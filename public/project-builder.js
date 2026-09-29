@@ -71,7 +71,7 @@ async function detectBrowserWorkflow(){
   const producerNode=new Map();for(const w of sources)for(const aid of w.node.outputs)producerNode.set(aid,w.node.id);
   const edges=[];for(const w of sources)for(const aid of w.node.inputs){const from=producerNode.get(aid);if(from&&from!==w.node.id)edges.push({from,to:w.node.id,artifact_id:aid})}
   for(const w of sources)w.edges=edges.filter(e=>e.from===w.node.id||e.to===w.node.id);
-  const cut=Number($("workflowConfidence")?.value||.90);selectedWorkflow=new Set(workflowInferences.filter(w=>w.confidence>=cut).map(w=>w.id));
+  const cut=Number($("workflowConfidence")?.value||.95);selectedWorkflow=new Set(workflowInferences.filter(w=>w.confidence>=cut).map(w=>w.id));
 }
 
 async function inspectFiles(files){
@@ -121,7 +121,7 @@ async function buildDraft(){
   const semanticNodes=dedupe(recs.map(r=>r.workflow_node)).map(n=>{n.outputs=(n.outputs||[]).filter(a=>!staticOutputs.has(a));return n}).filter(n=>n.outputs.length);
   const nodes=dedupe([...staticNodes,...semanticNodes]);
   const invCommit=await sha256Text(stableStringify(inventory.map(x=>({path:x.path,sha256:x.sha256,size:x.size}))));
-  return{subject:$("subject").value.trim()||"scientific-project",assumptions,claims,artifacts:[...ids].sort().map(id=>artifactEntry(byId.get(id))).filter(Boolean),checks,workflow:{nodes},pcs_intake:{format:"pcs-manifest-draft-v1",status:"draft",requires_confirmation:true,project_root_name:(sourceFiles[0]?.webkitRelativePath||"scientific-project").split("/")[0],minimum_selected_confidence:Number($("confidence").value),selected_recommendations:recs.map(r=>r.id),recommendation_count:recommendations.length,selected_recommendation_count:recs.length,workflow_discovery_format:WORKFLOW_FORMAT,minimum_workflow_confidence:Number($("workflowConfidence")?.value||.90),selected_workflow_inferences:wfs.map(w=>w.id),workflow_inference_count:workflowInferences.length,selected_workflow_inference_count:wfs.length,inventory_commitment_sha256:invCommit}}
+  return{subject:$("subject").value.trim()||"scientific-project",assumptions,claims,artifacts:[...ids].sort().map(id=>artifactEntry(byId.get(id))).filter(Boolean),checks,workflow:{nodes},pcs_intake:{format:"pcs-manifest-draft-v1",status:"draft",requires_confirmation:true,project_root_name:(sourceFiles[0]?.webkitRelativePath||"scientific-project").split("/")[0],minimum_selected_confidence:Number($("confidence").value),selected_recommendations:recs.map(r=>r.id),recommendation_count:recommendations.length,selected_recommendation_count:recs.length,workflow_discovery_format:WORKFLOW_FORMAT,minimum_workflow_confidence:Number($("workflowConfidence")?.value||.95),selected_workflow_inferences:wfs.map(w=>w.id),workflow_inference_count:workflowInferences.length,selected_workflow_inference_count:wfs.length,inventory_commitment_sha256:invCommit}}
 }
 function workflowMapForReport(){
   const producer=new Map();for(const w of workflowInferences)for(const aid of w.node.outputs)producer.set(aid,w.node.id);
