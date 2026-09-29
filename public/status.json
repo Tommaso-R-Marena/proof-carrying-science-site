@@ -121,6 +121,26 @@
         "cold_start_fallback_verified": true
       },
       "production_workload_speedup_established": false
+    },
+    "guided_discovery": {
+      "discovery_format": "pcs-project-discovery-v1",
+      "manifest_draft_format": "pcs-manifest-draft-v1",
+      "discover_command": "pcs discover-v06",
+      "confirm_command": "pcs confirm-v06",
+      "browser_mapper": "project-builder.html",
+      "local_only": true,
+      "private_key_material_excluded": true,
+      "explicit_confirmation_required": true,
+      "artifact_snapshot_rehashed_on_confirmation": true,
+      "artifact_snapshot_rechecked_on_attestation": true,
+      "supported_detectors": [
+        "restricted_pkpd_model",
+        "pkpd_output_columns",
+        "named_csv_dataset_splits",
+        "reaction_json",
+        "unit_pair_json"
+      ],
+      "automated_discovery_affects_scientific_verdict": false
     }
   },
   "formal": {
