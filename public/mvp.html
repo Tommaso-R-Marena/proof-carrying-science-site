@@ -224,6 +224,57 @@
   </div>
 </section>
 
+<section class="section" id="scheduler-lab">
+  <div class="kicker">Adaptive replay scheduling</div>
+  <h2>Learn where failures tend to surface without learning the verdict.</h2>
+  <p class="section-intro">PCS now includes deterministic scheduling baselines and a contextual LinUCB-style bandit. The optimization target is time to first detected failure. Every mandatory check still runs, and the scheduler is explicitly excluded from claim assessment, normalized decisions, reviewer policy, signed receipts, and quorum approval.</p>
+
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Shadow first</div><h3>Observe before acting</h3><p><code>--shadow-bandit</code> records what the learned scheduler would choose while PCS continues to execute the configured deterministic order.</p></article>
+    <article class="card"><div class="num">20 + 3/type</div><h3>Cold-start guard</h3><p>Active bandit ordering requires at least 20 eligible historical observations overall and 3 for every check type in the current package. Otherwise PCS falls back to failure-per-second.</p></article>
+    <article class="card"><div class="num">Invariant</div><h3>All checks still run</h3><p>Execution order may change. Scientific evidence scope, check semantics, claim status, reviewer policy, and quorum semantics may not.</p></article>
+  </div>
+
+  <div class="mvp-command-grid">
+    <article class="command-card">
+      <div class="command-label"><span>Collect safely</span><strong>Shadow mode</strong></div>
+      <div class="codecommand"><code>pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --scheduler manifest --shadow-bandit --scheduler-history scheduler-history.jsonl --scheduler-telemetry-append scheduler-history.jsonl</code><button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --scheduler manifest --shadow-bandit --scheduler-history scheduler-history.jsonl --scheduler-telemetry-append scheduler-history.jsonl">Copy</button></div>
+    </article>
+    <article class="command-card">
+      <div class="command-label"><span>Evaluate</span><strong>Chronological report</strong></div>
+      <div class="codecommand"><code>pcs scheduler-report-v06 scheduler-history.jsonl -o scheduler-report.json</code><button data-copy="pcs scheduler-report-v06 scheduler-history.jsonl -o scheduler-report.json">Copy</button></div>
+    </article>
+  </div>
+
+  <div class="policy-lab" style="margin-top:22px">
+    <aside class="panel">
+      <h2>Scheduler lab</h2>
+      <p>This local illustration uses the same synthetic runtime scenario documented in the repository: unit checks historically pass at about 10.45 ms; reaction checks historically fail at about 1.045 ms.</p>
+      <div class="field">
+        <label for="schedulerHistoryMode"><span>Telemetry history</span></label>
+        <select id="schedulerHistoryMode" class="selectinput">
+          <option value="cold">Cold start · 0 observations</option>
+          <option value="ready">Ready · 20 observations</option>
+        </select>
+      </div>
+      <div class="actions"><button class="button primary" id="evaluateScheduler">Evaluate scheduler</button></div>
+      <p class="tiny">This is an explanatory scheduling simulator. It is not a scientific verifier and does not estimate production speedup.</p>
+    </aside>
+    <div>
+      <div class="statusgrid policy-status-grid">
+        <div class="status na" id="schedulerReadyCard"><div class="label">Bandit readiness</div><div class="value" id="schedulerReady">NOT RUN</div></div>
+        <div class="status na" id="schedulerEffectiveCard"><div class="label">Effective strategy</div><div class="value" id="schedulerEffective">NOT RUN</div></div>
+        <div class="status na" id="schedulerCoverageCard"><div class="label">Mandatory checks</div><div class="value" id="schedulerCoverage">NOT RUN</div></div>
+        <div class="status na" id="schedulerTtfCard"><div class="label">Synthetic TTF estimate</div><div class="value" id="schedulerTtf">NOT RUN</div></div>
+      </div>
+      <section class="panel" style="margin-top:18px">
+        <h2>Ordering trace</h2>
+        <pre id="schedulerTrace">{ "status": "not evaluated" }</pre>
+      </section>
+    </div>
+  </div>
+</section>
+
 <section class="section">
   <div class="kicker">Initial MVP scope</div>
   <h2>Five executable scientific checks, one strict delivery path.</h2>
