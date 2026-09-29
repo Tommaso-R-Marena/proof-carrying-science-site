@@ -158,7 +158,12 @@
       "static_workflow_human_confirmation_required": true,
       "source_code_snapshot_bound": true,
       "source_change_after_confirmation_rejected": true,
-      "static_workflow_proves_program_correctness": false
+      "static_workflow_proves_program_correctness": false,
+      "cli_r_literal_workflow_analysis": true,
+      "browser_r_literal_workflow_preview": true,
+      "r_workflow_confidence": 0.88,
+      "r_workflow_auto_selected_by_default": false,
+      "human_readable_discovery_review": true
     }
   },
   "formal": {
