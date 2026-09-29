@@ -31,7 +31,7 @@
     <div class="field">
       <label><span>Package source</span><span id="sourceLabel">Built-in reference</span></label>
       <div class="actions" style="margin-top:0">
-        <button class="button secondary" id="loadReference">Reset reference</button>
+        <button class="button secondary" id="loadReference">Reset reference</button><a class="button secondary" href="demo-reference.json" download>Download signed JSON</a>
         <label class="button secondary filepick">Open JSON<input id="fileInput" type="file" accept=".json,application/json"></label>
       </div>
     </div>
@@ -101,9 +101,9 @@
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="index.html">Home</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 
-<script id="referenceEnvelope" type="application/json">
+<pre id="referenceEnvelope" hidden>
 {"format":"pcs-browser-signed-envelope-v1","signed_payload":"{\"assumption\":\"The restricted one-compartment IV-bolus PK + direct Emax PD equations are the declared computational model; this does not establish biological adequacy.\",\"assurance_class\":\"computational\",\"claims\":[{\"id\":\"C_PK_CONTRACT\",\"statement\":\"The model satisfies the restricted positivity and dimensional contract.\",\"status\":\"COMPUTATIONALLY_SUPPORTED\"},{\"id\":\"C_PK_REPLAY\",\"statement\":\"The predictions match the declared analytic PK/PD equations within 1e-9 relative tolerance.\",\"status\":\"COMPUTATIONALLY_SUPPORTED\"}],\"format\":\"pcs-browser-demo-v1\",\"model\":{\"clearance\":{\"unit\":\"L/h\",\"value\":2},\"concentration_unit\":\"mg/L\",\"dose\":{\"unit\":\"mg\",\"value\":100},\"model_type\":\"one_compartment_iv_bolus\",\"pd\":{\"e0\":{\"unit\":\"1\",\"value\":0},\"ec50\":{\"unit\":\"mg/L\",\"value\":2},\"effect_unit\":\"1\",\"emax\":{\"unit\":\"1\",\"value\":1},\"model_type\":\"direct_emax\"},\"time_unit\":\"h\",\"volume\":{\"unit\":\"L\",\"value\":20}},\"policy\":{\"required_claims\":{\"C_PK_CONTRACT\":[\"COMPUTATIONALLY_SUPPORTED\"],\"C_PK_REPLAY\":[\"COMPUTATIONALLY_SUPPORTED\"]}},\"predictions\":[{\"concentration_mg_L\":5,\"effect\":0.714285714286,\"time_h\":0},{\"concentration_mg_L\":4.52418709018,\"effect\":0.69344839865,\"time_h\":1},{\"concentration_mg_L\":4.09365376539,\"effect\":0.671789688584,\"time_h\":2},{\"concentration_mg_L\":3.351600230178,\"effect\":0.626280007105,\"time_h\":4},{\"concentration_mg_L\":2.246644820586,\"effect\":0.529039963431,\"time_h\":8}],\"subject\":\"PCS signed synthetic PK/PD reference\"}","signature_format":"Ed25519","signature_b64":"DmZsbd8y8wFYSwPCxo2k9Z3oyULtqBi5bpXsx5WzggwtkZ+xEs23kzqDOdLm0Jq7NRmNcRY7vmT+Cs2pndZFCQ==","public_key_raw_b64":"T4FQljMNHw0CBLff43EMv+ulEBHL7DoZ35GgbRsGioQ=","public_key_fingerprint_sha256":"9da5b7ffb4fdb9ed6dd3f392fc5069f7cad9f86838aef78947f7972931bcb6c2","certificate_sha256":"d871a23c512159b3df4a000f72906bc6c86a7d97a6e2f99f58a7e8dfebea4ce8"}
-</script>
+</pre>
 <script src="demo.js"></script>
 </body>
 </html>
