@@ -43,6 +43,37 @@
     });
   });
 
+  document.querySelectorAll(".tabs").forEach((tablist, listIndex) => {
+    tablist.setAttribute("role", "tablist");
+    const tabs = [...tablist.querySelectorAll(".tab")];
+    tabs.forEach((tab, tabIndex) => {
+      const key = tab.dataset.tab;
+      const panel = key ? document.getElementById("tab-" + key) : null;
+      if (!tab.id) tab.id = `tab-${listIndex}-${tabIndex}`;
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-selected", tab.classList.contains("active") ? "true" : "false");
+      if (panel) {
+        tab.setAttribute("aria-controls", panel.id);
+        panel.setAttribute("role", "tabpanel");
+        panel.setAttribute("aria-labelledby", tab.id);
+      }
+      tab.addEventListener("click", () => {
+        tabs.forEach((other) => other.setAttribute("aria-selected", other === tab ? "true" : "false"));
+      });
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        let next = tabIndex;
+        if (event.key === "ArrowLeft") next = (tabIndex - 1 + tabs.length) % tabs.length;
+        if (event.key === "ArrowRight") next = (tabIndex + 1) % tabs.length;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = tabs.length - 1;
+        tabs[next].focus();
+        tabs[next].click();
+      });
+    });
+  });
+
   document.querySelectorAll("[data-copy]").forEach((button) => {
     button.addEventListener("click", async () => {
       const value = button.getAttribute("data-copy") || "";
