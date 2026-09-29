@@ -70,6 +70,8 @@ if mapper_page.exists():
         "Inferred workflow",
         "No code execution",
         "Load synthetic example",
+        "R workflow",
+        "Download review Markdown",
     ]:
         if required_text not in mapper_text:
             errors.append(f"project-builder.html: missing explicit draft confirmation boundary: {required_text}")
@@ -85,6 +87,8 @@ if mapper_js.exists():
         "browser_heuristic:true",
         "multiple_static_producers",
         "loadSyntheticExample",
+        "analyzeBrowserRSource",
+        "pcs-discovery-review.md",
     ]:
         if required_text not in mapper_script:
             errors.append(f"project-builder.js: guided intake contract drift: {required_text}")
@@ -240,6 +244,9 @@ if public_status.exists() and fixture_obj is not None:
             "static_workflow_human_confirmation_required",
             "source_code_snapshot_bound",
             "source_change_after_confirmation_rejected",
+            "cli_r_literal_workflow_analysis",
+            "browser_r_literal_workflow_preview",
+            "human_readable_discovery_review",
         ]:
             if guided_discovery.get(key) is not True:
                 errors.append(f"status.json: static workflow invariant drift: {key}")
@@ -259,6 +266,10 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: partial AST workflow confidence drift")
         if guided_discovery.get("browser_heuristic_workflow_confidence") != 0.90:
             errors.append("status.json: browser workflow confidence drift")
+        if guided_discovery.get("r_workflow_confidence") != 0.88:
+            errors.append("status.json: R workflow confidence drift")
+        if guided_discovery.get("r_workflow_auto_selected_by_default") is not False:
+            errors.append("status.json: R workflow default-selection drift")
         if guided_discovery.get("automated_discovery_affects_scientific_verdict") is not False:
             errors.append("status.json: guided discovery entered scientific verdict boundary")
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
