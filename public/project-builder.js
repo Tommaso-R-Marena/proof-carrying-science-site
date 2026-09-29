@@ -74,6 +74,33 @@ async function detectBrowserWorkflow(){
   const cut=Number($("workflowConfidence")?.value||.95);selectedWorkflow=new Set(workflowInferences.filter(w=>w.confidence>=cut).map(w=>w.id));
 }
 
+async function loadSyntheticExample(){
+  const model={
+    model_type:"one_compartment_iv_bolus",
+    dose:{value:100,unit:"mg"},
+    volume:{value:20,unit:"L"},
+    clearance:{value:2,unit:"L/h"},
+    time_unit:"h",
+    concentration_unit:"mg/L",
+    pd:{model_type:"direct_emax",effect_unit:"1",e0:{value:0,unit:"1"},emax:{value:1,unit:"1"},ec50:{value:2,unit:"mg/L"}}
+  };
+  const files=[
+    new File([JSON.stringify(model,null,2)+"\n"],"model.json",{type:"application/json"}),
+    new File(["time,concentration,effect\n0,5,0.7142857143\n1,4.52418709,0.693569\n"],"predictions.csv",{type:"text/csv"}),
+    new File(["subject_id,value\nS1,1\nS2,2\n"],"train.csv",{type:"text/csv"}),
+    new File(["subject_id,value\nS3,3\nS4,4\n"],"test.csv",{type:"text/csv"}),
+    new File([
+      "import json\n",
+      "import pandas as pd\n",
+      "model = json.load(open('model.json'))\n",
+      "df = pd.read_csv('predictions.csv')\n",
+      "df.to_csv('predictions.csv', index=False)\n"
+    ],"generate.py",{type:"text/x-python"})
+  ];
+  $("subject").value="synthetic-guided-demo";
+  await inspectFiles(files);
+}
+
 async function inspectFiles(files){
   sourceFiles=[...files];inventory=[];skipped=[];recommendations=[];selected.clear();workflowInferences=[];workflowUnresolved=[];selectedWorkflow.clear();
   const used=new Set();let totalBytes=0;
@@ -167,6 +194,7 @@ async function render(){
   await rebuild();
 }
 $("chooseProject").onclick=()=>$("projectFiles").click();
+$("loadExampleProject").onclick=loadSyntheticExample;
 $("projectFiles").onchange=async e=>{if(!e.target.files?.length)return;const root=(e.target.files[0].webkitRelativePath||"scientific-project").split("/")[0];$("subject").value=root;await inspectFiles(e.target.files)};
 $("confidence").oninput=async()=>{$("confidenceValue").textContent=Number($("confidence").value).toFixed(2);autoSelect();await render()};
 $("workflowConfidence").oninput=async()=>{$("workflowConfidenceValue").textContent=Number($("workflowConfidence").value).toFixed(2);autoSelect();await render()};
