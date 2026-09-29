@@ -115,6 +115,11 @@ if mapper_js.exists():
         if required_text not in mapper_script:
             errors.append(f"project-builder.js: environment capture contract drift: {required_text}")
 
+for page in ["mvp.html", "trust.html", "architecture.html"]:
+    p = ROOT / page
+    if p.exists() and "prepare-environment-v06" not in p.read_text(encoding="utf-8"):
+        errors.append(f"{page}: verified replay workspace command is missing")
+
 receipt_pages = ["index.html", "mvp.html", "trust.html", "architecture.html"]
 for page in receipt_pages:
     p = ROOT / page
@@ -345,6 +350,21 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: browser environment preview authority drift")
         if environment_capture.get("automatic_environment_execution_during_verification") is not False:
             errors.append("status.json: environment verification execution boundary drift")
+        if environment_capture.get("verified_workspace_format") != "pcs-environment-workspace-v1":
+            errors.append("status.json: verified environment workspace format drift")
+        if environment_capture.get("prepare_workspace_command") != "pcs prepare-environment-v06":
+            errors.append("status.json: verified environment workspace command drift")
+        for key in [
+            "full_bundle_verification_before_materialization",
+            "materializes_signed_source_path_tree",
+            "workspace_bound_to_bundle_sha256",
+            "workspace_bound_to_certificate_hashes",
+            "atomic_staging_then_publish",
+        ]:
+            if environment_capture.get(key) is not True:
+                errors.append(f"status.json: environment workspace invariant drift: {key}")
+        if environment_capture.get("workspace_execution_by_pcs") is not False:
+            errors.append("status.json: environment workspace execution boundary drift")
 
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
         if adaptive_scheduler.get("scheduler_format") != "pcs-replay-scheduler-v1":
