@@ -141,7 +141,24 @@
         "unit_pair_json"
       ],
       "automated_discovery_affects_scientific_verdict": false,
-      "confirmation_provenance_in_signed_artifact_metadata": true
+      "confirmation_provenance_in_signed_artifact_metadata": true,
+      "workflow_discovery_format": "pcs-static-workflow-map-v1",
+      "cli_python_ast_analysis": true,
+      "cli_jupyter_code_cell_analysis": true,
+      "browser_workflow_preview": "heuristic_literal_path_analysis",
+      "browser_visual_graph": true,
+      "browser_synthetic_example": true,
+      "user_code_executed_during_discovery": false,
+      "default_workflow_confidence": 0.95,
+      "clean_ast_workflow_confidence": 0.98,
+      "partial_ast_workflow_confidence": 0.9,
+      "browser_heuristic_workflow_confidence": 0.9,
+      "dynamic_paths_guessed": false,
+      "ambiguous_multiple_producers_guessed": false,
+      "static_workflow_human_confirmation_required": true,
+      "source_code_snapshot_bound": true,
+      "source_change_after_confirmation_rejected": true,
+      "static_workflow_proves_program_correctness": false
     }
   },
   "formal": {
