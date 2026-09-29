@@ -84,7 +84,21 @@
       <div><strong>Reviewer policy</strong><span>Does the evidence meet criteria the reviewer chose?</span></div>
     </section>
 
-    <section class="section" id="product">
+        <section class="section-tight">
+      <div class="mvp-banner">
+        <div>
+          <div class="kicker">New audit layer</div>
+          <h3>Producer signs the science. Reviewer signs the review.</h3>
+          <p>PCS v0.6 can now emit a reviewer-signed verification receipt that binds the exact receipt bytes, delivered bundle, reviewer policy, core certificate/index commitments, and the final <code>valid</code>/<code>accepted</code> verdicts.</p>
+          <div class="actions"><a class="button primary" href="mvp.html">Reviewer-signed audit trail →</a><a class="button secondary" href="trust.html">Trust boundary</a></div>
+        </div>
+        <div class="mvp-cli">
+          <div class="codecommand"><code>pcs verify-receipt-v06 receipt.json --signature receipt.sig.json …</code><button data-copy="pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+<section class="section" id="product">
       <div class="kicker">The product</div>
       <h2>Evidence that travels with the claim.</h2>
       <p class="section-intro">Scientific results often arrive as a collection of code, data, notebooks, exported figures, model files, and informal explanations. PCS turns a bounded computational claim into a structured assurance package another person can inspect and replay without trusting the original producer.</p>
