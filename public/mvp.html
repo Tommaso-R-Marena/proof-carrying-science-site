@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v0.6 MVP · Proof-Carrying Science</title>
+<meta name="description" content="The PCS v0.6 MVP candidate: one-command attestation, deterministic self-verified bundles, independent replay, and reviewer-controlled acceptance policy.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>PCS v0.6 MVP candidate · Producer → signed bundle → independent reviewer</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="demo.html">v0.5 verifier</a>
+    <a href="intake.html">Pilot intake</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="pagehead mvp-head">
+  <div class="kicker">v0.6 MVP candidate</div>
+  <h1>One command to produce. One command to verify.</h1>
+  <p>The current PCS v0.6 branch closes the first complete producer-to-reviewer loop: package exact artifacts, replay supported checks, derive claim status, normalize decisions, sign the evidence, emit a deterministic ZIP, independently verify the exact archive, and let the reviewer apply a policy the producer does not control.</p>
+  <div class="actions">
+    <a class="button primary" href="#workflow">See the product loop →</a>
+    <a class="button secondary" href="#policy-lab">Open policy lab</a>
+  </div>
+  <div class="statusbar" aria-label="v0.6 MVP candidate status">
+    <div><span>Producer</span><strong><code>attest-v06</code></strong></div>
+    <div><span>Delivery</span><strong>Deterministic + self-verified ZIP</strong></div>
+    <div><span>Reviewer</span><strong><code>verify-v06-bundle</code></strong></div>
+    <div><span>Acceptance</span><strong>External reviewer policy</strong></div>
+  </div>
+</section>
+
+<section class="section-tight" id="workflow">
+  <div class="kicker">The complete loop</div>
+  <h2>From a bounded workflow to a portable assurance package.</h2>
+  <p class="section-intro">The producer never gets to declare itself accepted. PCS separates scientific replay, package validity, signer authenticity, and the receiving organization's acceptance policy.</p>
+
+  <div class="mvp-command-grid">
+    <article class="command-card">
+      <div class="command-label"><span>Producer</span><strong>Build and attest</strong></div>
+      <div class="codecommand">
+        <code>pcs attest-v06 project/manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem</code>
+        <button data-copy="pcs attest-v06 project/manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem">Copy</button>
+      </div>
+      <p>Copies exact artifacts into the package first, replays supported checks against those copied bytes, builds the typed v0.6 certificate and normalized decision set, signs the package, verifies the candidate ZIP, then atomically publishes it.</p>
+    </article>
+
+    <article class="command-card">
+      <div class="command-label"><span>Reviewer</span><strong>Verify + apply policy</strong></div>
+      <div class="codecommand">
+        <code>pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json</code>
+        <button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json">Copy</button>
+      </div>
+      <p>Reads the ZIP without extracting it, verifies the signer and exact file set, reruns supported scientific checks, regenerates normalized decisions, then applies the reviewer's external acceptance criteria.</p>
+    </article>
+  </div>
+
+  <div class="mvp-flow" aria-label="v0.6 producer to reviewer flow">
+    <div class="mvp-node"><span>01</span><strong>Manifest</strong><small>Claims, assumptions, artifacts, checks</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>02</span><strong>Replay</strong><small>Run checks on packaged bytes</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>03</span><strong>Normalize</strong><small>Claim-scoped decision set</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>04</span><strong>Sign</strong><small>Certificate + exact manifest</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>05</span><strong>Bundle</strong><small>Deterministic, self-verified ZIP</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>06</span><strong>Review</strong><small>Verify first, policy second</small></div>
+  </div>
+</section>
+
+<section class="section split">
+  <div>
+    <div class="kicker">Why policy is separate</div>
+    <h2>Valid does not mean accepted.</h2>
+    <p class="section-intro">A PCS package can be perfectly authentic and replay-consistent while honestly carrying a failed or open scientific claim. The receiving organization decides whether those claim statuses are acceptable for its use case.</p>
+    <div class="boundary"><strong>PCS validity</strong><span>Did the delivered bytes, signatures, replay results, and normalized decisions agree?</span></div>
+    <div class="boundary policy-boundary"><strong>Reviewer acceptance</strong><span>Do the verified claim statuses and signer identity satisfy this reviewer's external policy?</span></div>
+  </div>
+  <div class="panel">
+    <h2>Example policy</h2>
+    <p>The producer does not embed or sign the reviewer's acceptance criteria. The reviewer supplies them at verification time.</p>
+    <pre class="policy-pre" id="policyExample">{
+  "policy_version": "pcs-acceptance-policy-v1",
+  "require_signature": true,
+  "required_claims": {
+    "C_PKPD_CONTRACT": ["COMPUTATIONALLY_SUPPORTED"],
+    "C_PKPD_REPLAY": ["COMPUTATIONALLY_SUPPORTED"]
+  }
+}</pre>
+    <div class="actions"><button class="button secondary" id="copyPolicy">Copy policy JSON</button></div>
+  </div>
+</section>
+
+<section class="section" id="policy-lab">
+  <div class="kicker">Interactive policy lab</div>
+  <h2>Change the science or the review rule. Watch different layers respond.</h2>
+  <p class="section-intro">This browser lab demonstrates the v0.6 acceptance semantics locally. It is an explanatory policy simulator, not the production Python verifier and not a replacement for <code>verify-v06-bundle</code>.</p>
+
+  <div class="policy-lab">
+    <aside class="panel">
+      <h2>Verified package state</h2>
+      <p>Start from a package that has already passed or failed the PCS verification layers, then apply an external reviewer rule.</p>
+
+      <div class="toggle">
+        <div><strong>Tamper delivery</strong><small>Simulate package/replay verification failure.</small></div>
+        <input id="tamperPackage" type="checkbox">
+      </div>
+
+      <div class="field">
+        <label for="replayDecision"><span>C_PKPD_REPLAY decision</span></label>
+        <select id="replayDecision" class="selectinput">
+          <option value="COMPUTATIONALLY_SUPPORTED">COMPUTATIONALLY_SUPPORTED</option>
+          <option value="FALSIFIED_OR_CHECK_FAILED">FALSIFIED_OR_CHECK_FAILED</option>
+          <option value="OPEN">OPEN</option>
+        </select>
+      </div>
+
+      <h2 style="margin-top:24px">Reviewer policy</h2>
+      <div class="field">
+        <label for="requiredReplayStatus"><span>Required replay status</span></label>
+        <select id="requiredReplayStatus" class="selectinput">
+          <option value="COMPUTATIONALLY_SUPPORTED">COMPUTATIONALLY_SUPPORTED</option>
+          <option value="FORMALLY_VERIFIED_UNDER_ASSUMPTIONS">FORMALLY_VERIFIED_UNDER_ASSUMPTIONS</option>
+        </select>
+      </div>
+
+      <div class="toggle">
+        <div><strong>Signer matches policy</strong><small>Reviewer pins the expected Ed25519 public-key fingerprint.</small></div>
+        <input id="signerMatch" type="checkbox" checked>
+      </div>
+
+      <div class="actions"><button class="button primary" id="evaluatePolicy">Evaluate</button><button class="button secondary" id="resetPolicy">Reset</button></div>
+      <p class="tiny">Policy SHA-256 is computed in your browser over the exact displayed policy bytes. No data leaves this page.</p>
+    </aside>
+
+    <div>
+      <div class="statusgrid policy-status-grid">
+        <div class="status na" id="pcsValidityCard"><div class="label">PCS validity</div><div class="value" id="pcsValidity">NOT RUN</div></div>
+        <div class="status na" id="acceptanceCard"><div class="label">Reviewer acceptance</div><div class="value" id="acceptanceStatus">NOT RUN</div></div>
+        <div class="status na" id="signerPolicyCard"><div class="label">Signer policy</div><div class="value" id="signerPolicyStatus">NOT RUN</div></div>
+        <div class="status na" id="policyHashCard"><div class="label">Policy binding</div><div class="value mono" id="policyHashShort">NOT RUN</div></div>
+      </div>
+
+      <div class="grid2" style="margin-top:18px">
+        <section class="panel">
+          <h2>Policy failures</h2>
+          <div id="policyFailures" class="policy-failures"><p class="tiny">Evaluate the policy to see failures.</p></div>
+        </section>
+        <section class="panel">
+          <h2>Claim ledger</h2>
+          <div class="claim"><span class="dot pass" id="contractPolicyDot"></span><div><strong>C_PKPD_CONTRACT</strong><span id="contractPolicyText">COMPUTATIONALLY_SUPPORTED</span></div></div>
+          <div class="claim"><span class="dot pass" id="replayPolicyDot"></span><div><strong>C_PKPD_REPLAY</strong><span id="replayPolicyText">COMPUTATIONALLY_SUPPORTED</span></div></div>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top:18px">
+        <h2>Receipt preview</h2>
+        <pre id="policyReceipt">{ "status": "not evaluated" }</pre>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Initial MVP scope</div>
+  <h2>Five executable scientific checks, one strict delivery path.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">01</div><h3>PK/PD contract</h3><p>Restricted one-compartment IV-bolus + direct Emax representation, units, dimensions, and positivity.</p></article>
+    <article class="card"><div class="num">02</div><h3>PK/PD replay</h3><p>Independent analytic recomputation from packaged model bytes and exported predictions.</p></article>
+    <article class="card"><div class="num">03</div><h3>CSV disjointness</h3><p>Verify declared split keys do not overlap between packaged CSV artifacts.</p></article>
+    <article class="card"><div class="num">04</div><h3>Reaction balance</h3><p>Replay a narrow atom-balance predicate over declared stoichiometric terms.</p></article>
+    <article class="card"><div class="num">05</div><h3>Unit compatibility</h3><p>Check supported dimensional expressions and conversion compatibility.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>External evidence stays explicit</h3><p>Formal, empirical, statistical, and provenance evidence is not auto-promoted to PASS by the MVP producer.</p></article>
+  </div>
+</section>
+
+<section class="dark-section">
+  <div class="kicker" style="color:#78b9ff">Formal boundary</div>
+  <h2>The executable MVP and the formal theorem stack are related, but not identical.</h2>
+  <p class="section-intro">The current v0.6/v2 executable format has the full producer/reviewer product path. The strongest machine-checked raw-wire-to-<code>Assures</code> theorem stack currently targets the older v0.5/v1 wire, with package authenticity and replay represented through explicit theorem assumptions. Porting that theorem stack onto the exact v0.6/v2 representation remains open work.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">v0.6</div><h3>Executable MVP</h3><p>Canonical JCS, signed package, deterministic ZIP, fresh replay, normalized decisions, reviewer policy.</p></article>
+    <article class="card"><div class="num">v0.5/v1</div><h3>Machine-checked chain</h3><p>Raw normalized-wire bytes through checked decoding and assurance semantics have a Lean 4.28 theorem chain.</p></article>
+    <article class="card"><div class="num">Open</div><h3>Exact v0.6 formal port</h3><p>The product should not claim end-to-end Lean verification of the v0.6 delivery format until that port is completed.</p></article>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="callout">
+    <div><h3>The next milestone is external use.</h3><p>The core MVP loop now exists in the v0.6 candidate branch. The highest-value validation is a design partner running a bounded workflow PCS did not construct itself.</p></div>
+    <div class="actions" style="margin-top:0"><a class="button dark" href="contact.html">Discuss a pilot</a><a class="button secondary" href="trust.html">Trust Center</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="footergrid">
+    <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
+    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">v0.5 verifier</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
+  </div>
+</footer>
+</div>
+<script src="site.js"></script>
+<script src="mvp.js"></script>
+</body>
+</html>
