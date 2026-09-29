@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contact · Proof-Carrying Science</title>
+<meta name="description" content="Contact Proof-Carrying Science about a design-partner pilot, scientific workflow, or technical collaboration.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Design-partner inquiries welcome</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="index.html#product">Product</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div></nav>
+<main>
+<section class="pagehead">
+  <div class="kicker">Contact</div>
+  <h1>Tell us where stronger evidence would change the review.</h1>
+  <p>PCS is currently looking for bounded computational workflows where a subtle implementation error, weak provenance, irreproducible handoff, or review failure is genuinely expensive. The most useful first message is concrete: what the workflow does, what claims matter, and what another reviewer needs to trust.</p>
+</section>
+
+<section class="contact-card">
+  <div class="contact-detail">
+    <div class="kicker">Direct email</div>
+    <h2 style="font-family:var(--display);font-size:34px">Tommaso Marena</h2>
+    <p><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></p>
+    <p>For design-partner pilots, technical collaboration, research questions, or early product feedback.</p>
+    <button class="button secondary" id="copyEmail">Copy email address</button>
+    <div id="copyStatus" class="validation" aria-live="polite"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Compose a design-partner email</h2>
+    <p>This form stays in your browser. Clicking compose opens your local email client; PCS does not receive these fields through the website.</p>
+    <div class="grid2">
+      <div class="field"><label for="name">Your name</label><input id="name" class="textinput" autocomplete="name"></div>
+      <div class="field"><label for="org">Organization / lab</label><input id="org" class="textinput" autocomplete="organization"></div>
+    </div>
+    <div class="field"><label for="workflowType">Workflow area</label>
+      <select id="workflowType" class="selectinput">
+        <option>PK/PD / pharmacometrics</option>
+        <option>QSP / mechanistic modeling</option>
+        <option>Computational biology</option>
+        <option>Computational chemistry</option>
+        <option>AI / scientific ML</option>
+        <option>Formal methods / verification</option>
+        <option>Other scientific computation</option>
+      </select>
+    </div>
+    <div class="field"><label for="message">What should another reviewer be able to verify?</label><textarea id="message" placeholder="Describe the bounded workflow, the important claims, and the review/reproducibility problem."></textarea></div>
+    <div class="actions"><button class="button primary" id="composeEmail">Compose email</button><a class="button secondary" href="intake.html">Build intake first</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">A useful first pilot</div>
+  <h2>Small enough to bound. Important enough to matter.</h2>
+  <div class="grid3">
+    <article class="card"><div class="num">01</div><h3>One workflow</h3><p>A specific computational path with identifiable inputs, transformations, and outputs.</p></article>
+    <article class="card"><div class="num">02</div><h3>Three to ten claims</h3><p>Concrete statements a reviewer actually needs to accept, reject, reproduce, or escalate.</p></article>
+    <article class="card"><div class="num">03</div><h3>A real review burden</h3><p>Something where assurance would save expert time, reduce ambiguity, or catch expensive mistakes.</p></article>
+  </div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div></footer>
+</div>
+<script src="contact.js"></script>
+</body>
+</html>
