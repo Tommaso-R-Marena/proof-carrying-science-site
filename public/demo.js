@@ -111,11 +111,54 @@ function strictPolicyFor(cert,fp){
     required_claims:Object.fromEntries((cert.claims||[]).map(c=>[c.id,["FORMALLY_VERIFIED_UNDER_ASSUMPTIONS"]]))
   };
 }
+function inspectPackageFile(name,meta,p){
+  const entry=p.files?.[name];
+  $("packageFileName").textContent=name;
+  $("packageFileMeta").textContent=`${Number(meta?.size??0).toLocaleString()} bytes · ${short(meta?.sha256||"")}`;
+  if(!entry){
+    $("packageFilePreview").textContent="File is missing from the selected package.";
+    return;
+  }
+  try{
+    const bytes=Engine.fileBytes(entry);
+    if(bytes.byteLength>64*1024){
+      $("packageFilePreview").textContent=`Preview suppressed: ${bytes.byteLength.toLocaleString()} bytes exceeds the 64 KiB local preview limit.`;
+      return;
+    }
+    const text=Engine.fileText(entry);
+    const suspicious=[...text].some(ch=>{
+      const code=ch.charCodeAt(0);
+      return code===0||(code<9)||(code>13&&code<32);
+    });
+    if(suspicious){
+      $("packageFilePreview").textContent="Preview suppressed: selected member appears to contain binary/control bytes.";
+      return;
+    }
+    $("packageFilePreview").textContent=text||"(empty text file)";
+  }catch(e){
+    $("packageFilePreview").textContent="Preview unavailable: "+String(e);
+  }
+}
+
 function renderPackage(result,p){
   const manifest=result.manifest||{};
-  $("packageRows").innerHTML=Object.entries(manifest.files||{}).map(([name,meta])=>
-    `<tr><td><code>${esc(name)}</code></td><td>${Number(meta.size).toLocaleString()}</td><td><code>${esc(short(meta.sha256))}</code></td></tr>`
+  const entries=Object.entries(manifest.files||{});
+  $("packageRows").innerHTML=entries.map(([name,meta])=>
+    `<tr><td><button class="filelink" data-package-file="${esc(name)}"><code>${esc(name)}</code></button></td><td>${Number(meta.size).toLocaleString()}</td><td><code>${esc(short(meta.sha256))}</code></td></tr>`
   ).join("");
+  $("packageRows").querySelectorAll("[data-package-file]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const name=button.getAttribute("data-package-file");
+      inspectPackageFile(name,manifest.files[name],p);
+    });
+  });
+  if(entries.length){
+    inspectPackageFile(entries[0][0],entries[0][1],p);
+  }else{
+    $("packageFileName").textContent="No staged files";
+    $("packageFileMeta").textContent="—";
+    $("packageFilePreview").textContent="The package manifest contains no staged files.";
+  }
 }
 function renderClaims(result){
   const cert=result.certificate||{};
