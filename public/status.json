@@ -140,7 +140,8 @@
         "reaction_json",
         "unit_pair_json"
       ],
-      "automated_discovery_affects_scientific_verdict": false
+      "automated_discovery_affects_scientific_verdict": false,
+      "confirmation_provenance_in_signed_artifact_metadata": true
     }
   },
   "formal": {
