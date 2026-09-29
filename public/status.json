@@ -192,7 +192,9 @@
         "automatic_environment_execution_during_verification": false,
         "reconstruction_plan_available": true,
         "review_before_run_script_available": true,
-        "browser_preview_local_only": true
+        "browser_preview_local_only": true,
+        "authoritative_recapture_at_confirmation": true,
+        "browser_preview_authoritative": false
       }
     }
   },
