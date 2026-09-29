@@ -176,7 +176,7 @@ async function verify(){
       signer_fingerprint:result.signature?.fingerprint||null,
       claim_results:result.claimResults,
       decision_vector_parity:{passed:parity.passed,total:parity.total},
-      scope:"Static-browser parity profile for PCS v0.5 package structure, package signature, built-in PK/PD predicates, claim decision, and reviewer policy. Not the production ZIP/runtime verifier."
+      scope:"Static-browser parity profile for PCS v0.5 staged-file/package-manifest verification, optional package signature verification, built-in PK/PD replay, claim decision, and reviewer policy. Extracted-directory verification begins after ZIP extraction and is not the production ZIP/runtime verifier."
     };
     $("downloadReceipt").disabled=false;
   }catch(e){
