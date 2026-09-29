@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PK/PD Model Lab · Proof-Carrying Science</title>
+<meta name="description" content="Generate a restricted one-compartment IV-bolus PK + direct Emax PD model, replay it locally, and export PCS-compatible manifest/model/prediction files.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Local model lab · Generates PCS-compatible inputs</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav>
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks"><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div>
+</nav>
+
+<main>
+<section class="pagehead">
+  <div class="kicker">Restricted PK/PD model lab</div>
+  <h1>Generate the computation. Then hand it to PCS for assurance.</h1>
+  <p>This tool uses the same restricted one-compartment IV-bolus PK and direct Emax PD equations as the current PCS adapter. Change the parameters, generate predictions, replay them locally with the browser engine, then download a production-compatible <code>manifest.json</code>, <code>pk_model.json</code>, and <code>predictions.csv</code> for the Python checker.</p>
+</section>
+
+<section class="demo-shell">
+  <aside class="panel">
+    <h2>Model parameters</h2>
+    <div class="grid2">
+      <div class="field"><label>Dose (mg)</label><input id="dose" class="textinput" type="number" min="0.000001" step="any" value="100"></div>
+      <div class="field"><label>Volume (L)</label><input id="volume" class="textinput" type="number" min="0.000001" step="any" value="10"></div>
+      <div class="field"><label>Clearance (L/h)</label><input id="clearance" class="textinput" type="number" min="0.000001" step="any" value="1"></div>
+      <div class="field"><label>EC50 (mg/L)</label><input id="ec50" class="textinput" type="number" min="0.000001" step="any" value="2"></div>
+      <div class="field"><label>E0</label><input id="e0" class="textinput" type="number" step="any" value="0"></div>
+      <div class="field"><label>Emax</label><input id="emax" class="textinput" type="number" min="0.000001" step="any" value="100"></div>
+    </div>
+    <div class="field"><label>Times (hours, comma-separated)</label><textarea id="times">0, 0.5, 1, 2, 4, 8, 12, 24</textarea></div>
+    <div class="actions"><button class="button primary" id="generate">Generate + replay</button><button class="button secondary" id="reset">Reset reference</button></div>
+    <p class="tiny">This is a computational representation tool. It does not establish that a one-compartment/Emax model is empirically adequate for any drug, patient, or decision.</p>
+  </aside>
+
+  <div>
+    <div class="overall" id="labOverall">
+      <div><strong id="labStatus">Ready</strong><br><span id="labDetail">Generate a trajectory to run the browser replay.</span></div>
+      <div class="engine-badge">PCS PK/PD adapter profile</div>
+    </div>
+
+    <section class="panel">
+      <h2>Generated trajectory</h2>
+      <div class="metricgrid">
+        <div class="metric"><span>k<sub>el</sub> (1/h)</span><strong id="kel">—</strong></div>
+        <div class="metric"><span>C(0) (mg/L)</span><strong id="c0">—</strong></div>
+        <div class="metric"><span>Replay</span><strong id="replayResult">—</strong></div>
+      </div>
+      <div class="chartgrid" style="margin-top:18px">
+        <div><div class="tiny" style="margin-bottom:6px">Concentration (mg/L)</div><svg id="pkChart" class="sparkchart" viewBox="0 0 640 220" role="img" aria-label="PK concentration curve"></svg></div>
+        <div><div class="tiny" style="margin-bottom:6px">Effect</div><svg id="pdChart" class="sparkchart" viewBox="0 0 640 220" role="img" aria-label="PD effect curve"></svg></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="tabs">
+        <button class="tab active" data-tab="table">Predictions</button>
+        <button class="tab" data-tab="manifest">PCS manifest</button>
+        <button class="tab" data-tab="model">Model JSON</button>
+      </div>
+      <div class="tabpane active" id="tab-table">
+        <table class="pkgtable"><thead><tr><th>Time (h)</th><th>Concentration (mg/L)</th><th>Effect</th></tr></thead><tbody id="predictionRows"></tbody></table>
+      </div>
+      <div class="tabpane" id="tab-manifest"><pre id="manifestView"></pre></div>
+      <div class="tabpane" id="tab-model"><pre id="modelView"></pre></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Export for production PCS</h2>
+      <p>These three files form the same starter shape used by the restricted PK/PD example in the PCS repository. Put them in one directory and run the production CLI against <code>manifest.json</code>.</p>
+      <div class="actions">
+        <button class="button primary" id="downloadManifest">Download manifest.json</button>
+        <button class="button secondary" id="downloadModel">Download pk_model.json</button>
+        <button class="button secondary" id="downloadCsv">Download predictions.csv</button>
+      </div>
+      <pre>pcs freeze-intake pilot_intake.json -o pilot_intake.lock.json
+pcs attest manifest.json -o evidence --intake-lock pilot_intake.lock.json</pre>
+      <p class="tiny">The intake lock is intentionally separate because claim commitment should happen before a real result is reviewed. Use the <a href="intake.html">pilot intake builder</a> for that step.</p>
+    </section>
+  </div>
+</section>
+</main>
+
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+</div>
+<script src="pcs-engine.js"></script>
+<script src="model-lab.js"></script>
+</body>
+</html>
