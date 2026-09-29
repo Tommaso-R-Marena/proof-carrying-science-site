@@ -64,6 +64,7 @@
         <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Machine-checked normalized-state soundness</td></tr>
         <tr><td>Reviewer acceptance policy</td><td>Yes · <code>valid</code> and <code>accepted</code> separate; exact policy SHA-256 in receipt</td><td>Yes · local explanatory policy lab</td><td>Policy remains external to producer proof</td></tr>
         <tr><td>Reviewer-signed verification receipt</td><td>Yes · separate Ed25519 reviewer identity binds exact receipt bytes + bundle/policy/verdict commitments</td><td>Documentation only; browser never handles reviewer private keys</td><td>Outside current Lean theorem boundary</td></tr>
+        <tr><td>Multi-reviewer quorum approval</td><td>Yes · role thresholds, authorized reviewer fingerprints, role-specific policy hashes, duplicate-identity rejection, exact-subject grouping</td><td>Documentation/visualization only</td><td>Governance layer outside current Lean theorem boundary</td></tr>
       </tbody>
     </table>
   </div>
@@ -98,6 +99,16 @@
     <article class="card"><div class="num">1</div><h3>Producer authenticity</h3><p>Who issued the scientific package? Bound by the producer Ed25519 signature.</p></article>
     <article class="card"><div class="num">2</div><h3>PCS verification + policy</h3><p>Did the package replay correctly, and did it satisfy this reviewer's explicit acceptance criteria?</p></article>
     <article class="card"><div class="num">3</div><h3>Reviewer provenance</h3><p>Who performed and attested to that exact review? Bound by a separate reviewer-signed receipt.</p></article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Multi-party review governance</div>
+  <h2>Approval can require independent roles without allowing signatures to bleed across studies.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">2-of-3</div><h3>Total threshold</h3><p>Organizations can require a minimum number of accepted signed review receipts.</p></article>
+    <article class="card"><div class="num">Roles</div><h3>Role thresholds</h3><p>For example, at least one computational reviewer and one domain reviewer, each pinned to a distinct required policy hash.</p></article>
+    <article class="card"><div class="num">Subject</div><h3>Exact review target</h3><p>Quorum is evaluated per exact bundle/certificate/index commitment tuple. Reviews over different scientific deliveries are never pooled.</p></article>
   </div>
 </section>
 
