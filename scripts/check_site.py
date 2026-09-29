@@ -270,6 +270,22 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: R workflow confidence drift")
         if guided_discovery.get("r_workflow_auto_selected_by_default") is not False:
             errors.append("status.json: R workflow default-selection drift")
+        for key in [
+            "workflow_replay_stage",
+            "workflow_replay_from_exact_delivered_source_bytes",
+            "workflow_replay_before_scientific_replay",
+            "claimed_edges_must_be_rediscovered",
+            "signed_source_path_validated_as_canonical_relative",
+            "forged_resigned_workflow_claim_adversarial_test_committed",
+        ]:
+            if guided_discovery.get(key) is not True:
+                errors.append(f"status.json: workflow replay invariant drift: {key}")
+        if guided_discovery.get("exact_ast_dependency_mode") != "exact_resolved_set":
+            errors.append("status.json: exact workflow dependency mode drift")
+        if guided_discovery.get("partial_dependency_mode") != "claimed_subset":
+            errors.append("status.json: subset workflow dependency mode drift")
+        if guided_discovery.get("forged_resigned_workflow_claim_runtime_executed") is not False:
+            errors.append("status.json: workflow replay runtime evidence overclaim")
         if guided_discovery.get("automated_discovery_affects_scientific_verdict") is not False:
             errors.append("status.json: guided discovery entered scientific verdict boundary")
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
