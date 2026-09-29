@@ -110,6 +110,11 @@
     <div class="codecommand"><code>pcs environment-plan-v06 manifest.json -o environment-plan.json --script reconstruct-environment.sh</code><button data-copy="pcs environment-plan-v06 manifest.json -o environment-plan.json --script reconstruct-environment.sh">Copy</button></div>
     <p class="tiny">The generated script may invoke package managers or container builds and must be reviewed before execution. It is never executed by <code>verify-v06</code> or <code>verify-v06-bundle</code>.</p>
   </div>
+  <div class="panel" style="margin-top:16px">
+    <h2>Prepare a verified replay workspace</h2>
+    <div class="codecommand"><code>pcs prepare-environment-v06 study.pcs.zip -o replay-workspace --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt;</code><button data-copy="pcs prepare-environment-v06 study.pcs.zip -o replay-workspace --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt;">Copy</button></div>
+    <p>PCS fully verifies the delivered bundle first, then materializes the exact signed project-relative artifact tree plus <code>pcs-environment-workspace.json</code>, the replay plan, and a review-before-run reconstruction script. Materialization is non-executing and is published atomically only after preparation succeeds.</p>
+  </div>
 </section>
 
 <section class="section-tight">
