@@ -15,6 +15,9 @@ function hex(bytes){
 async function sha256Text(s){
   return hex(await crypto.subtle.digest("SHA-256", enc.encode(s)));
 }
+async function sha256Bytes(bytes){
+  return hex(await crypto.subtle.digest("SHA-256", bytes));
+}
 function clone(x){ return JSON.parse(JSON.stringify(x)); }
 
 function stableStringify(value){
@@ -108,7 +111,7 @@ async function runVerification(){
     const digest=await sha256Text(activePayload);
     const integrity=digest===envelope.certificate_sha256;
     const sig=await verifySignature(activePayload,envelope);
-    const calcFingerprint=await sha256Text(String.fromCharCode(...b64bytes(envelope.public_key_raw_b64)));
+    const calcFingerprint=await sha256Bytes(b64bytes(envelope.public_key_raw_b64));
     const fingerprintMatches=calcFingerprint===envelope.public_key_fingerprint_sha256;
     const scientific=replay(cert);
 
