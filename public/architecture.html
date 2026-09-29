@@ -13,7 +13,8 @@
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-  <div class="navlinks"><a href="mvp.html">v0.6 MVP</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a class="button dark" href="contact.html">Contact</a></div>
+  <div class="navlinks"><a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a class="button dark" href="contact.html">Contact</a></div>
 </nav>
 
 <main>
@@ -77,6 +78,18 @@
   </div>
 </section>
 
+<section class="section">
+  <div class="kicker">Benchmark + adaptive scheduling</div>
+  <h2>Learn where failures occur without learning the verdict.</h2>
+  <p class="section-intro">The new <code>benchmark-v06</code> registry pins source-derived fixtures, predeclares expected PASS/FAIL outcomes, runs the same replay kernel, and emits a deterministic report. Historical benchmark cost/failure data could later feed a contextual bandit or RL scheduler to order expensive checks for faster failure discovery.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Deterministic</div><h3>Benchmark verdicts</h3><p>PASS/FAIL remains a pure function of exact fixture bytes, checker semantics, and explicit expectations.</p></article>
+    <article class="card"><div class="num">Optional RL</div><h3>Scheduling only</h3><p>A learned component may choose which mandatory check runs first. It may not skip evidence, alter outcomes, or change reviewer policy.</p></article>
+    <article class="card"><div class="num">5 / 5</div><h3>Initial public cases</h3><p>The first registry matched all five expected outcomes, including both negative controls.</p></article>
+  </div>
+  <div class="actions"><a class="button secondary" href="validation.html">See validation cases</a></div>
+</section>
+
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Trust statement</div>
   <h2>Formal verification does not certify biology.</h2>
@@ -93,7 +106,7 @@
 </section>
 </main>
 
-<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 <script src="site.js"></script>
 </body>
