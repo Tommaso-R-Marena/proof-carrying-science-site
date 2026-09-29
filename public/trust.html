@@ -56,7 +56,7 @@
 
     <article class="trustitem">
       <header><h3>Guided discovery boundary</h3><span class="chip pending">Human confirmation required</span></header>
-      <p><code>discover-v06</code> and the local Project Mapper are recommendation layers. They inventory files and propose currently supported checks, but the generated manifest carries <code>pcs_intake.status = "draft"</code> and cannot enter attestation.</p>
+      <p><code>discover-v06</code> and the local Project Mapper are recommendation layers. They inventory files, propose supported checks, and may statically infer Python/Jupyter artifact dependencies without executing user code. The generated manifest carries <code>pcs_intake.status = "draft"</code> and cannot enter attestation.</p>
       <div class="boundary"><strong>Explicit confirmation</strong><span><code>confirm-v06</code> re-hashes every selected artifact. <code>attest-v06</code> checks the same snapshot again, so onboarding automation cannot silently authorize its own claims or sign changed bytes.</span></div>
     </article>
 
