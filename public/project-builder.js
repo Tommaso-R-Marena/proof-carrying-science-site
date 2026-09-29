@@ -53,28 +53,42 @@ function analyzeBrowserSource(text,sourcePath,locationPrefix=""){
   while((m=pathRx.exec(text))){refs.push({kind:m[2].startsWith("write")?"write":"read",path:m[1],api:"Path."+m[2],location:locationPrefix+"offset:"+m.index})}
   return refs;
 }
+function analyzeBrowserRSource(text,locationPrefix=""){
+  const refs=[];let m;
+  const readRx=/\b(?:read\.csv|read\.table|readRDS|readr::read_csv|readr::read_tsv|data\.table::fread|fread|load)\s*\(\s*["']([^"']+)["']/g;
+  while((m=readRx.exec(text)))refs.push({kind:"read",path:m[1],api:"r.read",location:locationPrefix+"offset:"+m.index});
+  const writeRx=/\b(?:write\.csv|write\.table|readr::write_csv|readr::write_tsv|data\.table::fwrite|fwrite|saveRDS)\s*\([^,\n]+,\s*["']([^"']+)["']/g;
+  while((m=writeRx.exec(text)))refs.push({kind:"write",path:m[1],api:"r.write",location:locationPrefix+"offset:"+m.index});
+  const writeFileRx=/\b(?:write\.csv|write\.table|saveRDS|save)\s*\([^\)]*?\bfile\s*=\s*["']([^"']+)["']/g;
+  while((m=writeFileRx.exec(text)))refs.push({kind:"write",path:m[1],api:"r.write.file",location:locationPrefix+"offset:"+m.index});
+  return refs.slice(0,128);
+}
+
 async function detectBrowserWorkflow(){
   workflowInferences=[];workflowUnresolved=[];selectedWorkflow.clear();
   const byPath=new Map(inventory.map(x=>[x.path,x])),sources=[];
   for(const item of inventory){
-    const low=item.path.toLowerCase();if(!(low.endsWith(".py")||low.endsWith(".ipynb"))||item.size>MAX_INSPECT)continue;
-    let refs=[],kind="python";
+    const low=item.path.toLowerCase();if(!(low.endsWith(".py")||low.endsWith(".ipynb")||low.endsWith(".r"))||item.size>MAX_INSPECT)continue;
+    let refs=[],kind="python",confidence=.90,analysisMode="browser_literal_heuristic";
     if(low.endsWith(".py")){
       refs=analyzeBrowserSource(await item.file.text(),item.path);
-    }else{
+    }else if(low.endsWith(".ipynb")){
       kind="jupyter";
       try{
         const nb=JSON.parse(await item.file.text()),cells=Array.isArray(nb.cells)?nb.cells:[];
         cells.forEach((cell,i)=>{if(cell&&cell.cell_type==="code"){const src=Array.isArray(cell.source)?cell.source.join(""):String(cell.source||"");refs.push(...analyzeBrowserSource(src,item.path,`cell[${i}]:`))}})
       }catch{workflowUnresolved.push({type:"source_parse_incomplete",source_path:item.path})}
+    }else{
+      kind="r";confidence=.88;analysisMode="browser_r_literal_heuristic";
+      refs=analyzeBrowserRSource(await item.file.text(),item.path);
     }
     const resolved=[],unresolved=[];
     for(const ref of refs){const rel=resolveBrowserPath(ref.path,item.path,byPath);if(rel){const art=byPath.get(rel);resolved.push({...ref,path:rel,artifact_id:art.artifact_id})}else unresolved.push({...ref,resolution:"unresolved"})}
     if(unresolved.length)workflowUnresolved.push({type:"unresolved_source_references",source_path:item.path,references:unresolved.slice(0,48),truncated:unresolved.length>48});
     const reads=[...new Set(resolved.filter(x=>x.kind==="read").map(x=>x.artifact_id))].sort(),writes=[...new Set(resolved.filter(x=>x.kind==="write").map(x=>x.artifact_id))].sort();
     if(!reads.length&&!writes.length)continue;
-    const id="W_STATIC_"+item.artifact_id,confidence=.90,nodeId=("N_STATIC_"+item.artifact_id).slice(0,127);
-    sources.push({id,source_artifact_id:item.artifact_id,source_path:item.path,source_kind:kind,confidence,reason:"Browser heuristic resolved literal local paths; Python CLI AST analysis remains authoritative.",resolved_references:resolved,unresolved_reference_count:unresolved.length,reads,writes,node:{id:nodeId,operation:"static_"+kind+"_workflow",inputs:[...new Set([item.artifact_id,...reads])].sort(),outputs:[...writes],contract:{inference_format:WORKFLOW_FORMAT,inference_id:id,static_only:true,user_code_executed:false,source_path:item.path,source_kind:kind,confidence,browser_heuristic:true,resolved_references:resolved.slice(0,8).map(x=>({kind:x.kind,path:x.path,artifact_id:x.artifact_id,api:x.api,location:x.location})),references_truncated:resolved.length>8}}});
+    const id="W_STATIC_"+item.artifact_id,nodeId=("N_STATIC_"+item.artifact_id).slice(0,127);
+    sources.push({id,source_artifact_id:item.artifact_id,source_path:item.path,source_kind:kind,analysis_mode:analysisMode,confidence,reason:"Browser literal-path heuristic resolved local artifact references; CLI static analysis remains authoritative.",resolved_references:resolved,unresolved_reference_count:unresolved.length,reads,writes,node:{id:nodeId,operation:"static_"+kind+"_workflow",inputs:[...new Set([item.artifact_id,...reads])].sort(),outputs:[...writes],contract:{inference_format:WORKFLOW_FORMAT,inference_id:id,static_only:true,user_code_executed:false,source_path:item.path,source_kind:kind,analysis_mode:analysisMode,confidence,browser_heuristic:true,resolved_references:resolved.slice(0,8).map(x=>({kind:x.kind,path:x.path,artifact_id:x.artifact_id,api:x.api,location:x.location})),references_truncated:resolved.length>8}}});
   }
   const producers=new Map();for(const w of sources)for(const aid of w.writes){if(!producers.has(aid))producers.set(aid,[]);producers.get(aid).push(w.id)}
   for(const [aid,ids] of producers)if(ids.length>1){workflowUnresolved.push({type:"multiple_static_producers",artifact_id:aid,source_inference_ids:[...ids].sort()});for(const w of sources)w.node.outputs=w.node.outputs.filter(x=>x!==aid)}
@@ -164,7 +178,7 @@ async function buildDraft(){
 function workflowMapForReport(){
   const producer=new Map();for(const w of workflowInferences)for(const aid of w.node.outputs)producer.set(aid,w.node.id);
   const edges=[];for(const w of workflowInferences)for(const aid of w.node.inputs){const from=producer.get(aid);if(from&&from!==w.node.id)edges.push({from,to:w.node.id,artifact_id:aid})}
-  return{format:WORKFLOW_FORMAT,static_only:true,user_code_executed:false,browser_heuristic:true,sources:workflowInferences.map(w=>({id:w.id,source_artifact_id:w.source_artifact_id,source_path:w.source_path,source_kind:w.source_kind,confidence:w.confidence,reason:w.reason,resolved_references:w.resolved_references,unresolved_reference_count:w.unresolved_reference_count,reads:w.reads,writes:w.writes})),nodes:workflowInferences.map(w=>w.node),edges,selected_artifact_ids:[...new Set(workflowInferences.flatMap(w=>[...w.node.inputs,...w.node.outputs]))].sort(),unresolved:workflowUnresolved,summary:{source_files_considered:inventory.filter(x=>/\.(py|ipynb)$/i.test(x.path)).length,source_files_with_resolved_dependencies:workflowInferences.length,workflow_nodes:workflowInferences.length,workflow_edges:edges.length,resolved_artifact_references:workflowInferences.reduce((a,w)=>a+w.resolved_references.length,0),unresolved_items:workflowUnresolved.length}}
+  return{format:WORKFLOW_FORMAT,static_only:true,user_code_executed:false,browser_heuristic:true,sources:workflowInferences.map(w=>({id:w.id,source_artifact_id:w.source_artifact_id,source_path:w.source_path,source_kind:w.source_kind,confidence:w.confidence,reason:w.reason,resolved_references:w.resolved_references,unresolved_reference_count:w.unresolved_reference_count,reads:w.reads,writes:w.writes})),nodes:workflowInferences.map(w=>w.node),edges,selected_artifact_ids:[...new Set(workflowInferences.flatMap(w=>[...w.node.inputs,...w.node.outputs]))].sort(),unresolved:workflowUnresolved,summary:{source_files_considered:inventory.filter(x=>/\.(py|ipynb|r)$/i.test(x.path)).length,source_files_with_resolved_dependencies:workflowInferences.length,workflow_nodes:workflowInferences.length,workflow_edges:edges.length,resolved_artifact_references:workflowInferences.reduce((a,w)=>a+w.resolved_references.length,0),unresolved_items:workflowUnresolved.length}}
 }
 async function rebuild(){
   if(!sourceFiles.length)return;
