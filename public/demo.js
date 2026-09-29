@@ -1,204 +1,157 @@
-const $ = id => document.getElementById(id);
-const enc = new TextEncoder();
+const $=id=>document.getElementById(id);
+const Engine=window.PCSBrowserEngine;
+let pkg=JSON.parse(JSON.stringify(window.PCS_V05_REFERENCE_PACKAGE));
+let sourceName="PCS v0.5 reference";
+let lastReceipt=null;
 
-let envelope = JSON.parse($("referenceEnvelope").textContent);
-let lastReceipt = null;
-let sourceName = "Built-in reference";
-
-function b64bytes(s){
-  const raw = atob(s);
-  return Uint8Array.from(raw, c => c.charCodeAt(0));
+function clone(x){return JSON.parse(JSON.stringify(x));}
+function short(x){return x?x.slice(0,12)+"…"+x.slice(-8):"—";}
+function errfmt(x){return Number.isFinite(x)?Number(x).toExponential(2):"—";}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
+function setStatus(cardId,valueId,value){
+  const state=value==="PASS"||value==="VERIFIED"?"pass":value==="NOT_APPLIED"?"na":value==="UNSUPPORTED"?"warn":"fail";
+  const card=$(cardId);card.classList.remove("pass","fail","warn","na");card.classList.add(state);$(valueId).textContent=value;
 }
-function hex(bytes){
-  return [...new Uint8Array(bytes)].map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-async function sha256Text(s){
-  return hex(await crypto.subtle.digest("SHA-256", enc.encode(s)));
-}
-async function sha256Bytes(bytes){
-  return hex(await crypto.subtle.digest("SHA-256", bytes));
-}
-function clone(x){ return JSON.parse(JSON.stringify(x)); }
-
-function stableStringify(value){
-  if(value === null || typeof value !== "object") return JSON.stringify(value);
-  if(Array.isArray(value)) return "[" + value.map(stableStringify).join(",") + "]";
-  return "{" + Object.keys(value).sort().map(k => JSON.stringify(k)+":"+stableStringify(value[k])).join(",") + "}";
-}
-function setStatus(cardId, valueId, state, text){
-  const card=$(cardId); card.classList.remove("pass","fail","warn","na"); card.classList.add(state);
-  $(valueId).textContent=text;
-}
-function relErr(a,b){
-  const d=Math.abs(a-b); return d/Math.max(Math.abs(b),1e-300);
-}
-function validModel(m){
-  return !!m &&
-    m.model_type==="one_compartment_iv_bolus" &&
-    m.dose?.unit==="mg" && m.volume?.unit==="L" && m.clearance?.unit==="L/h" &&
-    m.time_unit==="h" && m.concentration_unit==="mg/L" &&
-    Number.isFinite(m.dose?.value) && m.dose.value>0 &&
-    Number.isFinite(m.volume?.value) && m.volume.value>0 &&
-    Number.isFinite(m.clearance?.value) && m.clearance.value>0 &&
-    m.pd?.model_type==="direct_emax" &&
-    m.pd?.ec50?.unit==="mg/L" && m.pd?.effect_unit==="1" &&
-    Number.isFinite(m.pd?.e0?.value) &&
-    Number.isFinite(m.pd?.emax?.value) && m.pd.emax.value>0 &&
-    Number.isFinite(m.pd?.ec50?.value) && m.pd.ec50.value>0;
-}
-function replay(cert){
-  const m=cert.model;
-  if(!validModel(m)) return {contract:false,replay:false,rows:0,maxPk:Infinity,maxPd:Infinity};
-  if(!Array.isArray(cert.predictions) || cert.predictions.length===0) return {contract:true,replay:false,rows:0,maxPk:Infinity,maxPd:Infinity};
-  const kel=m.clearance.value/m.volume.value;
-  const c0=m.dose.value/m.volume.value;
-  let maxPk=0,maxPd=0;
-  let ok=true;
-  for(const row of cert.predictions){
-    const t=Number(row.time_h), observed=Number(row.concentration_mg_L), observedEffect=Number(row.effect);
-    if(!Number.isFinite(t)||t<0||!Number.isFinite(observed)||!Number.isFinite(observedEffect)){ok=false;continue;}
-    const expected=c0*Math.exp(-kel*t);
-    const expectedEffect=m.pd.e0.value + m.pd.emax.value*expected/(m.pd.ec50.value+expected);
-    const ep=relErr(observed,expected), ed=relErr(observedEffect,expectedEffect);
-    maxPk=Math.max(maxPk,ep); maxPd=Math.max(maxPd,ed);
-    if(ep>1e-9 || ed>1e-9) ok=false;
+function activePackage(){
+  const p=clone(pkg);
+  if($("tamper").checked){
+    const cert=JSON.parse(p.files["certificate.json"].content);
+    const pred=cert.artifacts.find(a=>a.id==="pk_predictions");
+    if(pred&&p.files[pred.path]){
+      p.files[pred.path].content=p.files[pred.path].content.replace(
+        "4,6.70320046035639,77.0199479018078",
+        "4,7.70320046035639,77.0199479018078"
+      );
+    }
   }
-  return {contract:true,replay:ok,rows:cert.predictions.length,maxPk,maxPd};
+  return p;
 }
-async function verifySignature(payload, env){
-  if(!crypto?.subtle) return {supported:false,valid:false,error:"Web Crypto unavailable"};
-  try{
-    const key=await crypto.subtle.importKey("raw",b64bytes(env.public_key_raw_b64),{name:"Ed25519"},false,["verify"]);
-    const valid=await crypto.subtle.verify({name:"Ed25519"},key,b64bytes(env.signature_b64),enc.encode(payload));
-    return {supported:true,valid};
-  }catch(e){
-    return {supported:false,valid:false,error:String(e)};
-  }
+function strictPolicyFor(cert,fp){
+  return {
+    policy_version:"pcs-acceptance-policy-v1",
+    require_signature:true,
+    expected_signer_fingerprint:fp,
+    required_claims:Object.fromEntries((cert.claims||[]).map(c=>[c.id,["FORMALLY_VERIFIED_UNDER_ASSUMPTIONS"]]))
+  };
 }
-function effectivePolicy(cert, derived, strict){
-  if(strict){
-    return {
-      pass: cert.assurance_class==="formal" &&
-        derived.C_PK_CONTRACT==="FORMALLY_VERIFIED_UNDER_ASSUMPTIONS" &&
-        derived.C_PK_REPLAY==="FORMALLY_VERIFIED_UNDER_ASSUMPTIONS",
-      description:"Requires formal assurance for both claims"
-    };
-  }
-  const req=cert.policy?.required_claims||{};
-  for(const [id,allowed] of Object.entries(req)){
-    if(!Array.isArray(allowed) || !allowed.includes(derived[id]||"MISSING")) return {pass:false,description:"Certificate policy"};
-  }
-  return {pass:true,description:"Certificate policy"};
+function renderPackage(result,p){
+  const manifest=result.manifest||{};
+  $("packageRows").innerHTML=Object.entries(manifest.files||{}).map(([name,meta])=>
+    `<tr><td><code>${esc(name)}</code></td><td>${Number(meta.size).toLocaleString()}</td><td><code>${esc(short(meta.sha256))}</code></td></tr>`
+  ).join("");
 }
-function tamperedCertificate(cert){
-  const x=clone(cert);
-  const row=x.predictions?.find(r=>r.time_h===4) || x.predictions?.[0];
-  if(row) row.concentration_mg_L=Number(row.concentration_mg_L)+0.75;
-  return x;
+function renderClaims(result){
+  const cert=result.certificate||{};
+  const byId=Object.fromEntries((result.claimResults||[]).map(x=>[x.id,x.assessment]));
+  $("claimRows").innerHTML=(cert.claims||[]).map(c=>{
+    const got=byId[c.id]||{status:"MISSING",reason:"no reassessment"};
+    const matches=got.status===c.assessment?.status;
+    return `<div class="claimrow"><span class="dot ${matches&&got.status!=="FALSIFIED_OR_CHECK_FAILED"?"pass":"fail"}"></span><div><strong>${esc(c.id)} · ${esc(got.status)}</strong><span>${esc(got.reason)}<br>Recorded: ${esc(c.assessment?.status||"—")} · ${matches?"matches":"DIFFERS from"} certificate</span></div></div>`;
+  }).join("");
 }
-function formatErr(x){ return Number.isFinite(x)?x.toExponential(2):"—"; }
-function shortHash(x){ return x?x.slice(0,12)+"…"+x.slice(-8):"—"; }
-
-async function runVerification(){
-  $("verify").disabled=true;
-  try{
-    if(!envelope || envelope.format!=="pcs-browser-signed-envelope-v1") throw new Error("Unsupported envelope format.");
-    const originalCert=JSON.parse(envelope.signed_payload);
-    const isTampered=$("tamper").checked;
-    const cert=isTampered?tamperedCertificate(originalCert):originalCert;
-    const activePayload=isTampered?stableStringify(cert):envelope.signed_payload;
-
-    const digest=await sha256Text(activePayload);
-    const integrity=digest===envelope.certificate_sha256;
-    const sig=await verifySignature(activePayload,envelope);
-    const calcFingerprint=await sha256Bytes(b64bytes(envelope.public_key_raw_b64));
-    const fingerprintMatches=calcFingerprint===envelope.public_key_fingerprint_sha256;
-    const scientific=replay(cert);
-
-    const derived={
-      C_PK_CONTRACT:scientific.contract?"COMPUTATIONALLY_SUPPORTED":"FALSIFIED_OR_CHECK_FAILED",
-      C_PK_REPLAY:scientific.replay?"COMPUTATIONALLY_SUPPORTED":"FALSIFIED_OR_CHECK_FAILED"
-    };
-    const policy=effectivePolicy(cert,derived,$("strictPolicy").checked);
-
-    setStatus("replayCard","replayStatus",scientific.replay?"pass":"fail",scientific.replay?"PASS":"FAIL");
-    setStatus("integrityCard","integrityStatus",integrity?"pass":"fail",integrity?"PASS":"FAIL");
-    if(!sig.supported) setStatus("authCard","authStatus","warn","UNSUPPORTED");
-    else setStatus("authCard","authStatus",(sig.valid&&fingerprintMatches)?"pass":"fail",(sig.valid&&fingerprintMatches)?"VERIFIED":"INVALID");
-    setStatus("policyCard","policyStatus",policy.pass?"pass":"fail",policy.pass?"PASS":"FAIL");
-
-    $("contractDot").className="dot "+(scientific.contract?"pass":"fail");
-    $("replayDot").className="dot "+(scientific.replay?"pass":"fail");
-    $("contractText").textContent=scientific.contract?"Restricted model contract satisfied.":"Restricted model contract failed.";
-    $("replayText").textContent=scientific.replay?"All prediction rows independently reproduced within 1e-9 relative tolerance.":"At least one prediction does not reproduce from the declared model.";
-
-    $("hashShort").textContent=shortHash(digest);
-    $("fingerprintShort").textContent=shortHash(envelope.public_key_fingerprint_sha256);
-    $("rowsReplayed").textContent=String(scientific.rows);
-    $("pkError").textContent=formatErr(scientific.maxPk);
-    $("pdError").textContent=formatErr(scientific.maxPd);
-    $("certificateView").textContent=JSON.stringify(cert,null,2);
-
-    lastReceipt={
-      format:"pcs-browser-verification-receipt-v1",
-      verified_at:new Date().toISOString(),
-      source:sourceName,
-      certificate_sha256_observed:digest,
-      certificate_sha256_expected:envelope.certificate_sha256,
-      signer_fingerprint_sha256:envelope.public_key_fingerprint_sha256,
-      dimensions:{
-        scientific_replay:scientific.replay?"PASS":"FAIL",
-        sha256_integrity:integrity?"PASS":"FAIL",
-        ed25519_signature:sig.supported?((sig.valid&&fingerprintMatches)?"VERIFIED":"INVALID"):"UNSUPPORTED",
-        reviewer_policy:policy.pass?"PASS":"FAIL"
-      },
-      derived_claims:derived,
-      replay:{
-        rows:scientific.rows,
-        max_pk_relative_error:scientific.maxPk,
-        max_pd_relative_error:scientific.maxPd,
-        tolerance:1e-9
-      },
-      reviewer_policy:policy.description,
-      browser_note:"Generated entirely client-side. This demo receipt is not a production PCS attestation."
-    };
-    $("downloadReceipt").disabled=false;
-  }catch(e){
-    ["replay","integrity","auth","policy"].forEach(name=>setStatus(name+"Card",name+"Status","fail","ERROR"));
-    $("certificateView").textContent="Verification error: "+String(e);
-    lastReceipt=null;$("downloadReceipt").disabled=true;
-  }finally{
-    $("verify").disabled=false;
-  }
+function renderEvidence(result){
+  $("evidenceRows").innerHTML=(result.replayRows||[]).map(({recorded,replayed})=>{
+    const ok=recorded.outcome===replayed.outcome&&recorded.kind===replayed.kind;
+    const d=replayed.details||{};
+    const metrics=replayed.id==="E_PK_REPLAY"
+      ?`Rows: ${d.row_count??"—"} · max PK rel: ${errfmt(d.max_concentration_rel_error)} · max PD rel: ${errfmt(d.max_effect_rel_error)}`
+      : replayed.id==="E_PK_CONTRACT"?"Restricted dimensional/positivity contract replayed.":"";
+    return `<div class="claimrow"><span class="dot ${ok?"pass":"fail"}"></span><div><strong>${esc(replayed.id)} · ${esc(replayed.outcome)}</strong><span>Kind: ${esc(replayed.kind)} · recorded outcome: ${esc(recorded.outcome)}<br>${esc(metrics)}</span></div></div>`;
+  }).join("");
 }
-function resetReference(){
-  envelope=JSON.parse($("referenceEnvelope").textContent);
-  sourceName="Built-in signed reference";
-  $("sourceLabel").textContent="Built-in reference";
-  $("tamper").checked=false;$("strictPolicy").checked=false;
-  $("certificateView").textContent=JSON.stringify(JSON.parse(envelope.signed_payload),null,2);
-  runVerification();
+function renderParity(){
+  const rows=Engine.runDecisionParity(),passed=rows.filter(x=>x.pass).length;
+  $("parityBadge").textContent=`Decision parity: ${passed}/${rows.length}`;
+  $("parityRows").innerHTML=rows.map(r=>`<div class="parityrow ${r.pass?"pass":"fail"}"><span>${esc(r.name)}</span><b>${r.pass?"PASS":"FAIL"}</b></div>`).join("");
+  return {passed,total:rows.length,rows};
+}
+function renderTrace(result){
+  const c=result.certificate||{},m=result.manifest||{},s=result.signature||{};
+  $("certificateTrace").innerHTML=[
+    ["Specification",c.spec_version],["Checker",c.checker_version],["Subject",c.subject],
+    ["Package format",m.package_format],["Signer",s.fingerprint||"—"],
+    ["Semantic hash",c.semantic_hash],["Integrity hash",c.integrity_hash]
+  ].map(([a,b])=>`<dt>${esc(a)}</dt><dd class="mono">${esc(b||"—")}</dd>`).join("");
+  $("certificateView").textContent=JSON.stringify(c,null,2);
 }
 function downloadReceipt(){
   if(!lastReceipt)return;
   const blob=new Blob([JSON.stringify(lastReceipt,null,2)+"\n"],{type:"application/json"});
-  const url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download="pcs-browser-verification-receipt.json";a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="pcs-browser-v05-verification-receipt.json";a.click();URL.revokeObjectURL(url);
 }
-$("verify").addEventListener("click",runVerification);
-$("loadReference").addEventListener("click",resetReference);
-$("tamper").addEventListener("change",runVerification);
-$("strictPolicy").addEventListener("change",runVerification);
-$("downloadReceipt").addEventListener("click",downloadReceipt);
-$("fileInput").addEventListener("change",async ev=>{
-  const file=ev.target.files?.[0]; if(!file)return;
+async function verify(){
+  $("verify").disabled=true;
   try{
-    envelope=JSON.parse(await file.text());
-    sourceName=file.name;$("sourceLabel").textContent=file.name;
-    $("tamper").checked=false;
-    await runVerification();
+    const p=activePackage();
+    const cert=JSON.parse(p.files["certificate.json"].content);
+    const sigrec=JSON.parse(p.files["package_signature.json"].content);
+    const policy=$("strictPolicy").checked?strictPolicyFor(cert,sigrec.public_key_fingerprint):null;
+    const result=await Engine.verifyVirtualPackage(p,policy);
+    const parity=renderParity();
+
+    setStatus("replayCard","replayStatus",result.assurance_dimensions.scientific_replay);
+    setStatus("integrityCard","integrityStatus",result.assurance_dimensions.package_integrity);
+    setStatus("authCard","authStatus",result.assurance_dimensions.signer_authenticity);
+    setStatus("policyCard","policyStatus",result.assurance_dimensions.reviewer_policy);
+
+    const oc=$("overallCard");oc.classList.remove("pass","fail");oc.classList.add(result.valid?"pass":"fail");
+    $("overallStatus").textContent=result.valid?"Package accepted by this browser profile":"Package rejected by this browser profile";
+    $("overallDetail").textContent=result.valid
+      ?"All requested package, replay, authenticity, and policy checks passed."
+      :`${result.errors.length} verification issue${result.errors.length===1?"":"s"} detected; inspect the log below.`;
+    $("specBadge").textContent=(result.certificate?.spec_version||"unknown")+" · "+(result.certificate?.checker_version||"");
+
+    renderPackage(result,p);renderClaims(result);renderEvidence(result);renderTrace(result);
+
+    const replay=(result.replayRows||[]).find(x=>x.replayed.id==="E_PK_REPLAY")?.replayed?.details||{};
+    $("rowsReplayed").textContent=replay.row_count??"—";
+    $("pkError").textContent=errfmt(replay.max_concentration_rel_error);
+    $("pdError").textContent=errfmt(replay.max_effect_rel_error);
+    $("fingerprintShort").textContent=short(result.signature?.fingerprint);
+    $("semanticShort").textContent=short(result.certificate?.semantic_hash);
+    $("integrityShort").textContent=short(result.certificate?.integrity_hash);
+
+    $("errorLog").innerHTML=result.errors.length
+      ?`<ul class="errorlist">${result.errors.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`
+      :'<div class="successline">No verification errors. Every requested check passed.</div>';
+
+    lastReceipt={
+      verification_receipt_format:"pcs-browser-v05-verification-receipt-v1",
+      verifier_profile:"pcs-browser-engine/v0.5-parity",
+      verified_at:new Date().toISOString(),
+      source:sourceName,
+      valid:result.valid,
+      errors:result.errors,
+      assurance_dimensions:result.assurance_dimensions,
+      signer_fingerprint:result.signature?.fingerprint||null,
+      claim_results:result.claimResults,
+      decision_vector_parity:{passed:parity.passed,total:parity.total},
+      scope:"Static-browser parity profile for PCS v0.5 package structure, package signature, built-in PK/PD predicates, claim decision, and reviewer policy. Not the production ZIP/runtime verifier."
+    };
+    $("downloadReceipt").disabled=false;
   }catch(e){
-    $("certificateView").textContent="Could not read package: "+String(e);
-  }
+    const message=String(e);
+    ["replay","integrity","auth","policy"].forEach(x=>setStatus(x+"Card",x+"Status","FAIL"));
+    $("overallCard").classList.remove("pass");$("overallCard").classList.add("fail");
+    $("overallStatus").textContent="Verifier error";$("overallDetail").textContent=message;
+    $("errorLog").innerHTML=`<ul class="errorlist"><li>${esc(message)}</li></ul>`;
+    lastReceipt=null;$("downloadReceipt").disabled=true;
+  }finally{$("verify").disabled=false;}
+}
+function reset(){
+  pkg=clone(window.PCS_V05_REFERENCE_PACKAGE);sourceName="PCS v0.5 reference";$("sourceLabel").textContent=sourceName;$("tamper").checked=false;$("strictPolicy").checked=false;verify();
+}
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".tabpane").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");$("tab-"+btn.dataset.tab).classList.add("active");
+}));
+$("verify").onclick=verify;$("loadReference").onclick=reset;$("downloadReceipt").onclick=downloadReceipt;
+$("tamper").onchange=verify;$("strictPolicy").onchange=verify;
+$("fileInput").addEventListener("change",async ev=>{
+  const file=ev.target.files?.[0];if(!file)return;
+  try{
+    pkg=JSON.parse(await file.text());sourceName=file.name;$("sourceLabel").textContent=file.name;$("tamper").checked=false;await verify();
+  }catch(e){$("overallStatus").textContent="Could not read package";$("overallDetail").textContent=String(e);}
 });
-resetReference();
+renderParity();reset();
