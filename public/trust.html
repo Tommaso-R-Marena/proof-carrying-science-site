@@ -15,6 +15,7 @@
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
   <div class="navlinks">
     <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
     <a href="index.html#product">Product</a>
     <a href="architecture.html">Architecture</a>
     <a href="demo.html">Live verifier</a>
@@ -116,6 +117,18 @@
 </section>
 
 <section class="section">
+  <div class="kicker">Real-world benchmark evidence</div>
+  <h2>Positive controls and expected failures are both part of the trust story.</h2>
+  <p class="section-intro">A direct checker-level run against public chemistry, biology/ML, and pharmacokinetic examples matched all five predeclared outcomes. Two were expected failures and were correctly rejected. This evidence is separate from the still-unexecuted hosted v0.6 gate.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">5 / 5</div><h3>Matched expectation</h3><p>Haber–Bosch balance, clean Iris split, contaminated Iris split, concentration units, and Indometh model-misfit.</p></article>
+    <article class="card"><div class="num">2 FAIL</div><h3>Negative controls worked</h3><p>PCS detected one leaked Iris row and rejected measured IV PK data when presented as exact deterministic model output.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>Not a full bundle run</h3><p>The execution was checker-level. GitHub's runner remained unavailable, so the full repository/ZIP path is not claimed as executed.</p></article>
+  </div>
+  <div class="actions"><a class="button secondary" href="validation.html">Inspect validation evidence</a></div>
+</section>
+
+<section class="section">
   <div class="kicker">Explicit non-claims</div>
   <h2>What PCS does not currently certify.</h2>
   <p class="section-intro">The strongest trust posture is one that names its limits. The following remain separate from the current machine-checked result.</p>
@@ -140,7 +153,7 @@
 <footer>
   <div class="footergrid">
     <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
-    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
     <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
   </div>
 </footer>
