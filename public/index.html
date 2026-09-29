@@ -18,7 +18,7 @@
 <div class="shell">
   <nav aria-label="Primary">
     <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-    <div class="navlinks"><a href="mvp.html">v0.6 MVP</a>
+    <div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a>
       <a href="validation.html">Validation</a>
       <a href="trust.html">Trust Center</a>
       <a href="#product">Product</a>
@@ -38,8 +38,8 @@
         <h1>Produce a scientific assurance package. Verify it independently.</h1>
         <p>Proof-Carrying Science now has a complete v0.6 producer-to-reviewer path: one command packages exact artifacts, replays supported checks, derives claim status, signs and self-verifies a deterministic ZIP; another independently verifies the archive and applies reviewer-controlled policy.</p>
         <div class="actions">
-          <a class="button primary" href="mvp.html">See the v0.6 MVP →</a>
-          <a class="button ghost" href="demo.html">Open v0.5 browser verifier</a>
+          <a class="button primary" href="project-builder.html">Map my project →</a>
+          <a class="button ghost" href="mvp.html">See the v0.6 MVP</a>
         </div>
         <div class="hero-meta">
           <span><strong>Current focus</strong><br>Computational biopharma</span>
@@ -66,6 +66,19 @@
       <div class="mvp-cli">
         <div class="codecommand"><code>pcs attest-v06 manifest.json -o study.pcs.zip …</code><button data-copy="pcs attest-v06 manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem">Copy</button></div>
         <div class="codecommand"><code>pcs verify-v06-bundle study.pcs.zip … --policy reviewer-policy.json</code><button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json">Copy</button></div>
+      </div>
+    </section>
+
+    <section class="mvp-banner" aria-label="Guided project onboarding">
+      <div>
+        <div class="kicker">New guided onboarding</div>
+        <h3>Start from your project folder, not a schema.</h3>
+        <p>The local Project Mapper inventories scientific files, hashes the bytes you reviewed, detects supported PK/PD, dataset-split, reaction, and unit-check patterns, and drafts a manifest that remains non-attestable until you explicitly confirm it.</p>
+        <div class="actions"><a class="button primary" href="project-builder.html">Open Project Mapper</a><a class="button secondary" href="mvp.html#workflow">See the trust boundary</a></div>
+      </div>
+      <div class="mvp-cli">
+        <div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div>
+        <div class="codecommand"><code>pcs confirm-v06 ./my-project/pcs-manifest.draft.json</code><button data-copy="pcs confirm-v06 ./my-project/pcs-manifest.draft.json">Copy</button></div>
       </div>
     </section>
 
@@ -118,8 +131,8 @@
       <div class="grid3" style="margin-top:30px">
         <article class="card">
           <div class="iconbox">01</div>
-          <h3>Declare the claim</h3>
-          <p>Freeze the exact claim, assumptions, workflow boundary, and desired assurance class before results are reviewed.</p>
+          <h3>Map the project</h3>
+          <p>Start from existing files. PCS drafts candidate artifacts, checks, claims, and assumptions for explicit human review.</p>
         </article>
         <article class="card">
           <div class="iconbox">02</div>
@@ -223,7 +236,7 @@
         <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
         <p>Independent assurance infrastructure for critical scientific computation.</p>
       </div>
-      <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="#research">Research architecture</a><a href="privacy.html">Privacy</a></div>
+      <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="#research">Research architecture</a><a href="privacy.html">Privacy</a></div>
       <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
     </div>
   </footer>
