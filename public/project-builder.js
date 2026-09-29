@@ -137,6 +137,22 @@ async function rebuild(){
   $("draftValidation").className="validation "+(lastDraft.claims.length?"good":"bad");$("draftValidation").textContent=lastDraft.claims.length?"Reviewable draft. Workflow edges are static inferences and the draft still requires explicit CLI confirmation.":"No supported scientific claims selected. Workflow mapping alone does not authorize attestation.";
   $("filesCount").textContent=inventory.length;$("recommendationCount").textContent=recommendations.length;$("selectedCount").textContent=selected.size;$("artifactCount").textContent=lastDraft.artifacts.length;$("workflowCount").textContent=lastDraft.workflow.nodes.length;$("workflowIssueCount").textContent=workflowUnresolved.length;
 }
+function renderWorkflowGraph(){
+  const selectedW=workflowInferences.filter(w=>selectedWorkflow.has(w.id));
+  if(!selectedW.length){$("workflowGraph").innerHTML='<p class="tiny">No selected workflow inference.</p>';return}
+  const byId=new Map(inventory.map(x=>[x.artifact_id,x.path]));
+  const producer=new Map();for(const w of selectedW)for(const aid of w.node.outputs)producer.set(aid,w);
+  const rows=[];
+  for(const w of selectedW){
+    const inputs=w.node.inputs.filter(a=>a!==w.source_artifact_id).map(a=>byId.get(a)||a);
+    const outputs=w.node.outputs.map(a=>byId.get(a)||a);
+    rows.push(`<div class="workflow-graph-row"><div class="workflow-graph-step"><strong>${esc(w.source_path)}</strong><small>${esc(w.source_kind)} · static only</small></div><div class="workflow-graph-arrow">→</div><div class="workflow-graph-artifacts"><span><b>reads</b> ${esc(inputs.join(", ")||"none")}</span><span><b>writes</b> ${esc(outputs.join(", ")||"none")}</span></div></div>`);
+  }
+  const edges=[];
+  for(const w of selectedW)for(const aid of w.node.inputs){const p=producer.get(aid);if(p&&p.id!==w.id)edges.push(`${p.source_path} → ${w.source_path} via ${byId.get(aid)||aid}`)}
+  $("workflowGraph").innerHTML=rows.join("")+(edges.length?`<div class="workflow-edge-list"><strong>Step dependencies</strong>${edges.map(x=>`<code>${esc(x)}</code>`).join("")}</div>`:"");
+}
+
 async function render(){
   $("mapperState").textContent=sourceFiles.length?"REVIEW REQUIRED":"NO PROJECT";$("mapperState").className="chip "+(sourceFiles.length?"pending":"open");
   $("recommendations").innerHTML=recommendations.length?recommendations.map(recommendationCard).join(""):'<p class="tiny">No currently supported PCS scientific-check pattern detected.</p>';
@@ -144,6 +160,7 @@ async function render(){
   $("workflowInferences").innerHTML=workflowInferences.length?workflowInferences.map(workflowCard).join(""):'<p class="tiny">No literal local Python/notebook file dependencies were inferred.</p>';
   $("workflowInferences").querySelectorAll("[data-wf]").forEach(x=>x.addEventListener("change",async e=>{e.target.checked?selectedWorkflow.add(e.target.dataset.wf):selectedWorkflow.delete(e.target.dataset.wf);await render()}));
   $("workflowIssues").textContent=workflowUnresolved.length?`${workflowUnresolved.length} unresolved workflow item(s). Use the Python CLI AST analyzer for authoritative review.`:"No unresolved browser workflow references.";
+  renderWorkflowGraph();
   $("inventory").innerHTML=inventory.map(x=>`<div class="inventory-row"><div><strong>${esc(x.path)}</strong><small>${esc(x.role)} · ${x.size.toLocaleString()} bytes</small></div><code>${x.sha256.slice(0,16)}…</code></div>`).join("");
   $("skipped").textContent=skipped.length?`Excluded ${skipped.length} file(s): ${skipped.map(x=>x.path+" ("+x.reason+")").join(", ")}`:"";
   $("rescan").disabled=!sourceFiles.length;$("clearProject").disabled=!sourceFiles.length;$("toggleInventory").disabled=!inventory.length;
@@ -155,7 +172,7 @@ $("confidence").oninput=async()=>{$("confidenceValue").textContent=Number($("con
 $("workflowConfidence").oninput=async()=>{$("workflowConfidenceValue").textContent=Number($("workflowConfidence").value).toFixed(2);autoSelect();await render()};
 $("subject").oninput=()=>rebuild();
 $("rescan").onclick=async()=>{await detect();await detectBrowserWorkflow();autoSelect();await render()};
-$("clearProject").onclick=()=>{sourceFiles=[];inventory=[];recommendations=[];skipped=[];selected.clear();workflowInferences=[];workflowUnresolved=[];selectedWorkflow.clear();lastDraft=lastReport=null;$("projectFiles").value="";$("recommendations").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowInferences").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowIssues").textContent="";$("inventory").innerHTML="";$("manifestPreview").textContent="{}";$("draftValidation").className="validation";$("draftValidation").textContent="No project selected.";["filesCount","recommendationCount","selectedCount","artifactCount","workflowCount","workflowIssueCount"].forEach(id=>$(id).textContent="0");$("downloadDraft").disabled=true;$("downloadDiscovery").disabled=true;$("mapperState").textContent="NO PROJECT"};
+$("clearProject").onclick=()=>{sourceFiles=[];inventory=[];recommendations=[];skipped=[];selected.clear();workflowInferences=[];workflowUnresolved=[];selectedWorkflow.clear();lastDraft=lastReport=null;$("projectFiles").value="";$("recommendations").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowInferences").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowIssues").textContent="";$("workflowGraph").innerHTML='<p class="tiny">No workflow graph yet.</p>';$("inventory").innerHTML="";$("manifestPreview").textContent="{}";$("draftValidation").className="validation";$("draftValidation").textContent="No project selected.";["filesCount","recommendationCount","selectedCount","artifactCount","workflowCount","workflowIssueCount"].forEach(id=>$(id).textContent="0");$("downloadDraft").disabled=true;$("downloadDiscovery").disabled=true;$("mapperState").textContent="NO PROJECT"};
 $("toggleInventory").onclick=()=>{const box=$("inventory"),show=box.hidden;box.hidden=!show;$("toggleInventory").textContent=show?"Hide":"Show"};
 $("downloadDraft").onclick=()=>lastDraft&&downloadJson("pcs-manifest.draft.json",lastDraft);
 $("downloadDiscovery").onclick=()=>lastReport&&downloadJson("pcs-discovery.json",lastReport);
