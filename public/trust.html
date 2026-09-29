@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trust Center · Proof-Carrying Science</title>
+<meta name="description" content="Current release, machine-checked proof status, verification boundaries, browser-demo scope, and explicit non-claims for Proof-Carrying Science.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Trust Center · Current release and proof boundaries</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="index.html#product">Product</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="demo.html">Live verifier</a>
+    <a href="model-lab.html">Model lab</a>
+    <a href="intake.html">Pilot intake</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="pagehead">
+  <div class="kicker">Trust Center</div>
+  <h1>What is verified, what is released, and what remains open.</h1>
+  <p>PCS is intended to reduce ambiguity around scientific computation, so its own assurance claims should be equally explicit. This page separates released executable behavior, machine-checked formal results, browser parity demonstrations, active refinement work, and non-claims.</p>
+  <div class="statusbar" aria-label="Current PCS status">
+    <div><span>Released checker</span><strong>PCS 0.5.0</strong></div>
+    <div><span>Formal kernel</span><strong>Lean 4.28.0 · verified</strong></div>
+    <div><span>Browser decision parity</span><strong>11 / 11 frozen vectors</strong></div>
+    <div><span>Next refinement</span><strong>0.5.1 · verification pending</strong></div>
+  </div>
+</section>
+
+<section class="section-tight trustgrid">
+  <div class="truststack">
+    <article class="trustitem">
+      <header><h3>Released executable checker</h3><span class="chip released">Released</span></header>
+      <p>The public product line is currently <code>pcs-python-kernel/0.5.0</code>. It builds and verifies PCS evidence packages, replays supported checks, validates artifact/package integrity, authenticates signed deliveries, and applies reviewer-controlled acceptance policy.</p>
+      <dl>
+        <dt>Specification</dt><dd><code>pcs-0.5</code></dd>
+        <dt>Checker</dt><dd><code>pcs-python-kernel/0.5.0</code></dd>
+        <dt>Initial scientific adapter</dt><dd>Restricted one-compartment IV-bolus PK + direct Emax PD</dd>
+        <dt>Browser demo</dt><dd>Production-format 0.5.0 reference package + extracted-directory verification profile</dd>
+      </dl>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Machine-checked formal result</h3><span class="chip verified">Verified</span></header>
+      <p>The PCS assurance decision and normalized-state soundness layer has been independently rebuilt successfully under Lean 4.28.0. The promoted production namespace contains no <code>sorry</code>/<code>admit</code>, no PCS-specific axioms, and no unsafe escape-hatch declarations.</p>
+      <div class="boundary"><strong>Verified theorem boundary</strong><span>Given a normalized claim/evidence state with explicit context coverage and required-evidence binding, an accepted PCS decision entails the corresponding scoped <code>Assures Γ L C E</code> judgment.</span></div>
+      <dl>
+        <dt>Lean</dt><dd>4.28.0</dd>
+        <dt>Production rebuild</dt><dd>PASS · 14 jobs</dd>
+        <dt>Compiled PCS declarations audited</dt><dd>641</dd>
+        <dt>Promoted soundness classes</dt><dd>Computational, formal, empirical, mixed</dd>
+      </dl>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Browser parity profile</h3><span class="chip verified">Self-test pass</span></header>
+      <p>The static browser engine mirrors the released claim-decision semantics and restricted PK/PD replay logic. It currently passes all 11 frozen cross-language decision cases and independently recomputes the 8-row PK/PD reference trajectory.</p>
+      <dl>
+        <dt>Decision vectors</dt><dd>11 / 11</dd>
+        <dt>PK/PD reference rows</dt><dd>8 / 8</dd>
+        <dt>Network upload</dt><dd>None in the browser demo</dd>
+        <dt>Third-party runtime JS</dt><dd>None</dd>
+      </dl>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Serialized refinement v0.5.1</h3><span class="chip pending">Verification pending</span></header>
+      <p>The next branch adds a claim-scoped normalized wire state between independently replay-verified certificates and the machine-checked Lean decision layer. This work is intentionally not represented as released or machine-checked until its dedicated Python and Lean verification pass completes.</p>
+      <div class="boundary"><strong>Target chain</strong><span>Verified certificate → claim-scoped normalized wire → typed Lean <code>DecisionWire</code> → <code>Normalized.DecisionInput</code> → machine-checked assurance soundness.</span></div>
+      <p style="margin-top:12px">The work also makes exact evidence scope, exact assumption scope, predicate commitments, and source-certificate identity explicit rather than trusting summary booleans.</p>
+    </article>
+  </div>
+
+  <div class="truststack">
+    <article class="panel">
+      <h2>Current verification boundary</h2>
+      <div class="timeline">
+        <div class="timeline-item"><strong>Raw PCS package</strong><span>Strict JSON/schema checks, safe package handling, hashes, provenance, signatures, and scientific replay remain executable responsibilities.</span></div>
+        <div class="timeline-item"><strong>Normalized scientific state</strong><span>The released formal theorem begins after this boundary. The active 0.5.1 refinement work is shrinking this gap.</span></div>
+        <div class="timeline-item"><strong>Decision semantics</strong><span>Machine-checked under Lean 4.28.0.</span></div>
+        <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Reproduce the formal gate</h2>
+      <p>The repository verification entrypoint builds the Lean project and rejects proof placeholders plus project-level escape hatches.</p>
+      <div class="codecommand"><code>./scripts/verify_lean.sh</code><button data-copy="./scripts/verify_lean.sh">Copy</button></div>
+      <p class="tiny">The public website does not execute this build. The verified result refers to the independently rebuilt production formal project, not to a browser simulation.</p>
+    </article>
+
+    <article class="panel">
+      <h2>Privacy posture</h2>
+      <p>The current website is static. The verifier, model lab, and intake builder run locally in the browser and do not upload selected scientific files through a PCS application backend.</p>
+      <div class="boundary"><strong>Important</strong><span>The public website is not a customer data plane. Do not use it for PHI, direct identifiers, signing keys, regulated records, or proprietary scientific datasets.</span></div>
+      <a class="button secondary" href="privacy.html">Read privacy boundary</a>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Explicit non-claims</div>
+  <h2>What PCS does not currently certify.</h2>
+  <p class="section-intro">The strongest trust posture is one that names its limits. The following remain separate from the current machine-checked result.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">01</div><h3>Scientific truth</h3><p>Formal soundness of a decision rule does not prove that a biological, chemical, or clinical model is empirically adequate.</p></article>
+    <article class="card"><div class="num">02</div><h3>End-to-end program verification</h3><p>Raw JSON parsing, hashing, ZIP handling, Python execution, and domain checker implementations remain outside the current Lean theorem boundary.</p></article>
+    <article class="card"><div class="num">03</div><h3>Regulatory status</h3><p>PCS does not currently claim FDA certification, GxP validation, clinical validity, safety, efficacy, or regulatory acceptance.</p></article>
+    <article class="card"><div class="num">04</div><h3>Arbitrary code correctness</h3><p>The current product supports bounded predicates and adapters; it does not prove arbitrary Python, R, C++, notebooks, solvers, or simulations correct.</p></article>
+    <article class="card"><div class="num">05</div><h3>Cross-language canonical JSON</h3><p>PCS 0.5 hashes are deterministic in the Python implementation but are not yet specified as a language-neutral canonical JSON standard. That is a targeted next-version hardening item.</p></article>
+    <article class="card"><div class="num">06</div><h3>Reviewer judgment</h3><p>PCS can enforce an explicit acceptance policy, but the receiving scientist or organization remains responsible for deciding which evidence and assurance classes are sufficient.</p></article>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="callout">
+    <div><h3>Inspect the evidence path yourself.</h3><p>Use the released browser verifier for the production-format v0.5.0 reference package, or inspect the technical architecture before discussing a design-partner workflow.</p></div>
+    <div class="actions" style="margin-top:0"><a class="button dark" href="demo.html">Open verifier</a><a class="button secondary" href="architecture.html">Architecture</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="footergrid">
+    <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
+    <div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
+  </div>
+</footer>
+</div>
+<script src="site.js"></script>
+</body>
+</html>
