@@ -13,7 +13,7 @@
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-  <div class="navlinks">
+  <div class="navlinks"><a href="project-builder.html">Project Mapper</a>
     <a href="mvp.html">v0.6 MVP</a>
     <a href="validation.html">Validation</a>
     <a href="trust.html">Trust Center</a>
@@ -28,9 +28,9 @@
 <section class="pagehead mvp-head">
   <div class="kicker">v0.6 MVP candidate</div>
   <h1>One command to produce. One command to verify.</h1>
-  <p>The current PCS v0.6 branch closes the first complete producer-to-reviewer loop: package exact artifacts, replay supported checks, derive claim status, normalize decisions, sign the evidence, emit a deterministic ZIP, independently verify the exact archive, and let the reviewer apply a policy the producer does not control.</p>
+  <p>The current PCS v0.6 branch now starts from an existing scientific project: guided discovery drafts the artifact/check/claim graph, explicit confirmation freezes the reviewed bytes, attestation packages and replays them, and independent reviewers verify the exact archive under their own policy.</p>
   <div class="actions">
-    <a class="button primary" href="#workflow">See the product loop →</a>
+    <a class="button primary" href="project-builder.html">Map a project →</a>
     <a class="button secondary" href="#policy-lab">Open policy lab</a>
   </div>
   <div class="statusbar" aria-label="v0.6 MVP candidate status">
@@ -39,6 +39,17 @@
     <div><span>Reviewer</span><strong><code>verify-v06-bundle</code></strong></div>
     <div><span>Audit</span><strong>Reviewer-signed receipt</strong></div>
   </div>
+</section>
+
+<section class="section-tight">
+  <div class="kicker">Guided intake before attestation</div>
+  <h2>The scientist no longer starts by writing PCS JSON.</h2>
+  <p class="section-intro">Use the local Project Mapper or <code>pcs discover-v06</code> to inventory an existing project and draft only the supported, high-confidence checks PCS can currently understand. The draft is deliberately non-attestable until human confirmation re-hashes the selected files.</p>
+  <div class="mvp-command-grid">
+    <article class="command-card"><div class="command-label"><span>Step 0</span><strong>Discover</strong></div><div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div><p>Locally inventories regular files, excludes key material, snapshots SHA-256/size, and recommends supported PK/PD, split-leakage, reaction-balance, and unit checks.</p></article>
+    <article class="command-card"><div class="command-label"><span>Human gate</span><strong>Confirm</strong></div><div class="codecommand"><code>pcs confirm-v06 ./my-project/pcs-manifest.draft.json</code><button data-copy="pcs confirm-v06 ./my-project/pcs-manifest.draft.json">Copy</button></div><p>Re-hashes every selected artifact, records explicit confirmation, and produces <code>manifest.json</code>. If files drift afterward, attestation rejects them.</p></article>
+  </div>
+  <div class="actions"><a class="button primary" href="project-builder.html">Open local Project Mapper</a></div>
 </section>
 
 <section class="section-tight" id="workflow">
@@ -310,7 +321,7 @@
 <footer>
   <div class="footergrid">
     <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
-    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">v0.5 verifier</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">v0.5 verifier</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
     <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
   </div>
 </footer>
