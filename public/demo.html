@@ -20,11 +20,11 @@
 <section class="pagehead">
   <div class="kicker">Production-format browser engine</div>
   <h1>Inspect what the checker actually trusts.</h1>
-  <p>This demo uses a virtualized PCS v0.5 evidence package whose internal files follow the production certificate, package-manifest, package-signature, evidence, artifact, and claim-assessment formats. The browser independently hashes every staged file, verifies the Ed25519 package signature, replays the PK/PD checks from the packaged artifacts, reassesses claims, and evaluates reviewer policy.</p>
+  <p>This demo can verify the built-in PCS v0.5 reference package or an extracted real PCS evidence directory. The browser independently hashes the staged file bytes, verifies the package manifest and Ed25519 signature when present, replays the supported PK/PD checks from packaged artifacts, reassesses claims, and evaluates reviewer policy.</p>
 </section>
 
 <div class="engine-banner">
-  <div><strong>Browser parity profile</strong><span>Ports the production decision kernel and restricted PK/PD predicates into JavaScript. The package internals are PCS v0.5; only the outer virtual-package transport is web-specific.</span></div>
+  <div><strong>Browser parity profile</strong><span>Ports the production decision kernel and restricted PK/PD predicates into JavaScript. It can ingest exact bytes from an extracted production evidence directory; safe ZIP parsing/extraction itself remains a production-Python responsibility.</span></div>
   <div class="engine-badge" id="parityBadge">Decision parity: running…</div>
 </div>
 
@@ -38,7 +38,8 @@
       <div class="actions" style="margin-top:0">
         <button class="button secondary" id="loadReference">Reset</button>
         <a class="button secondary" href="pcs-v05-reference-package.json" download>Download package JSON</a>
-        <label class="button secondary filepick">Open package<input id="fileInput" type="file" accept=".json,application/json"></label>
+        <label class="button secondary filepick">Open package JSON<input id="fileInput" type="file" accept=".json,application/json"></label>
+        <label class="button secondary filepick">Open extracted PCS directory<input id="directoryInput" type="file" webkitdirectory multiple></label>
       </div>
     </div>
 
@@ -56,7 +57,7 @@
       <button class="button secondary" id="downloadReceipt" disabled>Download receipt</button>
     </div>
 
-    <p class="tiny">No uploaded file is transmitted by this page. The browser reads compatible package JSON locally. Production PCS additionally verifies ZIP namespace safety and other host/runtime properties that do not belong in this static browser profile.</p>
+    <p class="tiny">No selected file is transmitted by this page. For a real bundle, unzip it locally and select the extracted evidence directory. This browser profile checks the resulting file set and bytes; production PCS additionally verifies ZIP namespace, symlink, compression-size, and extraction safety before those bytes are trusted.</p>
   </aside>
 
   <div>
