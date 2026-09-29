@@ -35,7 +35,13 @@
       "steps_executed": 0,
       "code_result": "NOT_EXECUTED"
     },
-    "released": false
+    "released": false,
+    "real_world_benchmark": {
+      "command": "pcs benchmark-v06",
+      "registry_format": "pcs-real-world-benchmark-registry-v1",
+      "deterministic_report": true,
+      "fixture_sha256_required": true
+    }
   },
   "formal": {
     "lean_version": "4.28.0",
@@ -57,7 +63,7 @@
     "third_party_runtime_javascript": false
   },
   "next_refinement": {
-    "target": "exact-v0.6-v2-formal-port-and-external-design-partner-pilot",
+    "target": "full-v0.6-runtime-gate-external-design-partner-pilot-and-exact-v0.6-v2-formal-port",
     "status": "OPEN",
     "released": false
   },
@@ -70,5 +76,22 @@
     "end_to_end_v06_formal_verification",
     "hosted_v06_gate_pass"
   ],
-  "contact": "marenatommaso@gmail.com"
+  "contact": "marenatommaso@gmail.com",
+  "real_world_validation": {
+    "date": "2026-09-29",
+    "execution_mode": "direct_checker_logic_execution",
+    "cases": 5,
+    "matched_expected": 5,
+    "unexpected": 0,
+    "expected_pass": 3,
+    "expected_fail": 2,
+    "notable_negative_controls": {
+      "iris_leakage_detected_id": "120",
+      "indometh_subject1_mismatching_rows": 11,
+      "indometh_subject1_max_abs_error_mg_per_L": 0.7831638386902207,
+      "indometh_subject1_max_rel_error": 1.0925283641651804
+    },
+    "full_attest_verify_roundtrip_executed": false,
+    "hosted_runner_status": "RUNNER_UNAVAILABLE"
+  }
 }
