@@ -67,6 +67,9 @@ if mapper_page.exists():
         "pcs discover-v06",
         "non-attestable",
         "Nothing is uploaded",
+        "Inferred workflow",
+        "No code execution",
+        "Load synthetic example",
     ]:
         if required_text not in mapper_text:
             errors.append(f"project-builder.html: missing explicit draft confirmation boundary: {required_text}")
@@ -77,6 +80,11 @@ if mapper_js.exists():
         "pcs-project-discovery-v1",
         "pcs_discovery_sha256",
         "requires_confirmation:true",
+        "pcs-static-workflow-map-v1",
+        "user_code_executed:false",
+        "browser_heuristic:true",
+        "multiple_static_producers",
+        "loadSyntheticExample",
     ]:
         if required_text not in mapper_script:
             errors.append(f"project-builder.js: guided intake contract drift: {required_text}")
@@ -222,6 +230,35 @@ if public_status.exists() and fixture_obj is not None:
                 errors.append(f"status.json: guided discovery invariant drift: {key}")
         if guided_discovery.get("confirmation_provenance_in_signed_artifact_metadata") is not True:
             errors.append("status.json: guided confirmation provenance drift")
+        if guided_discovery.get("workflow_discovery_format") != "pcs-static-workflow-map-v1":
+            errors.append("status.json: static workflow discovery format drift")
+        for key in [
+            "cli_python_ast_analysis",
+            "cli_jupyter_code_cell_analysis",
+            "browser_visual_graph",
+            "browser_synthetic_example",
+            "static_workflow_human_confirmation_required",
+            "source_code_snapshot_bound",
+            "source_change_after_confirmation_rejected",
+        ]:
+            if guided_discovery.get(key) is not True:
+                errors.append(f"status.json: static workflow invariant drift: {key}")
+        if guided_discovery.get("user_code_executed_during_discovery") is not False:
+            errors.append("status.json: workflow discovery execution-boundary drift")
+        if guided_discovery.get("dynamic_paths_guessed") is not False:
+            errors.append("status.json: dynamic-path guessing drift")
+        if guided_discovery.get("ambiguous_multiple_producers_guessed") is not False:
+            errors.append("status.json: multiple-producer guessing drift")
+        if guided_discovery.get("static_workflow_proves_program_correctness") is not False:
+            errors.append("status.json: static workflow correctness overclaim")
+        if guided_discovery.get("default_workflow_confidence") != 0.95:
+            errors.append("status.json: workflow default confidence drift")
+        if guided_discovery.get("clean_ast_workflow_confidence") != 0.98:
+            errors.append("status.json: clean AST workflow confidence drift")
+        if guided_discovery.get("partial_ast_workflow_confidence") != 0.90:
+            errors.append("status.json: partial AST workflow confidence drift")
+        if guided_discovery.get("browser_heuristic_workflow_confidence") != 0.90:
+            errors.append("status.json: browser workflow confidence drift")
         if guided_discovery.get("automated_discovery_affects_scientific_verdict") is not False:
             errors.append("status.json: guided discovery entered scientific verdict boundary")
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
