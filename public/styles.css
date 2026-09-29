@@ -97,3 +97,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
   .trustgrid{grid-template-columns:1fr}
 }
 @media(max-width:580px){.statusbar{grid-template-columns:1fr}.trustitem dl{grid-template-columns:1fr;gap:3px}.trustitem dd{margin-bottom:8px}}
+
+:focus-visible{outline:3px solid rgba(47,125,244,.35);outline-offset:3px}
+.button:focus-visible,.tab:focus-visible,.navtoggle:focus-visible,.smallbutton:focus-visible,.codecommand button:focus-visible{outline-color:rgba(47,125,244,.5)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.001ms!important;animation-duration:.001ms!important;animation-iteration-count:1!important}.button:hover{transform:none}}
