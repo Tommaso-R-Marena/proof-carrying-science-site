@@ -96,6 +96,18 @@
       </div>
     </section>
 
+    <section class="section">
+      <div class="kicker">Live engine</div>
+      <h2>The demo speaks the PCS v0.5 language.</h2>
+      <p class="section-intro">The browser verifier is not a screenshot or a hard-coded PASS screen. It reads a production-format PCS certificate and package manifest, verifies every staged file hash and the Ed25519 package signature, replays the restricted PK/PD predicates, re-derives claim status, and applies reviewer-controlled acceptance policy.</p>
+      <div class="grid4" style="margin-top:30px">
+        <article class="card"><div class="num">v0.5</div><h3>Real package structure</h3><p>Certificate, artifacts, evidence objects, workflow, package manifest, signer public key, limitations, and package signature are represented explicitly.</p></article>
+        <article class="card"><div class="num">11/11</div><h3>Decision parity</h3><p>The browser decision port currently matches all frozen Python↔Lean decision-vector cases, including failure, OPEN, mixed support, and formal-as-stronger computational evidence.</p></article>
+        <article class="card"><div class="num">8 rows</div><h3>Independent PK/PD replay</h3><p>The browser recomputes the reference concentration and Emax effect trajectory from the packaged model rather than trusting recorded outputs.</p></article>
+        <article class="card"><div class="num">Ed25519</div><h3>Cryptographic package binding</h3><p>The package manifest is signed and independently checked in-browser. Tampering can leave signer identity valid while package integrity and scientific replay fail.</p></article>
+      </div>
+    </section>
+
     <section class="dark-section" id="research">
       <div class="kicker" style="color:#78b9ff">Research architecture</div>
       <h2>Verification is not validation.</h2>
@@ -123,7 +135,7 @@
       <div class="callout">
         <div>
           <h3>Try the real browser verifier.</h3>
-          <p>The demo uses a signed synthetic PK/PD certificate. Your browser recomputes SHA-256, verifies an Ed25519 signature, replays the equations, evaluates reviewer policy, and detects tampering locally.</p>
+          <p>The demo now uses a production-format PCS v0.5 virtual package. Your browser checks the bound file set and hashes, verifies the Ed25519 package signature, replays the packaged PK/PD artifacts, reassesses claims, runs the frozen decision vectors, evaluates reviewer policy, and exposes the full verification log.</p>
         </div>
         <a class="button dark" href="demo.html">Open verifier →</a>
       </div>
