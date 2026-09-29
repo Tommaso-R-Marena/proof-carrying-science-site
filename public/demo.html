@@ -1,61 +1,109 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PCS Interactive Demo</title><meta name="description" content="Interactive demonstration of Proof-Carrying Science assurance.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Assurance Verifier · Proof-Carrying Science</title>
+<meta name="description" content="Verify a signed synthetic PK/PD evidence package in your browser: SHA-256, Ed25519, analytic replay, reviewer policy, and tamper detection.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="topbar"><div class="shell"><span>Runs locally in your browser · No evidence is uploaded</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
-  <a class="brand" href="index.html"><span class="mark">PCS</span>Proof-Carrying Science</a>
-  <div class="navlinks"><a href="index.html">Overview</a><a class="button secondary" href="index.html#focus">Design-partner alpha</a></div>
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks"><a href="index.html#product">Product</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div>
 </nav>
+
 <main>
-<section class="hero" style="padding-bottom:24px">
-  <div class="eyebrow">Illustrative browser demo</div>
-  <h1 style="font-size:clamp(42px,6vw,68px)">Watch an assurance package fail closed.</h1>
-  <p class="lede">This demo mirrors the PCS mental model using a synthetic restricted PK/PD workflow. It is not the production Python verifier and does not perform real Ed25519 verification in-browser.</p>
+<section class="pagehead">
+  <div class="kicker">Live browser verifier</div>
+  <h1>Verify the evidence, then break it.</h1>
+  <p>This is a functional, client-side assurance demo. Your browser verifies a real Ed25519 signature and SHA-256 digest, independently replays a synthetic one-compartment PK + direct Emax PD model, derives claim status, and applies reviewer policy. Toggle tampering to see the checks fail for different reasons.</p>
 </section>
 
-<div class="demo-layout">
+<section class="demo-shell">
   <aside class="panel">
-    <h2>Workflow controls</h2><p>Change the delivered state, then re-run the illustrative verifier.</p>
-    <div class="field"><label><span>Time</span><span id="timeLabel">4 h</span></label><input id="time" type="range" min="0" max="12" step="1" value="4"></div>
-    <div class="field"><label><span>Observed concentration</span><span id="concLabel">—</span></label><input id="concentration" type="range" min="0" max="10" step="0.01" value="0"></div>
-    <div class="switchrow"><div><strong>Tamper delivered result</strong><div class="demo-note">Adds a visible error to the exported concentration.</div></div><input id="tamper" type="checkbox"></div>
-    <div class="switchrow"><div><strong>Require formal proof</strong><div class="demo-note">Tightens reviewer policy beyond this computational adapter.</div></div><input id="strictPolicy" type="checkbox"></div>
-    <div class="actions"><button class="button primary" id="verify">Verify package</button><button class="button secondary" id="reset">Reset</button></div>
-    <p class="demo-note">Synthetic model: Dose 100 mg, V 20 L, CL 2 L/h; direct Emax PD with E0=0, Emax=1, EC50=2 mg/L.</p>
-  </aside>
+    <h2>Evidence package</h2>
+    <p>The built-in reference is synthetic and signed with a dedicated demo-only Ed25519 key.</p>
 
-  <section>
-    <div class="panel">
-      <h2>Assurance dimensions</h2>
-      <div class="statusgrid">
-        <div class="status" id="replayCard"><div class="label">Scientific replay</div><div class="value" id="replayStatus">NOT RUN</div></div>
-        <div class="status" id="integrityCard"><div class="label">Package integrity</div><div class="value" id="integrityStatus">NOT RUN</div></div>
-        <div class="status" id="authCard"><div class="label">Signer authenticity</div><div class="value" id="authStatus">NOT RUN</div></div>
-        <div class="status" id="policyCard"><div class="label">Reviewer policy</div><div class="value" id="policyStatus">NOT RUN</div></div>
+    <div class="field">
+      <label><span>Package source</span><span id="sourceLabel">Built-in reference</span></label>
+      <div class="actions" style="margin-top:0">
+        <button class="button secondary" id="loadReference">Reset reference</button>
+        <label class="button secondary filepick">Open JSON<input id="fileInput" type="file" accept=".json,application/json"></label>
       </div>
     </div>
 
-    <div class="panel" style="margin-top:18px">
-      <h2>Claim ledger</h2>
-      <div class="claim"><span class="dot" id="contractDot"></span><div><strong>C_PKPD_CONTRACT</strong><span>Declared PK/PD parameters satisfy the restricted unit and positivity contract.</span></div></div>
-      <div class="claim"><span class="dot" id="replayDot"></span><div><strong>C_PKPD_REPLAY</strong><span>Delivered concentration matches C(t)=(Dose/V)·exp(-(CL/V)t) within tolerance.</span></div></div>
+    <div class="toggle">
+      <div><strong>Tamper with delivered prediction</strong><small>Changes the 4-hour concentration after signing.</small></div>
+      <input id="tamper" type="checkbox">
+    </div>
+    <div class="toggle">
+      <div><strong>Require formal assurance</strong><small>Reviewer policy demands more than this computational package claims.</small></div>
+      <input id="strictPolicy" type="checkbox">
     </div>
 
-    <div class="panel" style="margin-top:18px">
-      <h2>Certificate preview</h2>
-      <pre id="certificate">{ "status": "not run" }</pre>
-      <p class="demo-note">Production PCS binds actual artifacts, signatures, package manifests, runtime provenance, and limitations statements. This page is an explanatory demo only.</p>
+    <div class="actions">
+      <button class="button primary" id="verify">Verify package</button>
+      <button class="button secondary" id="downloadReceipt" disabled>Download receipt</button>
     </div>
-  </section>
-</div>
+
+    <p class="tiny">Ed25519 verification uses the browser Web Crypto API. If your browser does not implement Ed25519, that dimension will report unsupported rather than pretending to pass.</p>
+  </aside>
+
+  <div>
+    <div class="panel">
+      <h2>Assurance dimensions</h2>
+      <p>These are deliberately separate questions. A correct computation can still be unauthenticated or fail reviewer policy.</p>
+      <div class="statusgrid">
+        <div class="status na" id="replayCard"><div class="label">Scientific replay</div><div class="value" id="replayStatus">NOT RUN</div></div>
+        <div class="status na" id="integrityCard"><div class="label">SHA-256 integrity</div><div class="value" id="integrityStatus">NOT RUN</div></div>
+        <div class="status na" id="authCard"><div class="label">Ed25519 signature</div><div class="value" id="authStatus">NOT RUN</div></div>
+        <div class="status na" id="policyCard"><div class="label">Reviewer policy</div><div class="value" id="policyStatus">NOT RUN</div></div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:18px">
+      <section class="panel">
+        <h2>Derived claims</h2>
+        <div class="claimrow"><span class="dot" id="contractDot"></span><div><strong>C_PK_CONTRACT</strong><span id="contractText">Awaiting verification.</span></div></div>
+        <div class="claimrow"><span class="dot" id="replayDot"></span><div><strong>C_PK_REPLAY</strong><span id="replayText">Awaiting verification.</span></div></div>
+      </section>
+
+      <section class="panel">
+        <h2>Verification details</h2>
+        <div class="resultline"><span>Certificate SHA-256</span><span class="mono" id="hashShort">—</span></div>
+        <div class="resultline"><span>Signer fingerprint</span><span class="mono" id="fingerprintShort">—</span></div>
+        <div class="resultline"><span>Rows replayed</span><span id="rowsReplayed">—</span></div>
+        <div class="resultline"><span>Max PK relative error</span><span class="mono" id="pkError">—</span></div>
+        <div class="resultline"><span>Max PD relative error</span><span class="mono" id="pdError">—</span></div>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Active certificate</h2>
+      <pre id="certificateView">Loading signed reference…</pre>
+      <p class="tiny">The reference key exists only to demonstrate cryptographic verification. It is not a production PCS organizational signing key. Production PCS also binds package manifests, runtime provenance, limitations, and additional evidence artifacts.</p>
+    </section>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="callout">
+    <div><h3>Want to test a real workflow?</h3><p>Start by freezing a bounded claim inventory, or email the workflow and review problem you have in mind.</p></div>
+    <div class="actions" style="margin-top:0"><a class="button dark" href="intake.html">Build pilot intake</a><a class="button secondary" href="mailto:marenatommaso@gmail.com?subject=PCS%20Workflow%20Inquiry">Email Tommaso</a></div>
+  </div>
+</section>
 </main>
-<footer>Proof-Carrying Science · Synthetic demonstration only · No biological, clinical, regulatory, or arbitrary-program correctness claim is made. · <a href="privacy.html">Privacy</a></footer>
+
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="index.html">Home</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
+
+<script id="referenceEnvelope" type="application/json">
+{"format":"pcs-browser-signed-envelope-v1","signed_payload":"{\"assumption\":\"The restricted one-compartment IV-bolus PK + direct Emax PD equations are the declared computational model; this does not establish biological adequacy.\",\"assurance_class\":\"computational\",\"claims\":[{\"id\":\"C_PK_CONTRACT\",\"statement\":\"The model satisfies the restricted positivity and dimensional contract.\",\"status\":\"COMPUTATIONALLY_SUPPORTED\"},{\"id\":\"C_PK_REPLAY\",\"statement\":\"The predictions match the declared analytic PK/PD equations within 1e-9 relative tolerance.\",\"status\":\"COMPUTATIONALLY_SUPPORTED\"}],\"format\":\"pcs-browser-demo-v1\",\"model\":{\"clearance\":{\"unit\":\"L/h\",\"value\":2},\"concentration_unit\":\"mg/L\",\"dose\":{\"unit\":\"mg\",\"value\":100},\"model_type\":\"one_compartment_iv_bolus\",\"pd\":{\"e0\":{\"unit\":\"1\",\"value\":0},\"ec50\":{\"unit\":\"mg/L\",\"value\":2},\"effect_unit\":\"1\",\"emax\":{\"unit\":\"1\",\"value\":1},\"model_type\":\"direct_emax\"},\"time_unit\":\"h\",\"volume\":{\"unit\":\"L\",\"value\":20}},\"policy\":{\"required_claims\":{\"C_PK_CONTRACT\":[\"COMPUTATIONALLY_SUPPORTED\"],\"C_PK_REPLAY\":[\"COMPUTATIONALLY_SUPPORTED\"]}},\"predictions\":[{\"concentration_mg_L\":5,\"effect\":0.714285714286,\"time_h\":0},{\"concentration_mg_L\":4.52418709018,\"effect\":0.69344839865,\"time_h\":1},{\"concentration_mg_L\":4.09365376539,\"effect\":0.671789688584,\"time_h\":2},{\"concentration_mg_L\":3.351600230178,\"effect\":0.626280007105,\"time_h\":4},{\"concentration_mg_L\":2.246644820586,\"effect\":0.529039963431,\"time_h\":8}],\"subject\":\"PCS signed synthetic PK/PD reference\"}","signature_format":"Ed25519","signature_b64":"DmZsbd8y8wFYSwPCxo2k9Z3oyULtqBi5bpXsx5WzggwtkZ+xEs23kzqDOdLm0Jq7NRmNcRY7vmT+Cs2pndZFCQ==","public_key_raw_b64":"T4FQljMNHw0CBLff43EMv+ulEBHL7DoZ35GgbRsGioQ=","public_key_fingerprint_sha256":"9da5b7ffb4fdb9ed6dd3f392fc5069f7cad9f86838aef78947f7972931bcb6c2","certificate_sha256":"d871a23c512159b3df4a000f72906bc6c86a7d97a6e2f99f58a7e8dfebea4ce8"}
+</script>
 <script src="demo.js"></script>
 </body>
 </html>
