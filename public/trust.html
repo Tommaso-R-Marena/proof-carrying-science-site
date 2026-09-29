@@ -62,6 +62,14 @@
     </article>
 
 <article class="trustitem">
+      <header><h3>Multi-reviewer quorum boundary</h3><span class="chip released">Implemented</span></header>
+      <p>PCS can aggregate independently signed reviewer receipts under a separate quorum policy. The quorum layer never changes the PCS scientific verdict; it decides whether enough authorized independent reviewers accepted the same exact reviewed subject.</p>
+      <div class="boundary"><strong>What counts</strong><span>Valid reviewer signature, <code>pcs_valid: true</code>, <code>reviewer_accepted: true</code>, authorized reviewer fingerprint, role-specific required policy SHA-256, and exact bundle/certificate/index subject match.</span></div>
+      <div class="boundary"><strong>Anti-combination rules</strong><span>Reviews from different scientific bundles are grouped separately and cannot be pooled. Duplicate reviewer identities are disqualified so one signing key cannot occupy multiple seats.</span></div>
+      <div class="boundary"><strong>Direct runtime check</strong><span>2-of-3 computational+domain quorum passed; cross-bundle mixing, duplicate identity, and wrong role-policy hash were each rejected in a standalone cryptographic scenario.</span></div>
+    </article>
+
+    <article class="trustitem">
       <header><h3>Machine-checked v0.5/v1 theorem stack</h3><span class="chip verified">Verified</span></header>
       <p>The strongest current Lean result goes beyond normalized-state semantics for the older v0.5/v1 wire: accepted normalized-wire bytes pass strict UTF-8/JSON/schema decoding, checked wire construction, <code>wireCheck</code>, <code>WellFormed</code>, and the bridge into <code>Assures</code>. Package authenticity and replay are modeled with their remaining trust exposed as theorem arguments.</p>
       <div class="boundary"><strong>Verified theorem boundary</strong><span><code>verifyNormalizedWireBytes_assures_e2e</code> is unconditional over accepted raw wire bytes. The package-level theorem is conditional on explicit signature-scheme and replay-adapter soundness assumptions.</span></div>
