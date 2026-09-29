@@ -37,8 +37,8 @@ for html_path in HTML_FILES:
 
 required = [
     "index.html", "demo.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "demo.js", "intake.js", "contact.js",
-    "logo-mark.svg", "demo-reference.json", "_headers", "robots.txt",
+    "styles.css", "demo.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "logo-mark.svg", "demo-reference.json", "pcs-v05-reference-package.json", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
@@ -96,3 +96,41 @@ if errors:
     sys.exit(1)
 
 print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, signed fixture hashes consistent)")
+
+
+prod_fixture = ROOT / "pcs-v05-reference-package.json"
+if prod_fixture.exists():
+    try:
+        obj = json.loads(prod_fixture.read_text(encoding="utf-8"))
+        if obj.get("transport_format") != "pcs-browser-virtual-package-v1":
+            errors.append("pcs-v05-reference-package.json: unexpected transport format")
+        files = obj.get("files", {})
+        for required_name in ["certificate.json", "package_manifest.json", "package_signature.json", "signer-public.pem"]:
+            if required_name not in files:
+                errors.append(f"pcs-v05-reference-package.json: missing {required_name}")
+        cert = json.loads(files["certificate.json"]["content"])
+        manifest = json.loads(files["package_manifest.json"]["content"])
+        sig = json.loads(files["package_signature.json"]["content"])
+        if cert.get("spec_version") != "pcs-0.5":
+            errors.append("pcs-v05-reference-package.json: certificate is not pcs-0.5")
+        if cert.get("checker_version") != "pcs-python-kernel/0.5.0":
+            errors.append("pcs-v05-reference-package.json: unexpected checker version")
+        if manifest.get("package_format") != "pcs-package-v1":
+            errors.append("pcs-v05-reference-package.json: package manifest format mismatch")
+        if sig.get("signature_format") != "pcs-package-ed25519-v1":
+            errors.append("pcs-v05-reference-package.json: package signature format mismatch")
+        for name, meta in manifest.get("files", {}).items():
+            if name not in files:
+                errors.append(f"pcs-v05-reference-package.json: manifest file missing from transport: {name}")
+                continue
+            payload = files[name]["content"].encode("utf-8")
+            if hashlib.sha256(payload).hexdigest() != meta.get("sha256"):
+                errors.append(f"pcs-v05-reference-package.json: hash mismatch for {name}")
+            if len(payload) != meta.get("size"):
+                errors.append(f"pcs-v05-reference-package.json: size mismatch for {name}")
+        if manifest.get("certificate_semantic_hash") != cert.get("semantic_hash"):
+            errors.append("pcs-v05-reference-package.json: certificate semantic binding mismatch")
+        if manifest.get("certificate_integrity_hash") != cert.get("integrity_hash"):
+            errors.append("pcs-v05-reference-package.json: certificate integrity binding mismatch")
+    except Exception as exc:
+        errors.append(f"pcs-v05-reference-package.json: invalid production fixture: {type(exc).__name__}: {exc}")
