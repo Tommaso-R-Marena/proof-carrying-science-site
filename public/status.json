@@ -62,6 +62,22 @@
         "wrong_reviewer_key_rejected": true,
         "scope": "direct cryptographic scheme execution; full repository gate still not executed"
       }
+    },
+    "reviewer_quorum": {
+      "policy_version": "pcs-review-quorum-policy-v1",
+      "review_set_format": "pcs-review-set-v1",
+      "result_format": "pcs-review-quorum-result-v1",
+      "command": "pcs verify-quorum-v06",
+      "role_specific_policy_hashes": true,
+      "duplicate_reviewer_identity_disqualified": true,
+      "cross_bundle_reviews_never_combined": true,
+      "direct_runtime_check": {
+        "two_of_three_with_required_roles_passed": true,
+        "cross_bundle_reviews_not_combined": true,
+        "duplicate_identity_not_double_counted": true,
+        "role_specific_policy_hash_enforced": true,
+        "scope": "direct cryptographic quorum scenario; full repository gate still not executed"
+      }
     }
   },
   "formal": {
