@@ -93,6 +93,27 @@ if mapper_js.exists():
         if required_text not in mapper_script:
             errors.append(f"project-builder.js: guided intake contract drift: {required_text}")
 
+if mapper_page.exists():
+    mapper_text = mapper_page.read_text(encoding="utf-8")
+    for required_text in [
+        "Reproducibility environment",
+        "Download environment plan",
+        "NO EXECUTION",
+    ]:
+        if required_text not in mapper_text:
+            errors.append(f"project-builder.html: environment capture contract drift: {required_text}")
+if mapper_js.exists():
+    mapper_script = mapper_js.read_text(encoding="utf-8")
+    for required_text in [
+        'ENVIRONMENT_FORMAT="pcs-environment-capture-v1"',
+        'ENVIRONMENT_PLAN_FORMAT="pcs-environment-replay-plan-v1"',
+        "automatic_execution_permitted_by_pcs:false",
+        "detectBrowserEnvironment",
+        "downloadEnvironmentPlan",
+    ]:
+        if required_text not in mapper_script:
+            errors.append(f"project-builder.js: environment capture contract drift: {required_text}")
+
 receipt_pages = ["index.html", "mvp.html", "trust.html", "architecture.html"]
 for page in receipt_pages:
     p = ROOT / page
@@ -288,6 +309,38 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: workflow replay runtime evidence overclaim")
         if guided_discovery.get("automated_discovery_affects_scientific_verdict") is not False:
             errors.append("status.json: guided discovery entered scientific verdict boundary")
+        environment_capture = guided_discovery.get("environment_capture", {})
+        if environment_capture.get("capture_format") != "pcs-environment-capture-v1":
+            errors.append("status.json: environment capture format drift")
+        if environment_capture.get("binding_format") != "pcs-environment-binding-v1":
+            errors.append("status.json: environment binding format drift")
+        if environment_capture.get("contract_namespace") != "pcs-manifest-environment-contract-v1":
+            errors.append("status.json: environment contract namespace drift")
+        if environment_capture.get("replay_plan_format") != "pcs-environment-replay-plan-v1":
+            errors.append("status.json: environment replay-plan format drift")
+        for key in [
+            "captures_python_dependencies",
+            "captures_r_dependencies",
+            "captures_conda_dependencies",
+            "captures_lockfiles",
+            "captures_interpreter_constraints",
+            "captures_container_specs",
+            "captures_nix_specs",
+            "container_digest_pinning_distinguished",
+            "human_confirmation_required",
+            "reconstruction_plan_available",
+            "review_before_run_script_available",
+            "browser_preview_local_only",
+        ]:
+            if environment_capture.get(key) is not True:
+                errors.append(f"status.json: environment capture invariant drift: {key}")
+        if environment_capture.get("reviewer_rederivation_stage") != "environment_replay":
+            errors.append("status.json: environment replay stage drift")
+        if environment_capture.get("replay_precedes_workflow_replay") is not True:
+            errors.append("status.json: environment replay ordering drift")
+        if environment_capture.get("automatic_environment_execution_during_verification") is not False:
+            errors.append("status.json: environment verification execution boundary drift")
+
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
         if adaptive_scheduler.get("scheduler_format") != "pcs-replay-scheduler-v1":
             errors.append("status.json: adaptive scheduler format drift")
