@@ -194,7 +194,15 @@
         "review_before_run_script_available": true,
         "browser_preview_local_only": true,
         "authoritative_recapture_at_confirmation": true,
-        "browser_preview_authoritative": false
+        "browser_preview_authoritative": false,
+        "verified_workspace_format": "pcs-environment-workspace-v1",
+        "prepare_workspace_command": "pcs prepare-environment-v06",
+        "full_bundle_verification_before_materialization": true,
+        "materializes_signed_source_path_tree": true,
+        "workspace_bound_to_bundle_sha256": true,
+        "workspace_bound_to_certificate_hashes": true,
+        "atomic_staging_then_publish": true,
+        "workspace_execution_by_pcs": false
       }
     }
   },
