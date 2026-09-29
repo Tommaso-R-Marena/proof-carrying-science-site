@@ -80,9 +80,9 @@
   <div class="mvp-flow" aria-label="v0.6 producer to reviewer flow">
     <div class="mvp-node"><span>01</span><strong>Manifest</strong><small>Claims, assumptions, artifacts, checks</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>02</span><strong>Replay</strong><small>Run checks on packaged bytes</small></div>
+    <div class="mvp-node"><span>02</span><strong>Workflow replay</strong><small>Re-derive confirmed source/artifact edges</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>03</span><strong>Normalize</strong><small>Claim-scoped decision set</small></div>
+    <div class="mvp-node"><span>03</span><strong>Scientific replay</strong><small>Run mandatory checks on packaged bytes</small></div>
     <div class="mvp-arrow">→</div>
     <div class="mvp-node"><span>04</span><strong>Sign</strong><small>Certificate + exact manifest</small></div>
     <div class="mvp-arrow">→</div>
@@ -91,6 +91,17 @@
     <div class="mvp-node"><span>06</span><strong>Review</strong><small>Verify first, policy second</small></div>
     <div class="mvp-arrow">→</div>
     <div class="mvp-node"><span>07</span><strong>Attest review</strong><small>Reviewer signs exact receipt bytes</small></div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="kicker">Independent workflow provenance</div>
+  <h2>Signed workflow is not trusted just because it is signed.</h2>
+  <p class="section-intro">After package hashes and producer signatures pass, the reviewer reconstructs project-relative source files from the exact delivered artifacts and reruns static workflow discovery. A forged dependency edge therefore fails before ordinary scientific evidence replay, even if the producer recomputed hashes and re-signed the package.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Exact</div><h3>Clean AST graph</h3><p>For clean Python/Jupyter analysis, the complete signed input/output set must equal the freshly rediscovered set.</p></article>
+    <article class="card"><div class="num">Subset</div><h3>Partial / R / browser graph</h3><p>Every signed edge must be rediscovered, while PCS explicitly does not claim the set is complete.</p></article>
+    <article class="card"><div class="num">Fail</div><h3>Mismatch stops verification</h3><p>The dedicated <code>workflow_replay</code> stage fails before claim replay or normalized-decision regeneration.</p></article>
   </div>
 </section>
 
