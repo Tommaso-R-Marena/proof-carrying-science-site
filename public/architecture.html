@@ -40,7 +40,7 @@
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Python</div><h3>Production checker</h3><p><code>pcs-python-kernel/0.5.0</code> builds and verifies evidence packages, replays supported checks, validates package namespaces, evaluates policy, and emits verification receipts.</p></article>
     <article class="card"><div class="num">Browser</div><h3>Parity profile</h3><p>The static browser engine mirrors claim-decision semantics and the restricted PK/PD checks, verifies production-format package hashes/signatures, and currently passes all 11 frozen decision vectors.</p></article>
-    <article class="card"><div class="num">Lean</div><h3>Assurance semantics</h3><p>The formal layer encodes <code>Γ ; E ⊢ C @ L</code> and the normalized-state decision soundness program. Raw JSON/package parsing and executable replay remain a distinct refinement boundary.</p></article>
+    <article class="card"><div class="num">Lean 4.28</div><h3>Machine-checked assurance semantics</h3><p>The formal layer encodes <code>Γ ; E ⊢ C @ L</code>. The decision and normalized-state soundness layer now builds cleanly under Lean 4.28.0 with no placeholders or PCS-specific axioms. Raw JSON/package parsing and executable replay remain a distinct refinement boundary.</p></article>
   </div>
 </section>
 
@@ -60,7 +60,7 @@
         <tr><td>CSV split disjointness</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
         <tr><td>Reaction balance</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
         <tr><td>Unit compatibility</td><td>Yes</td><td>Unit parser used by PK/PD profile</td><td>Restricted unit theorem layer</td></tr>
-        <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Normalized-state soundness program</td></tr>
+        <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Machine-checked normalized-state soundness</td></tr>
         <tr><td>Reviewer acceptance policy</td><td>Yes</td><td>Yes</td><td>Policy remains external to producer proof</td></tr>
       </tbody>
     </table>
@@ -70,7 +70,7 @@
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Trust statement</div>
   <h2>Formal verification does not certify biology.</h2>
-  <p class="section-intro">A machine-checked theorem can show that a decision rule follows from explicitly represented evidence under stated assumptions. It does not prove that the underlying scientific model is empirically adequate for the world. PCS therefore keeps implementation correctness, computational replay, empirical validation, provenance, and reviewer policy as separate dimensions.</p>
+  <p class="section-intro">The current PCS decision and normalized-state soundness theorems are machine-checked under Lean 4.28.0. They show that an accepted normalized decision yields the corresponding scoped assurance judgment under explicit context and evidence-binding assumptions. It does not prove that the underlying scientific model is empirically adequate for the world. PCS therefore keeps implementation correctness, computational replay, empirical validation, provenance, and reviewer policy as separate dimensions.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Correctness</div><h3>Did the computation follow its declared rules?</h3><p>Formal proof and executable replay can address this dimension within a bounded model.</p></article>
     <article class="card"><div class="num">Adequacy</div><h3>Is the model scientifically appropriate?</h3><p>This requires empirical/statistical evidence and domain judgment; formal proof alone cannot supply it.</p></article>
