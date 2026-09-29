@@ -36,7 +36,7 @@ for html_path in HTML_FILES:
 required = [
     "index.html", "mvp.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
-    "logo-mark.svg", "pcs-v05-reference-package.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
+    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
@@ -53,6 +53,8 @@ for page in ["index.html", "mvp.html", "trust.html", "architecture.html", "demo.
         errors.append(f"{page}: shared navigation script is missing")
     if 'href="trust.html"' not in page_text and page != "trust.html":
         errors.append(f"{page}: Trust Center navigation link is missing")
+    if 'href="mvp.html"' not in page_text and page != "mvp.html":
+        errors.append(f"{page}: v0.6 MVP navigation link is missing")
 
 headers = (ROOT / "_headers").read_text(encoding="utf-8") if (ROOT / "_headers").exists() else ""
 for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "X-Robots-Tag"]:
@@ -154,6 +156,24 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: contact address drift")
     except Exception as exc:
         errors.append(f"status.json: invalid public status: {type(exc).__name__}: {exc}")
+
+policy_fixture = ROOT / "reviewer-policy.example.json"
+if policy_fixture.exists():
+    try:
+        policy = json.loads(policy_fixture.read_text(encoding="utf-8"))
+        if policy.get("policy_version") != "pcs-acceptance-policy-v1":
+            errors.append("reviewer-policy.example.json: policy version drift")
+        if policy.get("require_signature") is not True:
+            errors.append("reviewer-policy.example.json: signature requirement drift")
+        required_claims = policy.get("required_claims", {})
+        expected_claims = {"C_PKPD_CONTRACT", "C_PKPD_REPLAY"}
+        if set(required_claims) != expected_claims:
+            errors.append("reviewer-policy.example.json: required claim set drift")
+        for claim_id in expected_claims:
+            if required_claims.get(claim_id) != ["COMPUTATIONALLY_SUPPORTED"]:
+                errors.append(f"reviewer-policy.example.json: unexpected status requirement for {claim_id}")
+    except Exception as exc:
+        errors.append(f"reviewer-policy.example.json: invalid policy fixture: {type(exc).__name__}: {exc}")
 
 reference_js = ROOT / "pcs-reference.js"
 if fixture_obj is not None and reference_js.exists():
