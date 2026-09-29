@@ -136,6 +136,32 @@ function renderEvidence(result){
     return `<div class="claimrow"><span class="dot ${ok?"pass":"fail"}"></span><div><strong>${esc(replayed.id)} · ${esc(replayed.outcome)}</strong><span>Kind: ${esc(replayed.kind)} · recorded outcome: ${esc(recorded.outcome)}<br>${esc(metrics)}</span></div></div>`;
   }).join("");
 }
+function renderDecisionTrace(result){
+  const cert=result.certificate||{};
+  const replayById=Object.fromEntries((result.replayRows||[]).map(x=>[x.recorded.id,x.replayed]));
+  const reassessed=Object.fromEntries((result.claimResults||[]).map(x=>[x.id,x.assessment]));
+  $("decisionTraceRows").innerHTML=(cert.claims||[]).map(claim=>{
+    const assessment=reassessed[claim.id]||{};
+    const evidence=(claim.required_evidence||[]).map(id=>{
+      const e=replayById[id];
+      return e
+        ?`<span class="tracepill"><strong>Evidence</strong>${esc(id)} · ${esc(e.kind)} · ${esc(e.outcome)}</span>`
+        :`<span class="tracepill"><strong>Evidence</strong>${esc(id)} · MISSING</span>`;
+    }).join('<span class="tracearrow">→</span>');
+    const assumptions=(claim.assumptions||[]).length
+      ?claim.assumptions.map(id=>`<span class="tracepill"><strong>Assumption</strong>${esc(id)}</span>`).join("")
+      :'<span class="tracepill"><strong>Assumption</strong>none</span>';
+    return `<article class="decisiontrace">
+      <header>
+        <div><h3>${esc(claim.id)}</h3><p class="statement">${esc(claim.statement||"")}</p></div>
+        <span class="chip ${assessment.status&&assessment.status!=="OPEN"&&assessment.status!=="FALSIFIED_OR_CHECK_FAILED"?"verified":"open"}">${esc(assessment.status||"UNKNOWN")}</span>
+      </header>
+      <div class="tracechain">${assumptions}<span class="tracearrow">+</span>${evidence}<span class="tracearrow">→</span><span class="tracepill"><strong>Decision</strong>${esc(assessment.status||"UNKNOWN")}</span></div>
+      <div class="predicatebox">${esc(JSON.stringify(claim.predicate??null))}</div>
+    </article>`;
+  }).join("");
+}
+
 function renderParity(){
   const rows=Engine.runDecisionParity(),passed=rows.filter(x=>x.pass).length;
   $("parityBadge").textContent=`Decision parity: ${passed}/${rows.length}`;
@@ -180,7 +206,7 @@ async function verify(){
       :`${result.errors.length} verification issue${result.errors.length===1?"":"s"} detected; inspect the log below.`;
     $("specBadge").textContent=(result.certificate?.spec_version||"unknown")+" · "+(result.certificate?.checker_version||"");
 
-    renderPackage(result,p);renderClaims(result);renderEvidence(result);renderTrace(result);
+    renderPackage(result,p);renderClaims(result);renderEvidence(result);renderDecisionTrace(result);renderTrace(result);
 
     const replay=(result.replayRows||[]).find(x=>x.replayed.id==="E_PK_REPLAY")?.replayed?.details||{};
     $("rowsReplayed").textContent=replay.row_count??"—";
