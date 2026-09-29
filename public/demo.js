@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id);
 const Engine=window.PCSBrowserEngine;
 let pkg=JSON.parse(JSON.stringify(window.PCS_V05_REFERENCE_PACKAGE));
-let sourceName="PCS v0.5 reference";
+let sourceName="PCS 0.5.0 reference";
 let lastReceipt=null;
 
 function clone(x){return JSON.parse(JSON.stringify(x));}
@@ -24,7 +24,9 @@ function replaceFileText(entry,replacer){
 }
 function activePackage(){
   const p=clone(pkg);
-  if($("tamper").checked){
+  const scenario=$("attackScenario")?.value||"none";
+
+  if(scenario==="artifact_substitution"){
     const cert=JSON.parse(Engine.fileText(p.files["certificate.json"]));
     const pred=cert.artifacts.find(a=>a.id==="pk_predictions");
     if(pred&&p.files[pred.path]){
@@ -33,6 +35,23 @@ function activePackage(){
       );
     }
   }
+
+  if(scenario==="status_escalation"){
+    const cert=JSON.parse(Engine.fileText(p.files["certificate.json"]));
+    const target=(cert.claims||[]).find(c=>c.kind==="computational")||cert.claims?.[0];
+    if(target){
+      target.assessment={
+        status:"FORMALLY_VERIFIED_UNDER_ASSUMPTIONS",
+        reason:"forged recorded status for threat-lab demonstration"
+      };
+      p.files["certificate.json"]=textToEntry(JSON.stringify(cert,null,2));
+    }
+  }
+
+  if(scenario==="signature_stripping"){
+    delete p.files["package_signature.json"];
+  }
+
   return p;
 }
 
@@ -76,6 +95,14 @@ async function directoryPackage(fileList){
   return {transport_format:"pcs-browser-directory-package-v1",files};
 }
 
+function baselinePolicyFor(cert,requireSignature){
+  return {
+    policy_version:"pcs-acceptance-policy-v1",
+    require_signature:Boolean(requireSignature),
+    expected_signer_fingerprint:null,
+    required_claims:Object.fromEntries((cert.claims||[]).map(c=>[c.id,[c.assessment.status]]))
+  };
+}
 function strictPolicyFor(cert,fp){
   return {
     policy_version:"pcs-acceptance-policy-v1",
@@ -135,7 +162,9 @@ async function verify(){
     const p=activePackage();
     const cert=JSON.parse(Engine.fileText(p.files["certificate.json"]));
     const sigrec=p.files["package_signature.json"]?JSON.parse(Engine.fileText(p.files["package_signature.json"])):null;
-    const policy=$("strictPolicy").checked?strictPolicyFor(cert,sigrec?.public_key_fingerprint||null):null;
+    const policy=$("strictPolicy").checked
+      ?strictPolicyFor(cert,sigrec?.public_key_fingerprint||null)
+      :baselinePolicyFor(cert,$("requireSignature").checked);
     const result=await Engine.verifyVirtualPackage(p,policy);
     const parity=renderParity();
 
@@ -188,8 +217,25 @@ async function verify(){
     lastReceipt=null;$("downloadReceipt").disabled=true;
   }finally{$("verify").disabled=false;}
 }
+function attackHint(){
+  const value=$("attackScenario")?.value||"none";
+  const hints={
+    none:"Baseline: verify the signed reference package without mutation.",
+    artifact_substitution:"Expected separation: scientific replay and package integrity fail; the signer can still authenticate the unchanged manifest.",
+    status_escalation:"Expected separation: claim reassessment rejects the forged status and package integrity fails, even though the original manifest signature can still verify.",
+    signature_stripping:"Expected separation: scientific replay and package integrity can remain valid, but signer authenticity becomes UNSIGNED and authenticated-package policy fails."
+  };
+  $("attackHint").textContent=hints[value]||"";
+}
 function reset(){
-  pkg=clone(window.PCS_V05_REFERENCE_PACKAGE);sourceName="PCS v0.5 reference";$("sourceLabel").textContent=sourceName;$("tamper").checked=false;$("strictPolicy").checked=false;verify();
+  pkg=clone(window.PCS_V05_REFERENCE_PACKAGE);
+  sourceName="PCS 0.5.0 reference";
+  $("sourceLabel").textContent=sourceName;
+  $("attackScenario").value="none";
+  $("requireSignature").checked=true;
+  $("strictPolicy").checked=false;
+  attackHint();
+  verify();
 }
 document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
@@ -197,13 +243,15 @@ document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>
   btn.classList.add("active");$("tab-"+btn.dataset.tab).classList.add("active");
 }));
 $("verify").onclick=verify;$("loadReference").onclick=reset;$("downloadReceipt").onclick=downloadReceipt;
-$("tamper").onchange=verify;$("strictPolicy").onchange=verify;
+$("attackScenario").onchange=()=>{attackHint();verify();};
+$("requireSignature").onchange=verify;
+$("strictPolicy").onchange=verify;
 $("directoryInput").addEventListener("change",async ev=>{
   try{
     pkg=await directoryPackage(ev.target.files);
     sourceName="Extracted PCS directory";
     $("sourceLabel").textContent=sourceName;
-    $("tamper").checked=false;
+    $("attackScenario").value="none";attackHint();
     await verify();
   }catch(e){
     $("overallStatus").textContent="Could not read directory";
@@ -213,7 +261,7 @@ $("directoryInput").addEventListener("change",async ev=>{
 $("fileInput").addEventListener("change",async ev=>{
   const file=ev.target.files?.[0];if(!file)return;
   try{
-    pkg=JSON.parse(await file.text());sourceName=file.name;$("sourceLabel").textContent=file.name;$("tamper").checked=false;await verify();
+    pkg=JSON.parse(await file.text());sourceName=file.name;$("sourceLabel").textContent=file.name;$("attackScenario").value="none";attackHint();await verify();
   }catch(e){$("overallStatus").textContent="Could not read package";$("overallDetail").textContent=String(e);}
 });
 renderParity();reset();
