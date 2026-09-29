@@ -34,15 +34,15 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "demo.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "demo.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "demo.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if p.exists() and CONTACT not in p.read_text(encoding="utf-8"):
         errors.append(f"{page}: real contact address is missing")
