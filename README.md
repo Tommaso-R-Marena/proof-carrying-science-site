@@ -10,7 +10,7 @@ Live preview:
 
 The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
 
-- **Production-format live verifier** — validates a PCS v0.5 virtual package, staged file hashes, Ed25519 package signature, restricted one-compartment PK + direct Emax PD replay, claim reassessment, reviewer policy, tamper demonstration, compatible package upload, downloadable verification receipt, and 11 frozen decision-parity vectors.
+- **Production-format live verifier** — validates the built-in PCS v0.5 package or an extracted real PCS evidence directory, hashes exact selected file bytes, verifies Ed25519 package signatures when present, replays restricted one-compartment PK + direct Emax PD evidence, reassesses claims, evaluates reviewer policy, demonstrates tampering, emits a verification receipt, and runs 11 frozen decision-parity vectors.
 - **PK/PD model lab** — generates the restricted model and prediction trajectory, replays it through the browser engine, and exports production-compatible `manifest.json`, `pk_model.json`, and `predictions.csv` for the Python CLI.
 - **Pilot intake builder** — validates claim/assumption IDs, computes a canonical SHA-256 semantic commitment, and exports both `pilot_intake.json` and `pilot_intake.lock.json`.
 - **Contact workflow** — direct contact at `marenatommaso@gmail.com`, local clipboard support, and a browser-generated `mailto:` design-partner inquiry.
@@ -89,7 +89,7 @@ npx wrangler deploy
 - no first-party analytics;
 - no third-party JavaScript;
 - no scientific-data submission endpoint;
-- verifier uploads remain local to the browser;
+- verifier package JSON and extracted-directory selections remain local to the browser;
 - pilot-intake entries remain local to the browser;
 - CSP and browser-hardening headers live in `public/_headers`;
 - search indexing remains intentionally disabled during alpha.
