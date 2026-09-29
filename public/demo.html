@@ -116,6 +116,7 @@
       <div class="tabs">
         <button class="tab active" data-tab="package">Package</button>
         <button class="tab" data-tab="evidence">Evidence replay</button>
+        <button class="tab" data-tab="trace">Decision trace</button>
         <button class="tab" data-tab="certificate">Certificate</button>
         <button class="tab" data-tab="parity">Decision parity</button>
         <button class="tab" data-tab="errors">Verification log</button>
@@ -127,6 +128,11 @@
 
       <div class="tabpane" id="tab-evidence">
         <div id="evidenceRows"></div>
+      </div>
+
+      <div class="tabpane" id="tab-trace">
+        <p class="tiny">This trace is reconstructed from the delivered certificate and independently replayed evidence. It shows the explicit PCS decision inputs, not hidden reasoning.</p>
+        <div id="decisionTraceRows"></div>
       </div>
 
       <div class="tabpane" id="tab-certificate">
