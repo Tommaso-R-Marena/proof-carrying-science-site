@@ -36,7 +36,7 @@ for html_path in HTML_FILES:
 required = [
     "index.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
-    "logo-mark.svg", "pcs-v05-reference-package.json", "_headers", "robots.txt",
+    "logo-mark.svg", "pcs-v05-reference-package.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
@@ -110,6 +110,36 @@ if prod_fixture.exists():
     except Exception as exc:
         errors.append(f"pcs-v05-reference-package.json: invalid production fixture: {type(exc).__name__}: {exc}")
 
+public_status = ROOT / "status.json"
+if public_status.exists() and fixture_obj is not None:
+    try:
+        status = json.loads(public_status.read_text(encoding="utf-8"))
+        if status.get("status_format") != "pcs-public-status-v1":
+            errors.append("status.json: unexpected status_format")
+        released = status.get("released", {})
+        formal = status.get("formal", {})
+        browser = status.get("browser_profile", {})
+        preview = status.get("next_refinement", {})
+        cert = json.loads(fixture_obj["files"]["certificate.json"]["content"])
+        if released.get("specification") != cert.get("spec_version"):
+            errors.append("status.json: released specification differs from browser fixture")
+        if released.get("checker") != cert.get("checker_version"):
+            errors.append("status.json: released checker differs from browser fixture")
+        if formal.get("lean_version") != "4.28.0":
+            errors.append("status.json: unexpected verified Lean version")
+        if formal.get("decision_and_normalized_state_soundness") != "MACHINE_CHECKED_PASS":
+            errors.append("status.json: formal soundness status drift")
+        if browser.get("decision_vectors_passed") != 11 or browser.get("decision_vectors_total") != 11:
+            errors.append("status.json: browser decision parity count drift")
+        if preview.get("checker") != "pcs-python-kernel/0.5.1" or preview.get("serialized_wire_refinement") != "VERIFICATION_PENDING":
+            errors.append("status.json: next refinement status drift")
+        if preview.get("released") is not False:
+            errors.append("status.json: unreleased refinement marked released")
+        if status.get("contact") != CONTACT:
+            errors.append("status.json: contact address drift")
+    except Exception as exc:
+        errors.append(f"status.json: invalid public status: {type(exc).__name__}: {exc}")
+
 reference_js = ROOT / "pcs-reference.js"
 if fixture_obj is not None and reference_js.exists():
     try:
@@ -129,4 +159,4 @@ if errors:
         print(f"- {err}")
     sys.exit(1)
 
-print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, released PCS 0.5.0 fixture bound, Trust Center present, shared navigation present)")
+print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, released PCS 0.5.0 fixture/status bound, Trust Center present, shared navigation present)")
