@@ -55,6 +55,8 @@ for page in ["index.html", "project-builder.html", "mvp.html", "validation.html"
         errors.append(f"{page}: Trust Center navigation link is missing")
     if 'href="mvp.html"' not in page_text and page != "mvp.html":
         errors.append(f"{page}: v0.6 MVP navigation link is missing")
+    if 'href="project-builder.html"' not in page_text and page != "project-builder.html":
+        errors.append(f"{page}: Project Mapper navigation link is missing")
 
 mapper_page = ROOT / "project-builder.html"
 mapper_js = ROOT / "project-builder.js"
@@ -218,6 +220,8 @@ if public_status.exists() and fixture_obj is not None:
         ]:
             if guided_discovery.get(key) is not True:
                 errors.append(f"status.json: guided discovery invariant drift: {key}")
+        if guided_discovery.get("confirmation_provenance_in_signed_artifact_metadata") is not True:
+            errors.append("status.json: guided confirmation provenance drift")
         if guided_discovery.get("automated_discovery_affects_scientific_verdict") is not False:
             errors.append("status.json: guided discovery entered scientific verdict boundary")
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
