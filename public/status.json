@@ -1,0 +1,37 @@
+{
+  "status_format": "pcs-public-status-v1",
+  "updated": "2026-09-29",
+  "released": {
+    "specification": "pcs-0.5",
+    "checker": "pcs-python-kernel/0.5.0",
+    "product_stage": "private-design-partner-alpha"
+  },
+  "formal": {
+    "lean_version": "4.28.0",
+    "decision_and_normalized_state_soundness": "MACHINE_CHECKED_PASS",
+    "production_rebuild_jobs": 14,
+    "project_specific_axioms": 0,
+    "placeholders": 0
+  },
+  "browser_profile": {
+    "decision_vectors_passed": 11,
+    "decision_vectors_total": 11,
+    "pkpd_reference_rows_replayed": 8,
+    "network_upload_endpoint": false,
+    "third_party_runtime_javascript": false
+  },
+  "next_refinement": {
+    "checker": "pcs-python-kernel/0.5.1",
+    "serialized_wire_refinement": "VERIFICATION_PENDING",
+    "released": false
+  },
+  "non_claims": [
+    "biological_truth",
+    "clinical_validity",
+    "regulatory_acceptance",
+    "gxp_validation",
+    "arbitrary_program_correctness",
+    "end_to_end_raw_package_formal_verification"
+  ],
+  "contact": "marenatommaso@gmail.com"
+}
