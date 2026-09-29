@@ -199,6 +199,11 @@ async function verify(){
       verifier_profile:"pcs-browser-engine/v0.5-parity",
       verified_at:new Date().toISOString(),
       source:sourceName,
+      attack_scenario:$("attackScenario")?.value||"none",
+      reviewer_policy_profile:{
+        require_authenticated_package:$("requireSignature").checked,
+        require_formal_status:$("strictPolicy").checked
+      },
       valid:result.valid,
       errors:result.errors,
       assurance_dimensions:result.assurance_dimensions,
