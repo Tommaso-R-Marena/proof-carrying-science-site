@@ -360,6 +360,7 @@ if public_status.exists() and fixture_obj is not None:
             "workspace_bound_to_bundle_sha256",
             "workspace_bound_to_certificate_hashes",
             "atomic_staging_then_publish",
+            "rechecks_bundle_sha256_before_materialization",
         ]:
             if environment_capture.get(key) is not True:
                 errors.append(f"status.json: environment workspace invariant drift: {key}")
