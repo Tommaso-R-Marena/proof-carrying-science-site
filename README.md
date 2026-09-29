@@ -10,6 +10,8 @@ Live preview:
 
 The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
 
+- **Trust Center** — distinguishes the released PCS 0.5.0 checker, the machine-checked Lean 4.28.0 decision/normalized-state theorem layer, the browser parity profile, the pending 0.5.1 serialized-refinement work, and explicit non-claims.
+- **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.
 - **Production-format live verifier** — validates the built-in PCS v0.5 package or an extracted real PCS evidence directory, hashes exact selected file bytes, verifies Ed25519 package signatures when present, replays restricted one-compartment PK + direct Emax PD evidence, reassesses claims, evaluates reviewer policy, demonstrates tampering, emits a verification receipt, and runs 11 frozen decision-parity vectors.
 - **PK/PD model lab** — generates the restricted model and prediction trajectory, replays it through the browser engine, and exports production-compatible `manifest.json`, `pk_model.json`, and `predictions.csv` for the Python CLI.
 - **Pilot intake builder** — validates claim/assumption IDs, computes a canonical SHA-256 semantic commitment, and exports both `pilot_intake.json` and `pilot_intake.lock.json`.
@@ -18,7 +20,7 @@ The site intentionally has no application backend. Its interactive functionality
 
 The browser verifier is a functional demonstration, not the production PCS Python verifier. Its built-in signing key is explicitly demo-only.
 
-The PCS assurance decision and normalized-state soundness layer has been machine-checked under Lean 4.28.0. This does not yet extend end-to-end to raw serialized package parsing/replay.
+The PCS assurance decision and normalized-state soundness layer has been machine-checked under Lean 4.28.0. The website keeps that verified result separate from the unreleased 0.5.1 serialized-refinement branch, which remains labeled verification-pending until its dedicated Python and Lean gate completes.
 
 ## Repository layout
 
@@ -27,6 +29,7 @@ Only `public/` is deployable.
 ```text
 public/
   index.html
+  trust.html
   architecture.html
   demo.html
   model-lab.html
@@ -35,6 +38,7 @@ public/
   privacy.html
   404.html
   styles.css
+  site.js
   demo.js
   model-lab.js
   pcs-engine.js
@@ -63,7 +67,7 @@ Run the static safety/integrity audit:
 python scripts/check_site.py
 ```
 
-The checker validates internal assets, the real contact address, local-only JavaScript posture, security headers, logo metadata, and the SHA-256/fingerprint consistency of the signed browser fixture.
+The checker validates internal assets, the real contact address, local-only JavaScript posture, security headers, logo metadata, the presence of the Trust Center/shared navigation, and the SHA-256/fingerprint consistency of the released 0.5.0 browser fixture.
 
 ## Cloudflare deployment
 
