@@ -34,15 +34,15 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -55,6 +55,29 @@ for page in ["index.html", "mvp.html", "validation.html", "trust.html", "archite
         errors.append(f"{page}: Trust Center navigation link is missing")
     if 'href="mvp.html"' not in page_text and page != "mvp.html":
         errors.append(f"{page}: v0.6 MVP navigation link is missing")
+
+mapper_page = ROOT / "project-builder.html"
+mapper_js = ROOT / "project-builder.js"
+if mapper_page.exists():
+    mapper_text = mapper_page.read_text(encoding="utf-8")
+    for required_text in [
+        "pcs confirm-v06",
+        "pcs discover-v06",
+        "non-attestable",
+        "Nothing is uploaded",
+    ]:
+        if required_text not in mapper_text:
+            errors.append(f"project-builder.html: missing explicit draft confirmation boundary: {required_text}")
+if mapper_js.exists():
+    mapper_script = mapper_js.read_text(encoding="utf-8")
+    for required_text in [
+        "pcs-manifest-draft-v1",
+        "pcs-project-discovery-v1",
+        "pcs_discovery_sha256",
+        "requires_confirmation:true",
+    ]:
+        if required_text not in mapper_script:
+            errors.append(f"project-builder.js: guided intake contract drift: {required_text}")
 
 receipt_pages = ["index.html", "mvp.html", "trust.html", "architecture.html"]
 for page in receipt_pages:
@@ -177,6 +200,26 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: v0.6 MVP command contract drift")
         if mvp.get("reviewer_policy", {}).get("valid_separate_from_accepted") is not True:
             errors.append("status.json: reviewer-policy separation drift")
+        guided_discovery = mvp.get("guided_discovery", {})
+        if guided_discovery.get("discovery_format") != "pcs-project-discovery-v1":
+            errors.append("status.json: guided discovery format drift")
+        if guided_discovery.get("manifest_draft_format") != "pcs-manifest-draft-v1":
+            errors.append("status.json: guided manifest-draft format drift")
+        if guided_discovery.get("discover_command") != "pcs discover-v06" or guided_discovery.get("confirm_command") != "pcs confirm-v06":
+            errors.append("status.json: guided discovery command drift")
+        if guided_discovery.get("browser_mapper") != "project-builder.html":
+            errors.append("status.json: guided browser mapper drift")
+        for key in [
+            "local_only",
+            "private_key_material_excluded",
+            "explicit_confirmation_required",
+            "artifact_snapshot_rehashed_on_confirmation",
+            "artifact_snapshot_rechecked_on_attestation",
+        ]:
+            if guided_discovery.get(key) is not True:
+                errors.append(f"status.json: guided discovery invariant drift: {key}")
+        if guided_discovery.get("automated_discovery_affects_scientific_verdict") is not False:
+            errors.append("status.json: guided discovery entered scientific verdict boundary")
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
         if adaptive_scheduler.get("scheduler_format") != "pcs-replay-scheduler-v1":
             errors.append("status.json: adaptive scheduler format drift")
