@@ -2,52 +2,74 @@
 
 Zero-build static launch-preview site for Proof-Carrying Science.
 
+## Live preview
+
+Cloudflare Workers Static Assets deployment:
+
+`https://proof-carrying-science-site.marenatommaso.workers.dev`
+
+## Repository layout
+
+Only `public/` is deployable.
+
+```text
+public/
+  index.html
+  demo.html
+  intake.html
+  privacy.html
+  404.html
+  styles.css
+  demo.js
+  intake.js
+  _headers
+  robots.txt
+```
+
+Repository metadata, scripts, Git objects, and documentation are outside the configured asset directory and must never be published.
+
 ## Local preview
 
 ```bash
-python -m http.server 8000
+python -m http.server 8000 --directory public
 ```
 
-Open `http://localhost:8000/`.
+Then open `http://localhost:8000/`.
 
-Run the repository-local static checks:
+Run the static safety check:
 
 ```bash
 python scripts/check_site.py
 ```
 
-## Pages
+## Cloudflare deployment
 
-- `index.html` — landing page
-- `demo.html` — illustrative PK/PD assurance demo
-- `intake.html` — browser-only pilot-intake builder
-- `privacy.html` — current launch-preview privacy statement
-- `404.html` — static not-found page
+The committed `wrangler.jsonc` is the deployment source of truth:
 
-## Deployment target
+- Worker name: `proof-carrying-science-site`
+- static assets directory: `./public`
+- `workers.dev`: enabled
+- version/preview URLs: disabled
+- Worker observability: disabled
+- 404 handling: static `404.html`
 
-Designed for Cloudflare Pages using GitHub integration.
+Git-connected deployments may continue to use:
 
-Recommended initial settings:
+```bash
+npx wrangler deploy
+```
 
-- Framework preset: **None**
-- Production branch: **main**
-- Build command: **leave blank**
-- Build output directory: **/**
-- Root directory: **repository root**
+Wrangler will read the committed configuration and upload only `public/`.
 
-Cloudflare Pages supports static HTML without a framework or build command. The repository-level `_headers` file applies security headers and prevents `pages.dev` preview URLs from being indexed.
+## Security/privacy posture
 
-## Launch posture
+- no backend;
+- no account system;
+- no database;
+- no first-party analytics;
+- no external JavaScript;
+- pilot-intake entries stay in the browser;
+- CSP and browser-hardening headers are declared in `public/_headers`;
+- preview site is intentionally non-indexed during alpha.
 
-Keep this repository private while iterating. A deployed `pages.dev` URL is still reachable on the public internet, so do not place secrets, private source, customer data, signing keys, unpublished research results, or regulated data here.
-
-The interactive demo is explanatory and does not perform the production PCS cryptographic verification path.
-
-Before enabling search indexing or a custom domain:
-
-1. confirm company/product naming;
-2. review public claims and privacy language;
-3. add an approved design-partner contact route;
-4. decide whether the website source should remain private;
-5. remove the global `robots.txt` disallow rule when intentionally launching.
+Never place secrets, customer data, signing keys, unpublished research artifacts, PHI, or regulated data in this repository.
