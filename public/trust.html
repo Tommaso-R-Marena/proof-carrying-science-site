@@ -61,6 +61,14 @@
     </article>
 
     <article class="trustitem">
+      <header><h3>Independent static-workflow replay boundary</h3><span class="chip released">Implemented</span></header>
+      <p>Human confirmation and producer signature are not sufficient to establish a static dependency claim. After exact package binding, the v0.6 verifier reconstructs the delivered source tree and reruns static workflow analysis before scientific evidence replay.</p>
+      <div class="boundary"><strong>Exact mode</strong><span>Clean Python/Jupyter AST mappings require exact equality between signed and freshly rediscovered input/output sets.</span></div>
+      <div class="boundary"><strong>Subset mode</strong><span>Partial, R, browser-heuristic, or ambiguity-reduced mappings require every signed edge to be rediscovered but do not claim completeness.</span></div>
+      <div class="boundary"><strong>Validation status</strong><span>An adversarial regression for a fully rehashed and re-signed false workflow edge is committed to the v0.6 gate. The hosted runner still has not executed it.</span></div>
+    </article>
+
+    <article class="trustitem">
       <header><h3>Reviewer-signed receipt boundary</h3><span class="chip released">Implemented</span></header>
       <p>The producer and reviewer can use different Ed25519 identities. After PCS verification and reviewer-policy evaluation, the reviewer may sign the exact receipt file. A later auditor can verify that signature without rerunning PCS.</p>
       <div class="boundary"><strong>What is signed</strong><span>Exact receipt SHA-256 plus bundle SHA-256, policy SHA-256, certificate semantic/integrity commitments, normalized-index commitment, PCS validity, and reviewer acceptance.</span></div>
