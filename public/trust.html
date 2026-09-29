@@ -9,11 +9,12 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="topbar"><div class="shell"><span>Trust Center · Current release and proof boundaries</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>Trust Center · v0.6 MVP candidate, released v0.5 fixture, and proof boundaries</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
   <div class="navlinks">
+    <a href="mvp.html">v0.6 MVP</a>
     <a href="index.html#product">Product</a>
     <a href="architecture.html">Architecture</a>
     <a href="demo.html">Live verifier</a>
@@ -29,35 +30,37 @@
   <h1>What is verified, what is released, and what remains open.</h1>
   <p>PCS is intended to reduce ambiguity around scientific computation, so its own assurance claims should be equally explicit. This page separates released executable behavior, machine-checked formal results, browser parity demonstrations, active refinement work, and non-claims.</p>
   <div class="statusbar" aria-label="Current PCS status">
-    <div><span>Released checker</span><strong>PCS 0.5.0</strong></div>
-    <div><span>Formal kernel</span><strong>Lean 4.28.0 · verified</strong></div>
-    <div><span>Browser decision parity</span><strong>11 / 11 frozen vectors</strong></div>
-    <div><span>Next refinement</span><strong>0.5.1 · verification pending</strong></div>
+    <div><span>MVP candidate</span><strong>PCS v0.6 · complete executable loop</strong></div>
+    <div><span>Formal theorem stack</span><strong>v0.5/v1 · Lean 4.28.0</strong></div>
+    <div><span>Browser parity fixture</span><strong>v0.5 · 11 / 11 vectors</strong></div>
+    <div><span>Latest v0.6 gate</span><strong>Runner unavailable · not executed</strong></div>
   </div>
 </section>
 
 <section class="section-tight trustgrid">
   <div class="truststack">
     <article class="trustitem">
-      <header><h3>Released executable checker</h3><span class="chip released">Released</span></header>
-      <p>The public product line is currently <code>pcs-python-kernel/0.5.0</code>. It builds and verifies PCS evidence packages, replays supported checks, validates artifact/package integrity, authenticates signed deliveries, and applies reviewer-controlled acceptance policy.</p>
+      <header><h3>v0.6 executable MVP candidate</h3><span class="chip pending">Candidate</span></header>
+      <p>The current v0.6 branch implements the complete producer-to-reviewer workflow: one-command attestation, canonical JCS certificate and normalized decisions, signed exact package manifest, deterministic self-verified ZIP, extraction-free bundle verification, and external reviewer policy.</p>
       <dl>
-        <dt>Specification</dt><dd><code>pcs-0.5</code></dd>
-        <dt>Checker</dt><dd><code>pcs-python-kernel/0.5.0</code></dd>
-        <dt>Initial scientific adapter</dt><dd>Restricted one-compartment IV-bolus PK + direct Emax PD</dd>
-        <dt>Browser demo</dt><dd>Production-format 0.5.0 reference package + extracted-directory verification profile</dd>
+        <dt>Specification</dt><dd><code>pcs-0.6</code></dd>
+        <dt>Checker identity</dt><dd><code>pcs-python-kernel/0.6.0-dev</code></dd>
+        <dt>Producer</dt><dd><code>pcs attest-v06</code></dd>
+        <dt>Reviewer</dt><dd><code>pcs verify-v06-bundle</code></dd>
+        <dt>Policy semantics</dt><dd><code>valid</code> remains separate from <code>accepted</code>; exact policy bytes are SHA-256 bound into the receipt</dd>
+        <dt>Runtime status</dt><dd>Implementation and regression suite committed; latest hosted runs received no runner and executed zero steps</dd>
       </dl>
     </article>
 
     <article class="trustitem">
-      <header><h3>Machine-checked formal result</h3><span class="chip verified">Verified</span></header>
-      <p>The PCS assurance decision and normalized-state soundness layer has been independently rebuilt successfully under Lean 4.28.0. The promoted production namespace contains no <code>sorry</code>/<code>admit</code>, no PCS-specific axioms, and no unsafe escape-hatch declarations.</p>
-      <div class="boundary"><strong>Verified theorem boundary</strong><span>Given a normalized claim/evidence state with explicit context coverage and required-evidence binding, an accepted PCS decision entails the corresponding scoped <code>Assures Γ L C E</code> judgment.</span></div>
+      <header><h3>Machine-checked v0.5/v1 theorem stack</h3><span class="chip verified">Verified</span></header>
+      <p>The strongest current Lean result goes beyond normalized-state semantics for the older v0.5/v1 wire: accepted normalized-wire bytes pass strict UTF-8/JSON/schema decoding, checked wire construction, <code>wireCheck</code>, <code>WellFormed</code>, and the bridge into <code>Assures</code>. Package authenticity and replay are modeled with their remaining trust exposed as theorem arguments.</p>
+      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>verifyNormalizedWireBytes_assures_e2e</code> is unconditional over accepted raw wire bytes. The package-level theorem is conditional on explicit signature-scheme and replay-adapter soundness assumptions.</span></div>
       <dl>
         <dt>Lean</dt><dd>4.28.0</dd>
-        <dt>Production rebuild</dt><dd>PASS · 14 jobs</dd>
-        <dt>Compiled PCS declarations audited</dt><dd>641</dd>
-        <dt>Promoted soundness classes</dt><dd>Computational, formal, empirical, mixed</dd>
+        <dt>Reported project build</dt><dd>PASS · no <code>sorry</code>, project axioms, or <code>native_decide</code></dd>
+        <dt>Wire vectors</dt><dd>34 / 34 Lean↔Python agreement reported</dd>
+        <dt>Exact v0.6/v2 port</dt><dd>Open</dd>
       </dl>
     </article>
 
@@ -73,10 +76,9 @@
     </article>
 
     <article class="trustitem">
-      <header><h3>Serialized refinement v0.5.1</h3><span class="chip pending">Verification pending</span></header>
-      <p>The next branch adds a claim-scoped normalized wire state between independently replay-verified certificates and the machine-checked Lean decision layer. This work is intentionally not represented as released or machine-checked until its dedicated Python and Lean verification pass completes.</p>
-      <div class="boundary"><strong>Target chain</strong><span>Verified certificate → claim-scoped normalized wire → typed Lean <code>DecisionWire</code> → <code>Normalized.DecisionInput</code> → machine-checked assurance soundness.</span></div>
-      <p style="margin-top:12px">The work also makes exact evidence scope, exact assumption scope, predicate commitments, and source-certificate identity explicit rather than trusting summary booleans.</p>
+      <header><h3>Exact v0.6/v2 formal port</h3><span class="chip open">Open</span></header>
+      <p>The executable product has moved to v0.6/v2: canonical JCS, new cryptographic domains, certificate integrity binding, normalized index hashing, full-SHA normalized storage paths, deterministic ZIP delivery, and reviewer policy. The current Lean end-to-end wire theorem still targets the older v0.5/v1 representation.</p>
+      <div class="boundary"><strong>Next formal milestone</strong><span>Port the verified raw-wire → <code>Assures</code> architecture onto the exact v0.6/v2 byte representation without weakening its explicit trust boundary.</span></div>
     </article>
   </div>
 
@@ -84,9 +86,9 @@
     <article class="panel">
       <h2>Current verification boundary</h2>
       <div class="timeline">
-        <div class="timeline-item"><strong>Raw PCS package</strong><span>Strict JSON/schema checks, safe package handling, hashes, provenance, signatures, and scientific replay remain executable responsibilities.</span></div>
-        <div class="timeline-item"><strong>Normalized scientific state</strong><span>The released formal theorem begins after this boundary. The active 0.5.1 refinement work is shrinking this gap.</span></div>
-        <div class="timeline-item"><strong>Decision semantics</strong><span>Machine-checked under Lean 4.28.0.</span></div>
+        <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
+        <div class="timeline-item"><strong>v0.5/v1 raw normalized wire</strong><span>The strongest current Lean theorem stack checks raw wire bytes through decoding and assurance semantics.</span></div>
+        <div class="timeline-item"><strong>Exact v0.6 formal port</strong><span>Still open; the executable MVP must not inherit the older theorem by implication.</span></div>
         <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
       </div>
     </article>
@@ -122,15 +124,15 @@
     <article class="card"><div class="num">02</div><h3>End-to-end program verification</h3><p>Raw JSON parsing, hashing, ZIP handling, Python execution, and domain checker implementations remain outside the current Lean theorem boundary.</p></article>
     <article class="card"><div class="num">03</div><h3>Regulatory status</h3><p>PCS does not currently claim FDA certification, GxP validation, clinical validity, safety, efficacy, or regulatory acceptance.</p></article>
     <article class="card"><div class="num">04</div><h3>Arbitrary code correctness</h3><p>The current product supports bounded predicates and adapters; it does not prove arbitrary Python, R, C++, notebooks, solvers, or simulations correct.</p></article>
-    <article class="card"><div class="num">05</div><h3>Cross-language canonical JSON</h3><p>PCS 0.5 hashes are deterministic in the Python implementation but are not yet specified as a language-neutral canonical JSON standard. That is a targeted next-version hardening item.</p></article>
+    <article class="card"><div class="num">05</div><h3>Cryptographic implementation proofs</h3><p>v0.6 uses a cross-language JCS profile and tested SHA-256/Ed25519 bindings, but SHA-256 is not proved against the standard and Ed25519 authenticity remains outside the Lean kernel.</p></article>
     <article class="card"><div class="num">06</div><h3>Reviewer judgment</h3><p>PCS can enforce an explicit acceptance policy, but the receiving scientist or organization remains responsible for deciding which evidence and assurance classes are sufficient.</p></article>
   </div>
 </section>
 
 <section class="section-tight">
   <div class="callout">
-    <div><h3>Inspect the evidence path yourself.</h3><p>Use the released browser verifier for the production-format v0.5.0 reference package, or inspect the technical architecture before discussing a design-partner workflow.</p></div>
-    <div class="actions" style="margin-top:0"><a class="button dark" href="demo.html">Open verifier</a><a class="button secondary" href="architecture.html">Architecture</a></div>
+    <div><h3>Inspect the current product path and its limits.</h3><p>Use the v0.6 MVP page for the producer/reviewer workflow and policy semantics; use the older browser verifier only as a v0.5 parity fixture.</p></div>
+    <div class="actions" style="margin-top:0"><a class="button dark" href="mvp.html">Open v0.6 MVP</a><a class="button secondary" href="architecture.html">Architecture</a></div>
   </div>
 </section>
 </main>
@@ -138,7 +140,7 @@
 <footer>
   <div class="footergrid">
     <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
-    <div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
     <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
   </div>
 </footer>
