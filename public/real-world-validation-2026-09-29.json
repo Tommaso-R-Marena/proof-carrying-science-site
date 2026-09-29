@@ -1,0 +1,30 @@
+{
+  "format": "pcs-public-real-world-validation-v1",
+  "date": "2026-09-29",
+  "execution_mode": "direct_checker_logic_execution",
+  "summary": {
+    "cases": 5,
+    "matched_expected": 5,
+    "unexpected": 0,
+    "expected_pass": 3,
+    "expected_fail": 2
+  },
+  "cases": [
+    {"id":"haber_bosch_balance","expected":"PASS","actual":"PASS","key_result":"N=2 and H=6 on both sides"},
+    {"id":"iris_clean_split","expected":"PASS","actual":"PASS","key_result":"120 train IDs, 30 test IDs, overlap=0"},
+    {"id":"iris_contaminated_split","expected":"FAIL","actual":"FAIL","key_result":"overlap_count=1, overlap_sample=[120]"},
+    {"id":"indometh_unit_equivalence","expected":"PASS","actual":"PASS","key_result":"mg/L == g/m^3 dimensionally; conversion=1"},
+    {"id":"indometh_subject1_single_exponential","expected":"FAIL","actual":"FAIL","key_result":"11/11 rows mismatch; max_abs_error=0.7831638387 mg/L; max_rel_error=1.0925283642"}
+  ],
+  "source_sha256": {
+    "Rdatasets_iris_csv": "398fadb8f48750d386d670e0b15c65944919682373bcaba59650c33eb5474362",
+    "Rdatasets_Indometh_csv": "aecce7eaa7fd2057ea5bf5a02943463ad5036354dd87a0808376ce502aaf0049"
+  },
+  "limitations": [
+    "not_a_full_attest_v06_verify_v06_bundle_round_trip",
+    "hosted_runner_unavailable",
+    "not_clinical_validation",
+    "not_general_chemistry_coverage",
+    "not_general_ml_leakage_detection"
+  ]
+}
