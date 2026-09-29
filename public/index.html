@@ -77,6 +77,19 @@
       <a class="button secondary" href="validation.html">Inspect results →</a>
     </section>
 
+    <section class="mvp-banner" aria-label="Adaptive replay scheduling">
+      <div>
+        <div class="kicker">Adaptive replay · experimental</div>
+        <h3>Learn which mandatory checks should run first, never which verdict to return.</h3>
+        <p>PCS v0.6 now supports deterministic baselines, shadow-mode contextual-bandit recommendations, cold-start protection, and privacy-preserving replay telemetry. Every required check still executes and scientific semantics remain unchanged.</p>
+        <div class="actions"><a class="button primary" href="mvp.html#scheduler-lab">Open scheduler lab</a><a class="button secondary" href="architecture.html">Architecture boundary</a></div>
+      </div>
+      <div class="mvp-cli">
+        <div class="codecommand"><code>--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl</code><button data-copy="--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl">Copy</button></div>
+        <div class="codecommand"><code>pcs scheduler-report-v06 history.jsonl -o scheduler-report.json</code><button data-copy="pcs scheduler-report-v06 history.jsonl -o scheduler-report.json">Copy</button></div>
+      </div>
+    </section>
+
     <section class="logo-strip" aria-label="Core assurance dimensions">
       <div><strong>Scientific replay</strong><span>Can supported checks be independently recomputed?</span></div>
       <div><strong>Package integrity</strong><span>Are the delivered bytes exactly the reviewed bytes?</span></div>
