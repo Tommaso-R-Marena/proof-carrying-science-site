@@ -177,6 +177,37 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: v0.6 MVP command contract drift")
         if mvp.get("reviewer_policy", {}).get("valid_separate_from_accepted") is not True:
             errors.append("status.json: reviewer-policy separation drift")
+        adaptive_scheduler = mvp.get("adaptive_scheduler", {})
+        if adaptive_scheduler.get("scheduler_format") != "pcs-replay-scheduler-v1":
+            errors.append("status.json: adaptive scheduler format drift")
+        if adaptive_scheduler.get("telemetry_format") != "pcs-replay-telemetry-v1":
+            errors.append("status.json: scheduler telemetry format drift")
+        if adaptive_scheduler.get("report_format") != "pcs-scheduler-report-v1":
+            errors.append("status.json: scheduler report format drift")
+        if adaptive_scheduler.get("default_strategy") != "manifest":
+            errors.append("status.json: scheduler default strategy drift")
+        if adaptive_scheduler.get("all_mandatory_checks_execute") is not True:
+            errors.append("status.json: scheduler mandatory-check invariant drift")
+        if adaptive_scheduler.get("scientific_verdict_uses_scheduler") is not False:
+            errors.append("status.json: scheduler entered scientific verdict boundary")
+        if adaptive_scheduler.get("persisted_evidence_ids_sha256_derived") is not True:
+            errors.append("status.json: scheduler telemetry privacy drift")
+        cold = adaptive_scheduler.get("cold_start_guard", {})
+        if cold.get("minimum_total_observations") != 20 or cold.get("minimum_per_current_check_type") != 3:
+            errors.append("status.json: scheduler cold-start threshold drift")
+        if cold.get("fallback_strategy") != "failure-per-second":
+            errors.append("status.json: scheduler fallback strategy drift")
+        runtime_scheduler = adaptive_scheduler.get("direct_runtime_check", {})
+        if runtime_scheduler.get("bandit_ready") is not True:
+            errors.append("status.json: scheduler runtime readiness evidence drift")
+        if runtime_scheduler.get("all_mandatory_checks_preserved") is not True:
+            errors.append("status.json: scheduler runtime mandatory-check evidence drift")
+        if runtime_scheduler.get("counterfactual_speedup_vs_manifest") != 11.0:
+            errors.append("status.json: scheduler direct-runtime estimate drift")
+        if runtime_scheduler.get("cold_start_fallback_verified") is not True:
+            errors.append("status.json: scheduler cold-start runtime evidence drift")
+        if adaptive_scheduler.get("production_workload_speedup_established") is not False:
+            errors.append("status.json: scheduler overclaims production speedup")
         reviewer_receipts = mvp.get("reviewer_receipts", {})
         if reviewer_receipts.get("signature_format") != "pcs-reviewer-receipt-ed25519-v1":
             errors.append("status.json: reviewer receipt signature format drift")
@@ -221,7 +252,7 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: legacy browser profile version drift")
         if browser.get("decision_vectors_passed") != 11 or browser.get("decision_vectors_total") != 11:
             errors.append("status.json: browser decision parity count drift")
-        if preview.get("target") != "full-v0.6-runtime-gate-external-design-partner-pilot-and-exact-v0.6-v2-formal-port" or preview.get("status") != "OPEN":
+        if preview.get("target") != "full-v0.6-runtime-gate-external-design-partner-pilot-real-scheduler-telemetry-and-exact-v0.6-v2-formal-port" or preview.get("status") != "OPEN":
             errors.append("status.json: next refinement status drift")
         if preview.get("released") is not False:
             errors.append("status.json: open refinement marked released")
@@ -281,6 +312,27 @@ if review_set_fixture.exists():
             errors.append("review-set.example.json: review count drift")
     except Exception as exc:
         errors.append(f"review-set.example.json: invalid fixture: {type(exc).__name__}: {exc}")
+
+mvp_page = ROOT / "mvp.html"
+mvp_js = ROOT / "mvp.js"
+if mvp_page.exists() and mvp_js.exists():
+    mvp_html = mvp_page.read_text(encoding="utf-8")
+    mvp_script = mvp_js.read_text(encoding="utf-8")
+    for scheduler_id in [
+        "schedulerHistoryMode",
+        "evaluateScheduler",
+        "schedulerReady",
+        "schedulerEffective",
+        "schedulerCoverage",
+        "schedulerTtf",
+        "schedulerTrace",
+    ]:
+        if f'id="{scheduler_id}"' not in mvp_html:
+            errors.append(f"mvp.html: missing adaptive scheduler lab id {scheduler_id}")
+    if "function evaluateSchedulerLab()" not in mvp_script:
+        errors.append("mvp.js: adaptive scheduler lab function missing")
+    if "scientific_verdict_uses_scheduler: false" not in mvp_script:
+        errors.append("mvp.js: scheduler verdict-boundary demonstration drift")
 
 reference_js = ROOT / "pcs-reference.js"
 if fixture_obj is not None and reference_js.exists():
