@@ -39,7 +39,7 @@
   <p class="section-intro">The browser is a transparent demonstration and parity surface. The Python checker remains the production executable trust boundary for package construction, ZIP safety, runtime provenance, and the complete supported predicate set.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Python</div><h3>Production checker</h3><p><code>pcs-python-kernel/0.5.0</code> builds and verifies evidence packages, replays supported checks, validates package namespaces, evaluates policy, and emits verification receipts.</p></article>
-    <article class="card"><div class="num">Browser</div><h3>Parity profile</h3><p>The static browser engine mirrors claim-decision semantics and the restricted PK/PD checks, verifies production-format package hashes/signatures, and currently passes all 11 frozen decision vectors.</p></article>
+    <article class="card"><div class="num">Browser</div><h3>Parity profile</h3><p>The static browser engine mirrors claim-decision semantics and restricted PK/PD checks, verifies production-format package hashes/signatures, accepts extracted production evidence directories, and currently passes all 11 frozen decision vectors.</p></article>
     <article class="card"><div class="num">Lean 4.28</div><h3>Machine-checked assurance semantics</h3><p>The formal layer encodes <code>Γ ; E ⊢ C @ L</code>. The decision and normalized-state soundness layer now builds cleanly under Lean 4.28.0 with no placeholders or PCS-specific axioms. Raw JSON/package parsing and executable replay remain a distinct refinement boundary.</p></article>
   </div>
 </section>
@@ -54,7 +54,7 @@
         <tr><td>Strict JSON / schema boundary</td><td>Yes</td><td>Format-specific structural checks</td><td>Starts after normalization</td></tr>
         <tr><td>Artifact SHA-256 binding</td><td>Yes</td><td>Yes</td><td>Assumed by normalized input</td></tr>
         <tr><td>Package manifest / Ed25519</td><td>Yes</td><td>Yes</td><td>Outside current theorem boundary</td></tr>
-        <tr><td>ZIP namespace / extraction safety</td><td>Yes</td><td>Not applicable to virtual web transport</td><td>Outside current theorem boundary</td></tr>
+        <tr><td>ZIP namespace / extraction safety</td><td>Yes</td><td>No; browser starts from selected/extracted files and applies path/file-size checks</td><td>Outside current theorem boundary</td></tr>
         <tr><td>PK/PD dimensional contract</td><td>Yes</td><td>Yes</td><td>Restricted unit contracts encoded</td></tr>
         <tr><td>PK/PD analytic replay</td><td>Yes</td><td>Yes</td><td>Real-analysis equation semantics not yet formalized</td></tr>
         <tr><td>CSV split disjointness</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
