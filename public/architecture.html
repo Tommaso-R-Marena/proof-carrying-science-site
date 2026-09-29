@@ -64,6 +64,7 @@
         <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Machine-checked normalized-state soundness</td></tr>
         <tr><td>Reviewer acceptance policy</td><td>Yes · <code>valid</code> and <code>accepted</code> separate; exact policy SHA-256 in receipt</td><td>Yes · local explanatory policy lab</td><td>Policy remains external to producer proof</td></tr>
         <tr><td>Reviewer-signed verification receipt</td><td>Yes · separate Ed25519 reviewer identity binds exact receipt bytes + bundle/policy/verdict commitments</td><td>Documentation only; browser never handles reviewer private keys</td><td>Outside current Lean theorem boundary</td></tr>
+        <tr><td>Adaptive replay ordering</td><td>Yes · deterministic baselines + contextual bandit; all mandatory checks execute; cold-start guard + shadow mode</td><td>Local explanatory scheduler lab only</td><td>Outside scientific/formal verdict semantics</td></tr>
         <tr><td>Multi-reviewer quorum approval</td><td>Yes · role thresholds, authorized reviewer fingerprints, role-specific policy hashes, duplicate-identity rejection, exact-subject grouping</td><td>Documentation/visualization only</td><td>Governance layer outside current Lean theorem boundary</td></tr>
       </tbody>
     </table>
@@ -83,11 +84,11 @@
 <section class="section">
   <div class="kicker">Benchmark + adaptive scheduling</div>
   <h2>Learn where failures occur without learning the verdict.</h2>
-  <p class="section-intro">The new <code>benchmark-v06</code> registry pins source-derived fixtures, predeclares expected PASS/FAIL outcomes, runs the same replay kernel, and emits a deterministic report. Historical benchmark cost/failure data could later feed a contextual bandit or RL scheduler to order expensive checks for faster failure discovery.</p>
+  <p class="section-intro">The <code>benchmark-v06</code> registry pins public-data fixtures and expected outcomes. Separately, the v0.6 replay path now implements deterministic scheduling baselines plus a contextual LinUCB-style bandit trained from observational replay telemetry. Its only authority is check order: all mandatory evidence still runs and scientific verdicts remain deterministic.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Deterministic</div><h3>Benchmark verdicts</h3><p>PASS/FAIL remains a pure function of exact fixture bytes, checker semantics, and explicit expectations.</p></article>
-    <article class="card"><div class="num">Optional RL</div><h3>Scheduling only</h3><p>A learned component may choose which mandatory check runs first. It may not skip evidence, alter outcomes, or change reviewer policy.</p></article>
-    <article class="card"><div class="num">5 / 5</div><h3>Initial public cases</h3><p>The first registry matched all five expected outcomes, including both negative controls.</p></article>
+    <article class="card"><div class="num">LinUCB</div><h3>Implemented scheduling only</h3><p>The learned component can rank mandatory checks by an upper-confidence estimate of failure probability per millisecond. Shadow mode and cold-start fallback prevent sparse history from silently controlling execution.</p></article>
+    <article class="card"><div class="num">Guarded</div><h3>Promotion requires evidence</h3><p>Bandit ordering requires ≥20 historical observations overall and ≥3 for every current check type. Production speedup remains unclaimed until real workflow telemetry supports it.</p></article>
   </div>
   <div class="actions"><a class="button secondary" href="validation.html">See validation cases</a></div>
 </section>
