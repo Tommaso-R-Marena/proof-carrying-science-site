@@ -163,7 +163,16 @@
       "browser_r_literal_workflow_preview": true,
       "r_workflow_confidence": 0.88,
       "r_workflow_auto_selected_by_default": false,
-      "human_readable_discovery_review": true
+      "human_readable_discovery_review": true,
+      "workflow_replay_stage": true,
+      "workflow_replay_from_exact_delivered_source_bytes": true,
+      "workflow_replay_before_scientific_replay": true,
+      "exact_ast_dependency_mode": "exact_resolved_set",
+      "partial_dependency_mode": "claimed_subset",
+      "claimed_edges_must_be_rediscovered": true,
+      "signed_source_path_validated_as_canonical_relative": true,
+      "forged_resigned_workflow_claim_adversarial_test_committed": true,
+      "forged_resigned_workflow_claim_runtime_executed": false
     }
   },
   "formal": {
