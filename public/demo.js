@@ -9,23 +9,73 @@ function short(x){return x?x.slice(0,12)+"…"+x.slice(-8):"—";}
 function errfmt(x){return Number.isFinite(x)?Number(x).toExponential(2):"—";}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
 function setStatus(cardId,valueId,value){
-  const state=value==="PASS"||value==="VERIFIED"?"pass":value==="NOT_APPLIED"?"na":value==="UNSUPPORTED"?"warn":"fail";
+  const state=value==="PASS"||value==="VERIFIED"?"pass":value==="NOT_APPLIED"?"na":value==="UNSUPPORTED"||value==="UNSIGNED"?"warn":"fail";
   const card=$(cardId);card.classList.remove("pass","fail","warn","na");card.classList.add(state);$(valueId).textContent=value;
+}
+function bytesToB64(bytes){
+  let out="";const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk)out+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  return btoa(out);
+}
+function textToEntry(text){return {content:text,encoding:"utf8"};}
+function replaceFileText(entry,replacer){
+  const text=Engine.fileText(entry);
+  return textToEntry(replacer(text));
 }
 function activePackage(){
   const p=clone(pkg);
   if($("tamper").checked){
-    const cert=JSON.parse(p.files["certificate.json"].content);
+    const cert=JSON.parse(Engine.fileText(p.files["certificate.json"]));
     const pred=cert.artifacts.find(a=>a.id==="pk_predictions");
     if(pred&&p.files[pred.path]){
-      p.files[pred.path].content=p.files[pred.path].content.replace(
-        "4,6.70320046035639,77.0199479018078",
-        "4,7.70320046035639,77.0199479018078"
+      p.files[pred.path]=replaceFileText(p.files[pred.path],text=>
+        text.replace("4,6.70320046035639,77.0199479018078","4,7.70320046035639,77.0199479018078")
       );
     }
   }
   return p;
 }
+
+const MAX_FILES=1000,MAX_TOTAL=100*1024*1024,MAX_SINGLE=50*1024*1024;
+const WINDOWS_RESERVED=new Set(["con","prn","aux","nul",..."com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9".split(" ")]);
+function validatePortablePath(path,seen){
+  if(!path||path.startsWith("/")||path.includes("\\")||path.includes("\0"))throw new Error("unsafe package path: "+path);
+  const parts=path.split("/");
+  if(parts.some(x=>!x||x==="."||x===".."))throw new Error("non-canonical package path: "+path);
+  const portable=[];
+  for(const part of parts){
+    const n=part.normalize("NFC");
+    if(n!==part)throw new Error("package path is not NFC-normalized: "+path);
+    if(/[<>:"|?*]/.test(part)||/[ .]$/.test(part))throw new Error("non-portable package filename: "+part);
+    const stem=part.split(".",1)[0].toLowerCase();
+    if(WINDOWS_RESERVED.has(stem))throw new Error("Windows-reserved package filename: "+part);
+    portable.push(n.toLowerCase());
+  }
+  const key=portable.join("/");
+  if(seen.has(key))throw new Error("cross-platform package path collision: "+path);
+  seen.add(key);
+}
+async function directoryPackage(fileList){
+  const selected=[...fileList];
+  if(!selected.length)throw new Error("no directory files selected");
+  if(selected.length>MAX_FILES)throw new Error(`too many files: ${selected.length} > ${MAX_FILES}`);
+  const rels=selected.map(f=>f.webkitRelativePath||f.name);
+  const roots=rels.map(p=>p.split("/")[0]);
+  const commonRoot=roots.every(x=>x===roots[0])&&rels.every(p=>p.includes("/"))?roots[0]:null;
+  const files={},seen=new Set();let total=0;
+  for(let i=0;i<selected.length;i++){
+    const f=selected[i];
+    if(f.size>MAX_SINGLE)throw new Error("package member too large: "+rels[i]);
+    total+=f.size;if(total>MAX_TOTAL)throw new Error("package exceeds 100 MB browser-profile limit");
+    let rel=rels[i];
+    if(commonRoot)rel=rel.slice(commonRoot.length+1);
+    validatePortablePath(rel,seen);
+    const bytes=new Uint8Array(await f.arrayBuffer());
+    files[rel]={content:bytesToB64(bytes),encoding:"base64"};
+  }
+  return {transport_format:"pcs-browser-directory-package-v1",files};
+}
+
 function strictPolicyFor(cert,fp){
   return {
     policy_version:"pcs-acceptance-policy-v1",
@@ -83,9 +133,9 @@ async function verify(){
   $("verify").disabled=true;
   try{
     const p=activePackage();
-    const cert=JSON.parse(p.files["certificate.json"].content);
-    const sigrec=JSON.parse(p.files["package_signature.json"].content);
-    const policy=$("strictPolicy").checked?strictPolicyFor(cert,sigrec.public_key_fingerprint):null;
+    const cert=JSON.parse(Engine.fileText(p.files["certificate.json"]));
+    const sigrec=p.files["package_signature.json"]?JSON.parse(Engine.fileText(p.files["package_signature.json"])):null;
+    const policy=$("strictPolicy").checked?strictPolicyFor(cert,sigrec?.public_key_fingerprint||null):null;
     const result=await Engine.verifyVirtualPackage(p,policy);
     const parity=renderParity();
 
@@ -148,6 +198,18 @@ document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>
 }));
 $("verify").onclick=verify;$("loadReference").onclick=reset;$("downloadReceipt").onclick=downloadReceipt;
 $("tamper").onchange=verify;$("strictPolicy").onchange=verify;
+$("directoryInput").addEventListener("change",async ev=>{
+  try{
+    pkg=await directoryPackage(ev.target.files);
+    sourceName="Extracted PCS directory";
+    $("sourceLabel").textContent=sourceName;
+    $("tamper").checked=false;
+    await verify();
+  }catch(e){
+    $("overallStatus").textContent="Could not read directory";
+    $("overallDetail").textContent=String(e);
+  }
+});
 $("fileInput").addEventListener("change",async ev=>{
   const file=ev.target.files?.[0];if(!file)return;
   try{
