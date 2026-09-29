@@ -16,6 +16,7 @@ The site intentionally has no application backend. Its interactive functionality
 - **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.
 - **v0.6 MVP product surface** — documents the complete `attest-v06 → deterministic self-verified ZIP → verify-v06-bundle → reviewer policy → receipt` loop, the five initial executable checks, and the exact formal boundary.
 - **Local v0.6 policy lab** — demonstrates the production semantics that PCS package validity and reviewer acceptance are different axes, computes SHA-256 over the exact displayed reviewer-policy bytes, and produces an illustrative receipt without network calls.
+- **Real-world validation evidence** — publishes the first 5-case public-data validation set: Haber–Bosch chemistry, clean and contaminated UCI Iris splits, Indometh unit equivalence, and an IV Indometh single-exponential falsification case. All 5 matched predeclared expectations, including 2 expected failures.
 - **Legacy v0.5 browser parity verifier** — validates the frozen PCS 0.5.0 reference package or an extracted v0.5 evidence directory, hashes exact selected file bytes, verifies Ed25519 package signatures when present, replays restricted one-compartment PK + direct Emax PD evidence, reassesses claims, and runs 11 frozen decision-parity vectors. It is intentionally labeled as a parity/transparency fixture rather than the current v0.6 product verifier.
 - **PK/PD model lab** — generates the restricted model and prediction trajectory, replays it through the browser engine, and exports production-compatible `manifest.json`, `pk_model.json`, and `predictions.csv` for the Python CLI.
 - **Pilot intake builder** — validates claim/assumption IDs, computes a canonical SHA-256 semantic commitment, and exports both `pilot_intake.json` and `pilot_intake.lock.json`.
@@ -34,6 +35,7 @@ Only `public/` is deployable.
 public/
   index.html
   mvp.html
+  validation.html
   trust.html
   status.json
   .well-known/security.txt
@@ -56,6 +58,7 @@ public/
   logo-mark.svg
   pcs-v05-reference-package.json
   reviewer-policy.example.json
+  real-world-validation-2026-09-29.json
   _headers
   robots.txt
 ```
@@ -76,7 +79,7 @@ Run the static safety/integrity audit:
 python scripts/check_site.py
 ```
 
-The checker validates internal assets, the real contact address, local-only JavaScript posture, security headers, logo metadata, the v0.6 MVP/status/policy surface, the Trust Center/shared navigation, and the SHA-256/fingerprint consistency of the legacy 0.5.0 browser fixture.
+The checker validates internal assets, the real contact address, local-only JavaScript posture, security headers, logo metadata, the v0.6 MVP/status/policy surface, the 5-case real-world validation evidence, the Trust Center/shared navigation, and the SHA-256/fingerprint consistency of the legacy 0.5.0 browser fixture.
 
 ## Cloudflare deployment
 
