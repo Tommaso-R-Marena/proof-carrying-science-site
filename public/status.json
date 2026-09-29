@@ -78,6 +78,49 @@
         "role_specific_policy_hash_enforced": true,
         "scope": "direct cryptographic quorum scenario; full repository gate still not executed"
       }
+    },
+    "adaptive_scheduler": {
+      "scheduler_format": "pcs-replay-scheduler-v1",
+      "telemetry_format": "pcs-replay-telemetry-v1",
+      "report_format": "pcs-scheduler-report-v1",
+      "strategies": [
+        "manifest",
+        "cheapest-first",
+        "failure-rate-first",
+        "failure-per-second",
+        "bandit"
+      ],
+      "default_strategy": "manifest",
+      "shadow_bandit_supported": true,
+      "all_mandatory_checks_execute": true,
+      "scientific_verdict_uses_scheduler": false,
+      "persisted_evidence_ids_sha256_derived": true,
+      "cold_start_guard": {
+        "minimum_total_observations": 20,
+        "minimum_per_current_check_type": 3,
+        "fallback_strategy": "failure-per-second"
+      },
+      "direct_runtime_check": {
+        "scope": "synthetic scheduler-algorithm execution; not scientific accuracy or production speedup evidence",
+        "history_observations": 20,
+        "bandit_ready": true,
+        "manifest_order": [
+          "E1",
+          "E2",
+          "E3"
+        ],
+        "bandit_order": [
+          "E2",
+          "E1",
+          "E3"
+        ],
+        "all_mandatory_checks_preserved": true,
+        "manifest_time_to_first_failure_ms": 11.495,
+        "bandit_time_to_first_failure_ms": 1.045,
+        "counterfactual_speedup_vs_manifest": 11,
+        "cold_start_fallback_verified": true
+      },
+      "production_workload_speedup_established": false
     }
   },
   "formal": {
@@ -100,7 +143,7 @@
     "third_party_runtime_javascript": false
   },
   "next_refinement": {
-    "target": "full-v0.6-runtime-gate-external-design-partner-pilot-and-exact-v0.6-v2-formal-port",
+    "target": "full-v0.6-runtime-gate-external-design-partner-pilot-real-scheduler-telemetry-and-exact-v0.6-v2-formal-port",
     "status": "OPEN",
     "released": false
   },
