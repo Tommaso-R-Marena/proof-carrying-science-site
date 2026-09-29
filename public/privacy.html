@@ -3,34 +3,28 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacy · Proof-Carrying Science</title>
-<meta name="description" content="Privacy information for the Proof-Carrying Science launch preview.">
-<link rel="stylesheet" href="styles.css">
+<meta name="description" content="Privacy and data-handling posture for the Proof-Carrying Science launch preview.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="topbar"><div class="shell"><span>Static launch preview · No first-party analytics</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
-<nav>
-  <a class="brand" href="index.html"><span class="mark">PCS</span>Proof-Carrying Science</a>
-  <div class="navlinks"><a href="demo.html">Demo</a><a href="intake.html">Pilot intake</a><a class="button secondary" href="index.html">Overview</a></div>
-</nav>
+<nav><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div></nav>
 <main>
-<section class="hero" style="padding-bottom:34px">
-  <div class="eyebrow">Privacy</div>
-  <h1 style="font-size:clamp(42px,6vw,68px)">A static site by design.</h1>
-  <p class="lede">This launch preview is intentionally built without an application backend, account system, advertising stack, or first-party analytics.</p>
+<section class="pagehead"><div class="kicker">Privacy</div><h1>Local by design.</h1><p>The current PCS website is static. It has no account system, application backend, database, advertising stack, first-party analytics, or scientific-data upload endpoint.</p></section>
+<section class="grid3">
+  <article class="card"><div class="num">01</div><h3>Verifier stays in-browser</h3><p>The signed-reference verifier uses Web Crypto and JavaScript in your browser. Uploaded compatible demo JSON is read locally and is not transmitted by this site.</p></article>
+  <article class="card"><div class="num">02</div><h3>Intake stays in-browser</h3><p>The pilot-intake builder validates, hashes, freezes, and downloads your intake locally. The page does not submit form contents to PCS.</p></article>
+  <article class="card"><div class="num">03</div><h3>Hosting metadata</h3><p>Cloudflare may process ordinary network-request metadata necessary to serve the site. PCS has not added a first-party analytics or tracking SDK.</p></article>
 </section>
-<section class="section" style="padding-top:20px">
-  <div class="grid3">
-    <div class="card"><div class="num">01</div><h3>Pilot intake stays local</h3><p>The intake builder constructs JSON in your browser. This static site does not send the form contents to Proof-Carrying Science.</p></div>
-    <div class="card"><div class="num">02</div><h3>No scientific uploads</h3><p>Do not place confidential, patient, proprietary, or regulated scientific data into this website. Real pilots use a separately agreed data-handling process.</p></div>
-    <div class="card"><div class="num">03</div><h3>Hosting metadata</h3><p>The hosting provider may process ordinary network-request metadata needed to serve the site. No PCS-controlled analytics or tracking scripts are currently configured.</p></div>
-  </div>
-  <div class="section">
-    <h2>Scope</h2>
-    <p class="disclaimer">The browser demo is explanatory only. It does not upload or verify real customer evidence, perform production Ed25519 verification, or replace the PCS executable checker. This notice should be reviewed before a public commercial launch or before adding analytics, forms, authentication, or server-side services.</p>
-  </div>
+<section class="section">
+  <div class="kicker">Do not upload sensitive science here</div>
+  <h2>This website is not the customer data plane.</h2>
+  <p class="section-intro">Do not place confidential scientific artifacts, direct identifiers, PHI, signing keys, regulated records, or proprietary datasets into this website. A real design-partner pilot uses a separately agreed data-handling process appropriate to the workflow.</p>
+  <div class="callout" style="margin-top:28px"><div><h3>Questions about a pilot or data boundary?</h3><p>Contact Tommaso directly before sending sensitive materials.</p></div><a class="button dark" href="mailto:marenatommaso@gmail.com?subject=PCS%20Data%20Handling%20Question">marenatommaso@gmail.com</a></div>
 </section>
 </main>
-<footer>Proof-Carrying Science · Launch preview · <a href="index.html">Home</a></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="index.html">Home</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 </body>
 </html>
