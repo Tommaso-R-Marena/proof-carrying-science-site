@@ -50,9 +50,19 @@
       </div>
     </div>
 
+    <div class="field">
+      <label for="attackScenario"><span>Threat-lab scenario</span><span>Local copy only</span></label>
+      <select id="attackScenario" class="selectinput">
+        <option value="none">No attack</option>
+        <option value="artifact_substitution">Artifact substitution</option>
+        <option value="status_escalation">Recorded claim-status escalation</option>
+        <option value="signature_stripping">Package-signature stripping</option>
+      </select>
+      <div id="attackHint" class="validation">Baseline: verify the signed reference package without mutation.</div>
+    </div>
     <div class="toggle">
-      <div><strong>Tamper with prediction artifact</strong><small>Changes the delivered CSV without updating its bound manifest hash.</small></div>
-      <input id="tamper" type="checkbox">
+      <div><strong>Require authenticated package</strong><small>If enabled, an absent or invalid package signature fails reviewer policy.</small></div>
+      <input id="requireSignature" type="checkbox" checked>
     </div>
     <div class="toggle">
       <div><strong>Require formal claim status</strong><small>Overrides reviewer policy to reject merely computational support.</small></div>
