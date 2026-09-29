@@ -204,3 +204,64 @@ $("copyPolicy").addEventListener("click", async () => {
 
 reset();
 evaluate();
+
+
+function evaluateSchedulerLab() {
+  const mode = $("schedulerHistoryMode").value;
+  const ready = mode === "ready";
+  const manifestOrder = ["E1 unit", "E2 reaction", "E3 unit"];
+  const banditOrder = ["E2 reaction", "E1 unit", "E3 unit"];
+  const effective = ready ? "bandit" : "failure-per-second";
+  const actualOrder = ready ? banditOrder : manifestOrder;
+  const timeToFailure = ready ? 1.045 : 11.495;
+
+  setStatus(
+    "schedulerReadyCard",
+    "schedulerReady",
+    ready ? "pass" : "warn",
+    ready ? "READY" : "COLD START"
+  );
+  setStatus(
+    "schedulerEffectiveCard",
+    "schedulerEffective",
+    ready ? "pass" : "warn",
+    effective
+  );
+  setStatus(
+    "schedulerCoverageCard",
+    "schedulerCoverage",
+    "pass",
+    "3 / 3 RUN"
+  );
+  setStatus(
+    "schedulerTtfCard",
+    "schedulerTtf",
+    ready ? "pass" : "na",
+    timeToFailure.toFixed(3) + " ms"
+  );
+
+  $("schedulerTrace").textContent = JSON.stringify({
+    requested_strategy: "bandit",
+    effective_strategy: effective,
+    bandit_readiness: {
+      ready,
+      total_observations: ready ? 20 : 0,
+      minimum_total_observations: 20,
+      per_type_observations: ready
+        ? { unit_compatible: 10, reaction_balance: 10 }
+        : { unit_compatible: 0, reaction_balance: 0 },
+      minimum_per_type_observations: 3
+    },
+    manifest_order: manifestOrder,
+    bandit_recommendation: ready ? banditOrder : null,
+    execution_order: actualOrder,
+    all_mandatory_checks_execute: true,
+    scientific_verdict_uses_scheduler: false,
+    synthetic_counterfactual_time_to_first_failure_ms: timeToFailure,
+    synthetic_speedup_vs_manifest: ready ? 11.0 : 1.0
+  }, null, 2);
+}
+
+$("evaluateScheduler").addEventListener("click", evaluateSchedulerLab);
+$("schedulerHistoryMode").addEventListener("change", evaluateSchedulerLab);
+evaluateSchedulerLab();
