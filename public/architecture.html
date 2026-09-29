@@ -63,6 +63,7 @@
         <tr><td>Unit compatibility</td><td>Yes</td><td>Unit parser used by PK/PD profile</td><td>Restricted unit theorem layer</td></tr>
         <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Machine-checked normalized-state soundness</td></tr>
         <tr><td>Reviewer acceptance policy</td><td>Yes · <code>valid</code> and <code>accepted</code> separate; exact policy SHA-256 in receipt</td><td>Yes · local explanatory policy lab</td><td>Policy remains external to producer proof</td></tr>
+        <tr><td>Reviewer-signed verification receipt</td><td>Yes · separate Ed25519 reviewer identity binds exact receipt bytes + bundle/policy/verdict commitments</td><td>Documentation only; browser never handles reviewer private keys</td><td>Outside current Lean theorem boundary</td></tr>
       </tbody>
     </table>
   </div>
@@ -88,6 +89,16 @@
     <article class="card"><div class="num">5 / 5</div><h3>Initial public cases</h3><p>The first registry matched all five expected outcomes, including both negative controls.</p></article>
   </div>
   <div class="actions"><a class="button secondary" href="validation.html">See validation cases</a></div>
+</section>
+
+<section class="section">
+  <div class="kicker">Audit architecture</div>
+  <h2>Three distinct trust decisions.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">1</div><h3>Producer authenticity</h3><p>Who issued the scientific package? Bound by the producer Ed25519 signature.</p></article>
+    <article class="card"><div class="num">2</div><h3>PCS verification + policy</h3><p>Did the package replay correctly, and did it satisfy this reviewer's explicit acceptance criteria?</p></article>
+    <article class="card"><div class="num">3</div><h3>Reviewer provenance</h3><p>Who performed and attested to that exact review? Bound by a separate reviewer-signed receipt.</p></article>
+  </div>
 </section>
 
 <section class="dark-section">
