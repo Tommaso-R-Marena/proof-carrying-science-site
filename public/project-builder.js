@@ -8,8 +8,11 @@ const KEY_SUFFIXES=[".pem",".key",".p12",".pfx"];
 const PRIVATE_MARKERS=["-----BEGIN PRIVATE KEY-----","-----BEGIN ENCRYPTED PRIVATE KEY-----","-----BEGIN OPENSSH PRIVATE KEY-----","-----BEGIN RSA PRIVATE KEY-----","-----BEGIN EC PRIVATE KEY-----"];
 const KEY_PRIORITY=["subject_id","patient_id","sample_id","participant_id","record_id","id","rownames","subject","patient","sample"];
 const WORKFLOW_FORMAT="pcs-static-workflow-map-v1";
+const ENVIRONMENT_FORMAT="pcs-environment-capture-v1";
+const ENVIRONMENT_PLAN_FORMAT="pcs-environment-replay-plan-v1";
 let sourceFiles=[],inventory=[],recommendations=[],skipped=[],selected=new Set();
 let workflowInferences=[],workflowUnresolved=[],selectedWorkflow=new Set();
+let environmentCapture=null;
 let lastDraft=null,lastReport=null;
 
 function safeName(path){return path.split("/").filter(Boolean).slice(1).join("/")||path.split("/").pop()}
@@ -99,6 +102,55 @@ async function detectBrowserWorkflow(){
   const cut=Number($("workflowConfidence")?.value||.95);selectedWorkflow=new Set(workflowInferences.filter(w=>w.confidence>=cut).map(w=>w.id));
 }
 
+async function detectBrowserEnvironment(){
+  const byPath=new Map(inventory.map(x=>[x.path,x])),sources=[],pyDeps=[],rDeps=[],condaDeps=[],pyConstraints=[],rConstraints=[],containers=[],unresolved=[];
+  const addSource=(item,kind)=>{if(item&&!sources.some(x=>x.artifact_id===item.artifact_id))sources.push({artifact_id:item.artifact_id,path:item.path,kind,sha256:item.sha256,size:item.size})};
+  const envNames=new Set(["pyproject.toml","poetry.lock","uv.lock","Pipfile","Pipfile.lock","requirements.txt","requirements-dev.txt","requirements.lock","constraints.txt",".python-version","runtime.txt","environment.yml","environment.yaml","conda-lock.yml","conda-lock.yaml","renv.lock","DESCRIPTION","Dockerfile","Containerfile","flake.nix","flake.lock"]);
+  for(const item of inventory){
+    const name=item.path.split("/").pop(),low=name.toLowerCase();
+    if(!envNames.has(name)&&!(low.startsWith("requirements")&&(low.endsWith(".txt")||low.endsWith(".in"))))continue;
+    const text=item.size<=MAX_INSPECT?await item.file.text():"";
+    if(!text){unresolved.push({type:"environment_source_unreadable_or_too_large",source_path:item.path});continue}
+    if(name==="pyproject.toml"){
+      addSource(item,"pyproject");
+      const py=text.match(/requires-python\s*=\s*["']([^"']+)["']/);if(py)pyConstraints.push({source_path:item.path,value:py[1]});
+      const depBlock=text.match(/dependencies\s*=\s*\[([\s\S]*?)\]/m);if(depBlock){for(const m of depBlock[1].matchAll(/["']([^"']+)["']/g)){const raw=m[1],nm=(raw.match(/^\s*([A-Za-z0-9_.-]+)/)||[])[1]||null;pyDeps.push({ecosystem:"python",name:nm,raw,source_path:item.path,source_kind:"pyproject_browser_preview",exact_pin:/^[A-Za-z0-9_.-]+\s*==/.test(raw),hash_pinned:false,version:raw.includes("==")?raw.split("==")[1].split(";")[0].trim():null})}}
+    }else if(low.startsWith("requirements")){
+      addSource(item,name.endsWith(".lock")?"requirements_lock":"requirements");
+      for(const rawLine of text.split(/\r?\n/)){const raw=rawLine.trim();if(!raw||raw.startsWith("#"))continue;const nm=(raw.match(/^([A-Za-z0-9_.-]+)/)||[])[1]||null;pyDeps.push({ecosystem:"python",name:nm,raw,source_path:item.path,source_kind:"requirements",exact_pin:/^[A-Za-z0-9_.-]+\s*==/.test(raw),hash_pinned:raw.includes("--hash=sha256:"),version:raw.includes("==")?raw.split("==")[1].split(/[ ;]/)[0]:null})}
+    }else if(name===".python-version"||name==="runtime.txt"){
+      addSource(item,"python_version");const m=text.match(/(?:python[- ]?)?([0-9]+(?:\.[0-9]+){1,2})/i);if(m)pyConstraints.push({source_path:item.path,value:m[1]});
+    }else if(name==="uv.lock"||name==="poetry.lock"||name==="Pipfile.lock"||name==="conda-lock.yml"||name==="conda-lock.yaml"||name==="flake.lock"){
+      const kind=name==="uv.lock"?"uv_lock":name==="poetry.lock"?"poetry_lock":name==="Pipfile.lock"?"pipfile_lock":name.startsWith("conda-lock")?"conda_lock":"nix_flake_lock";addSource(item,kind);
+    }else if(name==="Pipfile"){addSource(item,"pipfile")
+    }else if(name==="renv.lock"){
+      addSource(item,"renv_lock");try{const o=JSON.parse(text);if(o.R?.Version)rConstraints.push({source_path:item.path,value:o.R.Version});for(const [nm,p] of Object.entries(o.Packages||{})){rDeps.push({ecosystem:"r",name:nm,raw:JSON.stringify({Version:p.Version,Source:p.Source,Repository:p.Repository}),source_path:item.path,source_kind:"renv_lock",exact_pin:!!p.Version,hash_pinned:false,version:p.Version||null})}}catch{unresolved.push({type:"renv_parse_error",source_path:item.path})}
+    }else if(name==="DESCRIPTION"){
+      addSource(item,"r_description");const rm=text.match(/(?:^|\n)Depends:\s*[^\n]*R\s*\(([^\)]+)\)/);if(rm)rConstraints.push({source_path:item.path,value:rm[1].trim()});
+    }else if(name==="environment.yml"||name==="environment.yaml"){
+      addSource(item,"conda_environment");for(const raw of text.split(/\r?\n/)){const m=raw.trim().match(/^-\s*([A-Za-z0-9_.-]+)(?:=([^\s]+))?/);if(!m)continue;condaDeps.push({ecosystem:"conda",name:m[1],raw:m[0].slice(1).trim(),source_path:item.path,source_kind:"conda_environment",exact_pin:!!m[2],hash_pinned:false,version:m[2]||null});if(m[1].toLowerCase()==="python"&&m[2])pyConstraints.push({source_path:item.path,value:m[2]})}
+    }else if(name==="Dockerfile"||name==="Containerfile"){
+      addSource(item,"containerfile");const stages=[];for(const raw of text.split(/\r?\n/)){const m=raw.trim().match(/^FROM\s+(?:--platform=\S+\s+)?(\S+)/i);if(m){const ref=m[1],dynamic=ref.includes("$"),digest=ref.includes("@sha256:")&&!dynamic;stages.push({reference:ref,digest_pinned:digest,tag:!digest&&ref.split("/").pop().includes(":")?ref.split(":").pop():null,dynamic});if(dynamic)unresolved.push({type:"dynamic_container_base",source_path:item.path,reference:ref})}}containers.push({source_path:item.path,stages,all_base_images_digest_pinned:stages.length>0&&stages.every(x=>x.digest_pinned),package_install_commands:[]});
+    }else if(name==="flake.nix"){addSource(item,"nix_flake")}
+  }
+  const kinds=new Set(sources.map(x=>x.kind));let hermeticity="environment_unspecified";
+  if(containers.length&&containers.every(x=>x.all_base_images_digest_pinned)){hermeticity=[...kinds].some(x=>["uv_lock","poetry_lock","pipfile_lock","conda_lock","renv_lock","nix_flake_lock"].includes(x))?"strongly_pinned":"container_base_pinned"}
+  else if(kinds.has("conda_lock")||kinds.has("nix_flake_lock"))hermeticity="strongly_pinned";
+  else if(["uv_lock","poetry_lock","pipfile_lock","renv_lock"].some(x=>kinds.has(x)))hermeticity="locked_application_dependencies";
+  else {const req=pyDeps.filter(x=>x.source_kind==="requirements");if(req.length&&req.every(x=>x.exact_pin&&x.hash_pinned))hermeticity="hash_pinned_dependencies";else if(pyDeps.length||rDeps.length||condaDeps.length)hermeticity="declared_dependencies"}
+  const steps=[],tools=[];const first=(kind)=>sources.filter(x=>x.kind===kind).map(x=>x.path).sort()[0];
+  if(containers.length){tools.push("docker-or-compatible-oci-builder");for(const c of containers)steps.push({kind:"container_build",source_path:c.source_path,command_template:`docker build -f ${c.source_path} .`,network_required:true,executes_project_build_instructions:true})}
+  else if(kinds.has("nix_flake_lock")&&kinds.has("nix_flake")){tools.push("nix");steps.push({kind:"nix_flake",source_path:"flake.nix",command_template:"nix develop --offline",network_required:false,executes_project_build_instructions:true})}
+  else if(kinds.has("conda_lock")){tools.push("conda-lock-compatible-installer");const p=first("conda_lock");steps.push({kind:"conda_lock",source_path:p,command_template:`conda-lock install ${p}`,network_required:true,executes_project_build_instructions:false})}
+  else if(kinds.has("uv_lock")&&kinds.has("pyproject")){tools.push("uv");steps.push({kind:"uv_sync",source_path:"uv.lock",command_template:"uv sync --frozen",network_required:true,executes_project_build_instructions:true})}
+  else if(kinds.has("poetry_lock")&&kinds.has("pyproject")){tools.push("poetry");steps.push({kind:"poetry_install",source_path:"poetry.lock",command_template:"poetry install --sync",network_required:true,executes_project_build_instructions:true})}
+  else {const req=first("requirements_lock")||first("requirements");if(req){tools.push("python");steps.push({kind:"pip_install",source_path:req,command_template:`python -m pip install ${hermeticity==="hash_pinned_dependencies"?"--require-hashes ":""}-r ${req}`,network_required:true,executes_project_build_instructions:true})}}
+  if(kinds.has("renv_lock")&&!containers.length){tools.push("R+renv");steps.push({kind:"renv_restore",source_path:first("renv_lock"),command_template:"R -e 'renv::restore(prompt = FALSE)'",network_required:true,executes_project_build_instructions:true})}
+  if(kinds.has("conda_environment")&&!containers.length&&!kinds.has("conda_lock")){tools.push("conda-or-mamba");const p=first("conda_environment");steps.push({kind:"conda_environment",source_path:p,command_template:`conda env create -f ${p}`,network_required:true,executes_project_build_instructions:false})}
+  environmentCapture={format:ENVIRONMENT_FORMAT,static_only:true,network_accessed:false,user_code_executed:false,source_artifact_ids:sources.map(x=>x.artifact_id).sort(),sources:sources.sort((a,b)=>a.path.localeCompare(b.path)),python:{interpreter_constraints:pyConstraints,dependencies:pyDeps},r:{interpreter_constraints:rConstraints,dependencies:rDeps},conda:{dependencies:condaDeps},containers,hermeticity,replay_plan:{format:ENVIRONMENT_PLAN_FORMAT,hermeticity,required_tools:[...new Set(tools)].sort(),steps,automatic_execution_permitted_by_pcs:false,reason:"Browser preview only. Authoritative CLI capture is regenerated before signing and review."},unresolved,summary:{source_files:sources.length,dependency_records:pyDeps.length+rDeps.length+condaDeps.length,python_dependency_records:pyDeps.length,r_dependency_records:rDeps.length,conda_dependency_records:condaDeps.length,container_specs:containers.length,unresolved_items:unresolved.length}};
+  environmentCapture.semantic_sha256=await sha256Text(stableStringify(environmentCapture));
+}
+
 async function loadSyntheticExample(){
   const model={
     model_type:"one_compartment_iv_bolus",
@@ -141,7 +193,7 @@ async function inspectFiles(files){
     const hash=await sha256Bytes(await file.arrayBuffer());
     inventory.push({artifact_id:artifactId(rel,used),path:rel,size:file.size,sha256:hash,media_type:mediaType(rel),role:roleGuess(rel),file});
   }
-  await detect();await detectBrowserWorkflow();autoSelect();await render();
+  await detect();await detectBrowserWorkflow();await detectBrowserEnvironment();autoSelect();await render();
 }
 async function detect(){
   recommendations=[];
@@ -169,11 +221,12 @@ async function buildDraft(){
   const claims=dedupe(recs.map(r=>r.claim)),checks=dedupe(recs.map(r=>r.check)),assumptions=dedupe(recs.map(r=>r.assumption));
   for(const a of assumptions)a.scope=claims.filter(c=>(c.assumptions||[]).includes(a.id)).map(c=>c.id);
   for(const w of wfs)for(const aid of [...w.node.inputs,...w.node.outputs])ids.add(aid);
+  if(environmentCapture)for(const aid of environmentCapture.source_artifact_ids||[])ids.add(aid);
   const staticNodes=wfs.map(w=>structuredClone(w.node)),staticOutputs=new Set(staticNodes.flatMap(n=>n.outputs||[]));
   const semanticNodes=dedupe(recs.map(r=>r.workflow_node)).map(n=>{n.outputs=(n.outputs||[]).filter(a=>!staticOutputs.has(a));return n}).filter(n=>n.outputs.length);
   const nodes=dedupe([...staticNodes,...semanticNodes]);
   const invCommit=await sha256Text(stableStringify(inventory.map(x=>({path:x.path,sha256:x.sha256,size:x.size}))));
-  return{subject:$("subject").value.trim()||"scientific-project",assumptions,claims,artifacts:[...ids].sort().map(id=>artifactEntry(byId.get(id))).filter(Boolean),checks,workflow:{nodes},pcs_intake:{format:"pcs-manifest-draft-v1",status:"draft",requires_confirmation:true,project_root_name:(sourceFiles[0]?.webkitRelativePath||"scientific-project").split("/")[0],minimum_selected_confidence:Number($("confidence").value),selected_recommendations:recs.map(r=>r.id),recommendation_count:recommendations.length,selected_recommendation_count:recs.length,workflow_discovery_format:WORKFLOW_FORMAT,minimum_workflow_confidence:Number($("workflowConfidence")?.value||.95),selected_workflow_inferences:wfs.map(w=>w.id),workflow_inference_count:workflowInferences.length,selected_workflow_inference_count:wfs.length,inventory_commitment_sha256:invCommit}}
+  return{subject:$("subject").value.trim()||"scientific-project",assumptions,claims,artifacts:[...ids].sort().map(id=>artifactEntry(byId.get(id))).filter(Boolean),checks,workflow:{nodes},environment:environmentCapture?{...structuredClone(environmentCapture),human_confirmed:false,confirmation_scope:"Browser preview only; authoritative CLI confirmation re-derives and binds environment metadata."}:undefined,pcs_intake:{format:"pcs-manifest-draft-v1",status:"draft",requires_confirmation:true,project_root_name:(sourceFiles[0]?.webkitRelativePath||"scientific-project").split("/")[0],minimum_selected_confidence:Number($("confidence").value),selected_recommendations:recs.map(r=>r.id),recommendation_count:recommendations.length,selected_recommendation_count:recs.length,workflow_discovery_format:WORKFLOW_FORMAT,minimum_workflow_confidence:Number($("workflowConfidence")?.value||.95),selected_workflow_inferences:wfs.map(w=>w.id),workflow_inference_count:workflowInferences.length,selected_workflow_inference_count:wfs.length,environment_capture_format:environmentCapture?.format||null,environment_source_artifacts:environmentCapture?.source_artifact_ids||[],environment_hermeticity:environmentCapture?.hermeticity||"environment_unspecified",inventory_commitment_sha256:invCommit}}
 }
 function workflowMapForReport(){
   const producer=new Map();for(const w of workflowInferences)for(const aid of w.node.outputs)producer.set(aid,w.node.id);
@@ -184,7 +237,7 @@ async function rebuild(){
   if(!sourceFiles.length)return;
   lastDraft=await buildDraft();
   const unsupported=inventory.filter(x=>!lastDraft.artifacts.some(a=>a.id===x.artifact_id)).map(x=>x.path),workflowMap=workflowMapForReport();
-  lastReport={format:"pcs-project-discovery-v1",project_root_name:lastDraft.pcs_intake.project_root_name,subject:lastDraft.subject,inventory_commitment_sha256:lastDraft.pcs_intake.inventory_commitment_sha256,inventory:inventory.map(({file,...x})=>x),skipped,recommendations,selected_recommendations:lastDraft.pcs_intake.selected_recommendations,workflow_map:workflowMap,selected_workflow_inferences:lastDraft.pcs_intake.selected_workflow_inferences,unresolved:[...workflowUnresolved,...(lastDraft.claims.length?[]:[{type:"no-supported-checks-detected",message:"No currently supported PCS check was detected."}]),...(unsupported.length?[{type:"unselected-artifacts",message:"Some discovered files are not referenced by a selected check or workflow step.",paths:unsupported.slice(0,100),truncated:unsupported.length>100}]:[])],summary:{files_inventoried:inventory.length,files_skipped:skipped.length,bytes_inventoried:inventory.reduce((a,x)=>a+x.size,0),recommendations:recommendations.length,selected_recommendations:selected.size,claims_drafted:lastDraft.claims.length,checks_drafted:lastDraft.checks.length,artifacts_selected:lastDraft.artifacts.length,workflow_sources_analyzed:workflowMap.summary.source_files_considered,workflow_nodes_drafted:lastDraft.workflow.nodes.length,workflow_edges_inferred:workflowMap.summary.workflow_edges,workflow_unresolved_items:workflowUnresolved.length},manifest_draft:lastDraft};
+  lastReport={format:"pcs-project-discovery-v1",project_root_name:lastDraft.pcs_intake.project_root_name,subject:lastDraft.subject,inventory_commitment_sha256:lastDraft.pcs_intake.inventory_commitment_sha256,inventory:inventory.map(({file,...x})=>x),skipped,recommendations,selected_recommendations:lastDraft.pcs_intake.selected_recommendations,workflow_map:workflowMap,selected_workflow_inferences:lastDraft.pcs_intake.selected_workflow_inferences,environment_capture:environmentCapture,unresolved:[...workflowUnresolved,...(environmentCapture?.unresolved||[]),...(lastDraft.claims.length?[]:[{type:"no-supported-checks-detected",message:"No currently supported PCS check was detected."}]),...(unsupported.length?[{type:"unselected-artifacts",message:"Some discovered files are not referenced by a selected check or workflow step.",paths:unsupported.slice(0,100),truncated:unsupported.length>100}]:[])],summary:{files_inventoried:inventory.length,files_skipped:skipped.length,bytes_inventoried:inventory.reduce((a,x)=>a+x.size,0),recommendations:recommendations.length,selected_recommendations:selected.size,claims_drafted:lastDraft.claims.length,checks_drafted:lastDraft.checks.length,artifacts_selected:lastDraft.artifacts.length,workflow_sources_analyzed:workflowMap.summary.source_files_considered,workflow_nodes_drafted:lastDraft.workflow.nodes.length,workflow_edges_inferred:workflowMap.summary.workflow_edges,workflow_unresolved_items:workflowUnresolved.length,environment_sources:environmentCapture?.summary?.source_files||0,environment_dependencies:environmentCapture?.summary?.dependency_records||0,environment_unresolved_items:environmentCapture?.summary?.unresolved_items||0,environment_hermeticity:environmentCapture?.hermeticity||"environment_unspecified"},manifest_draft:lastDraft};
   $("manifestPreview").textContent=JSON.stringify(lastDraft,null,2);$("downloadDraft").disabled=false;$("downloadDiscovery").disabled=false;$("downloadReview").disabled=false;
   $("draftValidation").className="validation "+(lastDraft.claims.length?"good":"bad");$("draftValidation").textContent=lastDraft.claims.length?"Reviewable draft. Workflow edges are static inferences and the draft still requires explicit CLI confirmation.":"No supported scientific claims selected. Workflow mapping alone does not authorize attestation.";
   $("filesCount").textContent=inventory.length;$("recommendationCount").textContent=recommendations.length;$("selectedCount").textContent=selected.size;$("artifactCount").textContent=lastDraft.artifacts.length;$("workflowCount").textContent=lastDraft.workflow.nodes.length;$("workflowIssueCount").textContent=workflowUnresolved.length;
@@ -213,6 +266,20 @@ async function render(){
   $("workflowInferences").querySelectorAll("[data-wf]").forEach(x=>x.addEventListener("change",async e=>{e.target.checked?selectedWorkflow.add(e.target.dataset.wf):selectedWorkflow.delete(e.target.dataset.wf);await render()}));
   $("workflowIssues").textContent=workflowUnresolved.length?`${workflowUnresolved.length} unresolved workflow item(s). Use the Python CLI AST analyzer for authoritative review.`:"No unresolved browser workflow references.";
   renderWorkflowGraph();
+  const env=environmentCapture;
+  if(env){
+    const py=env.python.interpreter_constraints.map(x=>x.value).join(", ")||"not declared";
+    const rv=env.r.interpreter_constraints.map(x=>x.value).join(", ")||"not declared";
+    $("environmentSummary").innerHTML=`<div><strong>Hermeticity</strong><span>${esc(env.hermeticity)}</span></div><div><strong>Python</strong><span>${esc(py)} · ${env.python.dependencies.length} dependency record(s)</span></div><div><strong>R</strong><span>${esc(rv)} · ${env.r.dependencies.length} dependency record(s)</span></div><div><strong>Container specs</strong><span>${env.containers.length} · ${env.containers.every(x=>x.all_base_images_digest_pinned)&&env.containers.length?"digest-pinned":"not fully digest-pinned"}</span></div><div><strong>Reconstruction</strong><span>${env.replay_plan.steps.map(x=>x.kind).join(", ")||"no strategy detected"}</span></div>`;
+    $("environmentIssues").textContent=env.unresolved.length?`${env.unresolved.length} environment issue(s) require review.`:"No unresolved environment items in browser preview.";
+    $("environmentHermeticity").textContent=env.hermeticity;
+    $("downloadEnvironmentPlan").disabled=false;
+  }else{
+    $("environmentSummary").innerHTML='<div><strong>No environment capture yet</strong><span>Choose a project folder to begin.</span></div>';
+    $("environmentIssues").textContent="";
+    $("environmentHermeticity").textContent="unspecified";
+    $("downloadEnvironmentPlan").disabled=true;
+  }
   $("inventory").innerHTML=inventory.map(x=>`<div class="inventory-row"><div><strong>${esc(x.path)}</strong><small>${esc(x.role)} · ${x.size.toLocaleString()} bytes</small></div><code>${x.sha256.slice(0,16)}…</code></div>`).join("");
   $("skipped").textContent=skipped.length?`Excluded ${skipped.length} file(s): ${skipped.map(x=>x.path+" ("+x.reason+")").join(", ")}`:"";
   $("rescan").disabled=!sourceFiles.length;$("clearProject").disabled=!sourceFiles.length;$("toggleInventory").disabled=!inventory.length;
@@ -225,9 +292,10 @@ $("confidence").oninput=async()=>{$("confidenceValue").textContent=Number($("con
 $("workflowConfidence").oninput=async()=>{$("workflowConfidenceValue").textContent=Number($("workflowConfidence").value).toFixed(2);autoSelect();await render()};
 $("subject").oninput=()=>rebuild();
 $("rescan").onclick=async()=>{await detect();await detectBrowserWorkflow();autoSelect();await render()};
-$("clearProject").onclick=()=>{sourceFiles=[];inventory=[];recommendations=[];skipped=[];selected.clear();workflowInferences=[];workflowUnresolved=[];selectedWorkflow.clear();lastDraft=lastReport=null;$("projectFiles").value="";$("recommendations").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowInferences").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowIssues").textContent="";$("workflowGraph").innerHTML='<p class="tiny">No workflow graph yet.</p>';$("inventory").innerHTML="";$("manifestPreview").textContent="{}";$("draftValidation").className="validation";$("draftValidation").textContent="No project selected.";["filesCount","recommendationCount","selectedCount","artifactCount","workflowCount","workflowIssueCount"].forEach(id=>$(id).textContent="0");$("downloadDraft").disabled=true;$("downloadDiscovery").disabled=true;$("downloadReview").disabled=true;$("mapperState").textContent="NO PROJECT"};
+$("clearProject").onclick=()=>{sourceFiles=[];inventory=[];recommendations=[];skipped=[];selected.clear();workflowInferences=[];workflowUnresolved=[];selectedWorkflow.clear();environmentCapture=null;lastDraft=lastReport=null;$("projectFiles").value="";$("recommendations").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowInferences").innerHTML='<p class="tiny">Choose a project folder to begin.</p>';$("workflowIssues").textContent="";$("workflowGraph").innerHTML='<p class="tiny">No workflow graph yet.</p>';$("inventory").innerHTML="";$("manifestPreview").textContent="{}";$("draftValidation").className="validation";$("draftValidation").textContent="No project selected.";["filesCount","recommendationCount","selectedCount","artifactCount","workflowCount","workflowIssueCount"].forEach(id=>$(id).textContent="0");$("downloadDraft").disabled=true;$("downloadDiscovery").disabled=true;$("downloadReview").disabled=true;$("downloadEnvironmentPlan").disabled=true;$("environmentHermeticity").textContent="unspecified";$("mapperState").textContent="NO PROJECT"};
 $("toggleInventory").onclick=()=>{const box=$("inventory"),show=box.hidden;box.hidden=!show;$("toggleInventory").textContent=show?"Hide":"Show"};
 $("downloadDraft").onclick=()=>lastDraft&&downloadJson("pcs-manifest.draft.json",lastDraft);
 $("downloadDiscovery").onclick=()=>lastReport&&downloadJson("pcs-discovery.json",lastReport);
 $("downloadReview").onclick=()=>lastReport&&downloadText("pcs-discovery-review.md",discoveryReviewMarkdown(),"text/markdown");
+$("downloadEnvironmentPlan").onclick=()=>environmentCapture&&downloadJson("pcs-environment-plan.json",environmentCapture.replay_plan);
 $("copyConfirm").onclick=async()=>{try{await navigator.clipboard.writeText($("confirmCommand").textContent);$("copyConfirm").textContent="Copied";setTimeout(()=>$("copyConfirm").textContent="Copy",1200)}catch{$("copyConfirm").textContent="Select + copy"}};
