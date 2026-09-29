@@ -13,7 +13,7 @@
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-  <div class="navlinks">
+  <div class="navlinks"><a href="project-builder.html">Project Mapper</a>
     <a href="mvp.html">v0.6 MVP</a>
     <a href="validation.html">Validation</a>
     <a href="index.html#product">Product</a>
@@ -52,6 +52,12 @@
         <dt>Review provenance</dt><dd>Optional reviewer Ed25519 signature binds the exact receipt bytes and review commitments</dd>
         <dt>Runtime status</dt><dd>Implementation and regression suite committed; latest hosted runs received no runner and executed zero steps</dd>
       </dl>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Guided discovery boundary</h3><span class="chip pending">Human confirmation required</span></header>
+      <p><code>discover-v06</code> and the local Project Mapper are recommendation layers. They inventory files and propose currently supported checks, but the generated manifest carries <code>pcs_intake.status = "draft"</code> and cannot enter attestation.</p>
+      <div class="boundary"><strong>Explicit confirmation</strong><span><code>confirm-v06</code> re-hashes every selected artifact. <code>attest-v06</code> checks the same snapshot again, so onboarding automation cannot silently authorize its own claims or sign changed bytes.</span></div>
     </article>
 
     <article class="trustitem">
@@ -177,7 +183,7 @@
 <footer>
   <div class="footergrid">
     <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
-    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
     <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
   </div>
 </footer>
