@@ -172,7 +172,28 @@
       "claimed_edges_must_be_rediscovered": true,
       "signed_source_path_validated_as_canonical_relative": true,
       "forged_resigned_workflow_claim_adversarial_test_committed": true,
-      "forged_resigned_workflow_claim_runtime_executed": false
+      "forged_resigned_workflow_claim_runtime_executed": false,
+      "environment_capture": {
+        "capture_format": "pcs-environment-capture-v1",
+        "binding_format": "pcs-environment-binding-v1",
+        "contract_namespace": "pcs-manifest-environment-contract-v1",
+        "replay_plan_format": "pcs-environment-replay-plan-v1",
+        "captures_python_dependencies": true,
+        "captures_r_dependencies": true,
+        "captures_conda_dependencies": true,
+        "captures_lockfiles": true,
+        "captures_interpreter_constraints": true,
+        "captures_container_specs": true,
+        "captures_nix_specs": true,
+        "container_digest_pinning_distinguished": true,
+        "human_confirmation_required": true,
+        "reviewer_rederivation_stage": "environment_replay",
+        "replay_precedes_workflow_replay": true,
+        "automatic_environment_execution_during_verification": false,
+        "reconstruction_plan_available": true,
+        "review_before_run_script_available": true,
+        "browser_preview_local_only": true
+      }
     }
   },
   "formal": {
