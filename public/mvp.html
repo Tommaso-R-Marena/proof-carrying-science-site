@@ -131,6 +131,29 @@
   </div>
 </section>
 
+<section class="section">
+  <div class="kicker">Multi-reviewer quorum</div>
+  <h2>Require multiple independent approvals without merging reviewer authority.</h2>
+  <p class="section-intro">PCS can aggregate separately signed review receipts under a role-aware quorum policy. A 2-of-3 rule can require at least one computational reviewer and one domain reviewer while allowing a statistical reviewer to dissent without changing the underlying PCS verdict.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Computational</div><h3>Accepted</h3><p>Valid signed receipt, authorized fingerprint, and the computational-review policy SHA-256 required by the quorum policy.</p></article>
+    <article class="card"><div class="num">Domain</div><h3>Accepted</h3><p>Independently verified the same exact bundle/certificate/index subject under its own domain-review policy.</p></article>
+    <article class="card"><div class="num">Statistical</div><h3>Dissent allowed</h3><p>A non-accepting or unavailable third reviewer does not count, but cannot rewrite the other reviewers' receipts or the PCS scientific record.</p></article>
+  </div>
+  <div class="statusbar" style="margin-top:22px" aria-label="Example reviewer quorum">
+    <div><span>Total threshold</span><strong>2 of 3</strong></div>
+    <div><span>Required roles</span><strong>1 computational + 1 domain</strong></div>
+    <div><span>Cross-bundle mixing</span><strong>Rejected</strong></div>
+    <div><span>Duplicate identity</span><strong>Cannot count twice</strong></div>
+  </div>
+  <div class="panel" style="margin-top:22px">
+    <h2>Verify the quorum</h2>
+    <div class="codecommand"><code>pcs verify-quorum-v06 --quorum-policy review-quorum-policy.json --review-set review-set.json -o quorum-result.json</code><button data-copy="pcs verify-quorum-v06 --quorum-policy review-quorum-policy.json --review-set review-set.json -o quorum-result.json">Copy</button></div>
+    <p>The quorum engine groups accepted signed reviews by exact bundle SHA-256, certificate semantic/integrity hashes, and normalized-index semantic hash. Reviews from different studies can never be combined to satisfy the threshold.</p>
+    <div class="actions"><a class="button secondary" href="review-quorum-policy.example.json" download>Download quorum policy</a><a class="button secondary" href="review-set.example.json" download>Download review-set</a></div>
+  </div>
+</section>
+
 <section class="section" id="policy-lab">
   <div class="kicker">Interactive policy lab</div>
   <h2>Change the science or the review rule. Watch different layers respond.</h2>
