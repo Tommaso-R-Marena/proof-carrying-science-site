@@ -1,70 +1,90 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PCS Pilot Intake Builder</title>
-<meta name="description" content="Build a pre-result PCS pilot claim and assumption inventory locally in your browser.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pilot Intake Builder · Proof-Carrying Science</title>
+<meta name="description" content="Define and cryptographically commit to scientific claims and assumptions before reviewing results. Runs entirely in your browser.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-<style>
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.textinput,.selectinput,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:#fff;color:var(--ink);font:inherit}
-textarea{min-height:92px;resize:vertical}
-.rowcard{border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0;background:#fff}
-.rowcard header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
-.rowcard h3{margin:0;font-size:15px}
-.smallbutton{border:1px solid var(--line);background:white;border-radius:9px;padding:7px 10px;cursor:pointer}
-@media(max-width:700px){.formgrid{grid-template-columns:1fr}}
-</style>
 </head>
 <body>
+<div class="topbar"><div class="shell"><span>Local-only intake builder · Nothing is submitted to a server</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
-  <a class="brand" href="index.html"><span class="mark">PCS</span>Proof-Carrying Science</a>
-  <div class="navlinks"><a href="demo.html">Demo</a><a class="button secondary" href="index.html">Overview</a></div>
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks"><a href="index.html#product">Product</a><a href="demo.html">Live verifier</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div>
 </nav>
+
 <main>
-<section class="hero" style="padding-bottom:26px">
-  <div class="eyebrow">Design-partner tool</div>
-  <h1 style="font-size:clamp(42px,6vw,68px)">Freeze the question before seeing the answer.</h1>
-  <p class="lede">Define the workflow boundary, requested claims, assurance classes, and assumptions before attestation. This builder runs entirely in your browser and exports a PCS pilot-intake JSON file; it does not upload your entries.</p>
+<section class="pagehead">
+  <div class="kicker">Pre-result commitment</div>
+  <h1>Freeze the question before seeing the answer.</h1>
+  <p>Define the workflow boundary, requested claims, assurance classes, and assumptions before attestation. The browser validates the intake, computes a real SHA-256 semantic commitment over canonical JSON, and can export both the intake and a PCS-compatible lock file. Nothing leaves your browser.</p>
 </section>
 
-<div class="demo-layout">
-  <section class="panel">
+<section class="demo-shell">
+  <aside class="panel">
     <h2>Pilot scope</h2>
-    <div class="field"><label>Pilot ID</label><input id="pilotId" class="textinput" value="PCS-PILOT-001"></div>
-    <div class="field"><label>Workflow summary</label><textarea id="workflow">Bounded computational workflow supplied for PCS assurance review.</textarea></div>
-    <div class="field"><label>Data classification</label>
+    <div class="field"><label for="pilotId">Pilot ID</label><input id="pilotId" class="textinput" value="PCS-PILOT-001"></div>
+    <div class="field"><label for="workflow">Workflow summary</label><textarea id="workflow">Bounded computational workflow supplied for independent PCS assurance review.</textarea></div>
+    <div class="field"><label for="classification">Data classification</label>
       <select id="classification" class="selectinput">
         <option>synthetic</option><option>public</option><option selected>non_sensitive</option><option>deidentified</option><option>proprietary_sensitive</option>
       </select>
     </div>
-    <div class="field"><label>Notes</label><textarea id="notes" placeholder="Scope restrictions, reviewer context, or explicit non-goals."></textarea></div>
+    <div class="field"><label for="notes">Notes / explicit non-goals</label><textarea id="notes">No biological, clinical, regulatory, or model-adequacy claim is implied unless separately stated and supported.</textarea></div>
     <div class="actions">
-      <button class="button primary" id="download">Download intake JSON</button>
-      <button class="button secondary" id="loadPkpd">Load PK/PD example</button>
+      <button class="button secondary" id="loadPkpd">Load PK/PD reference</button>
+      <button class="button secondary" id="clearAll">Start blank</button>
     </div>
-    <p class="demo-note">For sensitive or regulated work, this form is only a local drafting aid. Use your approved data-handling process for actual pilot artifacts.</p>
-  </section>
+    <p class="tiny">For sensitive, proprietary, regulated, or patient-related work, use only an approved data-handling process. This page is a drafting and commitment tool, not a file-transfer service.</p>
+  </aside>
 
-  <section>
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;gap:14px;align-items:center"><div><h2>Claims</h2><p>What exactly must the evidence support?</p></div><button class="button secondary" id="addClaim">+ Claim</button></div>
+  <div>
+    <section class="panel">
+      <div style="display:flex;justify-content:space-between;gap:14px;align-items:center">
+        <div><h2>Claims</h2><p>State exactly what you want the evidence package to support.</p></div>
+        <button class="button secondary" id="addClaim">+ Claim</button>
+      </div>
       <div id="claims"></div>
-    </div>
-    <div class="panel" style="margin-top:18px">
-      <div style="display:flex;justify-content:space-between;gap:14px;align-items:center"><div><h2>Assumptions</h2><p>What conditions remain explicit rather than silently treated as facts?</p></div><button class="button secondary" id="addAssumption">+ Assumption</button></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div style="display:flex;justify-content:space-between;gap:14px;align-items:center">
+        <div><h2>Assumptions</h2><p>Keep conditions explicit instead of letting them become invisible premises.</p></div>
+        <button class="button secondary" id="addAssumption">+ Assumption</button>
+      </div>
       <div id="assumptions"></div>
-    </div>
-    <div class="panel" style="margin-top:18px">
-      <h2>Preview</h2>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Commitment</h2>
+      <div id="validation" class="validation">Validating…</div>
+      <div class="field"><label>Semantic SHA-256</label><div class="hashbox" id="semanticHash">—</div></div>
+      <div class="actions">
+        <button class="button primary" id="downloadIntake" disabled>Download intake JSON</button>
+        <button class="button dark" id="downloadLock" disabled>Freeze + download lock</button>
+      </div>
+      <p class="tiny">The lock contains the intake, a UTC freeze timestamp, and the semantic hash. In the production PCS workflow, attestation rejects claim/assumption changes that do not match the frozen commitment.</p>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Canonical intake preview</h2>
       <pre id="preview"></pre>
-      <p class="demo-note">Next CLI step: <code>pcs freeze-intake pilot_intake.json -o pilot_intake.lock.json</code>. The lock semantic hash is then bound into the signed attestation package.</p>
-    </div>
-  </section>
-</div>
+    </section>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="callout">
+    <div><h3>Ready to discuss a pilot?</h3><p>Download your intake and attach it to an email, or simply describe the workflow and the review problem.</p></div>
+    <a class="button dark" href="mailto:marenatommaso@gmail.com?subject=PCS%20Design%20Partner%20Inquiry">Email marenatommaso@gmail.com</a>
+  </div>
+</section>
 </main>
-<footer>Proof-Carrying Science · Local browser intake builder · Entries are not transmitted by this static page. · <a href="privacy.html">Privacy</a></footer>
+
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="index.html">Home</a><a href="demo.html">Live verifier</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 <script src="intake.js"></script>
 </body>
