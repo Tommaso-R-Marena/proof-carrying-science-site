@@ -14,7 +14,8 @@ The site intentionally has no application backend. Its interactive functionality
 - **Machine-readable trust state** — `public/status.json` mirrors the released checker/proof/parity/preview state and is cross-checked against the shipped browser fixture by the deployment gate.
 - **Security contact** — `public/.well-known/security.txt` provides a standard disclosure/contact path.
 - **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.
-- **v0.6 MVP product surface** — documents the complete `attest-v06 → deterministic self-verified ZIP → verify-v06-bundle → reviewer policy → receipt` loop, the five initial executable checks, and the exact formal boundary.
+- **Local Project Mapper** — lets a scientist choose an existing project folder, computes local SHA-256 artifact snapshots, detects supported PK/PD/split/reaction/unit patterns, allows recommendation selection, and exports a non-attestable `pcs-manifest.draft.json` plus `pcs-discovery.json` without uploading project files.
+- **v0.6 MVP product surface** — documents the complete `discover-v06 → confirm-v06 → attest-v06 → deterministic self-verified ZIP → verify-v06-bundle → reviewer policy → receipt` loop, the five initial executable checks, and the exact formal boundary.
 - **Local v0.6 policy lab** — demonstrates the production semantics that PCS package validity and reviewer acceptance are different axes, computes SHA-256 over the exact displayed reviewer-policy bytes, and produces an illustrative receipt without network calls.
 - **Adaptive replay scheduler** — documents and demonstrates deterministic ordering baselines plus the experimental contextual-bandit scheduler, shadow mode, telemetry privacy, cold-start thresholds, and the invariant that all mandatory checks execute and scientific verdicts ignore scheduler outputs.
 - **Multi-reviewer quorum governance** — documents and publishes a role-aware 2-of-3 review policy: authorized reviewer fingerprints, role-specific policy SHA-256 requirements, duplicate-identity rejection, and exact-subject grouping so reviews over different bundles cannot combine.
@@ -36,6 +37,7 @@ Only `public/` is deployable.
 ```text
 public/
   index.html
+  project-builder.html
   mvp.html
   validation.html
   trust.html
@@ -50,6 +52,7 @@ public/
   404.html
   styles.css
   site.js
+  project-builder.js
   mvp.js
   demo.js
   model-lab.js
@@ -110,6 +113,7 @@ npx wrangler deploy
 - no third-party JavaScript;
 - no scientific-data submission endpoint;
 - verifier package JSON and extracted-directory selections remain local to the browser;
+- Project Mapper file selections, hashes, and manifest drafts remain local to the browser;
 - pilot-intake entries remain local to the browser;
 - CSP and browser-hardening headers live in `public/_headers`;
 - search indexing remains intentionally disabled during alpha.
