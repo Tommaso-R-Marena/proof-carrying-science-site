@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Real-world Validation · Proof-Carrying Science</title>
+<meta name="description" content="PCS v0.6 real-world validation results across public pharmacokinetics, biology/ML, chemistry, units, and adversarial leakage cases.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Real-world validation · 5 / 5 expected outcomes matched · 2026-09-29</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="demo.html">v0.5 verifier</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="pagehead validation-head">
+  <div class="kicker">Executed public-data validation</div>
+  <h1>Five real-world cases. Two were supposed to fail.</h1>
+  <p>PCS should not earn credibility by turning every benchmark green. The first public-data validation set contains three expected positive controls and two expected negative controls. All five matched expectation.</p>
+  <div class="statusbar" aria-label="Real-world validation summary">
+    <div><span>Cases</span><strong>5</strong></div>
+    <div><span>Matched expectation</span><strong>5 / 5</strong></div>
+    <div><span>Expected FAIL cases</span><strong>2 / 2 correctly rejected</strong></div>
+    <div><span>Unexpected outcomes</span><strong>0</strong></div>
+  </div>
+  <div class="actions">
+    <a class="button primary" href="real-world-validation-2026-09-29.json">Download result JSON</a>
+    <a class="button secondary" href="mvp.html">Back to v0.6 MVP</a>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="validation-callout">
+    <div>
+      <div class="kicker">Execution boundary</div>
+      <h2>Genuine checker-level execution, not a hosted CI claim.</h2>
+      <p>The public datasets were loaded and the current PCS check logic was executed in an isolated Python session. This is real computation over the cited data. It was not a full <code>attest-v06 → verify-v06-bundle</code> repository run because GitHub continued to allocate no runner (<code>runner_id=0</code>, zero steps executed).</p>
+    </div>
+    <div class="validation-kpis">
+      <div><span>Source datasets</span><strong>2 public datasets + 1 documented industrial reaction</strong></div>
+      <div><span>Checks exercised</span><strong>Stoichiometry · split leakage · units · PK replay</strong></div>
+      <div><span>Benchmark feature</span><strong><code>pcs benchmark-v06</code></strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="kicker">Case-by-case results</div>
+  <h2>Positive controls and falsification controls.</h2>
+  <div class="validation-table-wrap">
+    <table class="validation-table">
+      <thead>
+        <tr><th>Case</th><th>Public source</th><th>PCS check</th><th>Expected</th><th>Observed</th><th>Key result</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Haber–Bosch ammonia synthesis</strong></td>
+          <td>Chemistry LibreTexts, “The Haber Process”</td>
+          <td><code>reaction_balance</code></td>
+          <td><span class="result-pill pass">PASS</span></td>
+          <td><span class="result-pill pass">PASS</span></td>
+          <td>N=2 and H=6 on each side; atom delta empty.</td>
+        </tr>
+        <tr>
+          <td><strong>UCI Iris clean split</strong></td>
+          <td>Fisher Iris, UCI DOI 10.24432/C56C76, CC BY 4.0</td>
+          <td><code>csv_disjoint</code></td>
+          <td><span class="result-pill pass">PASS</span></td>
+          <td><span class="result-pill pass">PASS</span></td>
+          <td>120 train IDs, 30 test IDs, zero overlap.</td>
+        </tr>
+        <tr>
+          <td><strong>UCI Iris contaminated split</strong></td>
+          <td>Adversarial mutation of the same public Iris data</td>
+          <td><code>csv_disjoint</code></td>
+          <td><span class="result-pill fail">FAIL</span></td>
+          <td><span class="result-pill fail">FAIL</span></td>
+          <td>Exactly one leaked ID detected: <code>120</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Indometh concentration units</strong></td>
+          <td>CRAN <code>pkr</code> / R Indometh examples</td>
+          <td><code>unit_compatible</code></td>
+          <td><span class="result-pill pass">PASS</span></td>
+          <td><span class="result-pill pass">PASS</span></td>
+          <td><code>mg/L</code> and <code>g/m^3</code> reduce to the same SI scale; conversion = 1.</td>
+        </tr>
+        <tr>
+          <td><strong>IV Indometh subject 1 vs exact single exponential</strong></td>
+          <td>R <code>datasets::Indometh</code>; Kwan et al. 1976</td>
+          <td>restricted one-compartment replay</td>
+          <td><span class="result-pill fail">FAIL</span></td>
+          <td><span class="result-pill fail">FAIL</span></td>
+          <td>11/11 rows mismatch; max absolute error 0.7832 mg/L; max relative error 1.0925.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section split">
+  <div>
+    <div class="kicker">Strongest negative result</div>
+    <h2>Real measured PK data did not get a free PASS.</h2>
+    <p class="section-intro">The public Indometh dataset contains intravenous indomethacin plasma concentrations over time. Subject 1 was fit with the best log-linear single-exponential curve and those measured concentrations were then intentionally presented to the PCS replay predicate as though they were exact deterministic model output.</p>
+    <div class="metricgrid validation-metrics">
+      <div class="metric"><span>Subject 1 observations</span><strong>11</strong></div>
+      <div class="metric"><span>Mismatching rows</span><strong>11</strong></div>
+      <div class="metric"><span>Max abs. error</span><strong>0.7832 mg/L</strong></div>
+      <div class="metric"><span>Max rel. error</span><strong>1.0925</strong></div>
+    </div>
+    <div class="boundary"><strong>Interpretation</strong><span>This is a correct rejection. The current PK adapter verifies a declared narrow analytic computation. It is not an empirical model-fitting or clinical-validity engine. Treating real observations as exact deterministic output should fail.</span></div>
+  </div>
+  <div class="panel">
+    <h2>Fitted replay model used for the falsification test</h2>
+    <div class="trace">
+      <dt>Model</dt><dd>One-compartment IV-bolus single exponential</dd>
+      <dt>Fitted C0</dt><dd>0.7959236857 mg/L</dd>
+      <dt>Fitted kel</dt><dd>0.4186240014 / h</dd>
+      <dt>PCS relative tolerance</dt><dd>1e-9</dd>
+      <dt>PCS absolute tolerance</dt><dd>1e-12</dd>
+    </div>
+    <p class="tiny">Dose was normalized to 1 mg and V/CL chosen to represent the fitted C0 and elimination constant. This does not assert that those fitted parameters are the actual clinical dose, volume, or clearance.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Provenance</div>
+  <h2>Exact public-data commitments.</h2>
+  <p class="section-intro">The validation registry pins derived fixture bytes independently and records the SHA-256 of the exact source CSVs used in the session.</p>
+  <div class="grid2" style="margin-top:28px">
+    <article class="card">
+      <div class="num">Rdatasets Iris CSV</div>
+      <h3>Source SHA-256</h3>
+      <div class="hashbox">398fadb8f48750d386d670e0b15c65944919682373bcaba59650c33eb5474362</div>
+      <p style="margin-top:12px">Source reference: UCI Iris dataset; DOI 10.24432/C56C76. Source URL recorded in the core benchmark registry.</p>
+    </article>
+    <article class="card">
+      <div class="num">Rdatasets Indometh CSV</div>
+      <h3>Source SHA-256</h3>
+      <div class="hashbox">aecce7eaa7fd2057ea5bf5a02943463ad5036354dd87a0808376ce502aaf0049</div>
+      <p style="margin-top:12px">Source reference: R <code>datasets::Indometh</code>; originally Kwan et al. (1976).</p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">New validation feature</div>
+  <h2>Real-world cases are now a repeatable product gate.</h2>
+  <p class="section-intro">The core repository now contains a provenance-bound registry and deterministic runner rather than a one-off notebook.</p>
+  <div class="codecommand"><code>pcs benchmark-v06 validation/real_world/registry.json -o real-world-validation.json</code><button data-copy="pcs benchmark-v06 validation/real_world/registry.json -o real-world-validation.json">Copy</button></div>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Hash first</div><h3>Fixture drift is fatal</h3><p>Every local benchmark fixture is SHA-256 verified before the scientific check executes.</p></article>
+    <article class="card"><div class="num">Predeclare</div><h3>Expected failures count</h3><p>A benchmark succeeds only when observed outcomes match the expectations declared before execution; negative controls are first-class.</p></article>
+    <article class="card"><div class="num">Deterministic</div><h3>Report is hash bound</h3><p>The registry hash, case outputs, checker identity, and a domain-separated report semantic hash are emitted together.</p></article>
+  </div>
+</section>
+
+<section class="dark-section">
+  <div class="kicker" style="color:#78b9ff">Adaptive validation / RL</div>
+  <h2>RL may schedule checks. It may not decide scientific truth.</h2>
+  <p class="section-intro">We evaluated adding reinforcement learning to the architecture. It does not improve the correctness of deterministic replay and would unnecessarily enlarge the verdict trust boundary. A future bandit/RL scheduler could learn which expensive mandatory checks are most likely to fail and run those earlier, reducing time-to-failure. Acceptance would still require every mandatory check, and the scheduler's output would remain untrusted.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Allowed</div><h3>Order checks</h3><p>Use historical benchmark cost/failure data to prioritize the next expensive check.</p></article>
+    <article class="card"><div class="num">Not allowed</div><h3>Skip evidence</h3><p>No policy-required or claim-required check may be omitted because a learned policy thinks it is unlikely to matter.</p></article>
+    <article class="card"><div class="num">Not allowed</div><h3>Change verdicts</h3><p>PASS/FAIL and reviewer acceptance remain deterministic functions of verified evidence and explicit policy.</p></article>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="notice"><strong>Current limit:</strong> these results establish behavior on five targeted real-world cases. They do not establish broad pharmacometric validity, general chemistry coverage, general ML leakage detection, or end-to-end v0.6 formal verification.</div>
+</section>
+</main>
+
+<footer>
+  <div class="footergrid">
+    <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
+    <div class="footercol"><strong>Explore</strong><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">v0.5 verifier</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
+  </div>
+</footer>
+</div>
+<script src="site.js"></script>
+</body>
+</html>
