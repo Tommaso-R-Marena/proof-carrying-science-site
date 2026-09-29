@@ -1,70 +1,163 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Proof-Carrying Science</title>
-<meta name="description" content="Independently verifiable assurance infrastructure for critical scientific computation.">
+<meta name="description" content="Independent computational assurance for scientific workflows: replayable evidence, explicit assumptions, provenance, signatures, and reviewer-controlled policy.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="topbar">
+  <div class="shell">
+    <span>Private design-partner alpha · Computational biopharma first</span>
+    <a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a>
+  </div>
+</div>
 <div class="shell">
-<nav>
-  <a class="brand" href="index.html"><span class="mark">PCS</span>Proof-Carrying Science</a>
-  <div class="navlinks"><a href="#how">How it works</a><a href="#focus">Initial focus</a><a href="#research">Research</a><a href="intake.html">Pilot intake</a><a class="button secondary" href="demo.html">Interactive demo</a></div>
-</nav>
-<main>
-<section class="hero">
-  <div class="eyebrow">Private design-partner alpha</div>
-  <h1>Evidence that travels with the computation.</h1>
-  <p class="lede">Proof-Carrying Science turns consequential computational claims into replayable, signed evidence packages: exact artifacts, explicit assumptions, machine-checkable obligations, runtime provenance, reviewer policy, and unresolved limits.</p>
-  <div class="actions"><a class="button primary" href="demo.html">Open the product demo →</a><a class="button secondary" href="intake.html">Build a pilot intake</a></div>
-  <div class="trustbar">
-    <div class="trustcell"><strong>Scientific replay</strong><span>Did supported checks independently rerun?</span></div>
-    <div class="trustcell"><strong>Package integrity</strong><span>Are the delivered bytes exactly the reviewed bytes?</span></div>
-    <div class="trustcell"><strong>Signer authenticity</strong><span>Did the expected organization issue this package?</span></div>
-    <div class="trustcell"><strong>Reviewer policy</strong><span>Does it meet criteria the reviewer chose?</span></div>
-  </div>
-</section>
+  <nav aria-label="Primary">
+    <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+    <div class="navlinks">
+      <a href="#product">Product</a>
+      <a href="#how">How it works</a>
+      <a href="demo.html">Live verifier</a>
+      <a href="intake.html">Pilot intake</a>
+      <a href="#research">Research</a>
+      <a class="button dark" href="contact.html">Contact</a>
+    </div>
+  </nav>
 
-<section class="section" id="how">
-  <div class="eyebrow">How PCS works</div><h2>The producer is not the trust boundary.</h2>
-  <p class="section-intro">PCS separates evidence generation from evidence acceptance. Complex workflows may produce evidence; a smaller checker replays and binds that evidence to the scoped claim it is supposed to support.</p>
-  <div class="pipeline">
-    <div class="pipe"><small>01</small><strong>Declare</strong><p>Claims, assumptions, workflow boundary, and reviewer expectations.</p></div>
-    <div class="pipe"><small>02</small><strong>Bind</strong><p>Content-address data, code, model files, outputs, and runtime provenance.</p></div>
-    <div class="pipe"><small>03</small><strong>Check</strong><p>Replay supported tests or independently check proof artifacts.</p></div>
-    <div class="pipe"><small>04</small><strong>Sign</strong><p>Bind certificate, report, limitations, and artifacts into one authenticated package.</p></div>
-    <div class="pipe"><small>05</small><strong>Review</strong><p>Apply an external acceptance policy chosen by the receiving organization.</p></div>
-  </div>
-</section>
+  <main>
+    <section class="hero">
+      <div class="hero-network" aria-hidden="true"></div>
+      <div class="hero-content">
+        <div class="eyebrow">Independent computational assurance</div>
+        <h1>Make critical scientific computation independently checkable.</h1>
+        <p>Proof-Carrying Science packages scientific claims together with the exact evidence needed to review them: artifacts, assumptions, replayable checks, provenance, signatures, and an explicit statement of what remains unverified.</p>
+        <div class="actions">
+          <a class="button primary" href="demo.html">Run the live verifier →</a>
+          <a class="button ghost" href="intake.html">Build a pilot intake</a>
+        </div>
+        <div class="hero-meta">
+          <span><strong>Current focus</strong><br>Computational biopharma</span>
+          <span><strong>Trust model</strong><br>Independent replay, not producer trust</span>
+          <span><strong>Formal layer</strong><br>Lean assurance kernel in machine-checking</span>
+        </div>
+      </div>
+    </section>
 
-<section class="section" id="focus">
-  <div class="eyebrow">Initial commercial wedge</div><h2>Computational biopharma first.</h2>
-  <p class="section-intro">The first restricted adapter targets a bounded one-compartment IV-bolus PK model with a direct Emax PD layer. The near-term product is a fixed-scope assurance pilot around an existing workflow—not a claim to verify all pharmacometrics.</p>
-  <div class="grid3">
-    <div class="card"><div class="num">A</div><h3>Model contract</h3><p>Check positivity, dimensions, units, and declared representation constraints.</p></div>
-    <div class="card"><div class="num">B</div><h3>Independent replay</h3><p>Recompute the declared analytic equations from packaged parameters and compare exported outputs under explicit tolerances.</p></div>
-    <div class="card"><div class="num">C</div><h3>Auditable handoff</h3><p>Deliver a deterministic bundle with hashes, runtime provenance, signed limitations, and reviewer-controlled acceptance.</p></div>
-  </div>
-  <div class="callout"><div><strong>See what happens when a result is tampered with.</strong><p>The interactive demo separates scientific replay failure from package authentication and reviewer acceptance.</p></div><a class="button secondary" href="demo.html">Run demo</a></div>
-</section>
+    <section class="logo-strip" aria-label="Core assurance dimensions">
+      <div><strong>Scientific replay</strong><span>Can supported checks be independently recomputed?</span></div>
+      <div><strong>Package integrity</strong><span>Are the delivered bytes exactly the reviewed bytes?</span></div>
+      <div><strong>Signer authenticity</strong><span>Did the expected signer issue this package?</span></div>
+      <div><strong>Reviewer policy</strong><span>Does the evidence meet criteria the reviewer chose?</span></div>
+    </section>
 
-<section class="section" id="research">
-  <div class="eyebrow">Research program</div><h2>From reproducibility to proof-carrying science.</h2>
-  <p class="section-intro">The formal target is <strong>Γ ; E ⊢ C @ L</strong>: under explicit assumptions Γ, evidence E supports scoped claim C at assurance class L. Formal correctness, finite computation, empirical validation, and provenance remain distinct evidence classes.</p>
-  <div class="grid3">
-    <div class="card"><div class="num">01</div><h3>Open trust root</h3><p>The checker, certificate format, and foundational semantics are intended to remain independently inspectable.</p></div>
-    <div class="card"><div class="num">02</div><h3>Domain packs</h3><p>Biopharma first; later chemistry, biology, AI, devices, engineering, and other high-consequence computation.</p></div>
-    <div class="card"><div class="num">03</div><h3>Research financed by product</h3><p>Commercial deployment, integration, governance, and assurance engineering can fund openly publishable foundational research.</p></div>
-  </div>
-</section>
+    <section class="section" id="product">
+      <div class="kicker">The product</div>
+      <h2>Evidence that travels with the claim.</h2>
+      <p class="section-intro">Scientific results often arrive as a collection of code, data, notebooks, exported figures, model files, and informal explanations. PCS turns a bounded computational claim into a structured assurance package another person can inspect and replay without trusting the original producer.</p>
+      <div class="grid3" style="margin-top:30px">
+        <article class="card">
+          <div class="iconbox">01</div>
+          <h3>Declare the claim</h3>
+          <p>Freeze the exact claim, assumptions, workflow boundary, and desired assurance class before results are reviewed.</p>
+        </article>
+        <article class="card">
+          <div class="iconbox">02</div>
+          <h3>Bind the evidence</h3>
+          <p>Content-address model files, outputs, code, provenance, runtime state, and machine-readable checks.</p>
+        </article>
+        <article class="card">
+          <div class="iconbox">03</div>
+          <h3>Verify the delivery</h3>
+          <p>Replay supported checks, authenticate the package, apply reviewer policy, and preserve unresolved limitations.</p>
+        </article>
+      </div>
+    </section>
 
-<section class="section">
-  <h2>What a PCS certificate does not mean.</h2>
-  <p class="disclaimer">A passing computational certificate does not establish that a biological model is adequate for a drug, that a therapy is safe or effective, that a workflow is regulator-approved or GxP validated, or that unsupported arbitrary code is correct. PCS is designed to make those boundaries explicit rather than blur them.</p>
-</section>
-</main>
-<footer>Proof-Carrying Science · Private research and engineering preview · Current executable replay checker: Python · Lean assurance kernel: active machine-checking work. · <a href="privacy.html">Privacy</a></footer>
+    <section class="section split" id="how">
+      <div>
+        <div class="kicker">How it works</div>
+        <h2>The generator is not the security boundary.</h2>
+        <p class="section-intro">A complex workflow can produce evidence. PCS is designed so the acceptance decision comes from a smaller, independently inspectable verification path.</p>
+        <div class="actions">
+          <a class="button primary" href="demo.html">Verify a signed reference package</a>
+          <a class="button secondary" href="contact.html">Discuss a workflow</a>
+        </div>
+      </div>
+      <div class="workflow" aria-label="PCS assurance workflow">
+        <div class="workflow-step"><div class="step">1</div><div><strong>Commit</strong><span>Freeze claims and assumptions before the outcome is known.</span></div></div>
+        <div class="workflow-step"><div class="step">2</div><div><strong>Package</strong><span>Bind exact artifacts, model definitions, outputs, runtime provenance, and limitations.</span></div></div>
+        <div class="workflow-step"><div class="step">3</div><div><strong>Replay</strong><span>Recompute supported checks from the delivered artifacts rather than trusting recorded PASS labels.</span></div></div>
+        <div class="workflow-step"><div class="step">4</div><div><strong>Authenticate</strong><span>Use cryptographic signatures and package manifests to detect substitution or tampering.</span></div></div>
+        <div class="workflow-step"><div class="step">5</div><div><strong>Review</strong><span>Apply an external policy chosen by the receiving scientist or organization.</span></div></div>
+      </div>
+    </section>
+
+    <section class="dark-section" id="research">
+      <div class="kicker" style="color:#78b9ff">Research architecture</div>
+      <h2>Verification is not validation.</h2>
+      <p class="section-intro">PCS keeps formal correctness, computational replay, empirical validation, provenance, and reviewer policy separate. A correct implementation of a model does not by itself show that the model is biologically adequate.</p>
+      <div class="grid3" style="margin-top:28px">
+        <article class="card"><div class="num">Γ</div><h3>Explicit assumptions</h3><p>Scientific claims are interpreted under a named context rather than hidden background assumptions.</p></article>
+        <article class="card"><div class="num">E</div><h3>Typed evidence</h3><p>Formal proof, computational checks, empirical validation, and provenance are different evidence classes.</p></article>
+        <article class="card"><div class="num">C @ L</div><h3>Scoped assurance</h3><p>The formal target is Γ ; E ⊢ C @ L: evidence supports a scoped claim at an explicit assurance level.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="kicker">First commercial wedge</div>
+      <h2>Computational biopharma, one bounded workflow at a time.</h2>
+      <p class="section-intro">The first PCS adapter focuses on a restricted one-compartment IV-bolus PK model with a direct Emax PD layer. The goal is not to certify pharmacology in general. It is to prove that a bounded computational claim can be reviewed with substantially stronger evidence than a conventional handoff.</p>
+      <div class="grid4" style="margin-top:30px">
+        <article class="card"><div class="num">A</div><h3>Model contract</h3><p>Units, dimensions, positivity, and declared representation constraints.</p></article>
+        <article class="card"><div class="num">B</div><h3>Analytic replay</h3><p>Independent recomputation of declared PK/PD equations and exported predictions.</p></article>
+        <article class="card"><div class="num">C</div><h3>Provenance</h3><p>Runtime, artifacts, hashes, package identity, and signed limitations.</p></article>
+        <article class="card"><div class="num">D</div><h3>Reviewer control</h3><p>The receiving organization—not the producer—defines acceptable claim status.</p></article>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="callout">
+        <div>
+          <h3>Try the real browser verifier.</h3>
+          <p>The demo uses a signed synthetic PK/PD certificate. Your browser recomputes SHA-256, verifies an Ed25519 signature, replays the equations, evaluates reviewer policy, and detects tampering locally.</p>
+        </div>
+        <a class="button dark" href="demo.html">Open verifier →</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="contact-band">
+        <div>
+          <div class="kicker">Design partners</div>
+          <h2>Have a workflow where review failure is expensive?</h2>
+          <p>We are looking for bounded computational workflows where reproducibility, handoff quality, provenance, or independent review matter enough to justify stronger assurance.</p>
+        </div>
+        <div class="actions" style="margin-top:0">
+          <a class="button primary" href="mailto:marenatommaso@gmail.com?subject=PCS%20Design%20Partner">Email Tommaso</a>
+          <a class="button secondary" href="contact.html">Contact details</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The Python replay checker remains part of the executable trusted computing base while the Lean refinement program is under active machine-checking.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footergrid">
+      <div class="footerbrand">
+        <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+        <p>Independent assurance infrastructure for critical scientific computation.</p>
+      </div>
+      <div class="footercol"><strong>Explore</strong><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="#research">Research architecture</a><a href="privacy.html">Privacy</a></div>
+      <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
+    </div>
+  </footer>
 </div>
 </body>
 </html>
