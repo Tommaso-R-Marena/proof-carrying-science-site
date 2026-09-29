@@ -10,7 +10,7 @@
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><span class="mark">PCS</span>Proof-Carrying Science</a>
-  <div class="navlinks"><a href="#how">How it works</a><a href="#focus">Initial focus</a><a href="#research">Research</a><a href="intake.html">Pilot intake</a><a class="button secondary" href="demo.html">Interactive demo</a></div>
+  <div class="navlinks"><a href="#how">How it works</a><a href="#trust">Trust center</a><a href="#focus">Initial focus</a><a href="#research">Research</a><a href="intake.html">Pilot intake</a><a class="button secondary" href="demo.html">Interactive demo</a></div>
 </nav>
 <main>
 <section class="hero">
@@ -36,6 +36,27 @@
     <div class="pipe"><small>04</small><strong>Sign</strong><p>Bind certificate, report, limitations, and artifacts into one authenticated package.</p></div>
     <div class="pipe"><small>05</small><strong>Review</strong><p>Apply an external acceptance policy chosen by the receiving organization.</p></div>
   </div>
+</section>
+
+
+<section class="section trust-center" id="trust">
+  <div class="eyebrow">Trust center</div><h2>Know exactly what is proved, checked, and still trusted.</h2>
+  <p class="section-intro">PCS treats assurance as a layered boundary, not a single green check. The current research build separates machine-checked Lean semantics from executable replay and from the lower serialization and cryptographic components that remain in the trusted computing base.</p>
+  <div class="trust-columns">
+    <article class="trust-panel verified">
+      <div class="trust-kicker"><span class="status-dot"></span>Verified now</div>
+      <h3>Machine-checked assurance semantics</h3>
+      <p>The decision and normalized-state soundness layer, plus typed <code>DecisionWire</code> soundness assuming <code>WellFormed</code>, rebuild under Lean 4.28.0 without project axioms or placeholders.</p>
+      <div class="trust-meta"><span>Lean 4.28.0</span><span>Typed wire soundness</span><span>Explicit assumptions</span></div>
+    </article>
+    <article class="trust-panel pending">
+      <div class="trust-kicker"><span class="status-dot"></span>Under verification</div>
+      <h3>Serialized and executable refinement</h3>
+      <p>The active draft closes the finite checker step from a typed wire to <code>WellFormed</code>. Raw JSON parsing, schema enforcement, SHA-256/Ed25519, and Python scientific replay remain explicit lower-boundary components rather than silently inheriting a proof claim.</p>
+      <div class="trust-meta"><span>Finite wire checker</span><span>JSON / crypto TCB</span><span>Draft refinement</span></div>
+    </article>
+  </div>
+  <div class="boundary-note"><strong>What this means:</strong> a machine-checked theorem is not being presented as proof that arbitrary scientific software, a biological model, or every delivered byte is correct. Each layer keeps its own claim.</div>
 </section>
 
 <section class="section" id="focus">
@@ -64,7 +85,7 @@
   <p class="disclaimer">A passing computational certificate does not establish that a biological model is adequate for a drug, that a therapy is safe or effective, that a workflow is regulator-approved or GxP validated, or that unsupported arbitrary code is correct. PCS is designed to make those boundaries explicit rather than blur them.</p>
 </section>
 </main>
-<footer>Proof-Carrying Science · Private research and engineering preview · Current executable replay checker: Python · Lean assurance kernel: active machine-checking work. · <a href="privacy.html">Privacy</a></footer>
+<footer>Proof-Carrying Science · Private research and engineering preview · Executable replay checker: Python · Lean decision and typed-wire soundness: machine-checked · Serialized refinement: active verification. · <a href="privacy.html">Privacy</a></footer>
 </div>
 </body>
 </html>
