@@ -18,6 +18,8 @@ The site intentionally has no application backend. Its interactive functionality
 
 The browser verifier is a functional demonstration, not the production PCS Python verifier. Its built-in signing key is explicitly demo-only.
 
+The PCS assurance decision and normalized-state soundness layer has been machine-checked under Lean 4.28.0. This does not yet extend end-to-end to raw serialized package parsing/replay.
+
 ## Repository layout
 
 Only `public/` is deployable.
@@ -25,6 +27,7 @@ Only `public/` is deployable.
 ```text
 public/
   index.html
+  architecture.html
   demo.html
   model-lab.html
   intake.html
