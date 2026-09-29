@@ -49,11 +49,19 @@
         <dt>Producer</dt><dd><code>pcs attest-v06</code></dd>
         <dt>Reviewer</dt><dd><code>pcs verify-v06-bundle</code></dd>
         <dt>Policy semantics</dt><dd><code>valid</code> remains separate from <code>accepted</code>; exact policy bytes are SHA-256 bound into the receipt</dd>
+        <dt>Review provenance</dt><dd>Optional reviewer Ed25519 signature binds the exact receipt bytes and review commitments</dd>
         <dt>Runtime status</dt><dd>Implementation and regression suite committed; latest hosted runs received no runner and executed zero steps</dd>
       </dl>
     </article>
 
     <article class="trustitem">
+      <header><h3>Reviewer-signed receipt boundary</h3><span class="chip released">Implemented</span></header>
+      <p>The producer and reviewer can use different Ed25519 identities. After PCS verification and reviewer-policy evaluation, the reviewer may sign the exact receipt file. A later auditor can verify that signature without rerunning PCS.</p>
+      <div class="boundary"><strong>What is signed</strong><span>Exact receipt SHA-256 plus bundle SHA-256, policy SHA-256, certificate semantic/integrity commitments, normalized-index commitment, PCS validity, and reviewer acceptance.</span></div>
+      <div class="boundary"><strong>What it does not mean</strong><span>A reviewer signature proves authorship of the review record under the selected key. It does not make the scientific model empirically adequate or elevate the assurance class.</span></div>
+    </article>
+
+<article class="trustitem">
       <header><h3>Machine-checked v0.5/v1 theorem stack</h3><span class="chip verified">Verified</span></header>
       <p>The strongest current Lean result goes beyond normalized-state semantics for the older v0.5/v1 wire: accepted normalized-wire bytes pass strict UTF-8/JSON/schema decoding, checked wire construction, <code>wireCheck</code>, <code>WellFormed</code>, and the bridge into <code>Assures</code>. Package authenticity and replay are modeled with their remaining trust exposed as theorem arguments.</p>
       <div class="boundary"><strong>Verified theorem boundary</strong><span><code>verifyNormalizedWireBytes_assures_e2e</code> is unconditional over accepted raw wire bytes. The package-level theorem is conditional on explicit signature-scheme and replay-adapter soundness assumptions.</span></div>
