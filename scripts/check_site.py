@@ -36,7 +36,7 @@ for html_path in HTML_FILES:
 required = [
     "index.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
-    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
+    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
@@ -186,6 +186,30 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: reviewer identity separation drift")
         if reviewer_receipts.get("independent_verify_command") != "pcs verify-receipt-v06":
             errors.append("status.json: reviewer receipt verify-command drift")
+        reviewer_quorum = mvp.get("reviewer_quorum", {})
+        if reviewer_quorum.get("policy_version") != "pcs-review-quorum-policy-v1":
+            errors.append("status.json: reviewer quorum policy version drift")
+        if reviewer_quorum.get("review_set_format") != "pcs-review-set-v1":
+            errors.append("status.json: reviewer review-set format drift")
+        if reviewer_quorum.get("result_format") != "pcs-review-quorum-result-v1":
+            errors.append("status.json: reviewer quorum result format drift")
+        if reviewer_quorum.get("command") != "pcs verify-quorum-v06":
+            errors.append("status.json: reviewer quorum command drift")
+        if reviewer_quorum.get("role_specific_policy_hashes") is not True:
+            errors.append("status.json: reviewer quorum role-policy binding drift")
+        if reviewer_quorum.get("duplicate_reviewer_identity_disqualified") is not True:
+            errors.append("status.json: duplicate reviewer protection drift")
+        if reviewer_quorum.get("cross_bundle_reviews_never_combined") is not True:
+            errors.append("status.json: cross-bundle quorum isolation drift")
+        quorum_runtime = reviewer_quorum.get("direct_runtime_check", {})
+        for key in [
+            "two_of_three_with_required_roles_passed",
+            "cross_bundle_reviews_not_combined",
+            "duplicate_identity_not_double_counted",
+            "role_specific_policy_hash_enforced",
+        ]:
+            if quorum_runtime.get(key) is not True:
+                errors.append(f"status.json: reviewer quorum runtime evidence drift: {key}")
         runtime_receipt = reviewer_receipts.get("runtime_scheme_check", {})
         if runtime_receipt.get("valid_signature_verified") is not True or runtime_receipt.get("one_byte_tamper_rejected") is not True or runtime_receipt.get("wrong_reviewer_key_rejected") is not True:
             errors.append("status.json: reviewer receipt runtime scheme evidence drift")
@@ -230,6 +254,33 @@ if policy_fixture.exists():
                 errors.append(f"reviewer-policy.example.json: unexpected status requirement for {claim_id}")
     except Exception as exc:
         errors.append(f"reviewer-policy.example.json: invalid policy fixture: {type(exc).__name__}: {exc}")
+
+quorum_policy_fixture = ROOT / "review-quorum-policy.example.json"
+if quorum_policy_fixture.exists():
+    try:
+        qp = json.loads(quorum_policy_fixture.read_text(encoding="utf-8"))
+        if qp.get("policy_version") != "pcs-review-quorum-policy-v1":
+            errors.append("review-quorum-policy.example.json: policy version drift")
+        if qp.get("min_accepted_reviews") != 2:
+            errors.append("review-quorum-policy.example.json: threshold drift")
+        if qp.get("required_roles") != {"computational": 1, "domain": 1}:
+            errors.append("review-quorum-policy.example.json: required role drift")
+        reviewers = qp.get("reviewers", [])
+        if len(reviewers) != 3:
+            errors.append("review-quorum-policy.example.json: reviewer count drift")
+    except Exception as exc:
+        errors.append(f"review-quorum-policy.example.json: invalid fixture: {type(exc).__name__}: {exc}")
+
+review_set_fixture = ROOT / "review-set.example.json"
+if review_set_fixture.exists():
+    try:
+        rs = json.loads(review_set_fixture.read_text(encoding="utf-8"))
+        if rs.get("format") != "pcs-review-set-v1":
+            errors.append("review-set.example.json: format drift")
+        if len(rs.get("reviews", [])) != 3:
+            errors.append("review-set.example.json: review count drift")
+    except Exception as exc:
+        errors.append(f"review-set.example.json: invalid fixture: {type(exc).__name__}: {exc}")
 
 reference_js = ROOT / "pcs-reference.js"
 if fixture_obj is not None and reference_js.exists():
