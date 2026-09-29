@@ -249,7 +249,14 @@ async function verifyVirtualPackage(pkg,policyOverride=null){
   const policy=evaluatePolicy(cert,policyOverride||defaultPolicy,sig.valid,sig.fingerprint);
   if(!policy.pass)errors.push(...policy.failures.map(f=>"policy: "+JSON.stringify(f)));
   const scientificOk=replayRows.every(x=>x.replayed.outcome===x.recorded.outcome)&&claimResults.every(x=>deepEqual(x.assessment,(cert.claims.find(c=>c.id===x.id)||{}).assessment));
-  const packageOk=[...expectedNames].every(n=>actualNames.has(n))&&[...actualNames].every(n=>expectedNames.has(n))&&!errors.some(e=>e.startsWith("package hash mismatch")||e.startsWith("package size mismatch")||e.startsWith("package file")||e.startsWith("unexpected package file"));
+  const packageOk=[...expectedNames].every(n=>actualNames.has(n))&&[...actualNames].every(n=>expectedNames.has(n))&&!errors.some(e=>
+    e.startsWith("package hash mismatch")||
+    e.startsWith("package size mismatch")||
+    e.startsWith("package file")||
+    e.startsWith("unexpected package file")||
+    e.startsWith("manifest semantic hash")||
+    e.startsWith("manifest integrity hash")
+  );
   return {
     valid:errors.length===0,errors,certificate:cert,manifest,signature:sig,policy,replayRows,claimResults,
     assurance_dimensions:{
