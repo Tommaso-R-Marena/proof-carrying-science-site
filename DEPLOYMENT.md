@@ -1,30 +1,65 @@
-# Free deployment checklist
+# Zero-cost Cloudflare deployment
 
-## Cloudflare Pages
+The current deployment target is **Cloudflare Workers Static Assets**, which is what the connected build log configured.
 
-1. Create/sign in to a free Cloudflare account.
-2. Go to **Workers & Pages → Create → Pages → Connect to Git**.
-3. Authorize the GitHub integration for `Tommaso-R-Marena/proof-carrying-science-site`.
-4. Select this repository.
-5. Production branch: `main`.
-6. Framework preset: **None**.
-7. Leave **Build command** blank.
-8. Set the output directory to the repository root if the UI requires one.
-9. Deploy.
-10. Open the generated `*.pages.dev` URL and test:
-   - homepage;
-   - interactive demo;
-   - pilot-intake download;
-   - privacy page;
-   - mobile layout.
-11. Confirm response headers include the repository's `_headers` security policy.
+## Canonical URL
 
-## Preview posture
+```text
+https://proof-carrying-science-site.marenatommaso.workers.dev
+```
 
-The `_headers` file adds `X-Robots-Tag: noindex` for `pages.dev` preview URLs. `robots.txt` also disallows crawling globally during alpha.
+## Critical deployment rule
 
-Do not remove these until public launch is deliberate.
+The committed `wrangler.jsonc` points to:
 
-## Cost posture
+```json
+"assets": {
+  "directory": "./public"
+}
+```
 
-The site has no framework, database, server-side functions, analytics SDK, or third-party JavaScript. Keep it that way until a real customer need justifies additional infrastructure.
+Do not change this to `"."`. Deploying the repository root can expose Git metadata, build files, scripts, or other unintended files.
+
+## Git-connected deployment
+
+The connected Cloudflare project may use:
+
+```bash
+npx wrangler deploy
+```
+
+No application build step is required.
+
+Before deployment:
+
+```bash
+python scripts/check_site.py
+```
+
+## Post-deployment checks
+
+Open:
+
+- `/`
+- `/demo.html`
+- `/intake.html`
+- `/privacy.html`
+- a nonexistent path to confirm the 404 page.
+
+Confirm that repository-only paths are unavailable, especially:
+
+```text
+/.git/HEAD
+/README.md
+/DEPLOYMENT.md
+/scripts/check_site.py
+/wrangler.jsonc
+```
+
+They must return not-found behavior because they are outside `public/`.
+
+## Alpha indexing
+
+`public/robots.txt` currently disallows crawlers. `public/_headers` also sends `X-Robots-Tag: noindex` on the production workers.dev hostname.
+
+Keep those controls until public launch is intentional.
