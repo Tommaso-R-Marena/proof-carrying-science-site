@@ -28,7 +28,7 @@
 <section class="pagehead">
   <div class="kicker">Guided v0.6 onboarding</div>
   <h1>Point PCS at your project. Start from a draft, not a schema.</h1>
-  <p>Select a local scientific project folder. PCS inventories regular files, computes SHA-256 snapshots in your browser, detects supported workflow patterns, and drafts candidate claims/checks for you to review. Nothing is uploaded and no private key is needed.</p>
+  <p>Select a local scientific project folder. PCS inventories regular files, computes SHA-256 snapshots in your browser, detects supported scientific checks, and maps likely Python/Jupyter artifact dependencies for you to review. Nothing is uploaded, no user code is executed, and no private key is needed.</p>
   <div class="actions">
     <button class="button primary" id="chooseProject">Choose project folder</button>
     <a class="button secondary" href="#how">How confirmation works</a>
@@ -39,9 +39,11 @@
 
 <section class="statusbar" aria-label="Project mapper status">
   <div><span>Files inventoried</span><strong id="filesCount">0</strong></div>
+  <div><span>Scientific checks</span><strong id="selectedCount">0</strong></div>
+  <div><span>Workflow nodes</span><strong id="workflowCount">0</strong></div>
+  <div><span>Workflow issues</span><strong id="workflowIssueCount">0</strong></div>
+  <div><span>Artifacts selected</span><strong id="artifactCount">0</strong></div>
   <div><span>Recommendations</span><strong id="recommendationCount">0</strong></div>
-  <div><span>Selected checks</span><strong id="selectedCount">0</strong></div>
-  <div><span>Selected artifacts</span><strong id="artifactCount">0</strong></div>
 </section>
 
 <section class="project-mapper">
@@ -51,6 +53,10 @@
     <div class="field">
       <label for="confidence"><span>Auto-select confidence</span><strong id="confidenceValue">0.95</strong></label>
       <input id="confidence" type="range" min="0.80" max="1" step="0.01" value="0.95" style="width:100%">
+    </div>
+    <div class="field">
+      <label for="workflowConfidence"><span>Workflow inference confidence</span><strong id="workflowConfidenceValue">0.90</strong></label>
+      <input id="workflowConfidence" type="range" min="0.80" max="1" step="0.01" value="0.90" style="width:100%">
     </div>
     <div class="actions">
       <button class="button secondary" id="rescan" disabled>Rebuild recommendations</button>
@@ -64,6 +70,8 @@
       <div><strong>Dataset splits</strong><span>Train/test/validation CSV + shared ID</span></div>
       <div><strong>Reaction balance</strong><span>Reactants/products JSON</span></div>
       <div><strong>Unit compatibility</strong><span><code>left_unit/right_unit</code> JSON</span></div>
+      <div><strong>Python workflow</strong><span>Literal local reads/writes via pandas, NumPy, <code>open</code>, and <code>Path</code></span></div>
+      <div><strong>Notebook workflow</strong><span>Static code-cell file dependencies; notebook code is never executed</span></div>
     </div>
 
     <p class="tiny">Files with common private-key extensions or private-key PEM markers are excluded. Common environment/build directories are ignored by the Python CLI scanner. The browser only receives files you explicitly choose.</p>
@@ -73,6 +81,13 @@
     <section class="panel">
       <div class="mapper-section-head"><div><h2>Recommendations</h2><p>Review what PCS inferred before exporting a draft.</p></div><span class="chip pending" id="mapperState">NO PROJECT</span></div>
       <div id="recommendations" class="recommendation-list"><p class="tiny">Choose a project folder to begin.</p></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="mapper-section-head"><div><h2>Inferred workflow</h2><p>Literal file dependencies from Python scripts and Jupyter code cells. Select only edges that match your intended workflow.</p></div><span class="chip pending">STATIC ONLY</span></div>
+      <div class="notice" style="margin-top:12px"><strong>No code execution:</strong> the browser uses conservative literal-path heuristics. The Python CLI uses AST-based analysis and is the authoritative workflow mapper for attestation.</div>
+      <div id="workflowInferences" class="recommendation-list"><p class="tiny">Choose a project folder to begin.</p></div>
+      <div id="workflowIssues" class="tiny" style="margin-top:10px"></div>
     </section>
 
     <section class="panel" style="margin-top:18px">
