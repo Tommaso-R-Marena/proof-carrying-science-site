@@ -56,6 +56,12 @@ for page in ["index.html", "mvp.html", "validation.html", "trust.html", "archite
     if 'href="mvp.html"' not in page_text and page != "mvp.html":
         errors.append(f"{page}: v0.6 MVP navigation link is missing")
 
+receipt_pages = ["index.html", "mvp.html", "trust.html", "architecture.html"]
+for page in receipt_pages:
+    p = ROOT / page
+    if p.exists() and "reviewer" not in p.read_text(encoding="utf-8").lower():
+        errors.append(f"{page}: reviewer-signed receipt surface is missing")
+
 validation_pages = ["index.html", "mvp.html", "trust.html", "architecture.html", "demo.html"]
 for page in validation_pages:
     p = ROOT / page
@@ -171,6 +177,18 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: v0.6 MVP command contract drift")
         if mvp.get("reviewer_policy", {}).get("valid_separate_from_accepted") is not True:
             errors.append("status.json: reviewer-policy separation drift")
+        reviewer_receipts = mvp.get("reviewer_receipts", {})
+        if reviewer_receipts.get("signature_format") != "pcs-reviewer-receipt-ed25519-v1":
+            errors.append("status.json: reviewer receipt signature format drift")
+        if reviewer_receipts.get("exact_receipt_sha256_bound") is not True:
+            errors.append("status.json: reviewer receipt exact-byte binding drift")
+        if reviewer_receipts.get("separate_reviewer_identity") is not True:
+            errors.append("status.json: reviewer identity separation drift")
+        if reviewer_receipts.get("independent_verify_command") != "pcs verify-receipt-v06":
+            errors.append("status.json: reviewer receipt verify-command drift")
+        runtime_receipt = reviewer_receipts.get("runtime_scheme_check", {})
+        if runtime_receipt.get("valid_signature_verified") is not True or runtime_receipt.get("one_byte_tamper_rejected") is not True or runtime_receipt.get("wrong_reviewer_key_rejected") is not True:
+            errors.append("status.json: reviewer receipt runtime scheme evidence drift")
         if mvp.get("latest_hosted_gate", {}).get("steps_executed") != 0 or mvp.get("latest_hosted_gate", {}).get("code_result") != "NOT_EXECUTED":
             errors.append("status.json: hosted-gate caveat drift")
         if mvp.get("released") is not False:
