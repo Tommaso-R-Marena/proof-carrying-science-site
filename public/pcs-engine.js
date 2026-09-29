@@ -8,9 +8,19 @@ const MIXED="MIXED_SUPPORT_UNDER_ASSUMPTIONS";
 const OPEN="OPEN";
 const FAILED="FALSIFIED_OR_CHECK_FAILED";
 const enc=new TextEncoder();
+const dec=new TextDecoder("utf-8",{fatal:true});
 
 function clone(x){return JSON.parse(JSON.stringify(x));}
 function bytesOf(s){return enc.encode(s);}
+function fileBytes(entry){
+  if(!entry)throw new Error("missing file entry");
+  if(entry.encoding==="base64")return b64bytes(entry.content||"");
+  return bytesOf(String(entry.content??""));
+}
+function fileText(entry){
+  if(!entry)throw new Error("missing file entry");
+  return entry.encoding==="base64"?dec.decode(fileBytes(entry)):String(entry.content??"");
+}
 function hex(buf){return [...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,"0")).join("");}
 async function sha256Bytes(bytes){return hex(await crypto.subtle.digest("SHA-256",bytes));}
 async function sha256Text(s){return sha256Bytes(bytesOf(s));}
@@ -150,12 +160,12 @@ function runCheck(spec,cert,files){
   try{
     if(spec.type==="pkpd_contract"){
       const a=arts[spec.model_artifact];if(!a)throw new Error("unknown model artifact");
-      const model=JSON.parse(files[a.path].content);const r=validatePkpd(model);
+      const model=JSON.parse(fileText(files[a.path]));const r=validatePkpd(model);
       return {id:spec.id,kind:"computational_test",claim_ids:spec.claim_ids||[],outcome:r.ok?"PASS":"FAIL",artifact_ids:[spec.model_artifact],details:r};
     }
     if(spec.type==="pkpd_reference_match"){
       const ma=arts[spec.model_artifact],oa=arts[spec.output_artifact];if(!ma||!oa)throw new Error("unknown replay artifact");
-      const model=JSON.parse(files[ma.path].content),r=replayPkpd(model,files[oa.path].content,spec);
+      const model=JSON.parse(fileText(files[ma.path])),r=replayPkpd(model,fileText(files[oa.path]),spec);
       return {id:spec.id,kind:"computational_test",claim_ids:spec.claim_ids||[],outcome:r.ok?"PASS":"FAIL",artifact_ids:[spec.model_artifact,spec.output_artifact],details:r.details};
     }
     if(spec.type==="external_formal_proof")return {id:spec.id,kind:"formal_proof",claim_ids:spec.claim_ids||[],outcome:"UNVERIFIED",artifact_ids:spec.proof_artifact?[spec.proof_artifact]:[],details:{reason:"external formal proof recorded but not independently checked by browser profile"}};
@@ -205,11 +215,14 @@ function workflowSummary(workflow,artifactIds){
 
 async function verifyVirtualPackage(pkg,policyOverride=null){
   const errors=[],files=pkg?.files||{};
-  if(pkg?.transport_format!=="pcs-browser-virtual-package-v1")throw new Error("unsupported browser transport format");
-  for(const required of ["certificate.json","package_manifest.json","package_signature.json","signer-public.pem"])if(!files[required])errors.push("missing "+required);
+  const supportedTransport=new Set(["pcs-browser-virtual-package-v1","pcs-browser-directory-package-v1"]);
+  if(!supportedTransport.has(pkg?.transport_format))throw new Error("unsupported browser transport format");
+  for(const required of ["certificate.json","package_manifest.json"])if(!files[required])errors.push("missing "+required);
   if(errors.length)return {valid:false,errors};
-  const manifestText=files["package_manifest.json"].content,sigText=files["package_signature.json"].content,certText=files["certificate.json"].content;
-  const manifest=JSON.parse(manifestText),sigrec=JSON.parse(sigText),cert=JSON.parse(certText);
+  const manifestText=fileText(files["package_manifest.json"]);
+  const certText=fileText(files["certificate.json"]);
+  const manifest=JSON.parse(manifestText),cert=JSON.parse(certText);
+  const sigrec=files["package_signature.json"]?JSON.parse(fileText(files["package_signature.json"])):null;
   if(manifest.package_format!=="pcs-package-v1")errors.push("unsupported package manifest format");
   if(cert.spec_version!=="pcs-0.5")errors.push("unsupported certificate spec_version");
   if(cert.checker_version!=="pcs-python-kernel/0.5.0")errors.push("unexpected checker_version");
@@ -218,16 +231,26 @@ async function verifyVirtualPackage(pkg,policyOverride=null){
   for(const n of expectedNames)if(!actualNames.has(n))errors.push("package file missing: "+n);
   for(const n of actualNames)if(!expectedNames.has(n))errors.push("unexpected package file: "+n);
   for(const [name,meta] of Object.entries(manifest.files||{})){
-    if(!files[name])continue;const b=bytesOf(files[name].content);
+    if(!files[name])continue;const b=fileBytes(files[name]);
     const h=await sha256Bytes(b);if(h!==meta.sha256)errors.push("package hash mismatch: "+name);if(b.byteLength!==meta.size)errors.push("package size mismatch: "+name);
   }
   if(manifest.certificate_semantic_hash!==cert.semantic_hash)errors.push("manifest semantic hash does not match certificate");
   if(manifest.certificate_integrity_hash!==cert.integrity_hash)errors.push("manifest integrity hash does not match certificate");
   for(const a of cert.artifacts||[]){
     if(!files[a.path]){errors.push("missing packaged artifact "+a.id);continue;}
-    if(await sha256Text(files[a.path].content)!==a.sha256)errors.push("artifact hash mismatch: "+a.id);
+    if(await sha256Bytes(fileBytes(files[a.path]))!==a.sha256)errors.push("artifact hash mismatch: "+a.id);
   }
-  const sig=await verifyPackageSignature(manifestText,sigrec,files["signer-public.pem"].content);if(!sig.valid)errors.push("package signature: "+sig.error);
+  let sig={valid:false,fingerprint:null,error:null,status:"UNSIGNED"};
+  if(sigrec){
+    if(!files["signer-public.pem"]){
+      sig={valid:false,fingerprint:sigrec.public_key_fingerprint||null,error:"signer-public.pem is missing",status:"INVALID"};
+      errors.push("package signature: signer-public.pem is missing");
+    }else{
+      sig=await verifyPackageSignature(manifestText,sigrec,fileText(files["signer-public.pem"]));
+      sig.status=sig.valid?"VERIFIED":"INVALID";
+      if(!sig.valid)errors.push("package signature: "+sig.error);
+    }
+  }
   const evidenceMap={};const replayRows=[];
   for(const recorded of cert.evidence||[]){
     const replayed=runCheck(recorded.check_spec||{},cert,files);evidenceMap[recorded.id]=replayed;replayRows.push({recorded,replayed});
@@ -245,7 +268,12 @@ async function verifyVirtualPackage(pkg,policyOverride=null){
     const ws=workflowSummary(cert.workflow,new Set((cert.artifacts||[]).map(a=>a.id)));
     if(!deepEqual(ws,cert.workflow_summary))errors.push("workflow_summary mismatch");
   }catch(e){errors.push(String(e));}
-  const defaultPolicy={policy_version:"pcs-acceptance-policy-v1",require_signature:true,expected_signer_fingerprint:sigrec.public_key_fingerprint,required_claims:Object.fromEntries((cert.claims||[]).map(c=>[c.id,[c.assessment.status]]))};
+  const defaultPolicy={
+    policy_version:"pcs-acceptance-policy-v1",
+    require_signature:Boolean(sigrec),
+    expected_signer_fingerprint:sigrec?sigrec.public_key_fingerprint:null,
+    required_claims:Object.fromEntries((cert.claims||[]).map(c=>[c.id,[c.assessment.status]]))
+  };
   const policy=evaluatePolicy(cert,policyOverride||defaultPolicy,sig.valid,sig.fingerprint);
   if(!policy.pass)errors.push(...policy.failures.map(f=>"policy: "+JSON.stringify(f)));
   const scientificOk=replayRows.every(x=>x.replayed.outcome===x.recorded.outcome)&&claimResults.every(x=>deepEqual(x.assessment,(cert.claims.find(c=>c.id===x.id)||{}).assessment));
@@ -262,7 +290,7 @@ async function verifyVirtualPackage(pkg,policyOverride=null){
     assurance_dimensions:{
       scientific_replay:scientificOk?"PASS":"FAIL",
       package_integrity:packageOk?"PASS":"FAIL",
-      signer_authenticity:sig.valid?"VERIFIED":"INVALID",
+      signer_authenticity:sigrec?(sig.valid?"VERIFIED":"INVALID"):"UNSIGNED",
       reviewer_policy:policy.pass?"PASS":"FAIL"
     }
   };
@@ -287,6 +315,6 @@ function runDecisionParity(){
 
 global.PCSBrowserEngine={
   statuses:{FORMAL,COMPUTATIONAL,EMPIRICAL,MIXED,OPEN,FAILED},
-  canonicalJson,sha256Text,assessClaim,validatePkpd,replayPkpd,evaluatePolicy,verifyVirtualPackage,runDecisionParity
+  canonicalJson,sha256Text,sha256Bytes,fileBytes,fileText,assessClaim,validatePkpd,replayPkpd,evaluatePolicy,verifyVirtualPackage,runDecisionParity
 };
 })(window);
