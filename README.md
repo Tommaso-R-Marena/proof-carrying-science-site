@@ -120,3 +120,19 @@ npx wrangler deploy
 - search indexing remains intentionally disabled during alpha.
 
 Never place secrets, customer data, signing private keys, unpublished research artifacts, PHI, or regulated data in this repository.
+
+
+### Reproducibility environment preview
+
+The Project Mapper now previews Python/R dependency declarations, common lockfiles,
+interpreter constraints, Conda/Nix specifications, and Docker/OCI base-image
+pinning. It exposes a descriptive hermeticity state and downloadable
+`pcs-environment-plan.json`.
+
+The browser preview is intentionally non-authoritative. `confirm-v06` regenerates
+the canonical environment capture from the exact reviewed artifact bytes using the
+production Python parser before attestation. Reviewer verification independently
+re-derives the same signed environment contract at `environment_replay`.
+
+The website never executes package managers, environment installers, container
+builds, or project installation hooks.
