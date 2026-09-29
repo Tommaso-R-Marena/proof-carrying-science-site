@@ -1,6 +1,9 @@
 const $=id=>document.getElementById(id);
 const enc=new TextEncoder();
 const MAX_INSPECT=2*1024*1024;
+const MAX_SINGLE_FILE=50*1024*1024;
+const MAX_TOTAL_BYTES=200*1024*1024;
+const MAX_FILES=2000;
 const KEY_SUFFIXES=[".pem",".key",".p12",".pfx"];
 const PRIVATE_MARKERS=["-----BEGIN PRIVATE KEY-----","-----BEGIN ENCRYPTED PRIVATE KEY-----","-----BEGIN OPENSSH PRIVATE KEY-----","-----BEGIN RSA PRIVATE KEY-----","-----BEGIN EC PRIVATE KEY-----"];
 const KEY_PRIORITY=["subject_id","patient_id","sample_id","participant_id","record_id","id","rownames","subject","patient","sample"];
@@ -25,8 +28,13 @@ async function inspectFiles(files){
   sourceFiles=[...files];
   inventory=[];skipped=[];recommendations=[];selected.clear();
   const used=new Set();
+  let totalBytes=0;
   for(const file of sourceFiles){
     const rel=safeName(file.webkitRelativePath||file.name);
+    if(inventory.length>=MAX_FILES){skipped.push({path:rel,reason:"discovery-file-limit"});continue}
+    if(file.size>MAX_SINGLE_FILE){skipped.push({path:rel,reason:"exceeds-package-single-file-limit"});continue}
+    if(totalBytes+file.size>MAX_TOTAL_BYTES){skipped.push({path:rel,reason:"discovery-total-byte-limit"});continue}
+    totalBytes+=file.size;
     const low=file.name.toLowerCase();
     if(KEY_SUFFIXES.some(x=>low.endsWith(x))){skipped.push({path:rel,reason:"key-material-excluded"});continue}
     const prefix=file.size<=65536?await file.text():await file.slice(0,65536).text();
