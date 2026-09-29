@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="topbar"><div class="shell"><span>Production-format PCS v0.5 demo · Runs locally in your browser</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>Production-format PCS 0.5.0 demo · Runs locally in your browser</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -20,8 +20,15 @@
 <section class="pagehead">
   <div class="kicker">Production-format browser engine</div>
   <h1>Inspect what the checker actually trusts.</h1>
-  <p>This demo can verify the built-in PCS v0.5 reference package or an extracted real PCS evidence directory. The browser independently hashes the staged file bytes, verifies the package manifest and Ed25519 signature when present, replays the supported PK/PD checks from packaged artifacts, reassesses claims, and evaluates reviewer policy.</p>
+  <p>This demo can verify the built-in PCS 0.5.0 reference package or an extracted real PCS evidence directory. The browser independently hashes the staged file bytes, verifies the package manifest and Ed25519 signature when present, replays the supported PK/PD checks from packaged artifacts, reassesses claims, and evaluates reviewer policy.</p>
 </section>
+
+<div class="statusbar" aria-label="Verifier profile status">
+  <div><span>Released profile</span><strong>PCS 0.5.0</strong></div>
+  <div><span>Decision parity</span><strong>11 / 11</strong></div>
+  <div><span>Formal decision layer</span><strong>Lean 4.28.0 verified</strong></div>
+  <div><span>0.5.1 wire refinement</span><strong>Pending · not used here</strong></div>
+</div>
 
 <div class="engine-banner">
   <div><strong>Browser parity profile</strong><span>Ports the production decision kernel and restricted PK/PD predicates into JavaScript. It can ingest exact bytes from an extracted production evidence directory; safe ZIP parsing/extraction itself remains a production-Python responsibility.</span></div>
@@ -34,7 +41,7 @@
     <p>The built-in package uses the same synthetic one-compartment IV-bolus PK + direct Emax PD example as the PCS repository and is signed with a dedicated demo-only Ed25519 key.</p>
 
     <div class="field">
-      <label><span>Source</span><span id="sourceLabel">PCS v0.5 reference</span></label>
+      <label><span>Source</span><span id="sourceLabel">PCS 0.5.0 reference</span></label>
       <div class="actions" style="margin-top:0">
         <button class="button secondary" id="loadReference">Reset</button>
         <a class="button secondary" href="pcs-v05-reference-package.json" download>Download package JSON</a>
@@ -137,7 +144,7 @@
 </section>
 </main>
 
-<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="index.html">Home</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="index.html">Home</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 
 <script src="pcs-engine.js"></script>
