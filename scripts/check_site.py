@@ -99,6 +99,7 @@ if mapper_page.exists():
         "Reproducibility environment",
         "Download environment plan",
         "NO EXECUTION",
+        "authoritative Python capture",
     ]:
         if required_text not in mapper_text:
             errors.append(f"project-builder.html: environment capture contract drift: {required_text}")
@@ -338,6 +339,10 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: environment replay stage drift")
         if environment_capture.get("replay_precedes_workflow_replay") is not True:
             errors.append("status.json: environment replay ordering drift")
+        if environment_capture.get("authoritative_recapture_at_confirmation") is not True:
+            errors.append("status.json: authoritative environment recapture drift")
+        if environment_capture.get("browser_preview_authoritative") is not False:
+            errors.append("status.json: browser environment preview authority drift")
         if environment_capture.get("automatic_environment_execution_during_verification") is not False:
             errors.append("status.json: environment verification execution boundary drift")
 
