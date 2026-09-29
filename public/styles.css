@@ -65,3 +65,7 @@ footer{border-top:1px solid var(--line);padding:38px 0 54px;margin-top:50px}.foo
 .trace{display:grid;grid-template-columns:130px 1fr;gap:8px 16px;font-size:12px}.trace dt{color:var(--muted)}.trace dd{margin:0;font-weight:650;word-break:break-word}
 @media(max-width:900px){.metricgrid{grid-template-columns:1fr 1fr}.parity{grid-template-columns:1fr}}
 @media(max-width:580px){.engine-banner,.overall{align-items:flex-start;flex-direction:column}.metricgrid{grid-template-columns:1fr}}
+
+.chartgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sparkchart{display:block;width:100%;height:auto;background:linear-gradient(#fbfcfe,#f4f7fb);border:1px solid var(--line);border-radius:14px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
+@media(max-width:760px){.chartgrid{grid-template-columns:1fr}}
