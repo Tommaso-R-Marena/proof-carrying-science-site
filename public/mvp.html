@@ -37,7 +37,7 @@
     <div><span>Producer</span><strong><code>attest-v06</code></strong></div>
     <div><span>Delivery</span><strong>Deterministic + self-verified ZIP</strong></div>
     <div><span>Reviewer</span><strong><code>verify-v06-bundle</code></strong></div>
-    <div><span>Acceptance</span><strong>External reviewer policy</strong></div>
+    <div><span>Audit</span><strong>Reviewer-signed receipt</strong></div>
   </div>
 </section>
 
@@ -59,10 +59,10 @@
     <article class="command-card">
       <div class="command-label"><span>Reviewer</span><strong>Verify + apply policy</strong></div>
       <div class="codecommand">
-        <code>pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json</code>
-        <button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json">Copy</button>
+        <code>pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json --reviewer-private-key reviewer-private.pem --receipt-signature receipt.sig.json</code>
+        <button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json --reviewer-private-key reviewer-private.pem --receipt-signature receipt.sig.json">Copy</button>
       </div>
-      <p>Reads the ZIP without extracting it, verifies the signer and exact file set, reruns supported scientific checks, regenerates normalized decisions, then applies the reviewer's external acceptance criteria.</p>
+      <p>Reads the ZIP without extracting it, verifies the signer and exact file set, reruns supported scientific checks, regenerates normalized decisions, applies the reviewer's acceptance criteria, then optionally signs the exact receipt bytes with a separate reviewer identity.</p>
     </article>
   </div>
 
@@ -78,6 +78,8 @@
     <div class="mvp-node"><span>05</span><strong>Bundle</strong><small>Deterministic, self-verified ZIP</small></div>
     <div class="mvp-arrow">→</div>
     <div class="mvp-node"><span>06</span><strong>Review</strong><small>Verify first, policy second</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>07</span><strong>Attest review</strong><small>Reviewer signs exact receipt bytes</small></div>
   </div>
 </section>
 
@@ -111,6 +113,21 @@
       <span>Three positive controls passed; two negative controls failed as intended, including a one-row Iris leakage mutation and published IV indomethacin concentrations misrepresented as exact single-exponential output.</span>
     </div>
     <a class="button secondary" href="validation.html">See evidence →</a>
+  </div>
+</section>
+
+<section class="section split">
+  <div>
+    <div class="kicker">Independent review provenance</div>
+    <h2>Producer signs the package. Reviewer signs the receipt.</h2>
+    <p class="section-intro">The two signatures serve different purposes. The producer signature authenticates the scientific delivery. After independent verification and policy evaluation, the reviewer may sign the exact receipt bytes with a separate Ed25519 key.</p>
+    <div class="boundary"><strong>Producer identity</strong><span>Binds certificate + exact package manifest.</span></div>
+    <div class="boundary policy-boundary"><strong>Reviewer identity</strong><span>Binds exact receipt SHA-256, bundle SHA-256, policy SHA-256, certificate/index commitments, PCS validity, and reviewer acceptance.</span></div>
+  </div>
+  <div class="panel">
+    <h2>Verify the review record later</h2>
+    <div class="codecommand"><code>pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;</code><button data-copy="pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;">Copy</button></div>
+    <p class="tiny">A reviewer signature attests to the review record. It does not elevate claim assurance, repair failed science, or replace PCS package verification. Reviewer private keys should stay local; this website never requests them.</p>
   </div>
 </section>
 
