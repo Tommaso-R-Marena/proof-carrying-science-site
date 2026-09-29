@@ -124,6 +124,10 @@
 
       <div class="tabpane active" id="tab-package">
         <table class="pkgtable"><thead><tr><th>File</th><th>Bytes</th><th>Manifest SHA-256</th></tr></thead><tbody id="packageRows"></tbody></table>
+        <div class="fileinspector">
+          <div class="fileinspector-head"><div><span class="tiny">Selected package member</span><strong id="packageFileName">Select a file above</strong></div><span class="mono tiny" id="packageFileMeta">—</span></div>
+          <pre id="packageFilePreview">Text-safe files up to 64 KiB can be inspected locally here.</pre>
+        </div>
       </div>
 
       <div class="tabpane" id="tab-evidence">
