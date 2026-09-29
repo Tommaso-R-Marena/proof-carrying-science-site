@@ -157,3 +157,25 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
 .validation-evidence-banner{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:22px 24px;border:1px solid #b8dfd4;background:#f3fbf8;border-radius:18px;margin:24px 0}.validation-evidence-banner strong{display:block;font-size:18px;margin-bottom:5px}.validation-evidence-banner span{font-size:13px;color:var(--muted);line-height:1.5}
 @media(max-width:900px){.validation-callout{grid-template-columns:1fr}.validation-metrics{grid-template-columns:1fr 1fr}.validation-evidence-banner{grid-template-columns:1fr}}
 @media(max-width:580px){.validation-metrics{grid-template-columns:1fr}}
+
+
+/* guided project mapper */
+.project-mapper{display:grid;grid-template-columns:340px 1fr;gap:18px;margin:28px 0 72px}
+.mapper-controls{align-self:start;position:sticky;top:18px}
+.mapper-detectors{display:grid;gap:9px}
+.mapper-detectors>div{border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fafcff}
+.mapper-detectors strong,.mapper-detectors span{display:block}
+.mapper-detectors strong{font-size:12px}.mapper-detectors span{font-size:10px;color:var(--muted);margin-top:3px}
+.mapper-section-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.recommendation-list{display:grid;gap:10px;margin-top:16px}
+.recommendation-card{display:grid;grid-template-columns:22px 1fr;gap:12px;padding:14px;border:1px solid var(--line);border-radius:13px;background:#fff;cursor:pointer;transition:.15s ease}
+.recommendation-card:hover{border-color:#b7c9dc}
+.recommendation-card.selected{border-color:#8ab7a1;background:#f4fbf8}
+.recommendation-card input{margin-top:4px}
+.recommendation-card p{margin:6px 0;color:var(--muted);font-size:12px;line-height:1.5}
+.recommendation-card small{color:#6c7c8e;font-size:10px}
+.recommendation-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.artifact-inventory{display:grid;gap:7px;margin-top:14px;max-height:420px;overflow:auto}
+.inventory-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fafcff}
+.inventory-row strong,.inventory-row small{display:block}.inventory-row strong{font-size:11px}.inventory-row small{font-size:9px;color:var(--muted);margin-top:2px}.inventory-row code{font-size:9px;color:#4e6074}
+@media(max-width:900px){.project-mapper{grid-template-columns:1fr}.mapper-controls{position:static}}
