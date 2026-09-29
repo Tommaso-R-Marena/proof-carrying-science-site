@@ -70,6 +70,14 @@
     </article>
 
     <article class="trustitem">
+      <header><h3>Adaptive replay scheduler boundary</h3><span class="chip pending">Experimental</span></header>
+      <p>PCS v0.6 implements deterministic replay-order baselines plus a contextual LinUCB-style bandit. The scheduler may prioritize which mandatory check runs first, but it is not consulted by scientific check semantics, claim assessment, normalized decisions, reviewer policy, signed receipts, or quorum approval.</p>
+      <div class="boundary"><strong>Cold-start guard</strong><span>Active bandit ordering requires at least 20 eligible observations overall and at least 3 observations for every check type in the current package. Sparse history falls back to deterministic failure-per-second ordering.</span></div>
+      <div class="boundary"><strong>Telemetry boundary</strong><span>Persisted telemetry contains check type, size/count context, outcome/failure class, wall/CPU timing, and SHA-256-derived evidence IDs. Artifact contents are not written into scheduler history.</span></div>
+      <div class="boundary"><strong>Evidence status</strong><span>A synthetic direct runtime exercise preserved all mandatory checks and produced an 11× counterfactual time-to-first-failure estimate. Production-workload speedup has not yet been established.</span></div>
+    </article>
+
+    <article class="trustitem">
       <header><h3>Machine-checked v0.5/v1 theorem stack</h3><span class="chip verified">Verified</span></header>
       <p>The strongest current Lean result goes beyond normalized-state semantics for the older v0.5/v1 wire: accepted normalized-wire bytes pass strict UTF-8/JSON/schema decoding, checked wire construction, <code>wireCheck</code>, <code>WellFormed</code>, and the bridge into <code>Assures</code>. Package authenticity and replay are modeled with their remaining trust exposed as theorem arguments.</p>
       <div class="boundary"><strong>Verified theorem boundary</strong><span><code>verifyNormalizedWireBytes_assures_e2e</code> is unconditional over accepted raw wire bytes. The package-level theorem is conditional on explicit signature-scheme and replay-adapter soundness assumptions.</span></div>
