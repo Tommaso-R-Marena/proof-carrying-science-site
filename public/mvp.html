@@ -80,17 +80,35 @@
   <div class="mvp-flow" aria-label="v0.6 producer to reviewer flow">
     <div class="mvp-node"><span>01</span><strong>Manifest</strong><small>Claims, assumptions, artifacts, checks</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>02</span><strong>Workflow replay</strong><small>Re-derive confirmed source/artifact edges</small></div>
+    <div class="mvp-node"><span>02</span><strong>Environment replay</strong><small>Re-derive dependencies, lockfiles, interpreter/container contract</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>03</span><strong>Scientific replay</strong><small>Run mandatory checks on packaged bytes</small></div>
+    <div class="mvp-node"><span>03</span><strong>Workflow replay</strong><small>Re-derive confirmed source/artifact edges</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>04</span><strong>Sign</strong><small>Certificate + exact manifest</small></div>
+    <div class="mvp-node"><span>04</span><strong>Scientific replay</strong><small>Run mandatory checks on packaged bytes</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>05</span><strong>Bundle</strong><small>Deterministic, self-verified ZIP</small></div>
+    <div class="mvp-node"><span>05</span><strong>Sign</strong><small>Certificate + exact manifest</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>06</span><strong>Review</strong><small>Verify first, policy second</small></div>
+    <div class="mvp-node"><span>06</span><strong>Bundle</strong><small>Deterministic, self-verified ZIP</small></div>
     <div class="mvp-arrow">→</div>
-    <div class="mvp-node"><span>07</span><strong>Attest review</strong><small>Reviewer signs exact receipt bytes</small></div>
+    <div class="mvp-node"><span>07</span><strong>Review</strong><small>Verify first, policy second</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>08</span><strong>Attest review</strong><small>Reviewer signs exact receipt bytes</small></div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="kicker">Independent environment provenance</div>
+  <h2>A lockfile is evidence only if the reviewer can regenerate the same environment contract.</h2>
+  <p class="section-intro">Guided discovery captures Python/R dependencies, lockfiles, interpreter constraints, Conda/Nix specifications, and Docker/OCI base references without executing package managers or builds. After package binding, the reviewer reconstructs those exact environment files and regenerates the canonical environment contract before workflow or scientific replay.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Pinned</div><h3>Strength is explicit</h3><p>PCS distinguishes loose declarations, application lockfiles, hash-pinned requirements, digest-pinned containers, and stronger combined states instead of calling all of them “reproducible.”</p></article>
+    <article class="card"><div class="num">Replay</div><h3>Freshly re-derived</h3><p>The signed <code>pcs-environment-capture-v1</code> proposition must equal a fresh capture over the exact delivered environment source bytes.</p></article>
+    <article class="card"><div class="num">No exec</div><h3>Verification stays non-executing</h3><p>PCS can emit <code>pcs-environment-plan.json</code> and a review-before-run reconstruction script, but verification never runs installers, package managers, or container builds automatically.</p></article>
+  </div>
+  <div class="panel" style="margin-top:22px">
+    <h2>Inspect reconstruction plan</h2>
+    <div class="codecommand"><code>pcs environment-plan-v06 manifest.json -o environment-plan.json --script reconstruct-environment.sh</code><button data-copy="pcs environment-plan-v06 manifest.json -o environment-plan.json --script reconstruct-environment.sh">Copy</button></div>
+    <p class="tiny">The generated script may invoke package managers or container builds and must be reviewed before execution. It is never executed by <code>verify-v06</code> or <code>verify-v06-bundle</code>.</p>
   </div>
 </section>
 
