@@ -34,18 +34,25 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
-    if p.exists() and CONTACT not in p.read_text(encoding="utf-8"):
+    if not p.exists():
+        continue
+    page_text = p.read_text(encoding="utf-8")
+    if CONTACT not in page_text:
         errors.append(f"{page}: real contact address is missing")
+    if 'src="site.js"' not in page_text:
+        errors.append(f"{page}: shared navigation script is missing")
+    if 'href="trust.html"' not in page_text and page != "trust.html":
+        errors.append(f"{page}: Trust Center navigation link is missing")
 
 headers = (ROOT / "_headers").read_text(encoding="utf-8") if (ROOT / "_headers").exists() else ""
 for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "X-Robots-Tag"]:
@@ -80,7 +87,7 @@ if prod_fixture.exists():
         if cert.get("spec_version") != "pcs-0.5":
             errors.append("pcs-v05-reference-package.json: certificate is not pcs-0.5")
         if cert.get("checker_version") != "pcs-python-kernel/0.5.0":
-            errors.append("pcs-v05-reference-package.json: unexpected checker version")
+            errors.append("pcs-v05-reference-package.json: browser reference must remain on released checker 0.5.0")
         if manifest.get("package_format") != "pcs-package-v1":
             errors.append("pcs-v05-reference-package.json: package manifest format mismatch")
         if sig.get("signature_format") != "pcs-package-ed25519-v1":
@@ -122,4 +129,4 @@ if errors:
         print(f"- {err}")
     sys.exit(1)
 
-print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, production PCS v0.5 fixture bound and consistent)")
+print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, released PCS 0.5.0 fixture bound, Trust Center present, shared navigation present)")
