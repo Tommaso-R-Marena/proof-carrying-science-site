@@ -1,0 +1,5 @@
+Contact: mailto:marenatommaso@gmail.com
+Expires: 2027-09-29T23:59:59Z
+Preferred-Languages: en
+Canonical: https://proof-carrying-science-site.marenatommaso.workers.dev/.well-known/security.txt
+Policy: https://proof-carrying-science-site.marenatommaso.workers.dev/trust.html
