@@ -34,15 +34,15 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "mvp.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "index.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
-    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
+    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "mvp.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -55,6 +55,37 @@ for page in ["index.html", "mvp.html", "trust.html", "architecture.html", "demo.
         errors.append(f"{page}: Trust Center navigation link is missing")
     if 'href="mvp.html"' not in page_text and page != "mvp.html":
         errors.append(f"{page}: v0.6 MVP navigation link is missing")
+
+validation_pages = ["index.html", "mvp.html", "trust.html", "architecture.html", "demo.html"]
+for page in validation_pages:
+    p = ROOT / page
+    if p.exists() and 'href="validation.html"' not in p.read_text(encoding="utf-8"):
+        errors.append(f"{page}: real-world validation navigation/link is missing")
+
+validation_result = ROOT / "real-world-validation-2026-09-29.json"
+if validation_result.exists():
+    try:
+        validation = json.loads(validation_result.read_text(encoding="utf-8"))
+        if validation.get("format") != "pcs-public-real-world-validation-v1":
+            errors.append("real-world validation: unexpected format")
+        summary = validation.get("summary", {})
+        if summary != {
+            "cases": 5,
+            "matched_expected": 5,
+            "unexpected": 0,
+            "expected_pass": 3,
+            "expected_fail": 2,
+        }:
+            errors.append("real-world validation: summary drift")
+        by_id = {case.get("id"): case for case in validation.get("cases", [])}
+        if by_id.get("iris_contaminated_split", {}).get("actual") != "FAIL":
+            errors.append("real-world validation: Iris negative control drift")
+        if by_id.get("indometh_subject1_single_exponential", {}).get("actual") != "FAIL":
+            errors.append("real-world validation: Indometh negative control drift")
+        if validation.get("execution_mode") != "direct_checker_logic_execution":
+            errors.append("real-world validation: execution-boundary drift")
+    except Exception as exc:
+        errors.append(f"real-world validation: invalid JSON: {type(exc).__name__}: {exc}")
 
 headers = (ROOT / "_headers").read_text(encoding="utf-8") if (ROOT / "_headers").exists() else ""
 for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "X-Robots-Tag"]:
@@ -148,10 +179,17 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: legacy browser profile version drift")
         if browser.get("decision_vectors_passed") != 11 or browser.get("decision_vectors_total") != 11:
             errors.append("status.json: browser decision parity count drift")
-        if preview.get("target") != "exact-v0.6-v2-formal-port-and-external-design-partner-pilot" or preview.get("status") != "OPEN":
+        if preview.get("target") != "full-v0.6-runtime-gate-external-design-partner-pilot-and-exact-v0.6-v2-formal-port" or preview.get("status") != "OPEN":
             errors.append("status.json: next refinement status drift")
         if preview.get("released") is not False:
             errors.append("status.json: open refinement marked released")
+        real_world = status.get("real_world_validation", {})
+        if real_world.get("cases") != 5 or real_world.get("matched_expected") != 5 or real_world.get("unexpected") != 0:
+            errors.append("status.json: real-world validation summary drift")
+        if real_world.get("full_attest_verify_roundtrip_executed") is not False:
+            errors.append("status.json: real-world validation overclaims full round trip")
+        if real_world.get("hosted_runner_status") != "RUNNER_UNAVAILABLE":
+            errors.append("status.json: real-world hosted-runner caveat drift")
         if status.get("contact") != CONTACT:
             errors.append("status.json: contact address drift")
     except Exception as exc:
@@ -194,4 +232,4 @@ if errors:
         print(f"- {err}")
     sys.exit(1)
 
-print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, v0.6 MVP status + legacy v0.5 fixture bound, Trust Center present, shared navigation present)")
+print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, v0.6 MVP + 5-case real-world validation + legacy v0.5 fixture bound)")
