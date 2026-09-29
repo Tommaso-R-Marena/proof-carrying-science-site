@@ -143,3 +143,17 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
 @media(max-width:620px){
   .mvp-flow{grid-template-columns:1fr}
 }
+
+
+/* Real-world validation surface */
+.validation-head{padding-bottom:36px}
+.validation-callout{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;padding:28px;border:1px solid #c9dcef;border-radius:20px;background:linear-gradient(135deg,#f4f8fe,#f3fbf8)}
+.validation-callout h2{margin:7px 0 10px;font-size:26px}.validation-callout p{color:var(--muted);line-height:1.6;margin:0}
+.validation-kpis{display:grid;gap:10px}.validation-kpis>div{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px}.validation-kpis span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}.validation-kpis strong{font-size:12px}
+.validation-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:#fff;margin-top:28px;box-shadow:var(--shadow)}
+.validation-table{width:100%;border-collapse:collapse;min-width:940px;font-size:12px}.validation-table th,.validation-table td{text-align:left;padding:14px 13px;border-bottom:1px solid var(--line);vertical-align:top}.validation-table th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:#f8fafc}.validation-table tr:last-child td{border-bottom:0}.validation-table td:nth-child(1){min-width:210px}.validation-table td:nth-child(2){min-width:220px}.validation-table td:last-child{min-width:220px;color:var(--muted);line-height:1.5}
+.result-pill{display:inline-flex;border-radius:999px;padding:5px 8px;font:800 10px var(--sans);letter-spacing:.05em;border:1px solid}.result-pill.pass{color:var(--good);border-color:#b8dfd4;background:#f3fbf8}.result-pill.fail{color:var(--bad);border-color:#efc1c7;background:#fff6f7}
+.validation-metrics{grid-template-columns:repeat(4,1fr);margin:20px 0}
+.validation-evidence-banner{display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:22px 24px;border:1px solid #b8dfd4;background:#f3fbf8;border-radius:18px;margin:24px 0}.validation-evidence-banner strong{display:block;font-size:18px;margin-bottom:5px}.validation-evidence-banner span{font-size:13px;color:var(--muted);line-height:1.5}
+@media(max-width:900px){.validation-callout{grid-template-columns:1fr}.validation-metrics{grid-template-columns:1fr 1fr}.validation-evidence-banner{grid-template-columns:1fr}}
+@media(max-width:580px){.validation-metrics{grid-template-columns:1fr}}
