@@ -37,8 +37,20 @@ function discoveryReviewMarkdown(){
   for(const r of lastReport.recommendations){const mark=lastReport.selected_recommendations.includes(r.id)?"x":" ";lines.push(`- [${mark}] **${r.detector}** (${Number(r.confidence).toFixed(2)})`,`  - Claim: ${r.claim?.statement||""}`,`  - Check: ${r.check?.type||""}`,`  - Why: ${r.reason||""}`)}
   lines.push("","## Static workflow inferences","");
   for(const w of lastReport.workflow_map.sources||[]){const mark=lastReport.selected_workflow_inferences.includes(w.id)?"x":" ";const reads=(w.reads||[]).map(a=>lastReport.inventory.find(x=>x.artifact_id===a)?.path||a).join(", ")||"none";const writes=(w.writes||[]).map(a=>lastReport.inventory.find(x=>x.artifact_id===a)?.path||a).join(", ")||"none";lines.push(`- [${mark}] **${w.source_path}** (${w.source_kind}, confidence ${Number(w.confidence).toFixed(2)})`,`  - Reads: ${reads}`,`  - Writes: ${writes}`,`  - Unresolved recognized references: ${w.unresolved_reference_count||0}`)}
+  const env=lastReport.environment_capture;
+  lines.push("","## Reproducibility environment","");
+  if(env){
+    lines.push(`- Hermeticity: **${env.hermeticity}**`,`- Environment source files: **${env.summary?.source_files||0}**`,`- Dependency records: **${env.summary?.dependency_records||0}**`,`- Environment unresolved items: **${env.summary?.unresolved_items||0}**`,"","Interpreter constraints:");
+    const py=(env.python?.interpreter_constraints||[]).map(x=>`Python ${x.value} (${x.source_path})`);
+    const rv=(env.r?.interpreter_constraints||[]).map(x=>`R ${x.value} (${x.source_path})`);
+    for(const x of [...py,...rv])lines.push(`- ${x}`);
+    if(!py.length&&!rv.length)lines.push("- No interpreter constraint detected.");
+    lines.push("","Proposed reconstruction steps:");
+    for(const step of env.replay_plan?.steps||[])lines.push(`- **${step.kind}**: ${step.command_template}`);
+    if(!(env.replay_plan?.steps||[]).length)lines.push("- No reconstructable environment strategy detected.");
+  }else lines.push("- No environment capture.");
   lines.push("","## Unresolved review items","");if(lastReport.unresolved.length){for(const x of lastReport.unresolved)lines.push(`- **${x.type||"unresolved"}**: ${x.message||x.source_path||""}`)}else lines.push("- None reported.");
-  lines.push("","## Before confirmation","","1. Confirm each selected scientific claim says what you intend.","2. Confirm each selected workflow edge matches the intended artifact flow.","3. Inspect unresolved or dynamic references instead of guessing.","4. Remove any recommendation you do not want to attest.","5. Only then run pcs confirm-v06.","");
+  lines.push("","## Before confirmation","","1. Confirm each selected scientific claim says what you intend.","2. Confirm each selected workflow edge matches the intended artifact flow.","3. Inspect unresolved or dynamic references instead of guessing.","4. Review dependency declarations, lockfiles, interpreter constraints, and environment reconstruction steps.","5. Remove any recommendation or environment claim you do not want to attest.","6. Only then run pcs confirm-v06.","");
   return lines.join("\n");
 }
 function normalizeRel(path){const out=[];for(const part of String(path).replaceAll("\\","/").split("/")){if(!part||part===".")continue;if(part===".."){if(!out.length)return null;out.pop()}else out.push(part)}return out.join("/")}
@@ -172,7 +184,9 @@ async function loadSyntheticExample(){
       "model = json.load(open('model.json'))\n",
       "df = pd.read_csv('predictions.csv')\n",
       "df.to_csv('predictions.csv', index=False)\n"
-    ],"generate.py",{type:"text/x-python"})
+    ],"generate.py",{type:"text/x-python"}),
+    new File(["numpy==1.26.4\npandas==2.2.2\n"],"requirements.txt",{type:"text/plain"}),
+    new File(["3.12.2\n"],".python-version",{type:"text/plain"})
   ];
   $("subject").value="synthetic-guided-demo";
   await inspectFiles(files);
