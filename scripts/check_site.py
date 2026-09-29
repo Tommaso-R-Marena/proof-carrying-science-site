@@ -34,15 +34,15 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "mvp.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "mvp.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -125,16 +125,31 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: released specification differs from browser fixture")
         if released.get("checker") != cert.get("checker_version"):
             errors.append("status.json: released checker differs from browser fixture")
+        mvp = status.get("mvp_candidate", {})
         if formal.get("lean_version") != "4.28.0":
             errors.append("status.json: unexpected verified Lean version")
-        if formal.get("decision_and_normalized_state_soundness") != "MACHINE_CHECKED_PASS":
-            errors.append("status.json: formal soundness status drift")
+        if formal.get("raw_wire_bytes_to_assures") != "MACHINE_CHECKED_PASS":
+            errors.append("status.json: formal raw-wire assurance status drift")
+        if formal.get("exact_v06_v2_port") != "OPEN":
+            errors.append("status.json: exact v0.6 formal-port boundary drift")
+        if mvp.get("specification") != "pcs-0.6" or mvp.get("checker") != "pcs-python-kernel/0.6.0-dev":
+            errors.append("status.json: v0.6 MVP identity drift")
+        if mvp.get("producer_command") != "pcs attest-v06" or mvp.get("reviewer_command") != "pcs verify-v06-bundle":
+            errors.append("status.json: v0.6 MVP command contract drift")
+        if mvp.get("reviewer_policy", {}).get("valid_separate_from_accepted") is not True:
+            errors.append("status.json: reviewer-policy separation drift")
+        if mvp.get("latest_hosted_gate", {}).get("steps_executed") != 0 or mvp.get("latest_hosted_gate", {}).get("code_result") != "NOT_EXECUTED":
+            errors.append("status.json: hosted-gate caveat drift")
+        if mvp.get("released") is not False:
+            errors.append("status.json: v0.6 MVP candidate marked released")
+        if browser.get("specification") != "pcs-0.5":
+            errors.append("status.json: legacy browser profile version drift")
         if browser.get("decision_vectors_passed") != 11 or browser.get("decision_vectors_total") != 11:
             errors.append("status.json: browser decision parity count drift")
-        if preview.get("checker") != "pcs-python-kernel/0.5.1" or preview.get("serialized_wire_refinement") != "VERIFICATION_PENDING":
+        if preview.get("target") != "exact-v0.6-v2-formal-port-and-external-design-partner-pilot" or preview.get("status") != "OPEN":
             errors.append("status.json: next refinement status drift")
         if preview.get("released") is not False:
-            errors.append("status.json: unreleased refinement marked released")
+            errors.append("status.json: open refinement marked released")
         if status.get("contact") != CONTACT:
             errors.append("status.json: contact address drift")
     except Exception as exc:
@@ -159,4 +174,4 @@ if errors:
         print(f"- {err}")
     sys.exit(1)
 
-print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, released PCS 0.5.0 fixture/status bound, Trust Center present, shared navigation present)")
+print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, v0.6 MVP status + legacy v0.5 fixture bound, Trust Center present, shared navigation present)")
