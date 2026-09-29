@@ -38,10 +38,11 @@
   <div class="workflow">
     <div class="workflow-step"><div class="step">1</div><div><strong>Scientific producer</strong><span>Any simulator, notebook, model, AI system, optimization pipeline, or human-authored computation produces candidate artifacts.</span></div></div>
     <div class="workflow-step"><div class="step">2</div><div><strong>PCS package construction</strong><span>Claims, assumptions, artifacts, replayable check specifications, workflow structure, runtime provenance, limitations, and cryptographic hashes are bound into a deterministic evidence package.</span></div></div>
-    <div class="workflow-step"><div class="step">3</div><div><strong>Static workflow replay</strong><span>Reconstruct delivered source files and re-derive any human-confirmed artifact dependency claims before trusting them.</span></div></div>
-    <div class="workflow-step"><div class="step">4</div><div><strong>Independent executable replay</strong><span>The checker reruns supported predicates from delivered artifacts rather than trusting recorded PASS fields.</span></div></div>
-    <div class="workflow-step"><div class="step">5</div><div><strong>Decision semantics</strong><span>Evidence outcomes are mapped to formal, computational, empirical, mixed, OPEN, or failed claim status under explicit rules.</span></div></div>
-    <div class="workflow-step"><div class="step">6</div><div><strong>Reviewer policy</strong><span>The receiver decides which claim statuses and signer identity are sufficient for acceptance.</span></div></div>
+    <div class="workflow-step"><div class="step">3</div><div><strong>Environment replay</strong><span>Reconstruct delivered dependency/lock/interpreter/container specifications and regenerate the human-confirmed environment contract without executing them.</span></div></div>
+    <div class="workflow-step"><div class="step">4</div><div><strong>Static workflow replay</strong><span>Reconstruct delivered source files and re-derive any human-confirmed artifact dependency claims before trusting them.</span></div></div>
+    <div class="workflow-step"><div class="step">5</div><div><strong>Independent executable replay</strong><span>The checker reruns supported predicates from delivered artifacts rather than trusting recorded PASS fields.</span></div></div>
+    <div class="workflow-step"><div class="step">6</div><div><strong>Decision semantics</strong><span>Evidence outcomes are mapped to formal, computational, empirical, mixed, OPEN, or failed claim status under explicit rules.</span></div></div>
+    <div class="workflow-step"><div class="step">7</div><div><strong>Reviewer policy</strong><span>The receiver decides which claim statuses and signer identity are sufficient for acceptance.</span></div></div>
   </div>
 </section>
 
@@ -72,6 +73,7 @@
         <tr><td>CSV split disjointness</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
         <tr><td>Reaction balance</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
         <tr><td>Unit compatibility</td><td>Yes</td><td>Unit parser used by PK/PD profile</td><td>Restricted unit theorem layer</td></tr>
+        <tr><td>Reproducibility environment capture</td><td>Yes · Python/R dependencies, lockfiles, interpreter constraints, Conda/Nix and container specs; independent <code>environment_replay</code> before workflow/scientific replay</td><td>Local preview + environment-plan download; authoritative contract is Python CLI</td><td>Outside current Lean theorem boundary</td></tr>
         <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Machine-checked normalized-state soundness</td></tr>
         <tr><td>Reviewer acceptance policy</td><td>Yes · <code>valid</code> and <code>accepted</code> separate; exact policy SHA-256 in receipt</td><td>Yes · local explanatory policy lab</td><td>Policy remains external to producer proof</td></tr>
         <tr><td>Reviewer-signed verification receipt</td><td>Yes · separate Ed25519 reviewer identity binds exact receipt bytes + bundle/policy/verdict commitments</td><td>Documentation only; browser never handles reviewer private keys</td><td>Outside current Lean theorem boundary</td></tr>
