@@ -228,10 +228,11 @@
       "merged": true,
       "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
       "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
-      "current_head": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+      "current_head": "29feeb66c421dd50bc8c9ba010dbeeeaac56d509",
       "runtime_main_gate_passed": true,
       "formal_wire_gate_passed": true,
-      "formal_wire_merge_commit": "3e93573e0875da422340ad5e8d5e29f623c1eadc"
+      "formal_wire_merge_commit": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+      "product_hardening_tested_checkpoint": "9a17359b99517d97ef484e143337af3f82d35d4d"
     },
     "runtime_evidence": {
       "three_host_oci": {
