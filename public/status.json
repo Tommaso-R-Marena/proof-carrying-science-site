@@ -365,6 +365,19 @@
         "links_to_executed_validation": true,
         "links_to_runtime_evidence": true
       }
+    },
+    "usability": {
+      "role_entry": {
+        "format": "pcs-role-entry-ui-v1",
+        "page": "index.html",
+        "producer_route": "guided-submission.html",
+        "reviewer_route": "result-anatomy.html",
+        "explorer_route": "guided-submission.html?demo=1",
+        "producer_and_reviewer_roles_separated": true,
+        "producer_cannot_self_accept": true,
+        "reviewer_policy_controls_acceptance": true,
+        "role_copy_uses_plain_language": true
+      }
     }
   },
   "formal": {
