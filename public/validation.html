@@ -36,6 +36,7 @@
   </div>
   <div class="actions">
     <a class="button primary" href="real-world-validation-2026-09-29.json">Download result JSON</a>
+    <a class="button secondary" href="#golden-demos">See the 3 golden demos</a>
     <a class="button secondary" href="mvp.html">Back to v0.6 MVP</a>
   </div>
 </section>
@@ -153,6 +154,31 @@
       <p style="margin-top:12px">Source reference: R <code>datasets::Indometh</code>; originally Kwan et al. (1976).</p>
     </article>
   </div>
+</section>
+
+<section class="section" id="golden-demos">
+  <div class="kicker">Canonical demo suite</div>
+  <h2>Three deterministic examples tell the whole PCS story.</h2>
+  <p class="section-intro">These are not screenshots or hand-written result cards. The core harness constructs, signs, bundles, and independently verifies each v0.6 case. A fixed demo-only signing key and fixed fixture timestamp make repeated builds byte-comparable.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card">
+      <div class="num">01 · Supported</div>
+      <h3>Valid package + supported claim</h3>
+      <p>A restricted PK/PD model and its declared output replay exactly within the typed tolerance. The bundle must be valid and both computational claims must derive <code>COMPUTATIONALLY_SUPPORTED</code>.</p>
+    </article>
+    <article class="card">
+      <div class="num">02 · Falsified</div>
+      <h3>Valid package + failed scientific claim</h3>
+      <p>The output is deliberately corrupted while the package remains structurally valid. PCS must preserve <code>FALSIFIED_OR_CHECK_FAILED</code> rather than confusing scientific failure with verifier failure.</p>
+    </article>
+    <article class="card">
+      <div class="num">03 · Reproducibility</div>
+      <h3>Environment-bound replay</h3>
+      <p>Discovery captures declared Python dependencies and interpreter constraints, confirmation binds their exact source bytes, and verification re-derives the environment proposition before scientific replay.</p>
+    </article>
+  </div>
+  <div class="codecommand" style="margin-top:22px"><code>python scripts/run_golden_examples_v06.py -o golden-demo-run</code><button data-copy="python scripts/run_golden_examples_v06.py -o golden-demo-run">Copy</button></div>
+  <div class="notice" style="margin-top:14px"><strong>Demo-only cryptographic identity:</strong> the golden suite intentionally uses a deterministic test key so byte-for-byte reproducibility can be asserted. That key is never appropriate for real publication or reviewer trust.</div>
 </section>
 
 <section class="section">
