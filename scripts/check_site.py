@@ -78,6 +78,9 @@ if guided_page.exists():
         "confirm-v06",
         "attest-v06",
         "Open Advanced Mapper",
+        "What can PCS formalize today?",
+        "PCS does not turn arbitrary prose directly into a trusted formal claim.",
+        "Describe what you want to check",
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -86,7 +89,7 @@ if guided_js.exists():
     for required_text in [
         "window.PCSProjectMapper",
         "setRecommendationSelected",
-        "setClaimStatement",
+        "formal_explanation",
         "api.downloadDraft",
         "api.downloadReview",
         "ZIP archives",
@@ -97,6 +100,17 @@ if mapper_js.exists():
     mapper_script = mapper_js.read_text(encoding="utf-8")
     if "window.PCSProjectMapper" not in mapper_script:
         errors.append("project-builder.js: reusable Guided Submission API is missing")
+    for required_text in [
+        "function explainPredicate(predicate)",
+        "Dataset separation",
+        "Chemical reaction balance",
+        "Unit compatibility",
+        "PK/PD model contract",
+        "PK/PD output reproduction",
+        "formal_explanation",
+    ]:
+        if required_text not in mapper_script:
+            errors.append(f"project-builder.js: formal claim explanation drift: {required_text}")
 
 if mapper_page.exists():
     mapper_text = mapper_page.read_text(encoding="utf-8")
@@ -308,7 +322,11 @@ if public_status.exists() and fixture_obj is not None:
             "folder_selection",
             "individual_file_selection",
             "synthetic_example",
-            "plain_language_claim_editing",
+            "plain_language_claim_rendering",
+            "free_text_used_only_for_template_suggestion",
+            "structured_predicate_preview",
+            "raw_predicate_progressive_disclosure",
+            "unsupported_claims_fail_closed",
             "progressive_disclosure",
             "advanced_mapper_preserved",
             "authoritative_confirmation_required",
@@ -324,6 +342,20 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: guided submission ZIP boundary drift")
         if guided_submission.get("browser_attestation_claimed") is not False:
             errors.append("status.json: guided submission browser-attestation overclaim")
+        if guided_submission.get("plain_language_claim_editing") is not False:
+            errors.append("status.json: free-text claim editing must not define formal semantics")
+        if guided_submission.get("free_text_defines_formal_predicate") is not False:
+            errors.append("status.json: free text must not define formal predicate")
+        if guided_submission.get("claim_translation_model") != "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation":
+            errors.append("status.json: guided claim translation model drift")
+        if guided_submission.get("supported_formal_claim_types") != [
+            "csv_disjoint",
+            "reaction_balance",
+            "unit_compatible",
+            "pkpd_contract",
+            "pkpd_reference_match",
+        ]:
+            errors.append("status.json: supported formal claim type set drift")
         if guided_submission.get("steps") != ["project", "claim", "review", "prepare", "ready"]:
             errors.append("status.json: guided submission step contract drift")
 
