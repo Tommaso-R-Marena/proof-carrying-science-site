@@ -119,6 +119,18 @@
   </div>
 </section>
 
+<section class="section-tight reviewer-local-verify">
+  <div class="kicker">Reviewer workflow</div>
+  <h2>Independent verification is one local command once your trust profile is pinned.</h2>
+  <p class="section-intro">The receiver keeps the trusted producer public key, expected signer fingerprint, and optional acceptance policy outside the scientific bundle. That prevents the package from choosing its own trust root.</p>
+  <div class="codecommand"><code>pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json</code><button data-copy="pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json">Copy</button></div>
+  <div class="grid3" style="margin-top:20px">
+    <article class="card"><div class="num">Trust profile</div><h3>Receiver-owned</h3><p><code>pcs-verifier-trust-v1</code> pins the producer key fingerprint and optional reviewer policy outside the delivered package.</p></article>
+    <article class="card"><div class="num">Same verifier</div><h3>No weaker demo path</h3><p><code>verify-local-v06</code> calls the same extraction-free v0.6 ZIP verifier used by the full reviewer command.</p></article>
+    <article class="card"><div class="num">Portable</div><h3>Single-file verifier</h3><p>The <code>pcs-verifier-v06</code> entry point can be packaged as a one-file executable; Linux packaging is CI smoke-tested and Windows/macOS build jobs are configured.</p></article>
+  </div>
+</section>
+
 <section class="section result-stage-detail">
   <div class="kicker">What “valid” contains</div>
   <h2>PCS v0.6 verifies a chain, not one green checkbox.</h2>
