@@ -98,7 +98,7 @@ if guided_page.exists():
         "What should PCS verify?",
         "Review what PCS found",
         "Prepare the verifiable package handoff",
-        "Your PCS draft is ready for authoritative confirmation.",
+        "Your PCS claim contract is prepared for authoritative verification.",
         "project-builder.js",
         "guided-submission.js",
         "Nothing is uploaded",
