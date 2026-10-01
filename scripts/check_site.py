@@ -34,15 +34,15 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "guided-submission.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "guided-submission.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "guided-submission.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -60,6 +60,44 @@ for page in ["index.html", "project-builder.html", "mvp.html", "validation.html"
 
 mapper_page = ROOT / "project-builder.html"
 mapper_js = ROOT / "project-builder.js"
+
+guided_page = ROOT / "guided-submission.html"
+guided_js = ROOT / "guided-submission.js"
+if guided_page.exists():
+    guided_text = guided_page.read_text(encoding="utf-8")
+    for required_text in [
+        "From scientific project to review-ready PCS draft in five steps.",
+        "Choose project folder",
+        "What should PCS verify?",
+        "Review what PCS found",
+        "Prepare the verifiable package handoff",
+        "Your PCS draft is ready for authoritative confirmation.",
+        "project-builder.js",
+        "guided-submission.js",
+        "Nothing is uploaded",
+        "confirm-v06",
+        "attest-v06",
+        "Open Advanced Mapper",
+    ]:
+        if required_text not in guided_text:
+            errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
+if guided_js.exists():
+    guided_script = guided_js.read_text(encoding="utf-8")
+    for required_text in [
+        "window.PCSProjectMapper",
+        "setRecommendationSelected",
+        "setClaimStatement",
+        "api.downloadDraft",
+        "api.downloadReview",
+        "ZIP archives",
+    ]:
+        if required_text not in guided_script:
+            errors.append(f"guided-submission.js: guided controller drift: {required_text}")
+if mapper_js.exists():
+    mapper_script = mapper_js.read_text(encoding="utf-8")
+    if "window.PCSProjectMapper" not in mapper_script:
+        errors.append("project-builder.js: reusable Guided Submission API is missing")
+
 if mapper_page.exists():
     mapper_text = mapper_page.read_text(encoding="utf-8")
     for required_text in [
@@ -252,6 +290,35 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: v0.6 MVP command contract drift")
         if mvp.get("reviewer_policy", {}).get("valid_separate_from_accepted") is not True:
             errors.append("status.json: reviewer-policy separation drift")
+
+        guided_submission = mvp.get("guided_submission", {})
+        if guided_submission.get("format") != "pcs-guided-submission-ui-v1":
+            errors.append("status.json: guided submission format drift")
+        for key in [
+            "uses_project_mapper_engine",
+            "local_only_browser_discovery",
+            "folder_selection",
+            "individual_file_selection",
+            "synthetic_example",
+            "plain_language_claim_editing",
+            "progressive_disclosure",
+            "advanced_mapper_preserved",
+            "authoritative_confirmation_required",
+            "draft_download_available",
+            "review_download_available",
+            "cli_handoff_generated",
+        ]:
+            if guided_submission.get(key) is not True:
+                errors.append(f"status.json: guided submission invariant drift: {key}")
+        if guided_submission.get("user_code_executed_during_browser_discovery") is not False:
+            errors.append("status.json: guided submission code-execution boundary drift")
+        if guided_submission.get("zip_silently_unpacked") is not False:
+            errors.append("status.json: guided submission ZIP boundary drift")
+        if guided_submission.get("browser_attestation_claimed") is not False:
+            errors.append("status.json: guided submission browser-attestation overclaim")
+        if guided_submission.get("steps") != ["project", "claim", "review", "prepare", "ready"]:
+            errors.append("status.json: guided submission step contract drift")
+
         guided_discovery = mvp.get("guided_discovery", {})
         if guided_discovery.get("discovery_format") != "pcs-project-discovery-v1":
             errors.append("status.json: guided discovery format drift")
@@ -479,7 +546,7 @@ if public_status.exists() and fixture_obj is not None:
         gate = mvp.get("latest_hosted_gate", {})
         if gate.get("provider") != "CircleCI" or gate.get("status") != "PASS" or gate.get("code_result") != "PASS" or gate.get("full_runtime_executed") is not True:
             errors.append("status.json: hosted runtime-gate evidence drift")
-        if gate.get("tested_checkpoint") != "1ef3cea04eb06f2b316ee566733e59c6af7452f1":
+        if gate.get("tested_checkpoint") != "3e93573e0875da422340ad5e8d5e29f623c1eadc":
             errors.append("status.json: runtime-gate checkpoint drift")
         if mvp.get("released") is not False:
             errors.append("status.json: v0.6 MVP candidate marked released")
