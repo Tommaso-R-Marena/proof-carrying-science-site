@@ -32,3 +32,7 @@ jobs:
           node --check public/demo.js
       - name: Validate deployable static site
         run: python scripts/check_site.py
+      - name: Install pinned Wrangler
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate Cloudflare deployment configuration
+        run: npm run deploy:dry-run
