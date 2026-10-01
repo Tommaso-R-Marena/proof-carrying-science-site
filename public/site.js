@@ -3,6 +3,20 @@
 
   document.documentElement.classList.add("js");
 
+  document.querySelectorAll(".navlinks").forEach((links) => {
+    if (!links.querySelector('a[href="guided-submission.html"]')) {
+      const tryLink = document.createElement("a");
+      tryLink.href = "guided-submission.html";
+      tryLink.textContent = "Try PCS";
+      tryLink.className = "nav-primary-link";
+      links.insertBefore(tryLink, links.firstChild);
+    }
+    const mapperLink = links.querySelector('a[href="project-builder.html"]');
+    if (mapperLink && /Project Mapper/i.test(mapperLink.textContent || "")) {
+      mapperLink.textContent = "Advanced Mapper";
+    }
+  });
+
   document.querySelectorAll("nav").forEach((nav) => {
     const links = nav.querySelector(".navlinks");
     if (!links) return;
