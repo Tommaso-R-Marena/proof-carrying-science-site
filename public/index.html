@@ -44,7 +44,7 @@
         <div class="hero-meta">
           <span><strong>Current focus</strong><br>Computational biopharma</span>
           <span><strong>Trust model</strong><br>Independent replay, not producer trust</span>
-          <span><strong>Formal layer</strong><br>v0.5/v1 raw-wire → assurance chain machine-checked; exact v0.6 port remains open</span>
+          <span><strong>Formal layer</strong><br>v0.6/v2 archive → scientific-assurance chain machine-checked under explicit external contracts</span>
         </div>
       </div>
     </section>
@@ -279,7 +279,7 @@
     </section>
 
     <section class="section-tight">
-      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The v0.6 MVP remains an executable Python trust boundary; its latest hosted CircleCI runtime/restoration gate passed on the current tested checkpoint. The strongest machine-checked raw-wire → <code>Assures</code> chain currently targets the older v0.5/v1 format; porting that exact theorem stack to v0.6/v2 remains open.</p>
+      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The exact v0.6/v2 theorem stack is now integrated: Lean checks the package/archive assurance chain and proves <code>reaction_balance</code> replay faithfulness. Production-Python → Lean correspondence, ZIP decoding, environment capture, the other replay executors, and cryptographic assumptions/spec-faithfulness remain explicit trust boundaries.</p>
     </section>
   </main>
 
