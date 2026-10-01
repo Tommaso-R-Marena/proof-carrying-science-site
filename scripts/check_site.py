@@ -833,7 +833,10 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: product hardening gate not marked PASS")
         if product_gate.get("tested_checkpoint") != "9a17359b99517d97ef484e143337af3f82d35d4d":
             errors.append("status.json: product hardening checkpoint drift")
-        if product_gate.get("focused_attack_cases") != 12:\n            errors.append("status.json: focused adversarial attack-count drift")\n        for key in [\n            "golden_examples_passed",
+        if product_gate.get("focused_attack_cases") != 12:
+            errors.append("status.json: focused adversarial attack-count drift")
+        for key in [
+            "golden_examples_passed",
             "adversarial_hardening_passed",
             "local_trust_profile_verification_passed",
             "standalone_linux_verifier_built_and_smoke_tested",
