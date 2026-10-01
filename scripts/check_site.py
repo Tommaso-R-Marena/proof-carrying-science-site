@@ -98,6 +98,29 @@ if result_anatomy_js.exists():
         if required_text not in script_value:
             errors.append(f"result-anatomy.js: scenario semantics drift: {required_text}")
 
+
+index_page = ROOT / "index.html"
+if index_page.exists():
+    index_text = index_page.read_text(encoding="utf-8")
+    for required_text in [
+        "Start from your role",
+        "What are you here to do?",
+        "I have a computation or result to submit.",
+        "I need to understand or verify a PCS result.",
+        "Start Guided Submission",
+        "Understand a PCS Result",
+        "producer and reviewer are intentionally separate trust roles",
+        "latest hosted CircleCI runtime/restoration gate passed",
+    ]:
+        if required_text not in index_text:
+            errors.append(f"index.html: role-entry/usability drift: {required_text}")
+    if 'href="guided-submission.html"' not in index_text:
+        errors.append("index.html: producer role route drift")
+    if 'href="result-anatomy.html"' not in index_text:
+        errors.append("index.html: reviewer role route drift")
+    if 'href="guided-submission.html?demo=1"' not in index_text:
+        errors.append("index.html: explorer demo route drift")
+
 demo_page = ROOT / "demo.html"
 demo_js = ROOT / "demo.js"
 if demo_page.exists():
@@ -513,6 +536,25 @@ if public_status.exists() and fixture_obj is not None:
             "OPEN",
         ]:
             errors.append("status.json: demo claim-status explanation drift")
+
+        usability = mvp.get("usability", {})
+        role_entry = usability.get("role_entry", {})
+        if role_entry.get("format") != "pcs-role-entry-ui-v1":
+            errors.append("status.json: role-entry format drift")
+        if role_entry.get("producer_route") != "guided-submission.html":
+            errors.append("status.json: producer route drift")
+        if role_entry.get("reviewer_route") != "result-anatomy.html":
+            errors.append("status.json: reviewer route drift")
+        if role_entry.get("explorer_route") != "guided-submission.html?demo=1":
+            errors.append("status.json: explorer route drift")
+        for key in [
+            "producer_and_reviewer_roles_separated",
+            "producer_cannot_self_accept",
+            "reviewer_policy_controls_acceptance",
+            "role_copy_uses_plain_language",
+        ]:
+            if role_entry.get(key) is not True:
+                errors.append(f"status.json: role-entry invariant drift: {key}")
 
         guided_discovery = mvp.get("guided_discovery", {})
         if guided_discovery.get("discovery_format") != "pcs-project-discovery-v1":
