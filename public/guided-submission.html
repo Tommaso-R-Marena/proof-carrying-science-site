@@ -8,7 +8,7 @@
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="guided-revamp">
 <div class="topbar"><div class="shell"><span>Guided Submission · Local browser discovery · No upload</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
@@ -26,11 +26,20 @@
 </nav>
 
 <main class="guided-main">
-<section class="guided-hero">
-  <div class="kicker">Try PCS</div>
-  <h1>From scientific project to review-ready PCS draft in five steps.</h1>
-  <p>PCS examines the files you choose locally in your browser, proposes what can be verified, and prepares a reviewable manifest draft. You confirm the scientific meaning. Nothing is uploaded and no project code is executed during browser discovery.</p>
-  <div class="guided-privacy"><span>●</span><strong>Local only</strong><span>Your project files never leave this browser flow.</span></div>
+<section class="guided-hero guided-hero-revamp">
+  <div>
+    <div class="kicker">Producer experience · Try PCS</div>
+    <h1>From scientific project to review-ready PCS draft in five steps.</h1>
+    <p>Start with the project you already have. PCS proposes supported typed claims, shows exactly what evidence those claims require, and prepares a reviewable handoff. You remain responsible for confirming the scientific meaning.</p>
+    <div class="actions guided-hero-actions"><button class="button primary" id="guidedHeroExample" type="button">Run synthetic example →</button><a class="button secondary" href="result-anatomy.html">See the reviewer side</a></div>
+  </div>
+  <div class="guided-hero-console" aria-hidden="true">
+    <div><span>1</span><strong>Project</strong><small>choose files</small></div>
+    <b>→</b><div><span>2</span><strong>Typed claim</strong><small>confirm meaning</small></div>
+    <b>→</b><div><span>3</span><strong>Evidence</strong><small>review bindings</small></div>
+    <b>→</b><div><span>4</span><strong>Handoff</strong><small>prepare CLI</small></div>
+  </div>
+  <div class="guided-privacy"><span>●</span><strong>Nothing is uploaded</strong><span>Your project files stay in this browser and project code is not executed during discovery.</span></div>
 </section>
 
 <ol class="guided-stepper" aria-label="Submission progress">
