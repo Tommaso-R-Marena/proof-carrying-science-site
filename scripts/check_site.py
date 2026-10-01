@@ -461,7 +461,7 @@ if public_status.exists() and fixture_obj is not None:
         if formal.get("production_to_lean") != "CONDITIONAL_DIFFERENTIALLY_TESTED":
             errors.append("status.json: production-to-Lean boundary drift")
         mainline = mvp.get("mainline", {})
-        if mainline.get("current_head") != "91b35d4d81a6e77ea8d20b221b555aafe5988e32":
+        if mainline.get("current_head") != "c461e42692ee61a2dd3309174a938f8e506d59ac":
             errors.append("status.json: model main head drift")
         if mainline.get("formal_wire_gate_passed") is not True or mainline.get("runtime_main_gate_passed") is not True:
             errors.append("status.json: model main gate status drift")
