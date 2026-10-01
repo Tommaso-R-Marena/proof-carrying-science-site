@@ -58,6 +58,33 @@ for page in ["index.html", "guided-submission.html", "project-builder.html", "mv
     if 'href="project-builder.html"' not in page_text and page != "project-builder.html":
         errors.append(f"{page}: Project Mapper navigation link is missing")
 
+
+demo_page = ROOT / "demo.html"
+demo_js = ROOT / "demo.js"
+if demo_page.exists():
+    demo_text = demo_page.read_text(encoding="utf-8")
+    for required_text in [
+        "30-second reading guide",
+        "PCS is answering four different questions.",
+        "What this result means",
+        "What it does not mean",
+        "What to look at next",
+    ]:
+        if required_text not in demo_text:
+            errors.append(f"demo.html: result-interpretation drift: {required_text}")
+if demo_js.exists():
+    demo_script = demo_js.read_text(encoding="utf-8")
+    for required_text in [
+        "function explainVerificationResult(result)",
+        "Accepted under this reviewer policy",
+        "Rejected: package integrity failed",
+        "Rejected: required scientific replay failed",
+        "Not accepted: at least one claim remains OPEN",
+        "Verified evidence, but this reviewer policy does not accept it",
+    ]:
+        if required_text not in demo_script:
+            errors.append(f"demo.js: result-interpretation drift: {required_text}")
+
 mapper_page = ROOT / "project-builder.html"
 mapper_js = ROOT / "project-builder.js"
 
@@ -81,6 +108,12 @@ if guided_page.exists():
         "What can PCS formalize today?",
         "PCS does not turn arbitrary prose directly into a trusted formal claim.",
         "Describe what you want to check",
+        "DRAFT READY · NOT YET VERIFIED",
+        "How to read a PCS result",
+        "COMPUTATIONALLY_SUPPORTED",
+        "FALSIFIED_OR_CHECK_FAILED",
+        "OPEN",
+        "ACCEPTED",
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -93,6 +126,9 @@ if guided_js.exists():
         "api.downloadDraft",
         "api.downloadReview",
         "ZIP archives",
+        "demoMode",
+        "guided-submission.html?demo=1",
+        "Demo checkpoint",
     ]:
         if required_text not in guided_script:
             errors.append(f"guided-submission.js: guided controller drift: {required_text}")
@@ -374,6 +410,38 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: supported formal claim type set drift")
         if guided_submission.get("steps") != ["project", "claim", "review", "prepare", "ready"]:
             errors.append("status.json: guided submission step contract drift")
+
+        demo_clarity = mvp.get("demo_clarity", {})
+        if demo_clarity.get("format") != "pcs-demo-interpretation-ui-v1":
+            errors.append("status.json: demo clarity format drift")
+        if demo_clarity.get("one_click_guided_demo") != "guided-submission.html?demo=1":
+            errors.append("status.json: one-click guided demo drift")
+        for key in [
+            "demo_mode_labels_synthetic_example",
+            "preparation_not_presented_as_verification",
+            "package_validity_distinguished_from_claim_support",
+            "reviewer_acceptance_distinguished_from_validity",
+            "scientific_truth_overclaim_rejected",
+            "legacy_verifier_dynamic_result_explanation",
+        ]:
+            if demo_clarity.get(key) is not True:
+                errors.append(f"status.json: demo clarity invariant drift: {key}")
+        if demo_clarity.get("preparation_state_label") != "PREPARED DRAFT":
+            errors.append("status.json: prepared-draft label drift")
+        if demo_clarity.get("result_layers") != [
+            "claim_intent",
+            "typed_predicate",
+            "evidence_replay",
+            "derived_claim_status",
+            "reviewer_acceptance",
+        ]:
+            errors.append("status.json: demo result-layer model drift")
+        if demo_clarity.get("exact_claim_statuses_explained") != [
+            "COMPUTATIONALLY_SUPPORTED",
+            "FALSIFIED_OR_CHECK_FAILED",
+            "OPEN",
+        ]:
+            errors.append("status.json: demo claim-status explanation drift")
 
         guided_discovery = mvp.get("guided_discovery", {})
         if guided_discovery.get("discovery_format") != "pcs-project-discovery-v1":
