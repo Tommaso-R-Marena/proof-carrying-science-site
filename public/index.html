@@ -49,6 +49,42 @@
       </div>
     </section>
 
+    <section class="role-entry" aria-labelledby="roleEntryTitle">
+      <div class="role-entry-head">
+        <div>
+          <div class="kicker">Start from your role</div>
+          <h2 id="roleEntryTitle">What are you here to do?</h2>
+          <p>PCS has two different workflows. Producers prepare and bind a scientific claim. Reviewers independently verify the delivered package and decide whether the resulting support meets their policy.</p>
+        </div>
+        <a class="button ghost" href="guided-submission.html?demo=1">Just exploring? Run the 90-second demo</a>
+      </div>
+      <div class="role-entry-grid">
+        <a class="role-card producer" href="guided-submission.html">
+          <span class="role-card-label">PRODUCER</span>
+          <h3>I have a computation or result to submit.</h3>
+          <p>Choose your project, confirm the exact claim PCS should check, review the discovered files/environment, and prepare the authoritative attestation handoff.</p>
+          <ol>
+            <li>Choose project</li>
+            <li>Confirm rigorous claim</li>
+            <li>Prepare signed PCS package</li>
+          </ol>
+          <strong>Start Guided Submission →</strong>
+        </a>
+        <a class="role-card reviewer" href="result-anatomy.html">
+          <span class="role-card-label">REVIEWER</span>
+          <h3>I need to understand or verify a PCS result.</h3>
+          <p>See how package validity, claim status, and reviewer acceptance are separated, then follow the v0.6 reviewer workflow for independent verification.</p>
+          <ol>
+            <li>Verify exact package</li>
+            <li>Inspect derived claim status</li>
+            <li>Apply receiver-owned policy</li>
+          </ol>
+          <strong>Understand a PCS Result →</strong>
+        </a>
+      </div>
+      <p class="role-entry-note"><strong>Important:</strong> producer and reviewer are intentionally separate trust roles. A producer cannot make a package “accepted” simply by generating it; acceptance belongs to the receiving reviewer’s policy.</p>
+    </section>
+
     <section class="statusbar" aria-label="Current product status">
       <div><span>Producer path</span><strong><code>attest-v06</code> · implemented</strong></div>
       <div><span>Reviewer path</span><strong><code>verify-v06-bundle</code> · implemented</strong></div>
@@ -243,7 +279,7 @@
     </section>
 
     <section class="section-tight">
-      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The v0.6 MVP remains an executable Python trust boundary, and its latest full gate has not run because GitHub allocated no runner. The strongest machine-checked raw-wire → <code>Assures</code> chain currently targets the older v0.5/v1 format; porting that exact theorem stack to v0.6/v2 remains open.</p>
+      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The v0.6 MVP remains an executable Python trust boundary; its latest hosted CircleCI runtime/restoration gate passed on the current tested checkpoint. The strongest machine-checked raw-wire → <code>Assures</code> chain currently targets the older v0.5/v1 format; porting that exact theorem stack to v0.6/v2 remains open.</p>
     </section>
   </main>
 
