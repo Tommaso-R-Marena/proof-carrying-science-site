@@ -126,6 +126,11 @@ function artifactBinding(x,a){
   const ok=declared.sha256===a.sha256;
   return {ok,label:ok?"manifest-bound":"hash differs"};
 }
+function supportState(status){
+  if(status==="FALSIFIED_OR_CHECK_FAILED"||status==="FAIL")return false;
+  if(["FORMALLY_VERIFIED_UNDER_ASSUMPTIONS","COMPUTATIONALLY_SUPPORTED","EMPIRICALLY_VALIDATED_WITHIN_SCOPE","MIXED_SUPPORT_UNDER_ASSUMPTIONS","PASS"].includes(status))return true;
+  return null;
+}
 function graphNode(kind,title,meta,status,attrs=""){
   const cls=status===true?" pass":status===false?" fail":"";
   return '<div class="graph-node '+kind+cls+'" '+attrs+'><strong>'+esc(title)+'</strong>'+(meta?'<small>'+esc(meta)+'</small>':"")+'</div>';
@@ -143,8 +148,8 @@ function renderAssuranceGraph(x){
     const artifactNodes=rel.artifacts.length?rel.artifacts.map(a=>{const b=artifactBinding(x,a);return graphNode("artifact",a.id,(a.role||"artifact")+" · "+b.label,b.ok,'role="button" tabindex="0" data-impact-artifact="'+esc(a.id)+'"')}).join(""):graphNode("empty","No artifact dependency","evidence may be self-contained or declarative",null);
     const workflowNodes=rel.workflow.length?'<div class="graph-workflow">'+rel.workflow.map(n=>'<span>'+esc(n.id)+" · "+esc(n.operation)+'</span>').join("")+'</div>':"";
     const evidenceNodes=rel.evidence.length?rel.evidence.map(e=>graphNode("evidence",e.id,(e.kind||"evidence")+" · "+(e.outcome||"UNVERIFIED"),e.outcome==="PASS")).join(""):graphNode("empty","No linked evidence","claim has no resolved evidence link",false);
-    const claimNode=graphNode("claim",claim.id,(claim.kind||"claim")+" · "+(claim.predicate?.type||"unknown predicate"),claim.assessment?.status!=="FALSIFIED_OR_CHECK_FAILED");
-    const decisionNode=rel.decision?graphNode("decision",rel.decision.decision,rel.decision.claim_id+" · "+short(rel.decision.wire_semantic_hash),!String(rel.decision.decision).includes("FAIL")):graphNode("empty","No normalized decision","index entry not found",false);
+    const claimNode=graphNode("claim",claim.id,(claim.kind||"claim")+" · "+(claim.predicate?.type||"unknown predicate"),supportState(claim.assessment?.status));
+    const decisionNode=rel.decision?graphNode("decision",rel.decision.decision,rel.decision.claim_id+" · "+short(rel.decision.wire_semantic_hash),supportState(rel.decision.decision)):graphNode("empty","No normalized decision","index entry not found",false);
     let authNode;
     if(!receipt) authNode=graphNode("authority","Authority external","Attach a production verifier receipt",null);
     else if(!rs.all) authNode=graphNode("authority","Receipt mismatch","commitments do not identify this exact package",false);
