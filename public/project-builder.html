@@ -26,11 +26,12 @@
 
 <main>
 <section class="pagehead">
-  <div class="kicker">Guided v0.6 onboarding</div>
-  <h1>Point PCS at your project. Start from a draft, not a schema.</h1>
-  <p>Select a local scientific project folder. PCS inventories regular files, computes SHA-256 snapshots in your browser, detects supported scientific checks, and maps likely Python/Jupyter artifact dependencies for you to review. Nothing is uploaded, no user code is executed, and no private key is needed.</p>
+  <div class="kicker">Advanced Project Mapper</div>
+  <h1>Inspect and tune PCS discovery in detail.</h1>
+  <p>This is the advanced discovery surface for users who want direct control over confidence thresholds, inferred workflow edges, environment metadata, artifacts, and the raw manifest draft. Nothing is uploaded, no user code is executed, and no private key is needed.</p><div class="notice" style="margin-top:18px"><strong>New to PCS?</strong> Start with <a href="guided-submission.html">Guided Submission</a>. It uses this same discovery engine with a simpler five-step review flow.</div>
   <div class="actions">
-    <button class="button primary" id="chooseProject">Choose project folder</button>
+    <a class="button primary" href="guided-submission.html">Use Guided Submission</a>
+    <button class="button secondary" id="chooseProject">Choose project folder here</button>
     <button class="button secondary" id="loadExampleProject">Load synthetic example</button>
     <a class="button secondary" href="#how">How confirmation works</a>
   </div>

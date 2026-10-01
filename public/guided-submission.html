@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Try PCS · Guided Submission</title>
+<meta name="description" content="Prepare a Proof-Carrying Science submission in five guided steps. Files stay local in your browser.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Guided Submission · Local browser discovery · No upload</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="guided-submission.html">Try PCS</a>
+    <a href="project-builder.html">Advanced Mapper</a>
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="intake.html">Pilot intake</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main class="guided-main">
+<section class="guided-hero">
+  <div class="kicker">Try PCS</div>
+  <h1>From scientific project to review-ready PCS draft in five steps.</h1>
+  <p>PCS examines the files you choose locally in your browser, proposes what can be verified, and prepares a reviewable manifest draft. You confirm the scientific meaning. Nothing is uploaded and no project code is executed during browser discovery.</p>
+  <div class="guided-privacy"><span>●</span><strong>Local only</strong><span>Your project files never leave this browser flow.</span></div>
+</section>
+
+<ol class="guided-stepper" aria-label="Submission progress">
+  <li class="active" data-step-indicator="1"><span>1</span><div><strong>Project</strong><small>Choose files</small></div></li>
+  <li data-step-indicator="2"><span>2</span><div><strong>Claim</strong><small>Confirm meaning</small></div></li>
+  <li data-step-indicator="3"><span>3</span><div><strong>Review</strong><small>Check what PCS found</small></div></li>
+  <li data-step-indicator="4"><span>4</span><div><strong>Prepare</strong><small>Approve handoff</small></div></li>
+  <li data-step-indicator="5"><span>5</span><div><strong>Ready</strong><small>Finish in CLI</small></div></li>
+</ol>
+
+<div id="guidedMessage" class="guided-message" hidden role="status" aria-live="polite"></div>
+
+<section class="guided-stage" data-guided-stage="1">
+  <div class="guided-stage-head">
+    <div><span class="guided-stage-number">01</span><h2>Add your project</h2><p>Choose the folder you actually work in, select a few files, or try the example first.</p></div>
+    <span class="chip verified">NO UPLOAD</span>
+  </div>
+  <div class="guided-upload-grid">
+    <button class="guided-upload-card primary-card" id="guidedChooseFolder" type="button">
+      <span class="guided-upload-icon">↗</span><strong>Choose project folder</strong><small>Best for a real workflow with code, data, dependencies, and outputs.</small>
+    </button>
+    <button class="guided-upload-card" id="guidedChooseFiles" type="button">
+      <span class="guided-upload-icon">＋</span><strong>Choose individual files</strong><small>Useful for a notebook, script, model JSON, CSVs, or a small test case.</small>
+    </button>
+    <button class="guided-upload-card example-card" id="guidedLoadExample" type="button">
+      <span class="guided-upload-icon">▶</span><strong>Try an example</strong><small>See the whole flow using a synthetic PK/PD project.</small>
+    </button>
+  </div>
+  <input id="guidedFolderFiles" type="file" webkitdirectory directory multiple hidden>
+  <input id="guidedLooseFiles" type="file" multiple hidden>
+  <div class="guided-dropzone" id="guidedDropzone" tabindex="0">
+    <strong>Or drop project files here</strong>
+    <span>PCS reads only the files the browser gives it. ZIP archives are not unpacked silently.</span>
+  </div>
+  <div class="guided-safety-note"><strong>Why no ZIP unpacking here?</strong> The browser flow avoids adding another archive parser to the trust surface. Choose the unzipped folder, or use <code>pcs discover-v06</code> locally.</div>
+</section>
+
+<section class="guided-stage" data-guided-stage="2" hidden>
+  <div class="guided-stage-head">
+    <div><span class="guided-stage-number">02</span><h2>What should PCS verify?</h2><p>PCS proposes claims from recognizable scientific structures. Keep the ones you mean, remove the ones you do not, and edit the plain-English statement if needed.</p></div>
+    <span class="chip pending">YOU CONFIRM</span>
+  </div>
+  <div class="guided-project-name">
+    <label for="guidedSubject">Project name</label>
+    <input class="textinput" id="guidedSubject" value="scientific-project" autocomplete="off">
+  </div>
+  <div id="guidedClaims" class="guided-claim-list"></div>
+  <div id="guidedNoClaims" class="guided-empty" hidden>
+    <strong>PCS did not find a currently supported scientific claim automatically.</strong>
+    <p>You can still inspect the project in Advanced Mapper, or use the CLI to build a manifest for a workflow outside the browser detector set.</p>
+    <a class="button secondary" href="project-builder.html">Open Advanced Mapper</a>
+  </div>
+  <div class="guided-actions">
+    <button class="button secondary" type="button" data-guided-back="1">Back</button>
+    <button class="button primary" type="button" id="guidedToReview">Review what PCS found →</button>
+  </div>
+</section>
+
+<section class="guided-stage" data-guided-stage="3" hidden>
+  <div class="guided-stage-head">
+    <div><span class="guided-stage-number">03</span><h2>Review what PCS found</h2><p>The important pieces first. Technical commitments and raw JSON stay available underneath.</p></div>
+    <span class="chip pending">REVIEW</span>
+  </div>
+  <div class="guided-review-grid" id="guidedReviewCards"></div>
+  <details class="guided-advanced">
+    <summary>Show technical details</summary>
+    <div class="guided-advanced-grid">
+      <div><strong>Manifest draft</strong><pre id="guidedManifestPreview">{}</pre></div>
+      <div><strong>Environment preview</strong><pre id="guidedEnvironmentPreview">{}</pre></div>
+    </div>
+    <div class="actions"><a class="button secondary" href="project-builder.html">Open full Advanced Mapper</a></div>
+  </details>
+  <div class="guided-actions">
+    <button class="button secondary" type="button" data-guided-back="2">Back</button>
+    <button class="button primary" type="button" id="guidedToPrepare">Looks right →</button>
+  </div>
+</section>
+
+<section class="guided-stage" data-guided-stage="4" hidden>
+  <div class="guided-stage-head">
+    <div><span class="guided-stage-number">04</span><h2>Prepare the verifiable package handoff</h2><p>The browser has prepared the discovery draft. The authoritative CLI will re-hash the selected files before it permits signing.</p></div>
+    <span class="chip pending">FINAL REVIEW</span>
+  </div>
+  <div class="guided-final-checks" id="guidedFinalChecks"></div>
+  <label class="guided-confirm">
+    <input type="checkbox" id="guidedConfirmReview">
+    <span><strong>I reviewed what PCS found.</strong><small>I understand that browser discovery is a draft and that <code>confirm-v06</code> independently re-derives and re-hashes the selected project before attestation.</small></span>
+  </label>
+  <div class="guided-actions">
+    <button class="button secondary" type="button" data-guided-back="3">Back</button>
+    <button class="button primary" type="button" id="guidedPrepare">Prepare verifiable package →</button>
+  </div>
+</section>
+
+<section class="guided-stage" data-guided-stage="5" hidden>
+  <div class="guided-result">
+    <div class="guided-result-mark">✓</div>
+    <div class="kicker">Browser preparation complete</div>
+    <h2>Your PCS draft is ready for authoritative confirmation.</h2>
+    <p>Nothing was uploaded and your code was not executed during discovery. Download the draft, keep it with the original project, and run the two commands below to create the signed PCS package.</p>
+  </div>
+  <div class="guided-result-grid">
+    <article class="guided-result-card">
+      <span>1</span><h3>Download the reviewed draft</h3><p>This contains the claims, selected artifacts, workflow map, and environment declaration you reviewed.</p>
+      <button class="button primary" type="button" id="guidedDownloadDraft">Download manifest draft</button>
+      <button class="button secondary" type="button" id="guidedDownloadReview">Download review notes</button>
+    </article>
+    <article class="guided-result-card">
+      <span>2</span><h3>Confirm against the original project</h3><p>PCS re-hashes the real files and refuses a stale or changed project.</p>
+      <div class="codecommand"><code id="guidedConfirmCommand">pcs confirm-v06 ...</code><button type="button" id="guidedCopyConfirm">Copy</button></div>
+    </article>
+    <article class="guided-result-card">
+      <span>3</span><h3>Create the signed package</h3><p>Attestation signs the confirmed manifest and produces the reviewable <code>.pcs.zip</code>.</p>
+      <div class="codecommand"><code id="guidedAttestCommand">pcs attest-v06 ...</code><button type="button" id="guidedCopyAttest">Copy</button></div>
+    </article>
+  </div>
+  <div class="guided-next">
+    <div><strong>Want PCS integrated into a real workflow?</strong><span>We are looking for design partners with consequential computational pipelines.</span></div>
+    <div class="actions"><a class="button primary" href="intake.html">Start a pilot</a><a class="button secondary" href="trust.html">Inspect the trust model</a></div>
+  </div>
+  <button class="button ghost" type="button" id="guidedStartOver">Start over</button>
+</section>
+
+<section class="guided-why">
+  <div class="kicker">Simple on top, rigorous underneath</div>
+  <h2>You do not need to understand the wire format to use PCS.</h2>
+  <div class="grid3">
+    <article class="card"><div class="num">A</div><h3>Plain-language first</h3><p>The normal flow asks what you want verified and what PCS found. Hashes, commitments, and schema details are progressively disclosed.</p></article>
+    <article class="card"><div class="num">B</div><h3>Same engine underneath</h3><p>Guided Submission uses the same local discovery and manifest-draft engine as Advanced Mapper. It is not a disconnected demo.</p></article>
+    <article class="card"><div class="num">C</div><h3>Trust boundary preserved</h3><p>The browser never silently turns a heuristic into an attestation. Authoritative confirmation still re-hashes the original project before signing.</p></article>
+  </div>
+</section>
+</main>
+
+<div id="guidedMapperEngine" hidden aria-hidden="true">
+  <input id="projectFiles" type="file" multiple><input id="subject" value="scientific-project">
+  <input id="confidence" value="0.95"><span id="confidenceValue"></span>
+  <input id="workflowConfidence" value="0.95"><span id="workflowConfidenceValue"></span>
+  <button id="chooseProject"></button><button id="loadExampleProject"></button><button id="rescan"></button><button id="clearProject"></button>
+  <button id="toggleInventory"></button><button id="downloadDraft"></button><button id="downloadDiscovery"></button><button id="downloadReview"></button><button id="downloadEnvironmentPlan"></button><button id="copyConfirm"></button>
+  <span id="filesCount"></span><span id="selectedCount"></span><span id="workflowCount"></span><span id="workflowIssueCount"></span><span id="environmentHermeticity"></span><span id="artifactCount"></span><span id="recommendationCount"></span><span id="mapperState"></span>
+  <div id="recommendations"></div><div id="workflowInferences"></div><div id="workflowIssues"></div><div id="workflowGraph"></div><div id="environmentSummary"></div><div id="environmentIssues"></div><div id="inventory"></div><div id="skipped"></div><div id="draftValidation"></div>
+  <pre id="manifestPreview"></pre><code id="confirmCommand"></code>
+</div>
+
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="guided-submission.html">Try PCS</a><a href="project-builder.html">Advanced Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script src="project-builder.js"></script>
+<script src="guided-submission.js"></script>
+</body>
+</html>

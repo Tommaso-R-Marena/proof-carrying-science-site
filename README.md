@@ -10,7 +10,7 @@ Live preview:
 
 The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
 
-- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.5/v1 theorem boundary, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
+- **Guided Submission** — beginner-first five-step flow (`Project → Claim → Review → Prepare → Ready`) that reuses the exact browser Project Mapper engine, keeps files local, edits plain-language claims, progressively discloses technical details, and stops honestly at the authoritative CLI confirmation/signing boundary.\n- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.5/v1 theorem boundary, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
 - **Machine-readable trust state** — `public/status.json` mirrors the released checker/proof/parity/preview state and is cross-checked against the shipped browser fixture by the deployment gate.
 - **Security contact** — `public/.well-known/security.txt` provides a standard disclosure/contact path.
 - **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.

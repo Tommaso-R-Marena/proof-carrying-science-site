@@ -272,6 +272,32 @@
         "native_extension_binary_differs_across_architecture": true,
         "scientific_output_byte_identical_across_architecture": true
       }
+    },
+    "guided_submission": {
+      "format": "pcs-guided-submission-ui-v1",
+      "page": "guided-submission.html",
+      "uses_project_mapper_engine": true,
+      "local_only_browser_discovery": true,
+      "user_code_executed_during_browser_discovery": false,
+      "steps": [
+        "project",
+        "claim",
+        "review",
+        "prepare",
+        "ready"
+      ],
+      "folder_selection": true,
+      "individual_file_selection": true,
+      "synthetic_example": true,
+      "zip_silently_unpacked": false,
+      "plain_language_claim_editing": true,
+      "progressive_disclosure": true,
+      "advanced_mapper_preserved": true,
+      "authoritative_confirmation_required": true,
+      "browser_attestation_claimed": false,
+      "draft_download_available": true,
+      "review_download_available": true,
+      "cli_handoff_generated": true
     }
   },
   "formal": {
