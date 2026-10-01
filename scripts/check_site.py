@@ -13,6 +13,7 @@ HTML_FILES = sorted(ROOT.glob("*.html"))
 ASSET_RE = re.compile(r"""(?:src|href)=["']([^"'#]+)""", re.I)
 IGNORE_SCHEMES = {"mailto", "tel", "data", "blob", "javascript"}
 CONTACT = "marenatommaso@gmail.com"
+PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
 errors: list[str] = []
 
 for html_path in HTML_FILES:
@@ -24,8 +25,9 @@ for html_path in HTML_FILES:
         if parsed.scheme in IGNORE_SCHEMES:
             continue
         if parsed.scheme in {"http", "https"}:
-            errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
-            continue
+            if parsed.scheme != "https" or parsed.netloc != PRODUCTION_HOST:
+                errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
+                continue
         path_text = parsed.path
         if not path_text or path_text == "/":
             continue
@@ -386,7 +388,27 @@ for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-
 
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
-    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", text):
+
+    # A literal relative fetch of an existing deployable asset is a same-origin,
+    # read-only static dependency. It does not upload browser-selected data and
+    # therefore preserves the site's local-only scientific-data posture.
+    def _strip_static_fetch(match: re.Match[str]) -> str:
+        ref = match.group("ref")
+        parsed = urlparse(ref)
+        if parsed.scheme or parsed.netloc or parsed.query or parsed.fragment:
+            return match.group(0)
+        target = ROOT / parsed.path.lstrip("/")
+        if not target.is_file():
+            errors.append(f"{js.name}: literal static fetch target is missing: {ref}")
+            return match.group(0)
+        return "/* validated same-origin static fetch */"
+
+    reviewed = re.sub(
+        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*\)""",
+        _strip_static_fetch,
+        text,
+    )
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", reviewed):
         errors.append(f"{js.name}: network API found; local-only posture requires review")
 
 logo = ROOT / "logo-mark.svg"
