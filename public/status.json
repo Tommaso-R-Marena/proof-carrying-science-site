@@ -395,6 +395,37 @@
         "reviewer_policy_controls_acceptance": true,
         "role_copy_uses_plain_language": true
       }
+    },
+    "product_hardening_gate": {
+      "provider": "CircleCI",
+      "status": "PASS",
+      "tested_checkpoint": "2c5f224c43aab8d5cfc0f5b3658b80ab25cc008a",
+      "golden_examples_passed": true,
+      "adversarial_hardening_passed": true,
+      "local_trust_profile_verification_passed": true,
+      "standalone_linux_verifier_built_and_smoke_tested": true
+    },
+    "golden_examples": {
+      "format": "pcs-golden-examples-v06-v1",
+      "command": "python scripts/run_golden_examples_v06.py -o golden-demo-run",
+      "cases": [
+        "pkpd-supported",
+        "pkpd-falsified",
+        "environment-bound"
+      ],
+      "byte_determinism_tested": true,
+      "deterministic_demo_key_only": true,
+      "scientific_failure_distinguished_from_package_failure": true
+    },
+    "reviewer_verifier": {
+      "trust_profile_format": "pcs-verifier-trust-v1",
+      "one_command_cli": "pcs verify-local-v06",
+      "narrow_entrypoint": "pcs-verifier-v06",
+      "single_file_builder": "scripts/build_verifier_artifact.py",
+      "schema_resources_explicitly_bundled": true,
+      "linux_single_file_ci_smoke_tested": true,
+      "windows_macos_build_workflow_configured": true,
+      "trust_profile_external_to_bundle": true
     }
   },
   "formal": {
