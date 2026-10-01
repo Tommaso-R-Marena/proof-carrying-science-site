@@ -10,7 +10,7 @@ Live preview:
 
 The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
 
-- **Trust Center** — distinguishes the released PCS 0.5.0 checker, the machine-checked Lean 4.28.0 decision/normalized-state theorem layer, the browser parity profile, the pending 0.5.1 serialized-refinement work, and explicit non-claims.
+- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.5/v1 theorem boundary, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
 - **Machine-readable trust state** — `public/status.json` mirrors the released checker/proof/parity/preview state and is cross-checked against the shipped browser fixture by the deployment gate.
 - **Security contact** — `public/.well-known/security.txt` provides a standard disclosure/contact path.
 - **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.
@@ -21,6 +21,9 @@ The site intentionally has no application backend. Its interactive functionality
 - **Adaptive replay scheduler** — documents and demonstrates deterministic ordering baselines plus the experimental contextual-bandit scheduler, shadow mode, telemetry privacy, cold-start thresholds, and the invariant that all mandatory checks execute and scientific verdicts ignore scheduler outputs.
 - **Multi-reviewer quorum governance** — documents and publishes a role-aware 2-of-3 review policy: authorized reviewer fingerprints, role-specific policy SHA-256 requirements, duplicate-identity rejection, and exact-subject grouping so reviews over different bundles cannot combine.
 - **Real-world validation evidence** — publishes the first 5-case public-data validation set: Haber–Bosch chemistry, clean and contaminated UCI Iris splits, Indometh unit equivalence, and an IV Indometh single-exponential falsification case. All 5 matched predeclared expectations, including 2 expected failures.
+- **Executed runtime portability evidence** — fail-closed CircleCI campaigns cover Ubuntu 24/26, amd64/ARM64, Docker/rootful Podman, native R, and repeated deterministic replay.
+- **Offline dependency reconstruction** — signed hash-locked NumPy wheels and signed local R repository payloads are restored with network-disabled builds; the base images are checked not to contain the target dependency.
+- **Native ABI evidence** — PCS captures native-extension SHA-256 fingerprints and has demonstrated architecture-specific binary differences with byte-identical scientific outputs for the tested workload.
 - **Legacy v0.5 browser parity verifier** — validates the frozen PCS 0.5.0 reference package or an extracted v0.5 evidence directory, hashes exact selected file bytes, verifies Ed25519 package signatures when present, replays restricted one-compartment PK + direct Emax PD evidence, reassesses claims, and runs 11 frozen decision-parity vectors. It is intentionally labeled as a parity/transparency fixture rather than the current v0.6 product verifier.
 - **PK/PD model lab** — generates the restricted model and prediction trajectory, replays it through the browser engine, and exports production-compatible `manifest.json`, `pk_model.json`, and `predictions.csv` for the Python CLI.
 - **Pilot intake builder** — validates claim/assumption IDs, computes a canonical SHA-256 semantic commitment, and exports both `pilot_intake.json` and `pilot_intake.lock.json`.

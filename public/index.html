@@ -53,7 +53,7 @@
       <div><span>Producer path</span><strong><code>attest-v06</code> · implemented</strong></div>
       <div><span>Reviewer path</span><strong><code>verify-v06-bundle</code> · implemented</strong></div>
       <div><span>Reviewer policy</span><strong>Valid ≠ accepted · SHA-256 bound</strong></div>
-      <div><span>Runtime gate</span><strong>Runner unavailable · execution pending</strong></div>
+      <div><span>Runtime evidence</span><strong>Cross-machine CircleCI gates · PASS</strong></div>
     </section>
 
     <section class="mvp-banner" aria-label="v0.6 MVP workflow">
@@ -109,6 +109,15 @@
         <div class="codecommand"><code>--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl</code><button data-copy="--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl">Copy</button></div>
         <div class="codecommand"><code>pcs scheduler-report-v06 history.jsonl -o scheduler-report.json</code><button data-copy="pcs scheduler-report-v06 history.jsonl -o scheduler-report.json">Copy</button></div>
       </div>
+    </section>
+
+
+    <section class="validation-evidence-banner" aria-label="Cross-runtime reproducibility evidence">
+      <div>
+        <strong>Executed across OS, architecture, OCI engine, Python, and R.</strong>
+        <span>PCS has completed fail-closed replay campaigns on Ubuntu 24/26, amd64/ARM64, Docker/rootful Podman, native R, offline hash-locked Python wheels, offline renv restoration, and architecture-specific native extensions while reproducing the signed scientific outputs.</span>
+      </div>
+      <a class="button secondary" href="mvp.html#runtime-evidence">Inspect runtime evidence →</a>
     </section>
 
     <section class="logo-strip" aria-label="Core assurance dimensions">

@@ -1,6 +1,6 @@
 {
   "status_format": "pcs-public-status-v1",
-  "updated": "2026-09-29",
+  "updated": "2026-10-01",
   "released": {
     "specification": "pcs-0.5",
     "checker": "pcs-python-kernel/0.5.0",
@@ -30,10 +30,12 @@
       "pkpd_reference_match"
     ],
     "latest_hosted_gate": {
-      "status": "RUNNER_UNAVAILABLE",
-      "runner_id": 0,
-      "steps_executed": 0,
-      "code_result": "NOT_EXECUTED"
+      "provider": "CircleCI",
+      "status": "PASS",
+      "code_result": "PASS",
+      "full_runtime_executed": true,
+      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
+      "terminal_gate": "restoration-boundaries-complete"
     },
     "released": false,
     "real_world_benchmark": {
@@ -202,8 +204,67 @@
         "workspace_bound_to_bundle_sha256": true,
         "workspace_bound_to_certificate_hashes": true,
         "atomic_staging_then_publish": true,
-        "workspace_execution_by_pcs": false,
-        "rechecks_bundle_sha256_before_materialization": true
+        "workspace_execution_by_pcs": true,
+        "rechecks_bundle_sha256_before_materialization": true,
+        "sandbox_execution_available": true,
+        "execute_workspace_command": "pcs execute-environment-v06",
+        "repeated_deterministic_replay": true,
+        "oci_runtimes_observed": [
+          "docker",
+          "podman"
+        ],
+        "captures_oci_runtime_identity": true,
+        "captures_python_native_extension_hashes": true,
+        "binds_vendored_restoration_artifacts": true,
+        "python_offline_hash_locked_wheel_restore": true,
+        "r_offline_renv_restore": true
+      }
+    },
+    "mainline": {
+      "repository": "Tommaso-R-Marena/proof-carrying-science",
+      "branch": "main",
+      "merged": true,
+      "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
+      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1"
+    },
+    "runtime_evidence": {
+      "three_host_oci": {
+        "passed": true,
+        "checkpoint": "8e3e65558462ef1fd818a38d5bdd009a2bb4e13c",
+        "hosts": [
+          "Ubuntu 24.04 amd64",
+          "Ubuntu 24.04 ARM64",
+          "Ubuntu 26.04 amd64"
+        ],
+        "host_os_variation": true,
+        "architecture_variation": true,
+        "container_os_variation": true,
+        "package_lock_variation": true,
+        "container_provenance_variation": true
+      },
+      "oci_engines": {
+        "docker_vs_rootful_podman_passed": true,
+        "checkpoint": "22c07945a7b03f37aa24d7bd6136481aa787c391",
+        "rootless_podman_container_execution_established": false,
+        "runtime_identity_captured": true
+      },
+      "r_runtime": {
+        "native_r_replay_passed": true,
+        "docker_amd64": true,
+        "docker_arm64": true,
+        "rootful_podman_amd64": true,
+        "rscript_sha256_captured": true,
+        "package_inventory_captured": true
+      },
+      "dependency_restoration": {
+        "checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
+        "python_hash_locked_wheel_restore_passed": true,
+        "r_renv_lock_restore_passed": true,
+        "offline_network_disabled_builds": true,
+        "vendored_restoration_artifacts_signed": true,
+        "native_extension_hashes_captured": true,
+        "native_extension_binary_differs_across_architecture": true,
+        "scientific_output_byte_identical_across_architecture": true
       }
     }
   },
@@ -238,7 +299,9 @@
     "gxp_validation",
     "arbitrary_program_correctness",
     "end_to_end_v06_formal_verification",
-    "hosted_v06_gate_pass"
+    "rootless_podman_portability",
+    "universal_cross_platform_equivalence",
+    "arbitrary_dependency_build_correctness"
   ],
   "contact": "marenatommaso@gmail.com",
   "real_world_validation": {

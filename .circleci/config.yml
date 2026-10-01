@@ -1,0 +1,21 @@
+version: 2.1
+
+jobs:
+  site-check:
+    docker:
+      - image: cimg/python:3.12
+    steps:
+      - checkout
+      - run:
+          name: Validate deployable PCS static site
+          command: python scripts/check_site.py
+
+workflows:
+  website-integrity:
+    jobs:
+      - site-check:
+          filters:
+            branches:
+              only:
+                - main
+                - v06-mvp-product

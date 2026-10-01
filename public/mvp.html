@@ -346,10 +346,35 @@
 
 <section class="section-tight">
   <div class="callout">
-    <div><h3>The next milestone is external use.</h3><p>The core MVP loop now exists in the v0.6 candidate branch. The highest-value validation is a design partner running a bounded workflow PCS did not construct itself.</p></div>
+    <div><h3>The next milestone is external use.</h3><p>The core MVP loop is merged to the model mainline and has completed cross-machine runtime evidence. The highest-value validation is a design partner running a bounded workflow PCS did not construct itself.</p></div>
     <div class="actions" style="margin-top:0"><a class="button dark" href="contact.html">Discuss a pilot</a><a class="button secondary" href="trust.html">Trust Center</a></div>
   </div>
 </section>
+
+<section class="section-tight" id="runtime-evidence">
+  <div class="kicker">Executed reproducibility evidence</div>
+  <h2>The signed environment is now reconstructed and replayed, not merely described.</h2>
+  <p class="section-intro">PCS keeps ordinary verification and execution separate: <code>prepare-environment-v06</code> verifies and materializes the signed workspace, while <code>execute-environment-v06</code> explicitly launches the sandboxed replay. The completed evidence campaigns exercise the actual execution path.</p>
+  <div class="trustgrid">
+    <article class="trustitem">
+      <header><h3>Cross-machine OCI</h3><span class="chip released">PASS</span></header>
+      <p>One signed campaign replayed on Ubuntu 24.04 amd64, Ubuntu 24.04 ARM64, and Ubuntu 26.04 amd64, while also varying Debian container bases, lock state, and image provenance.</p>
+    </article>
+    <article class="trustitem">
+      <header><h3>Docker ↔ Podman + native R</h3><span class="chip released">PASS</span></header>
+      <p>The same signed computation reproduced under Docker and real rootful Podman. A separate R-native workflow passed on Docker amd64, Docker ARM64, and rootful Podman amd64. Rootless Podman container execution on the managed CI host remains unestablished.</p>
+    </article>
+    <article class="trustitem">
+      <header><h3>Offline restoration + ABI</h3><span class="chip released">PASS</span></header>
+      <p>PCS restored NumPy from signed hash-locked architecture-specific wheels and restored an R environment from a signed local repository through <code>renv::restore()</code>, all with build networking disabled. Native-extension hashes differed by architecture while scientific outputs remained byte-identical.</p>
+    </article>
+  </div>
+  <div class="mvp-cli">
+    <div class="codecommand"><code>pcs prepare-environment-v06 study.pcs.zip ...</code><button data-copy="pcs prepare-environment-v06 study.pcs.zip --public-key trusted-public.pem">Copy</button></div>
+    <div class="codecommand"><code>pcs execute-environment-v06 workspace/ ... --runs 3</code><button data-copy="pcs execute-environment-v06 workspace/ --public-key trusted-public.pem --runs 3">Copy</button></div>
+  </div>
+</section>
+
 </main>
 
 <footer>

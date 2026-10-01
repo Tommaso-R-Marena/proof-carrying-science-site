@@ -364,8 +364,39 @@ if public_status.exists() and fixture_obj is not None:
         ]:
             if environment_capture.get(key) is not True:
                 errors.append(f"status.json: environment workspace invariant drift: {key}")
-        if environment_capture.get("workspace_execution_by_pcs") is not False:
-            errors.append("status.json: environment workspace execution boundary drift")
+        if environment_capture.get("workspace_execution_by_pcs") is not True:
+            errors.append("status.json: explicit environment execution capability drift")
+        if environment_capture.get("sandbox_execution_available") is not True:
+            errors.append("status.json: sandbox execution availability drift")
+        if environment_capture.get("execute_workspace_command") != "pcs execute-environment-v06":
+            errors.append("status.json: environment execution command drift")
+        if environment_capture.get("automatic_environment_execution_during_verification") is not False:
+            errors.append("status.json: verification must not auto-execute environments")
+        if environment_capture.get("binds_vendored_restoration_artifacts") is not True:
+            errors.append("status.json: signed restoration-artifact binding drift")
+
+
+        runtime_evidence = mvp.get("runtime_evidence", {})
+        three_host = runtime_evidence.get("three_host_oci", {})
+        if three_host.get("passed") is not True or three_host.get("architecture_variation") is not True or three_host.get("host_os_variation") is not True:
+            errors.append("status.json: three-host OCI evidence drift")
+        engines = runtime_evidence.get("oci_engines", {})
+        if engines.get("docker_vs_rootful_podman_passed") is not True or engines.get("runtime_identity_captured") is not True:
+            errors.append("status.json: OCI engine evidence drift")
+        if engines.get("rootless_podman_container_execution_established") is not False:
+            errors.append("status.json: rootless Podman portability overclaim")
+        restoration = runtime_evidence.get("dependency_restoration", {})
+        for key in [
+            "python_hash_locked_wheel_restore_passed",
+            "r_renv_lock_restore_passed",
+            "offline_network_disabled_builds",
+            "vendored_restoration_artifacts_signed",
+            "native_extension_hashes_captured",
+            "native_extension_binary_differs_across_architecture",
+            "scientific_output_byte_identical_across_architecture",
+        ]:
+            if restoration.get(key) is not True:
+                errors.append(f"status.json: restoration/runtime evidence drift: {key}")
 
         adaptive_scheduler = mvp.get("adaptive_scheduler", {})
         if adaptive_scheduler.get("scheduler_format") != "pcs-replay-scheduler-v1":
@@ -434,8 +465,11 @@ if public_status.exists() and fixture_obj is not None:
         runtime_receipt = reviewer_receipts.get("runtime_scheme_check", {})
         if runtime_receipt.get("valid_signature_verified") is not True or runtime_receipt.get("one_byte_tamper_rejected") is not True or runtime_receipt.get("wrong_reviewer_key_rejected") is not True:
             errors.append("status.json: reviewer receipt runtime scheme evidence drift")
-        if mvp.get("latest_hosted_gate", {}).get("steps_executed") != 0 or mvp.get("latest_hosted_gate", {}).get("code_result") != "NOT_EXECUTED":
-            errors.append("status.json: hosted-gate caveat drift")
+        gate = mvp.get("latest_hosted_gate", {})
+        if gate.get("provider") != "CircleCI" or gate.get("status") != "PASS" or gate.get("code_result") != "PASS" or gate.get("full_runtime_executed") is not True:
+            errors.append("status.json: hosted runtime-gate evidence drift")
+        if gate.get("tested_checkpoint") != "1ef3cea04eb06f2b316ee566733e59c6af7452f1":
+            errors.append("status.json: runtime-gate checkpoint drift")
         if mvp.get("released") is not False:
             errors.append("status.json: v0.6 MVP candidate marked released")
         if browser.get("specification") != "pcs-0.5":
@@ -543,4 +577,4 @@ if errors:
         print(f"- {err}")
     sys.exit(1)
 
-print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, v0.6 MVP + 5-case real-world validation + legacy v0.5 fixture bound)")
+print(f"SITE CHECK: PASS ({len(HTML_FILES)} HTML pages, v0.6 mainline + cross-machine/runtime/restoration evidence + legacy v0.5 fixture bound)")

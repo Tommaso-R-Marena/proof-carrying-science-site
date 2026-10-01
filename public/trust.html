@@ -34,7 +34,7 @@
     <div><span>MVP candidate</span><strong>PCS v0.6 · complete executable loop</strong></div>
     <div><span>Formal theorem stack</span><strong>v0.5/v1 · Lean 4.28.0</strong></div>
     <div><span>Browser parity fixture</span><strong>v0.5 · 11 / 11 vectors</strong></div>
-    <div><span>Latest v0.6 gate</span><strong>Runner unavailable · not executed</strong></div>
+    <div><span>Latest v0.6 gate</span><strong>CircleCI cross-machine runtime gates · PASS</strong></div>
   </div>
 </section>
 
@@ -50,7 +50,7 @@
         <dt>Reviewer</dt><dd><code>pcs verify-v06-bundle</code></dd>
         <dt>Policy semantics</dt><dd><code>valid</code> remains separate from <code>accepted</code>; exact policy bytes are SHA-256 bound into the receipt</dd>
         <dt>Review provenance</dt><dd>Optional reviewer Ed25519 signature binds the exact receipt bytes and review commitments</dd>
-        <dt>Runtime status</dt><dd>Implementation and regression suite committed; latest hosted runs received no runner and executed zero steps</dd>
+        <dt>Runtime status</dt><dd>Merged to model main; CircleCI executed cross-machine, cross-architecture, Docker/Podman, R, offline restoration, and ABI gates successfully</dd>
       </dl>
     </article>
 
@@ -65,8 +65,8 @@
       <p>Dependency files, lockfiles, interpreter constraints, and container specifications are not trusted merely because the producer signed them. After exact package binding, PCS reconstructs the delivered environment source tree and regenerates the canonical environment capture before workflow or scientific replay.</p>
       <div class="boundary"><strong>Strength labels</strong><span>PCS distinguishes <code>strongly_pinned</code>, <code>container_base_pinned</code>, <code>locked_application_dependencies</code>, <code>hash_pinned_dependencies</code>, <code>declared_dependencies</code>, and <code>environment_unspecified</code>. These are descriptive reproducibility states, not proofs of runtime equivalence.</span></div>
       <div class="boundary"><strong>Authoritative handoff</strong><span>The browser Project Mapper previews environment structure only. <code>confirm-v06</code> regenerates the canonical Python environment capture from the exact reviewed artifact bytes before marking it confirmed.</span></div>
-      <div class="boundary"><strong>No automatic execution</strong><span>Reviewer verification does not run package managers, dependency installers, container builds, or user installation hooks. Reconstruction plans/scripts are review-before-run artifacts only.</span></div>
-      <div class="boundary"><strong>Verified replay workspace</strong><span><code>prepare-environment-v06</code> first performs full bundle verification, then atomically materializes the exact signed project-relative artifact tree plus workspace metadata, replay plan, and reconstruction script. The workspace remains non-executing.</span></div>
+      <div class="boundary"><strong>Explicit execution boundary</strong><span>Ordinary reviewer verification does not run package managers, dependency installers, container builds, or user installation hooks. After verification, <code>prepare-environment-v06</code> materializes an inert signed workspace; the separate explicit <code>execute-environment-v06</code> command performs sandboxed OCI reconstruction and replay.</span></div>
+      <div class="boundary"><strong>Verified replay workspace</strong><span><code>prepare-environment-v06</code> first performs full bundle verification, then atomically materializes the exact signed project-relative artifact tree plus workspace metadata, replay plan, and reconstruction script. Execution remains a separate explicit action through <code>execute-environment-v06</code>.</span></div>
       <div class="boundary"><strong>Adversarial boundary</strong><span>A forged environment dependency or interpreter claim remains expected to fail at <code>environment_replay</code> even if the producer recomputes certificate/package hashes and signatures.</span></div>
     </article>
 
@@ -196,6 +196,17 @@
     <div class="actions" style="margin-top:0"><a class="button dark" href="mvp.html">Open v0.6 MVP</a><a class="button secondary" href="architecture.html">Architecture</a></div>
   </div>
 </section>
+
+<section class="section-tight">
+  <div class="kicker">Executed trust-boundary evidence</div>
+  <h2>Runtime portability is tested as evidence, not assumed.</h2>
+  <div class="trustgrid">
+    <article class="trustitem"><header><h3>Machines and OCI engines</h3><span class="chip released">PASS</span></header><p>PCS replay has completed on Ubuntu 24.04 amd64, Ubuntu 24.04 ARM64, and Ubuntu 26.04 amd64, and across Docker and real rootful Podman. Runtime identity is captured in realized-environment evidence.</p></article>
+    <article class="trustitem"><header><h3>Dependency restoration</h3><span class="chip released">PASS</span></header><p>Python wheels and R package repository payloads are cryptographically bound into the signed environment and restored offline. Base images were checked not to provide the target dependency in advance.</p></article>
+    <article class="trustitem"><header><h3>Native ABI boundary</h3><span class="chip released">PASS</span></header><p>Architecture-specific NumPy native-extension binaries produced different SHA-256 fingerprints on amd64 and ARM64 while the scientific result remained byte-identical. Dependency/native drift remains determinism-critical; unsigned local builder image IDs are recorded observations.</p></article>
+  </div>
+</section>
+
 </main>
 
 <footer>
