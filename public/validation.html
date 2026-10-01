@@ -45,7 +45,7 @@
     <div>
       <div class="kicker">Execution boundary</div>
       <h2>Genuine checker-level execution, not a hosted CI claim.</h2>
-      <p>The public datasets were loaded and the current PCS check logic was executed in an isolated Python session. This is real computation over the cited data. It was not a full <code>attest-v06 → verify-v06-bundle</code> repository run because GitHub continued to allocate no runner (<code>runner_id=0</code>, zero steps executed).</p>
+      <p>The public datasets were loaded and the current PCS check logic was executed in an isolated Python session. This is real computation over the cited data. This specific 2026-09-29 campaign was not a full <code>attest-v06 → verify-v06-bundle</code> repository run because GitHub allocated no runner for that workflow. <strong>Later, separate CircleCI campaigns did execute the full runtime/restoration path across amd64/ARM64, Docker/rootful Podman, Python/R, and offline dependency restoration.</strong></p>
     </div>
     <div class="validation-kpis">
       <div><span>Source datasets</span><strong>2 public datasets + 1 documented industrial reaction</strong></div>
