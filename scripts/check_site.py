@@ -131,6 +131,14 @@ if mapper_js.exists():
         if required_text not in mapper_script:
             errors.append(f"project-builder.js: guided intake contract drift: {required_text}")
 
+    for required_text in [
+        "read_paths,write_paths",
+        "Array.isArray(w.read_paths)",
+        "Array.isArray(w.write_paths)",
+    ]:
+        if required_text not in mapper_script:
+            errors.append(f"project-builder.js: workflow display-shape regression: {required_text}")
+
 if mapper_page.exists():
     mapper_text = mapper_page.read_text(encoding="utf-8")
     for required_text in [
