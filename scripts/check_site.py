@@ -94,6 +94,10 @@ if result_anatomy_js.exists():
         "NOT TRUSTWORTHY FROM THIS RUN",
         "valid:true,accepted:false",
         "history.replaceState",
+        "summaryFormal",
+        "summaryReplay",
+        "summaryTrusted",
+        "Bottom line:",
     ]:
         if required_text not in script_value:
             errors.append(f"result-anatomy.js: scenario semantics drift: {required_text}")
@@ -176,6 +180,10 @@ if guided_page.exists():
         "FALSIFIED_OR_CHECK_FAILED",
         "OPEN",
         "ACCEPTED",
+        "Where you are",
+        "Nothing has been verified, executed, signed, or accepted.",
+        "Claim translation",
+        "Authoritative check",
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -192,6 +200,10 @@ if guided_js.exists():
         "URLSearchParams",
         'get("demo")==="1"',
         "Demo checkpoint",
+        "SUPPORTED TEMPLATE FOUND",
+        "NOT YET FORMALIZED",
+        "No predicate generated — fail closed.",
+        "renderGuide(step)",
     ]:
         if required_text not in guided_script:
             errors.append(f"guided-submission.js: guided controller drift: {required_text}")
@@ -448,6 +460,10 @@ if public_status.exists() and fixture_obj is not None:
             "draft_download_available",
             "review_download_available",
             "cli_handoff_generated",
+            "persistent_stage_explanation",
+            "each_stage_states_what_is_not_yet_verified",
+            "live_claim_translation_panel",
+            "no_supported_template_generates_no_predicate",
         ]:
             if guided_submission.get(key) is not True:
                 errors.append(f"status.json: guided submission invariant drift: {key}")
@@ -473,6 +489,10 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: supported formal claim type set drift")
         if guided_submission.get("steps") != ["project", "claim", "review", "prepare", "ready"]:
             errors.append("status.json: guided submission step contract drift")
+        if guided_submission.get("live_claim_translation_axes") != [
+            "user_words", "supported_typed_meaning", "authoritative_predicate"
+        ]:
+            errors.append("status.json: live claim-translation axes drift")
 
         demo_clarity = mvp.get("demo_clarity", {})
         result_anatomy = demo_clarity.get("completed_result_anatomy", {})
@@ -484,6 +504,7 @@ if public_status.exists() and fixture_obj is not None:
             "distinguishes_valid_claim_status_accepted",
             "links_to_executed_validation",
             "links_to_runtime_evidence",
+            "thirty_second_assurance_summary",
         ]:
             if result_anatomy.get(key) is not True:
                 errors.append(f"status.json: result anatomy invariant drift: {key}")
@@ -517,6 +538,8 @@ if public_status.exists() and fixture_obj is not None:
             "reviewer_acceptance_distinguished_from_validity",
             "scientific_truth_overclaim_rejected",
             "legacy_verifier_dynamic_result_explanation",
+            "thirty_second_result_summary",
+            "scenario_aware_result_summary",
         ]:
             if demo_clarity.get(key) is not True:
                 errors.append(f"status.json: demo clarity invariant drift: {key}")
@@ -530,6 +553,12 @@ if public_status.exists() and fixture_obj is not None:
             "reviewer_acceptance",
         ]:
             errors.append("status.json: demo result-layer model drift")
+        if demo_clarity.get("result_summary_axes") != [
+            "formally_established",
+            "freshly_reproduced",
+            "still_trusted",
+        ]:
+            errors.append("status.json: 30-second result-summary axes drift")
         if demo_clarity.get("exact_claim_statuses_explained") != [
             "COMPUTATIONALLY_SUPPORTED",
             "FALSIFIED_OR_CHECK_FAILED",
