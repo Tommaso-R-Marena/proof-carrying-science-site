@@ -70,17 +70,42 @@
 
 <section class="guided-stage" data-guided-stage="2" hidden>
   <div class="guided-stage-head">
-    <div><span class="guided-stage-number">02</span><h2>What should PCS verify?</h2><p>PCS proposes claims from recognizable scientific structures. Keep the ones you mean, remove the ones you do not, and edit the plain-English statement if needed.</p></div>
+    <div><span class="guided-stage-number">02</span><h2>What should PCS verify?</h2><p>PCS does not turn arbitrary prose directly into a trusted formal claim. It matches your project to supported claim templates, fills typed fields, and generates an exact machine-checkable predicate. You choose which rigorous meaning you intend.</p></div>
     <span class="chip pending">YOU CONFIRM</span>
   </div>
+  <div class="claim-translation-explainer" aria-label="How PCS turns an intent into a rigorous claim">
+    <div><span>1</span><strong>Your intent</strong><small>“Make sure train and test do not share patients.”</small></div>
+    <div class="claim-arrow" aria-hidden="true">→</div>
+    <div><span>2</span><strong>Supported template</strong><small>Dataset separation by identity key</small></div>
+    <div class="claim-arrow" aria-hidden="true">→</div>
+    <div><span>3</span><strong>Typed predicate</strong><small>left dataset + right dataset + key + exact pass condition</small></div>
+    <div class="claim-arrow" aria-hidden="true">→</div>
+    <div><span>4</span><strong>Verifier result</strong><small>PCS evaluates only that exact predicate.</small></div>
+  </div>
+  <div class="guided-intent-box">
+    <label for="guidedClaimIntent"><strong>Describe what you want to check</strong><span>Optional. This helps highlight a matching supported template; it does not itself become the formal claim.</span></label>
+    <input class="textinput" id="guidedClaimIntent" placeholder="e.g. Make sure the training and test data share no patient IDs" autocomplete="off">
+    <div id="guidedIntentHint" class="guided-intent-hint">PCS will suggest among the formal templates it actually supports.</div>
+  </div>
+  <details class="guided-supported-claims">
+    <summary>What can PCS formalize today?</summary>
+    <div class="guided-supported-grid">
+      <div><strong>Dataset separation</strong><span>No overlap between two datasets on a declared identity key.</span></div>
+      <div><strong>Reaction balance</strong><span>Element counts are conserved across a declared chemical reaction.</span></div>
+      <div><strong>Unit compatibility</strong><span>Two declared units reduce to the same physical dimension.</span></div>
+      <div><strong>PK/PD model contract</strong><span>A restricted PK/PD model satisfies PCS representation, positivity, and unit rules.</span></div>
+      <div><strong>PK/PD output reproduction</strong><span>Declared output values match the restricted reference equations within explicit tolerances.</span></div>
+    </div>
+    <p>If your statement falls outside these templates, PCS should say <strong>not yet formalized</strong> rather than inventing semantics.</p>
+  </details>
   <div class="guided-project-name">
     <label for="guidedSubject">Project name</label>
     <input class="textinput" id="guidedSubject" value="scientific-project" autocomplete="off">
   </div>
   <div id="guidedClaims" class="guided-claim-list"></div>
   <div id="guidedNoClaims" class="guided-empty" hidden>
-    <strong>PCS did not find a currently supported scientific claim automatically.</strong>
-    <p>You can still inspect the project in Advanced Mapper, or use the CLI to build a manifest for a workflow outside the browser detector set.</p>
+    <strong>PCS did not find a currently supported formal claim automatically.</strong>
+    <p>Your scientific statement may still be meaningful, but PCS does not yet have machine semantics for it. Use Advanced Mapper or the CLI to define a supported predicate; do not treat free-form prose alone as verified.</p>
     <a class="button secondary" href="project-builder.html">Open Advanced Mapper</a>
   </div>
   <div class="guided-actions">
@@ -97,6 +122,7 @@
   <div class="guided-review-grid" id="guidedReviewCards"></div>
   <details class="guided-advanced">
     <summary>Show technical details</summary>
+    <p class="guided-tech-note">The JSON below is the machine-readable contract. Human-readable summaries are explanations of this structure; they are not a separate source of truth.</p>
     <div class="guided-advanced-grid">
       <div><strong>Manifest draft</strong><pre id="guidedManifestPreview">{}</pre></div>
       <div><strong>Environment preview</strong><pre id="guidedEnvironmentPreview">{}</pre></div>

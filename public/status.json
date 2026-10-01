@@ -290,14 +290,28 @@
       "individual_file_selection": true,
       "synthetic_example": true,
       "zip_silently_unpacked": false,
-      "plain_language_claim_editing": true,
+      "plain_language_claim_editing": false,
       "progressive_disclosure": true,
       "advanced_mapper_preserved": true,
       "authoritative_confirmation_required": true,
       "browser_attestation_claimed": false,
       "draft_download_available": true,
       "review_download_available": true,
-      "cli_handoff_generated": true
+      "cli_handoff_generated": true,
+      "plain_language_claim_rendering": true,
+      "free_text_defines_formal_predicate": false,
+      "free_text_used_only_for_template_suggestion": true,
+      "structured_predicate_preview": true,
+      "raw_predicate_progressive_disclosure": true,
+      "supported_formal_claim_types": [
+        "csv_disjoint",
+        "reaction_balance",
+        "unit_compatible",
+        "pkpd_contract",
+        "pkpd_reference_match"
+      ],
+      "unsupported_claims_fail_closed": true,
+      "claim_translation_model": "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation"
     }
   },
   "formal": {
