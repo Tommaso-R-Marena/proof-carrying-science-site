@@ -208,6 +208,18 @@
   </div>
 </section>
 
+<section class="section">
+  <div class="kicker">Claim semantics boundary</div>
+  <h2>Natural language explains the claim. The typed predicate defines it.</h2>
+  <p class="section-intro">PCS does not treat arbitrary prose as executable scientific logic. Human intent is matched only to a supported claim template; that template supplies typed fields, an exact predicate, and a matching check specification. The verifier evaluates that structured object, not the prose label.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">1</div><h3>Intent</h3><p>A scientist can describe the goal in ordinary language. PCS may use those words to suggest a supported template, but the text itself carries no formal authority.</p></article>
+    <article class="card"><div class="num">2</div><h3>Typed predicate</h3><p>The user confirms concrete fields such as artifact IDs, identity keys, units, reaction coefficients, model/output bindings, or numeric tolerances.</p></article>
+    <article class="card"><div class="num">3</div><h3>Exact verification</h3><p>The built-in check deterministically implies the predicate recorded in the certificate. Unsupported statements remain explicitly unformalized instead of being guessed.</p></article>
+  </div>
+  <div class="boundary" style="margin-top:18px"><strong>Current supported formal claim families</strong><span><code>csv_disjoint</code>, <code>reaction_balance</code>, <code>unit_compatible</code>, <code>pkpd_contract</code>, and <code>pkpd_reference_match</code>.</span></div>
+</section>
+
 </main>
 
 <footer>
