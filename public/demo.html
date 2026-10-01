@@ -8,8 +8,8 @@
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-<div class="topbar"><div class="shell"><span>Legacy PCS v0.5 browser parity fixture · Current MVP product path is v0.6</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<body class="demo-revamp">
+<div class="topbar"><div class="shell"><span>Threat lab · Legacy PCS v0.5 browser parity fixture · Current product path is v0.6</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -19,10 +19,17 @@
 
 <main>
 <section class="pagehead">
-  <div class="kicker">Legacy v0.5 parity engine</div>
-  <h1>Inspect the older reference package transparently.</h1>
-  <p>This browser engine remains a useful v0.5 parity fixture: it verifies the frozen reference package or an extracted v0.5 evidence directory, hashes staged bytes, checks the package signature, replays the restricted PK/PD checks, reassesses claims, and applies policy. The current v0.6 MVP uses the Python CLI for deterministic bundle creation, extraction-free ZIP verification, normalized-decision regeneration, and SHA-bound reviewer policy.</p>
-  <div class="actions"><a class="button primary" href="mvp.html">Open current v0.6 MVP →</a></div>
+  <div>
+    <div class="kicker">Threat lab · legacy v0.5 parity engine</div>
+    <h1>Break a package. Watch PCS fail closed.</h1>
+    <p>This is the adversarial transparency demo, intentionally pinned to the frozen v0.5 browser fixture. Mutate a signed reference package and inspect exactly which assurance layer rejects it. The current product path is v0.6 and requires the compiled Lean authority for authoritative validity.</p>
+    <div class="actions"><a class="button primary" href="guided-submission.html?demo=1">Run current 90-second demo →</a><a class="button secondary" href="mvp.html">Open v0.6 MVP</a></div>
+  </div>
+  <aside class="demo-profile-card">
+    <span>THIS PAGE IS</span>
+    <strong>Adversarial / parity lab</strong>
+    <small>Useful for package-tampering intuition. Not the current v0.6 product verifier.</small>
+  </aside>
 </section>
 
 <div class="statusbar" aria-label="Verifier profile status">
