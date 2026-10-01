@@ -34,7 +34,7 @@
       "status": "PASS",
       "code_result": "PASS",
       "full_runtime_executed": true,
-      "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+      "tested_checkpoint": "b2e120e40eeb349af33df8a595729cb18efb0d4d",
       "terminal_gate": "restoration-boundaries-complete",
       "formal_wire_lean_gate": "PASS",
       "product_demo_hardening_gate": "PASS",
@@ -227,14 +227,14 @@
       "repository": "Tommaso-R-Marena/proof-carrying-science",
       "branch": "main",
       "merged": true,
-      "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
-      "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
-      "current_head": "c461e42692ee61a2dd3309174a938f8e506d59ac",
+      "merge_commit": "4fa3f11701fd30ee8b21b764185ae8c0b79d4382",
+      "tested_checkpoint": "b2e120e40eeb349af33df8a595729cb18efb0d4d",
+      "current_head": "7f6f6838789bd9cc342a3c073852ab6482d54549",
       "runtime_main_gate_passed": true,
       "formal_wire_gate_passed": true,
-      "formal_wire_merge_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
-      "product_hardening_tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
-      "formal_v2_merge_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32"
+      "formal_wire_merge_commit": "4fa3f11701fd30ee8b21b764185ae8c0b79d4382",
+      "product_hardening_tested_checkpoint": "b2e120e40eeb349af33df8a595729cb18efb0d4d",
+      "formal_v2_merge_commit": "4fa3f11701fd30ee8b21b764185ae8c0b79d4382"
     },
     "runtime_evidence": {
       "three_host_oci": {
@@ -402,7 +402,7 @@
     "product_hardening_gate": {
       "provider": "CircleCI",
       "status": "PASS",
-      "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+      "tested_checkpoint": "b2e120e40eeb349af33df8a595729cb18efb0d4d",
       "golden_examples_passed": true,
       "adversarial_hardening_passed": true,
       "local_trust_profile_verification_passed": true,
@@ -429,7 +429,15 @@
       "schema_resources_explicitly_bundled": true,
       "linux_single_file_ci_smoke_tested": true,
       "windows_macos_build_workflow_configured": true,
-      "trust_profile_external_to_bundle": true
+      "trust_profile_external_to_bundle": true,
+      "windows_single_file_ci_verified": true,
+      "macos_single_file_ci_verified": true,
+      "cross_platform_embedded_lean_golden_verified": [
+        "linux",
+        "windows",
+        "macos"
+      ],
+      "lean_authority_mandatory_for_authoritative_validity": true
     }
   },
   "formal": {
@@ -443,20 +451,20 @@
     "native_decide": false,
     "exact_v06_v2_port": "INTEGRATED",
     "mainline_integrated": true,
-    "model_main_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+    "model_main_commit": "4fa3f11701fd30ee8b21b764185ae8c0b79d4382",
     "circleci_lean_gate": "PASS",
     "integration_gate": "PASS",
-    "integration_checkpoint": "814c92937f3da0da2c983d41153dd30c6ecb9d1f",
-    "v2_files": 30,
-    "v2_theorem_lemma_declarations": 279,
-    "axiom_print_checks": 65,
+    "integration_checkpoint": "b2e120e40eeb349af33df8a595729cb18efb0d4d",
+    "v2_files": 31,
+    "v2_theorem_lemma_declarations": 282,
+    "axiom_print_checks": 67,
     "differential_cases": 19,
     "archive_partition_proved": true,
     "sha256_padding_structure_proved": true,
     "reaction_balance_replay_faithful": true,
-    "production_to_lean": "CONDITIONAL_DIFFERENTIALLY_TESTED",
+    "production_to_lean": "LEAN_AUTHORITY_GATED",
     "external_contracts": [
-      "ProductionRefinesLean",
+      "LeanAuthorityInvocationAndMaterialization",
       "ZipDecoderFaithful",
       "CaptureSound",
       "ReplayFaithful_except_reaction_balance",
@@ -469,9 +477,14 @@
       "formal/PCS/V2/Flagship.lean",
       "formal/PCS/V2/Archive.lean",
       "formal/PCS/V2/Chemistry.lean",
+      "formal/PCS/V2/Authority.lean",
       "formal/PCS/V2/TCB.lean",
       "formal/PCS/V2/Audit.lean"
-    ]
+    ],
+    "lean_authority_required": true,
+    "python_only_acceptance_authoritative": false,
+    "streaming_sha256_block_fold_proved_equivalent": true,
+    "arm64_large_bundle_authority_verified": true
   },
   "browser_profile": {
     "specification": "pcs-0.5",
@@ -483,7 +496,7 @@
     "third_party_runtime_javascript": false
   },
   "next_refinement": {
-    "target": "production-refines-lean-zip-capture-replay-tcb-shrink-and-external-design-partner-pilot",
+    "target": "zip-materialization-capture-replay-crypto-tcb-shrink-and-external-design-partner-pilot",
     "status": "OPEN",
     "released": false
   },
