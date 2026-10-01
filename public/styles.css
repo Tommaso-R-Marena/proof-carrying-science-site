@@ -330,3 +330,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
 @media(max-width:850px){.role-entry-head{align-items:flex-start;flex-direction:column}.role-entry-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.role-card ol{grid-template-columns:1fr}.role-card{padding:18px}}
 
+
+
+/* P0 demo comprehension rail */
+.guided-demo-guide{position:sticky;top:10px;z-index:20;display:flex;justify-content:space-between;gap:24px;align-items:center;margin:14px 0 22px;padding:15px 18px;border:1px solid #c9dcef;border-radius:16px;background:rgba(255,255,255,.96);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px)}
+.guided-demo-guide-copy{min-width:0}.guided-demo-guide-copy strong{display:block;font-size:14px;margin:2px 0 4px}.guided-demo-guide-copy small{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+.guided-demo-guide-kicker{font:800 9px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+.guided-demo-guide-state{flex:0 0 235px;border-left:1px solid var(--line);padding-left:18px}.guided-demo-guide-state span{display:block;font:800 10px var(--sans);letter-spacing:.08em;color:var(--blue)}.guided-demo-guide-state small{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.35}
+@media(max-width:760px){.guided-demo-guide{position:static;align-items:flex-start;flex-direction:column}.guided-demo-guide-state{flex:auto;width:100%;border-left:0;border-top:1px solid var(--line);padding:12px 0 0}}
