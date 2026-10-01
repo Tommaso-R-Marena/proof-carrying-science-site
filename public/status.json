@@ -34,9 +34,10 @@
       "status": "PASS",
       "code_result": "PASS",
       "full_runtime_executed": true,
-      "tested_checkpoint": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+      "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
       "terminal_gate": "restoration-boundaries-complete",
       "formal_wire_lean_gate": "PASS",
+      "product_demo_hardening_gate": "PASS",
       "restoration_and_abi_gate": "PASS"
     },
     "released": false,
@@ -227,12 +228,13 @@
       "branch": "main",
       "merged": true,
       "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
-      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
-      "current_head": "29feeb66c421dd50bc8c9ba010dbeeeaac56d509",
+      "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+      "current_head": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
       "runtime_main_gate_passed": true,
       "formal_wire_gate_passed": true,
-      "formal_wire_merge_commit": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
-      "product_hardening_tested_checkpoint": "9a17359b99517d97ef484e143337af3f82d35d4d"
+      "formal_wire_merge_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+      "product_hardening_tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+      "formal_v2_merge_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32"
     },
     "runtime_evidence": {
       "three_host_oci": {
@@ -400,7 +402,7 @@
     "product_hardening_gate": {
       "provider": "CircleCI",
       "status": "PASS",
-      "tested_checkpoint": "9a17359b99517d97ef484e143337af3f82d35d4d",
+      "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
       "golden_examples_passed": true,
       "adversarial_hardening_passed": true,
       "local_trust_profile_verification_passed": true,
@@ -432,22 +434,43 @@
   },
   "formal": {
     "lean_version": "4.28.0",
-    "target_wire_format": "pcs-normalized-decision-v1",
+    "target_wire_format": "pcs-normalized-decision-v2",
     "raw_wire_bytes_to_assures": "MACHINE_CHECKED_PASS",
-    "package_level_soundness": "CONDITIONAL_ON_EXPLICIT_SIGNATURE_AND_REPLAY_SOUNDNESS",
+    "v06_v2_archive_to_scientific_assurance": "MACHINE_CHECKED_UNDER_EXPLICIT_CONTRACTS",
+    "package_level_soundness": "MACHINE_CHECKED_UNDER_EXPLICIT_EXTERNAL_CONTRACTS",
     "project_specific_axioms": 0,
     "placeholders": 0,
     "native_decide": false,
-    "exact_v06_v2_port": "OPEN",
+    "exact_v06_v2_port": "INTEGRATED",
     "mainline_integrated": true,
-    "model_main_commit": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+    "model_main_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
     "circleci_lean_gate": "PASS",
+    "integration_gate": "PASS",
+    "integration_checkpoint": "814c92937f3da0da2c983d41153dd30c6ecb9d1f",
+    "v2_files": 30,
+    "v2_theorem_lemma_declarations": 279,
+    "axiom_print_checks": 65,
+    "differential_cases": 19,
+    "archive_partition_proved": true,
+    "sha256_padding_structure_proved": true,
+    "reaction_balance_replay_faithful": true,
+    "production_to_lean": "CONDITIONAL_DIFFERENTIALLY_TESTED",
+    "external_contracts": [
+      "ProductionRefinesLean",
+      "ZipDecoderFaithful",
+      "CaptureSound",
+      "ReplayFaithful_except_reaction_balance",
+      "NoForgery",
+      "SHA256_spec_correspondence",
+      "Ed25519_spec_correspondence"
+    ],
     "production_sources": [
-      "formal/PCS/Wire.lean",
-      "formal/PCS/WireCheck.lean",
-      "formal/PCS/WireCodec.lean",
-      "formal/PCS/WireCodecVectors.lean",
-      "formal/PCS/WireVectors.lean"
+      "formal/PCS/V2/EndToEnd.lean",
+      "formal/PCS/V2/Flagship.lean",
+      "formal/PCS/V2/Archive.lean",
+      "formal/PCS/V2/Chemistry.lean",
+      "formal/PCS/V2/TCB.lean",
+      "formal/PCS/V2/Audit.lean"
     ]
   },
   "browser_profile": {
@@ -460,7 +483,7 @@
     "third_party_runtime_javascript": false
   },
   "next_refinement": {
-    "target": "full-v0.6-runtime-gate-external-design-partner-pilot-real-scheduler-telemetry-and-exact-v0.6-v2-formal-port",
+    "target": "production-refines-lean-zip-capture-replay-tcb-shrink-and-external-design-partner-pilot",
     "status": "OPEN",
     "released": false
   },
@@ -470,7 +493,10 @@
     "regulatory_acceptance",
     "gxp_validation",
     "arbitrary_program_correctness",
-    "end_to_end_v06_formal_verification",
+    "unconditional_end_to_end_v06_formal_verification_without_external_contracts",
+    "production_python_proved_equivalent_to_lean",
+    "all_replay_checkers_formally_verified",
+    "sha256_ed25519_independent_spec_equivalence",
     "rootless_podman_portability",
     "universal_cross_platform_equivalence",
     "arbitrary_dependency_build_correctness"
