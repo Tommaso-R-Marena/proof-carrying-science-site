@@ -87,6 +87,17 @@
     <input class="textinput" id="guidedClaimIntent" placeholder="e.g. Make sure the training and test data share no patient IDs" autocomplete="off">
     <div id="guidedIntentHint" class="guided-intent-hint">PCS will suggest among the formal templates it actually supports.</div>
   </div>
+  <details class="guided-supported-claims">
+    <summary>What can PCS formalize today?</summary>
+    <div class="guided-supported-grid">
+      <div><strong>Dataset separation</strong><span>No overlap between two datasets on a declared identity key.</span></div>
+      <div><strong>Reaction balance</strong><span>Element counts are conserved across a declared chemical reaction.</span></div>
+      <div><strong>Unit compatibility</strong><span>Two declared units reduce to the same physical dimension.</span></div>
+      <div><strong>PK/PD model contract</strong><span>A restricted PK/PD model satisfies PCS representation, positivity, and unit rules.</span></div>
+      <div><strong>PK/PD output reproduction</strong><span>Declared output values match the restricted reference equations within explicit tolerances.</span></div>
+    </div>
+    <p>If your statement falls outside these templates, PCS should say <strong>not yet formalized</strong> rather than inventing semantics.</p>
+  </details>
   <div class="guided-project-name">
     <label for="guidedSubject">Project name</label>
     <input class="textinput" id="guidedSubject" value="scientific-project" autocomplete="off">
