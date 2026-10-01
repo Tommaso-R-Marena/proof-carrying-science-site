@@ -233,8 +233,19 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: unexpected verified Lean version")
         if formal.get("raw_wire_bytes_to_assures") != "MACHINE_CHECKED_PASS":
             errors.append("status.json: formal raw-wire assurance status drift")
+        if formal.get("mainline_integrated") is not True:
+            errors.append("status.json: formal theorem layer not marked integrated on model main")
+        if formal.get("model_main_commit") != "3e93573e0875da422340ad5e8d5e29f623c1eadc":
+            errors.append("status.json: formal model-main commit drift")
+        if formal.get("circleci_lean_gate") != "PASS":
+            errors.append("status.json: formal CircleCI Lean gate drift")
         if formal.get("exact_v06_v2_port") != "OPEN":
             errors.append("status.json: exact v0.6 formal-port boundary drift")
+        mainline = mvp.get("mainline", {})
+        if mainline.get("current_head") != "3e93573e0875da422340ad5e8d5e29f623c1eadc":
+            errors.append("status.json: model main head drift")
+        if mainline.get("formal_wire_gate_passed") is not True or mainline.get("runtime_main_gate_passed") is not True:
+            errors.append("status.json: model main gate status drift")
         if mvp.get("specification") != "pcs-0.6" or mvp.get("checker") != "pcs-python-kernel/0.6.0-dev":
             errors.append("status.json: v0.6 MVP identity drift")
         if mvp.get("producer_command") != "pcs attest-v06" or mvp.get("reviewer_command") != "pcs verify-v06-bundle":
