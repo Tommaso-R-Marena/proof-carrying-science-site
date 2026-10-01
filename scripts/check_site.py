@@ -319,6 +319,21 @@ for page in validation_pages:
     if p.exists() and 'href="validation.html"' not in p.read_text(encoding="utf-8"):
         errors.append(f"{page}: real-world validation navigation/link is missing")
 
+validation_page = ROOT / "validation.html"
+if validation_page.exists():
+    validation_text = validation_page.read_text(encoding="utf-8")
+    for required_text in [
+        "Canonical demo suite",
+        "Three deterministic examples tell the whole PCS story.",
+        "Valid package + supported claim",
+        "Valid package + failed scientific claim",
+        "Environment-bound replay",
+        "python scripts/run_golden_examples_v06.py -o golden-demo-run",
+        "Demo-only cryptographic identity:",
+    ]:
+        if required_text not in validation_text:
+            errors.append(f"validation.html: golden-demo contract drift: {required_text}")
+
 validation_result = ROOT / "real-world-validation-2026-09-29.json"
 if validation_result.exists():
     try:
