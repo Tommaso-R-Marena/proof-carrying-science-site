@@ -336,11 +336,11 @@
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Formal boundary</div>
   <h2>The executable MVP and the formal theorem stack are related, but not identical.</h2>
-  <p class="section-intro">The current v0.6/v2 executable format has the full producer/reviewer product path. The strongest machine-checked raw-wire-to-<code>Assures</code> theorem stack currently targets the older v0.5/v1 wire, with package authenticity and replay represented through explicit theorem assumptions. Porting that theorem stack onto the exact v0.6/v2 representation remains open work.</p>
+  <p class="section-intro">The current v0.6/v2 executable format and the machine-checked theorem stack now target the same certificate/package/normalized-decision representation. Lean proves the archive/package binding and the bridge into scoped scientific assurance; <code>reaction_balance</code> replay is also proved faithful. The remaining boundary is explicit: production-Python → Lean refinement, ZIP decoding, capture soundness, non-chemistry replay fidelity, cryptographic unforgeability, and independent crypto-spec correspondence.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">v0.6</div><h3>Executable MVP</h3><p>Canonical JCS, signed package, deterministic ZIP, fresh replay, normalized decisions, reviewer policy.</p></article>
-    <article class="card"><div class="num">v0.5/v1</div><h3>Machine-checked chain</h3><p>Raw normalized-wire bytes through checked decoding and assurance semantics have a Lean 4.28 theorem chain.</p></article>
-    <article class="card"><div class="num">Open</div><h3>Exact v0.6 formal port</h3><p>The product should not claim end-to-end Lean verification of the v0.6 delivery format until that port is completed.</p></article>
+    <article class="card"><div class="num">v0.6/v2</div><h3>Machine-checked chain</h3><p>Canonical bytes, package/index binding, signatures, archive partitioning, normalized decisions, and scoped scientific assurance are connected by Lean 4.28 theorems.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>Production refinement + remaining TCB</h3><p>The Python verifier is differentially tested against Lean but not yet proved to refine it. ZIP decoding, capture, most replay executors, and crypto assumptions remain explicit contracts.</p></article>
   </div>
 </section>
 
