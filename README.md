@@ -32,7 +32,7 @@ The site intentionally has no application backend. Its interactive functionality
 
 The browser verifier is a functional demonstration, not the production PCS Python verifier. Its built-in signing key is explicitly demo-only.
 
-The strongest current machine-checked theorem stack targets the older v0.5/v1 normalized-wire representation, including accepted raw wire bytes through `Assures` under the stated package/signature/replay boundary. The website keeps that result separate from the v0.6/v2 executable MVP candidate; the exact v0.6 formal port remains open.
+The strongest current machine-checked theorem stack targets the older v0.5/v1 normalized-wire representation, including accepted raw wire bytes through `Assures` under the stated package/signature/replay boundary. That theorem layer is now integrated on the model `main` branch and continuously checked by a Lean 4.28 CircleCI gate. The website keeps that result separate from the v0.6/v2 executable MVP candidate; the exact v0.6 formal port remains open.
 
 ## Repository layout
 

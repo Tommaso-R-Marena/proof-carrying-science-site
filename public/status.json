@@ -34,8 +34,10 @@
       "status": "PASS",
       "code_result": "PASS",
       "full_runtime_executed": true,
-      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
-      "terminal_gate": "restoration-boundaries-complete"
+      "tested_checkpoint": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+      "terminal_gate": "restoration-boundaries-complete",
+      "formal_wire_lean_gate": "PASS",
+      "restoration_and_abi_gate": "PASS"
     },
     "released": false,
     "real_world_benchmark": {
@@ -225,7 +227,11 @@
       "branch": "main",
       "merged": true,
       "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
-      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1"
+      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
+      "current_head": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+      "runtime_main_gate_passed": true,
+      "formal_wire_gate_passed": true,
+      "formal_wire_merge_commit": "3e93573e0875da422340ad5e8d5e29f623c1eadc"
     },
     "runtime_evidence": {
       "three_host_oci": {
@@ -276,7 +282,17 @@
     "project_specific_axioms": 0,
     "placeholders": 0,
     "native_decide": false,
-    "exact_v06_v2_port": "OPEN"
+    "exact_v06_v2_port": "OPEN",
+    "mainline_integrated": true,
+    "model_main_commit": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+    "circleci_lean_gate": "PASS",
+    "production_sources": [
+      "formal/PCS/Wire.lean",
+      "formal/PCS/WireCheck.lean",
+      "formal/PCS/WireCodec.lean",
+      "formal/PCS/WireCodecVectors.lean",
+      "formal/PCS/WireVectors.lean"
+    ]
   },
   "browser_profile": {
     "specification": "pcs-0.5",
