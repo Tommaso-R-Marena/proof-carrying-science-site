@@ -62,6 +62,45 @@
     <div class="inspector-boundaries" id="boundaryCards"></div>
   </section>
 
+  <section class="section-tight assurance-explorer">
+    <div class="section-heading-row">
+      <div><div class="kicker">End-to-end assurance graph</div><h2>Trace each claim from assumptions and artifacts to authority.</h2></div>
+      <p>This graph is built from the actual certificate IDs, workflow edges, evidence references, normalized decision index, and—when attached—the verifier receipt.</p>
+    </div>
+    <div class="assurance-controls">
+      <label>Focus claim
+        <select id="claimFocus"><option value="all">All claims</option></select>
+      </label>
+      <button class="button secondary" id="resetClaimFocus" type="button">Show all</button>
+      <button class="button secondary" id="downloadInspection" type="button">Download inspection report</button>
+    </div>
+    <div class="assurance-legend" aria-label="Assurance graph legend">
+      <span><i class="graph-dot assumption"></i>Assumption</span>
+      <span><i class="graph-dot artifact"></i>Artifact / workflow</span>
+      <span><i class="graph-dot evidence"></i>Evidence</span>
+      <span><i class="graph-dot claim"></i>Claim</span>
+      <span><i class="graph-dot decision"></i>Decision</span>
+      <span><i class="graph-dot authority"></i>Receipt / authority</span>
+    </div>
+    <div id="assuranceGraph" class="assurance-graph" aria-live="polite"></div>
+  </section>
+
+  <section class="section-tight impact-explorer">
+    <div class="section-heading-row">
+      <div><div class="kicker">Change-impact analysis</div><h2>If an artifact changes, what downstream assurance becomes stale?</h2></div>
+      <p>This mirrors PCS core's conservative transitive invalidation: artifact → downstream workflow outputs → evidence → claims.</p>
+    </div>
+    <div class="impact-workbench panel">
+      <div class="impact-picker">
+        <label>Changed artifact
+          <select id="impactArtifact"><option value="">Select an artifact</option></select>
+        </label>
+        <button class="button primary" id="runImpact" type="button">Trace impact</button>
+      </div>
+      <div id="impactResult" class="impact-result"><p class="muted">Load a package with certificate artifacts, then select one to trace its downstream impact.</p></div>
+    </div>
+  </section>
+
   <section class="section-tight split inspector-claim-section">
     <div>
       <div class="kicker">Typed claims</div><h2>Scientific statements in the package</h2>
