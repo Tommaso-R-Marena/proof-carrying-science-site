@@ -399,11 +399,12 @@
     "product_hardening_gate": {
       "provider": "CircleCI",
       "status": "PASS",
-      "tested_checkpoint": "2c5f224c43aab8d5cfc0f5b3658b80ab25cc008a",
+      "tested_checkpoint": "9a17359b99517d97ef484e143337af3f82d35d4d",
       "golden_examples_passed": true,
       "adversarial_hardening_passed": true,
       "local_trust_profile_verification_passed": true,
-      "standalone_linux_verifier_built_and_smoke_tested": true
+      "standalone_linux_verifier_built_and_smoke_tested": true,
+      "focused_attack_cases": 12
     },
     "golden_examples": {
       "format": "pcs-golden-examples-v06-v1",
