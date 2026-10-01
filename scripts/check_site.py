@@ -175,6 +175,22 @@ if mapper_js.exists():
         if required_text not in mapper_script:
             errors.append(f"project-builder.js: environment capture contract drift: {required_text}")
 
+for page in ["trust.html", "architecture.html"]:
+    p = ROOT / page
+    if p.exists():
+        text_value = p.read_text(encoding="utf-8")
+        for required_text in [
+            "Claim semantics boundary",
+            "Natural language explains the claim. The typed predicate defines it.",
+            "csv_disjoint",
+            "reaction_balance",
+            "unit_compatible",
+            "pkpd_contract",
+            "pkpd_reference_match",
+        ]:
+            if required_text not in text_value:
+                errors.append(f"{page}: claim-semantics explanation drift: {required_text}")
+
 for page in ["mvp.html", "trust.html", "architecture.html"]:
     p = ROOT / page
     if p.exists() and "prepare-environment-v06" not in p.read_text(encoding="utf-8"):
