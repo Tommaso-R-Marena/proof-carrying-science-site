@@ -1,0 +1,19 @@
+# Proof-Carrying Science
+
+Proof-Carrying Science (PCS) is an assurance system for scientific computation. It packages an exact typed scientific claim with exact artifacts, assumptions, replay evidence, cryptographic bindings, machine-checked assurance, and reviewer-owned acceptance policy.
+
+Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
+
+## Primary pages
+- Product overview: /
+- Guided Submission: /guided-submission.html
+- PCS Package Inspector: /package-inspector.html
+- Result anatomy: /result-anatomy.html
+- Validation evidence: /validation.html
+- Trust Center: /trust.html
+- Trust Explorer: /trust-explorer.html
+- Architecture: /architecture.html
+- v0.6 MVP: /mvp.html
+
+## Important interpretation
+A PCS-valid package is scoped to an exact typed claim, exact evidence, and explicit assumptions. PCS does not claim that package validity establishes arbitrary biological, clinical, empirical, or regulatory truth. Production v0.6 validity is Lean-authoritative; browser tools are educational, discovery, or inspection surfaces unless explicitly stated otherwise.
