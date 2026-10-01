@@ -102,15 +102,15 @@
     </article>
 
     <article class="trustitem">
-      <header><h3>Machine-checked v0.5/v1 theorem stack</h3><span class="chip verified">Verified</span></header>
-      <p>The strongest current Lean result goes beyond normalized-state semantics for the older v0.5/v1 wire: accepted normalized-wire bytes pass strict UTF-8/JSON/schema decoding, checked wire construction, <code>wireCheck</code>, <code>WellFormed</code>, and the bridge into <code>Assures</code>. Package authenticity and replay are modeled with their remaining trust exposed as theorem arguments.</p>
-      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>verifyNormalizedWireBytes_assures_e2e</code> is unconditional over accepted raw wire bytes. The package-level theorem is conditional on explicit signature-scheme and replay-adapter soundness assumptions.</span></div>
+      <header><h3>Machine-checked v0.6/v2 theorem stack</h3><span class="chip verified">Integrated</span></header>
+      <p>The current Lean 4.28 layer targets the exact v0.6/v2 representation: canonical JSON and schemas, domain/hash binding, certificate and normalized-index commitments, signature wiring, exact signed package membership, archive partitioning, normalized decisions, and the bridge into <code>ScientificAssurance</code>. For <code>reaction_balance</code>, replay faithfulness itself is proved in Lean.</p>
+      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>pcs_accept_implies_scientific_assurance</code> and <code>pcs_raw_archive_assurance</code> connect accepted v0.6/v2 package/archive structure to scoped scientific assurance under explicit external contracts. The production-Python verifier is still related by the named <code>ProductionRefinesLean</code> hypothesis.</span></div>
       <dl>
         <dt>Lean</dt><dd>4.28.0</dd>
-        <dt>Model-main integration</dt><dd>Integrated on <code>main</code> at <code>3e93573e0875…</code>; CircleCI Lean 4.28 gate PASS</dd>
-        <dt>Reported project build</dt><dd>PASS · no <code>sorry</code>, project axioms, or <code>native_decide</code></dd>
-        <dt>Wire vectors</dt><dd>34 / 34 Lean↔Python agreement reported</dd>
-        <dt>Exact v0.6/v2 port</dt><dd>Open</dd>
+        <dt>Model-main integration</dt><dd>Integrated on <code>main</code> at <code>91b35d4d81a6…</code></dd>
+        <dt>Formal source audit</dt><dd>30 V2 files · 279 theorem/lemma declarations · 65 <code>#print axioms</code> checks · no production <code>sorry</code>/<code>admit</code>/project <code>axiom</code>/<code>unsafe</code>/<code>native_decide</code></dd>
+        <dt>Differential corpus</dt><dd>19 Python↔Lean package/key cases in the integration gate</dd>
+        <dt>Reaction replay</dt><dd><code>reaction_balance</code> faithfulness proved in Lean</dd>
       </dl>
     </article>
 
@@ -126,9 +126,9 @@
     </article>
 
     <article class="trustitem">
-      <header><h3>Exact v0.6/v2 formal port</h3><span class="chip open">Open</span></header>
-      <p>The executable product has moved to v0.6/v2: canonical JCS, new cryptographic domains, certificate integrity binding, normalized index hashing, full-SHA normalized storage paths, deterministic ZIP delivery, and reviewer policy. The current Lean end-to-end wire theorem still targets the older v0.5/v1 representation.</p>
-      <div class="boundary"><strong>Next formal milestone</strong><span>Port the verified raw-wire → <code>Assures</code> architecture onto the exact v0.6/v2 byte representation without weakening its explicit trust boundary.</span></div>
+      <header><h3>Remaining v0.6/v2 formal boundary</h3><span class="chip pending">Explicit TCB</span></header>
+      <p>The representation port is complete, but several external contracts remain intentionally visible: production-Python → Lean refinement, ZIP-decoder faithfulness, environment-capture soundness, replay faithfulness for check types other than <code>reaction_balance</code>, cryptographic unforgeability, and independent SHA-256/Ed25519 specification correspondence.</p>
+      <div class="boundary"><strong>Next formal milestone</strong><span>Make production acceptance invoke the Lean checker, or prove <code>ProductionRefinesLean</code>; then shrink the ZIP, capture, replay, and crypto-spec boundaries one by one.</span></div>
     </article>
   </div>
 
@@ -137,8 +137,8 @@
       <h2>Current verification boundary</h2>
       <div class="timeline">
         <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
-        <div class="timeline-item"><strong>v0.5/v1 raw normalized wire</strong><span>The strongest current Lean theorem stack checks raw wire bytes through decoding and assurance semantics.</span></div>
-        <div class="timeline-item"><strong>Exact v0.6 formal port</strong><span>Still open; the executable MVP must not inherit the older theorem by implication.</span></div>
+        <div class="timeline-item"><strong>v0.6/v2 Lean assurance layer</strong><span>Machine-checked canonical/package/archive/decision structure leads to scoped scientific assurance under explicit external contracts.</span></div>
+        <div class="timeline-item"><strong>Production ↔ Lean boundary</strong><span>Differentially tested, but still an explicit <code>ProductionRefinesLean</code> hypothesis until production invokes Lean or a refinement proof is supplied.</span></div>
         <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
       </div>
     </article>
