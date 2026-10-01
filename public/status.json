@@ -34,8 +34,10 @@
       "status": "PASS",
       "code_result": "PASS",
       "full_runtime_executed": true,
-      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
-      "terminal_gate": "restoration-boundaries-complete"
+      "tested_checkpoint": "3e93573e0875da422340ad5e8d5e29f623c1eadc",
+      "terminal_gate": "restoration-boundaries-complete",
+      "formal_wire_lean_gate": "PASS",
+      "restoration_and_abi_gate": "PASS"
     },
     "released": false,
     "real_world_benchmark": {
