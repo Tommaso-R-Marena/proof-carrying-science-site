@@ -20,6 +20,15 @@
       else links.insertBefore(inspectLink, links.firstChild);
     }
 
+    if (!links.querySelector('a[href="package-inspector.html"]')) {
+      const inspectLink = document.createElement("a");
+      inspectLink.href = "package-inspector.html";
+      inspectLink.textContent = "Inspect package";
+      const guided = links.querySelector('a[href="guided-submission.html"]');
+      if (guided && guided.nextSibling) links.insertBefore(inspectLink, guided.nextSibling);
+      else links.insertBefore(inspectLink, links.firstChild);
+    }
+
     const mapperLink = links.querySelector('a[href="project-builder.html"]');
     if (mapperLink && /Project Mapper/i.test(mapperLink.textContent || "")) {
       mapperLink.textContent = "Advanced Mapper";
@@ -110,6 +119,15 @@
       window.setTimeout(() => { button.textContent = original; }, 1400);
     });
   });
+  const analyticsHost = "proof-carrying-science-site.marenatommaso.workers.dev";
+  if (location.hostname === analyticsHost && !document.querySelector('script[data-pcs-web-analytics]')) {
+    const beacon = document.createElement("script");
+    beacon.type = "module";
+    beacon.src = "https://static.cloudflareinsights.com/beacon.min.js";
+    beacon.dataset.cfBeacon = JSON.stringify({token: "ea09d5072ce041ea893b5e0092815294"});
+    beacon.dataset.pcsWebAnalytics = "true";
+    document.head.appendChild(beacon);
+  }
   const analyticsHost = "proof-carrying-science-site.marenatommaso.workers.dev";
   if (location.hostname === analyticsHost && !document.querySelector('script[data-pcs-web-analytics]')) {
     const beacon = document.createElement("script");
