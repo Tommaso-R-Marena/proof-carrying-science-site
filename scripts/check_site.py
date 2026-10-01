@@ -81,6 +81,10 @@ if result_anatomy_page.exists():
         "policy_sha256",
         "See executed validation",
         "See runtime evidence",
+        "Reviewer workflow",
+        "pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json",
+        "pcs-verifier-trust-v1",
+        "Single-file verifier",
     ]:
         if required_text not in text_value:
             errors.append(f"result-anatomy.html: result-anatomy contract drift: {required_text}")
