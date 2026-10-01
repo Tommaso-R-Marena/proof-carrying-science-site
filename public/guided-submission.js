@@ -7,7 +7,21 @@
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
   function notify(text,kind="info"){const b=$("guidedMessage");b.hidden=!text;b.className="guided-message "+kind;b.textContent=text||""}
   function setBusy(on,text="Analyzing your project locally…"){busy=on;document.body.classList.toggle("guided-busy",on);document.querySelectorAll(".guided-stage button").forEach(btn=>{if(on){btn.dataset.guidedWasDisabled=btn.disabled?"1":"0";btn.disabled=true}else if("guidedWasDisabled" in btn.dataset){btn.disabled=btn.dataset.guidedWasDisabled==="1";delete btn.dataset.guidedWasDisabled}});if(on)notify(text);else if($("guidedMessage").classList.contains("info"))notify("")}
-  function go(step){document.querySelectorAll("[data-guided-stage]").forEach(x=>x.hidden=Number(x.dataset.guidedStage)!==step);document.querySelectorAll("[data-step-indicator]").forEach(x=>{const n=Number(x.dataset.stepIndicator);x.classList.toggle("active",n===step);x.classList.toggle("complete",n<step);if(n===step)x.setAttribute("aria-current","step");else x.removeAttribute("aria-current")});const demo=$("guidedDemoContext");if(demo)demo.hidden=!demoMode;const takeaway=$("guidedDemoTakeaway");if(takeaway)takeaway.hidden=!(demoMode&&step===5);window.scrollTo({top:document.querySelector(".guided-stepper").offsetTop-24,behavior:"smooth"})}
+  const GUIDE={
+    1:["1. Choose the project you want PCS to inspect","PCS is only discovering files here. Nothing has been verified, executed, signed, or accepted.","DISCOVERY","Question: what should PCS inspect?"],
+    2:["2. Confirm the exact claim PCS is allowed to evaluate","Your words are navigation help only. The typed predicate below is the authoritative scientific meaning.","CLAIM CONTRACT","Question: is this exactly what you mean?"],
+    3:["3. Inspect the draft before any attestation","Review the bound files, typed claim, inferred workflow, and environment. This page is still not a PASS.","HUMAN REVIEW","Question: did PCS bind the right things?"],
+    4:["4. Approve the handoff to the authoritative verifier","The CLI will re-hash the original project and refuse stale bytes before it can sign anything.","CONFIRMATION","Question: should this exact draft be frozen?"],
+    5:["5. Run independent verification","A prepared draft is not a scientific verdict. The signed bundle must still be replayed by the verifier/reviewer.","READY TO VERIFY","Question: what did independent replay establish?"]
+  };
+  function renderGuide(step){
+    const g=GUIDE[step]||GUIDE[1];
+    if($("guidedDemoGuideTitle"))$("guidedDemoGuideTitle").textContent=g[0];
+    if($("guidedDemoGuideDetail"))$("guidedDemoGuideDetail").textContent=g[1];
+    if($("guidedDemoGuideState"))$("guidedDemoGuideState").textContent=g[2];
+    if($("guidedDemoGuideQuestion"))$("guidedDemoGuideQuestion").textContent=g[3];
+  }
+  function go(step){document.querySelectorAll("[data-guided-stage]").forEach(x=>x.hidden=Number(x.dataset.guidedStage)!==step);document.querySelectorAll("[data-step-indicator]").forEach(x=>{const n=Number(x.dataset.stepIndicator);x.classList.toggle("active",n===step);x.classList.toggle("complete",n<step);if(n===step)x.setAttribute("aria-current","step");else x.removeAttribute("aria-current")});renderGuide(step);const demo=$("guidedDemoContext");if(demo)demo.hidden=!demoMode;const takeaway=$("guidedDemoTakeaway");if(takeaway)takeaway.hidden=!(demoMode&&step===5);window.scrollTo({top:document.querySelector(".guided-stepper").offsetTop-24,behavior:"smooth"})}
   const claims=()=>state?.draft?.claims||[];
   const rootName=()=>String(state?.report?.project_root_name||state?.draft?.pcs_intake?.project_root_name||state?.subject||"my-project").replace(/[^A-Za-z0-9._-]+/g,"-")||"my-project";
   function outputs(){const out=new Set();for(const w of state?.workflow_inferences||[])if(w.selected)for(const p of w.write_paths||[])out.add(p);for(const x of state?.inventory||[])if(x.role==="tabular-output")out.add(x.path);return[...out]}
