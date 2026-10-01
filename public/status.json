@@ -229,7 +229,7 @@
       "merged": true,
       "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
       "tested_checkpoint": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
-      "current_head": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
+      "current_head": "c461e42692ee61a2dd3309174a938f8e506d59ac",
       "runtime_main_gate_passed": true,
       "formal_wire_gate_passed": true,
       "formal_wire_merge_commit": "91b35d4d81a6e77ea8d20b221b555aafe5988e32",
