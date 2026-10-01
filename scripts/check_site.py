@@ -34,15 +34,15 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "guided-submission.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "guided-submission.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "guided-submission.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "guided-submission.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -58,6 +58,45 @@ for page in ["index.html", "guided-submission.html", "project-builder.html", "mv
     if 'href="project-builder.html"' not in page_text and page != "project-builder.html":
         errors.append(f"{page}: Project Mapper navigation link is missing")
 
+
+
+result_anatomy_page = ROOT / "result-anatomy.html"
+result_anatomy_js = ROOT / "result-anatomy.js"
+if result_anatomy_page.exists():
+    text_value = result_anatomy_page.read_text(encoding="utf-8")
+    for required_text in [
+        "Completed review anatomy",
+        "What does a finished PCS result actually mean?",
+        "Educational walkthrough:",
+        "Valid + accepted",
+        "Valid + policy rejected",
+        "Valid + claim failed",
+        "Invalid package",
+        "Actual v0.6 field names",
+        "pcs-end-to-end-verifier-v06-v1",
+        "bundle_sha256",
+        "certificate_semantic_hash",
+        "certificate_integrity_hash",
+        "normalized_index_semantic_hash",
+        "policy_sha256",
+        "See executed validation",
+        "See runtime evidence",
+    ]:
+        if required_text not in text_value:
+            errors.append(f"result-anatomy.html: result-anatomy contract drift: {required_text}")
+    if 'aria-live="polite"' not in text_value:
+        errors.append("result-anatomy.html: scenario result changes are not announced")
+if result_anatomy_js.exists():
+    script_value = result_anatomy_js.read_text(encoding="utf-8")
+    for required_text in [
+        "COMPUTATIONALLY_SUPPORTED",
+        "FALSIFIED_OR_CHECK_FAILED",
+        "NOT TRUSTWORTHY FROM THIS RUN",
+        "valid:true,accepted:false",
+        "history.replaceState",
+    ]:
+        if required_text not in script_value:
+            errors.append(f"result-anatomy.js: scenario semantics drift: {required_text}")
 
 demo_page = ROOT / "demo.html"
 demo_js = ROOT / "demo.js"
@@ -413,6 +452,37 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: guided submission step contract drift")
 
         demo_clarity = mvp.get("demo_clarity", {})
+        result_anatomy = demo_clarity.get("completed_result_anatomy", {})
+        if result_anatomy.get("page") != "result-anatomy.html" or result_anatomy.get("script") != "result-anatomy.js":
+            errors.append("status.json: completed result anatomy surface drift")
+        for key in [
+            "based_on_real_v06_field_names",
+            "illustrative_values_not_live_verification",
+            "distinguishes_valid_claim_status_accepted",
+            "links_to_executed_validation",
+            "links_to_runtime_evidence",
+        ]:
+            if result_anatomy.get(key) is not True:
+                errors.append(f"status.json: result anatomy invariant drift: {key}")
+        if result_anatomy.get("scenarios") != [
+            "valid_and_accepted",
+            "valid_policy_rejected",
+            "valid_failed_claim",
+            "invalid_package",
+        ]:
+            errors.append("status.json: result anatomy scenario set drift")
+        if result_anatomy.get("reviewer_receipt_bindings_explained") != [
+            "bundle_sha256",
+            "certificate_semantic_hash",
+            "certificate_integrity_hash",
+            "normalized_index_semantic_hash",
+            "policy_sha256",
+            "valid",
+            "accepted",
+        ]:
+            errors.append("status.json: reviewer receipt binding explanation drift")
+
+
         if demo_clarity.get("format") != "pcs-demo-interpretation-ui-v1":
             errors.append("status.json: demo clarity format drift")
         if demo_clarity.get("one_click_guided_demo") != "guided-submission.html?demo=1":
