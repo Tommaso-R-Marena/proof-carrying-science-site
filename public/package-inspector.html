@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PCS Package Inspector · Inspect a .pcs.zip Locally</title>
+<meta name="description" content="Inspect a PCS v0.6 package locally in your browser: ZIP members, SHA-256 bindings, typed claims, normalized decisions, signatures, and proof boundaries.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta property="og:title" content="PCS Package Inspector">
+<meta property="og:description" content="Inspect a PCS v0.6 scientific assurance package locally—no upload required.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html">
+<meta property="og:site_name" content="Proof-Carrying Science">
+<meta property="og:image" content="https://proof-carrying-science-site.marenatommaso.workers.dev/logo-mark.svg">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="inspector-page">
+<div class="topbar"><div class="shell"><span>PCS v0.6 package inspector · Local browser analysis · No upload</span><a href="trust.html">Trust Center</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks"><a href="guided-submission.html">Try PCS</a><a href="package-inspector.html">Inspect package</a><a href="result-anatomy.html">Results</a><a href="trust-explorer.html">Trust Explorer</a><a href="validation.html">Validation</a><a class="button dark" href="contact.html">Contact</a></div>
+</nav>
+<main>
+<section class="pagehead inspector-head">
+  <div>
+    <div class="kicker">Reviewer tool · browser-local</div>
+    <h1>Open a <code>.pcs.zip</code>. See exactly what is inside.</h1>
+    <p>The inspector reads the deterministic PCS v0.6 ZIP directly in your browser, computes the bundle SHA-256, checks the manifest against exact member bytes, extracts typed claims and normalized decisions, and exposes the remaining authority boundary.</p>
+    <div class="notice"><strong>Important:</strong> this is an inspector, not the authoritative verifier. Signature authenticity, scientific replay, and Lean acceptance remain explicitly marked as requiring the production verifier.</div>
+  </div>
+  <aside class="demo-profile-card"><span>PRIVACY</span><strong>Your file stays local</strong><small>No package bytes are uploaded by this page.</small></aside>
+</section>
+
+<section class="inspector-drop panel" id="inspectorDrop">
+  <div>
+    <div class="kicker">Start here</div>
+    <h2>Drop a PCS v0.6 bundle</h2>
+    <p>Current PCS delivery bundles are deterministic <code>ZIP_STORED</code> archives. The inspector rejects unsupported compression, duplicate/unsafe paths, malformed central-directory records, or missing control files.</p>
+  </div>
+  <div class="actions">
+    <label class="button primary filepick">Open .pcs.zip<input id="bundleInput" type="file" accept=".zip,.pcs.zip,application/zip"></label>
+    <button class="button secondary" id="loadGolden" type="button">Load verified-format example</button>
+    <label class="button secondary filepick">Attach verifier receipt<input id="receiptInput" type="file" accept=".json,application/json"></label>
+  </div>
+  <div class="drop-status" id="dropStatus">No package loaded.</div>
+</section>
+
+<section class="inspector-summary" id="inspectorSummary" hidden>
+  <div class="inspector-kpis">
+    <article><small>BUNDLE SHA-256</small><strong id="bundleHash">—</strong><span id="bundleSize">—</span></article>
+    <article><small>ARCHIVE</small><strong id="archiveState">—</strong><span id="memberCount">—</span></article>
+    <article><small>MANIFEST BINDING</small><strong id="bindingState">—</strong><span id="bindingDetail">—</span></article>
+    <article><small>AUTHORITY</small><strong id="authorityState">INSPECTED</strong><span>authoritative verification remains external</span></article>
+  </div>
+
+  <section class="section-tight">
+    <div class="section-heading-row"><div><div class="kicker">Trust boundary</div><h2>What this browser established—and what it did not.</h2></div><p>PCS deliberately keeps inspection, executable verification, formal authority, and reviewer policy separate.</p></div>
+    <div class="inspector-boundaries" id="boundaryCards"></div>
+  </section>
+
+  <section class="section-tight split inspector-claim-section">
+    <div>
+      <div class="kicker">Typed claims</div><h2>Scientific statements in the package</h2>
+      <div id="claimCards" class="inspector-claim-list"></div>
+    </div>
+    <div>
+      <div class="kicker">Normalized decisions</div><h2>Delivered decision set</h2>
+      <div id="decisionCards" class="inspector-decision-list"></div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="section-heading-row"><div><div class="kicker">Exact bytes</div><h2>Manifest-bound member inventory</h2></div><p>Every signed package member is re-hashed locally and compared with the manifest's declared size and SHA-256.</p></div>
+    <div class="tablewrap"><table class="inspector-table"><thead><tr><th>Member</th><th>Bytes</th><th>SHA-256</th><th>Binding</th></tr></thead><tbody id="memberRows"></tbody></table></div>
+  </section>
+
+  <section class="section-tight split">
+    <div class="panel">
+      <div class="kicker">Signatures</div><h2>Signature records</h2><div id="signatureCards"></div>
+    </div>
+    <div class="panel">
+      <div class="kicker">Verifier receipt</div><h2>Optional authoritative result</h2>
+      <p id="receiptStatus">Attach a production verifier receipt to cross-check its bundle/certificate commitments against this package.</p>
+      <div id="receiptCards"></div>
+    </div>
+  </section>
+
+  <section class="section-tight panel">
+    <div class="kicker">Reviewer handoff</div><h2>Run the authoritative verifier on this exact package.</h2>
+    <div class="codecommand"><code>pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json</code><button data-copy="pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json">Copy</button></div>
+    <p class="muted">The browser inspector never upgrades its own result to <code>valid:true</code>. Authoritative validity requires the compiled Lean authority in the production verification path.</p>
+  </section>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Review</strong><a href="package-inspector.html">Package Inspector</a><a href="result-anatomy.html">Result anatomy</a><a href="trust-explorer.html">Trust Explorer</a></div><div class="footercol"><strong>Evidence</strong><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a></div></div></footer>
+</div>
+<script src="site.js"></script><script src="package-inspector.js"></script>
+</body></html>

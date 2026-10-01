@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/guided-submission.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/result-anatomy.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/validation.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/validation-registry.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/trust.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/trust-explorer.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/architecture.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/mvp.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://proof-carrying-science-site.marenatommaso.workers.dev/contact.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+</urlset>

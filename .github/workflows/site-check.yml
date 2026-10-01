@@ -9,6 +9,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -30,6 +34,9 @@ jobs:
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
           node --check public/demo.js
+          node --check public/package-inspector.js
+          node --check public/trust-explorer.js
+          node --check public/validation-registry.js
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Install pinned Wrangler

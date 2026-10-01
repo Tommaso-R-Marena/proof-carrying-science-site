@@ -13,6 +13,7 @@ HTML_FILES = sorted(ROOT.glob("*.html"))
 ASSET_RE = re.compile(r"""(?:src|href)=["']([^"'#]+)""", re.I)
 IGNORE_SCHEMES = {"mailto", "tel", "data", "blob", "javascript"}
 CONTACT = "marenatommaso@gmail.com"
+PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
 errors: list[str] = []
 
 for html_path in HTML_FILES:
@@ -24,8 +25,9 @@ for html_path in HTML_FILES:
         if parsed.scheme in IGNORE_SCHEMES:
             continue
         if parsed.scheme in {"http", "https"}:
-            errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
-            continue
+            if parsed.scheme != "https" or parsed.netloc != PRODUCTION_HOST:
+                errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
+                continue
         path_text = parsed.path
         if not path_text or path_text == "/":
             continue
@@ -36,7 +38,11 @@ for html_path in HTML_FILES:
 required = [
     "index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "guided-submission.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
-    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
+    "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
+    "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
+    "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
+    "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json",
+    "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
@@ -379,6 +385,22 @@ if validation_result.exists():
     except Exception as exc:
         errors.append(f"real-world validation: invalid JSON: {type(exc).__name__}: {exc}")
 
+robots_text = (ROOT / "robots.txt").read_text(encoding="utf-8") if (ROOT / "robots.txt").exists() else ""
+if "Disallow: /" in robots_text:
+    errors.append("robots.txt: public indexing was accidentally disabled")
+if "Sitemap: https://proof-carrying-science-site.marenatommaso.workers.dev/sitemap.xml" not in robots_text:
+    errors.append("robots.txt: public sitemap declaration is missing")
+
+sitemap_text = (ROOT / "sitemap.xml").read_text(encoding="utf-8") if (ROOT / "sitemap.xml").exists() else ""
+for public_url in [
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/validation-registry.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/trust-explorer.html",
+]:
+    if public_url not in sitemap_text:
+        errors.append(f"sitemap.xml: required public URL missing: {public_url}")
+
 headers = (ROOT / "_headers").read_text(encoding="utf-8") if (ROOT / "_headers").exists() else ""
 for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "X-Robots-Tag"]:
     if required_header not in headers:
@@ -386,7 +408,27 @@ for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-
 
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
-    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", text):
+
+    # A literal relative fetch of an existing deployable asset is a same-origin,
+    # read-only static dependency. It does not upload browser-selected data and
+    # therefore preserves the site's local-only scientific-data posture.
+    def _strip_static_fetch(match: re.Match[str]) -> str:
+        ref = match.group("ref")
+        parsed = urlparse(ref)
+        if parsed.scheme or parsed.netloc or parsed.query or parsed.fragment:
+            return match.group(0)
+        target = ROOT / parsed.path.lstrip("/")
+        if not target.is_file():
+            errors.append(f"{js.name}: literal static fetch target is missing: {ref}")
+            return match.group(0)
+        return "/* validated same-origin static fetch */"
+
+    reviewed = re.sub(
+        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*\)""",
+        _strip_static_fetch,
+        text,
+    )
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", reviewed):
         errors.append(f"{js.name}: network API found; local-only posture requires review")
 
 logo = ROOT / "logo-mark.svg"
