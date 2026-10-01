@@ -306,6 +306,22 @@ for page in ["trust.html", "architecture.html"]:
             if required_text not in text_value:
                 errors.append(f"{page}: claim-semantics explanation drift: {required_text}")
 
+for page in ["index.html", "mvp.html", "trust.html", "architecture.html"]:
+    p = ROOT / page
+    if p.exists():
+        text_value = p.read_text(encoding="utf-8")
+        if "v0.6/v2" not in text_value:
+            errors.append(f"{page}: v0.6/v2 formal status surface missing")
+        stale_formal_phrases = [
+            "exact v0.6 port remains open",
+            "porting that exact theorem stack to v0.6/v2 remains open",
+            "Exact v0.6/v2 formal port",
+            "exact v0.6/v2 port remains open",
+        ]
+        for stale in stale_formal_phrases:
+            if stale in text_value:
+                errors.append(f"{page}: stale pre-integration formal claim remains: {stale}")
+
 for page in ["mvp.html", "trust.html", "architecture.html"]:
     p = ROOT / page
     if p.exists() and "prepare-environment-v06" not in p.read_text(encoding="utf-8"):
