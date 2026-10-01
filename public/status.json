@@ -1,19 +1,286 @@
 {
   "status_format": "pcs-public-status-v1",
-  "updated": "2026-09-29",
+  "updated": "2026-10-01",
   "released": {
     "specification": "pcs-0.5",
     "checker": "pcs-python-kernel/0.5.0",
+    "role": "legacy-browser-parity-fixture",
     "product_stage": "private-design-partner-alpha"
+  },
+  "mvp_candidate": {
+    "specification": "pcs-0.6",
+    "checker": "pcs-python-kernel/0.6.0-dev",
+    "producer_command": "pcs attest-v06",
+    "reviewer_command": "pcs verify-v06-bundle",
+    "canonical_json_profile": "pcs-jcs-rfc8785-v1",
+    "normalized_decision_format": "pcs-normalized-decision-v2",
+    "deterministic_bundle": true,
+    "extraction_free_zip_verification": true,
+    "post_build_self_verification": true,
+    "reviewer_policy": {
+      "policy_version": "pcs-acceptance-policy-v1",
+      "valid_separate_from_accepted": true,
+      "exact_policy_sha256_in_receipt": true
+    },
+    "supported_builtin_checks": [
+      "csv_disjoint",
+      "reaction_balance",
+      "unit_compatible",
+      "pkpd_contract",
+      "pkpd_reference_match"
+    ],
+    "latest_hosted_gate": {
+      "provider": "CircleCI",
+      "status": "PASS",
+      "code_result": "PASS",
+      "full_runtime_executed": true,
+      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
+      "terminal_gate": "restoration-boundaries-complete"
+    },
+    "released": false,
+    "real_world_benchmark": {
+      "command": "pcs benchmark-v06",
+      "registry_format": "pcs-real-world-benchmark-registry-v1",
+      "deterministic_report": true,
+      "fixture_sha256_required": true
+    },
+    "reviewer_receipts": {
+      "signature_format": "pcs-reviewer-receipt-ed25519-v1",
+      "exact_receipt_sha256_bound": true,
+      "separate_reviewer_identity": true,
+      "independent_verify_command": "pcs verify-receipt-v06",
+      "binds": [
+        "bundle_sha256",
+        "policy_sha256",
+        "certificate_semantic_hash",
+        "certificate_integrity_hash",
+        "normalized_index_semantic_hash",
+        "valid",
+        "accepted"
+      ],
+      "runtime_scheme_check": {
+        "valid_signature_verified": true,
+        "one_byte_tamper_rejected": true,
+        "wrong_reviewer_key_rejected": true,
+        "scope": "direct cryptographic scheme execution; full repository gate still not executed"
+      }
+    },
+    "reviewer_quorum": {
+      "policy_version": "pcs-review-quorum-policy-v1",
+      "review_set_format": "pcs-review-set-v1",
+      "result_format": "pcs-review-quorum-result-v1",
+      "command": "pcs verify-quorum-v06",
+      "role_specific_policy_hashes": true,
+      "duplicate_reviewer_identity_disqualified": true,
+      "cross_bundle_reviews_never_combined": true,
+      "direct_runtime_check": {
+        "two_of_three_with_required_roles_passed": true,
+        "cross_bundle_reviews_not_combined": true,
+        "duplicate_identity_not_double_counted": true,
+        "role_specific_policy_hash_enforced": true,
+        "scope": "direct cryptographic quorum scenario; full repository gate still not executed"
+      }
+    },
+    "adaptive_scheduler": {
+      "scheduler_format": "pcs-replay-scheduler-v1",
+      "telemetry_format": "pcs-replay-telemetry-v1",
+      "report_format": "pcs-scheduler-report-v1",
+      "strategies": [
+        "manifest",
+        "cheapest-first",
+        "failure-rate-first",
+        "failure-per-second",
+        "bandit"
+      ],
+      "default_strategy": "manifest",
+      "shadow_bandit_supported": true,
+      "all_mandatory_checks_execute": true,
+      "scientific_verdict_uses_scheduler": false,
+      "persisted_evidence_ids_sha256_derived": true,
+      "cold_start_guard": {
+        "minimum_total_observations": 20,
+        "minimum_per_current_check_type": 3,
+        "fallback_strategy": "failure-per-second"
+      },
+      "direct_runtime_check": {
+        "scope": "synthetic scheduler-algorithm execution; not scientific accuracy or production speedup evidence",
+        "history_observations": 20,
+        "bandit_ready": true,
+        "manifest_order": [
+          "E1",
+          "E2",
+          "E3"
+        ],
+        "bandit_order": [
+          "E2",
+          "E1",
+          "E3"
+        ],
+        "all_mandatory_checks_preserved": true,
+        "manifest_time_to_first_failure_ms": 11.495,
+        "bandit_time_to_first_failure_ms": 1.045,
+        "counterfactual_speedup_vs_manifest": 11,
+        "cold_start_fallback_verified": true
+      },
+      "production_workload_speedup_established": false
+    },
+    "guided_discovery": {
+      "discovery_format": "pcs-project-discovery-v1",
+      "manifest_draft_format": "pcs-manifest-draft-v1",
+      "discover_command": "pcs discover-v06",
+      "confirm_command": "pcs confirm-v06",
+      "browser_mapper": "project-builder.html",
+      "local_only": true,
+      "private_key_material_excluded": true,
+      "explicit_confirmation_required": true,
+      "artifact_snapshot_rehashed_on_confirmation": true,
+      "artifact_snapshot_rechecked_on_attestation": true,
+      "supported_detectors": [
+        "restricted_pkpd_model",
+        "pkpd_output_columns",
+        "named_csv_dataset_splits",
+        "reaction_json",
+        "unit_pair_json"
+      ],
+      "automated_discovery_affects_scientific_verdict": false,
+      "confirmation_provenance_in_signed_artifact_metadata": true,
+      "workflow_discovery_format": "pcs-static-workflow-map-v1",
+      "cli_python_ast_analysis": true,
+      "cli_jupyter_code_cell_analysis": true,
+      "browser_workflow_preview": "heuristic_literal_path_analysis",
+      "browser_visual_graph": true,
+      "browser_synthetic_example": true,
+      "user_code_executed_during_discovery": false,
+      "default_workflow_confidence": 0.95,
+      "clean_ast_workflow_confidence": 0.98,
+      "partial_ast_workflow_confidence": 0.9,
+      "browser_heuristic_workflow_confidence": 0.9,
+      "dynamic_paths_guessed": false,
+      "ambiguous_multiple_producers_guessed": false,
+      "static_workflow_human_confirmation_required": true,
+      "source_code_snapshot_bound": true,
+      "source_change_after_confirmation_rejected": true,
+      "static_workflow_proves_program_correctness": false,
+      "cli_r_literal_workflow_analysis": true,
+      "browser_r_literal_workflow_preview": true,
+      "r_workflow_confidence": 0.88,
+      "r_workflow_auto_selected_by_default": false,
+      "human_readable_discovery_review": true,
+      "workflow_replay_stage": true,
+      "workflow_replay_from_exact_delivered_source_bytes": true,
+      "workflow_replay_before_scientific_replay": true,
+      "exact_ast_dependency_mode": "exact_resolved_set",
+      "partial_dependency_mode": "claimed_subset",
+      "claimed_edges_must_be_rediscovered": true,
+      "signed_source_path_validated_as_canonical_relative": true,
+      "forged_resigned_workflow_claim_adversarial_test_committed": true,
+      "forged_resigned_workflow_claim_runtime_executed": false,
+      "environment_capture": {
+        "capture_format": "pcs-environment-capture-v1",
+        "binding_format": "pcs-environment-binding-v1",
+        "contract_namespace": "pcs-manifest-environment-contract-v1",
+        "replay_plan_format": "pcs-environment-replay-plan-v1",
+        "captures_python_dependencies": true,
+        "captures_r_dependencies": true,
+        "captures_conda_dependencies": true,
+        "captures_lockfiles": true,
+        "captures_interpreter_constraints": true,
+        "captures_container_specs": true,
+        "captures_nix_specs": true,
+        "container_digest_pinning_distinguished": true,
+        "human_confirmation_required": true,
+        "reviewer_rederivation_stage": "environment_replay",
+        "replay_precedes_workflow_replay": true,
+        "automatic_environment_execution_during_verification": false,
+        "reconstruction_plan_available": true,
+        "review_before_run_script_available": true,
+        "browser_preview_local_only": true,
+        "authoritative_recapture_at_confirmation": true,
+        "browser_preview_authoritative": false,
+        "verified_workspace_format": "pcs-environment-workspace-v1",
+        "prepare_workspace_command": "pcs prepare-environment-v06",
+        "full_bundle_verification_before_materialization": true,
+        "materializes_signed_source_path_tree": true,
+        "workspace_bound_to_bundle_sha256": true,
+        "workspace_bound_to_certificate_hashes": true,
+        "atomic_staging_then_publish": true,
+        "workspace_execution_by_pcs": true,
+        "rechecks_bundle_sha256_before_materialization": true,
+        "sandbox_execution_available": true,
+        "execute_workspace_command": "pcs execute-environment-v06",
+        "repeated_deterministic_replay": true,
+        "oci_runtimes_observed": [
+          "docker",
+          "podman"
+        ],
+        "captures_oci_runtime_identity": true,
+        "captures_python_native_extension_hashes": true,
+        "binds_vendored_restoration_artifacts": true,
+        "python_offline_hash_locked_wheel_restore": true,
+        "r_offline_renv_restore": true
+      }
+    },
+    "mainline": {
+      "repository": "Tommaso-R-Marena/proof-carrying-science",
+      "branch": "main",
+      "merged": true,
+      "merge_commit": "8b365e806fb32a63294b5f9fd1455fda53dd4db3",
+      "tested_checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1"
+    },
+    "runtime_evidence": {
+      "three_host_oci": {
+        "passed": true,
+        "checkpoint": "8e3e65558462ef1fd818a38d5bdd009a2bb4e13c",
+        "hosts": [
+          "Ubuntu 24.04 amd64",
+          "Ubuntu 24.04 ARM64",
+          "Ubuntu 26.04 amd64"
+        ],
+        "host_os_variation": true,
+        "architecture_variation": true,
+        "container_os_variation": true,
+        "package_lock_variation": true,
+        "container_provenance_variation": true
+      },
+      "oci_engines": {
+        "docker_vs_rootful_podman_passed": true,
+        "checkpoint": "22c07945a7b03f37aa24d7bd6136481aa787c391",
+        "rootless_podman_container_execution_established": false,
+        "runtime_identity_captured": true
+      },
+      "r_runtime": {
+        "native_r_replay_passed": true,
+        "docker_amd64": true,
+        "docker_arm64": true,
+        "rootful_podman_amd64": true,
+        "rscript_sha256_captured": true,
+        "package_inventory_captured": true
+      },
+      "dependency_restoration": {
+        "checkpoint": "1ef3cea04eb06f2b316ee566733e59c6af7452f1",
+        "python_hash_locked_wheel_restore_passed": true,
+        "r_renv_lock_restore_passed": true,
+        "offline_network_disabled_builds": true,
+        "vendored_restoration_artifacts_signed": true,
+        "native_extension_hashes_captured": true,
+        "native_extension_binary_differs_across_architecture": true,
+        "scientific_output_byte_identical_across_architecture": true
+      }
+    }
   },
   "formal": {
     "lean_version": "4.28.0",
-    "decision_and_normalized_state_soundness": "MACHINE_CHECKED_PASS",
-    "production_rebuild_jobs": 14,
+    "target_wire_format": "pcs-normalized-decision-v1",
+    "raw_wire_bytes_to_assures": "MACHINE_CHECKED_PASS",
+    "package_level_soundness": "CONDITIONAL_ON_EXPLICIT_SIGNATURE_AND_REPLAY_SOUNDNESS",
     "project_specific_axioms": 0,
-    "placeholders": 0
+    "placeholders": 0,
+    "native_decide": false,
+    "exact_v06_v2_port": "OPEN"
   },
   "browser_profile": {
+    "specification": "pcs-0.5",
+    "role": "legacy-parity-and-transparency-fixture",
     "decision_vectors_passed": 11,
     "decision_vectors_total": 11,
     "pkpd_reference_rows_replayed": 8,
@@ -21,8 +288,8 @@
     "third_party_runtime_javascript": false
   },
   "next_refinement": {
-    "checker": "pcs-python-kernel/0.5.1",
-    "serialized_wire_refinement": "VERIFICATION_PENDING",
+    "target": "full-v0.6-runtime-gate-external-design-partner-pilot-real-scheduler-telemetry-and-exact-v0.6-v2-formal-port",
+    "status": "OPEN",
     "released": false
   },
   "non_claims": [
@@ -31,7 +298,27 @@
     "regulatory_acceptance",
     "gxp_validation",
     "arbitrary_program_correctness",
-    "end_to_end_raw_package_formal_verification"
+    "end_to_end_v06_formal_verification",
+    "rootless_podman_portability",
+    "universal_cross_platform_equivalence",
+    "arbitrary_dependency_build_correctness"
   ],
-  "contact": "marenatommaso@gmail.com"
+  "contact": "marenatommaso@gmail.com",
+  "real_world_validation": {
+    "date": "2026-09-29",
+    "execution_mode": "direct_checker_logic_execution",
+    "cases": 5,
+    "matched_expected": 5,
+    "unexpected": 0,
+    "expected_pass": 3,
+    "expected_fail": 2,
+    "notable_negative_controls": {
+      "iris_leakage_detected_id": "120",
+      "indometh_subject1_mismatching_rows": 11,
+      "indometh_subject1_max_abs_error_mg_per_L": 0.7831638386902207,
+      "indometh_subject1_max_rel_error": 1.0925283641651804
+    },
+    "full_attest_verify_roundtrip_executed": false,
+    "hosted_runner_status": "RUNNER_UNAVAILABLE"
+  }
 }

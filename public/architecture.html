@@ -13,7 +13,8 @@
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-  <div class="navlinks"><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a class="button dark" href="contact.html">Contact</a></div>
+  <div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a class="button dark" href="contact.html">Contact</a></div>
 </nav>
 
 <main>
@@ -23,13 +24,25 @@
   <p>PCS is designed around a simple trust principle: the system that produces a scientific result does not get to define whether its own evidence is sufficient. Producers emit artifacts and claims; a separate verification path replays supported checks, binds evidence, authenticates delivery, and applies reviewer-controlled policy.</p>
 </section>
 
+<section class="section">
+  <div class="kicker">Usability layer</div>
+  <h2>Guided project mapper, outside the scientific verdict boundary.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Discover</div><h3>Local artifact + workflow mapping</h3><p>Inventory files, hash bytes, inspect bounded JSON/CSV structure, and statically infer conservative Python/Jupyter file dependencies without executing source code.</p></article>
+    <article class="card"><div class="num">Confirm</div><h3>Explicit human gate</h3><p>A discovery draft cannot be attested. Confirmation re-hashes the exact selected artifact snapshot.</p></article>
+    <article class="card"><div class="num">Attest</div><h3>Drift protection</h3><p>Attestation checks the confirmed snapshot again before copying bytes into the signed package.</p></article>
+  </div>
+</section>
+
 <section class="section-tight">
   <div class="workflow">
     <div class="workflow-step"><div class="step">1</div><div><strong>Scientific producer</strong><span>Any simulator, notebook, model, AI system, optimization pipeline, or human-authored computation produces candidate artifacts.</span></div></div>
     <div class="workflow-step"><div class="step">2</div><div><strong>PCS package construction</strong><span>Claims, assumptions, artifacts, replayable check specifications, workflow structure, runtime provenance, limitations, and cryptographic hashes are bound into a deterministic evidence package.</span></div></div>
-    <div class="workflow-step"><div class="step">3</div><div><strong>Independent executable replay</strong><span>The checker reruns supported predicates from delivered artifacts rather than trusting recorded PASS fields.</span></div></div>
-    <div class="workflow-step"><div class="step">4</div><div><strong>Decision semantics</strong><span>Evidence outcomes are mapped to formal, computational, empirical, mixed, OPEN, or failed claim status under explicit rules.</span></div></div>
-    <div class="workflow-step"><div class="step">5</div><div><strong>Reviewer policy</strong><span>The receiver decides which claim statuses and signer identity are sufficient for acceptance.</span></div></div>
+    <div class="workflow-step"><div class="step">3</div><div><strong>Environment replay</strong><span>Reconstruct delivered dependency/lock/interpreter/container specifications and regenerate the human-confirmed environment contract without executing them.</span></div></div>
+    <div class="workflow-step"><div class="step">4</div><div><strong>Static workflow replay</strong><span>Reconstruct delivered source files and re-derive any human-confirmed artifact dependency claims before trusting them.</span></div></div>
+    <div class="workflow-step"><div class="step">5</div><div><strong>Independent executable replay</strong><span>The checker reruns supported predicates from delivered artifacts rather than trusting recorded PASS fields.</span></div></div>
+    <div class="workflow-step"><div class="step">6</div><div><strong>Decision semantics</strong><span>Evidence outcomes are mapped to formal, computational, empirical, mixed, OPEN, or failed claim status under explicit rules.</span></div></div>
+    <div class="workflow-step"><div class="step">7</div><div><strong>Reviewer policy</strong><span>The receiver decides which claim statuses and signer identity are sufficient for acceptance.</span></div></div>
   </div>
 </section>
 
@@ -38,9 +51,9 @@
   <h2>One product, different verification surfaces.</h2>
   <p class="section-intro">The browser is a transparent demonstration and parity surface. The Python checker remains the production executable trust boundary for package construction, ZIP safety, runtime provenance, and the complete supported predicate set.</p>
   <div class="grid3" style="margin-top:28px">
-    <article class="card"><div class="num">Python</div><h3>Production checker</h3><p><code>pcs-python-kernel/0.5.0</code> builds and verifies evidence packages, replays supported checks, validates package namespaces, evaluates policy, and emits verification receipts.</p></article>
-    <article class="card"><div class="num">Browser</div><h3>Parity profile</h3><p>The static browser engine mirrors claim-decision semantics and restricted PK/PD checks, verifies production-format package hashes/signatures, accepts extracted production evidence directories, and currently passes all 11 frozen decision vectors.</p></article>
-    <article class="card"><div class="num">Lean 4.28</div><h3>Machine-checked assurance semantics</h3><p>The formal layer encodes <code>Γ ; E ⊢ C @ L</code>. The decision and normalized-state soundness layer now builds cleanly under Lean 4.28.0 with no placeholders or PCS-specific axioms. Raw JSON/package parsing and executable replay remain a distinct refinement boundary.</p></article>
+    <article class="card"><div class="num">Python v0.6</div><h3>MVP product path</h3><p><code>attest-v06</code> builds the signed package and deterministic ZIP; <code>verify-v06-bundle</code> verifies the exact archive, regenerates normalized decisions, and evaluates external reviewer policy.</p></article>
+    <article class="card"><div class="num">Browser</div><h3>Transparency surfaces</h3><p>The legacy v0.5 parity engine still exposes the older reference package and 11 frozen decision vectors. The new v0.6 MVP page demonstrates reviewer-policy semantics locally without pretending to replace the Python verifier.</p></article>
+    <article class="card"><div class="num">Lean 4.28</div><h3>Machine-checked v0.5/v1 wire chain</h3><p>The strongest current theorem stack checks accepted raw normalized-wire bytes through strict decoding, <code>wireCheck</code>, <code>WellFormed</code>, and <code>Assures</code>. Package signature/replay trust is explicit; the exact v0.6/v2 port remains open.</p></article>
   </div>
 </section>
 
@@ -51,19 +64,70 @@
     <table class="pkgtable">
       <thead><tr><th>Capability</th><th>Production Python</th><th>Browser parity profile</th><th>Formal layer</th></tr></thead>
       <tbody>
-        <tr><td>Strict JSON / schema boundary</td><td>Yes</td><td>Format-specific structural checks</td><td>Starts after normalization</td></tr>
+        <tr><td>Strict JSON / schema boundary</td><td>Yes · v0.6 canonical JCS + duplicate rejection</td><td>v0.5 fixture checks + local v0.6 policy lab</td><td>Proved for v0.5/v1 raw wire; exact v0.6 port open</td></tr>
         <tr><td>Artifact SHA-256 binding</td><td>Yes</td><td>Yes</td><td>Assumed by normalized input</td></tr>
-        <tr><td>Package manifest / Ed25519</td><td>Yes</td><td>Yes</td><td>Outside current theorem boundary</td></tr>
-        <tr><td>ZIP namespace / extraction safety</td><td>Yes</td><td>No; browser starts from selected/extracted files and applies path/file-size checks</td><td>Outside current theorem boundary</td></tr>
+        <tr><td>Package manifest / Ed25519</td><td>Yes · certificate + package domains, signer pinning</td><td>v0.5 fixture only</td><td>Package theorem conditional on explicit scheme-soundness assumption</td></tr>
+        <tr><td>ZIP namespace / extraction safety</td><td>Yes · v0.6 verifies without extracting; deterministic builder self-verifies candidate ZIP</td><td>No ZIP trust claim</td><td>Raw ZIP bytes remain outside current theorem boundary</td></tr>
         <tr><td>PK/PD dimensional contract</td><td>Yes</td><td>Yes</td><td>Restricted unit contracts encoded</td></tr>
         <tr><td>PK/PD analytic replay</td><td>Yes</td><td>Yes</td><td>Real-analysis equation semantics not yet formalized</td></tr>
         <tr><td>CSV split disjointness</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
         <tr><td>Reaction balance</td><td>Yes</td><td>Not yet</td><td>Predicate type encoded</td></tr>
         <tr><td>Unit compatibility</td><td>Yes</td><td>Unit parser used by PK/PD profile</td><td>Restricted unit theorem layer</td></tr>
+        <tr><td>Reproducibility environment capture</td><td>Yes · Python/R dependencies, lockfiles, interpreter constraints, Conda/Nix and container specs; independent <code>environment_replay</code> before workflow/scientific replay</td><td>Local preview + environment-plan download; authoritative contract is Python CLI</td><td>Outside current Lean theorem boundary</td></tr>
+        <tr><td>Verified replay workspace</td><td>Yes · <code>prepare-environment-v06</code> verifies and atomically materializes the signed workspace; <code>execute-environment-v06</code> separately performs sandboxed OCI reconstruction and repeated replay</td><td>No browser filesystem materialization or package execution claim</td><td>Outside current Lean theorem boundary</td></tr>
+        
+        <tr><td>Cross-machine runtime evidence</td><td>PASS · Ubuntu 24/26, amd64/ARM64, Docker/rootful Podman; three-run replay evidence</td><td>Documentation only</td><td>Empirical execution evidence, not a universal portability theorem</td></tr>
+        <tr><td>Offline dependency restoration</td><td>PASS · hash-locked NumPy wheels with <code>--require-hashes</code>; signed local R repository with <code>renv::restore()</code>; network-disabled builds</td><td>Browser preview never installs dependencies</td><td>Package-manager/build tools remain in the executable TCB</td></tr>
+        <tr><td>Native-extension / ABI fingerprinting</td><td>PASS · native extension SHA-256 captured; architecture-specific binaries differ while signed scientific output matches</td><td>Not applicable</td><td>Binary identity is observed; semantic equivalence is established only for tested workloads</td></tr>
         <tr><td>Claim decision semantics</td><td>Yes</td><td>Yes · 11/11 frozen vectors</td><td>Machine-checked normalized-state soundness</td></tr>
-        <tr><td>Reviewer acceptance policy</td><td>Yes</td><td>Yes</td><td>Policy remains external to producer proof</td></tr>
+        <tr><td>Reviewer acceptance policy</td><td>Yes · <code>valid</code> and <code>accepted</code> separate; exact policy SHA-256 in receipt</td><td>Yes · local explanatory policy lab</td><td>Policy remains external to producer proof</td></tr>
+        <tr><td>Reviewer-signed verification receipt</td><td>Yes · separate Ed25519 reviewer identity binds exact receipt bytes + bundle/policy/verdict commitments</td><td>Documentation only; browser never handles reviewer private keys</td><td>Outside current Lean theorem boundary</td></tr>
+        <tr><td>Adaptive replay ordering</td><td>Yes · deterministic baselines + contextual bandit; all mandatory checks execute; cold-start guard + shadow mode</td><td>Local explanatory scheduler lab only</td><td>Outside scientific/formal verdict semantics</td></tr>
+        <tr><td>Multi-reviewer quorum approval</td><td>Yes · role thresholds, authorized reviewer fingerprints, role-specific policy hashes, duplicate-identity rejection, exact-subject grouping</td><td>Documentation/visualization only</td><td>Governance layer outside current Lean theorem boundary</td></tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">v0.6 delivery invariants</div>
+  <h2>The serialized artifact is part of the verification target.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">JCS</div><h3>Canonical bytes</h3><p>Certificate, signatures, package manifest, normalized wires, and index use the frozen v0.6 JCS profile with strict UTF-8 and duplicate-key rejection.</p></article>
+    <article class="card"><div class="num">ZIP</div><h3>Deterministic delivery</h3><p>Sorted ZIP_STORED members, fixed metadata, exact manifest-signed file set, post-build self-verification, and atomic publication.</p></article>
+    <article class="card"><div class="num">Policy</div><h3>Receiver-owned acceptance</h3><p>Policy is supplied by the reviewer, not embedded by the producer. The receipt binds its exact bytes by SHA-256.</p></article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Benchmark + adaptive scheduling</div>
+  <h2>Learn where failures occur without learning the verdict.</h2>
+  <p class="section-intro">The <code>benchmark-v06</code> registry pins public-data fixtures and expected outcomes. Separately, the v0.6 replay path now implements deterministic scheduling baselines plus a contextual LinUCB-style bandit trained from observational replay telemetry. Its only authority is check order: all mandatory evidence still runs and scientific verdicts remain deterministic.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Deterministic</div><h3>Benchmark verdicts</h3><p>PASS/FAIL remains a pure function of exact fixture bytes, checker semantics, and explicit expectations.</p></article>
+    <article class="card"><div class="num">LinUCB</div><h3>Implemented scheduling only</h3><p>The learned component can rank mandatory checks by an upper-confidence estimate of failure probability per millisecond. Shadow mode and cold-start fallback prevent sparse history from silently controlling execution.</p></article>
+    <article class="card"><div class="num">Guarded</div><h3>Promotion requires evidence</h3><p>Bandit ordering requires ≥20 historical observations overall and ≥3 for every current check type. Production speedup remains unclaimed until real workflow telemetry supports it.</p></article>
+  </div>
+  <div class="actions"><a class="button secondary" href="validation.html">See validation cases</a></div>
+</section>
+
+<section class="section">
+  <div class="kicker">Audit architecture</div>
+  <h2>Three distinct trust decisions.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">1</div><h3>Producer authenticity</h3><p>Who issued the scientific package? Bound by the producer Ed25519 signature.</p></article>
+    <article class="card"><div class="num">2</div><h3>PCS verification + policy</h3><p>Did the package replay correctly, and did it satisfy this reviewer's explicit acceptance criteria?</p></article>
+    <article class="card"><div class="num">3</div><h3>Reviewer provenance</h3><p>Who performed and attested to that exact review? Bound by a separate reviewer-signed receipt.</p></article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Multi-party review governance</div>
+  <h2>Approval can require independent roles without allowing signatures to bleed across studies.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">2-of-3</div><h3>Total threshold</h3><p>Organizations can require a minimum number of accepted signed review receipts.</p></article>
+    <article class="card"><div class="num">Roles</div><h3>Role thresholds</h3><p>For example, at least one computational reviewer and one domain reviewer, each pinned to a distinct required policy hash.</p></article>
+    <article class="card"><div class="num">Subject</div><h3>Exact review target</h3><p>Quorum is evaluated per exact bundle/certificate/index commitment tuple. Reviews over different scientific deliveries are never pooled.</p></article>
   </div>
 </section>
 
@@ -79,11 +143,11 @@
 </section>
 
 <section class="section-tight">
-  <div class="callout"><div><h3>Inspect the running system.</h3><p>Use the production-format verifier to inspect package internals, or generate a valid PK/PD starter through the model lab.</p></div><div class="actions" style="margin-top:0"><a class="button dark" href="demo.html">Open verifier</a><a class="button secondary" href="model-lab.html">Open model lab</a></div></div>
+  <div class="callout"><div><h3>Inspect the running system.</h3><p>Use the production-format verifier to inspect package internals, or generate a valid PK/PD starter through the model lab.</p></div><div class="actions" style="margin-top:0"><a class="button dark" href="mvp.html">Open v0.6 MVP</a><a class="button secondary" href="demo.html">Open v0.5 verifier</a></div></div>
 </section>
 </main>
 
-<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 <script src="site.js"></script>
 </body>

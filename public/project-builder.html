@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Mapper · Proof-Carrying Science</title>
+<meta name="description" content="Map a scientific project directory into a reviewable PCS v0.6 manifest draft locally in your browser. No files are uploaded.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Local-only Project Mapper · Your scientific files never leave the browser</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="project-builder.html">Project Mapper</a>
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="intake.html">Pilot intake</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="pagehead">
+  <div class="kicker">Guided v0.6 onboarding</div>
+  <h1>Point PCS at your project. Start from a draft, not a schema.</h1>
+  <p>Select a local scientific project folder. PCS inventories regular files, computes SHA-256 snapshots in your browser, detects supported scientific checks, and maps likely Python/Jupyter artifact dependencies for you to review. Nothing is uploaded, no user code is executed, and no private key is needed.</p>
+  <div class="actions">
+    <button class="button primary" id="chooseProject">Choose project folder</button>
+    <button class="button secondary" id="loadExampleProject">Load synthetic example</button>
+    <a class="button secondary" href="#how">How confirmation works</a>
+  </div>
+  <input id="projectFiles" type="file" webkitdirectory directory multiple hidden>
+  <div class="notice" style="margin-top:18px"><strong>Safety boundary:</strong> this mapper recommends structure; it does not decide scientific truth. The exported draft is intentionally non-attestable until you run <code>pcs confirm-v06</code>, which re-hashes the selected artifacts locally before permitting attestation.</div>
+</section>
+
+<section class="statusbar" aria-label="Project mapper status">
+  <div><span>Files inventoried</span><strong id="filesCount">0</strong></div>
+  <div><span>Scientific checks</span><strong id="selectedCount">0</strong></div>
+  <div><span>Workflow nodes</span><strong id="workflowCount">0</strong></div>
+  <div><span>Workflow issues</span><strong id="workflowIssueCount">0</strong></div>
+  <div><span>Environment</span><strong id="environmentHermeticity">unspecified</strong></div>
+  <div><span>Artifacts selected</span><strong id="artifactCount">0</strong></div>
+  <div><span>Recommendations</span><strong id="recommendationCount">0</strong></div>
+</section>
+
+<section class="project-mapper">
+  <aside class="panel mapper-controls">
+    <h2>Project</h2>
+    <div class="field"><label for="subject"><span>Subject</span></label><input id="subject" class="textinput" value="scientific-project"></div>
+    <div class="field">
+      <label for="confidence"><span>Auto-select confidence</span><strong id="confidenceValue">0.95</strong></label>
+      <input id="confidence" type="range" min="0.80" max="1" step="0.01" value="0.95" style="width:100%">
+    </div>
+    <div class="field">
+      <label for="workflowConfidence"><span>Workflow inference confidence</span><strong id="workflowConfidenceValue">0.95</strong></label>
+      <input id="workflowConfidence" type="range" min="0.80" max="1" step="0.01" value="0.95" style="width:100%">
+    </div>
+    <div class="actions">
+      <button class="button secondary" id="rescan" disabled>Rebuild recommendations</button>
+      <button class="button secondary" id="clearProject" disabled>Clear</button>
+    </div>
+
+    <h2 style="margin-top:26px">What PCS detects today</h2>
+    <div class="mapper-detectors">
+      <div><strong>PK/PD model</strong><span>Restricted IV-bolus + direct Emax JSON</span></div>
+      <div><strong>PK/PD output</strong><span><code>time, concentration, effect</code> CSV</span></div>
+      <div><strong>Dataset splits</strong><span>Train/test/validation CSV + shared ID</span></div>
+      <div><strong>Reaction balance</strong><span>Reactants/products JSON</span></div>
+      <div><strong>Unit compatibility</strong><span><code>left_unit/right_unit</code> JSON</span></div>
+      <div><strong>Python workflow</strong><span>Literal local reads/writes via pandas, NumPy, <code>open</code>, and <code>Path</code></span></div>
+      <div><strong>Notebook workflow</strong><span>Static code-cell file dependencies; notebook code is never executed</span></div>
+      <div><strong>R workflow</strong><span>Literal read/write file references are previewed conservatively and remain review-only by default</span></div>
+      <div><strong>Environment</strong><span>Python/R dependencies, lockfiles, interpreter constraints, Conda/Nix, Docker/OCI specifications</span></div>
+    </div>
+
+    <p class="tiny">Files with common private-key extensions or private-key PEM markers are excluded. Common environment/build directories are ignored by the Python CLI scanner. The browser only receives files you explicitly choose.</p>
+  </aside>
+
+  <div>
+    <section class="panel">
+      <div class="mapper-section-head"><div><h2>Recommendations</h2><p>Review what PCS inferred before exporting a draft.</p></div><span class="chip pending" id="mapperState">NO PROJECT</span></div>
+      <div id="recommendations" class="recommendation-list"><p class="tiny">Choose a project folder to begin.</p></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="mapper-section-head"><div><h2>Inferred workflow</h2><p>Literal file dependencies from Python scripts and Jupyter code cells. Select only edges that match your intended workflow.</p></div><span class="chip pending">STATIC ONLY</span></div>
+      <div class="notice" style="margin-top:12px"><strong>No code execution:</strong> the browser uses conservative literal-path heuristics. The Python CLI uses AST-based analysis and is the authoritative workflow mapper for attestation.</div>
+      <div id="workflowInferences" class="recommendation-list"><p class="tiny">Choose a project folder to begin.</p></div>
+      <div id="workflowIssues" class="tiny" style="margin-top:10px"></div>
+      <div class="workflow-map-preview" style="margin-top:16px">
+        <div class="mapper-section-head"><div><h3>Graph preview</h3><p>Selected source steps and artifact flow.</p></div></div>
+        <div id="workflowGraph"><p class="tiny">No workflow graph yet.</p></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="mapper-section-head"><div><h2>Reproducibility environment</h2><p>Static preview of dependency declarations, lockfiles, interpreter constraints, and container/environment specifications.</p></div><span class="chip pending">NO EXECUTION</span></div>
+      <div class="notice" style="margin-top:12px"><strong>Reconstruction boundary:</strong> this browser view is a local preview. <code>confirm-v06</code> re-parses the exact reviewed environment files with the authoritative Python capture before signing. Reviewer verification independently re-derives that canonical contract. PCS never runs package managers, builds containers, or executes project installation code automatically.</div>
+      <div id="environmentSummary" class="mapper-detectors" style="margin-top:14px"><div><strong>No environment capture yet</strong><span>Choose a project folder to begin.</span></div></div>
+      <div id="environmentIssues" class="tiny" style="margin-top:10px"></div>
+      <div class="actions" style="margin-top:14px"><button class="button secondary" id="downloadEnvironmentPlan" disabled>Download environment plan</button></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <div class="mapper-section-head"><div><h2>Artifact inventory</h2><p>SHA-256 snapshots bind what you reviewed.</p></div><button class="smallbutton" id="toggleInventory" disabled>Show</button></div>
+      <div id="inventory" class="artifact-inventory" hidden></div>
+      <div id="skipped" class="tiny" style="margin-top:10px"></div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Draft manifest</h2>
+      <div id="draftValidation" class="validation">No project selected.</div>
+      <div class="actions">
+        <button class="button primary" id="downloadDraft" disabled>Download manifest draft</button>
+        <button class="button secondary" id="downloadDiscovery" disabled>Download discovery JSON</button>
+        <button class="button secondary" id="downloadReview" disabled>Download review Markdown</button>
+      </div>
+      <pre id="manifestPreview">{}</pre>
+    </section>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="kicker">Explicit human confirmation</div>
+  <h2>Automation drafts. The scientist confirms.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">01</div><h3>Discover</h3><p>Use this local mapper or <code>pcs discover-v06 ./project</code> to inventory files and propose supported checks.</p></article>
+    <article class="card"><div class="num">02</div><h3>Review</h3><p>Edit the draft if needed. Remove a recommendation if it does not express the scientific claim you intend to make.</p></article>
+    <article class="card"><div class="num">03</div><h3>Confirm + attest</h3><p><code>confirm-v06</code> re-hashes selected artifacts. <code>attest-v06</code> checks those same snapshots again before signing.</p></article>
+  </div>
+
+  <div class="panel" style="margin-top:24px">
+    <h2>Continue in the CLI</h2>
+    <p>If the browser downloaded the draft outside the project directory, point confirmation at the original project root:</p>
+    <div class="codecommand"><code id="confirmCommand">pcs confirm-v06 ~/Downloads/pcs-manifest.draft.json --project-root ./my-project -o ./my-project/manifest.json</code><button id="copyConfirm">Copy</button></div>
+    <div class="codecommand" style="margin-top:10px"><code>pcs attest-v06 ./my-project/manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem</code><button data-copy="pcs attest-v06 ./my-project/manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem">Copy</button></div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="callout">
+    <div><h3>Prefer the authoritative CLI scanner?</h3><p>The Python discovery engine uses the same product contract with stricter path, size, duplicate-JSON, and filesystem handling.</p></div>
+    <div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script src="project-builder.js"></script>
+</body>
+</html>

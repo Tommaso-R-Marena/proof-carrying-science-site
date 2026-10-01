@@ -9,11 +9,13 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="topbar"><div class="shell"><span>Trust Center · Current release and proof boundaries</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>Trust Center · v0.6 MVP candidate, released v0.5 fixture, and proof boundaries</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-  <div class="navlinks">
+  <div class="navlinks"><a href="project-builder.html">Project Mapper</a>
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
     <a href="index.html#product">Product</a>
     <a href="architecture.html">Architecture</a>
     <a href="demo.html">Live verifier</a>
@@ -29,35 +31,85 @@
   <h1>What is verified, what is released, and what remains open.</h1>
   <p>PCS is intended to reduce ambiguity around scientific computation, so its own assurance claims should be equally explicit. This page separates released executable behavior, machine-checked formal results, browser parity demonstrations, active refinement work, and non-claims.</p>
   <div class="statusbar" aria-label="Current PCS status">
-    <div><span>Released checker</span><strong>PCS 0.5.0</strong></div>
-    <div><span>Formal kernel</span><strong>Lean 4.28.0 · verified</strong></div>
-    <div><span>Browser decision parity</span><strong>11 / 11 frozen vectors</strong></div>
-    <div><span>Next refinement</span><strong>0.5.1 · verification pending</strong></div>
+    <div><span>MVP candidate</span><strong>PCS v0.6 · complete executable loop</strong></div>
+    <div><span>Formal theorem stack</span><strong>v0.5/v1 · Lean 4.28.0</strong></div>
+    <div><span>Browser parity fixture</span><strong>v0.5 · 11 / 11 vectors</strong></div>
+    <div><span>Latest v0.6 gate</span><strong>CircleCI cross-machine runtime gates · PASS</strong></div>
   </div>
 </section>
 
 <section class="section-tight trustgrid">
   <div class="truststack">
     <article class="trustitem">
-      <header><h3>Released executable checker</h3><span class="chip released">Released</span></header>
-      <p>The public product line is currently <code>pcs-python-kernel/0.5.0</code>. It builds and verifies PCS evidence packages, replays supported checks, validates artifact/package integrity, authenticates signed deliveries, and applies reviewer-controlled acceptance policy.</p>
+      <header><h3>v0.6 executable MVP candidate</h3><span class="chip pending">Candidate</span></header>
+      <p>The current v0.6 branch implements the complete producer-to-reviewer workflow: one-command attestation, canonical JCS certificate and normalized decisions, signed exact package manifest, deterministic self-verified ZIP, extraction-free bundle verification, and external reviewer policy.</p>
       <dl>
-        <dt>Specification</dt><dd><code>pcs-0.5</code></dd>
-        <dt>Checker</dt><dd><code>pcs-python-kernel/0.5.0</code></dd>
-        <dt>Initial scientific adapter</dt><dd>Restricted one-compartment IV-bolus PK + direct Emax PD</dd>
-        <dt>Browser demo</dt><dd>Production-format 0.5.0 reference package + extracted-directory verification profile</dd>
+        <dt>Specification</dt><dd><code>pcs-0.6</code></dd>
+        <dt>Checker identity</dt><dd><code>pcs-python-kernel/0.6.0-dev</code></dd>
+        <dt>Producer</dt><dd><code>pcs attest-v06</code></dd>
+        <dt>Reviewer</dt><dd><code>pcs verify-v06-bundle</code></dd>
+        <dt>Policy semantics</dt><dd><code>valid</code> remains separate from <code>accepted</code>; exact policy bytes are SHA-256 bound into the receipt</dd>
+        <dt>Review provenance</dt><dd>Optional reviewer Ed25519 signature binds the exact receipt bytes and review commitments</dd>
+        <dt>Runtime status</dt><dd>Merged to model main; CircleCI executed cross-machine, cross-architecture, Docker/Podman, R, offline restoration, and ABI gates successfully</dd>
       </dl>
     </article>
 
     <article class="trustitem">
-      <header><h3>Machine-checked formal result</h3><span class="chip verified">Verified</span></header>
-      <p>The PCS assurance decision and normalized-state soundness layer has been independently rebuilt successfully under Lean 4.28.0. The promoted production namespace contains no <code>sorry</code>/<code>admit</code>, no PCS-specific axioms, and no unsafe escape-hatch declarations.</p>
-      <div class="boundary"><strong>Verified theorem boundary</strong><span>Given a normalized claim/evidence state with explicit context coverage and required-evidence binding, an accepted PCS decision entails the corresponding scoped <code>Assures Γ L C E</code> judgment.</span></div>
+      <header><h3>Guided discovery boundary</h3><span class="chip pending">Human confirmation required</span></header>
+      <p><code>discover-v06</code> and the local Project Mapper are recommendation layers. They inventory files, propose supported checks, and may statically infer Python/Jupyter artifact dependencies without executing user code. The generated manifest carries <code>pcs_intake.status = "draft"</code> and cannot enter attestation.</p>
+      <div class="boundary"><strong>Explicit confirmation</strong><span><code>confirm-v06</code> re-hashes every selected artifact. <code>attest-v06</code> checks the same snapshot again, so onboarding automation cannot silently authorize its own claims or sign changed bytes.</span></div>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Independent environment replay boundary</h3><span class="chip released">Implemented</span></header>
+      <p>Dependency files, lockfiles, interpreter constraints, and container specifications are not trusted merely because the producer signed them. After exact package binding, PCS reconstructs the delivered environment source tree and regenerates the canonical environment capture before workflow or scientific replay.</p>
+      <div class="boundary"><strong>Strength labels</strong><span>PCS distinguishes <code>strongly_pinned</code>, <code>container_base_pinned</code>, <code>locked_application_dependencies</code>, <code>hash_pinned_dependencies</code>, <code>declared_dependencies</code>, and <code>environment_unspecified</code>. These are descriptive reproducibility states, not proofs of runtime equivalence.</span></div>
+      <div class="boundary"><strong>Authoritative handoff</strong><span>The browser Project Mapper previews environment structure only. <code>confirm-v06</code> regenerates the canonical Python environment capture from the exact reviewed artifact bytes before marking it confirmed.</span></div>
+      <div class="boundary"><strong>Explicit execution boundary</strong><span>Ordinary reviewer verification does not run package managers, dependency installers, container builds, or user installation hooks. After verification, <code>prepare-environment-v06</code> materializes an inert signed workspace; the separate explicit <code>execute-environment-v06</code> command performs sandboxed OCI reconstruction and replay.</span></div>
+      <div class="boundary"><strong>Verified replay workspace</strong><span><code>prepare-environment-v06</code> first performs full bundle verification, then atomically materializes the exact signed project-relative artifact tree plus workspace metadata, replay plan, and reconstruction script. Execution remains a separate explicit action through <code>execute-environment-v06</code>.</span></div>
+      <div class="boundary"><strong>Adversarial boundary</strong><span>A forged environment dependency or interpreter claim remains expected to fail at <code>environment_replay</code> even if the producer recomputes certificate/package hashes and signatures.</span></div>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Independent static-workflow replay boundary</h3><span class="chip released">Implemented</span></header>
+      <p>Human confirmation and producer signature are not sufficient to establish a static dependency claim. After exact package binding, the v0.6 verifier reconstructs the delivered source tree and reruns static workflow analysis before scientific evidence replay.</p>
+      <div class="boundary"><strong>Exact mode</strong><span>Clean Python/Jupyter AST mappings require exact equality between signed and freshly rediscovered input/output sets.</span></div>
+      <div class="boundary"><strong>Subset mode</strong><span>Partial, R, browser-heuristic, or ambiguity-reduced mappings require every signed edge to be rediscovered but do not claim completeness.</span></div>
+      <div class="boundary"><strong>Validation status</strong><span>An adversarial regression for a fully rehashed and re-signed false workflow edge is committed to the v0.6 gate. The hosted runner still has not executed it.</span></div>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Reviewer-signed receipt boundary</h3><span class="chip released">Implemented</span></header>
+      <p>The producer and reviewer can use different Ed25519 identities. After PCS verification and reviewer-policy evaluation, the reviewer may sign the exact receipt file. A later auditor can verify that signature without rerunning PCS.</p>
+      <div class="boundary"><strong>What is signed</strong><span>Exact receipt SHA-256 plus bundle SHA-256, policy SHA-256, certificate semantic/integrity commitments, normalized-index commitment, PCS validity, and reviewer acceptance.</span></div>
+      <div class="boundary"><strong>What it does not mean</strong><span>A reviewer signature proves authorship of the review record under the selected key. It does not make the scientific model empirically adequate or elevate the assurance class.</span></div>
+    </article>
+
+<article class="trustitem">
+      <header><h3>Multi-reviewer quorum boundary</h3><span class="chip released">Implemented</span></header>
+      <p>PCS can aggregate independently signed reviewer receipts under a separate quorum policy. The quorum layer never changes the PCS scientific verdict; it decides whether enough authorized independent reviewers accepted the same exact reviewed subject.</p>
+      <div class="boundary"><strong>What counts</strong><span>Valid reviewer signature, <code>pcs_valid: true</code>, <code>reviewer_accepted: true</code>, authorized reviewer fingerprint, role-specific required policy SHA-256, and exact bundle/certificate/index subject match.</span></div>
+      <div class="boundary"><strong>Anti-combination rules</strong><span>Reviews from different scientific bundles are grouped separately and cannot be pooled. Duplicate reviewer identities are disqualified so one signing key cannot occupy multiple seats.</span></div>
+      <div class="boundary"><strong>Direct runtime check</strong><span>2-of-3 computational+domain quorum passed; cross-bundle mixing, duplicate identity, and wrong role-policy hash were each rejected in a standalone cryptographic scenario.</span></div>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Adaptive replay scheduler boundary</h3><span class="chip pending">Experimental</span></header>
+      <p>PCS v0.6 implements deterministic replay-order baselines plus a contextual LinUCB-style bandit. The scheduler may prioritize which mandatory check runs first, but it is not consulted by scientific check semantics, claim assessment, normalized decisions, reviewer policy, signed receipts, or quorum approval.</p>
+      <div class="boundary"><strong>Cold-start guard</strong><span>Active bandit ordering requires at least 20 eligible observations overall and at least 3 observations for every check type in the current package. Sparse history falls back to deterministic failure-per-second ordering.</span></div>
+      <div class="boundary"><strong>Telemetry boundary</strong><span>Persisted telemetry contains check type, size/count context, outcome/failure class, wall/CPU timing, and SHA-256-derived evidence IDs. Artifact contents are not written into scheduler history.</span></div>
+      <div class="boundary"><strong>Evidence status</strong><span>A synthetic direct runtime exercise preserved all mandatory checks and produced an 11× counterfactual time-to-first-failure estimate. Production-workload speedup has not yet been established.</span></div>
+    </article>
+
+    <article class="trustitem">
+      <header><h3>Machine-checked v0.5/v1 theorem stack</h3><span class="chip verified">Verified</span></header>
+      <p>The strongest current Lean result goes beyond normalized-state semantics for the older v0.5/v1 wire: accepted normalized-wire bytes pass strict UTF-8/JSON/schema decoding, checked wire construction, <code>wireCheck</code>, <code>WellFormed</code>, and the bridge into <code>Assures</code>. Package authenticity and replay are modeled with their remaining trust exposed as theorem arguments.</p>
+      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>verifyNormalizedWireBytes_assures_e2e</code> is unconditional over accepted raw wire bytes. The package-level theorem is conditional on explicit signature-scheme and replay-adapter soundness assumptions.</span></div>
       <dl>
         <dt>Lean</dt><dd>4.28.0</dd>
-        <dt>Production rebuild</dt><dd>PASS · 14 jobs</dd>
-        <dt>Compiled PCS declarations audited</dt><dd>641</dd>
-        <dt>Promoted soundness classes</dt><dd>Computational, formal, empirical, mixed</dd>
+        <dt>Reported project build</dt><dd>PASS · no <code>sorry</code>, project axioms, or <code>native_decide</code></dd>
+        <dt>Wire vectors</dt><dd>34 / 34 Lean↔Python agreement reported</dd>
+        <dt>Exact v0.6/v2 port</dt><dd>Open</dd>
       </dl>
     </article>
 
@@ -73,10 +125,9 @@
     </article>
 
     <article class="trustitem">
-      <header><h3>Serialized refinement v0.5.1</h3><span class="chip pending">Verification pending</span></header>
-      <p>The next branch adds a claim-scoped normalized wire state between independently replay-verified certificates and the machine-checked Lean decision layer. This work is intentionally not represented as released or machine-checked until its dedicated Python and Lean verification pass completes.</p>
-      <div class="boundary"><strong>Target chain</strong><span>Verified certificate → claim-scoped normalized wire → typed Lean <code>DecisionWire</code> → <code>Normalized.DecisionInput</code> → machine-checked assurance soundness.</span></div>
-      <p style="margin-top:12px">The work also makes exact evidence scope, exact assumption scope, predicate commitments, and source-certificate identity explicit rather than trusting summary booleans.</p>
+      <header><h3>Exact v0.6/v2 formal port</h3><span class="chip open">Open</span></header>
+      <p>The executable product has moved to v0.6/v2: canonical JCS, new cryptographic domains, certificate integrity binding, normalized index hashing, full-SHA normalized storage paths, deterministic ZIP delivery, and reviewer policy. The current Lean end-to-end wire theorem still targets the older v0.5/v1 representation.</p>
+      <div class="boundary"><strong>Next formal milestone</strong><span>Port the verified raw-wire → <code>Assures</code> architecture onto the exact v0.6/v2 byte representation without weakening its explicit trust boundary.</span></div>
     </article>
   </div>
 
@@ -84,9 +135,9 @@
     <article class="panel">
       <h2>Current verification boundary</h2>
       <div class="timeline">
-        <div class="timeline-item"><strong>Raw PCS package</strong><span>Strict JSON/schema checks, safe package handling, hashes, provenance, signatures, and scientific replay remain executable responsibilities.</span></div>
-        <div class="timeline-item"><strong>Normalized scientific state</strong><span>The released formal theorem begins after this boundary. The active 0.5.1 refinement work is shrinking this gap.</span></div>
-        <div class="timeline-item"><strong>Decision semantics</strong><span>Machine-checked under Lean 4.28.0.</span></div>
+        <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
+        <div class="timeline-item"><strong>v0.5/v1 raw normalized wire</strong><span>The strongest current Lean theorem stack checks raw wire bytes through decoding and assurance semantics.</span></div>
+        <div class="timeline-item"><strong>Exact v0.6 formal port</strong><span>Still open; the executable MVP must not inherit the older theorem by implication.</span></div>
         <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
       </div>
     </article>
@@ -114,6 +165,18 @@
 </section>
 
 <section class="section">
+  <div class="kicker">Real-world benchmark evidence</div>
+  <h2>Positive controls and expected failures are both part of the trust story.</h2>
+  <p class="section-intro">A direct checker-level run against public chemistry, biology/ML, and pharmacokinetic examples matched all five predeclared outcomes. Two were expected failures and were correctly rejected. This evidence is separate from the still-unexecuted hosted v0.6 gate.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">5 / 5</div><h3>Matched expectation</h3><p>Haber–Bosch balance, clean Iris split, contaminated Iris split, concentration units, and Indometh model-misfit.</p></article>
+    <article class="card"><div class="num">2 FAIL</div><h3>Negative controls worked</h3><p>PCS detected one leaked Iris row and rejected measured IV PK data when presented as exact deterministic model output.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>Not a full bundle run</h3><p>The execution was checker-level. GitHub's runner remained unavailable, so the full repository/ZIP path is not claimed as executed.</p></article>
+  </div>
+  <div class="actions"><a class="button secondary" href="validation.html">Inspect validation evidence</a></div>
+</section>
+
+<section class="section">
   <div class="kicker">Explicit non-claims</div>
   <h2>What PCS does not currently certify.</h2>
   <p class="section-intro">The strongest trust posture is one that names its limits. The following remain separate from the current machine-checked result.</p>
@@ -122,23 +185,34 @@
     <article class="card"><div class="num">02</div><h3>End-to-end program verification</h3><p>Raw JSON parsing, hashing, ZIP handling, Python execution, and domain checker implementations remain outside the current Lean theorem boundary.</p></article>
     <article class="card"><div class="num">03</div><h3>Regulatory status</h3><p>PCS does not currently claim FDA certification, GxP validation, clinical validity, safety, efficacy, or regulatory acceptance.</p></article>
     <article class="card"><div class="num">04</div><h3>Arbitrary code correctness</h3><p>The current product supports bounded predicates and adapters; it does not prove arbitrary Python, R, C++, notebooks, solvers, or simulations correct.</p></article>
-    <article class="card"><div class="num">05</div><h3>Cross-language canonical JSON</h3><p>PCS 0.5 hashes are deterministic in the Python implementation but are not yet specified as a language-neutral canonical JSON standard. That is a targeted next-version hardening item.</p></article>
+    <article class="card"><div class="num">05</div><h3>Cryptographic implementation proofs</h3><p>v0.6 uses a cross-language JCS profile and tested SHA-256/Ed25519 bindings, but SHA-256 is not proved against the standard and Ed25519 authenticity remains outside the Lean kernel.</p></article>
     <article class="card"><div class="num">06</div><h3>Reviewer judgment</h3><p>PCS can enforce an explicit acceptance policy, but the receiving scientist or organization remains responsible for deciding which evidence and assurance classes are sufficient.</p></article>
   </div>
 </section>
 
 <section class="section-tight">
   <div class="callout">
-    <div><h3>Inspect the evidence path yourself.</h3><p>Use the released browser verifier for the production-format v0.5.0 reference package, or inspect the technical architecture before discussing a design-partner workflow.</p></div>
-    <div class="actions" style="margin-top:0"><a class="button dark" href="demo.html">Open verifier</a><a class="button secondary" href="architecture.html">Architecture</a></div>
+    <div><h3>Inspect the current product path and its limits.</h3><p>Use the v0.6 MVP page for the producer/reviewer workflow and policy semantics; use the older browser verifier only as a v0.5 parity fixture.</p></div>
+    <div class="actions" style="margin-top:0"><a class="button dark" href="mvp.html">Open v0.6 MVP</a><a class="button secondary" href="architecture.html">Architecture</a></div>
   </div>
 </section>
+
+<section class="section-tight">
+  <div class="kicker">Executed trust-boundary evidence</div>
+  <h2>Runtime portability is tested as evidence, not assumed.</h2>
+  <div class="trustgrid">
+    <article class="trustitem"><header><h3>Machines and OCI engines</h3><span class="chip released">PASS</span></header><p>PCS replay has completed on Ubuntu 24.04 amd64, Ubuntu 24.04 ARM64, and Ubuntu 26.04 amd64, and across Docker and real rootful Podman. Runtime identity is captured in realized-environment evidence.</p></article>
+    <article class="trustitem"><header><h3>Dependency restoration</h3><span class="chip released">PASS</span></header><p>Python wheels and R package repository payloads are cryptographically bound into the signed environment and restored offline. Base images were checked not to provide the target dependency in advance.</p></article>
+    <article class="trustitem"><header><h3>Native ABI boundary</h3><span class="chip released">PASS</span></header><p>Architecture-specific NumPy native-extension binaries produced different SHA-256 fingerprints on amd64 and ARM64 while the scientific result remained byte-identical. Dependency/native drift remains determinism-critical; unsigned local builder image IDs are recorded observations.</p></article>
+  </div>
+</section>
+
 </main>
 
 <footer>
   <div class="footergrid">
     <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
-    <div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
     <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
   </div>
 </footer>

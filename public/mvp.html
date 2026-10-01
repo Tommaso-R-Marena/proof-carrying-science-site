@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v0.6 MVP · Proof-Carrying Science</title>
+<meta name="description" content="The PCS v0.6 MVP candidate: one-command attestation, deterministic self-verified bundles, independent replay, and reviewer-controlled acceptance policy.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>PCS v0.6 MVP candidate · Producer → signed bundle → independent reviewer</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks"><a href="project-builder.html">Project Mapper</a>
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="demo.html">v0.5 verifier</a>
+    <a href="intake.html">Pilot intake</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="pagehead mvp-head">
+  <div class="kicker">v0.6 MVP candidate</div>
+  <h1>One command to produce. One command to verify.</h1>
+  <p>The current PCS v0.6 branch now starts from an existing scientific project: guided discovery drafts the artifact/check/claim graph, explicit confirmation freezes the reviewed bytes, attestation packages and replays them, and independent reviewers verify the exact archive under their own policy.</p>
+  <div class="actions">
+    <a class="button primary" href="project-builder.html">Map a project →</a>
+    <a class="button secondary" href="#policy-lab">Open policy lab</a>
+  </div>
+  <div class="statusbar" aria-label="v0.6 MVP candidate status">
+    <div><span>Producer</span><strong><code>attest-v06</code></strong></div>
+    <div><span>Delivery</span><strong>Deterministic + self-verified ZIP</strong></div>
+    <div><span>Reviewer</span><strong><code>verify-v06-bundle</code></strong></div>
+    <div><span>Audit</span><strong>Reviewer-signed receipt</strong></div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="kicker">Guided intake before attestation</div>
+  <h2>The scientist no longer starts by writing PCS JSON.</h2>
+  <p class="section-intro">Use the local Project Mapper or <code>pcs discover-v06</code> to inventory an existing project and draft only the supported, high-confidence checks PCS can currently understand. The draft is deliberately non-attestable until human confirmation re-hashes the selected files.</p>
+  <div class="mvp-command-grid">
+    <article class="command-card"><div class="command-label"><span>Step 0</span><strong>Discover</strong></div><div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div><p>Locally inventories regular files, excludes key material, snapshots SHA-256/size, recommends supported scientific checks, and statically maps high-confidence Python/Jupyter artifact dependencies without executing user code.</p></article>
+    <article class="command-card"><div class="command-label"><span>Human gate</span><strong>Confirm</strong></div><div class="codecommand"><code>pcs confirm-v06 ./my-project/pcs-manifest.draft.json</code><button data-copy="pcs confirm-v06 ./my-project/pcs-manifest.draft.json">Copy</button></div><p>Re-hashes every selected artifact, records explicit confirmation, and produces <code>manifest.json</code>. If files drift afterward, attestation rejects them.</p></article>
+  </div>
+  <div class="actions"><a class="button primary" href="project-builder.html">Open local Project Mapper</a></div>
+</section>
+
+<section class="section-tight" id="workflow">
+  <div class="kicker">The complete loop</div>
+  <h2>From a bounded workflow to a portable assurance package.</h2>
+  <p class="section-intro">The producer never gets to declare itself accepted. PCS separates scientific replay, package validity, signer authenticity, and the receiving organization's acceptance policy.</p>
+
+  <div class="mvp-command-grid">
+    <article class="command-card">
+      <div class="command-label"><span>Producer</span><strong>Build and attest</strong></div>
+      <div class="codecommand">
+        <code>pcs attest-v06 project/manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem</code>
+        <button data-copy="pcs attest-v06 project/manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem">Copy</button>
+      </div>
+      <p>Copies exact artifacts into the package first, replays supported checks against those copied bytes, builds the typed v0.6 certificate and normalized decision set, signs the package, verifies the candidate ZIP, then atomically publishes it.</p>
+    </article>
+
+    <article class="command-card">
+      <div class="command-label"><span>Reviewer</span><strong>Verify + apply policy</strong></div>
+      <div class="codecommand">
+        <code>pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json --reviewer-private-key reviewer-private.pem --receipt-signature receipt.sig.json</code>
+        <button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json --reviewer-private-key reviewer-private.pem --receipt-signature receipt.sig.json">Copy</button>
+      </div>
+      <p>Reads the ZIP without extracting it, verifies the signer and exact file set, reruns supported scientific checks, regenerates normalized decisions, applies the reviewer's acceptance criteria, then optionally signs the exact receipt bytes with a separate reviewer identity.</p>
+    </article>
+  </div>
+
+  <div class="mvp-flow" aria-label="v0.6 producer to reviewer flow">
+    <div class="mvp-node"><span>01</span><strong>Manifest</strong><small>Claims, assumptions, artifacts, checks</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>02</span><strong>Environment replay</strong><small>Re-derive dependencies, lockfiles, interpreter/container contract</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>03</span><strong>Workflow replay</strong><small>Re-derive confirmed source/artifact edges</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>04</span><strong>Scientific replay</strong><small>Run mandatory checks on packaged bytes</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>05</span><strong>Sign</strong><small>Certificate + exact manifest</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>06</span><strong>Bundle</strong><small>Deterministic, self-verified ZIP</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>07</span><strong>Review</strong><small>Verify first, policy second</small></div>
+    <div class="mvp-arrow">→</div>
+    <div class="mvp-node"><span>08</span><strong>Attest review</strong><small>Reviewer signs exact receipt bytes</small></div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="kicker">Independent environment provenance</div>
+  <h2>A lockfile is evidence only if the reviewer can regenerate the same environment contract.</h2>
+  <p class="section-intro">Guided discovery captures Python/R dependencies, lockfiles, interpreter constraints, Conda/Nix specifications, and Docker/OCI base references without executing package managers or builds. After package binding, the reviewer reconstructs those exact environment files and regenerates the canonical environment contract before workflow or scientific replay.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Pinned</div><h3>Strength is explicit</h3><p>PCS distinguishes loose declarations, application lockfiles, hash-pinned requirements, digest-pinned containers, and stronger combined states instead of calling all of them “reproducible.”</p></article>
+    <article class="card"><div class="num">Replay</div><h3>Freshly re-derived</h3><p>The signed <code>pcs-environment-capture-v1</code> proposition must equal a fresh capture over the exact delivered environment source bytes.</p></article>
+    <article class="card"><div class="num">No exec</div><h3>Verification stays non-executing</h3><p>PCS can emit <code>pcs-environment-plan.json</code> and a review-before-run reconstruction script, but verification never runs installers, package managers, or container builds automatically.</p></article>
+  </div>
+  <div class="panel" style="margin-top:22px">
+    <h2>Inspect reconstruction plan</h2>
+    <div class="codecommand"><code>pcs environment-plan-v06 manifest.json -o environment-plan.json --script reconstruct-environment.sh</code><button data-copy="pcs environment-plan-v06 manifest.json -o environment-plan.json --script reconstruct-environment.sh">Copy</button></div>
+    <p class="tiny">The generated script may invoke package managers or container builds and must be reviewed before execution. It is never executed by <code>verify-v06</code> or <code>verify-v06-bundle</code>.</p>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <h2>Prepare a verified replay workspace</h2>
+    <div class="codecommand"><code>pcs prepare-environment-v06 study.pcs.zip -o replay-workspace --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt;</code><button data-copy="pcs prepare-environment-v06 study.pcs.zip -o replay-workspace --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt;">Copy</button></div>
+    <p>PCS fully verifies the delivered bundle first, then materializes the exact signed project-relative artifact tree plus <code>pcs-environment-workspace.json</code>, the replay plan, and a review-before-run reconstruction script. Materialization is non-executing and is published atomically only after preparation succeeds.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="kicker">Independent workflow provenance</div>
+  <h2>Signed workflow is not trusted just because it is signed.</h2>
+  <p class="section-intro">After package hashes and producer signatures pass, the reviewer reconstructs project-relative source files from the exact delivered artifacts and reruns static workflow discovery. A forged dependency edge therefore fails before ordinary scientific evidence replay, even if the producer recomputed hashes and re-signed the package.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Exact</div><h3>Clean AST graph</h3><p>For clean Python/Jupyter analysis, the complete signed input/output set must equal the freshly rediscovered set.</p></article>
+    <article class="card"><div class="num">Subset</div><h3>Partial / R / browser graph</h3><p>Every signed edge must be rediscovered, while PCS explicitly does not claim the set is complete.</p></article>
+    <article class="card"><div class="num">Fail</div><h3>Mismatch stops verification</h3><p>The dedicated <code>workflow_replay</code> stage fails before claim replay or normalized-decision regeneration.</p></article>
+  </div>
+</section>
+
+<section class="section split">
+  <div>
+    <div class="kicker">Why policy is separate</div>
+    <h2>Valid does not mean accepted.</h2>
+    <p class="section-intro">A PCS package can be perfectly authentic and replay-consistent while honestly carrying a failed or open scientific claim. The receiving organization decides whether those claim statuses are acceptable for its use case.</p>
+    <div class="boundary"><strong>PCS validity</strong><span>Did the delivered bytes, signatures, replay results, and normalized decisions agree?</span></div>
+    <div class="boundary policy-boundary"><strong>Reviewer acceptance</strong><span>Do the verified claim statuses and signer identity satisfy this reviewer's external policy?</span></div>
+  </div>
+  <div class="panel">
+    <h2>Example policy</h2>
+    <p>The producer does not embed or sign the reviewer's acceptance criteria. The reviewer supplies them at verification time.</p>
+    <pre class="policy-pre" id="policyExample">{
+  "policy_version": "pcs-acceptance-policy-v1",
+  "require_signature": true,
+  "required_claims": {
+    "C_PKPD_CONTRACT": ["COMPUTATIONALLY_SUPPORTED"],
+    "C_PKPD_REPLAY": ["COMPUTATIONALLY_SUPPORTED"]
+  }
+}</pre>
+    <div class="actions"><button class="button secondary" id="copyPolicy">Copy policy JSON</button><a class="button secondary" href="reviewer-policy.example.json" download>Download example</a></div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="validation-evidence-banner">
+    <div>
+      <strong>Real-world validation: 5 / 5 public-data cases matched expectation.</strong>
+      <span>Three positive controls passed; two negative controls failed as intended, including a one-row Iris leakage mutation and published IV indomethacin concentrations misrepresented as exact single-exponential output.</span>
+    </div>
+    <a class="button secondary" href="validation.html">See evidence →</a>
+  </div>
+</section>
+
+<section class="section split">
+  <div>
+    <div class="kicker">Independent review provenance</div>
+    <h2>Producer signs the package. Reviewer signs the receipt.</h2>
+    <p class="section-intro">The two signatures serve different purposes. The producer signature authenticates the scientific delivery. After independent verification and policy evaluation, the reviewer may sign the exact receipt bytes with a separate Ed25519 key.</p>
+    <div class="boundary"><strong>Producer identity</strong><span>Binds certificate + exact package manifest.</span></div>
+    <div class="boundary policy-boundary"><strong>Reviewer identity</strong><span>Binds exact receipt SHA-256, bundle SHA-256, policy SHA-256, certificate/index commitments, PCS validity, and reviewer acceptance.</span></div>
+  </div>
+  <div class="panel">
+    <h2>Verify the review record later</h2>
+    <div class="codecommand"><code>pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;</code><button data-copy="pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;">Copy</button></div>
+    <p class="tiny">A reviewer signature attests to the review record. It does not elevate claim assurance, repair failed science, or replace PCS package verification. Reviewer private keys should stay local; this website never requests them.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Multi-reviewer quorum</div>
+  <h2>Require multiple independent approvals without merging reviewer authority.</h2>
+  <p class="section-intro">PCS can aggregate separately signed review receipts under a role-aware quorum policy. A 2-of-3 rule can require at least one computational reviewer and one domain reviewer while allowing a statistical reviewer to dissent without changing the underlying PCS verdict.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Computational</div><h3>Accepted</h3><p>Valid signed receipt, authorized fingerprint, and the computational-review policy SHA-256 required by the quorum policy.</p></article>
+    <article class="card"><div class="num">Domain</div><h3>Accepted</h3><p>Independently verified the same exact bundle/certificate/index subject under its own domain-review policy.</p></article>
+    <article class="card"><div class="num">Statistical</div><h3>Dissent allowed</h3><p>A non-accepting or unavailable third reviewer does not count, but cannot rewrite the other reviewers' receipts or the PCS scientific record.</p></article>
+  </div>
+  <div class="statusbar" style="margin-top:22px" aria-label="Example reviewer quorum">
+    <div><span>Total threshold</span><strong>2 of 3</strong></div>
+    <div><span>Required roles</span><strong>1 computational + 1 domain</strong></div>
+    <div><span>Cross-bundle mixing</span><strong>Rejected</strong></div>
+    <div><span>Duplicate identity</span><strong>Cannot count twice</strong></div>
+  </div>
+  <div class="panel" style="margin-top:22px">
+    <h2>Verify the quorum</h2>
+    <div class="codecommand"><code>pcs verify-quorum-v06 --quorum-policy review-quorum-policy.json --review-set review-set.json -o quorum-result.json</code><button data-copy="pcs verify-quorum-v06 --quorum-policy review-quorum-policy.json --review-set review-set.json -o quorum-result.json">Copy</button></div>
+    <p>The quorum engine groups accepted signed reviews by exact bundle SHA-256, certificate semantic/integrity hashes, and normalized-index semantic hash. Reviews from different studies can never be combined to satisfy the threshold.</p>
+    <div class="actions"><a class="button secondary" href="review-quorum-policy.example.json" download>Download quorum policy</a><a class="button secondary" href="review-set.example.json" download>Download review-set</a></div>
+  </div>
+</section>
+
+<section class="section" id="policy-lab">
+  <div class="kicker">Interactive policy lab</div>
+  <h2>Change the science or the review rule. Watch different layers respond.</h2>
+  <p class="section-intro">This browser lab demonstrates the v0.6 acceptance semantics locally. It is an explanatory policy simulator, not the production Python verifier and not a replacement for <code>verify-v06-bundle</code>.</p>
+
+  <div class="policy-lab">
+    <aside class="panel">
+      <h2>Verified package state</h2>
+      <p>Start from a package that has already passed or failed the PCS verification layers, then apply an external reviewer rule.</p>
+
+      <div class="toggle">
+        <div><strong>Tamper delivery</strong><small>Simulate package/replay verification failure.</small></div>
+        <input id="tamperPackage" type="checkbox">
+      </div>
+
+      <div class="field">
+        <label for="replayDecision"><span>C_PKPD_REPLAY decision</span></label>
+        <select id="replayDecision" class="selectinput">
+          <option value="COMPUTATIONALLY_SUPPORTED">COMPUTATIONALLY_SUPPORTED</option>
+          <option value="FALSIFIED_OR_CHECK_FAILED">FALSIFIED_OR_CHECK_FAILED</option>
+          <option value="OPEN">OPEN</option>
+        </select>
+      </div>
+
+      <h2 style="margin-top:24px">Reviewer policy</h2>
+      <div class="field">
+        <label for="requiredReplayStatus"><span>Required replay status</span></label>
+        <select id="requiredReplayStatus" class="selectinput">
+          <option value="COMPUTATIONALLY_SUPPORTED">COMPUTATIONALLY_SUPPORTED</option>
+          <option value="FORMALLY_VERIFIED_UNDER_ASSUMPTIONS">FORMALLY_VERIFIED_UNDER_ASSUMPTIONS</option>
+        </select>
+      </div>
+
+      <div class="toggle">
+        <div><strong>Signer matches policy</strong><small>Reviewer pins the expected Ed25519 public-key fingerprint.</small></div>
+        <input id="signerMatch" type="checkbox" checked>
+      </div>
+
+      <div class="actions"><button class="button primary" id="evaluatePolicy">Evaluate</button><button class="button secondary" id="resetPolicy">Reset</button></div>
+      <p class="tiny">Policy SHA-256 is computed in your browser over the exact displayed policy bytes. No data leaves this page.</p>
+    </aside>
+
+    <div>
+      <div class="statusgrid policy-status-grid">
+        <div class="status na" id="pcsValidityCard"><div class="label">PCS validity</div><div class="value" id="pcsValidity">NOT RUN</div></div>
+        <div class="status na" id="acceptanceCard"><div class="label">Reviewer acceptance</div><div class="value" id="acceptanceStatus">NOT RUN</div></div>
+        <div class="status na" id="signerPolicyCard"><div class="label">Signer policy</div><div class="value" id="signerPolicyStatus">NOT RUN</div></div>
+        <div class="status na" id="policyHashCard"><div class="label">Policy binding</div><div class="value mono" id="policyHashShort">NOT RUN</div></div>
+      </div>
+
+      <div class="grid2" style="margin-top:18px">
+        <section class="panel">
+          <h2>Policy failures</h2>
+          <div id="policyFailures" class="policy-failures"><p class="tiny">Evaluate the policy to see failures.</p></div>
+        </section>
+        <section class="panel">
+          <h2>Claim ledger</h2>
+          <div class="claim"><span class="dot pass" id="contractPolicyDot"></span><div><strong>C_PKPD_CONTRACT</strong><span id="contractPolicyText">COMPUTATIONALLY_SUPPORTED</span></div></div>
+          <div class="claim"><span class="dot pass" id="replayPolicyDot"></span><div><strong>C_PKPD_REPLAY</strong><span id="replayPolicyText">COMPUTATIONALLY_SUPPORTED</span></div></div>
+        </section>
+      </div>
+
+      <section class="panel" style="margin-top:18px">
+        <h2>Receipt preview</h2>
+        <pre id="policyReceipt">{ "status": "not evaluated" }</pre>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="scheduler-lab">
+  <div class="kicker">Adaptive replay scheduling</div>
+  <h2>Learn where failures tend to surface without learning the verdict.</h2>
+  <p class="section-intro">PCS now includes deterministic scheduling baselines and a contextual LinUCB-style bandit. The optimization target is time to first detected failure. Every mandatory check still runs, and the scheduler is explicitly excluded from claim assessment, normalized decisions, reviewer policy, signed receipts, and quorum approval.</p>
+
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">Shadow first</div><h3>Observe before acting</h3><p><code>--shadow-bandit</code> records what the learned scheduler would choose while PCS continues to execute the configured deterministic order.</p></article>
+    <article class="card"><div class="num">20 + 3/type</div><h3>Cold-start guard</h3><p>Active bandit ordering requires at least 20 eligible historical observations overall and 3 for every check type in the current package. Otherwise PCS falls back to failure-per-second.</p></article>
+    <article class="card"><div class="num">Invariant</div><h3>All checks still run</h3><p>Execution order may change. Scientific evidence scope, check semantics, claim status, reviewer policy, and quorum semantics may not.</p></article>
+  </div>
+
+  <div class="mvp-command-grid">
+    <article class="command-card">
+      <div class="command-label"><span>Collect safely</span><strong>Shadow mode</strong></div>
+      <div class="codecommand"><code>pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --scheduler manifest --shadow-bandit --scheduler-history scheduler-history.jsonl --scheduler-telemetry-append scheduler-history.jsonl</code><button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --scheduler manifest --shadow-bandit --scheduler-history scheduler-history.jsonl --scheduler-telemetry-append scheduler-history.jsonl">Copy</button></div>
+    </article>
+    <article class="command-card">
+      <div class="command-label"><span>Evaluate</span><strong>Chronological report</strong></div>
+      <div class="codecommand"><code>pcs scheduler-report-v06 scheduler-history.jsonl -o scheduler-report.json</code><button data-copy="pcs scheduler-report-v06 scheduler-history.jsonl -o scheduler-report.json">Copy</button></div>
+    </article>
+  </div>
+
+  <div class="policy-lab" style="margin-top:22px">
+    <aside class="panel">
+      <h2>Scheduler lab</h2>
+      <p>This local illustration uses the same synthetic runtime scenario documented in the repository: unit checks historically pass at about 10.45 ms; reaction checks historically fail at about 1.045 ms.</p>
+      <div class="field">
+        <label for="schedulerHistoryMode"><span>Telemetry history</span></label>
+        <select id="schedulerHistoryMode" class="selectinput">
+          <option value="cold">Cold start · 0 observations</option>
+          <option value="ready">Ready · 20 observations</option>
+        </select>
+      </div>
+      <div class="actions"><button class="button primary" id="evaluateScheduler">Evaluate scheduler</button></div>
+      <p class="tiny">This is an explanatory scheduling simulator. It is not a scientific verifier and does not estimate production speedup.</p>
+    </aside>
+    <div>
+      <div class="statusgrid policy-status-grid">
+        <div class="status na" id="schedulerReadyCard"><div class="label">Bandit readiness</div><div class="value" id="schedulerReady">NOT RUN</div></div>
+        <div class="status na" id="schedulerEffectiveCard"><div class="label">Effective strategy</div><div class="value" id="schedulerEffective">NOT RUN</div></div>
+        <div class="status na" id="schedulerCoverageCard"><div class="label">Mandatory checks</div><div class="value" id="schedulerCoverage">NOT RUN</div></div>
+        <div class="status na" id="schedulerTtfCard"><div class="label">Synthetic TTF estimate</div><div class="value" id="schedulerTtf">NOT RUN</div></div>
+      </div>
+      <section class="panel" style="margin-top:18px">
+        <h2>Ordering trace</h2>
+        <pre id="schedulerTrace">{ "status": "not evaluated" }</pre>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">Initial MVP scope</div>
+  <h2>Five executable scientific checks, one strict delivery path.</h2>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">01</div><h3>PK/PD contract</h3><p>Restricted one-compartment IV-bolus + direct Emax representation, units, dimensions, and positivity.</p></article>
+    <article class="card"><div class="num">02</div><h3>PK/PD replay</h3><p>Independent analytic recomputation from packaged model bytes and exported predictions.</p></article>
+    <article class="card"><div class="num">03</div><h3>CSV disjointness</h3><p>Verify declared split keys do not overlap between packaged CSV artifacts.</p></article>
+    <article class="card"><div class="num">04</div><h3>Reaction balance</h3><p>Replay a narrow atom-balance predicate over declared stoichiometric terms.</p></article>
+    <article class="card"><div class="num">05</div><h3>Unit compatibility</h3><p>Check supported dimensional expressions and conversion compatibility.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>External evidence stays explicit</h3><p>Formal, empirical, statistical, and provenance evidence is not auto-promoted to PASS by the MVP producer.</p></article>
+  </div>
+</section>
+
+<section class="dark-section">
+  <div class="kicker" style="color:#78b9ff">Formal boundary</div>
+  <h2>The executable MVP and the formal theorem stack are related, but not identical.</h2>
+  <p class="section-intro">The current v0.6/v2 executable format has the full producer/reviewer product path. The strongest machine-checked raw-wire-to-<code>Assures</code> theorem stack currently targets the older v0.5/v1 wire, with package authenticity and replay represented through explicit theorem assumptions. Porting that theorem stack onto the exact v0.6/v2 representation remains open work.</p>
+  <div class="grid3" style="margin-top:28px">
+    <article class="card"><div class="num">v0.6</div><h3>Executable MVP</h3><p>Canonical JCS, signed package, deterministic ZIP, fresh replay, normalized decisions, reviewer policy.</p></article>
+    <article class="card"><div class="num">v0.5/v1</div><h3>Machine-checked chain</h3><p>Raw normalized-wire bytes through checked decoding and assurance semantics have a Lean 4.28 theorem chain.</p></article>
+    <article class="card"><div class="num">Open</div><h3>Exact v0.6 formal port</h3><p>The product should not claim end-to-end Lean verification of the v0.6 delivery format until that port is completed.</p></article>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="callout">
+    <div><h3>The next milestone is external use.</h3><p>The core MVP loop is merged to the model mainline and has completed cross-machine runtime evidence. The highest-value validation is a design partner running a bounded workflow PCS did not construct itself.</p></div>
+    <div class="actions" style="margin-top:0"><a class="button dark" href="contact.html">Discuss a pilot</a><a class="button secondary" href="trust.html">Trust Center</a></div>
+  </div>
+</section>
+
+<section class="section-tight" id="runtime-evidence">
+  <div class="kicker">Executed reproducibility evidence</div>
+  <h2>The signed environment is now reconstructed and replayed, not merely described.</h2>
+  <p class="section-intro">PCS keeps ordinary verification and execution separate: <code>prepare-environment-v06</code> verifies and materializes the signed workspace, while <code>execute-environment-v06</code> explicitly launches the sandboxed replay. The completed evidence campaigns exercise the actual execution path.</p>
+  <div class="trustgrid">
+    <article class="trustitem">
+      <header><h3>Cross-machine OCI</h3><span class="chip released">PASS</span></header>
+      <p>One signed campaign replayed on Ubuntu 24.04 amd64, Ubuntu 24.04 ARM64, and Ubuntu 26.04 amd64, while also varying Debian container bases, lock state, and image provenance.</p>
+    </article>
+    <article class="trustitem">
+      <header><h3>Docker ↔ Podman + native R</h3><span class="chip released">PASS</span></header>
+      <p>The same signed computation reproduced under Docker and real rootful Podman. A separate R-native workflow passed on Docker amd64, Docker ARM64, and rootful Podman amd64. Rootless Podman container execution on the managed CI host remains unestablished.</p>
+    </article>
+    <article class="trustitem">
+      <header><h3>Offline restoration + ABI</h3><span class="chip released">PASS</span></header>
+      <p>PCS restored NumPy from signed hash-locked architecture-specific wheels and restored an R environment from a signed local repository through <code>renv::restore()</code>, all with build networking disabled. Native-extension hashes differed by architecture while scientific outputs remained byte-identical.</p>
+    </article>
+  </div>
+  <div class="mvp-cli">
+    <div class="codecommand"><code>pcs prepare-environment-v06 study.pcs.zip ...</code><button data-copy="pcs prepare-environment-v06 study.pcs.zip --public-key trusted-public.pem">Copy</button></div>
+    <div class="codecommand"><code>pcs execute-environment-v06 workspace/ ... --runs 3</code><button data-copy="pcs execute-environment-v06 workspace/ --public-key trusted-public.pem --runs 3">Copy</button></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footergrid">
+    <div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div>
+    <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">v0.5 verifier</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div>
+    <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
+  </div>
+</footer>
+</div>
+<script src="site.js"></script>
+<script src="mvp.js"></script>
+</body>
+</html>

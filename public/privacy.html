@@ -9,13 +9,14 @@
 <body>
 <div class="topbar"><div class="shell"><span>Static launch preview · No first-party analytics</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
-<nav><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div></nav>
+<nav><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div></nav>
 <main>
 <section class="pagehead"><div class="kicker">Privacy</div><h1>Local by design.</h1><p>The current PCS website is static. It has no account system, application backend, database, advertising stack, first-party analytics, or scientific-data upload endpoint.</p></section>
-<section class="grid3">
-  <article class="card"><div class="num">01</div><h3>Verifier stays in-browser</h3><p>The verifier uses Web Crypto and JavaScript in your browser. Compatible package JSON and files selected through the extracted-directory picker are read locally and are not transmitted by this site.</p></article>
-  <article class="card"><div class="num">02</div><h3>Intake stays in-browser</h3><p>The pilot-intake builder validates, hashes, freezes, and downloads your intake locally. The page does not submit form contents to PCS.</p></article>
-  <article class="card"><div class="num">03</div><h3>Hosting metadata</h3><p>Cloudflare may process ordinary network-request metadata necessary to serve the site. PCS has not added a first-party analytics or tracking SDK.</p></article>
+<section class="grid4">
+  <article class="card"><div class="num">01</div><h3>Project Mapper stays in-browser</h3><p>Files you explicitly select are read and SHA-256 hashed locally to draft artifact/check metadata. Python/Jupyter text may also be inspected locally for literal file dependencies; it is never executed. The mapper contains no PCS upload endpoint or network API.</p></article>
+  <article class="card"><div class="num">02</div><h3>Verifier stays in-browser</h3><p>The legacy browser verifier uses Web Crypto and JavaScript locally. Compatible package JSON and selected extracted-directory files are not transmitted by this site.</p></article>
+  <article class="card"><div class="num">03</div><h3>Intake stays in-browser</h3><p>The pilot-intake builder validates, hashes, freezes, and downloads your intake locally. The page does not submit form contents to PCS.</p></article>
+  <article class="card"><div class="num">04</div><h3>Hosting metadata</h3><p>Cloudflare may process ordinary network-request metadata necessary to serve the site. PCS has not added a first-party analytics or tracking SDK.</p></article>
 </section>
 <section class="section">
   <div class="kicker">Do not upload sensitive science here</div>
@@ -24,7 +25,7 @@
   <div class="callout" style="margin-top:28px"><div><h3>Questions about a pilot or data boundary?</h3><p>Contact Tommaso directly before sending sensitive materials.</p></div><a class="button dark" href="mailto:marenatommaso@gmail.com?subject=PCS%20Data%20Handling%20Question">marenatommaso@gmail.com</a></div>
 </section>
 </main>
-<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="index.html">Home</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="index.html">Home</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 <script src="site.js"></script>
 </body>

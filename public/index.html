@@ -11,14 +11,16 @@
 <body>
 <div class="topbar">
   <div class="shell">
-    <span>Private design-partner alpha · Computational biopharma first</span>
+    <span>v0.6 MVP candidate · Complete producer-to-reviewer path · Computational biopharma first</span>
     <a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a>
   </div>
 </div>
 <div class="shell">
   <nav aria-label="Primary">
     <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-    <div class="navlinks"><a href="trust.html">Trust Center</a>
+    <div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a>
+      <a href="validation.html">Validation</a>
+      <a href="trust.html">Trust Center</a>
       <a href="#product">Product</a>
       <a href="architecture.html">Architecture</a>
       <a href="demo.html">Live verifier</a>
@@ -32,26 +34,90 @@
     <section class="hero">
       <div class="hero-network" aria-hidden="true"></div>
       <div class="hero-content">
-        <div class="eyebrow">Independent computational assurance</div>
-        <h1>Make critical scientific computation independently checkable.</h1>
-        <p>Proof-Carrying Science packages scientific claims together with the exact evidence needed to review them: artifacts, assumptions, replayable checks, provenance, signatures, and an explicit statement of what remains unverified.</p>
+        <div class="eyebrow">v0.6 MVP candidate · Independent computational assurance</div>
+        <h1>Produce a scientific assurance package. Verify it independently.</h1>
+        <p>Proof-Carrying Science now has a complete v0.6 producer-to-reviewer path: one command packages exact artifacts, replays supported checks, derives claim status, signs and self-verifies a deterministic ZIP; another independently verifies the archive and applies reviewer-controlled policy.</p>
         <div class="actions">
-          <a class="button primary" href="demo.html">Run the live verifier →</a>
-          <a class="button ghost" href="intake.html">Build a pilot intake</a>
+          <a class="button primary" href="project-builder.html">Map my project →</a>
+          <a class="button ghost" href="mvp.html">See the v0.6 MVP</a>
         </div>
         <div class="hero-meta">
           <span><strong>Current focus</strong><br>Computational biopharma</span>
           <span><strong>Trust model</strong><br>Independent replay, not producer trust</span>
-          <span><strong>Formal layer</strong><br>Decision + normalized-state soundness machine-checked in Lean 4.28.0</span>
+          <span><strong>Formal layer</strong><br>v0.5/v1 raw-wire → assurance chain machine-checked; exact v0.6 port remains open</span>
         </div>
       </div>
     </section>
 
     <section class="statusbar" aria-label="Current product status">
-      <div><span>Released checker</span><strong>0.5.0</strong></div>
-      <div><span>Lean soundness layer</span><strong>Verified · 4 assurance classes</strong></div>
-      <div><span>Browser parity</span><strong>11 / 11 frozen vectors</strong></div>
-      <div><span>Next refinement</span><strong>0.5.1 · verification pending</strong></div>
+      <div><span>Producer path</span><strong><code>attest-v06</code> · implemented</strong></div>
+      <div><span>Reviewer path</span><strong><code>verify-v06-bundle</code> · implemented</strong></div>
+      <div><span>Reviewer policy</span><strong>Valid ≠ accepted · SHA-256 bound</strong></div>
+      <div><span>Runtime evidence</span><strong>Cross-machine CircleCI gates · PASS</strong></div>
+    </section>
+
+    <section class="mvp-banner" aria-label="v0.6 MVP workflow">
+      <div>
+        <div class="kicker">First complete MVP loop</div>
+        <h3>Bounded project → signed ZIP → independent review receipt.</h3>
+        <p>The v0.6 candidate copies exact source artifacts before replay, derives normalized decisions, signs certificate and manifest, creates a deterministic ZIP, verifies the exact candidate archive, then lets the receiver apply an external policy.</p>
+        <div class="actions"><a class="button primary" href="mvp.html">Explore the workflow</a><a class="button secondary" href="trust.html">Inspect trust boundaries</a></div>
+      </div>
+      <div class="mvp-cli">
+        <div class="codecommand"><code>pcs attest-v06 manifest.json -o study.pcs.zip …</code><button data-copy="pcs attest-v06 manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem">Copy</button></div>
+        <div class="codecommand"><code>pcs verify-v06-bundle study.pcs.zip … --policy reviewer-policy.json</code><button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json">Copy</button></div>
+      </div>
+    </section>
+
+    <section class="mvp-banner" aria-label="Guided project onboarding">
+      <div>
+        <div class="kicker">New guided onboarding</div>
+        <h3>Start from your project folder, not a schema.</h3>
+        <p>The local Project Mapper inventories scientific files, hashes the bytes you reviewed, detects supported scientific checks, and previews likely Python/Jupyter artifact flow without executing code. The draft remains non-attestable until you explicitly confirm it.</p>
+        <div class="actions"><a class="button primary" href="project-builder.html">Open Project Mapper</a><a class="button secondary" href="mvp.html#workflow">See the trust boundary</a></div>
+      </div>
+      <div class="mvp-cli">
+        <div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div>
+        <div class="codecommand"><code>pcs confirm-v06 ./my-project/pcs-manifest.draft.json</code><button data-copy="pcs confirm-v06 ./my-project/pcs-manifest.draft.json">Copy</button></div>
+      </div>
+    </section>
+
+    <section class="validation-evidence-banner" aria-label="Static workflow replay">
+      <div>
+        <strong>Fresh workflow replay from delivered source bytes.</strong>
+        <span>Human-confirmed Python/Jupyter/R dependency claims are not accepted on producer signature alone. The v0.6 reviewer reconstructs the project-relative source tree from packaged artifacts and reruns static analysis before scientific evidence replay.</span>
+      </div>
+      <a class="button secondary" href="trust.html">Inspect boundary →</a>
+    </section>
+
+    <section class="validation-evidence-banner" aria-label="Real-world validation evidence">
+      <div>
+        <strong>First public-data validation: 5 / 5 expected outcomes matched.</strong>
+        <span>Haber–Bosch atom balance, UCI Iris clean and contaminated splits, Indometh unit equivalence, and a published IV indomethacin negative-control replay. Two cases were expected to fail, and both were correctly rejected.</span>
+      </div>
+      <a class="button secondary" href="validation.html">Inspect results →</a>
+    </section>
+
+    <section class="mvp-banner" aria-label="Adaptive replay scheduling">
+      <div>
+        <div class="kicker">Adaptive replay · experimental</div>
+        <h3>Learn which mandatory checks should run first, never which verdict to return.</h3>
+        <p>PCS v0.6 now supports deterministic baselines, shadow-mode contextual-bandit recommendations, cold-start protection, and privacy-preserving replay telemetry. Every required check still executes and scientific semantics remain unchanged.</p>
+        <div class="actions"><a class="button primary" href="mvp.html#scheduler-lab">Open scheduler lab</a><a class="button secondary" href="architecture.html">Architecture boundary</a></div>
+      </div>
+      <div class="mvp-cli">
+        <div class="codecommand"><code>--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl</code><button data-copy="--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl">Copy</button></div>
+        <div class="codecommand"><code>pcs scheduler-report-v06 history.jsonl -o scheduler-report.json</code><button data-copy="pcs scheduler-report-v06 history.jsonl -o scheduler-report.json">Copy</button></div>
+      </div>
+    </section>
+
+
+    <section class="validation-evidence-banner" aria-label="Cross-runtime reproducibility evidence">
+      <div>
+        <strong>Executed across OS, architecture, OCI engine, Python, and R.</strong>
+        <span>PCS has completed fail-closed replay campaigns on Ubuntu 24/26, amd64/ARM64, Docker/rootful Podman, native R, offline hash-locked Python wheels, offline renv restoration, and architecture-specific native extensions while reproducing the signed scientific outputs.</span>
+      </div>
+      <a class="button secondary" href="mvp.html#runtime-evidence">Inspect runtime evidence →</a>
     </section>
 
     <section class="logo-strip" aria-label="Core assurance dimensions">
@@ -61,15 +127,29 @@
       <div><strong>Reviewer policy</strong><span>Does the evidence meet criteria the reviewer chose?</span></div>
     </section>
 
-    <section class="section" id="product">
+        <section class="section-tight">
+      <div class="mvp-banner">
+        <div>
+          <div class="kicker">New audit layer</div>
+          <h3>Producer signs the science. Reviewer signs the review.</h3>
+          <p>PCS v0.6 can now emit a reviewer-signed verification receipt that binds the exact receipt bytes, delivered bundle, reviewer policy, core certificate/index commitments, and the final <code>valid</code>/<code>accepted</code> verdicts.</p>
+          <div class="actions"><a class="button primary" href="mvp.html">Reviewer-signed audit trail →</a><a class="button secondary" href="trust.html">Trust boundary</a></div>
+        </div>
+        <div class="mvp-cli">
+          <div class="codecommand"><code>pcs verify-receipt-v06 receipt.json --signature receipt.sig.json …</code><button data-copy="pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;">Copy</button></div>
+        </div>
+      </div>
+    </section>
+
+<section class="section" id="product">
       <div class="kicker">The product</div>
       <h2>Evidence that travels with the claim.</h2>
       <p class="section-intro">Scientific results often arrive as a collection of code, data, notebooks, exported figures, model files, and informal explanations. PCS turns a bounded computational claim into a structured assurance package another person can inspect and replay without trusting the original producer.</p>
       <div class="grid3" style="margin-top:30px">
         <article class="card">
           <div class="iconbox">01</div>
-          <h3>Declare the claim</h3>
-          <p>Freeze the exact claim, assumptions, workflow boundary, and desired assurance class before results are reviewed.</p>
+          <h3>Map the project</h3>
+          <p>Start from existing files. PCS drafts candidate artifacts, checks, claims, and assumptions for explicit human review.</p>
         </article>
         <article class="card">
           <div class="iconbox">02</div>
@@ -104,14 +184,14 @@
     </section>
 
     <section class="section">
-      <div class="kicker">Live engine</div>
-      <h2>The demo speaks the PCS v0.5 language.</h2>
-      <p class="section-intro">The browser verifier is not a screenshot or a hard-coded PASS screen. It reads a production-format PCS certificate and package manifest, verifies every staged file hash and the Ed25519 package signature, replays the restricted PK/PD predicates, re-derives claim status, and applies reviewer-controlled acceptance policy.</p>
+      <div class="kicker">Product + parity surfaces</div>
+      <h2>v0.6 is the MVP path. v0.5 remains the browser parity fixture.</h2>
+      <p class="section-intro">The current product candidate lives in the Python CLI: deterministic v0.6 attestation, extraction-free ZIP verification, normalized decision regeneration, and external reviewer policy. The existing in-browser verifier remains useful as a transparent v0.5 parity/research fixture; it is no longer presented as the current product format.</p>
       <div class="grid4" style="margin-top:30px">
-        <article class="card"><div class="num">v0.5</div><h3>Real package structure</h3><p>Certificate, artifacts, evidence objects, workflow, package manifest, signer public key, limitations, and package signature are represented explicitly.</p></article>
-        <article class="card"><div class="num">11/11</div><h3>Decision parity</h3><p>The browser decision port currently matches all frozen Python↔Lean decision-vector cases, including failure, OPEN, mixed support, and formal-as-stronger computational evidence.</p></article>
-        <article class="card"><div class="num">8 rows</div><h3>Independent PK/PD replay</h3><p>The browser recomputes the reference concentration and Emax effect trajectory from the packaged model rather than trusting recorded outputs.</p></article>
-        <article class="card"><div class="num">Ed25519</div><h3>Cryptographic package binding</h3><p>The package manifest is signed and independently checked in-browser. Tampering can leave signer identity valid while package integrity and scientific replay fail.</p></article>
+        <article class="card"><div class="num">v0.6</div><h3>Current MVP package path</h3><p>Canonical JCS certificate, normalized decision set, signed exact manifest, deterministic self-verified ZIP, and policy-bound verification receipt.</p></article>
+        <article class="card"><div class="num">Policy</div><h3>Reviewer-controlled acceptance</h3><p>The v0.6 verifier preserves <code>valid</code> separately from <code>accepted</code> and binds the exact external policy bytes into the receipt by SHA-256.</p></article>
+        <article class="card"><div class="num">5 checks</div><h3>Executable MVP evidence</h3><p>PK/PD contract, PK/PD analytic replay, CSV split disjointness, reaction balance, and unit compatibility are supported by the v0.6 producer.</p></article>
+        <article class="card"><div class="num">v0.5</div><h3>Legacy browser parity fixture</h3><p>The local browser engine still verifies the frozen 0.5 reference package and 11/11 decision vectors for transparency, without being mislabeled as the v0.6 product verifier.</p></article>
       </div>
     </section>
 
@@ -141,10 +221,10 @@
     <section class="section-tight">
       <div class="callout">
         <div>
-          <h3>Try the real browser verifier.</h3>
-          <p>The demo now uses a production-format PCS v0.5 virtual package. Your browser checks the bound file set and hashes, verifies the Ed25519 package signature, replays the packaged PK/PD artifacts, reassesses claims, runs the frozen decision vectors, evaluates reviewer policy, and exposes the full verification log.</p>
+          <h3>Explore the v0.6 product loop and reviewer policy.</h3>
+          <p>The MVP page shows the current producer and reviewer commands, deterministic bundle flow, policy separation, supported evidence types, and the exact formal boundary. The older browser verifier remains available as a v0.5 transparency fixture.</p>
         </div>
-        <div class="actions" style="margin-top:0"><a class="button dark" href="demo.html">Open verifier →</a><a class="button secondary" href="model-lab.html">Generate PCS inputs</a></div>
+        <div class="actions" style="margin-top:0"><a class="button dark" href="mvp.html">Open v0.6 MVP →</a><a class="button secondary" href="demo.html">Open v0.5 verifier</a></div>
       </div>
     </section>
 
@@ -163,7 +243,7 @@
     </section>
 
     <section class="section-tight">
-      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The Python replay checker remains part of the executable trusted computing base. The PCS assurance decision and normalized-state soundness layer is machine-checked in Lean 4.28.0; the raw serialized-package → normalized-state refinement boundary remains open.</p>
+      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The v0.6 MVP remains an executable Python trust boundary, and its latest full gate has not run because GitHub allocated no runner. The strongest machine-checked raw-wire → <code>Assures</code> chain currently targets the older v0.5/v1 format; porting that exact theorem stack to v0.6/v2 remains open.</p>
     </section>
   </main>
 
@@ -173,7 +253,7 @@
         <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
         <p>Independent assurance infrastructure for critical scientific computation.</p>
       </div>
-      <div class="footercol"><strong>Explore</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="#research">Research architecture</a><a href="privacy.html">Privacy</a></div>
+      <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="#research">Research architecture</a><a href="privacy.html">Privacy</a></div>
       <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
     </div>
   </footer>

@@ -10,11 +10,21 @@ Live preview:
 
 The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
 
-- **Trust Center** — distinguishes the released PCS 0.5.0 checker, the machine-checked Lean 4.28.0 decision/normalized-state theorem layer, the browser parity profile, the pending 0.5.1 serialized-refinement work, and explicit non-claims.
+- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.5/v1 theorem boundary, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
 - **Machine-readable trust state** — `public/status.json` mirrors the released checker/proof/parity/preview state and is cross-checked against the shipped browser fixture by the deployment gate.
 - **Security contact** — `public/.well-known/security.txt` provides a standard disclosure/contact path.
 - **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.
-- **Production-format live verifier** — validates the built-in released PCS 0.5.0 package or an extracted real PCS evidence directory, hashes exact selected file bytes, verifies Ed25519 package signatures when present, replays restricted one-compartment PK + direct Emax PD evidence, reassesses claims, evaluates reviewer policy, includes artifact/status/signature threat-lab scenarios, exposes a claim-level decision trace and local package inspector, emits a verification receipt, and runs 11 frozen decision-parity vectors.
+- **Local Project Mapper** — lets a scientist choose an existing project folder, computes local SHA-256 artifact snapshots, detects supported PK/PD/split/reaction/unit patterns, previews heuristic Python/Jupyter/R artifact flow without executing source code, renders a visual workflow graph, allows independent check/workflow selection, and exports non-attestable machine-readable plus Markdown review artifacts without uploading project files.
+- **Independent static-workflow replay** — the production v0.6 verifier reconstructs exact delivered source files and re-runs workflow discovery before scientific replay. Clean AST graphs require exact dependency-set equality; weaker mappings require every signed edge to be rediscovered.
+- **v0.6 MVP product surface** — documents the complete `discover-v06 → confirm-v06 → attest-v06 → deterministic self-verified ZIP → verify-v06-bundle → reviewer policy → receipt` loop, the five initial executable checks, and the exact formal boundary.
+- **Local v0.6 policy lab** — demonstrates the production semantics that PCS package validity and reviewer acceptance are different axes, computes SHA-256 over the exact displayed reviewer-policy bytes, and produces an illustrative receipt without network calls.
+- **Adaptive replay scheduler** — documents and demonstrates deterministic ordering baselines plus the experimental contextual-bandit scheduler, shadow mode, telemetry privacy, cold-start thresholds, and the invariant that all mandatory checks execute and scientific verdicts ignore scheduler outputs.
+- **Multi-reviewer quorum governance** — documents and publishes a role-aware 2-of-3 review policy: authorized reviewer fingerprints, role-specific policy SHA-256 requirements, duplicate-identity rejection, and exact-subject grouping so reviews over different bundles cannot combine.
+- **Real-world validation evidence** — publishes the first 5-case public-data validation set: Haber–Bosch chemistry, clean and contaminated UCI Iris splits, Indometh unit equivalence, and an IV Indometh single-exponential falsification case. All 5 matched predeclared expectations, including 2 expected failures.
+- **Executed runtime portability evidence** — fail-closed CircleCI campaigns cover Ubuntu 24/26, amd64/ARM64, Docker/rootful Podman, native R, and repeated deterministic replay.
+- **Offline dependency reconstruction** — signed hash-locked NumPy wheels and signed local R repository payloads are restored with network-disabled builds; the base images are checked not to contain the target dependency.
+- **Native ABI evidence** — PCS captures native-extension SHA-256 fingerprints and has demonstrated architecture-specific binary differences with byte-identical scientific outputs for the tested workload.
+- **Legacy v0.5 browser parity verifier** — validates the frozen PCS 0.5.0 reference package or an extracted v0.5 evidence directory, hashes exact selected file bytes, verifies Ed25519 package signatures when present, replays restricted one-compartment PK + direct Emax PD evidence, reassesses claims, and runs 11 frozen decision-parity vectors. It is intentionally labeled as a parity/transparency fixture rather than the current v0.6 product verifier.
 - **PK/PD model lab** — generates the restricted model and prediction trajectory, replays it through the browser engine, and exports production-compatible `manifest.json`, `pk_model.json`, and `predictions.csv` for the Python CLI.
 - **Pilot intake builder** — validates claim/assumption IDs, computes a canonical SHA-256 semantic commitment, and exports both `pilot_intake.json` and `pilot_intake.lock.json`.
 - **Contact workflow** — direct contact at `marenatommaso@gmail.com`, local clipboard support, and a browser-generated `mailto:` design-partner inquiry.
@@ -22,7 +32,7 @@ The site intentionally has no application backend. Its interactive functionality
 
 The browser verifier is a functional demonstration, not the production PCS Python verifier. Its built-in signing key is explicitly demo-only.
 
-The PCS assurance decision and normalized-state soundness layer has been machine-checked under Lean 4.28.0. The website keeps that verified result separate from the unreleased 0.5.1 serialized-refinement branch, which remains labeled verification-pending until its dedicated Python and Lean gate completes.
+The strongest current machine-checked theorem stack targets the older v0.5/v1 normalized-wire representation, including accepted raw wire bytes through `Assures` under the stated package/signature/replay boundary. The website keeps that result separate from the v0.6/v2 executable MVP candidate; the exact v0.6 formal port remains open.
 
 ## Repository layout
 
@@ -31,6 +41,9 @@ Only `public/` is deployable.
 ```text
 public/
   index.html
+  project-builder.html
+  mvp.html
+  validation.html
   trust.html
   status.json
   .well-known/security.txt
@@ -43,6 +56,8 @@ public/
   404.html
   styles.css
   site.js
+  project-builder.js
+  mvp.js
   demo.js
   model-lab.js
   pcs-engine.js
@@ -51,6 +66,10 @@ public/
   contact.js
   logo-mark.svg
   pcs-v05-reference-package.json
+  reviewer-policy.example.json
+  review-quorum-policy.example.json
+  review-set.example.json
+  real-world-validation-2026-09-29.json
   _headers
   robots.txt
 ```
@@ -71,7 +90,7 @@ Run the static safety/integrity audit:
 python scripts/check_site.py
 ```
 
-The checker validates internal assets, the real contact address, local-only JavaScript posture, security headers, logo metadata, the presence of the Trust Center/shared navigation, and the SHA-256/fingerprint consistency of the released 0.5.0 browser fixture.
+The checker validates internal assets, the real contact address, local-only JavaScript posture, security headers, logo metadata, the v0.6 MVP/status/policy/quorum/adaptive-scheduler surfaces, the 5-case real-world validation evidence, the Trust Center/shared navigation, and the SHA-256/fingerprint consistency of the legacy 0.5.0 browser fixture.
 
 ## Cloudflare deployment
 
@@ -98,8 +117,25 @@ npx wrangler deploy
 - no third-party JavaScript;
 - no scientific-data submission endpoint;
 - verifier package JSON and extracted-directory selections remain local to the browser;
+- Project Mapper file selections, hashes, and manifest drafts remain local to the browser;
 - pilot-intake entries remain local to the browser;
 - CSP and browser-hardening headers live in `public/_headers`;
 - search indexing remains intentionally disabled during alpha.
 
 Never place secrets, customer data, signing private keys, unpublished research artifacts, PHI, or regulated data in this repository.
+
+
+### Reproducibility environment preview
+
+The Project Mapper now previews Python/R dependency declarations, common lockfiles,
+interpreter constraints, Conda/Nix specifications, and Docker/OCI base-image
+pinning. It exposes a descriptive hermeticity state and downloadable
+`pcs-environment-plan.json`.
+
+The browser preview is intentionally non-authoritative. `confirm-v06` regenerates
+the canonical environment capture from the exact reviewed artifact bytes using the
+production Python parser before attestation. Reviewer verification independently
+re-derives the same signed environment contract at `environment_replay`.
+
+The website never executes package managers, environment installers, container
+builds, or project installation hooks.
