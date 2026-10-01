@@ -183,10 +183,10 @@
   <p class="section-intro">The strongest trust posture is one that names its limits. The following remain separate from the current machine-checked result.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">01</div><h3>Scientific truth</h3><p>Formal soundness of a decision rule does not prove that a biological, chemical, or clinical model is empirically adequate.</p></article>
-    <article class="card"><div class="num">02</div><h3>End-to-end program verification</h3><p>Raw JSON parsing, hashing, ZIP handling, Python execution, and domain checker implementations remain outside the current Lean theorem boundary.</p></article>
+    <article class="card"><div class="num">02</div><h3>Production correspondence + external contracts</h3><p>The v0.6/v2 theorem chain is machine-checked, but Python acceptance is not yet proved to refine Lean. ZIP decoding, environment capture, and replay fidelity for non-chemistry checks remain explicit contracts.</p></article>
     <article class="card"><div class="num">03</div><h3>Regulatory status</h3><p>PCS does not currently claim FDA certification, GxP validation, clinical validity, safety, efficacy, or regulatory acceptance.</p></article>
     <article class="card"><div class="num">04</div><h3>Arbitrary code correctness</h3><p>The current product supports bounded predicates and adapters; it does not prove arbitrary Python, R, C++, notebooks, solvers, or simulations correct.</p></article>
-    <article class="card"><div class="num">05</div><h3>Cryptographic implementation proofs</h3><p>v0.6 uses a cross-language JCS profile and tested SHA-256/Ed25519 bindings, but SHA-256 is not proved against the standard and Ed25519 authenticity remains outside the Lean kernel.</p></article>
+    <article class="card"><div class="num">05</div><h3>Cryptographic standard boundary</h3><p>Lean implementations and wiring exist, but SHA-256 and Ed25519 are still validated against standards by known-answer vectors rather than independent specification-equivalence proofs; Ed25519 unforgeability remains a cryptographic assumption.</p></article>
     <article class="card"><div class="num">06</div><h3>Reviewer judgment</h3><p>PCS can enforce an explicit acceptance policy, but the receiving scientist or organization remains responsible for deciding which evidence and assurance classes are sufficient.</p></article>
   </div>
 </section>
