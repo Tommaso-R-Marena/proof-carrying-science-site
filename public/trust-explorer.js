@@ -1,0 +1,1 @@
+(()=>{"use strict";const buttons=[...document.querySelectorAll("[data-trust-filter]")],cards=[...document.querySelectorAll("#trustMap [data-kind]")];buttons.forEach(b=>b.addEventListener("click",()=>{const f=b.dataset.trustFilter;buttons.forEach(x=>x.classList.toggle("active",x===b));cards.forEach(c=>{c.hidden=!(f==="all"||c.dataset.kind===f)})}))})();
