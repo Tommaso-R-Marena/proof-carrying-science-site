@@ -406,6 +406,36 @@ for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-
     if required_header not in headers:
         errors.append(f"_headers missing {required_header}")
 
+inspector_page = ROOT / "package-inspector.html"
+if inspector_page.exists():
+    inspector_text = inspector_page.read_text(encoding="utf-8")
+    for required_text in [
+        "End-to-end assurance graph",
+        "Change-impact analysis",
+        'id="assuranceGraph"',
+        'id="impactArtifact"',
+        'id="downloadInspection"',
+        "pcs verify-local-v06 delivered.pcs.zip",
+    ]:
+        if required_text not in inspector_text:
+            errors.append(f"package-inspector.html: end-to-end assurance graph drift: {required_text}")
+
+inspector_script = ROOT / "package-inspector.js"
+if inspector_script.exists():
+    inspector_js = inspector_script.read_text(encoding="utf-8")
+    for required_text in [
+        "function impactFromArtifact",
+        "function renderAssuranceGraph",
+        "function inspectionReport",
+        "pcs-browser-inspection-report-v1",
+        "affected_workflow_nodes",
+        "affected_evidence",
+        "affected_claims",
+        "receipt.authoritative===true",
+    ]:
+        if required_text not in inspector_js:
+            errors.append(f"package-inspector.js: assurance dependency engine drift: {required_text}")
+
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
 
