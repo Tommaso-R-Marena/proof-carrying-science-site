@@ -312,6 +312,35 @@
       ],
       "unsupported_claims_fail_closed": true,
       "claim_translation_model": "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation"
+    },
+    "demo_clarity": {
+      "format": "pcs-demo-interpretation-ui-v1",
+      "one_click_guided_demo": "guided-submission.html?demo=1",
+      "demo_mode_labels_synthetic_example": true,
+      "preparation_not_presented_as_verification": true,
+      "preparation_state_label": "PREPARED DRAFT",
+      "result_layers": [
+        "claim_intent",
+        "typed_predicate",
+        "evidence_replay",
+        "derived_claim_status",
+        "reviewer_acceptance"
+      ],
+      "exact_claim_statuses_explained": [
+        "COMPUTATIONALLY_SUPPORTED",
+        "FALSIFIED_OR_CHECK_FAILED",
+        "OPEN"
+      ],
+      "package_validity_distinguished_from_claim_support": true,
+      "reviewer_acceptance_distinguished_from_validity": true,
+      "scientific_truth_overclaim_rejected": true,
+      "legacy_verifier_dynamic_result_explanation": true,
+      "legacy_verifier_result_dimensions": [
+        "scientific_replay",
+        "package_integrity",
+        "signer_authenticity",
+        "reviewer_policy"
+      ]
     }
   },
   "formal": {

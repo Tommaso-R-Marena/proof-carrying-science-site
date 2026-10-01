@@ -43,6 +43,15 @@
 
 <div id="guidedMessage" class="guided-message" hidden role="status" aria-live="polite"></div>
 
+<div id="guidedDemoContext" class="guided-demo-context" hidden>
+  <div class="guided-demo-badge">DEMO MODE</div>
+  <div class="guided-demo-copy">
+    <strong>Synthetic PK/PD example</strong>
+    <span><b>Scientific question:</b> does the declared model satisfy the PCS contract, and do the prediction values reproduce the declared one-compartment IV-bolus + Emax equations within exact tolerances?</span>
+  </div>
+  <div class="guided-demo-watch"><strong>Watch the chain</strong><span>intent → typed predicate → bound evidence → claim status → reviewer decision</span></div>
+</div>
+
 <section class="guided-stage" data-guided-stage="1">
   <div class="guided-stage-head">
     <div><span class="guided-stage-number">01</span><h2>Add your project</h2><p>Choose the folder you actually work in, select a few files, or try the example first.</p></div>
@@ -116,7 +125,7 @@
 
 <section class="guided-stage" data-guided-stage="3" hidden>
   <div class="guided-stage-head">
-    <div><span class="guided-stage-number">03</span><h2>Review what PCS found</h2><p>The important pieces first. Technical commitments and raw JSON stay available underneath.</p></div>
+    <div><span class="guided-stage-number">03</span><h2>Review what PCS found</h2><p>This is the contract PCS is preparing—not yet a PASS. Check that the artifacts, formal claim meaning, workflow, and environment match what you intend.</p></div>
     <span class="chip pending">REVIEW</span>
   </div>
   <div class="guided-review-grid" id="guidedReviewCards"></div>
@@ -153,10 +162,11 @@
 
 <section class="guided-stage" data-guided-stage="5" hidden>
   <div class="guided-result">
-    <div class="guided-result-mark">✓</div>
-    <div class="kicker">Browser preparation complete</div>
-    <h2>Your PCS draft is ready for authoritative confirmation.</h2>
-    <p>Nothing was uploaded and your code was not executed during discovery. Download the draft, keep it with the original project, and run the two commands below to create the signed PCS package.</p>
+    <div class="guided-result-mark draft-mark">D</div>
+    <div class="kicker">Draft ready · not yet verified</div>
+    <h2>Your PCS claim contract is prepared for authoritative verification.</h2>
+    <p>This screen means PCS successfully prepared a reviewable draft. It does <strong>not</strong> mean the scientific claim passed. The authoritative CLI still re-hashes the project, signs the package, and the reviewer independently replays the required evidence.</p>
+    <div class="guided-not-verified"><strong>Current state: PREPARED DRAFT</strong><span>No scientific verdict has been issued yet.</span></div>
   </div>
   <div class="guided-result-grid">
     <article class="guided-result-card">
@@ -173,9 +183,58 @@
       <div class="codecommand"><code id="guidedAttestCommand">pcs attest-v06 ...</code><button type="button" id="guidedCopyAttest">Copy</button></div>
     </article>
   </div>
+
+  <section class="guided-verification-story" aria-label="What happens after preparation">
+    <div class="kicker">What happens next</div>
+    <h3>PCS separates five questions that are often blurred together.</h3>
+    <div class="guided-verification-chain">
+      <div><span>1</span><strong>Is this the intended claim?</strong><small>You confirm the typed predicate and bound artifacts.</small></div>
+      <div><span>2</span><strong>Are these the same bytes?</strong><small>PCS re-hashes and binds the exact project/package contents.</small></div>
+      <div><span>3</span><strong>Did the required checks pass?</strong><small>The reviewer independently replays the declared evidence.</small></div>
+      <div><span>4</span><strong>What support follows?</strong><small>PCS derives the claim status from evidence; it does not trust a recorded PASS.</small></div>
+      <div><span>5</span><strong>Will this reviewer accept it?</strong><small>Acceptance is a separate receiver-owned policy decision.</small></div>
+    </div>
+  </section>
+
+  <section class="guided-result-meaning" aria-label="How to read PCS results">
+    <div class="kicker">How to read a PCS result</div>
+    <h3>A green result never means “science proved true.”</h3>
+    <div class="guided-result-legend">
+      <article class="result-meaning neutral">
+        <span class="result-token">VALID PACKAGE</span>
+        <strong>The delivered package passed structural, integrity, signature, and replay requirements.</strong>
+        <p>It means the verifier accepted the exact package under PCS rules. It does not by itself establish the scientific claim.</p>
+      </article>
+      <article class="result-meaning pass">
+        <span class="result-token">COMPUTATIONALLY_SUPPORTED</span>
+        <strong>All declared computational evidence required by this claim passed.</strong>
+        <p>It supports the exact typed predicate under its declared assumptions and scope. It does not automatically establish empirical, biological, or clinical truth.</p>
+      </article>
+      <article class="result-meaning fail">
+        <span class="result-token">FALSIFIED_OR_CHECK_FAILED</span>
+        <strong>At least one required check failed.</strong>
+        <p>The claim cannot receive the requested support from this evidence. Investigate the failed check rather than treating the package as successful.</p>
+      </article>
+      <article class="result-meaning open">
+        <span class="result-token">OPEN</span>
+        <strong>Required evidence is missing, unverified, or insufficient for that claim type.</strong>
+        <p>OPEN is not a pass and not necessarily a falsification. It means PCS cannot currently justify the requested assurance level.</p>
+      </article>
+      <article class="result-meaning policy">
+        <span class="result-token">ACCEPTED</span>
+        <strong>The reviewer’s explicit policy accepts the verified package and claim statuses.</strong>
+        <p>Acceptance is governance, not scientific truth. Two reviewers may apply different policies to the same valid package.</p>
+      </article>
+    </div>
+  </section>
+
   <div class="guided-next">
     <div><strong>Want PCS integrated into a real workflow?</strong><span>We are looking for design partners with consequential computational pipelines.</span></div>
     <div class="actions"><a class="button primary" href="intake.html">Start a pilot</a><a class="button secondary" href="trust.html">Inspect the trust model</a></div>
+  </div>
+  <div class="guided-demo-takeaway" id="guidedDemoTakeaway" hidden>
+    <strong>Demo takeaway</strong>
+    <span>PCS is not asking you to trust a notebook result. It binds an exact claim to exact files, exact checks, and an exact environment so another party can independently reproduce the evidence and decide whether that level of support is acceptable.</span>
   </div>
   <button class="button ghost" type="button" id="guidedStartOver">Start over</button>
 </section>
