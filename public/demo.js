@@ -225,6 +225,56 @@ function downloadReceipt(){
   const blob=new Blob([JSON.stringify(lastReceipt,null,2)+"\n"],{type:"application/json"});
   const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="pcs-browser-v05-verification-receipt.json";a.click();URL.revokeObjectURL(url);
 }
+function explainVerificationResult(result){
+  const d=result.assurance_dimensions||{};
+  const claimStatuses=(result.claimResults||[]).map(x=>x.assessment?.status).filter(Boolean);
+  const supported=claimStatuses.filter(x=>["COMPUTATIONALLY_SUPPORTED","FORMALLY_VERIFIED_UNDER_ASSUMPTIONS","EMPIRICALLY_VALIDATED_WITHIN_SCOPE","MIXED_SUPPORT_UNDER_ASSUMPTIONS"].includes(x));
+  const failed=claimStatuses.filter(x=>x==="FALSIFIED_OR_CHECK_FAILED");
+  const open=claimStatuses.filter(x=>x==="OPEN");
+  const accepted=d.reviewer_policy==="PASS"&&result.valid;
+  const packageOk=d.package_integrity==="PASS";
+  const replayOk=d.scientific_replay==="PASS";
+  const authOk=["VERIFIED","UNSIGNED"].includes(d.signer_authenticity);
+  let headline,means,doesNot,next;
+  if(accepted){
+    headline="Accepted under this reviewer policy";
+    means=`The delivered bytes passed integrity checks, the declared evidence replayed consistently, and this reviewer policy accepts the resulting claim status${supported.length===1?"":"es"}.`;
+    doesNot="This does not prove biological or clinical validity, universal correctness, or acceptance by every reviewer. It establishes only the exact scoped claims represented in the package.";
+    next="Inspect Claim reassessment to see the derived assurance status, then Replay metrics to see the numerical evidence.";
+  }else if(!packageOk){
+    headline="Rejected: package integrity failed";
+    means="The delivered file set or hashes do not match the authenticated package commitment, so PCS refuses to treat the staged bytes as the claimed package.";
+    doesNot="This does not necessarily show that the underlying scientific model is false; the trust chain was broken before that conclusion could be drawn safely.";
+    next="Inspect Package and Verification log to find the changed, missing, or unexpected bytes.";
+  }else if(!replayOk||failed.length){
+    headline="Rejected: required scientific replay failed";
+    means="At least one required computational check did not reproduce the recorded result, so the corresponding claim cannot receive the requested support.";
+    doesNot="A failed replay does not automatically identify why the science failed; it establishes that this evidence does not support the exact declared claim.";
+    next="Inspect Evidence replay and Claim reassessment to locate the failing check and derived claim status.";
+  }else if(open.length){
+    headline="Not accepted: at least one claim remains OPEN";
+    means="PCS does not have enough independently verified evidence to justify the requested assurance level for at least one claim.";
+    doesNot="OPEN is not the same as falsified. It means the evidence is missing, unverified, or of the wrong assurance class.";
+    next="Inspect Claim reassessment to see which evidence class or required item is missing.";
+  }else if(d.reviewer_policy==="FAIL"){
+    headline="Verified evidence, but this reviewer policy does not accept it";
+    means="The package and replay may be internally valid, but the receiver requires a different signer or a stronger claim status than this package provides.";
+    doesNot="Policy rejection does not mean the computation failed. It means the verified result is insufficient for this reviewer’s acceptance rule.";
+    next="Inspect Reviewer policy and compare the required claim status or signer constraint with the verified package.";
+  }else if(!authOk){
+    headline="Rejected: signer authenticity failed";
+    means="PCS could not authenticate the signer required by this review policy.";
+    doesNot="This does not by itself show that the computation is numerically wrong; it means the reviewer cannot trust the claimed producer identity.";
+    next="Inspect Signer authenticity and the package-signature details.";
+  }else{
+    headline="Verification did not satisfy the current profile";
+    means="At least one required assurance dimension did not meet the current verifier or policy requirements.";
+    doesNot="Do not collapse this into a scientific truth judgment; inspect the failed dimension first.";
+    next="Use the four assurance dimensions and Verification log below.";
+  }
+  return {headline,means,doesNot,next};
+}
+
 async function verify(){
   $("verify").disabled=true;
   try{
@@ -243,10 +293,15 @@ async function verify(){
     setStatus("policyCard","policyStatus",result.assurance_dimensions.reviewer_policy);
 
     const oc=$("overallCard");oc.classList.remove("pass","fail");oc.classList.add(result.valid?"pass":"fail");
-    $("overallStatus").textContent=result.valid?"Package accepted by this browser profile":"Package rejected by this browser profile";
+    const interpretation=explainVerificationResult(result);
+    $("overallStatus").textContent=result.valid?"ACCEPTED under this reviewer policy":"NOT ACCEPTED under this reviewer policy";
     $("overallDetail").textContent=result.valid
-      ?"All requested package, replay, authenticity, and policy checks passed."
-      :`${result.errors.length} verification issue${result.errors.length===1?"":"s"} detected; inspect the log below.`;
+      ?"The package, replay, authenticity requirements, and current reviewer policy all passed. See the interpretation below for the exact scope."
+      :`${result.errors.length} verification issue${result.errors.length===1?"":"s"} detected. The interpretation below identifies which layer failed.`;
+    $("demoMeaningHeadline").textContent=interpretation.headline;
+    $("demoMeans").textContent=interpretation.means;
+    $("demoDoesNotMean").textContent=interpretation.doesNot;
+    $("demoNext").textContent=interpretation.next;
     $("specBadge").textContent=(result.certificate?.spec_version||"unknown")+" · "+(result.certificate?.checker_version||"");
 
     renderPackage(result,p);renderClaims(result);renderEvidence(result);renderDecisionTrace(result);renderTrace(result);
@@ -286,7 +341,11 @@ async function verify(){
     const message=String(e);
     ["replay","integrity","auth","policy"].forEach(x=>setStatus(x+"Card",x+"Status","FAIL"));
     $("overallCard").classList.remove("pass");$("overallCard").classList.add("fail");
-    $("overallStatus").textContent="Verifier error";$("overallDetail").textContent=message;
+    $("overallStatus").textContent="VERIFIER ERROR";$("overallDetail").textContent=message;
+    $("demoMeaningHeadline").textContent="The verifier could not complete";
+    $("demoMeans").textContent="No trustworthy acceptance or claim-support conclusion should be drawn from an incomplete verification run.";
+    $("demoDoesNotMean").textContent="A software/runtime error is not itself evidence that the scientific claim is false.";
+    $("demoNext").textContent="Resolve the verifier error first, then rerun the same package.";
     $("errorLog").innerHTML=`<ul class="errorlist"><li>${esc(message)}</li></ul>`;
     lastReceipt=null;$("downloadReceipt").disabled=true;
   }finally{$("verify").disabled=false;}
