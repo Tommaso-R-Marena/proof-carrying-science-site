@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /demo.html
-Disallow: /model-lab.html
 
 Sitemap: https://proof-carrying-science-site.marenatommaso.workers.dev/sitemap.xml
