@@ -3,296 +3,299 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Proof-Carrying Science</title>
-<meta name="description" content="Independent computational assurance for scientific workflows: replayable evidence, explicit assumptions, provenance, signatures, and reviewer-controlled policy.">
+<title>Proof-Carrying Science · Verifiable Scientific Computation</title>
+<meta name="description" content="Proof-Carrying Science packages scientific claims with exact evidence, replay, signatures, machine-checked assurance, and reviewer-owned acceptance policy.">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="home-revamp">
 <div class="topbar">
   <div class="shell">
-    <span>v0.6 MVP candidate · Complete producer-to-reviewer path · Computational biopharma first</span>
+    <span>PCS v0.6 MVP · Lean-authoritative validity · Private design-partner alpha</span>
     <a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a>
   </div>
 </div>
+
 <div class="shell">
-  <nav aria-label="Primary">
-    <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-    <div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a>
-      <a href="validation.html">Validation</a>
-      <a href="trust.html">Trust Center</a>
-      <a href="#product">Product</a>
-      <a href="architecture.html">Architecture</a>
-      <a href="demo.html">Live verifier</a>
-      <a href="intake.html">Pilot intake</a>
-      <a href="#research">Research</a>
-      <a class="button dark" href="contact.html">Contact</a>
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="#product">Product</a>
+    <a href="guided-submission.html?demo=1">Demo</a>
+    <a href="result-anatomy.html">Results</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="project-builder.html">Project Mapper</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="hero hero-revamp">
+  <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+  <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+  <div class="hero-revamp-grid">
+    <div class="hero-revamp-copy">
+      <div class="eyebrow">Independent assurance for scientific computation</div>
+      <h1>Scientific results should arrive with their evidence.</h1>
+      <p>PCS turns a computational claim into a verifiable package: the exact artifacts, typed claim, assumptions, replay evidence, signatures, machine-checked assurance, and the reviewer’s own acceptance decision.</p>
+      <div class="actions">
+        <a class="button primary button-lg" href="guided-submission.html?demo=1">Run the 90-second demo →</a>
+        <a class="button hero-secondary button-lg" href="guided-submission.html">Try it on a project</a>
+      </div>
+      <div class="hero-proof-row" aria-label="Current PCS status">
+        <span><i></i> v0.6 producer → reviewer path</span>
+        <span><i></i> compiled Lean authority required</span>
+        <span><i></i> files stay local in browser demos</span>
+      </div>
     </div>
-  </nav>
 
-  <main>
-    <section class="hero">
-      <div class="hero-network" aria-hidden="true"></div>
-      <div class="hero-content">
-        <div class="eyebrow">v0.6 MVP candidate · Independent computational assurance</div>
-        <h1>Produce a scientific assurance package. Verify it independently.</h1>
-        <p>Proof-Carrying Science now has a complete v0.6 producer-to-reviewer path: one command packages exact artifacts, replays supported checks, derives claim status, signs and self-verifies a deterministic ZIP; another independently verifies the archive and applies reviewer-controlled policy.</p>
-        <div class="actions">
-          <a class="button primary" href="guided-submission.html">Try PCS →</a><a class="button secondary" href="guided-submission.html?demo=1">Run 90-second demo</a><a class="button ghost" href="result-anatomy.html">Understand a PCS result</a>
-          <a class="button ghost" href="mvp.html">See the v0.6 MVP</a>
-        </div>
-        <div class="hero-meta">
-          <span><strong>Current focus</strong><br>Computational biopharma</span>
-          <span><strong>Trust model</strong><br>Independent replay, not producer trust</span>
-          <span><strong>Formal layer</strong><br>v0.6/v2 archive → scientific-assurance chain machine-checked under explicit external contracts</span>
-        </div>
+    <div class="assurance-console" aria-label="Illustrative PCS assurance console">
+      <div class="console-top">
+        <div><span class="console-dot"></span><span class="console-dot"></span><span class="console-dot"></span></div>
+        <strong>PCS / assurance</strong>
+        <span class="console-live">VERIFIED FLOW</span>
       </div>
-    </section>
-
-    <section class="role-entry" aria-labelledby="roleEntryTitle">
-      <div class="role-entry-head">
-        <div>
-          <div class="kicker">Start from your role</div>
-          <h2 id="roleEntryTitle">What are you here to do?</h2>
-          <p>PCS has two different workflows. Producers prepare and bind a scientific claim. Reviewers independently verify the delivered package and decide whether the resulting support meets their policy.</p>
-        </div>
-        <a class="button ghost" href="guided-submission.html?demo=1">Just exploring? Run the 90-second demo</a>
+      <div class="console-claim">
+        <small>TYPED CLAIM</small>
+        <strong>Prediction artifact matches the declared analytic model within tolerance.</strong>
+        <code>pkpd_reference_match</code>
       </div>
-      <div class="role-entry-grid">
-        <a class="role-card producer" href="guided-submission.html">
-          <span class="role-card-label">PRODUCER</span>
-          <h3>I have a computation or result to submit.</h3>
-          <p>Choose your project, confirm the exact claim PCS should check, review the discovered files/environment, and prepare the authoritative attestation handoff.</p>
-          <ol>
-            <li>Choose project</li>
-            <li>Confirm rigorous claim</li>
-            <li>Prepare signed PCS package</li>
-          </ol>
-          <strong>Start Guided Submission →</strong>
-        </a>
-        <a class="role-card reviewer" href="result-anatomy.html">
-          <span class="role-card-label">REVIEWER</span>
-          <h3>I need to understand or verify a PCS result.</h3>
-          <p>See how package validity, claim status, and reviewer acceptance are separated, then follow the v0.6 reviewer workflow for independent verification.</p>
-          <ol>
-            <li>Verify exact package</li>
-            <li>Inspect derived claim status</li>
-            <li>Apply receiver-owned policy</li>
-          </ol>
-          <strong>Understand a PCS Result →</strong>
-        </a>
+      <div class="console-flow">
+        <div class="console-step done"><span>01</span><div><strong>Bind</strong><small>exact artifact bytes</small></div><b>✓</b></div>
+        <div class="console-step done"><span>02</span><div><strong>Replay</strong><small>required evidence</small></div><b>✓</b></div>
+        <div class="console-step done"><span>03</span><div><strong>Assure</strong><small>Lean authority</small></div><b>✓</b></div>
+        <div class="console-step done"><span>04</span><div><strong>Review</strong><small>receiver-owned policy</small></div><b>✓</b></div>
       </div>
-      <p class="role-entry-note"><strong>Important:</strong> producer and reviewer are intentionally separate trust roles. A producer cannot make a package “accepted” simply by generating it; acceptance belongs to the receiving reviewer’s policy.</p>
-    </section>
-
-    <section class="statusbar" aria-label="Current product status">
-      <div><span>Producer path</span><strong><code>attest-v06</code> · implemented</strong></div>
-      <div><span>Reviewer path</span><strong><code>verify-v06-bundle</code> · implemented</strong></div>
-      <div><span>Reviewer policy</span><strong>Valid ≠ accepted · SHA-256 bound</strong></div>
-      <div><span>Runtime evidence</span><strong>Cross-machine CircleCI gates · PASS</strong></div>
-    </section>
-
-    <section class="mvp-banner" aria-label="v0.6 MVP workflow">
-      <div>
-        <div class="kicker">First complete MVP loop</div>
-        <h3>Bounded project → signed ZIP → independent review receipt.</h3>
-        <p>The v0.6 candidate copies exact source artifacts before replay, derives normalized decisions, signs certificate and manifest, creates a deterministic ZIP, verifies the exact candidate archive, then lets the receiver apply an external policy.</p>
-        <div class="actions"><a class="button primary" href="mvp.html">Explore the workflow</a><a class="button secondary" href="trust.html">Inspect trust boundaries</a></div>
+      <div class="console-verdict">
+        <div><small>PACKAGE</small><strong>VALID</strong></div>
+        <div><small>CLAIM</small><strong>COMPUTATIONALLY_SUPPORTED</strong></div>
+        <div><small>POLICY</small><strong>ACCEPTED</strong></div>
       </div>
-      <div class="mvp-cli">
-        <div class="codecommand"><code>pcs attest-v06 manifest.json -o study.pcs.zip …</code><button data-copy="pcs attest-v06 manifest.json -o study.pcs.zip --private-key organization-private.pem --public-key organization-public.pem">Copy</button></div>
-        <div class="codecommand"><code>pcs verify-v06-bundle study.pcs.zip … --policy reviewer-policy.json</code><button data-copy="pcs verify-v06-bundle study.pcs.zip --public-key trusted-public.pem --expected-signer-fingerprint &lt;fingerprint&gt; --policy reviewer-policy.json --receipt receipt.json">Copy</button></div>
-      </div>
-    </section>
-
-    <section class="mvp-banner" aria-label="Guided project onboarding">
-      <div>
-        <div class="kicker">Guided Submission</div>
-        <h3>Choose your project. PCS proposes the rest.</h3>
-        <p>The beginner flow reuses the same local Project Mapper engine but hides schemas and cryptographic internals by default. Choose a folder or a few files, review the plain-English claims PCS proposes, confirm what it found, and prepare the authoritative CLI handoff. Your files stay in the browser.</p>
-        <div class="actions"><a class="button primary" href="guided-submission.html">Start guided submission</a><a class="button secondary" href="project-builder.html">Open advanced mapper</a></div>
-      </div>
-      <div class="mvp-cli">
-        <div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div>
-        <div class="codecommand"><code>pcs confirm-v06 ./my-project/pcs-manifest.draft.json</code><button data-copy="pcs confirm-v06 ./my-project/pcs-manifest.draft.json">Copy</button></div>
-      </div>
-    </section>
-
-    <section class="validation-evidence-banner" aria-label="Static workflow replay">
-      <div>
-        <strong>Fresh workflow replay from delivered source bytes.</strong>
-        <span>Human-confirmed Python/Jupyter/R dependency claims are not accepted on producer signature alone. The v0.6 reviewer reconstructs the project-relative source tree from packaged artifacts and reruns static analysis before scientific evidence replay.</span>
-      </div>
-      <a class="button secondary" href="trust.html">Inspect boundary →</a>
-    </section>
-
-    <section class="validation-evidence-banner" aria-label="Real-world validation evidence">
-      <div>
-        <strong>First public-data validation: 5 / 5 expected outcomes matched.</strong>
-        <span>Haber–Bosch atom balance, UCI Iris clean and contaminated splits, Indometh unit equivalence, and a published IV indomethacin negative-control replay. Two cases were expected to fail, and both were correctly rejected.</span>
-      </div>
-      <a class="button secondary" href="validation.html">Inspect results →</a>
-    </section>
-
-    <section class="mvp-banner" aria-label="Adaptive replay scheduling">
-      <div>
-        <div class="kicker">Adaptive replay · experimental</div>
-        <h3>Learn which mandatory checks should run first, never which verdict to return.</h3>
-        <p>PCS v0.6 now supports deterministic baselines, shadow-mode contextual-bandit recommendations, cold-start protection, and privacy-preserving replay telemetry. Every required check still executes and scientific semantics remain unchanged.</p>
-        <div class="actions"><a class="button primary" href="mvp.html#scheduler-lab">Open scheduler lab</a><a class="button secondary" href="architecture.html">Architecture boundary</a></div>
-      </div>
-      <div class="mvp-cli">
-        <div class="codecommand"><code>--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl</code><button data-copy="--scheduler manifest --shadow-bandit --scheduler-telemetry-append history.jsonl">Copy</button></div>
-        <div class="codecommand"><code>pcs scheduler-report-v06 history.jsonl -o scheduler-report.json</code><button data-copy="pcs scheduler-report-v06 history.jsonl -o scheduler-report.json">Copy</button></div>
-      </div>
-    </section>
-
-
-    <section class="validation-evidence-banner" aria-label="Cross-runtime reproducibility evidence">
-      <div>
-        <strong>Executed across OS, architecture, OCI engine, Python, and R.</strong>
-        <span>PCS has completed fail-closed replay campaigns on Ubuntu 24/26, amd64/ARM64, Docker/rootful Podman, native R, offline hash-locked Python wheels, offline renv restoration, and architecture-specific native extensions while reproducing the signed scientific outputs.</span>
-      </div>
-      <a class="button secondary" href="mvp.html#runtime-evidence">Inspect runtime evidence →</a>
-    </section>
-
-    <section class="logo-strip" aria-label="Core assurance dimensions">
-      <div><strong>Scientific replay</strong><span>Can supported checks be independently recomputed?</span></div>
-      <div><strong>Package integrity</strong><span>Are the delivered bytes exactly the reviewed bytes?</span></div>
-      <div><strong>Signer authenticity</strong><span>Did the expected signer issue this package?</span></div>
-      <div><strong>Reviewer policy</strong><span>Does the evidence meet criteria the reviewer chose?</span></div>
-    </section>
-
-        <section class="section-tight">
-      <div class="mvp-banner">
-        <div>
-          <div class="kicker">New audit layer</div>
-          <h3>Producer signs the science. Reviewer signs the review.</h3>
-          <p>PCS v0.6 can now emit a reviewer-signed verification receipt that binds the exact receipt bytes, delivered bundle, reviewer policy, core certificate/index commitments, and the final <code>valid</code>/<code>accepted</code> verdicts.</p>
-          <div class="actions"><a class="button primary" href="mvp.html">Reviewer-signed audit trail →</a><a class="button secondary" href="trust.html">Trust boundary</a></div>
-        </div>
-        <div class="mvp-cli">
-          <div class="codecommand"><code>pcs verify-receipt-v06 receipt.json --signature receipt.sig.json …</code><button data-copy="pcs verify-receipt-v06 receipt.json --signature receipt.sig.json --reviewer-public-key reviewer-public.pem --expected-reviewer-fingerprint &lt;reviewer-fingerprint&gt;">Copy</button></div>
-        </div>
-      </div>
-    </section>
-
-<section class="section" id="product">
-      <div class="kicker">The product</div>
-      <h2>Evidence that travels with the claim.</h2>
-      <p class="section-intro">Scientific results often arrive as a collection of code, data, notebooks, exported figures, model files, and informal explanations. PCS turns a bounded computational claim into a structured assurance package another person can inspect and replay without trusting the original producer.</p>
-      <div class="grid3" style="margin-top:30px">
-        <article class="card">
-          <div class="iconbox">01</div>
-          <h3>Map the project</h3>
-          <p>Start from existing files. PCS drafts candidate artifacts, checks, claims, and assumptions for explicit human review.</p>
-        </article>
-        <article class="card">
-          <div class="iconbox">02</div>
-          <h3>Bind the evidence</h3>
-          <p>Content-address model files, outputs, code, provenance, runtime state, and machine-readable checks.</p>
-        </article>
-        <article class="card">
-          <div class="iconbox">03</div>
-          <h3>Verify the delivery</h3>
-          <p>Replay supported checks, authenticate the package, apply reviewer policy, and preserve unresolved limitations.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section split" id="how">
-      <div>
-        <div class="kicker">How it works</div>
-        <h2>The generator is not the security boundary.</h2>
-        <p class="section-intro">A complex workflow can produce evidence. PCS is designed so the acceptance decision comes from a smaller, independently inspectable verification path.</p>
-        <div class="actions">
-          <a class="button primary" href="demo.html">Verify a signed reference package</a>
-          <a class="button secondary" href="contact.html">Discuss a workflow</a>
-        </div>
-      </div>
-      <div class="workflow" aria-label="PCS assurance workflow">
-        <div class="workflow-step"><div class="step">1</div><div><strong>Commit</strong><span>Freeze claims and assumptions before the outcome is known.</span></div></div>
-        <div class="workflow-step"><div class="step">2</div><div><strong>Package</strong><span>Bind exact artifacts, model definitions, outputs, runtime provenance, and limitations.</span></div></div>
-        <div class="workflow-step"><div class="step">3</div><div><strong>Replay</strong><span>Recompute supported checks from the delivered artifacts rather than trusting recorded PASS labels.</span></div></div>
-        <div class="workflow-step"><div class="step">4</div><div><strong>Authenticate</strong><span>Use cryptographic signatures and package manifests to detect substitution or tampering.</span></div></div>
-        <div class="workflow-step"><div class="step">5</div><div><strong>Review</strong><span>Apply an external policy chosen by the receiving scientist or organization.</span></div></div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="kicker">Product + parity surfaces</div>
-      <h2>v0.6 is the MVP path. v0.5 remains the browser parity fixture.</h2>
-      <p class="section-intro">The current product candidate lives in the Python CLI: deterministic v0.6 attestation, extraction-free ZIP verification, normalized decision regeneration, and external reviewer policy. The existing in-browser verifier remains useful as a transparent v0.5 parity/research fixture; it is no longer presented as the current product format.</p>
-      <div class="grid4" style="margin-top:30px">
-        <article class="card"><div class="num">v0.6</div><h3>Current MVP package path</h3><p>Canonical JCS certificate, normalized decision set, signed exact manifest, deterministic self-verified ZIP, and policy-bound verification receipt.</p></article>
-        <article class="card"><div class="num">Policy</div><h3>Reviewer-controlled acceptance</h3><p>The v0.6 verifier preserves <code>valid</code> separately from <code>accepted</code> and binds the exact external policy bytes into the receipt by SHA-256.</p></article>
-        <article class="card"><div class="num">5 checks</div><h3>Executable MVP evidence</h3><p>PK/PD contract, PK/PD analytic replay, CSV split disjointness, reaction balance, and unit compatibility are supported by the v0.6 producer.</p></article>
-        <article class="card"><div class="num">v0.5</div><h3>Legacy browser parity fixture</h3><p>The local browser engine still verifies the frozen 0.5 reference package and 11/11 decision vectors for transparency, without being mislabeled as the v0.6 product verifier.</p></article>
-      </div>
-    </section>
-
-    <section class="dark-section" id="research">
-      <div class="kicker" style="color:#78b9ff">Research architecture</div>
-      <h2>Verification is not validation.</h2>
-      <p class="section-intro">PCS keeps formal correctness, computational replay, empirical validation, provenance, and reviewer policy separate. A correct implementation of a model does not by itself show that the model is biologically adequate.</p>
-      <div class="grid3" style="margin-top:28px">
-        <article class="card"><div class="num">Γ</div><h3>Explicit assumptions</h3><p>Scientific claims are interpreted under a named context rather than hidden background assumptions.</p></article>
-        <article class="card"><div class="num">E</div><h3>Typed evidence</h3><p>Formal proof, computational checks, empirical validation, and provenance are different evidence classes.</p></article>
-        <article class="card"><div class="num">C @ L</div><h3>Scoped assurance</h3><p>The formal target is Γ ; E ⊢ C @ L: evidence supports a scoped claim at an explicit assurance level.</p></article>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="kicker">First commercial wedge</div>
-      <h2>Computational biopharma, one bounded workflow at a time.</h2>
-      <p class="section-intro">The first PCS adapter focuses on a restricted one-compartment IV-bolus PK model with a direct Emax PD layer. The goal is not to certify pharmacology in general. It is to prove that a bounded computational claim can be reviewed with substantially stronger evidence than a conventional handoff.</p>
-      <div class="grid4" style="margin-top:30px">
-        <article class="card"><div class="num">A</div><h3>Model contract</h3><p>Units, dimensions, positivity, and declared representation constraints.</p></article>
-        <article class="card"><div class="num">B</div><h3>Analytic replay</h3><p>Independent recomputation of declared PK/PD equations and exported predictions.</p></article>
-        <article class="card"><div class="num">C</div><h3>Provenance</h3><p>Runtime, artifacts, hashes, package identity, and signed limitations.</p></article>
-        <article class="card"><div class="num">D</div><h3>Reviewer control</h3><p>The receiving organization—not the producer—defines acceptable claim status.</p></article>
-      </div>
-    </section>
-
-    <section class="section-tight">
-      <div class="callout">
-        <div>
-          <h3>Explore the v0.6 product loop and reviewer policy.</h3>
-          <p>The MVP page shows the current producer and reviewer commands, deterministic bundle flow, policy separation, supported evidence types, and the exact formal boundary. The older browser verifier remains available as a v0.5 transparency fixture.</p>
-        </div>
-        <div class="actions" style="margin-top:0"><a class="button dark" href="mvp.html">Open v0.6 MVP →</a><a class="button secondary" href="demo.html">Open v0.5 verifier</a></div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="contact-band">
-        <div>
-          <div class="kicker">Design partners</div>
-          <h2>Have a workflow where review failure is expensive?</h2>
-          <p>We are looking for bounded computational workflows where reproducibility, handoff quality, provenance, or independent review matter enough to justify stronger assurance.</p>
-        </div>
-        <div class="actions" style="margin-top:0">
-          <a class="button primary" href="mailto:marenatommaso@gmail.com?subject=PCS%20Design%20Partner">Email Tommaso</a>
-          <a class="button secondary" href="contact.html">Contact details</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-tight">
-      <p class="notice"><strong>Scope:</strong> PCS does not currently claim biological truth, clinical validity, GxP validation, regulatory acceptance, or correctness of arbitrary unsupported programs. The exact v0.6/v2 theorem stack is now integrated: Lean checks the package/archive assurance chain and proves <code>reaction_balance</code> replay faithfulness. The latest hosted CircleCI runtime/restoration gate passed on the tested integration checkpoint. Production-Python → Lean correspondence, ZIP decoding, environment capture, the other replay executors, and cryptographic assumptions/spec-faithfulness remain explicit trust boundaries.</p>
-    </section>
-  </main>
-
-  <footer>
-    <div class="footergrid">
-      <div class="footerbrand">
-        <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-        <p>Independent assurance infrastructure for critical scientific computation.</p>
-      </div>
-      <div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="#research">Research architecture</a><a href="privacy.html">Privacy</a></div>
-      <div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div>
+      <p>Illustrative UI. A valid PCS result is scoped to the exact typed claim and evidence—it is not a claim that “the science is universally true.”</p>
     </div>
-  </footer>
+  </div>
+</section>
+
+<section class="signal-strip" aria-label="Current system status">
+  <div><span>Formal core</span><strong>v0.6/v2 integrated</strong><small>31 Lean V2 files · 282 theorem/lemma declarations</small></div>
+  <div><span>Production validity</span><strong>Lean-authoritative</strong><small>Python-only acceptance cannot produce authoritative <code>valid:true</code></small></div>
+  <div><span>Runtime</span><strong>Cross-platform gates</strong><small>latest hosted CircleCI runtime/restoration gate passed</small></div>
+  <div><span>Initial scope</span><strong>5 executable checks</strong><small>bounded scientific predicates, fail-closed outside scope</small></div>
+</section>
+
+<section class="section product-story" id="product">
+  <div class="section-heading-row">
+    <div>
+      <div class="kicker">The product in one picture</div>
+      <h2>Separate the scientific claim from the machinery around it.</h2>
+    </div>
+    <p>Most computational handoffs collapse code, data, results, signatures, and organizational approval into one opaque “trust me.” PCS keeps each layer explicit and independently inspectable.</p>
+  </div>
+
+  <div class="assurance-rail">
+    <article>
+      <span>01</span>
+      <div class="rail-icon">C</div>
+      <h3>Claim</h3>
+      <p>Human language is mapped to a supported typed predicate. The predicate—not prose—is authoritative.</p>
+    </article>
+    <div class="rail-arrow">→</div>
+    <article>
+      <span>02</span>
+      <div class="rail-icon">E</div>
+      <h3>Evidence</h3>
+      <p>Exact files, assumptions, environment declarations, workflow edges, and evidence requests are hash-bound.</p>
+    </article>
+    <div class="rail-arrow">→</div>
+    <article>
+      <span>03</span>
+      <div class="rail-icon">R</div>
+      <h3>Replay</h3>
+      <p>Supported checks are recomputed from the delivered bytes instead of trusting recorded PASS values.</p>
+    </article>
+    <div class="rail-arrow">→</div>
+    <article>
+      <span>04</span>
+      <div class="rail-icon">A</div>
+      <h3>Assurance</h3>
+      <p>Lean checks the formal package/decision chain and produces scoped assurance under explicit remaining contracts.</p>
+    </article>
+    <div class="rail-arrow">→</div>
+    <article>
+      <span>05</span>
+      <div class="rail-icon">P</div>
+      <h3>Policy</h3>
+      <p>The receiver decides whether that verified support is enough. Package validity and acceptance stay separate.</p>
+    </article>
+  </div>
+</section>
+
+<section class="role-entry role-entry-revamp" aria-labelledby="roleEntryTitle">
+  <div class="role-entry-head">
+    <div>
+      <div class="kicker">Start from your role</div>
+      <h2 id="roleEntryTitle">What are you here to do?</h2>
+      <p>Producer and reviewer are intentionally separate trust roles. A producer can prepare evidence; the receiver independently verifies it and owns acceptance policy.</p>
+    </div>
+    <a class="button secondary" href="guided-submission.html?demo=1">Just exploring? Run the 90-second demo</a>
+  </div>
+  <div class="role-entry-grid role-entry-grid-revamp">
+    <a class="role-card producer role-card-revamp" href="guided-submission.html">
+      <div class="role-visual">
+        <span>PRODUCER</span>
+        <div><i>1</i><b>Project</b></div><em>→</em><div><i>2</i><b>Claim</b></div><em>→</em><div><i>3</i><b>Prepare</b></div>
+      </div>
+      <h3>I have a computation or result to submit.</h3>
+      <p>Choose a real project, review the typed claims PCS proposes, inspect the discovered evidence/environment, and prepare the authoritative CLI handoff.</p>
+      <strong>Start Guided Submission →</strong>
+    </a>
+    <a class="role-card reviewer role-card-revamp" href="result-anatomy.html">
+      <div class="role-visual reviewer-visual">
+        <span>REVIEWER</span>
+        <div><i>1</i><b>Verify</b></div><em>→</em><div><i>2</i><b>Interpret</b></div><em>→</em><div><i>3</i><b>Decide</b></div>
+      </div>
+      <h3>I need to understand or verify a PCS result.</h3>
+      <p>See exactly why <code>valid</code>, claim status, and <code>accepted</code> are three different axes, then follow the independent reviewer workflow.</p>
+      <strong>Understand a PCS Result →</strong>
+    </a>
+  </div>
+  <p class="role-entry-note"><strong>Important:</strong> producer and reviewer are intentionally separate trust roles. A producer cannot make a package “accepted” simply by generating it; acceptance belongs to the receiving reviewer’s policy.</p>
+</section>
+
+<section class="section demo-gallery">
+  <div class="section-heading-row">
+    <div>
+      <div class="kicker">Interactive product tour</div>
+      <h2>Three demos, each with one job.</h2>
+    </div>
+    <p>The old site asked one demo to explain everything. The new flow separates onboarding, result interpretation, and adversarial transparency.</p>
+  </div>
+
+  <div class="demo-gallery-grid">
+    <a class="demo-card primary-demo" href="guided-submission.html?demo=1">
+      <div class="demo-card-top"><span>01 · PRIMARY DEMO</span><b>~90 sec</b></div>
+      <div class="demo-card-screen">
+        <div class="screen-step active">Project</div><div class="screen-step">Claim</div><div class="screen-step">Review</div><div class="screen-step">Prepare</div><div class="screen-step">Ready</div>
+      </div>
+      <h3>Build a PCS claim from a scientific project.</h3>
+      <p>See intent become a typed predicate, evidence become bound, and a review-ready handoff emerge without pretending the browser itself performed authoritative verification.</p>
+      <strong>Run guided demo →</strong>
+    </a>
+
+    <a class="demo-card" href="result-anatomy.html">
+      <div class="demo-card-top"><span>02 · REVIEWER DEMO</span><b>4 scenarios</b></div>
+      <div class="demo-result-mini">
+        <div class="mini-axis pass"><small>PACKAGE</small><strong>VALID</strong></div>
+        <div class="mini-axis pass"><small>CLAIM</small><strong>SUPPORTED</strong></div>
+        <div class="mini-axis warn"><small>POLICY</small><strong>VARIES</strong></div>
+      </div>
+      <h3>Learn to read a completed PCS result.</h3>
+      <p>Switch between valid+accepted, valid+policy-rejected, scientific failure, and invalid-package cases.</p>
+      <strong>Open result anatomy →</strong>
+    </a>
+
+    <a class="demo-card" href="demo.html">
+      <div class="demo-card-top"><span>03 · THREAT LAB</span><b>legacy v0.5</b></div>
+      <div class="threat-mini">
+        <span>artifact substitution</span><span>status escalation</span><span>signature stripping</span>
+      </div>
+      <h3>Watch a reference package fail closed.</h3>
+      <p>The older browser parity fixture remains useful for transparent adversarial experiments. It is clearly separated from the current v0.6 product path.</p>
+      <strong>Open threat lab →</strong>
+    </a>
+  </div>
+</section>
+
+<section class="proof-boundary">
+  <div class="proof-boundary-copy">
+    <div class="kicker">Trust without hand-waving</div>
+    <h2>What is proved, what is checked, and what is still trusted are different things.</h2>
+    <p>The current v0.6/v2 theorem stack connects accepted canonical package structure and normalized decisions to scoped scientific assurance. Production validity is gated on compiled Lean acceptance. Remaining external contracts stay visible rather than inheriting a “formally verified” label.</p>
+    <div class="actions">
+      <a class="button primary" href="trust.html">Open Trust Center</a>
+      <a class="button secondary" href="architecture.html">See architecture</a>
+    </div>
+  </div>
+  <div class="proof-layers">
+    <article class="verified-layer">
+      <div><span>PROVED / LEAN</span><b>Machine-checked</b></div>
+      <ul>
+        <li>canonical v0.6/v2 representation</li>
+        <li>package/member/hash/index binding</li>
+        <li>signature wiring + archive partitioning</li>
+        <li>normalized decisions → scoped assurance</li>
+        <li><code>reaction_balance</code> replay faithfulness</li>
+      </ul>
+    </article>
+    <article class="boundary-layer">
+      <div><span>EXPLICIT TCB</span><b>Named boundaries</b></div>
+      <ul>
+        <li>ZIP decoding/materialization + invocation</li>
+        <li>environment/workflow semantic fidelity</li>
+        <li>non-chemistry replay fidelity</li>
+        <li>independent crypto-spec correspondence</li>
+        <li>Ed25519 unforgeability</li>
+      </ul>
+    </article>
+    <article class="nonclaim-layer">
+      <div><span>NOT CLAIMED</span><b>Scientific adequacy</b></div>
+      <ul>
+        <li>biological or clinical truth</li>
+        <li>regulatory approval or GxP validation</li>
+        <li>correctness of arbitrary scientific code</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="section evidence-section">
+  <div class="section-heading-row">
+    <div>
+      <div class="kicker">Executed evidence</div>
+      <h2>The verifier is expected to preserve negative results, too.</h2>
+    </div>
+    <p>PCS is useful only if it can say “no.” The first public-data validation set matched all five predeclared outcomes, including two cases deliberately expected to fail.</p>
+  </div>
+  <div class="evidence-stats">
+    <div><strong>5 / 5</strong><span>predeclared validation outcomes matched</span></div>
+    <div><strong>2 / 2</strong><span>negative controls correctly rejected</span></div>
+    <div><strong>19 / 19</strong><span>Python ↔ Lean differential cases passed</span></div>
+    <div><strong>3 OS</strong><span>embedded-Lean golden verification: Linux, Windows, macOS</span></div>
+  </div>
+  <div class="actions">
+    <a class="button primary" href="validation.html">Inspect validation evidence</a>
+    <a class="button secondary" href="mvp.html">Inspect the v0.6 MVP</a>
+  </div>
+</section>
+
+<section class="section final-cta" id="research">
+  <div>
+    <div class="kicker">Computational biopharma first</div>
+    <h2>Start with one bounded claim that matters.</h2>
+    <p>PCS is not trying to “prove arbitrary science.” The initial wedge is a small number of high-consequence computational claims where exact replay, provenance, formal semantics, and independent review create immediate value.</p>
+  </div>
+  <div class="final-cta-actions">
+    <a class="button primary button-lg" href="guided-submission.html">Try PCS on a project</a>
+    <a class="button secondary button-lg" href="intake.html">Build pilot intake</a>
+    <a class="button secondary button-lg" href="contact.html">Discuss a design-partner pilot</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footergrid">
+    <div class="footerbrand">
+      <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+      <p>Independent assurance infrastructure for critical scientific computation.</p>
+    </div>
+    <div class="footercol"><strong>Product</strong><a href="guided-submission.html">Try PCS</a><a href="result-anatomy.html">Result anatomy</a><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a></div>
+    <div class="footercol"><strong>Trust & contact</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="privacy.html">Privacy</a><a href="contact.html">Design-partner inquiry</a><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div>
+  </div>
+</footer>
 </div>
 <script src="site.js"></script>
 </body>
