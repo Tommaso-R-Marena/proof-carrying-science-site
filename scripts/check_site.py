@@ -108,7 +108,7 @@ if guided_page.exists():
         "What can PCS formalize today?",
         "PCS does not turn arbitrary prose directly into a trusted formal claim.",
         "Describe what you want to check",
-        "DRAFT READY · NOT YET VERIFIED",
+        "Draft ready · not yet verified",
         "How to read a PCS result",
         "COMPUTATIONALLY_SUPPORTED",
         "FALSIFIED_OR_CHECK_FAILED",
@@ -127,7 +127,8 @@ if guided_js.exists():
         "api.downloadReview",
         "ZIP archives",
         "demoMode",
-        "guided-submission.html?demo=1",
+        "URLSearchParams",
+        'get("demo")==="1"',
         "Demo checkpoint",
     ]:
         if required_text not in guided_script:
