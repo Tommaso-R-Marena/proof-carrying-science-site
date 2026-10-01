@@ -340,7 +340,31 @@
         "package_integrity",
         "signer_authenticity",
         "reviewer_policy"
-      ]
+      ],
+      "completed_result_anatomy": {
+        "page": "result-anatomy.html",
+        "script": "result-anatomy.js",
+        "based_on_real_v06_field_names": true,
+        "illustrative_values_not_live_verification": true,
+        "scenarios": [
+          "valid_and_accepted",
+          "valid_policy_rejected",
+          "valid_failed_claim",
+          "invalid_package"
+        ],
+        "distinguishes_valid_claim_status_accepted": true,
+        "reviewer_receipt_bindings_explained": [
+          "bundle_sha256",
+          "certificate_semantic_hash",
+          "certificate_integrity_hash",
+          "normalized_index_semantic_hash",
+          "policy_sha256",
+          "valid",
+          "accepted"
+        ],
+        "links_to_executed_validation": true,
+        "links_to_runtime_evidence": true
+      }
     }
   },
   "formal": {
