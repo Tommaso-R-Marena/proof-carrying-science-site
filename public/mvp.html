@@ -336,11 +336,11 @@
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Formal boundary</div>
   <h2>The executable MVP and the formal theorem stack are related, but not identical.</h2>
-  <p class="section-intro">The current v0.6/v2 executable format and the machine-checked theorem stack now target the same certificate/package/normalized-decision representation. Lean proves the archive/package binding and the bridge into scoped scientific assurance; <code>reaction_balance</code> replay is also proved faithful. The remaining boundary is explicit: production-Python → Lean refinement, ZIP decoding, capture soundness, non-chemistry replay fidelity, cryptographic unforgeability, and independent crypto-spec correspondence.</p>
+  <p class="section-intro">The current v0.6/v2 executable format and the machine-checked theorem stack target the same certificate/package/normalized-decision representation. Lean proves the archive/package binding and the bridge into scoped scientific assurance; <code>reaction_balance</code> replay is also proved faithful. Authoritative production validity now requires the compiled Lean authority. The remaining boundary is explicit: ZIP decoding/materialization and process invocation, capture soundness, non-chemistry replay fidelity, cryptographic unforgeability, and independent crypto-spec correspondence.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">v0.6</div><h3>Executable MVP</h3><p>Canonical JCS, signed package, deterministic ZIP, fresh replay, normalized decisions, reviewer policy.</p></article>
     <article class="card"><div class="num">v0.6/v2</div><h3>Machine-checked chain</h3><p>Canonical bytes, package/index binding, signatures, archive partitioning, normalized decisions, and scoped scientific assurance are connected by Lean 4.28 theorems.</p></article>
-    <article class="card"><div class="num">Boundary</div><h3>Production refinement + remaining TCB</h3><p>The Python verifier is differentially tested against Lean but not yet proved to refine it. ZIP decoding, capture, most replay executors, and crypto assumptions remain explicit contracts.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>Lean authority + remaining TCB</h3><p>Python performs fail-closed prechecks and external replay/capture work, but Python-only acceptance is non-authoritative. Compiled Lean acceptance is mandatory; ZIP decoding/materialization, process invocation, capture, most replay executors, and crypto assumptions remain explicit contracts.</p></article>
   </div>
 </section>
 

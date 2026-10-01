@@ -463,21 +463,25 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: exact v0.6/v2 integration status drift")
         if formal.get("mainline_integrated") is not True:
             errors.append("status.json: formal theorem layer not marked integrated on model main")
-        if formal.get("model_main_commit") != "91b35d4d81a6e77ea8d20b221b555aafe5988e32":
+        if formal.get("model_main_commit") != "4fa3f11701fd30ee8b21b764185ae8c0b79d4382":
             errors.append("status.json: formal model-main commit drift")
         if formal.get("circleci_lean_gate") != "PASS" or formal.get("integration_gate") != "PASS":
             errors.append("status.json: formal hosted gate drift")
-        if formal.get("v2_files") != 30 or formal.get("v2_theorem_lemma_declarations") != 279 or formal.get("axiom_print_checks") != 65:
+        if formal.get("v2_files") != 31 or formal.get("v2_theorem_lemma_declarations") != 282 or formal.get("axiom_print_checks") != 67:
             errors.append("status.json: v0.6/v2 formal audit counts drift")
         if formal.get("differential_cases") != 19:
             errors.append("status.json: v0.6/v2 differential-case count drift")
         for key in ["archive_partition_proved", "sha256_padding_structure_proved", "reaction_balance_replay_faithful"]:
             if formal.get(key) is not True:
                 errors.append(f"status.json: formal v0.6/v2 invariant drift: {key}")
-        if formal.get("production_to_lean") != "CONDITIONAL_DIFFERENTIALLY_TESTED":
-            errors.append("status.json: production-to-Lean boundary drift")
+        if formal.get("production_to_lean") != "LEAN_AUTHORITY_GATED":
+            errors.append("status.json: production-to-Lean authority drift")
+        if formal.get("lean_authority_required") is not True or formal.get("python_only_acceptance_authoritative") is not False:
+            errors.append("status.json: Lean-authority production invariant drift")
+        if formal.get("streaming_sha256_block_fold_proved_equivalent") is not True or formal.get("arm64_large_bundle_authority_verified") is not True:
+            errors.append("status.json: Lean authority hardening evidence drift")
         mainline = mvp.get("mainline", {})
-        if mainline.get("current_head") != "c461e42692ee61a2dd3309174a938f8e506d59ac":
+        if mainline.get("current_head") != "7f6f6838789bd9cc342a3c073852ab6482d54549":
             errors.append("status.json: model main head drift")
         if mainline.get("formal_wire_gate_passed") is not True or mainline.get("runtime_main_gate_passed") is not True:
             errors.append("status.json: model main gate status drift")
@@ -860,7 +864,7 @@ if public_status.exists() and fixture_obj is not None:
         product_gate = mvp.get("product_hardening_gate", {})
         if product_gate.get("status") != "PASS":
             errors.append("status.json: product hardening gate not marked PASS")
-        if product_gate.get("tested_checkpoint") != "91b35d4d81a6e77ea8d20b221b555aafe5988e32":
+        if product_gate.get("tested_checkpoint") != "b2e120e40eeb349af33df8a595729cb18efb0d4d":
             errors.append("status.json: product hardening checkpoint drift")
         if product_gate.get("focused_attack_cases") != 12:
             errors.append("status.json: focused adversarial attack-count drift")
@@ -888,11 +892,17 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: Linux standalone verifier CI evidence drift")
         if reviewer_verifier.get("schema_resources_explicitly_bundled") is not True:
             errors.append("status.json: standalone verifier schema bundling drift")
+        if reviewer_verifier.get("windows_single_file_ci_verified") is not True or reviewer_verifier.get("macos_single_file_ci_verified") is not True:
+            errors.append("status.json: cross-platform standalone verifier evidence drift")
+        if reviewer_verifier.get("cross_platform_embedded_lean_golden_verified") != ["linux", "windows", "macos"]:
+            errors.append("status.json: embedded-Lean cross-platform golden evidence drift")
+        if reviewer_verifier.get("lean_authority_mandatory_for_authoritative_validity") is not True:
+            errors.append("status.json: reviewer Lean-authority invariant drift")
 
         gate = mvp.get("latest_hosted_gate", {})
         if gate.get("provider") != "CircleCI" or gate.get("status") != "PASS" or gate.get("code_result") != "PASS" or gate.get("full_runtime_executed") is not True:
             errors.append("status.json: hosted runtime-gate evidence drift")
-        if gate.get("tested_checkpoint") != "91b35d4d81a6e77ea8d20b221b555aafe5988e32":
+        if gate.get("tested_checkpoint") != "b2e120e40eeb349af33df8a595729cb18efb0d4d":
             errors.append("status.json: runtime-gate checkpoint drift")
         if mvp.get("released") is not False:
             errors.append("status.json: v0.6 MVP candidate marked released")
@@ -900,7 +910,7 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: legacy browser profile version drift")
         if browser.get("decision_vectors_passed") != 11 or browser.get("decision_vectors_total") != 11:
             errors.append("status.json: browser decision parity count drift")
-        if preview.get("target") != "production-refines-lean-zip-capture-replay-tcb-shrink-and-external-design-partner-pilot" or preview.get("status") != "OPEN":
+        if preview.get("target") != "zip-materialization-capture-replay-crypto-tcb-shrink-and-external-design-partner-pilot" or preview.get("status") != "OPEN":
             errors.append("status.json: next refinement status drift")
         if preview.get("released") is not False:
             errors.append("status.json: open refinement marked released")

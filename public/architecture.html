@@ -53,7 +53,7 @@
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Python v0.6</div><h3>MVP product path</h3><p><code>attest-v06</code> builds the signed package and deterministic ZIP; <code>verify-v06-bundle</code> verifies the exact archive, regenerates normalized decisions, and evaluates external reviewer policy.</p></article>
     <article class="card"><div class="num">Browser</div><h3>Transparency surfaces</h3><p>The legacy v0.5 parity engine still exposes the older reference package and 11 frozen decision vectors. The new v0.6 MVP page demonstrates reviewer-policy semantics locally without pretending to replace the Python verifier.</p></article>
-    <article class="card"><div class="num">Lean 4.28</div><h3>Machine-checked v0.6/v2 assurance chain</h3><p>The current theorem stack targets the exact v0.6/v2 representation: canonical bytes and schemas, package/member/hash/index binding, signature wiring, archive partitioning, normalized decisions, and scoped scientific assurance. The production ↔ Lean, ZIP decoder, capture, non-chemistry replay, and crypto-spec boundaries remain explicit.</p></article>
+    <article class="card"><div class="num">Lean 4.28</div><h3>Machine-checked v0.6/v2 assurance chain</h3><p>The current theorem stack targets the exact v0.6/v2 representation: canonical bytes and schemas, package/member/hash/index binding, signature wiring, archive partitioning, normalized decisions, and scoped scientific assurance. Production validity is now gated on compiled Lean acceptance; ZIP decoding/materialization, capture, non-chemistry replay, and crypto-spec boundaries remain explicit.</p></article>
   </div>
 </section>
 
@@ -64,7 +64,7 @@
     <table class="pkgtable">
       <thead><tr><th>Capability</th><th>Production Python</th><th>Browser parity profile</th><th>Formal layer</th></tr></thead>
       <tbody>
-        <tr><td>Strict JSON / schema boundary</td><td>Yes · v0.6 canonical JCS + duplicate rejection</td><td>v0.5 fixture checks + local v0.6 policy lab</td><td>Machine-checked for the v0.6/v2 formal representation; production refinement remains explicit</td></tr>
+        <tr><td>Strict JSON / schema boundary</td><td>Yes · v0.6 canonical JCS + duplicate rejection</td><td>v0.5 fixture checks + local v0.6 policy lab</td><td>Machine-checked for the v0.6/v2 formal representation; Python-only acceptance cannot produce authoritative validity</td></tr>
         <tr><td>Artifact SHA-256 binding</td><td>Yes</td><td>Yes</td><td>Assumed by normalized input</td></tr>
         <tr><td>Package manifest / Ed25519</td><td>Yes · certificate + package domains, signer pinning</td><td>v0.5 fixture only</td><td>Package theorem conditional on explicit scheme-soundness assumption</td></tr>
         <tr><td>ZIP namespace / extraction safety</td><td>Yes · v0.6 verifies without extracting; deterministic builder self-verifies candidate ZIP</td><td>No ZIP trust claim</td><td>Raw ZIP bytes remain outside current theorem boundary</td></tr>
@@ -134,7 +134,7 @@
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Trust statement</div>
   <h2>Formal verification does not certify biology.</h2>
-  <p class="section-intro">The current PCS v0.6/v2 package/archive assurance theorems are machine-checked under Lean 4.28.0. They connect accepted canonical package structure and normalized decisions to scoped scientific assurance under explicit external contracts; <code>reaction_balance</code> replay faithfulness is proved internally. They do not prove that an underlying scientific model is empirically adequate for the world, nor do they erase the remaining production, ZIP, capture, replay, or cryptographic boundaries.</p>
+  <p class="section-intro">The current PCS v0.6/v2 package/archive assurance theorems are machine-checked under Lean 4.28.0. They connect accepted canonical package structure and normalized decisions to scoped scientific assurance under explicit external contracts; <code>reaction_balance</code> replay faithfulness is proved internally. The deployed v0.6 path requires compiled Lean acceptance for authoritative validity. This still does not prove that an underlying scientific model is empirically adequate for the world, nor does it erase the ZIP-decoder/materialization, capture, replay, process-invocation, or cryptographic boundaries.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Correctness</div><h3>Did the computation follow its declared rules?</h3><p>Formal proof and executable replay can address this dimension within a bounded model.</p></article>
     <article class="card"><div class="num">Adequacy</div><h3>Is the model scientifically appropriate?</h3><p>This requires empirical/statistical evidence and domain judgment; formal proof alone cannot supply it.</p></article>

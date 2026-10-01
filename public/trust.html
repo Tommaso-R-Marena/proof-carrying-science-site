@@ -104,11 +104,11 @@
     <article class="trustitem">
       <header><h3>Machine-checked v0.6/v2 theorem stack</h3><span class="chip verified">Integrated</span></header>
       <p>The current Lean 4.28 layer targets the exact v0.6/v2 representation: canonical JSON and schemas, domain/hash binding, certificate and normalized-index commitments, signature wiring, exact signed package membership, archive partitioning, normalized decisions, and the bridge into <code>ScientificAssurance</code>. For <code>reaction_balance</code>, replay faithfulness itself is proved in Lean.</p>
-      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>pcs_accept_implies_scientific_assurance</code> and <code>pcs_raw_archive_assurance</code> connect accepted v0.6/v2 package/archive structure to scoped scientific assurance under explicit external contracts. The production-Python verifier is still related by the named <code>ProductionRefinesLean</code> hypothesis.</span></div>
+      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>pcs_accept_implies_scientific_assurance</code> and <code>pcs_raw_archive_assurance</code> connect accepted v0.6/v2 package/archive structure to scoped scientific assurance under explicit external contracts. Production no longer promotes Python-only acceptance: authoritative <code>valid: true</code> requires the compiled Lean authority to accept the exact decoded package-member bytes plus the certificate-bound observation transcript.</span></div>
       <dl>
         <dt>Lean</dt><dd>4.28.0</dd>
-        <dt>Model-main integration</dt><dd>Integrated on <code>main</code> at <code>91b35d4d81a6…</code></dd>
-        <dt>Formal source audit</dt><dd>30 V2 files · 279 theorem/lemma declarations · 65 <code>#print axioms</code> checks · no production <code>sorry</code>/<code>admit</code>/project <code>axiom</code>/<code>unsafe</code>/<code>native_decide</code></dd>
+        <dt>Model-main integration</dt><dd>Lean-authoritative production path merged on <code>main</code> at <code>4fa3f11701fd…</code>; clean hosted runtime checkpoint <code>b2e120e40eeb…</code></dd>
+        <dt>Formal source audit</dt><dd>31 V2 files · 282 theorem/lemma declarations · 67 <code>#print axioms</code> checks · no production <code>sorry</code>/<code>admit</code>/project <code>axiom</code>/<code>unsafe</code>/<code>native_decide</code></dd>
         <dt>Differential corpus</dt><dd>19 Python↔Lean package/key cases in the integration gate</dd>
         <dt>Reaction replay</dt><dd><code>reaction_balance</code> faithfulness proved in Lean</dd>
       </dl>
@@ -127,8 +127,8 @@
 
     <article class="trustitem">
       <header><h3>Remaining v0.6/v2 formal boundary</h3><span class="chip pending">Explicit TCB</span></header>
-      <p>The representation port is complete, but several external contracts remain intentionally visible: production-Python → Lean refinement, ZIP-decoder faithfulness, environment-capture soundness, replay faithfulness for check types other than <code>reaction_balance</code>, cryptographic unforgeability, and independent SHA-256/Ed25519 specification correspondence.</p>
-      <div class="boundary"><strong>Next formal milestone</strong><span>Make production acceptance invoke the Lean checker, or prove <code>ProductionRefinesLean</code>; then shrink the ZIP, capture, replay, and crypto-spec boundaries one by one.</span></div>
+      <p>The representation port and production acceptance gate are integrated, but several external contracts remain intentionally visible: ZIP-decoder faithfulness; Python materialization/process invocation of the Lean authority; environment-capture soundness; replay faithfulness for check types other than <code>reaction_balance</code>; cryptographic unforgeability; and independent SHA-256/Ed25519 specification correspondence.</p>
+      <div class="boundary"><strong>Next formal milestone</strong><span>Shrink the remaining operational handoff and external-contract TCB: ZIP decoding/materialization, capture/workflow semantics, non-chemistry replay semantics, and independent crypto-spec correspondence.</span></div>
     </article>
   </div>
 
@@ -138,7 +138,7 @@
       <div class="timeline">
         <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
         <div class="timeline-item"><strong>v0.6/v2 Lean assurance layer</strong><span>Machine-checked canonical/package/archive/decision structure leads to scoped scientific assurance under explicit external contracts.</span></div>
-        <div class="timeline-item"><strong>Production ↔ Lean boundary</strong><span>Differentially tested, but still an explicit <code>ProductionRefinesLean</code> hypothesis until production invokes Lean or a refinement proof is supplied.</span></div>
+        <div class="timeline-item"><strong>Production → Lean authority gate</strong><span>Python prechecks and external observations are non-authoritative by themselves; final PCS validity requires compiled Lean acceptance, with the authority executable and transcript hashes recorded in the result.</span></div>
         <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
       </div>
     </article>
@@ -183,7 +183,7 @@
   <p class="section-intro">The strongest trust posture is one that names its limits. The following remain separate from the current machine-checked result.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">01</div><h3>Scientific truth</h3><p>Formal soundness of a decision rule does not prove that a biological, chemical, or clinical model is empirically adequate.</p></article>
-    <article class="card"><div class="num">02</div><h3>Production correspondence + external contracts</h3><p>The v0.6/v2 theorem chain is machine-checked, but Python acceptance is not yet proved to refine Lean. ZIP decoding, environment capture, and replay fidelity for non-chemistry checks remain explicit contracts.</p></article>
+    <article class="card"><div class="num">02</div><h3>Operational handoff + external contracts</h3><p>Production validity is Lean-gated, but PCS still does not formally prove the Python ZIP decoder/materializer/process invocation itself, environment capture, or replay fidelity for non-chemistry checks.</p></article>
     <article class="card"><div class="num">03</div><h3>Regulatory status</h3><p>PCS does not currently claim FDA certification, GxP validation, clinical validity, safety, efficacy, or regulatory acceptance.</p></article>
     <article class="card"><div class="num">04</div><h3>Arbitrary code correctness</h3><p>The current product supports bounded predicates and adapters; it does not prove arbitrary Python, R, C++, notebooks, solvers, or simulations correct.</p></article>
     <article class="card"><div class="num">05</div><h3>Cryptographic standard boundary</h3><p>Lean implementations and wiring exist, but SHA-256 and Ed25519 are still validated against standards by known-answer vectors rather than independent specification-equivalence proofs; Ed25519 unforgeability remains a cryptographic assumption.</p></article>
