@@ -75,7 +75,7 @@
       <p>Human confirmation and producer signature are not sufficient to establish a static dependency claim. After exact package binding, the v0.6 verifier reconstructs the delivered source tree and reruns static workflow analysis before scientific evidence replay.</p>
       <div class="boundary"><strong>Exact mode</strong><span>Clean Python/Jupyter AST mappings require exact equality between signed and freshly rediscovered input/output sets.</span></div>
       <div class="boundary"><strong>Subset mode</strong><span>Partial, R, browser-heuristic, or ambiguity-reduced mappings require every signed edge to be rediscovered but do not claim completeness.</span></div>
-      <div class="boundary"><strong>Validation status</strong><span>An adversarial regression for a fully rehashed and re-signed false workflow edge is committed to the v0.6 gate. The hosted runner still has not executed it.</span></div>
+      <div class="boundary"><strong>Validation status</strong><span>The full hosted integration suite and mainline product/formal gates have executed the current workflow-replay regressions successfully.</span></div>
     </article>
 
     <article class="trustitem">
@@ -168,11 +168,11 @@
 <section class="section">
   <div class="kicker">Real-world benchmark evidence</div>
   <h2>Positive controls and expected failures are both part of the trust story.</h2>
-  <p class="section-intro">A direct checker-level run against public chemistry, biology/ML, and pharmacokinetic examples matched all five predeclared outcomes. Two were expected failures and were correctly rejected. This evidence is separate from the still-unexecuted hosted v0.6 gate.</p>
+  <p class="section-intro">A direct checker-level run against public chemistry, biology/ML, and pharmacokinetic examples matched all five predeclared outcomes. Two were expected failures and were correctly rejected. That historical campaign was checker-level; later CircleCI runs independently exercised the full v0.6 product/formal/restoration path.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">5 / 5</div><h3>Matched expectation</h3><p>Haber–Bosch balance, clean Iris split, contaminated Iris split, concentration units, and Indometh model-misfit.</p></article>
     <article class="card"><div class="num">2 FAIL</div><h3>Negative controls worked</h3><p>PCS detected one leaked Iris row and rejected measured IV PK data when presented as exact deterministic model output.</p></article>
-    <article class="card"><div class="num">Boundary</div><h3>Not a full bundle run</h3><p>The execution was checker-level. GitHub's runner remained unavailable, so the full repository/ZIP path is not claimed as executed.</p></article>
+    <article class="card"><div class="num">Boundary</div><h3>Historical campaign scope</h3><p>The five-case public-data campaign itself was checker-level. Separate later hosted gates exercised the repository, deterministic ZIP/product path, formal layer, and restoration/ABI campaigns.</p></article>
   </div>
   <div class="actions"><a class="button secondary" href="validation.html">Inspect validation evidence</a></div>
 </section>
