@@ -311,7 +311,16 @@
         "pkpd_reference_match"
       ],
       "unsupported_claims_fail_closed": true,
-      "claim_translation_model": "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation"
+      "claim_translation_model": "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation",
+      "persistent_stage_explanation": true,
+      "each_stage_states_what_is_not_yet_verified": true,
+      "live_claim_translation_panel": true,
+      "live_claim_translation_axes": [
+        "user_words",
+        "supported_typed_meaning",
+        "authoritative_predicate"
+      ],
+      "no_supported_template_generates_no_predicate": true
     },
     "demo_clarity": {
       "format": "pcs-demo-interpretation-ui-v1",
@@ -363,8 +372,16 @@
           "accepted"
         ],
         "links_to_executed_validation": true,
-        "links_to_runtime_evidence": true
-      }
+        "links_to_runtime_evidence": true,
+        "thirty_second_assurance_summary": true
+      },
+      "thirty_second_result_summary": true,
+      "result_summary_axes": [
+        "formally_established",
+        "freshly_reproduced",
+        "still_trusted"
+      ],
+      "scenario_aware_result_summary": true
     },
     "usability": {
       "role_entry": {

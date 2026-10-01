@@ -52,6 +52,18 @@
   <div class="guided-demo-watch"><strong>Watch the chain</strong><span>intent → typed predicate → bound evidence → claim status → reviewer decision</span></div>
 </div>
 
+<section class="guided-demo-guide" id="guidedDemoGuide" aria-live="polite">
+  <div class="guided-demo-guide-copy">
+    <span class="guided-demo-guide-kicker">Where you are</span>
+    <strong id="guidedDemoGuideTitle">1. Choose the project you want PCS to inspect</strong>
+    <small id="guidedDemoGuideDetail">PCS is only discovering files here. Nothing has been verified, executed, signed, or accepted.</small>
+  </div>
+  <div class="guided-demo-guide-state">
+    <span id="guidedDemoGuideState">DISCOVERY</span>
+    <small id="guidedDemoGuideQuestion">Question: what should PCS inspect?</small>
+  </div>
+</section>
+
 <section class="guided-stage" data-guided-stage="1">
   <div class="guided-stage-head">
     <div><span class="guided-stage-number">01</span><h2>Add your project</h2><p>Choose the folder you actually work in, select a few files, or try the example first.</p></div>
@@ -96,6 +108,14 @@
     <input class="textinput" id="guidedClaimIntent" placeholder="e.g. Make sure the training and test data share no patient IDs" autocomplete="off">
     <div id="guidedIntentHint" class="guided-intent-hint">PCS will suggest among the formal templates it actually supports.</div>
   </div>
+  <section class="claim-translation-live" id="guidedClaimTranslation" aria-live="polite">
+    <div class="claim-translation-live-head"><strong>Claim translation</strong><span id="guidedClaimTranslationState">WAITING FOR INTENT</span></div>
+    <div class="claim-translation-live-grid">
+      <div><small>Your words</small><strong id="guidedClaimWords">Describe the scientific check above.</strong><span>Used only to find a supported template.</span></div>
+      <div><small>PCS interprets this as</small><strong id="guidedClaimMeaning">No formal meaning selected yet.</strong><span id="guidedClaimMeaningScope">PCS will not infer unsupported semantics.</span></div>
+      <div><small>Authoritative check</small><strong id="guidedClaimExact">No typed predicate yet.</strong><span>The typed predicate—not your prose—is what later verification evaluates.</span></div>
+    </div>
+  </section>
   <details class="guided-supported-claims">
     <summary>What can PCS formalize today?</summary>
     <div class="guided-supported-grid">

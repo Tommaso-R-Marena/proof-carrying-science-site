@@ -62,6 +62,28 @@
     $("resultMeans").textContent=s.means;
     $("resultDoesNotMean").textContent=s.not;
     $("resultNext").textContent=s.next;
+    const formal=$("summaryFormal"), replay=$("summaryReplay"), trusted=$("summaryTrusted"), bottom=$("summaryBottom");
+    if(!s.valid){
+      formal.textContent="No downstream PCS assurance is established because the package verification chain failed.";
+      replay.textContent="At least one required integrity, authentication, replay, or normalized-decision stage failed.";
+      trusted.textContent="The underlying scientific hypothesis remains outside what this invalid run can establish.";
+      bottom.textContent="Bottom line: INVALID PACKAGE means stop before interpreting the scientific claim.";
+    }else if(s.claim==="FALSIFIED_OR_CHECK_FAILED"){
+      formal.textContent="PCS formally preserves the replay-derived negative decision for this exact typed claim.";
+      replay.textContent="The package and required checks replayed coherently, and at least one required scientific check failed.";
+      trusted.textContent="Why the scientific check failed—and whether the model/data assumptions are adequate—still requires domain judgment.";
+      bottom.textContent="Bottom line: the assurance system worked, but the requested claim support did not.";
+    }else if(!s.accepted){
+      formal.textContent="PCS establishes the verified computational claim status independently of reviewer policy.";
+      replay.textContent="The exact package and declared required checks passed fresh verification.";
+      trusted.textContent="Whether that support is sufficient for this use case remains a receiver-owned policy decision.";
+      bottom.textContent="Bottom line: verified computation and organizational acceptance are deliberately separate.";
+    }else{
+      formal.textContent="PCS establishes the decision relationship for the exact typed predicate, evidence, and policy inputs.";
+      replay.textContent="The delivered bytes, supported checks, environment/workflow bindings, and normalized decisions passed fresh verification.";
+      trusted.textContent="Runtime/platform behavior, cryptographic implementations, unsupported scientific semantics, and domain adequacy remain explicit trust boundaries.";
+      bottom.textContent="Bottom line: this is strong assurance for the declared computational claim—not a proof of every broader scientific interpretation.";
+    }
     const url=new URL(window.location.href);url.searchParams.set("scenario",name);history.replaceState(null,"",url);
   }
   buttons.forEach(b=>b.addEventListener("click",()=>render(b.dataset.resultScenario)));
