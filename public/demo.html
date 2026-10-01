@@ -37,6 +37,20 @@
   <div class="engine-badge" id="parityBadge">Decision parity: running…</div>
 </div>
 
+<section class="demo-reading-guide" aria-label="How to read this PCS demo">
+  <div>
+    <div class="kicker">30-second reading guide</div>
+    <h2>PCS is answering four different questions.</h2>
+  </div>
+  <div class="demo-guide-steps">
+    <div><span>1</span><strong>Claim</strong><small>What exact computational statement is being asserted?</small></div>
+    <div><span>2</span><strong>Evidence</strong><small>Do the required checks independently replay on the delivered bytes?</small></div>
+    <div><span>3</span><strong>Support</strong><small>What assurance status follows from that evidence?</small></div>
+    <div><span>4</span><strong>Policy</strong><small>Does this reviewer accept that verified support level?</small></div>
+  </div>
+  <p><strong>Important:</strong> an accepted package does not mean “the science is universally true.” It means the exact package passed this verifier and satisfies this reviewer’s explicit policy.</p>
+</section>
+
 <section class="demo-shell">
   <aside class="panel">
     <h2>Reference package</h2>
@@ -85,9 +99,19 @@
       <div class="engine-badge" id="specBadge">pcs-0.5</div>
     </div>
 
+    <section class="demo-meaning-panel" id="demoMeaningPanel" aria-live="polite">
+      <div class="kicker">What this result means</div>
+      <h2 id="demoMeaningHeadline">Verification is running…</h2>
+      <div class="demo-meaning-grid">
+        <div class="means"><strong>What it means</strong><span id="demoMeans">PCS is independently checking the delivered package.</span></div>
+        <div class="not-means"><strong>What it does not mean</strong><span id="demoDoesNotMean">No scientific interpretation should be drawn until the checks finish.</span></div>
+        <div class="next"><strong>What to look at next</strong><span id="demoNext">Use the four assurance dimensions below to see which layer passed or failed.</span></div>
+      </div>
+    </section>
+
     <section class="panel">
       <h2>Assurance dimensions</h2>
-      <p>Each dimension answers a different question. In particular, signer authenticity does not mean the delivered bytes still match what the signer authenticated.</p>
+      <p>Read these independently. <strong>Scientific replay</strong> asks whether the declared computation reproduced; <strong>package integrity</strong> asks whether the bytes match; <strong>signer authenticity</strong> asks who authenticated the manifest; <strong>reviewer policy</strong> asks whether this receiver accepts the verified state.</p>
       <div class="statusgrid">
         <div class="status na" id="replayCard"><div class="label">Scientific replay</div><div class="value" id="replayStatus">NOT RUN</div></div>
         <div class="status na" id="integrityCard"><div class="label">Package integrity</div><div class="value" id="integrityStatus">NOT RUN</div></div>
