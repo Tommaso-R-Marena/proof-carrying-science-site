@@ -364,6 +364,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
   --revamp-cyan:#2ac7c9;
   --revamp-green:#13a378;
   --revamp-border:#dbe5f0;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 .home-revamp{background:
   radial-gradient(circle at 10% 5%,rgba(66,137,255,.06),transparent 26%),
