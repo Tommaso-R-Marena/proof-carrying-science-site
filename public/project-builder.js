@@ -26,6 +26,84 @@ function roleGuess(name){const n=name.toLowerCase();if(n.endsWith(".csv")){if(/p
 function csvLine(line){const out=[];let cur="",quote=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==="\""){if(quote&&line[i+1]==="\""){cur+='\"';i++}else quote=!quote}else if(ch===","&&!quote){out.push(cur.trim());cur=""}else cur+=ch}out.push(cur.trim());return out}
 function splitKind(name){const t=new Set(name.toLowerCase().split(/[^a-z0-9]+/));if([...t].some(x=>["train","training"].includes(x)))return"train";if([...t].some(x=>["test","testing","holdout"].includes(x)))return"test";if([...t].some(x=>["val","valid","validation","dev"].includes(x)))return"validation";return null}
 function claim(id,statement,evidence,predicate,assumptions=[]){return{id,statement,kind:"computational",required_evidence:[evidence],assumptions,predicate}}
+function artifactPathForClaim(artifactId){
+  return inventory.find(x=>x.artifact_id===artifactId)?.path||artifactId||"unspecified";
+}
+function explainPredicate(predicate){
+  const p=predicate&&typeof predicate==="object"?predicate:{};
+  if(p.type==="csv_disjoint"){
+    return {
+      template:"Dataset separation",
+      summary:`No value in ${artifactPathForClaim(p.left_artifact)}[${p.key}] may also appear in ${artifactPathForClaim(p.right_artifact)}[${p.key}].`,
+      fields:[
+        ["First dataset",artifactPathForClaim(p.left_artifact)],
+        ["Second dataset",artifactPathForClaim(p.right_artifact)],
+        ["Identity key",p.key||"unspecified"],
+        ["Pass condition","Intersection of key values is empty"]
+      ],
+      scope:"This establishes separation by the declared key only; it does not prove the datasets are otherwise independent or free of leakage."
+    };
+  }
+  if(p.type==="reaction_balance"){
+    const side=rows=>(Array.isArray(rows)?rows:[]).map(x=>`${x.coefficient??1} × ${x.formula||"?"}`).join(" + ")||"unspecified";
+    return {
+      template:"Chemical reaction balance",
+      summary:`The declared reaction ${side(p.reactants)} → ${side(p.products)} must conserve each parsed element.`,
+      fields:[
+        ["Reactants",side(p.reactants)],
+        ["Products",side(p.products)],
+        ["Pass condition","Element counts match on both sides"]
+      ],
+      scope:"This checks stoichiometric atom balance under the PCS formula grammar; it does not establish thermodynamic or kinetic feasibility."
+    };
+  }
+  if(p.type==="unit_compatible"){
+    return {
+      template:"Unit compatibility",
+      summary:`${p.left_unit||"?"} and ${p.right_unit||"?"} must reduce to the same PCS physical dimension.`,
+      fields:[
+        ["Left unit",p.left_unit||"unspecified"],
+        ["Right unit",p.right_unit||"unspecified"],
+        ["Pass condition","Normalized dimensions are equal"]
+      ],
+      scope:"This checks dimensional compatibility, not whether the numerical values or scientific interpretation are correct."
+    };
+  }
+  if(p.type==="pkpd_contract"){
+    return {
+      template:"PK/PD model contract",
+      summary:`The model in ${artifactPathForClaim(p.model_artifact)} must satisfy PCS's restricted PK/PD positivity, unit, and representation contract.`,
+      fields:[
+        ["Model artifact",artifactPathForClaim(p.model_artifact)],
+        ["Pass condition","Restricted model parameters and units satisfy the PCS PK/PD contract"]
+      ],
+      scope:"This checks the declared computational model contract; it does not establish biological or clinical adequacy."
+    };
+  }
+  if(p.type==="pkpd_reference_match"){
+    return {
+      template:"PK/PD output reproduction",
+      summary:`Values in ${artifactPathForClaim(p.output_artifact)} must match the restricted model in ${artifactPathForClaim(p.model_artifact)} within the declared tolerances.`,
+      fields:[
+        ["Model artifact",artifactPathForClaim(p.model_artifact)],
+        ["Output artifact",artifactPathForClaim(p.output_artifact)],
+        ["Time column",p.time_column||"unspecified"],
+        ["Concentration column",p.concentration_column||"unspecified"],
+        ["Effect column",p.effect_column||"unspecified"],
+        ["Relative tolerance",String(p.rel_tol??"unspecified")],
+        ["Absolute tolerance",String(p.abs_tol??"unspecified")],
+        ["Pass condition","Every checked row matches the PCS reference equations within tolerance"]
+      ],
+      scope:"This establishes deterministic agreement with the restricted reference equations; it does not validate the model against biological or clinical reality."
+    };
+  }
+  return {
+    template:"Unsupported formal claim",
+    summary:"PCS does not currently have machine semantics for this predicate type.",
+    fields:[["Predicate type",p.type||"unspecified"]],
+    scope:"Do not treat this prose as a rigorous PCS claim until a supported checker and predicate semantics exist."
+  };
+}
 function artifactEntry(item){return{id:item.artifact_id,path:item.path,role:item.role,media_type:item.media_type,metadata:{pcs_discovery_sha256:item.sha256,pcs_discovery_size:item.size}}}
 function recommendationCard(r){const on=selected.has(r.id);return `<label class="recommendation-card ${on?"selected":""}"><input type="checkbox" data-rec="${esc(r.id)}" ${on?"checked":""}><div><div class="recommendation-title"><strong>${esc(r.detector)}</strong><span class="chip ${r.confidence>=.99?"verified":"pending"}">${Math.round(r.confidence*100)}%</span></div><p>${esc(r.reason)}</p><small>${esc(r.check.type)} · ${esc(r.claim.id)}</small></div></label>`}
 function workflowCard(w){const on=selectedWorkflow.has(w.id),readPaths=Array.isArray(w.read_paths)?w.read_paths:[],writePaths=Array.isArray(w.write_paths)?w.write_paths:[],reads=readPaths.length?readPaths.join(", "):"none",writes=writePaths.length?writePaths.join(", "):"none";return `<label class="recommendation-card workflow-inference-card ${on?"selected":""}"><input type="checkbox" data-wf="${esc(w.id)}" ${on?"checked":""}><div><div class="recommendation-title"><strong>${esc(w.source_path)}</strong><span class="chip pending">${Math.round(w.confidence*100)}% heuristic</span></div><p><strong>Reads:</strong> ${esc(reads)}<br><strong>Writes:</strong> ${esc(writes)}</p><small>Static only · source code not executed · ${w.unresolved_reference_count||0} unresolved reference(s)</small></div></label>`}
@@ -333,7 +411,8 @@ function pcsMapperApiState(){
       selected:selected.has(r.id),
       claim:pcsMapperApiClone(r.claim),
       check:pcsMapperApiClone(r.check),
-      artifact_ids:[...(r.artifact_ids||[])]
+      artifact_ids:[...(r.artifact_ids||[])],
+      formal_explanation:pcsMapperApiClone(explainPredicate(r.claim?.predicate))
     })),
     workflow_inferences: workflowInferences.map(w=>({
       id:w.id,
@@ -384,6 +463,9 @@ window.PCSProjectMapper = Object.freeze({
     if(!changed)throw new Error("Unknown claim: "+claimId);
     await render();
     return pcsMapperApiState();
+  },
+  explainPredicate(predicate){
+    return pcsMapperApiClone(explainPredicate(predicate));
   },
   downloadDraft(){
     if(!lastDraft)throw new Error("No manifest draft is ready.");
