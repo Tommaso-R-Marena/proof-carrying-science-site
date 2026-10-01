@@ -33,7 +33,15 @@
   function renderIntentMatch(){
     const query=$("guidedClaimIntent")?.value||"",tokens=claimIntentTokens(query),cards=[...$("guidedClaims").querySelectorAll("[data-claim-card]")];
     cards.forEach(c=>{c.classList.remove("intent-match");const badge=c.querySelector("[data-intent-badge]");if(badge)badge.hidden=true});
-    if(!tokens.length){$("guidedIntentHint").textContent="PCS will suggest among the formal templates it actually supports.";return}
+    if($("guidedClaimWords"))$("guidedClaimWords").textContent=query.trim()||"Describe the scientific check above.";
+    if(!tokens.length){
+      $("guidedIntentHint").textContent="PCS will suggest among the formal templates it actually supports.";
+      if($("guidedClaimTranslationState"))$("guidedClaimTranslationState").textContent="WAITING FOR INTENT";
+      if($("guidedClaimMeaning"))$("guidedClaimMeaning").textContent="No formal meaning selected yet.";
+      if($("guidedClaimMeaningScope"))$("guidedClaimMeaningScope").textContent="PCS will not infer unsupported semantics.";
+      if($("guidedClaimExact"))$("guidedClaimExact").textContent="No typed predicate yet.";
+      return
+    }
     let best=null,bestScore=0;
     for(const card of cards){
       const blob=(card.dataset.search||"").toLowerCase();
@@ -44,8 +52,18 @@
       best.classList.add("intent-match");
       const badge=best.querySelector("[data-intent-badge]");if(badge)badge.hidden=false;
       $("guidedIntentHint").textContent="Closest supported template highlighted below. This is a navigation suggestion only; you still confirm the exact typed predicate.";
+      const rec=(state?.recommendations||[]).find(r=>String(r.id)===String(best.dataset.claimCard));
+      const x=rec?.formal_explanation||api.explainPredicate(rec?.claim?.predicate||{});
+      if($("guidedClaimTranslationState"))$("guidedClaimTranslationState").textContent="SUPPORTED TEMPLATE FOUND";
+      if($("guidedClaimMeaning"))$("guidedClaimMeaning").textContent=x.template||"Supported PCS predicate";
+      if($("guidedClaimMeaningScope"))$("guidedClaimMeaningScope").textContent=x.summary||rec?.claim?.statement||"";
+      if($("guidedClaimExact"))$("guidedClaimExact").textContent=JSON.stringify(rec?.claim?.predicate||{});
     }else{
       $("guidedIntentHint").textContent="No detected supported template clearly matches those words. PCS will not invent a formal meaning from free text.";
+      if($("guidedClaimTranslationState"))$("guidedClaimTranslationState").textContent="NOT YET FORMALIZED";
+      if($("guidedClaimMeaning"))$("guidedClaimMeaning").textContent="PCS has no supported typed meaning for this wording.";
+      if($("guidedClaimMeaningScope"))$("guidedClaimMeaningScope").textContent="Rephrase toward a supported template or define the claim explicitly in Advanced Mapper/CLI.";
+      if($("guidedClaimExact"))$("guidedClaimExact").textContent="No predicate generated — fail closed.";
     }
   }
   function renderClaims(){
