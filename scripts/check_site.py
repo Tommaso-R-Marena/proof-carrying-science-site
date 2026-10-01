@@ -824,6 +824,36 @@ if public_status.exists() and fixture_obj is not None:
         runtime_receipt = reviewer_receipts.get("runtime_scheme_check", {})
         if runtime_receipt.get("valid_signature_verified") is not True or runtime_receipt.get("one_byte_tamper_rejected") is not True or runtime_receipt.get("wrong_reviewer_key_rejected") is not True:
             errors.append("status.json: reviewer receipt runtime scheme evidence drift")
+        product_gate = mvp.get("product_hardening_gate", {})
+        if product_gate.get("status") != "PASS":
+            errors.append("status.json: product hardening gate not marked PASS")
+        if product_gate.get("tested_checkpoint") != "2c5f224c43aab8d5cfc0f5b3658b80ab25cc008a":
+            errors.append("status.json: product hardening checkpoint drift")
+        for key in [
+            "golden_examples_passed",
+            "adversarial_hardening_passed",
+            "local_trust_profile_verification_passed",
+            "standalone_linux_verifier_built_and_smoke_tested",
+        ]:
+            if product_gate.get(key) is not True:
+                errors.append(f"status.json: product hardening invariant drift: {key}")
+        golden = mvp.get("golden_examples", {})
+        if golden.get("format") != "pcs-golden-examples-v06-v1":
+            errors.append("status.json: golden example format drift")
+        if golden.get("cases") != ["pkpd-supported", "pkpd-falsified", "environment-bound"]:
+            errors.append("status.json: golden example case set drift")
+        if golden.get("byte_determinism_tested") is not True:
+            errors.append("status.json: golden example determinism drift")
+        reviewer_verifier = mvp.get("reviewer_verifier", {})
+        if reviewer_verifier.get("trust_profile_format") != "pcs-verifier-trust-v1":
+            errors.append("status.json: reviewer trust-profile format drift")
+        if reviewer_verifier.get("one_command_cli") != "pcs verify-local-v06":
+            errors.append("status.json: reviewer one-command CLI drift")
+        if reviewer_verifier.get("linux_single_file_ci_smoke_tested") is not True:
+            errors.append("status.json: Linux standalone verifier CI evidence drift")
+        if reviewer_verifier.get("schema_resources_explicitly_bundled") is not True:
+            errors.append("status.json: standalone verifier schema bundling drift")
+
         gate = mvp.get("latest_hosted_gate", {})
         if gate.get("provider") != "CircleCI" or gate.get("status") != "PASS" or gate.get("code_result") != "PASS" or gate.get("full_runtime_executed") is not True:
             errors.append("status.json: hosted runtime-gate evidence drift")
