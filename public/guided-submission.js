@@ -6,7 +6,7 @@
 
   const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
   function notify(text,kind="info"){const b=$("guidedMessage");b.hidden=!text;b.className="guided-message "+kind;b.textContent=text||""}
-  function setBusy(on,text="Analyzing your project locally…"){busy=on;document.body.classList.toggle("guided-busy",on);if(on)notify(text);else if($("guidedMessage").classList.contains("info"))notify("")}
+  function setBusy(on,text="Analyzing your project locally…"){busy=on;document.body.classList.toggle("guided-busy",on);document.querySelectorAll(".guided-stage button").forEach(btn=>{if(on){btn.dataset.guidedWasDisabled=btn.disabled?"1":"0";btn.disabled=true}else if("guidedWasDisabled" in btn.dataset){btn.disabled=btn.dataset.guidedWasDisabled==="1";delete btn.dataset.guidedWasDisabled}});if(on)notify(text);else if($("guidedMessage").classList.contains("info"))notify("")}
   function go(step){document.querySelectorAll("[data-guided-stage]").forEach(x=>x.hidden=Number(x.dataset.guidedStage)!==step);document.querySelectorAll("[data-step-indicator]").forEach(x=>{const n=Number(x.dataset.stepIndicator);x.classList.toggle("active",n===step);x.classList.toggle("complete",n<step);if(n===step)x.setAttribute("aria-current","step");else x.removeAttribute("aria-current")});window.scrollTo({top:document.querySelector(".guided-stepper").offsetTop-24,behavior:"smooth"})}
   const claims=()=>state?.draft?.claims||[];
   const rootName=()=>String(state?.report?.project_root_name||state?.draft?.pcs_intake?.project_root_name||state?.subject||"my-project").replace(/[^A-Za-z0-9._-]+/g,"-")||"my-project";
