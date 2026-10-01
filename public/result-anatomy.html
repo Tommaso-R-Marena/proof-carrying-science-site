@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Completed PCS Result · Proof-Carrying Science</title>
+<meta name="description" content="Understand a completed PCS v0.6 review: package validity, claim support, reviewer acceptance, and signed receipt commitments.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar"><div class="shell"><span>Result anatomy · PCS v0.6 semantics · Educational walkthrough</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="guided-submission.html">Try PCS</a>
+    <a href="result-anatomy.html">Result anatomy</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="pagehead result-anatomy-head">
+  <div class="kicker">Completed review anatomy</div>
+  <h1>What does a finished PCS result actually mean?</h1>
+  <p>A PCS result has separate layers. The package can be valid while a scientific claim fails. A claim can be computationally supported while a reviewer still declines to accept it. This walkthrough uses the actual PCS v0.6 result and receipt fields to make those distinctions concrete.</p>
+  <div class="notice"><strong>Educational walkthrough:</strong> the scenario values below are illustrative examples of the real v0.6 schema. They are not presented as a new live verification run. For executed evidence, use <a href="validation.html">Validation</a> and the <a href="trust.html">Trust Center</a>.</div>
+</section>
+
+<section class="result-anatomy-story">
+  <div class="kicker">The whole PCS result in one sentence</div>
+  <h2>“These exact bytes were independently checked; this exact claim received this level of support; this reviewer did or did not accept that verified state.”</h2>
+  <div class="result-anatomy-chain" aria-label="PCS result layers">
+    <div><span>1</span><strong>Exact package</strong><small>What bytes were reviewed?</small></div>
+    <div><span>2</span><strong>Independent replay</strong><small>Did required checks reproduce?</small></div>
+    <div><span>3</span><strong>Claim decision</strong><small>What support follows?</small></div>
+    <div><span>4</span><strong>Reviewer policy</strong><small>Is that support enough here?</small></div>
+    <div><span>5</span><strong>Signed receipt</strong><small>Who reviewed what, under which policy?</small></div>
+  </div>
+</section>
+
+<section class="section-tight result-scenarios">
+  <div class="kicker">Compare outcomes</div>
+  <h2>Same framework, very different conclusions.</h2>
+  <div class="scenario-tabs" role="group" aria-label="Choose illustrative result scenario">
+    <button type="button" class="active" data-result-scenario="accepted" aria-pressed="true">Valid + accepted</button>
+    <button type="button" data-result-scenario="policy" aria-pressed="false">Valid + policy rejected</button>
+    <button type="button" data-result-scenario="failed-claim" aria-pressed="false">Valid + claim failed</button>
+    <button type="button" data-result-scenario="invalid" aria-pressed="false">Invalid package</button>
+  </div>
+
+  <div class="result-scenario-summary" id="resultScenarioSummary">
+    <div class="result-scenario-verdict">
+      <span id="resultScenarioBadge">VALID + ACCEPTED</span>
+      <h3 id="resultScenarioTitle">The exact package verified, the claim is computationally supported, and this reviewer accepts that support level.</h3>
+      <p id="resultScenarioSubtitle">This is the clean positive case—but its scope is still the exact typed claim, evidence, assumptions, and reviewer policy.</p>
+    </div>
+    <div class="result-three-axes">
+      <div id="axisValid" class="axis-card pass"><span>Package validity</span><strong>VALID</strong><small>PCS trust chain accepted</small></div>
+      <div id="axisClaim" class="axis-card pass"><span>Claim status</span><strong>COMPUTATIONALLY_SUPPORTED</strong><small>Required computational evidence passed</small></div>
+      <div id="axisAccepted" class="axis-card pass"><span>Reviewer policy</span><strong>ACCEPTED</strong><small>This receiver accepts that verified support</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="section split result-interpretation-section">
+  <div>
+    <div class="kicker">Plain-language interpretation</div>
+    <h2 id="resultMeaningTitle">What you can conclude</h2>
+    <div class="result-interpret-box means">
+      <strong>PCS supports saying:</strong>
+      <span id="resultMeans"></span>
+    </div>
+    <div class="result-interpret-box not-means">
+      <strong>PCS does not support saying:</strong>
+      <span id="resultDoesNotMean"></span>
+    </div>
+    <div class="result-interpret-box next">
+      <strong>What a reviewer should inspect next:</strong>
+      <span id="resultNext"></span>
+    </div>
+  </div>
+
+  <div class="panel result-receipt-card">
+    <div class="kicker">Actual v0.6 field names</div>
+    <h2>Verification receipt anatomy</h2>
+    <div class="receipt-axis-row"><span><code>valid</code></span><strong id="receiptValid">true</strong><small>Did PCS accept the package/replay/normalized-decision chain?</small></div>
+    <div class="receipt-axis-row"><span><code>accepted</code></span><strong id="receiptAccepted">true</strong><small>Did the receiver's external policy accept that verified state?</small></div>
+    <div class="receipt-axis-row"><span><code>claims[].decision</code></span><strong id="receiptClaim">COMPUTATIONALLY_SUPPORTED</strong><small>What assurance follows for this exact typed claim?</small></div>
+    <details class="receipt-details">
+      <summary>Show the cryptographic bindings a signed reviewer receipt can commit to</summary>
+      <dl>
+        <div><dt><code>bundle_sha256</code></dt><dd>Exact delivered ZIP bytes</dd></div>
+        <div><dt><code>certificate_semantic_hash</code></dt><dd>Scientific certificate meaning</dd></div>
+        <div><dt><code>certificate_integrity_hash</code></dt><dd>Certificate integrity instance</dd></div>
+        <div><dt><code>normalized_index_semantic_hash</code></dt><dd>Replay-derived decision set</dd></div>
+        <div><dt><code>policy_sha256</code></dt><dd>Exact reviewer policy bytes</dd></div>
+        <div><dt><code>valid</code> + <code>accepted</code></dt><dd>Both result axes, signed separately from the producer</dd></div>
+      </dl>
+    </details>
+  </div>
+</section>
+
+<section class="section result-stage-detail">
+  <div class="kicker">What “valid” contains</div>
+  <h2>PCS v0.6 verifies a chain, not one green checkbox.</h2>
+  <div class="result-stage-grid">
+    <article><span>1</span><h3>Canonical inputs</h3><p>Certificate, manifest, and signature records must use the exact accepted canonical byte representation.</p></article>
+    <article><span>2</span><h3>Certificate signature</h3><p>The certificate must authenticate under the expected Ed25519 producer key.</p></article>
+    <article><span>3</span><h3>Package binding</h3><p>Member set, byte sizes, SHA-256 values, certificate binding, and package signature are checked.</p></article>
+    <article><span>4</span><h3>Environment replay</h3><p>Human-confirmed reproducibility-environment claims are regenerated from the delivered source bytes.</p></article>
+    <article><span>5</span><h3>Workflow replay</h3><p>Confirmed static dependency claims must be rediscovered from the packaged source.</p></article>
+    <article><span>6</span><h3>Scientific replay</h3><p>Every supported evidence item is rerun rather than trusting recorded PASS/FAIL values.</p></article>
+    <article><span>7</span><h3>Normalized decisions</h3><p>The delivered decision set must exactly equal the set derived from the fresh replay.</p></article>
+  </div>
+</section>
+
+<section class="section-tight real-evidence-bridge">
+  <div>
+    <div class="kicker">Illustration vs evidence</div>
+    <h2>The cards above teach semantics. These links show executed evidence.</h2>
+    <p>The public-data benchmark matched all five predeclared outcomes, including two negative controls. Separate hosted runtime campaigns exercised the full runtime/restoration path across architecture, OCI engine, language runtime, and offline dependency restoration. Those are evidence about PCS behavior; they are not the illustrative receipt values above.</p>
+  </div>
+  <div class="actions">
+    <a class="button primary" href="validation.html">See executed validation</a>
+    <a class="button secondary" href="trust.html">See runtime evidence</a>
+    <a class="button secondary" href="guided-submission.html?demo=1">Restart 90-second demo</a>
+  </div>
+</section>
+</main>
+
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="guided-submission.html">Try PCS</a><a href="result-anatomy.html">Result anatomy</a><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script src="result-anatomy.js"></script>
+</body>
+</html>
