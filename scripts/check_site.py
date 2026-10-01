@@ -38,7 +38,11 @@ for html_path in HTML_FILES:
 required = [
     "index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "guided-submission.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
-    "logo-mark.svg", "pcs-v05-reference-package.json", "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json", "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
+    "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
+    "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
+    "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
+    "reviewer-policy.example.json", "review-quorum-policy.example.json", "review-set.example.json",
+    "real-world-validation-2026-09-29.json", "status.json", ".well-known/security.txt", "_headers", "robots.txt",
 ]
 for name in required:
     if not (ROOT / name).exists():
@@ -380,6 +384,22 @@ if validation_result.exists():
             errors.append("real-world validation: execution-boundary drift")
     except Exception as exc:
         errors.append(f"real-world validation: invalid JSON: {type(exc).__name__}: {exc}")
+
+robots_text = (ROOT / "robots.txt").read_text(encoding="utf-8") if (ROOT / "robots.txt").exists() else ""
+if "Disallow: /" in robots_text:
+    errors.append("robots.txt: public indexing was accidentally disabled")
+if "Sitemap: https://proof-carrying-science-site.marenatommaso.workers.dev/sitemap.xml" not in robots_text:
+    errors.append("robots.txt: public sitemap declaration is missing")
+
+sitemap_text = (ROOT / "sitemap.xml").read_text(encoding="utf-8") if (ROOT / "sitemap.xml").exists() else ""
+for public_url in [
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/validation-registry.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/trust-explorer.html",
+]:
+    if public_url not in sitemap_text:
+        errors.append(f"sitemap.xml: required public URL missing: {public_url}")
 
 headers = (ROOT / "_headers").read_text(encoding="utf-8") if (ROOT / "_headers").exists() else ""
 for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "X-Robots-Tag"]:
