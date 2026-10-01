@@ -313,3 +313,93 @@ $("downloadDiscovery").onclick=()=>lastReport&&downloadJson("pcs-discovery.json"
 $("downloadReview").onclick=()=>lastReport&&downloadText("pcs-discovery-review.md",discoveryReviewMarkdown(),"text/markdown");
 $("downloadEnvironmentPlan").onclick=()=>environmentCapture&&downloadJson("pcs-environment-plan.json",environmentCapture.replay_plan);
 $("copyConfirm").onclick=async()=>{try{await navigator.clipboard.writeText($("confirmCommand").textContent);$("copyConfirm").textContent="Copied";setTimeout(()=>$("copyConfirm").textContent="Copy",1200)}catch{$("copyConfirm").textContent="Select + copy"}};
+
+// Public adapter used by the beginner Guided Submission flow.
+// It deliberately reuses the same discovery/draft engine as Advanced Mapper.
+function pcsMapperApiClone(value){
+  if(value==null)return value;
+  try{return structuredClone(value)}catch{return JSON.parse(JSON.stringify(value))}
+}
+function pcsMapperApiState(){
+  return {
+    subject: $("subject")?.value?.trim() || "scientific-project",
+    inventory: inventory.map(({file,...x})=>pcsMapperApiClone(x)),
+    skipped: pcsMapperApiClone(skipped),
+    recommendations: recommendations.map(r=>({
+      id:r.id,
+      detector:r.detector,
+      confidence:r.confidence,
+      reason:r.reason,
+      selected:selected.has(r.id),
+      claim:pcsMapperApiClone(r.claim),
+      check:pcsMapperApiClone(r.check),
+      artifact_ids:[...(r.artifact_ids||[])]
+    })),
+    workflow_inferences: workflowInferences.map(w=>({
+      id:w.id,
+      selected:selectedWorkflow.has(w.id),
+      source_path:w.source_path,
+      source_kind:w.source_kind,
+      confidence:w.confidence,
+      read_paths:[...(w.read_paths||[])],
+      write_paths:[...(w.write_paths||[])],
+      unresolved_reference_count:w.unresolved_reference_count
+    })),
+    workflow_unresolved: pcsMapperApiClone(workflowUnresolved),
+    environment_capture: pcsMapperApiClone(environmentCapture),
+    draft: pcsMapperApiClone(lastDraft),
+    report: pcsMapperApiClone(lastReport)
+  };
+}
+window.PCSProjectMapper = Object.freeze({
+  async loadFiles(files, options={}){
+    const list=[...(files||[])];
+    if(!list.length)throw new Error("No project files were provided.");
+    if(options.subject && $("subject")) $("subject").value=String(options.subject);
+    await inspectFiles(list);
+    return pcsMapperApiState();
+  },
+  async loadExample(){
+    await loadSyntheticExample();
+    return pcsMapperApiState();
+  },
+  getState(){return pcsMapperApiState()},
+  async setSubject(value){
+    $("subject").value=String(value||"").trim()||"scientific-project";
+    await rebuild();
+    return pcsMapperApiState();
+  },
+  async setRecommendationSelected(id, enabled){
+    if(enabled) selected.add(id); else selected.delete(id);
+    await render();
+    return pcsMapperApiState();
+  },
+  async setClaimStatement(claimId, statement){
+    const next=String(statement||"").trim();
+    if(!next)throw new Error("Claim statement cannot be empty.");
+    let changed=false;
+    for(const r of recommendations){
+      if(r.claim?.id===claimId){r.claim.statement=next;changed=true}
+    }
+    if(!changed)throw new Error("Unknown claim: "+claimId);
+    await render();
+    return pcsMapperApiState();
+  },
+  downloadDraft(){
+    if(!lastDraft)throw new Error("No manifest draft is ready.");
+    downloadJson("pcs-manifest.draft.json",lastDraft);
+  },
+  downloadDiscovery(){
+    if(!lastReport)throw new Error("No discovery report is ready.");
+    downloadJson("pcs-discovery.json",lastReport);
+  },
+  downloadReview(){
+    if(!lastReport)throw new Error("No discovery review is ready.");
+    downloadText("pcs-discovery-review.md",discoveryReviewMarkdown(),"text/markdown");
+  },
+  downloadEnvironmentPlan(){
+    if(!environmentCapture)throw new Error("No environment reconstruction plan is ready.");
+    downloadJson("pcs-environment-plan.json",environmentCapture.replay_plan);
+  }
+});
+
