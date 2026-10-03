@@ -416,6 +416,7 @@ if inspector_page.exists():
         'id="impactArtifact"',
         'id="downloadInspection"',
         'id="certifiedCoverage"',
+        "CERTIFIED CHECKER TYPES",
         "pcs verify-local-v06 delivered.pcs.zip",
     ]:
         if required_text not in inspector_text:
@@ -439,9 +440,14 @@ if inspector_script.exists():
         "csv_disjoint",
         "pkpd_contract",
         "pkpd_reference_match",
-        "LEAN_CERTIFIED_BUILTIN",
-        "OUTSIDE_CERTIFIED_BUILTIN_SET",
-        "formal_coverage:coverageSummary",
+        "CERTIFIED CHECKER TYPE",
+        "OUTSIDE CERTIFIED CHECKER SET",
+        "CHECKER_TYPE_ONLY",
+        "MATCHING_LEAN_AUTHORITATIVE_RECEIPT",
+        "PROVED_IN_LEAN_FOR_THIS_CHECK_TYPE",
+        "NOT_IN_CERTIFIED_BUILTIN_SET",
+        "browser_execution_verified:false",
+        "package_authority:packageAuthorityCoverage",
     ]:
         if required_text not in inspector_js:
             errors.append(f"package-inspector.js: assurance dependency engine drift: {required_text}")
