@@ -139,6 +139,35 @@
     <div><span class="guided-stage-number">02</span><h2>What should PCS verify?</h2><p>PCS does not turn arbitrary prose directly into a trusted formal claim. It matches your project to supported claim templates, fills typed fields, and generates an exact machine-checkable predicate. You choose which rigorous meaning you intend.</p></div>
     <span class="chip pending">YOU CONFIRM</span>
   </div>
+  <section class="guided-discovery-brief" id="guidedDiscoveryBrief" aria-live="polite" aria-atomic="true">
+    <div class="guided-discovery-brief-head">
+      <div>
+        <span class="guided-discovery-brief-kicker">Local discovery complete</span>
+        <h3>Here is what PCS found—and what it still does not know.</h3>
+      </div>
+      <span class="chip open">STATIC DISCOVERY ONLY</span>
+    </div>
+    <p class="guided-discovery-brief-note">Nothing in this summary is a scientific verdict. PCS has inspected the selected files, proposed supported interpretations, and surfaced items that still require your judgment.</p>
+    <div class="guided-discovery-brief-grid">
+      <article class="found">
+        <span>1 · Found locally</span>
+        <strong id="guidedDiscoveryFound">Waiting for project discovery.</strong>
+        <small id="guidedDiscoveryFoundDetail">PCS will summarize the files the browser actually provided.</small>
+      </article>
+      <article class="proposed">
+        <span>2 · PCS proposed</span>
+        <strong id="guidedDiscoveryProposed">No proposal yet.</strong>
+        <small id="guidedDiscoveryProposedDetail">Supported claims, static workflow relationships, and environment declarations appear here.</small>
+      </article>
+      <article class="confirm">
+        <span>3 · You still confirm</span>
+        <strong id="guidedDiscoveryConfirm">The scientific meaning.</strong>
+        <small id="guidedDiscoveryConfirmDetail">You decide whether the proposed claim and bindings match what you actually intend.</small>
+      </article>
+    </div>
+    <div class="guided-discovery-next" id="guidedDiscoveryNext">Next: describe the scientific check you care about, then confirm one exact supported predicate below.</div>
+  </section>
+
   <div class="claim-translation-explainer" aria-label="How PCS turns an intent into a rigorous claim">
     <div><span>1</span><strong>Your intent</strong><small>“Make sure train and test do not share patients.”</small></div>
     <div class="claim-arrow" aria-hidden="true">→</div>
