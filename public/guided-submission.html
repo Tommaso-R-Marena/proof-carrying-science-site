@@ -205,7 +205,11 @@
     <label for="guidedSubject">Project name</label>
     <input class="textinput" id="guidedSubject" value="scientific-project" autocomplete="off">
   </div>
-  <div id="guidedClaims" class="guided-claim-list"></div>
+  <div class="guided-claim-decision-note">
+    <strong>How to decide which claim to include</strong>
+    <span>Approve a proposal only when its plain-language meaning, literal verifier fields, and scope boundary all match what you intend. <b>Discovery confidence is only a file/template matching signal—it is not confidence that the scientific claim is true.</b></span>
+  </div>
+  <div id="guidedClaims" class="guided-claim-list" aria-label="Supported claim proposals"></div>
   <div id="guidedNoClaims" class="guided-empty" hidden>
     <strong>PCS did not find a currently supported formal claim automatically.</strong>
     <p>Your scientific statement may still be meaningful, but PCS does not yet have machine semantics for it. Use Advanced Mapper or the CLI to define a supported predicate; do not treat free-form prose alone as verified.</p>
