@@ -415,6 +415,7 @@ if inspector_page.exists():
         'id="assuranceGraph"',
         'id="impactArtifact"',
         'id="downloadInspection"',
+        'id="certifiedCoverage"',
         "pcs verify-local-v06 delivered.pcs.zip",
     ]:
         if required_text not in inspector_text:
@@ -432,6 +433,15 @@ if inspector_script.exists():
         "affected_evidence",
         "affected_claims",
         "receipt.authoritative===true",
+        "LEAN_CERTIFIED_EVIDENCE_TYPES",
+        "reaction_balance",
+        "unit_compatible",
+        "csv_disjoint",
+        "pkpd_contract",
+        "pkpd_reference_match",
+        "LEAN_CERTIFIED_BUILTIN",
+        "OUTSIDE_CERTIFIED_BUILTIN_SET",
+        "formal_coverage:coverageSummary",
     ]:
         if required_text not in inspector_js:
             errors.append(f"package-inspector.js: assurance dependency engine drift: {required_text}")
