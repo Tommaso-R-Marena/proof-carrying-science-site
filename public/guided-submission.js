@@ -37,6 +37,39 @@
   function outputs(){const out=new Set();for(const w of state?.workflow_inferences||[])if(w.selected)for(const p of w.write_paths||[])out.add(p);for(const x of state?.inventory||[])if(x.role==="tabular-output")out.add(x.path);return[...out]}
   function inputs(){const out=new Set(outputs()),v=new Set();for(const w of state?.workflow_inferences||[])if(w.selected)for(const p of w.read_paths||[])if(!out.has(p))v.add(p);if(!v.size)for(const x of state?.inventory||[])if(!["source-code","tabular-output"].includes(x.role))v.add(x.path);return[...v]}
   function env(){const e=state?.environment_capture;if(!e)return{label:"Not declared",detail:"No recognized dependency or environment declaration was found."};return{label:e.hermeticity||"environment_unspecified",detail:`${e.python?.dependencies?.length||0} Python · ${e.r?.dependencies?.length||0} R dependency record(s) · ${e.containers?.length||0} container spec(s)`}}
+  function renderDiscoveryBrief(){
+    if(!$("guidedDiscoveryBrief")||!state)return;
+    const inventory=state.inventory||[],recs=state.recommendations||[],flows=state.workflow_inferences||[];
+    const sourceCount=inventory.filter(x=>x.role==="source-code").length;
+    const likelyInputs=inputs().length,likelyOutputs=outputs().length;
+    const environment=env();
+    const unresolved=(state.workflow_unresolved?.length||0)+(state.environment_capture?.unresolved?.length||0);
+    const skipped=state.skipped?.length||0;
+    const selected=recs.filter(r=>r.selected).length;
+    const roleBits=[];
+    if(sourceCount)roleBits.push(`${sourceCount} source`);
+    if(likelyInputs)roleBits.push(`${likelyInputs} likely input${likelyInputs===1?"":"s"}`);
+    if(likelyOutputs)roleBits.push(`${likelyOutputs} likely output${likelyOutputs===1?"":"s"}`);
+    $("guidedDiscoveryFound").textContent=`${inventory.length} file${inventory.length===1?"":"s"} inventoried locally`;
+    $("guidedDiscoveryFoundDetail").textContent=roleBits.length?roleBits.join(" · "):"PCS hashed the selected files, but did not confidently classify code/input/output roles.";
+    if(recs.length){
+      $("guidedDiscoveryProposed").textContent=`${recs.length} supported check${recs.length===1?"":"s"} proposed`;
+      $("guidedDiscoveryProposedDetail").textContent=`${flows.length} static workflow inference${flows.length===1?"":"s"} · environment: ${environment.label}`;
+    }else{
+      $("guidedDiscoveryProposed").textContent="0 supported scientific checks proposed";
+      $("guidedDiscoveryProposedDetail").textContent=`PCS will not invent semantics. ${flows.length} static workflow inference${flows.length===1?"":"s"} found · environment: ${environment.label}`;
+    }
+    const reviewBits=[];
+    reviewBits.push(selected?`${selected} proposed claim${selected===1?" is":"s are"} currently included`:"no scientific claim is currently selected");
+    if(unresolved)reviewBits.push(`${unresolved} unresolved workflow/environment item${unresolved===1?"":"s"}`);
+    if(skipped)reviewBits.push(`${skipped} file${skipped===1?" was":"s were"} excluded during browser discovery`);
+    $("guidedDiscoveryConfirm").textContent=recs.length?"Confirm the exact scientific meaning":"Define a supported meaning before continuing";
+    $("guidedDiscoveryConfirmDetail").textContent=reviewBits.join(" · ")+ ".";
+    $("guidedDiscoveryNext").textContent=recs.length
+      ?"Next: describe the scientific check you care about, then confirm one exact supported predicate below."
+      :"Next: PCS did not detect a supported formal claim. Review the available templates below or use Advanced Mapper/CLI rather than treating free-form prose as verified.";
+    $("guidedDiscoveryBrief").classList.toggle("needs-attention",!recs.length||!!unresolved||!!skipped);
+  }
   function claimIntentTokens(value){
     return String(value||"").toLowerCase().split(/[^a-z0-9]+/).filter(x=>x.length>2&&!["the","and","that","with","from","into","make","sure","want","check","verify","data"].includes(x))
   }
@@ -107,6 +140,7 @@
     }).join("");
     $("guidedClaims").querySelectorAll("[data-rec]").forEach(x=>x.onchange=async e=>{setBusy(true,"Updating the draft…");try{state=await api.setRecommendationSelected(e.target.dataset.rec,e.target.checked);renderClaims()}catch(err){notify(err.message||String(err),"error")}finally{setBusy(false)}});
     $("guidedToReview").disabled=!claims().length;
+    renderDiscoveryBrief();
     renderIntentMatch()
   }
   function reviewCard(title,value,detail,warn=false){return`<article class="guided-review-card ${warn?"warn":"good"}"><span class="guided-review-status">${warn?"!":"✓"}</span><div><small>${esc(title)}</small><strong>${esc(value)}</strong><p>${esc(detail)}</p></div></article>`}
