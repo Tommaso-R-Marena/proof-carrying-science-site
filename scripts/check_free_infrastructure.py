@@ -60,7 +60,7 @@ site_js = (PUBLIC / "site.js").read_text(encoding="utf-8")
 for required in [
     "proof-carrying-science-site.marenatommaso.workers.dev",
     "https://static.cloudflareinsights.com/beacon.min.js",
-    "data-cf-beacon",
+    "dataset.cfBeacon",
 ]:
     if required not in site_js:
         errors.append(f"production Web Analytics wiring missing: {required}")
