@@ -369,11 +369,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
 
 
 /* P0 demo comprehension rail */
-.guided-demo-guide{position:sticky;top:10px;z-index:20;display:flex;justify-content:space-between;gap:24px;align-items:center;margin:14px 0 22px;padding:15px 18px;border:1px solid #c9dcef;border-radius:16px;background:rgba(255,255,255,.96);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px)}
-.guided-demo-guide-copy{min-width:0}.guided-demo-guide-copy strong{display:block;font-size:14px;margin:2px 0 4px}.guided-demo-guide-copy small{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+.guided-demo-guide{position:sticky;top:10px;z-index:20;display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,230px) minmax(220px,280px);gap:0;align-items:stretch;margin:14px 0 22px;padding:0;border:1px solid #c9dcef;border-radius:16px;background:rgba(255,255,255,.96);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px);overflow:hidden}
+.guided-demo-guide-copy{min-width:0;padding:15px 18px}.guided-demo-guide-copy strong{display:block;font-size:14px;line-height:1.35;margin:2px 0 4px;overflow-wrap:anywhere}.guided-demo-guide-copy small{display:block;color:var(--muted);font-size:12px;line-height:1.45}
 .guided-demo-guide-kicker{font:800 9px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
-.guided-demo-guide-state{flex:0 0 235px;border-left:1px solid var(--line);padding-left:18px}.guided-demo-guide-state span{display:block;font:800 10px var(--sans);letter-spacing:.08em;color:var(--blue)}.guided-demo-guide-state small{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.35}
-@media(max-width:760px){.guided-demo-guide{position:static;align-items:flex-start;flex-direction:column}.guided-demo-guide-state{flex:auto;width:100%;border-left:0;border-top:1px solid var(--line);padding:12px 0 0}}
+.guided-demo-guide-state{min-width:0;border-left:1px solid var(--line);padding:15px 18px;display:flex;flex-direction:column;justify-content:center}.guided-demo-guide-state span{display:block;font:800 10px var(--sans);letter-spacing:.08em;color:var(--blue)}.guided-demo-guide-state small{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+@media(max-width:1120px){.guided-demo-guide{grid-template-columns:minmax(0,1fr) minmax(190px,230px)}.guided-demo-guide-action{grid-column:1/-1!important;border-left:0!important;border-top:1px solid #d9e4ef!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;justify-items:stretch!important;gap:14px!important}.guided-demo-guide-action small{text-align:left!important;max-width:none!important}.guided-demo-guide-action .button{width:auto!important;min-width:210px}}
+@media(max-width:760px){.guided-demo-guide{position:static;grid-template-columns:1fr}.guided-demo-guide-state{width:auto;border-left:0;border-top:1px solid var(--line)}.guided-demo-guide-action{grid-template-columns:1fr!important}.guided-demo-guide-action .button{width:100%!important;min-width:0!important}}
 
 
 /* P0 claim interpretation */
@@ -655,11 +656,12 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 
 
 /* Guided demo coach: keeps the 90-second path explicit without changing verification semantics. */
-.guided-demo-guide-action{display:grid;gap:6px;justify-items:end;min-width:230px;padding-left:18px;border-left:1px solid #d9e4ef}
-.guided-demo-guide-action small{max-width:260px;text-align:right;color:var(--muted);font-size:8.5px;line-height:1.4}
-.guided-demo-guide-action .button{white-space:nowrap}
-@media(max-width:760px){
-  .guided-demo-guide-action{justify-items:stretch;min-width:0;padding:12px 0 0;border-left:0;border-top:1px solid #d9e4ef}
-  .guided-demo-guide-action small{text-align:left;max-width:none}
-  .guided-demo-guide-action .button{width:100%}
+.guided-demo-guide-action{display:flex;min-width:0;padding:15px 18px;border-left:1px solid #d9e4ef;flex-direction:column;justify-content:center;align-items:stretch;gap:7px}
+.guided-demo-guide-action small{max-width:none;text-align:left;color:var(--muted);font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+.guided-demo-guide-action .button{width:100%;max-width:100%;white-space:normal;line-height:1.25;padding:10px 12px;text-align:center}
+
+/* Responsive text-safety: labels may wrap instead of forcing cards wider than the viewport. */
+@media(max-width:900px){
+  .guided-review-gate-note strong,.guided-handoff-warning strong,.reviewer-package-boundary strong,.guided-scope-box strong{white-space:normal}
+  .guided-confidence-note{white-space:normal}
 }
