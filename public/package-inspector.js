@@ -72,6 +72,26 @@ async function analyze(buffer,name){
 function chip(ok,a="PASS",b="CHECK"){return '<span class="chip '+(ok?"verified":"open")+'">'+esc(ok?a:b)+'</span>'}
 function idMap(items){return new Map((Array.isArray(items)?items:[]).filter(x=>x&&x.id).map(x=>[x.id,x]));}
 function uniq(xs){return [...new Set(xs.filter(Boolean))];}
+const LEAN_CERTIFIED_EVIDENCE_TYPES=new Set(["reaction_balance","unit_compatible","csv_disjoint","pkpd_contract","pkpd_reference_match"]);
+function evidenceCoverage(e){
+  const type=e?.check_spec?.type||"";
+  return {
+    type,
+    certified:LEAN_CERTIFIED_EVIDENCE_TYPES.has(type),
+    label:LEAN_CERTIFIED_EVIDENCE_TYPES.has(type)?"LEAN-CERTIFIED":"EXTERNAL / UNVERIFIED"
+  };
+}
+function coverageSummary(cert){
+  const evidence=Array.isArray(cert?.evidence)?cert.evidence:[];
+  const classified=evidence.map(e=>({e,coverage:evidenceCoverage(e)}));
+  const certified=classified.filter(x=>x.coverage.certified);
+  return {
+    total:evidence.length,
+    certified:certified.length,
+    external:evidence.length-certified.length,
+    certified_types:uniq(certified.map(x=>x.coverage.type)).sort()
+  };
+}
 function receiptCommitments(x){
   if(!receipt||!x) return {attached:!!receipt,matches:[],all:false};
   const matches=[
@@ -147,7 +167,7 @@ function renderAssuranceGraph(x){
     const assumptionNodes=rel.assumptions.length?rel.assumptions.map(a=>graphNode("assumption",a.id,a.statement,null)).join(""):graphNode("empty","No declared assumptions","claim is not scoped to a certificate assumption",null);
     const artifactNodes=rel.artifacts.length?rel.artifacts.map(a=>{const b=artifactBinding(x,a);return graphNode("artifact",a.id,(a.role||"artifact")+" · "+b.label,b.ok,'role="button" tabindex="0" data-impact-artifact="'+esc(a.id)+'"')}).join(""):graphNode("empty","No artifact dependency","evidence may be self-contained or declarative",null);
     const workflowNodes=rel.workflow.length?'<div class="graph-workflow">'+rel.workflow.map(n=>'<span>'+esc(n.id)+" · "+esc(n.operation)+'</span>').join("")+'</div>':"";
-    const evidenceNodes=rel.evidence.length?rel.evidence.map(e=>graphNode("evidence",e.id,(e.kind||"evidence")+" · "+(e.outcome||"UNVERIFIED"),e.outcome==="PASS")).join(""):graphNode("empty","No linked evidence","claim has no resolved evidence link",false);
+    const evidenceNodes=rel.evidence.length?rel.evidence.map(e=>{const cov=evidenceCoverage(e);return graphNode("evidence",e.id,(e.kind||"evidence")+" · "+(e.outcome||"UNVERIFIED")+" · "+cov.label+(cov.type?" · "+cov.type:""),e.outcome==="PASS")}).join(""):graphNode("empty","No linked evidence","claim has no resolved evidence link",false);
     const claimNode=graphNode("claim",claim.id,(claim.kind||"claim")+" · "+(claim.predicate?.type||"unknown predicate"),supportState(claim.assessment?.status));
     const decisionNode=rel.decision?graphNode("decision",rel.decision.decision,rel.decision.claim_id+" · "+short(rel.decision.wire_semantic_hash),supportState(rel.decision.decision)):graphNode("empty","No normalized decision","index entry not found",false);
     let authNode;
@@ -208,7 +228,8 @@ function inspectionReport(x){
     inspection:{pcs_v06_format:x.packageFormat,exact_signed_member_set:x.exact,manifest_member_hashes_match:x.hashesOk,certificate_manifest_binding:x.certBound},
     certificate:{spec_version:x.cert.spec_version,checker_version:x.cert.checker_version,subject:x.cert.subject,mission_scope:x.cert.mission_scope,semantic_hash:x.cert.semantic_hash,integrity_hash:x.cert.integrity_hash,counts:{claims:(x.cert.claims||[]).length,evidence:(x.cert.evidence||[]).length,artifacts:(x.cert.artifacts||[]).length,workflow_nodes:(x.cert.workflow?.nodes||[]).length}},
     claims:(x.cert.claims||[]).map(cl=>({id:cl.id,kind:cl.kind,predicate_type:cl.predicate?.type,assessment_status:cl.assessment?.status,required_evidence:cl.required_evidence||[],assumptions:cl.assumptions||[]})),
-    evidence:(x.cert.evidence||[]).map(e=>({id:e.id,kind:e.kind,outcome:e.outcome,checker:e.checker,claim_ids:e.claim_ids||[],artifact_ids:e.artifact_ids||[]})),
+    formal_coverage:coverageSummary(x.cert),
+    evidence:(x.cert.evidence||[]).map(e=>{const cov=evidenceCoverage(e);return {id:e.id,kind:e.kind,outcome:e.outcome,checker:e.checker,check_type:cov.type||null,formal_coverage:cov.certified?"LEAN_CERTIFIED_BUILTIN":"OUTSIDE_CERTIFIED_BUILTIN_SET",claim_ids:e.claim_ids||[],artifact_ids:e.artifact_ids||[]}}),
     workflow:(x.cert.workflow?.nodes||[]).map(n=>({id:n.id,operation:n.operation,inputs:n.inputs||[],outputs:n.outputs||[],contract_type:n.contract?.type})),
     normalized_decisions:(x.index?.entries||[]).map(d=>({claim_id:d.claim_id,decision:d.decision,path:d.path,wire_semantic_hash:d.wire_semantic_hash})),
     receipt:receipt?{attached:true,commitments_match:rs.all,valid:receipt.valid,authoritative:receipt.authoritative,accepted:receipt.accepted,failed_stage:receipt.failed_stage||null,stages:receipt.stages||null,lean_authority:receipt.lean_authority?{accepted:receipt.lean_authority.accepted,verdict:receipt.lean_authority.verdict,mode:receipt.lean_authority.mode,authority_sha256:receipt.lean_authority.authority_sha256,observation_transcript_sha256:receipt.lean_authority.observation_transcript_sha256}:null}:{attached:false}
@@ -222,6 +243,9 @@ function downloadInspectionReport(x){
 function render(x){
   current=x;$("inspectorSummary").hidden=false;$("bundleHash").textContent=x.bundleHash;$("bundleSize").textContent=x.buffer.byteLength.toLocaleString()+" archive bytes";
   populateExplorerControls(x);
+  const cov=coverageSummary(x.cert);
+  $("certifiedCoverage").textContent=cov.total?cov.certified+"/"+cov.total:"0/0";
+  $("certifiedCoverageDetail").textContent=cov.total?(cov.certified_types.length?cov.certified_types.join(", "):"no certified built-in evidence in this package"):"no evidence items";
   $("archiveState").textContent=x.packageFormat?"PCS v0.6":"CHECK";$("memberCount").textContent=x.entries.size+" ZIP members";
   const bind=x.hashesOk&&x.certBound;$("bindingState").textContent=bind?"MATCH":"CHECK";$("bindingDetail").textContent=bind?"exact signed member set + hashes match":"one or more bindings differ";
   $("memberRows").innerHTML=x.rows.map(r=>'<tr><td><code>'+esc(r.name)+'</code></td><td>'+(r.size??"—")+'</td><td><code>'+esc(short(r.hash))+'</code></td><td>'+chip(r.ok,"MATCH","MISMATCH")+'</td></tr>').join("");
