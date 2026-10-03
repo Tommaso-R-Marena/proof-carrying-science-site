@@ -40,6 +40,16 @@ jobs:
           node --check public/validation-registry.js
       - name: Validate deployable static site
         run: python scripts/check_site.py
+      - name: Validate responsive UI layout
+        run: python scripts/check_ui_layout.py
+      - name: Upload UI layout failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcs-ui-layout-failures
+          path: artifacts/ui-layout
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Enforce zero-billing Cloudflare posture
         run: python scripts/check_free_infrastructure.py
       - name: Install pinned Wrangler
