@@ -41,6 +41,50 @@
   <div class="notice"><strong>Educational walkthrough:</strong> the scenario values below are illustrative examples of the real v0.6 schema. They are not presented as a new live verification run. For executed evidence, use <a href="validation.html">Validation</a> and the <a href="trust.html">Trust Center</a>.</div>
 </section>
 
+<section class="reviewer-first-glance" aria-labelledby="reviewerFirstGlanceTitle">
+  <div class="reviewer-first-glance-head">
+    <div>
+      <div class="kicker">Reviewer first glance</div>
+      <h2 id="reviewerFirstGlanceTitle">Four questions before you read anything else.</h2>
+      <p>These four axes are deliberately separate. A valid package can carry a failed claim, and a supported claim can still be rejected by reviewer policy.</p>
+    </div>
+    <div class="reviewer-scenario-switch">
+      <span>Illustrative outcome</span>
+      <div class="scenario-tabs compact" role="group" aria-label="Choose illustrative result scenario">
+        <button type="button" class="active" data-result-scenario="accepted" aria-pressed="true">Valid + accepted</button>
+        <button type="button" data-result-scenario="policy" aria-pressed="false">Policy rejected</button>
+        <button type="button" data-result-scenario="failed-claim" aria-pressed="false">Claim failed</button>
+        <button type="button" data-result-scenario="invalid" aria-pressed="false">Invalid package</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="reviewer-first-glance-grid" aria-live="polite" aria-atomic="true">
+    <article class="glance-card pass" id="glancePackage">
+      <small>1 · Package validity</small>
+      <strong id="glancePackageStatus">VALID</strong>
+      <p id="glancePackageDetail">Integrity, authentication, replay, and normalized-decision chain accepted.</p>
+    </article>
+    <article class="glance-card pass" id="glanceClaim">
+      <small>2 · Exact typed claim</small>
+      <strong id="glanceClaimStatus">COMPUTATIONALLY_SUPPORTED</strong>
+      <p>The prediction artifact matches the declared analytic one-compartment IV-bolus PK + direct Emax PD model within the stated tolerance.</p>
+      <code>pkpd_reference_match</code>
+    </article>
+    <article class="glance-card warn" id="glanceTrust">
+      <small>3 · Still trusted / open</small>
+      <strong id="glanceTrustStatus">EXPLICIT TRUST BOUNDARY</strong>
+      <p id="glanceTrustDetail">Runtime/platform behavior, cryptographic implementations, unsupported scientific semantics, and domain adequacy remain outside the proved claim.</p>
+    </article>
+    <article class="glance-card pass" id="glancePolicy">
+      <small>4 · Reviewer policy</small>
+      <strong id="glancePolicyStatus">ACCEPTED</strong>
+      <p id="glancePolicyDetail">This receiver's explicit policy accepts the verified claim status and signer.</p>
+    </article>
+  </div>
+  <div class="reviewer-first-glance-bottom" id="glanceBottom"><strong>Read next:</strong> inspect the exact predicate and assumptions, then the fresh replay evidence, then the reviewer policy.</div>
+</section>
+
 <section class="result-anatomy-story">
   <div class="kicker">The whole PCS result in one sentence</div>
   <h2>“These exact bytes were independently checked; this exact claim received this level of support; this reviewer did or did not accept that verified state.”</h2>
@@ -55,7 +99,7 @@
 
 <section class="result-30s" aria-label="Understand this PCS result in 30 seconds">
   <div class="kicker">30-second read</div>
-  <h2>Three questions tell you what PCS actually established.</h2>
+  <h2>After the four-axis verdict, inspect proof, replay, and the remaining trust boundary.</h2>
   <div class="result-30s-grid">
     <article class="result-30s-card formal"><small>1 · Formally established by PCS logic</small><strong id="summaryFormal">The delivered decision is bound to the exact typed claim and verifier rules.</strong><p id="summaryFormalDetail">This is the logic/decision layer. It does not prove arbitrary scientific truth.</p></article>
     <article class="result-30s-card replay"><small>2 · Reproduced or freshly checked</small><strong id="summaryReplay">Package integrity, declared environment/workflow facts, and supported scientific checks are independently rechecked.</strong><p id="summaryReplayDetail">The verifier does not simply trust a recorded PASS.</p></article>
@@ -67,13 +111,6 @@
 <section class="section-tight result-scenarios">
   <div class="kicker">Compare outcomes</div>
   <h2>Same framework, very different conclusions.</h2>
-  <div class="scenario-tabs" role="group" aria-label="Choose illustrative result scenario">
-    <button type="button" class="active" data-result-scenario="accepted" aria-pressed="true">Valid + accepted</button>
-    <button type="button" data-result-scenario="policy" aria-pressed="false">Valid + policy rejected</button>
-    <button type="button" data-result-scenario="failed-claim" aria-pressed="false">Valid + claim failed</button>
-    <button type="button" data-result-scenario="invalid" aria-pressed="false">Invalid package</button>
-  </div>
-
   <div class="result-scenario-summary" id="resultScenarioSummary" aria-live="polite" aria-atomic="true">
     <div class="result-scenario-verdict">
       <span id="resultScenarioBadge">VALID + ACCEPTED</span>

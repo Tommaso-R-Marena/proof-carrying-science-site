@@ -47,9 +47,43 @@
   function axis(id,tone,label,detail){
     const el=$(id);el.className="axis-card "+tone;el.querySelector("strong").textContent=label;el.querySelector("small").textContent=detail;
   }
+  function glance(id,tone,status,detail){
+    const el=$(id);el.className="glance-card "+tone;
+    const statusEl=$(id+"Status"),detailEl=$(id+"Detail");
+    if(statusEl)statusEl.textContent=status;
+    if(detailEl)detailEl.textContent=detail;
+  }
+  function renderFirstGlance(s){
+    glance("glancePackage",s.axes[0],s.valid?"VALID":"INVALID",s.valid
+      ?"Integrity, authentication, replay, and normalized-decision chain accepted."
+      :"The package trust chain failed. Stop before interpreting the scientific claim.");
+    glance("glanceClaim",s.axes[1],s.valid?s.claim:"NO TRUSTWORTHY CLAIM CONCLUSION",s.valid
+      ?(s.claim==="COMPUTATIONALLY_SUPPORTED"
+        ?"The exact illustrative typed claim received computational support from freshly replayed required evidence."
+        :"The exact illustrative typed claim did not receive the requested support.")
+      :"No downstream claim status from this run is trustworthy because package verification failed.");
+    if(!s.valid){
+      glance("glanceTrust","warn","STOP AT PACKAGE FAILURE","The underlying scientific hypothesis remains outside what this invalid run can establish; diagnose the failed verifier stage first.");
+    }else if(s.claim==="FALSIFIED_OR_CHECK_FAILED"){
+      glance("glanceTrust","warn","DOMAIN JUDGMENT REMAINS","Why the required check failed, and whether the data/model assumptions are adequate, remains outside the PCS decision.");
+    }else if(!s.accepted){
+      glance("glanceTrust","warn","POLICY REQUIREMENT REMAINS","The computation verified, but sufficiency for this use case remains a receiver-owned governance decision.");
+    }else{
+      glance("glanceTrust","warn","EXPLICIT TRUST BOUNDARY","Runtime/platform behavior, cryptographic implementations, unsupported scientific semantics, and domain adequacy remain outside the proved claim.");
+    }
+    glance("glancePolicy",s.axes[2],s.accepted?"ACCEPTED":"NOT ACCEPTED",s.accepted
+      ?"This receiver's explicit policy accepts the verified claim status and signer."
+      :s.valid
+        ?"The receiver policy does not accept this verified state. That does not make the package invalid."
+        :"No receiver acceptance follows from an invalid package.");
+    $("glanceBottom").innerHTML=s.valid
+      ?'<strong>Read next:</strong> inspect the exact predicate and assumptions, then the fresh replay evidence, then the reviewer policy.'
+      :'<strong>Read next:</strong> diagnose the failed package stage before reading any scientific claim conclusion.';
+  }
   function render(name){
     const s=scenarios[name]||scenarios.accepted;
     buttons.forEach(b=>{const on=b.dataset.resultScenario===name;b.classList.toggle("active",on);b.setAttribute("aria-pressed",on?"true":"false")});
+    renderFirstGlance(s);
     $("resultScenarioBadge").textContent=s.badge;
     $("resultScenarioTitle").textContent=s.title;
     $("resultScenarioSubtitle").textContent=s.subtitle;
