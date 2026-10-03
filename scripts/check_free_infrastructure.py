@@ -65,6 +65,15 @@ for required in [
     if required not in site_js:
         errors.append(f"production Web Analytics wiring missing: {required}")
 
+for required_path in [
+    REPO / ".github" / "workflows" / "live-health.yml",
+    REPO / ".github" / "dependabot.yml",
+    REPO / "FREE_INFRASTRUCTURE.md",
+    REPO / "scripts" / "check_live_site.py",
+]:
+    if not required_path.exists():
+        errors.append(f"free infrastructure control missing: {required_path.relative_to(REPO)}")
+
 privacy = (PUBLIC / "privacy.html").read_text(encoding="utf-8")
 for required in [
     "Cloudflare Web Analytics",
