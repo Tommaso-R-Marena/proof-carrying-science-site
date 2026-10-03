@@ -226,7 +226,29 @@
     <div><span class="guided-stage-number">03</span><h2>Review what PCS found</h2><p>This is the contract PCS is preparing—not yet a PASS. Check that the artifacts, formal claim meaning, workflow, and environment match what you intend.</p></div>
     <span class="chip pending">REVIEW</span>
   </div>
+  <section class="guided-review-gate" id="guidedReviewGate" aria-live="polite" aria-atomic="true">
+    <div class="guided-review-gate-head">
+      <div>
+        <span class="guided-review-gate-kicker">Browser review status</span>
+        <h3 id="guidedReviewGateTitle">Review the discovered contract before handoff.</h3>
+        <p id="guidedReviewGateDetail">PCS will summarize anything that still needs attention before signing.</p>
+      </div>
+      <span class="guided-review-gate-badge" id="guidedReviewGateBadge">REVIEW</span>
+    </div>
+    <div class="guided-review-gate-items" id="guidedReviewGateItems"></div>
+    <div class="guided-review-gate-note"><strong>This is not a verifier result.</strong><span>The browser can flag missing or ambiguous discovery information, but <code>confirm-v06</code> and the independent verifier remain authoritative.</span></div>
+  </section>
+
   <div class="guided-review-grid" id="guidedReviewCards"></div>
+
+  <section class="guided-scope-review" aria-labelledby="guidedScopeReviewTitle">
+    <div>
+      <span class="guided-review-gate-kicker">Selected claim boundaries</span>
+      <h3 id="guidedScopeReviewTitle">What successful verification still would not establish</h3>
+    </div>
+    <div id="guidedScopeReviewList"></div>
+  </section>
+
   <details class="guided-advanced">
     <summary>Show technical details</summary>
     <p class="guided-tech-note">The JSON below is the machine-readable contract. Human-readable summaries are explanations of this structure; they are not a separate source of truth.</p>
@@ -238,7 +260,7 @@
   </details>
   <div class="guided-actions">
     <button class="button secondary" type="button" data-guided-back="2">Back</button>
-    <button class="button primary" type="button" id="guidedToPrepare">Looks right →</button>
+    <button class="button primary" type="button" id="guidedToPrepare">Continue to handoff review →</button>
   </div>
 </section>
 
