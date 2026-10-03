@@ -10,7 +10,8 @@
       axes:["pass","pass","pass"],
       means:"The delivered package passed the PCS v0.6 verification chain; all declared computational evidence required by this claim passed; and the receiver's explicit policy accepts that support level.",
       not:"The biological mechanism, clinical usefulness, safety, efficacy, or every possible scientific interpretation has been proved true.",
-      next:"Read the typed predicate and assumptions first, then inspect the replay evidence and the exact reviewer policy."
+      next:"Read the typed predicate and assumptions first, then inspect the replay evidence and the exact reviewer policy.",
+      inspect:{href:"#typed-claim-inspection",label:"Inspect exact predicate →",title:"Inspect the exact typed predicate first.",why:"The positive result only has meaning relative to the precise predicate, bound artifacts, tolerances, and assumption scope."}
     },
     policy:{
       badge:"VALID + NOT ACCEPTED",
@@ -20,7 +21,8 @@
       axes:["pass","pass","warn"],
       means:"The exact package verified and the declared computational evidence supports the typed claim. PCS has preserved a valid scientific record.",
       not:"The receiver is obligated to accept it. A policy may require a particular signer, formal evidence, empirical validation, or another status.",
-      next:"Compare the verified claim status and signer with the receiver's policy. The scientific replay may need no correction at all."
+      next:"Compare the verified claim status and signer with the receiver's policy. The scientific replay may need no correction at all.",
+      inspect:{href:"#policy-receipt",label:"Inspect policy + receipt →",title:"Inspect the reviewer policy decision first.",why:"The package and claim verified; the disagreement is now about what this receiver requires, not whether the replay record is valid."}
     },
     "failed-claim":{
       badge:"VALID PACKAGE + FAILED CLAIM",
@@ -30,7 +32,8 @@
       axes:["pass","fail","warn"],
       means:"The bytes, signatures, replay process, and normalized decisions are internally valid—and at least one required scientific check failed, so the claim does not receive the requested support.",
       not:"The PCS system malfunctioned merely because the claim failed. Correctly preserving a falsification is successful assurance behavior.",
-      next:"Inspect the failed evidence object and determine whether the scientific claim, data, code, or assumptions need revision."
+      next:"Inspect the failed evidence object and determine whether the scientific claim, data, code, or assumptions need revision.",
+      inspect:{href:"#scientific-replay-stage",label:"Inspect scientific replay →",title:"Inspect the failed replay stage first.",why:"The package is valid, so the actionable question is which required scientific check failed and what that failure says about the claim, data, code, or assumptions."}
     },
     invalid:{
       badge:"INVALID PACKAGE",
@@ -40,7 +43,8 @@
       axes:["fail","neutral","warn"],
       means:"At least one required verifier stage failed, so PCS refuses to certify that these bytes are the authenticated, replay-consistent package being claimed.",
       not:"The underlying scientific hypothesis is necessarily false. Package invalidity and scientific falsification are different failure modes.",
-      next:"Identify the failed verifier stage—canonical bytes, signature, package binding, environment/workflow replay, scientific replay, or normalized decisions—then rerun after remediation."
+      next:"Identify the failed verifier stage—canonical bytes, signature, package binding, environment/workflow replay, scientific replay, or normalized decisions—then rerun after remediation.",
+      inspect:{href:"#verification-chain",label:"Inspect verification chain →",title:"Diagnose the package failure before reading the claim.",why:"An invalid package blocks downstream claim interpretation. Start with the verifier stage that failed, then remediate and rerun."}
     }
   };
   const buttons=[...document.querySelectorAll("[data-result-scenario]")];
@@ -84,6 +88,10 @@
     const s=scenarios[name]||scenarios.accepted;
     buttons.forEach(b=>{const on=b.dataset.resultScenario===name;b.classList.toggle("active",on);b.setAttribute("aria-pressed",on?"true":"false")});
     renderFirstGlance(s);
+    $("reviewerNextPrimary").href=s.inspect.href;
+    $("reviewerNextPrimary").textContent=s.inspect.label;
+    $("reviewerNextTitle").textContent=s.inspect.title;
+    $("reviewerNextWhy").textContent=s.inspect.why;
     $("resultScenarioBadge").textContent=s.badge;
     $("resultScenarioTitle").textContent=s.title;
     $("resultScenarioSubtitle").textContent=s.subtitle;
