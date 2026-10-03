@@ -113,29 +113,49 @@
     const recs=state?.recommendations||[];$("guidedNoClaims").hidden=!!recs.length;
     $("guidedClaims").innerHTML=recs.map(r=>{
       const x=r.formal_explanation||api.explainPredicate(r.claim?.predicate||{});
-      const fields=(x.fields||[]).map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
-      const search=[r.detector,r.claim?.statement,x.template,x.summary,x.scope,...(x.fields||[]).flat()].join(" ");
-      return `<article class="guided-claim-card ${r.selected?"selected":""}" data-claim-card="${esc(r.id)}" data-search="${esc(search)}">
-        <label class="guided-claim-toggle">
-          <input type="checkbox" data-rec="${esc(r.id)}" ${r.selected?"checked":""} aria-label="${r.selected?"Remove":"Include"} ${esc(x.template)}">
-          <span><strong>${esc(x.template)}</strong><small>Supported PCS predicate · ${Math.round(r.confidence*100)}% discovery confidence</small></span>
-          <span class="chip ${r.selected?"verified":"open"}">${r.selected?"Included":"Not included"}</span>
-        </label>
-        <div class="guided-formal-meaning">
-          <span class="guided-meaning-label">What this means</span>
-          <p class="guided-human-summary">${esc(x.summary||r.claim?.statement||"")}</p>
-          <span class="chip pending guided-intent-badge" data-intent-badge hidden>Closest supported match</span>
-          <div class="guided-check-box">
-            <strong>What PCS will actually check</strong>
-            <dl>${fields}</dl>
+      const fieldRows=x.fields||[];
+      const fields=fieldRows.length
+        ?fieldRows.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")
+        :'<div><dt>Predicate</dt><dd>See exact machine predicate below.</dd></div>';
+      const search=[r.detector,r.claim?.statement,x.template,x.summary,x.scope,...fieldRows.flat()].join(" ");
+      return `<article class="guided-claim-card guided-claim-workbench ${r.selected?"selected":""}" data-claim-card="${esc(r.id)}" data-search="${esc(search)}">
+        <header class="guided-claim-workbench-head">
+          <div>
+            <span class="guided-claim-template-label">Supported PCS template</span>
+            <h3>${esc(x.template||"Supported PCS predicate")}</h3>
+            <p>Proposed because PCS matched this project to a known checker pattern.</p>
           </div>
-          <div class="guided-scope-box"><strong>What this does not establish</strong><span>${esc(x.scope||"")}</span></div>
+          <label class="guided-claim-approval">
+            <input type="checkbox" data-rec="${esc(r.id)}" ${r.selected?"checked":""} aria-label="${r.selected?"Remove":"Include"} exact claim: ${esc(x.template)}">
+            <span><strong>${r.selected?"Included in draft":"Use this exact claim"}</strong><small>${r.selected?"Uncheck to remove it.":"Include only if all three columns below match your intent."}</small></span>
+          </label>
+        </header>
+        <div class="guided-claim-comparison">
+          <section class="meaning">
+            <span>1 · Proposed meaning</span>
+            <strong>${esc(x.summary||r.claim?.statement||"No plain-language summary available.")}</strong>
+            <small>This is PCS's human-readable explanation of the supported template.</small>
+            <span class="chip pending guided-intent-badge" data-intent-badge hidden>Closest supported match</span>
+          </section>
+          <section class="literal">
+            <span>2 · Literal verifier fields</span>
+            <dl>${fields}</dl>
+            <small>These typed values—not the surrounding prose—define what verification later evaluates.</small>
+          </section>
+          <section class="boundary">
+            <span>3 · Outside this claim</span>
+            <strong>${esc(x.scope||"No broader scientific meaning is implied beyond the typed predicate.")}</strong>
+            <small>Do not treat successful verification as evidence for claims outside this boundary.</small>
+          </section>
+        </div>
+        <div class="guided-claim-workbench-foot">
+          <p><strong>Why PCS proposed it:</strong> ${esc(r.reason||"No discovery rationale available.")}</p>
+          <span class="guided-confidence-note"><b>${Math.round(r.confidence*100)}% discovery match</b> · template-matching signal only, not scientific confidence</span>
           <details class="guided-predicate-details">
             <summary>Show exact machine predicate</summary>
             <pre>${esc(JSON.stringify(r.claim?.predicate||{},null,2))}</pre>
           </details>
         </div>
-        <p class="guided-detection-reason"><strong>Why PCS proposed it:</strong> ${esc(r.reason||"")}</p>
       </article>`;
     }).join("");
     $("guidedClaims").querySelectorAll("[data-rec]").forEach(x=>x.onchange=async e=>{setBusy(true,"Updating the draft…");try{state=await api.setRecommendationSelected(e.target.dataset.rec,e.target.checked);renderClaims()}catch(err){notify(err.message||String(err),"error")}finally{setBusy(false)}});
