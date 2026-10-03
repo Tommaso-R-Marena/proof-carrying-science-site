@@ -270,37 +270,82 @@
     <span class="chip pending">FINAL REVIEW</span>
   </div>
   <div class="guided-final-checks" id="guidedFinalChecks"></div>
+
+  <section class="guided-handoff-map compact" aria-labelledby="guidedHandoffPreviewTitle">
+    <div class="guided-handoff-map-head">
+      <div>
+        <span class="guided-review-gate-kicker">State boundary</span>
+        <h3 id="guidedHandoffPreviewTitle">This browser action stops at a reviewed draft.</h3>
+      </div>
+      <span class="guided-handoff-now">YOU ARE HERE</span>
+    </div>
+    <div class="guided-handoff-states" aria-label="PCS handoff states">
+      <article class="current"><span>1</span><div><small>Browser</small><strong>PREPARED DRAFT</strong><p>Reviewed claim contract and browser-hashed artifact snapshot.</p></div></article>
+      <b aria-hidden="true">→</b>
+      <article><span>2</span><div><small>Authoritative CLI</small><strong>CONFIRMED MANIFEST</strong><p><code>confirm-v06</code> re-derives and re-hashes the original project.</p></div></article>
+      <b aria-hidden="true">→</b>
+      <article><span>3</span><div><small>Producer signing</small><strong>SIGNED PACKAGE</strong><p><code>attest-v06</code> signs the confirmed manifest and creates <code>.pcs.zip</code>.</p></div></article>
+      <b aria-hidden="true">→</b>
+      <article><span>4</span><div><small>Independent reviewer</small><strong>REVIEWER RESULT</strong><p>Verification replays required evidence and applies receiver-owned policy.</p></div></article>
+    </div>
+  </section>
+
   <label class="guided-confirm">
     <input type="checkbox" id="guidedConfirmReview">
-    <span><strong>I reviewed what PCS found.</strong><small>I understand that browser discovery is a draft and that <code>confirm-v06</code> independently re-derives and re-hashes the selected project before attestation.</small></span>
+    <span><strong>I reviewed this draft and understand where the browser stops.</strong><small>This action only prepares a reviewed browser draft. It does <strong>not</strong> run <code>confirm-v06</code>, sign a package, replay evidence, or issue a scientific verdict.</small></span>
   </label>
   <div class="guided-actions">
     <button class="button secondary" type="button" data-guided-back="3">Back</button>
-    <button class="button primary" type="button" id="guidedPrepare">Prepare verifiable package →</button>
+    <button class="button primary" type="button" id="guidedPrepare">Prepare reviewed draft →</button>
   </div>
 </section>
 
 <section class="guided-stage" data-guided-stage="5" hidden>
   <div class="guided-result">
     <div class="guided-result-mark draft-mark">D</div>
-    <div class="kicker">Draft ready · not yet verified</div>
-    <h2>Your PCS claim contract is prepared for authoritative verification.</h2>
-    <p>This screen means PCS successfully prepared a reviewable draft. It does <strong>not</strong> mean the scientific claim passed. The authoritative CLI still re-hashes the project, signs the package, and the reviewer independently replays the required evidence.</p>
-    <div class="guided-not-verified"><strong>Current state: PREPARED DRAFT</strong><span>No scientific verdict has been issued yet.</span></div>
+    <div class="kicker">Browser handoff complete · authoritative work starts next</div>
+    <h2>Your reviewed browser draft is ready. PCS verification has not started yet.</h2>
+    <p>This screen means the browser prepared the claim contract you reviewed. It does <strong>not</strong> mean the project has been authoritatively confirmed, signed, independently replayed, accepted, or scientifically supported.</p>
+    <div class="guided-not-verified"><strong>Current state: PREPARED DRAFT</strong><span>The next state requires <code>confirm-v06</code> against the original project.</span></div>
   </div>
+
+  <section class="guided-handoff-map" aria-labelledby="guidedHandoffStateTitle">
+    <div class="guided-handoff-map-head">
+      <div>
+        <span class="guided-review-gate-kicker">PCS handoff state machine</span>
+        <h3 id="guidedHandoffStateTitle">Four distinct states. Only the first exists right now.</h3>
+      </div>
+      <span class="guided-handoff-now">CURRENT: PREPARED DRAFT</span>
+    </div>
+    <div class="guided-handoff-states" aria-label="PCS handoff states">
+      <article class="current"><span>1</span><div><small>Browser complete</small><strong>PREPARED DRAFT</strong><p>Reviewed draft only. Not confirmed, signed, or verified.</p></div></article>
+      <b aria-hidden="true">→</b>
+      <article><span>2</span><div><small>Run next</small><strong>CONFIRMED MANIFEST</strong><p>Original project bytes are re-derived and re-hashed by <code>confirm-v06</code>.</p></div></article>
+      <b aria-hidden="true">→</b>
+      <article><span>3</span><div><small>Then producer</small><strong>SIGNED PACKAGE</strong><p>The confirmed manifest is signed and packaged for delivery.</p></div></article>
+      <b aria-hidden="true">→</b>
+      <article><span>4</span><div><small>Then reviewer</small><strong>REVIEWER RESULT</strong><p>Independent verification determines package validity, claim status, and policy acceptance.</p></div></article>
+    </div>
+    <div class="guided-handoff-warning"><strong>Do not skip state labels.</strong><span>A prepared draft is not a confirmed manifest. A signed package is not a successful verification. A valid package is not automatically an accepted or scientifically supported claim.</span></div>
+  </section>
+
   <div class="guided-result-grid">
-    <article class="guided-result-card">
-      <span>1</span><h3>Download the reviewed draft</h3><p>This contains the claims, selected artifacts, workflow map, and environment declaration you reviewed.</p>
+    <article class="guided-result-card current-state">
+      <span>1</span><div class="guided-state-output">STATE NOW · PREPARED DRAFT</div><h3>Download the reviewed browser draft</h3><p>This contains the claims, selected artifacts, workflow map, and environment declaration you reviewed. It is not yet authoritative.</p>
       <button class="button primary" type="button" id="guidedDownloadDraft">Download manifest draft</button>
       <button class="button secondary" type="button" id="guidedDownloadReview">Download review notes</button>
     </article>
     <article class="guided-result-card">
-      <span>2</span><h3>Confirm against the original project</h3><p>PCS re-hashes the real files and refuses a stale or changed project.</p>
+      <span>2</span><div class="guided-state-output">NEXT STATE · CONFIRMED MANIFEST</div><h3>Confirm against the original project</h3><p>Run the authoritative CLI against the original project. Success re-hashes the real files and produces the confirmed manifest used for signing.</p>
       <div class="codecommand"><code id="guidedConfirmCommand">pcs confirm-v06 ...</code><button type="button" id="guidedCopyConfirm">Copy</button></div>
     </article>
     <article class="guided-result-card">
-      <span>3</span><h3>Create the signed package</h3><p>Attestation signs the confirmed manifest and produces the reviewable <code>.pcs.zip</code>.</p>
+      <span>3</span><div class="guided-state-output">NEXT STATE · SIGNED PACKAGE</div><h3>Sign the confirmed manifest</h3><p>Only after confirmation, <code>attest-v06</code> signs that manifest and produces the deliverable <code>.pcs.zip</code>.</p>
       <div class="codecommand"><code id="guidedAttestCommand">pcs attest-v06 ...</code><button type="button" id="guidedCopyAttest">Copy</button></div>
+    </article>
+    <article class="guided-result-card reviewer-state">
+      <span>4</span><div class="guided-state-output">FINAL HANDOFF · REVIEWER RESULT</div><h3>Reviewer independently verifies</h3><p>The receiver checks the package, independently replays required evidence, derives claim status, and separately applies acceptance policy.</p>
+      <a class="button secondary" href="result-anatomy.html">See reviewer result anatomy</a>
     </article>
   </div>
 
