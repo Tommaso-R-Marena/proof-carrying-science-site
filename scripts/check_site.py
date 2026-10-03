@@ -194,6 +194,8 @@ if guided_page.exists():
         "Nothing has been verified, executed, signed, or accepted.",
         "Claim translation",
         "Authoritative check",
+        "guidedDemoGuideAction",
+        "Demo coach · next action",
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -214,6 +216,9 @@ if guided_js.exists():
         "NOT YET FORMALIZED",
         "No predicate generated — fail closed.",
         "renderGuide(step)",
+        "DEMO_ACTIONS",
+        "See a completed reviewer result",
+        'window.location.href="result-anatomy.html?scenario=accepted"',
     ]:
         if required_text not in guided_script:
             errors.append(f"guided-submission.js: guided controller drift: {required_text}")
