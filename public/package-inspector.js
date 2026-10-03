@@ -114,6 +114,135 @@ function packageAuthorityCoverage(x){
   }
   return {status:"MATCHING_NONAUTHORITATIVE_RECEIPT",commitments_match:true,lean_authoritative:false};
 }
+function reviewCard(id,tone,status,detail){
+  const el=$(id); if(!el)return;
+  el.className="inspector-review-card "+tone;
+  $(id+"Status").textContent=status;
+  $(id+"Detail").textContent=detail;
+}
+function decisionSummary(x){
+  const entries=Array.isArray(x.index?.entries)?x.index.entries:[];
+  const supporting=entries.filter(d=>supportState(d.decision)===true);
+  const failing=entries.filter(d=>supportState(d.decision)===false);
+  const unresolved=entries.length-supporting.length-failing.length;
+  return {entries,supporting,failing,unresolved};
+}
+function renderReviewerSnapshot(x){
+  if(!x||!$("inspectorReviewSnapshotTitle"))return;
+  const browserOk=!!(x.packageFormat&&x.exact&&x.hashesOk&&x.certBound);
+  const authority=packageAuthorityCoverage(x);
+  const decisions=decisionSummary(x);
+  $("inspectorReviewMeta").textContent=x.name+" · "+x.buffer.byteLength.toLocaleString()+" bytes · SHA-256 "+short(x.bundleHash);
+
+  reviewCard(
+    "reviewBrowserIntegrity",
+    browserOk?"pass":"fail",
+    browserOk?"STRUCTURE + BINDINGS MATCH":"BROWSER CHECK FAILED",
+    browserOk
+      ?"Canonical v0.6 structure, signed member set, member SHA-256 values, and certificate↔manifest commitments matched locally. Signature authenticity is not established here."
+      :"At least one local archive, member-set, hash, or certificate↔manifest check failed. Do not rely on downstream package claims."
+  );
+
+  let claimTone="neutral",claimStatus="DELIVERED DECISIONS ONLY",claimDetail;
+  if(!decisions.entries.length){
+    claimTone="warn"; claimStatus="NO NORMALIZED DECISIONS";
+    claimDetail="The package contains no normalized decision index for the browser to summarize.";
+  }else if(authority.status==="MATCHING_LEAN_AUTHORITATIVE_RECEIPT"){
+    if(decisions.failing.length){
+      claimTone="fail"; claimStatus="CLAIM SUPPORT FAILED";
+      claimDetail=decisions.failing.length+" of "+decisions.entries.length+" normalized claim decision(s) are failing in the exact decision set bound by the matching authoritative receipt.";
+    }else if(decisions.unresolved){
+      claimTone="warn"; claimStatus="MIXED / OPEN DECISIONS";
+      claimDetail=decisions.supporting.length+" supporting · "+decisions.unresolved+" unresolved decision(s) in the exact normalized set bound by the authoritative receipt.";
+    }else{
+      claimTone="pass"; claimStatus=decisions.supporting.length+" / "+decisions.entries.length+" SUPPORTED";
+      claimDetail="The matching Lean-authoritative receipt binds this exact normalized decision set. This remains scoped to the typed claims and assumptions in the package.";
+    }
+  }else if(authority.status==="MATCHING_REJECTED_RECEIPT"){
+    claimTone="neutral"; claimStatus="NO TRUSTWORTHY CLAIM RESULT";
+    claimDetail="A matching verifier receipt rejected the package, so downstream claim conclusions should not be treated as authoritative.";
+  }else if(authority.status==="RECEIPT_MISMATCH"){
+    claimTone="warn"; claimStatus="RECEIPT DOES NOT BIND THIS PACKAGE";
+    claimDetail="The browser can read "+decisions.entries.length+" delivered decision(s), but the attached receipt does not identify this exact package.";
+  }else{
+    claimDetail=decisions.entries.length+" normalized decision(s) are present in the delivered package. The browser reads them but does not independently replay the scientific checks or establish valid:true.";
+  }
+  reviewCard("reviewClaimDecision",claimTone,claimStatus,claimDetail);
+
+  let authorityTone="neutral",authorityStatus="NOT ESTABLISHED",authorityDetail="No matching authoritative verifier receipt is attached. Run the production verifier with receiver-owned trust.";
+  if(authority.status==="RECEIPT_MISMATCH"){
+    authorityTone="fail";authorityStatus="RECEIPT MISMATCH";authorityDetail="The attached receipt commitments do not identify this exact package. Stop and obtain or generate the correct receipt.";
+  }else if(authority.status==="MATCHING_REJECTED_RECEIPT"){
+    authorityTone="fail";authorityStatus="VERIFIER REJECTED";authorityDetail="A receipt bound to this package reports valid:false"+(authority.failed_stage?" at "+authority.failed_stage:"")+".";
+  }else if(authority.status==="MATCHING_NONAUTHORITATIVE_RECEIPT"){
+    authorityTone="warn";authorityStatus="NOT LEAN-AUTHORITATIVE";authorityDetail="The receipt binds this package, but it does not establish compiled Lean authority.";
+  }else if(authority.status==="MATCHING_LEAN_AUTHORITATIVE_RECEIPT"){
+    authorityTone="pass";authorityStatus="LEAN-AUTHORITATIVE";authorityDetail="A matching receipt reports authoritative valid:true for this exact package and normalized decision set.";
+  }
+  reviewCard("reviewAuthority",authorityTone,authorityStatus,authorityDetail);
+
+  let policyTone="neutral",policyStatus="NOT EVALUATED",policyDetail="Reviewer acceptance is not inferred from browser inspection.";
+  if(authority.status==="MATCHING_LEAN_AUTHORITATIVE_RECEIPT"){
+    if(authority.reviewer_accepted){
+      policyTone="pass";policyStatus="ACCEPTED";policyDetail="The matching authoritative receipt reports accepted:true under the receiver's external policy.";
+    }else{
+      policyTone="warn";policyStatus="NOT ACCEPTED";policyDetail="The package is authoritative PCS-valid, but the receiver's external policy reports accepted:false.";
+    }
+  }else if(authority.status==="MATCHING_REJECTED_RECEIPT"){
+    policyTone="warn";policyStatus="NOT ACCEPTED";policyDetail="The verifier rejected the package, so reviewer acceptance does not follow.";
+  }else if(authority.status==="RECEIPT_MISMATCH"){
+    policyTone="neutral";policyStatus="UNKNOWN FOR THIS PACKAGE";policyDetail="The attached receipt belongs to different package commitments and cannot establish this package's policy result.";
+  }
+  reviewCard("reviewPolicy",policyTone,policyStatus,policyDetail);
+
+  let badge="INSPECTED",title="Browser inspection completed. Authoritative verification is still required.",
+      detail="PCS inspected the delivered archive locally. The four cards below separate browser checks from authoritative verification and reviewer policy.",
+      nextTitle="Run the authoritative verifier on this exact package.",
+      nextDetail="Use receiver-owned trust and policy outside the package. The browser never upgrades itself to valid:true.",
+      nextHref="#reviewer-handoff",nextLabel="Go to authoritative verification →",snapshotTone="neutral";
+  if(!browserOk){
+    badge="STOP";snapshotTone="fail";title="Stop: browser inspection found a package integrity problem.";
+    detail="Resolve the local archive/binding failure before interpreting claims or trusting a receipt.";
+    nextTitle="Inspect the browser trust-boundary findings.";nextDetail="The package did not pass the local structure/binding checks shown below.";
+    nextHref="#trust-boundary-inspection";nextLabel="Inspect browser findings →";
+  }else if(authority.status==="RECEIPT_MISMATCH"){
+    badge="STOP";snapshotTone="fail";title="Stop: the attached receipt does not identify this exact package.";
+    detail="The package can still be inspected locally, but this receipt cannot be used as authority for it.";
+    nextTitle="Review the receipt commitments and package hash.";nextDetail="Use the receipt panel to see which commitments match or differ.";
+    nextHref="#receipt-review";nextLabel="Review receipt commitments →";
+  }else if(authority.status==="MATCHING_REJECTED_RECEIPT"){
+    badge="REJECTED";snapshotTone="fail";title="A matching verifier receipt rejected this package.";
+    detail="The receipt binds these exact package commitments, but authoritative verification reports valid:false.";
+    nextTitle="Inspect the verifier receipt and failed stage.";nextDetail="Diagnose the verifier failure before interpreting downstream claim decisions.";
+    nextHref="#receipt-review";nextLabel="Inspect verifier receipt →";
+  }else if(authority.status==="MATCHING_LEAN_AUTHORITATIVE_RECEIPT"){
+    badge=authority.reviewer_accepted?"VALID + ACCEPTED":"VALID · NOT ACCEPTED";
+    snapshotTone=authority.reviewer_accepted?"pass":"warn";
+    title=authority.reviewer_accepted
+      ?"Authoritative receipt matches this package, and reviewer policy accepted it."
+      :"Authoritative receipt matches this package, but reviewer policy did not accept it.";
+    detail="Package validity, claim decisions, and receiver acceptance remain separate axes even when they are shown together here.";
+    nextTitle=authority.reviewer_accepted?"Review the exact claims and their scope.":"Review why receiver policy rejected an otherwise valid package.";
+    nextDetail=authority.reviewer_accepted
+      ?"Confirm what each typed claim actually establishes—and what remains outside its scope."
+      :"The scientific replay may be fine; acceptance can fail because the receiver requires stronger or different evidence.";
+    nextHref=authority.reviewer_accepted?"#assurance-explorer":"#receipt-review";
+    nextLabel=authority.reviewer_accepted?"Review claims + scope →":"Review policy + receipt →";
+  }else if(authority.status==="MATCHING_NONAUTHORITATIVE_RECEIPT"){
+    badge="RECEIPT MATCHED";snapshotTone="warn";title="The receipt matches this package, but Lean authority is not established.";
+    detail="Do not treat a matching non-authoritative receipt as equivalent to production valid:true.";
+    nextTitle="Run the authoritative verifier.";nextDetail="Use the compiled Lean authority with receiver-owned trust before relying on package validity.";
+  }
+  const box=$("inspectorReviewSnapshot");
+  if(box)box.className="inspector-review-snapshot "+snapshotTone;
+  $("inspectorReviewBadge").textContent=badge;
+  $("inspectorReviewSnapshotTitle").textContent=title;
+  $("inspectorReviewSnapshotDetail").textContent=detail;
+  $("inspectorReviewNextTitle").textContent=nextTitle;
+  $("inspectorReviewNextDetail").textContent=nextDetail;
+  $("inspectorReviewNextAction").href=nextHref;
+  $("inspectorReviewNextAction").textContent=nextLabel;
+}
 function renderCoverageKpi(x){
   const cov=coverageSummary(x?.cert);
   const value=$("certifiedCoverage"), detail=$("certifiedCoverageDetail");
@@ -300,18 +429,19 @@ function render(x){
   $("boundaryCards").innerHTML=checks.map(([t,s,d])=>'<article class="boundary-card '+(s===true?"pass":s===false?"fail":"open")+'"><span>'+(s===true?"✓":s===false?"×":"○")+'</span><div><strong>'+esc(t)+'</strong><p>'+esc(d)+'</p></div></article>').join("");
   $("dropStatus").textContent=x.name+" inspected locally.";
   renderAuthorityKpi(x);
+  renderReviewerSnapshot(x);
   renderAssuranceGraph(x);
   renderImpact(x,$("impactArtifact")?.value||"");
   renderReceipt();
 }
 function renderReceipt(){
-  const box=$("receiptCards"); if(!receipt){box.innerHTML="";if(current){renderAuthorityKpi(current);renderAssuranceGraph(current)}return}
+  const box=$("receiptCards"); if(!receipt){box.innerHTML="";if(current){renderAuthorityKpi(current);renderReviewerSnapshot(current);renderAssuranceGraph(current)}return}
   if(!current){$("receiptStatus").textContent="Receipt loaded. Open its corresponding bundle to cross-check commitments.";return}
   const state=receiptCommitments(current), matches=state.matches;
   $("receiptStatus").textContent=(state.all?"Receipt commitments match this inspected package. ":"Receipt commitment mismatch detected. ")+"The browser is displaying the receipt's assertions, not independently recreating Lean/replay authority.";
   const lean=receipt.lean_authority;
   box.innerHTML='<div class="receipt-mini"><span>valid</span><strong>'+esc(String(receipt.valid))+'</strong></div><div class="receipt-mini"><span>authoritative</span><strong>'+esc(String(receipt.authoritative))+'</strong></div><div class="receipt-mini"><span>accepted</span><strong>'+esc(String(receipt.accepted))+'</strong></div>'+(lean?'<div class="receipt-mini"><span>Lean authority</span><strong>'+esc(String(lean.verdict||lean.accepted))+'</strong></div>':"")+matches.map(([k,a,b])=>'<div class="receipt-match"><code>'+esc(k)+'</code>'+chip(a===b,"MATCH","MISMATCH")+'</div>').join("");
-  renderAuthorityKpi(current);renderCoverageKpi(current);renderAssuranceGraph(current);
+  renderAuthorityKpi(current);renderCoverageKpi(current);renderReviewerSnapshot(current);renderAssuranceGraph(current);
 }
 async function inspectFile(file){
   $("dropStatus").textContent="Inspecting "+file.name+"…"; try{render(await analyze(await file.arrayBuffer(),file.name))}catch(e){$("dropStatus").textContent="Rejected: "+e.message;$("inspectorSummary").hidden=true}
