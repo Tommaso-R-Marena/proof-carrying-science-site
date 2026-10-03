@@ -100,7 +100,7 @@ The committed `wrangler.jsonc` is the source of truth:
 - Static assets: `./public`
 - `workers.dev`: enabled
 - Preview URLs: disabled
-- Worker observability: disabled
+- Worker observability: enabled (Workers Logs at full demo-stage sampling + Cloudflare Issues)
 - Static 404 handling enabled
 
 Git-connected deployments use the pinned local Wrangler toolchain:
@@ -110,6 +110,8 @@ npm run deploy
 ```
 
 A successful production deploy also submits the public URL set to IndexNow.
+
+The repository also runs `scripts/check_free_infrastructure.py` in CI. This deliberately keeps the public site on the no-card/static posture: Workers Free static assets, Web Analytics, Workers Logs, and Issues are allowed; adding D1/KV/R2/Queues/AI/other resource bindings requires an explicit review instead of silently entering the deployment configuration.
 
 ## Security/privacy posture
 
