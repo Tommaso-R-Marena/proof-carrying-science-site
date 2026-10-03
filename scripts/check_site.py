@@ -129,6 +129,12 @@ index_page = ROOT / "index.html"
 if index_page.exists():
     index_text = index_page.read_text(encoding="utf-8")
     for required_text in [
+        "Don’t just send a result. Send what someone needs to verify it.",
+        "Project + scientific question",
+        "Exact files + exact checks",
+        "Replayed evidence + explicit decision",
+        "independent replay, not a recorded PASS",
+        "acceptance stays with the reviewer",
         "Start from your role",
         "What are you here to do?",
         "I have a computation or result to submit.",
