@@ -188,6 +188,13 @@ if guided_page.exists():
     guided_text = guided_page.read_text(encoding="utf-8")
     for required_text in [
         "From scientific project to review-ready PCS draft in five steps.",
+        "Start with a small, reviewable slice of your project",
+        "Usually 2–4 files are enough to learn whether PCS fits.",
+        "code + input + output + environment file",
+        "What happens when you choose files?",
+        "What does not happen?",
+        "Public preview data boundary",
+        "Do not select PHI",
         "Choose project folder",
         "What should PCS verify?",
         "Review what PCS found",
