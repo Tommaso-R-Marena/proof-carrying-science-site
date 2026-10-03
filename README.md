@@ -32,7 +32,7 @@ The site intentionally has no application backend. Its interactive functionality
 
 The browser verifier is a functional demonstration, not the production PCS Python verifier. Its built-in signing key is explicitly demo-only.
 
-The strongest current machine-checked theorem stack targets the exact v0.6/v2 representation. Lean proves canonical decoding and schema structure, package/member/hash/index binding, signature wiring, archive partitioning, normalized decisions, and the bridge into scoped `ScientificAssurance`; `reaction_balance` replay faithfulness is also proved in Lean. The deployed v0.6 path is now Lean-authoritative: Python-only acceptance is non-authoritative, and final `valid: true` requires the compiled Lean authority. ZIP decoding/materialization and authority invocation, environment-capture soundness, replay faithfulness for the other check types, cryptographic unforgeability, and independent SHA-256/Ed25519 spec-faithfulness remain explicit trust boundaries. The integrated layer lives on the model `main` branch and is checked by Lean 4.28 CI.
+The strongest current machine-checked theorem stack targets the exact v0.6/v2 representation. For canonical STORED archives, `PCS.V2.Frontier.pcs_frontier_archive_acceptance_sound` starts from accepted raw archive bytes and reaches `HighAssurance` with a single explicit theorem hypothesis: `NoForgery` for the Lean Ed25519 trust anchor. Lean proves SHA-256 equal to an independent FIPS 180-4 specification, proves canonical ZIP decoding, and independently replays all five built-in checks; the separate Mathlib bridge gives `pkpd_reference_match` a real-valued analytic-model meaning. Python-only acceptance remains non-authoritative. Remaining boundaries include Ed25519 unforgeability and independent RFC 8032/SHA-512 correspondence, workflow-front-end semantics, environment meaning beyond `EnvFacts`, external validators, legacy non-canonical ZIPs, and operational runtime/toolchain components. The frontier layer is integrated on the model `main` branch and checked by Lean 4.28 gates.
 
 ## Repository layout
 
@@ -103,24 +103,26 @@ The committed `wrangler.jsonc` is the source of truth:
 - Worker observability: disabled
 - Static 404 handling enabled
 
-Git-connected deployments can use:
+Git-connected deployments use the pinned local Wrangler toolchain:
 
 ```bash
-npx wrangler deploy
+npm run deploy
 ```
+
+A successful production deploy also submits the public URL set to IndexNow.
 
 ## Security/privacy posture
 
 - no database;
 - no user accounts;
-- no first-party analytics;
-- no third-party JavaScript;
+- privacy-first Cloudflare Web Analytics / Core Web Vitals measurement;
+- no advertising pixels or behavioral tracking; Cloudflare's analytics beacon is the only third-party runtime script;
 - no scientific-data submission endpoint;
 - verifier package JSON and extracted-directory selections remain local to the browser;
 - Project Mapper file selections, hashes, and manifest drafts remain local to the browser;
 - pilot-intake entries remain local to the browser;
 - CSP and browser-hardening headers live in `public/_headers`;
-- search indexing remains intentionally disabled during alpha.
+- public product/trust pages are indexable; legacy/internal utilities use page-level `noindex`, and previews remain non-indexed.
 
 Never place secrets, customer data, signing private keys, unpublished research artifacts, PHI, or regulated data in this repository.
 

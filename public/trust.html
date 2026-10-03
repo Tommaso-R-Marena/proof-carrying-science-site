@@ -110,14 +110,16 @@
 
     <article class="trustitem">
       <header><h3>Machine-checked v0.6/v2 theorem stack</h3><span class="chip verified">Integrated</span></header>
-      <p>The current Lean 4.28 layer targets the exact v0.6/v2 representation: canonical JSON and schemas, domain/hash binding, certificate and normalized-index commitments, signature wiring, exact signed package membership, archive partitioning, normalized decisions, and the bridge into <code>ScientificAssurance</code>. For <code>reaction_balance</code>, replay faithfulness itself is proved in Lean.</p>
-      <div class="boundary"><strong>Verified theorem boundary</strong><span><code>pcs_accept_implies_scientific_assurance</code> and <code>pcs_raw_archive_assurance</code> connect accepted v0.6/v2 package/archive structure to scoped scientific assurance under explicit external contracts. Production no longer promotes Python-only acceptance: authoritative <code>valid: true</code> requires the compiled Lean authority to accept the exact decoded package-member bytes plus the certificate-bound observation transcript.</span></div>
+      <p>The current Lean 4.28 frontier layer starts from raw canonical archive bytes and proves the exact v0.6/v2 package/decision chain, independent FIPS 180-4 SHA-256 semantics, canonical STORED-ZIP decoding, and semantic replay for <strong>all five</strong> built-in check families. The separate Mathlib bridge proves that an accepted <code>pkpd_reference_match</code> is within tolerance of the declared real-valued analytic PK/PD model.</p>
+      <div class="boundary"><strong>Strongest theorem</strong><span><code>PCS.V2.Frontier.pcs_frontier_archive_acceptance_sound</code>: if the compiled authority accepts raw canonical archive bytes, the archive satisfies <code>CanonicalZip</code>, splits exactly into the package, and satisfies <code>HighAssurance</code>. Its only theorem hypothesis is <code>NoForgery PCS.V2.Ed25519.verify T.pk signed</code>.</span></div>
       <dl>
         <dt>Lean</dt><dd>4.28.0</dd>
-        <dt>Model-main integration</dt><dd>Lean-authoritative production path merged on <code>main</code> at <code>4fa3f11701fd…</code>; clean hosted runtime checkpoint <code>b2e120e40eeb…</code></dd>
-        <dt>Formal source audit</dt><dd>31 V2 files · 282 theorem/lemma declarations · 67 <code>#print axioms</code> checks · no production <code>sorry</code>/<code>admit</code>/project <code>axiom</code>/<code>unsafe</code>/<code>native_decide</code></dd>
-        <dt>Differential corpus</dt><dd>19 Python↔Lean package/key cases in the integration gate</dd>
-        <dt>Reaction replay</dt><dd><code>reaction_balance</code> faithfulness proved in Lean</dd>
+        <dt>Model-main integration</dt><dd>Frontier reduction merged on <code>main</code> at <code>cec96c3b4a15…</code>; clean GitHub integration gate passed before merge</dd>
+        <dt>Formal source audit</dt><dd>46 V2 files · 1,232 top-level V2 declarations · 495 V2 theorem/lemma declarations · 111 kernel + 6 real-bridge <code>#print axioms</code> checks</dd>
+        <dt>Proof escapes</dt><dd>0 <code>sorry</code> · 0 <code>admit</code> · 0 project <code>axiom</code> · 0 <code>unsafe</code>/<code>implemented_by</code>/<code>extern</code>/<code>native_decide</code></dd>
+        <dt>Lean vectors</dt><dd>91 executable <code>#guard</code> vectors in V2</dd>
+        <dt>Python integration</dt><dd>Full 504-test suite passed with the compiled Lean authority available</dd>
+        <dt>Certified built-ins</dt><dd><code>reaction_balance</code>, <code>unit_compatible</code>, <code>csv_disjoint</code>, <code>pkpd_contract</code>, <code>pkpd_reference_match</code></dd>
       </dl>
     </article>
 
@@ -134,8 +136,8 @@
 
     <article class="trustitem">
       <header><h3>Remaining v0.6/v2 formal boundary</h3><span class="chip pending">Explicit TCB</span></header>
-      <p>The representation port and production acceptance gate are integrated, but several external contracts remain intentionally visible: ZIP-decoder faithfulness; Python materialization/process invocation of the Lean authority; environment-capture soundness; replay faithfulness for check types other than <code>reaction_balance</code>; cryptographic unforgeability; and independent SHA-256/Ed25519 specification correspondence.</p>
-      <div class="boundary"><strong>Next formal milestone</strong><span>Shrink the remaining operational handoff and external-contract TCB: ZIP decoding/materialization, capture/workflow semantics, non-chemistry replay semantics, and independent crypto-spec correspondence.</span></div>
+      <p>The frontier theorem has removed the old <code>ZipDecoderFaithful</code>, generic <code>CaptureSound</code>, generic built-in <code>ReplayFaithful</code>, and SHA-256-spec hypotheses for the canonical authoritative path. Remaining boundaries are narrower: Ed25519 unforgeability; independent RFC 8032 equivalence for the Lean verifier (and SHA-512 beneath it); the Python workflow front end that produces normalized <code>FreshSource</code>; environment meaning beyond verified <code>EnvFacts</code>; external/non-built-in validators; and legacy non-canonical ZIPs.</p>
+      <div class="boundary"><strong>Next formal milestone</strong><span>Close the independent RFC 8032/SHA-512 correspondence, formally verify a literal-reference workflow front end, expand <code>EnvFacts</code> coverage, and add proof-carrying adapters for external validators.</span></div>
     </article>
   </div>
 
@@ -144,7 +146,7 @@
       <h2>Current verification boundary</h2>
       <div class="timeline">
         <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
-        <div class="timeline-item"><strong>v0.6/v2 Lean assurance layer</strong><span>Machine-checked canonical/package/archive/decision structure leads to scoped scientific assurance under explicit external contracts.</span></div>
+        <div class="timeline-item"><strong>v0.6/v2 frontier assurance layer</strong><span>For canonical STORED archives, the compiled Lean authority decodes raw bytes itself, proves FIPS SHA-256 correspondence, replays all five built-ins with certified checkers, and reaches <code>HighAssurance</code> under the sole <code>NoForgery</code> hypothesis.</span></div>
         <div class="timeline-item"><strong>Production → Lean authority gate</strong><span>Python prechecks and external observations are non-authoritative by themselves; final PCS validity requires compiled Lean acceptance, with the authority executable and transcript hashes recorded in the result.</span></div>
         <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
       </div>
@@ -153,7 +155,7 @@
     <article class="panel">
       <h2>Reproduce the formal gate</h2>
       <p>The repository verification entrypoint builds the Lean project and rejects proof placeholders plus project-level escape hatches.</p>
-      <div class="codecommand"><code>./scripts/verify_lean.sh</code><button data-copy="./scripts/verify_lean.sh">Copy</button></div>
+      <div class="codecommand"><code>./scripts/verify_lean.sh &amp;&amp; ./scripts/verify_lean_real.sh</code><button data-copy="./scripts/verify_lean.sh && ./scripts/verify_lean_real.sh">Copy</button></div>
       <p class="tiny">The public website does not execute this build. The verified result refers to the independently rebuilt production formal project, not to a browser simulation.</p>
     </article>
 

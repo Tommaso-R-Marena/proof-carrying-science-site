@@ -529,23 +529,39 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: formal raw-wire assurance status drift")
         if formal.get("target_wire_format") != "pcs-normalized-decision-v2":
             errors.append("status.json: v0.6/v2 formal target drift")
-        if formal.get("v06_v2_archive_to_scientific_assurance") != "MACHINE_CHECKED_UNDER_EXPLICIT_CONTRACTS":
-            errors.append("status.json: v0.6/v2 archive-assurance status drift")
+        if formal.get("v06_v2_archive_to_scientific_assurance") != "MACHINE_CHECKED_CANONICAL_ARCHIVE_UNDER_NOFORGERY":
+            errors.append("status.json: frontier canonical-archive assurance status drift")
+        if formal.get("package_level_soundness") != "MACHINE_CHECKED_FRONTIER":
+            errors.append("status.json: frontier package-level soundness status drift")
         if formal.get("exact_v06_v2_port") != "INTEGRATED":
             errors.append("status.json: exact v0.6/v2 integration status drift")
         if formal.get("mainline_integrated") is not True:
             errors.append("status.json: formal theorem layer not marked integrated on model main")
-        if formal.get("model_main_commit") != "4fa3f11701fd30ee8b21b764185ae8c0b79d4382":
-            errors.append("status.json: formal model-main commit drift")
+        if formal.get("model_main_commit") != "cec96c3b4a15a028a143b6ed00cb1b77a61dc69e":
+            errors.append("status.json: frontier model-main commit drift")
         if formal.get("circleci_lean_gate") != "PASS" or formal.get("integration_gate") != "PASS":
             errors.append("status.json: formal hosted gate drift")
-        if formal.get("v2_files") != 31 or formal.get("v2_theorem_lemma_declarations") != 282 or formal.get("axiom_print_checks") != 67:
-            errors.append("status.json: v0.6/v2 formal audit counts drift")
+        if formal.get("v2_files") != 46 or formal.get("v2_top_level_declarations") != 1232 or formal.get("v2_theorem_lemma_declarations") != 495:
+            errors.append("status.json: frontier V2 formal counts drift")
+        if formal.get("axiom_print_checks") != 111 or formal.get("real_bridge_axiom_print_checks") != 6:
+            errors.append("status.json: frontier axiom-audit counts drift")
+        if formal.get("lean_guard_vectors") != 91 or formal.get("python_suite_tests_passed") != 504:
+            errors.append("status.json: frontier executable validation counts drift")
         if formal.get("differential_cases") != 19:
             errors.append("status.json: v0.6/v2 differential-case count drift")
-        for key in ["archive_partition_proved", "sha256_padding_structure_proved", "reaction_balance_replay_faithful"]:
+        for key in [
+            "archive_partition_proved",
+            "sha256_padding_structure_proved",
+            "reaction_balance_replay_faithful",
+            "sha256_fips1804_equivalence_proved",
+            "canonical_stored_zip_lean_decoded",
+            "all_five_builtin_replay_semantics_proved",
+            "pkpd_real_model_semantics_proved",
+        ]:
             if formal.get(key) is not True:
-                errors.append(f"status.json: formal v0.6/v2 invariant drift: {key}")
+                errors.append(f"status.json: frontier formal invariant drift: {key}")
+        if formal.get("frontier_only_hypothesis") != "NoForgery PCS.V2.Ed25519.verify T.pk signed":
+            errors.append("status.json: frontier sole-hypothesis statement drift")
         if formal.get("production_to_lean") != "LEAN_AUTHORITY_GATED":
             errors.append("status.json: production-to-Lean authority drift")
         if formal.get("lean_authority_required") is not True or formal.get("python_only_acceptance_authoritative") is not False:
@@ -553,7 +569,7 @@ if public_status.exists() and fixture_obj is not None:
         if formal.get("streaming_sha256_block_fold_proved_equivalent") is not True or formal.get("arm64_large_bundle_authority_verified") is not True:
             errors.append("status.json: Lean authority hardening evidence drift")
         mainline = mvp.get("mainline", {})
-        if mainline.get("current_head") != "7f6f6838789bd9cc342a3c073852ab6482d54549":
+        if mainline.get("current_head") != "cec96c3b4a15a028a143b6ed00cb1b77a61dc69e":
             errors.append("status.json: model main head drift")
         if mainline.get("formal_wire_gate_passed") is not True or mainline.get("runtime_main_gate_passed") is not True:
             errors.append("status.json: model main gate status drift")
@@ -982,7 +998,7 @@ if public_status.exists() and fixture_obj is not None:
             errors.append("status.json: legacy browser profile version drift")
         if browser.get("decision_vectors_passed") != 11 or browser.get("decision_vectors_total") != 11:
             errors.append("status.json: browser decision parity count drift")
-        if preview.get("target") != "zip-materialization-capture-replay-crypto-tcb-shrink-and-external-design-partner-pilot" or preview.get("status") != "OPEN":
+        if preview.get("target") != "ed25519-rfc8032-sha512-workflow-frontend-envfacts-external-validators-and-design-partner-pilot" or preview.get("status") != "OPEN":
             errors.append("status.json: next refinement status drift")
         if preview.get("released") is not False:
             errors.append("status.json: open refinement marked released")
