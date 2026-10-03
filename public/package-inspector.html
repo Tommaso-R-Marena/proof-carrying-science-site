@@ -35,10 +35,33 @@
   <aside class="demo-profile-card"><span>PRIVACY</span><strong>Your file stays local</strong><small>No package bytes are uploaded by this page.</small></aside>
 </section>
 
+<section class="reviewer-package-quickstart" aria-labelledby="reviewerPackageQuickstartTitle">
+  <div class="reviewer-package-quickstart-head">
+    <div>
+      <div class="kicker">Received a PCS package?</div>
+      <h2 id="reviewerPackageQuickstartTitle">Three steps from delivery to an authoritative review.</h2>
+      <p>The browser helps you inspect the exact delivered bytes before you run the production verifier. Inspection and authority are intentionally separate.</p>
+    </div>
+    <span>BROWSER → CLI → REVIEWER POLICY</span>
+  </div>
+  <div class="reviewer-package-steps">
+    <article class="current">
+      <span>1</span><div><small>Browser inspection</small><strong>Open the <code>.pcs.zip</code></strong><p>Re-hash members, inspect manifest bindings, typed claims, normalized decisions, and proof boundaries locally.</p></div>
+    </article>
+    <article>
+      <span>2</span><div><small>Optional cross-check</small><strong>Attach a verifier receipt if you have one</strong><p>The inspector checks whether receipt commitments identify this exact bundle. A missing receipt does not block inspection.</p></div>
+    </article>
+    <article>
+      <span>3</span><div><small>Authoritative verification</small><strong>Run <code>verify-local-v06</code></strong><p>Your receiver-owned trust profile and policy stay outside the package. The compiled authority—not this page—can establish authoritative <code>valid:true</code>.</p></div>
+    </article>
+  </div>
+  <div class="reviewer-package-boundary"><strong>What you need now:</strong><span>the delivered <code>.pcs.zip</code>. A verifier receipt is optional for browser inspection; <code>trust.json</code> is used by the authoritative CLI, not uploaded here.</span></div>
+</section>
+
 <section class="inspector-drop panel" id="inspectorDrop">
   <div>
-    <div class="kicker">Start here</div>
-    <h2>Drop a PCS v0.6 bundle</h2>
+    <div class="kicker">Step 1 · Start here</div>
+    <h2>Open the delivered PCS v0.6 bundle</h2>
     <p>Current PCS delivery bundles are deterministic <code>ZIP_STORED</code> archives. The inspector rejects unsupported compression, duplicate/unsafe paths, malformed central-directory records, or missing control files.</p>
   </div>
   <div class="actions">
