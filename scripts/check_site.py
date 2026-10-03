@@ -16,6 +16,18 @@ CONTACT = "marenatommaso@gmail.com"
 PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
 errors: list[str] = []
 
+site_js = ROOT / "site.js"
+if site_js.exists():
+    site_script = site_js.read_text(encoding="utf-8")
+    for required_text in [
+        "secondaryHrefs",
+        "navmore",
+        "More PCS resources",
+        'aria-current", "page"',
+    ]:
+        if required_text not in site_script:
+            errors.append(f"site.js: navigation hierarchy drift: {required_text}")
+
 for html_path in HTML_FILES:
     text = html_path.read_text(encoding="utf-8")
     if "<html" not in text.lower() or "<title>" not in text.lower():

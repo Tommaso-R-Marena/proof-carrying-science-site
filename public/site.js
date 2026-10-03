@@ -4,26 +4,77 @@
   document.documentElement.classList.add("js");
 
   document.querySelectorAll(".navlinks").forEach((links) => {
-    if (!links.querySelector('a[href="guided-submission.html"]')) {
+    const directLinks = () => [...links.querySelectorAll(":scope > a")];
+    const guided = directLinks().find((a) => (a.getAttribute("href") || "").split("?")[0] === "guided-submission.html");
+    if (guided) {
+      guided.textContent = "Try PCS";
+      guided.classList.add("nav-primary-link");
+    } else {
       const tryLink = document.createElement("a");
       tryLink.href = "guided-submission.html";
       tryLink.textContent = "Try PCS";
       tryLink.className = "nav-primary-link";
       links.insertBefore(tryLink, links.firstChild);
     }
-    if (!links.querySelector('a[href="package-inspector.html"]')) {
+
+    if (!directLinks().some((a) => (a.getAttribute("href") || "").split("?")[0] === "package-inspector.html")) {
       const inspectLink = document.createElement("a");
       inspectLink.href = "package-inspector.html";
       inspectLink.textContent = "Inspect package";
-      const guided = links.querySelector('a[href="guided-submission.html"]');
-      if (guided && guided.nextSibling) links.insertBefore(inspectLink, guided.nextSibling);
+      const tryLink = directLinks().find((a) => (a.getAttribute("href") || "").split("?")[0] === "guided-submission.html");
+      if (tryLink && tryLink.nextSibling) links.insertBefore(inspectLink, tryLink.nextSibling);
       else links.insertBefore(inspectLink, links.firstChild);
     }
 
-    const mapperLink = links.querySelector('a[href="project-builder.html"]');
+    const mapperLink = directLinks().find((a) => (a.getAttribute("href") || "").split("?")[0] === "project-builder.html");
     if (mapperLink && /Project Mapper/i.test(mapperLink.textContent || "")) {
       mapperLink.textContent = "Advanced Mapper";
     }
+
+    const secondaryHrefs = new Set([
+      "validation.html",
+      "architecture.html",
+      "mvp.html",
+      "project-builder.html",
+      "demo.html",
+      "model-lab.html",
+      "intake.html",
+      "privacy.html"
+    ]);
+    const secondaryLinks = directLinks().filter((a) => secondaryHrefs.has((a.getAttribute("href") || "").split("?")[0]));
+    if (secondaryLinks.length) {
+      const more = document.createElement("details");
+      more.className = "navmore";
+      const summary = document.createElement("summary");
+      summary.innerHTML = 'More <span aria-hidden="true">⌄</span>';
+      summary.setAttribute("aria-label", "More PCS resources");
+      const menu = document.createElement("div");
+      menu.className = "navmore-menu";
+      secondaryLinks.forEach((a) => menu.appendChild(a));
+      more.append(summary, menu);
+      const contact = directLinks().find((a) => a.classList.contains("button"));
+      links.insertBefore(more, contact || null);
+
+      document.addEventListener("click", (event) => {
+        if (more.open && !more.contains(event.target)) more.open = false;
+      });
+      more.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          more.open = false;
+          summary.focus();
+        }
+      });
+    }
+
+    const currentPath = location.pathname.split("/").pop() || "index.html";
+    links.querySelectorAll("a[href]").forEach((a) => {
+      const raw = a.getAttribute("href") || "";
+      if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("http")) return;
+      const targetPath = raw.split("#")[0].split("?")[0] || "index.html";
+      if (targetPath === currentPath) a.setAttribute("aria-current", "page");
+    });
+    const more = links.querySelector(".navmore");
+    if (more?.querySelector('[aria-current="page"]')) more.classList.add("current");
   });
 
   document.querySelectorAll("nav").forEach((nav) => {
@@ -43,6 +94,8 @@
       button.classList.remove("open");
       button.setAttribute("aria-expanded", "false");
       button.setAttribute("aria-label", "Open navigation");
+      const more = links.querySelector(".navmore");
+      if (more) more.open = false;
     };
 
     button.addEventListener("click", () => {
