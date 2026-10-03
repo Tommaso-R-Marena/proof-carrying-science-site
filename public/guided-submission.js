@@ -14,12 +14,22 @@
     4:["4. Approve the handoff to the authoritative verifier","The CLI will re-hash the original project and refuse stale bytes before it can sign anything.","CONFIRMATION","Question: should this exact draft be frozen?"],
     5:["5. Run independent verification","A prepared draft is not a scientific verdict. The signed bundle must still be replayed by the verifier/reviewer.","READY TO VERIFY","Question: what did independent replay establish?"]
   };
+  const DEMO_ACTIONS={
+    2:["Claim looks right · review evidence →","Next: inspect what PCS bound to this typed claim."],
+    3:["Evidence looks right · prepare handoff →","Next: review the draft boundary before any signing."],
+    4:["I reviewed this demo draft →","This prepares a browser draft only; it does not issue a scientific verdict."],
+    5:["See a completed reviewer result →","Next: switch to the reviewer view and see how validity, support, and policy differ."]
+  };
   function renderGuide(step){
     const g=GUIDE[step]||GUIDE[1];
     if($("guidedDemoGuideTitle"))$("guidedDemoGuideTitle").textContent=g[0];
     if($("guidedDemoGuideDetail"))$("guidedDemoGuideDetail").textContent=g[1];
     if($("guidedDemoGuideState"))$("guidedDemoGuideState").textContent=g[2];
     if($("guidedDemoGuideQuestion"))$("guidedDemoGuideQuestion").textContent=g[3];
+    const action=$("guidedDemoGuideAction"),next=$("guidedDemoNext"),hint=$("guidedDemoNextHint"),a=DEMO_ACTIONS[step];
+    if(action)action.hidden=!(demoMode&&a);
+    if(next&&a)next.textContent=a[0];
+    if(hint&&a)hint.textContent=a[1];
   }
   function go(step){document.querySelectorAll("[data-guided-stage]").forEach(x=>x.hidden=Number(x.dataset.guidedStage)!==step);document.querySelectorAll("[data-step-indicator]").forEach(x=>{const n=Number(x.dataset.stepIndicator);x.classList.toggle("active",n===step);x.classList.toggle("complete",n<step);if(n===step)x.setAttribute("aria-current","step");else x.removeAttribute("aria-current")});renderGuide(step);const demo=$("guidedDemoContext");if(demo)demo.hidden=!demoMode;const takeaway=$("guidedDemoTakeaway");if(takeaway)takeaway.hidden=!(demoMode&&step===5);window.scrollTo({top:document.querySelector(".guided-stepper").offsetTop-24,behavior:"smooth"})}
   const claims=()=>state?.draft?.claims||[];
@@ -108,6 +118,13 @@
   async function copy(btn){const t=btn.textContent;try{await navigator.clipboard.writeText(btn.dataset.value||"");btn.textContent="Copied"}catch{btn.textContent="Select + copy"}setTimeout(()=>btn.textContent=t,1300)}
   if(!api){notify("The local PCS discovery engine could not be initialized. Refresh the page or open Advanced Mapper.","error");return}
   $("guidedClaimIntent").addEventListener("input",renderIntentMatch);
+  if($("guidedDemoNext"))$("guidedDemoNext").onclick=()=>{
+    const step=Number(document.querySelector("[data-step-indicator].active")?.dataset.stepIndicator||1);
+    if(step===2){$("guidedToReview").click();return}
+    if(step===3){$("guidedToPrepare").click();return}
+    if(step===4){$("guidedConfirmReview").checked=true;$("guidedPrepare").click();return}
+    if(step===5){window.location.href="result-anatomy.html?scenario=accepted"}
+  };
   $("guidedChooseFolder").onclick=()=>$("guidedFolderFiles").click();$("guidedChooseFiles").onclick=()=>$("guidedLooseFiles").click();$("guidedLoadExample").onclick=example;if($("guidedHeroExample"))$("guidedHeroExample").onclick=example;$("guidedFolderFiles").onchange=e=>load(e.target.files);$("guidedLooseFiles").onchange=e=>load(e.target.files);
   const d=$("guidedDropzone");["dragenter","dragover"].forEach(t=>d.addEventListener(t,e=>{e.preventDefault();d.classList.add("dragging")}));["dragleave","drop"].forEach(t=>d.addEventListener(t,e=>{e.preventDefault();d.classList.remove("dragging")}));d.ondrop=e=>load(e.dataTransfer.files);d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("guidedLooseFiles").click()}};
   $("guidedSubject").onchange=async e=>{if(!state)return;setBusy(true,"Updating project name…");try{state=await api.setSubject(e.target.value);e.target.value=state.subject}catch(err){notify(err.message||String(err),"error")}finally{setBusy(false)}};
