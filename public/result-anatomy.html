@@ -83,6 +83,20 @@
     </article>
   </div>
   <div class="reviewer-first-glance-bottom" id="glanceBottom"><strong>Read next:</strong> inspect the exact predicate and assumptions, then the fresh replay evidence, then the reviewer policy.</div>
+  <div class="reviewer-inspection-route" aria-live="polite">
+    <div>
+      <span class="reviewer-inspection-kicker">Recommended next inspection</span>
+      <strong id="reviewerNextTitle">Inspect the exact typed predicate first.</strong>
+      <p id="reviewerNextWhy">The positive result only has meaning relative to the precise predicate, bound artifacts, tolerances, and assumption scope.</p>
+    </div>
+    <a class="button primary" id="reviewerNextPrimary" href="#typed-claim-inspection">Inspect exact predicate →</a>
+  </div>
+  <nav class="reviewer-inspection-shortcuts" aria-label="Jump to reviewer evidence">
+    <a href="#typed-claim-inspection"><span>01</span><strong>Typed predicate</strong><small>Exact fields + assumption</small></a>
+    <a href="#verification-chain"><span>02</span><strong>Replay chain</strong><small>What “valid” actually checked</small></a>
+    <a href="#trust-boundary"><span>03</span><strong>Trust boundary</strong><small>What remains outside PCS</small></a>
+    <a href="#policy-receipt"><span>04</span><strong>Policy + receipt</strong><small>Why this reviewer accepted</small></a>
+  </nav>
 </section>
 
 <section class="result-anatomy-story">
@@ -103,9 +117,37 @@
   <div class="result-30s-grid">
     <article class="result-30s-card formal"><small>1 · Formally established by PCS logic</small><strong id="summaryFormal">The delivered decision is bound to the exact typed claim and verifier rules.</strong><p id="summaryFormalDetail">This is the logic/decision layer. It does not prove arbitrary scientific truth.</p></article>
     <article class="result-30s-card replay"><small>2 · Reproduced or freshly checked</small><strong id="summaryReplay">Package integrity, declared environment/workflow facts, and supported scientific checks are independently rechecked.</strong><p id="summaryReplayDetail">The verifier does not simply trust a recorded PASS.</p></article>
-    <article class="result-30s-card trusted"><small>3 · Still trusted / outside the proof</small><strong id="summaryTrusted">Runtime, operating-system/container behavior, cryptographic implementations, and unsupported domain semantics remain part of the trust boundary.</strong><p id="summaryTrustedDetail">PCS should name these boundaries rather than hide them behind a green badge.</p></article>
+    <article class="result-30s-card trusted" id="trust-boundary"><small>3 · Still trusted / outside the proof</small><strong id="summaryTrusted">Runtime, operating-system/container behavior, cryptographic implementations, and unsupported domain semantics remain part of the trust boundary.</strong><p id="summaryTrustedDetail">PCS should name these boundaries rather than hide them behind a green badge.</p></article>
   </div>
   <p class="result-30s-bottom" id="summaryBottom">Bottom line: read the typed claim first, then the fresh replay result, then the remaining trust boundary.</p>
+</section>
+
+<section class="section-tight typed-claim-inspection" id="typed-claim-inspection" aria-labelledby="typedClaimInspectionTitle">
+  <div class="typed-claim-inspection-head">
+    <div>
+      <div class="kicker">Exact illustrative claim</div>
+      <h2 id="typedClaimInspectionTitle">What the verifier is literally evaluating.</h2>
+      <p>This walkthrough uses the same restricted PK/PD reference-match predicate exposed by the PCS model example. The prose explains it; these typed fields define it.</p>
+    </div>
+    <span>ILLUSTRATIVE · NOT A LIVE RECEIPT</span>
+  </div>
+  <div class="typed-claim-inspection-grid">
+    <div class="typed-claim-fields">
+      <div><small><code>type</code></small><strong><code>pkpd_reference_match</code></strong></div>
+      <div><small><code>model_artifact</code></small><strong><code>pk_model</code></strong></div>
+      <div><small><code>output_artifact</code></small><strong><code>pk_predictions</code></strong></div>
+      <div><small><code>time_column</code></small><strong><code>time</code></strong></div>
+      <div><small><code>concentration_column</code></small><strong><code>concentration</code></strong></div>
+      <div><small><code>effect_column</code></small><strong><code>effect</code></strong></div>
+      <div><small><code>rel_tol</code></small><strong><code>1e-9</code></strong></div>
+      <div><small><code>abs_tol</code></small><strong><code>1e-12</code></strong></div>
+    </div>
+    <div class="typed-claim-scope">
+      <span>Declared computational meaning</span>
+      <strong>The prediction artifact matches the declared analytic one-compartment IV-bolus PK + direct Emax PD equations within the stated tolerances.</strong>
+      <p><b>Assumption / scope:</b> the restricted one-compartment IV-bolus equation is the declared computational model. This does not establish empirical adequacy, biological mechanism, clinical utility, safety, or efficacy.</p>
+    </div>
+  </div>
 </section>
 
 <section class="section-tight result-scenarios">
@@ -143,7 +185,7 @@
     </div>
   </div>
 
-  <div class="panel result-receipt-card">
+  <div class="panel result-receipt-card" id="policy-receipt">
     <div class="kicker">Actual v0.6 field names</div>
     <h2>Verification receipt anatomy</h2>
     <div class="receipt-axis-row"><span><code>format</code></span><strong>pcs-end-to-end-verifier-v06-v1</strong><small>Current executable v0.6 verifier result format.</small></div>
@@ -176,7 +218,7 @@
   </div>
 </section>
 
-<section class="section result-stage-detail">
+<section class="section result-stage-detail" id="verification-chain">
   <div class="kicker">What “valid” contains</div>
   <h2>PCS v0.6 verifies a chain, not one green checkbox.</h2>
   <div class="result-stage-grid">
@@ -185,7 +227,7 @@
     <article><span>3</span><h3>Package binding</h3><p>Member set, byte sizes, SHA-256 values, certificate binding, and package signature are checked.</p></article>
     <article><span>4</span><h3>Environment replay</h3><p>Human-confirmed reproducibility-environment claims are regenerated from the delivered source bytes.</p></article>
     <article><span>5</span><h3>Workflow replay</h3><p>Confirmed static dependency claims must be rediscovered from the packaged source.</p></article>
-    <article><span>6</span><h3>Scientific replay</h3><p>Every supported evidence item is rerun rather than trusting recorded PASS/FAIL values.</p></article>
+    <article id="scientific-replay-stage"><span>6</span><h3>Scientific replay</h3><p>Every supported evidence item is rerun rather than trusting recorded PASS/FAIL values.</p></article>
     <article><span>7</span><h3>Normalized decisions</h3><p>The delivered decision set must exactly equal the set derived from the fresh replay.</p></article>
   </div>
 </section>
