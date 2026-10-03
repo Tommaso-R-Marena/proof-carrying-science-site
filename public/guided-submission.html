@@ -87,18 +87,42 @@
 
 <section class="guided-stage" data-guided-stage="1">
   <div class="guided-stage-head">
-    <div><span class="guided-stage-number">01</span><h2>Add your project</h2><p>Choose the folder you actually work in, select a few files, or try the example first.</p></div>
+    <div><span class="guided-stage-number">01</span><h2>Start with a small, reviewable slice of your project</h2><p>You do not need to hand PCS an entire repository. A good first test is the smallest set of files that captures one computational question and the evidence behind it.</p></div>
     <span class="chip verified">NO UPLOAD</span>
   </div>
+
+  <section class="guided-project-onramp" aria-labelledby="guidedOnrampTitle">
+    <div class="guided-onramp-copy">
+      <span class="guided-onramp-kicker">A good first PCS project</span>
+      <h3 id="guidedOnrampTitle">Usually 2–4 files are enough to learn whether PCS fits.</h3>
+      <p>For example: one script or notebook, the input it reads, the output you want checked, and—when available—a lockfile or environment declaration.</p>
+    </div>
+    <div class="guided-onramp-grid">
+      <div><span>1</span><strong>Code</strong><small>Script or notebook that expresses the computation.</small></div>
+      <div><span>2</span><strong>Input</strong><small>CSV, JSON, model parameters, or another bounded input.</small></div>
+      <div><span>3</span><strong>Output</strong><small>The result or prediction artifact you want independently checked.</small></div>
+      <div><span>4</span><strong>Environment</strong><small>Requirements, lockfile, container spec, or version declaration if you have one.</small></div>
+    </div>
+    <div class="guided-onramp-expect">
+      <div><strong>What happens when you choose files?</strong><span>PCS hashes and inspects the selected files locally, proposes only supported checks, and asks you to confirm the meaning before any handoff.</span></div>
+      <div><strong>What does not happen?</strong><span>Your code is not executed in this browser step, nothing is signed, and no scientific PASS is issued.</span></div>
+    </div>
+    <div class="guided-onramp-caution">
+      <strong>Public preview data boundary</strong>
+      <span>Use public, synthetic, or otherwise non-sensitive artifacts here. Do not select PHI, direct identifiers, signing keys, regulated records, or confidential/proprietary science for this public preview.</span>
+      <a href="privacy.html">Read the data-handling boundary →</a>
+    </div>
+  </section>
+
   <div class="guided-upload-grid">
     <button class="guided-upload-card primary-card" id="guidedChooseFolder" type="button">
-      <span class="guided-upload-icon">↗</span><strong>Choose project folder</strong><small>Best for a real workflow with code, data, dependencies, and outputs.</small>
+      <span class="guided-upload-icon">↗</span><strong>Choose project folder</strong><small>Best when the relevant files already live together. Start with a small, non-sensitive project if possible.</small>
     </button>
     <button class="guided-upload-card" id="guidedChooseFiles" type="button">
-      <span class="guided-upload-icon">＋</span><strong>Choose individual files</strong><small>Useful for a notebook, script, model JSON, CSVs, or a small test case.</small>
+      <span class="guided-upload-icon">＋</span><strong>Choose individual files</strong><small>Best first try: code + input + output + environment file, without sharing the rest of the repository.</small>
     </button>
     <button class="guided-upload-card example-card" id="guidedLoadExample" type="button">
-      <span class="guided-upload-icon">▶</span><strong>Try an example</strong><small>See the whole flow using a synthetic PK/PD project.</small>
+      <span class="guided-upload-icon">▶</span><strong>Not ready to use your files?</strong><small>Run the synthetic PK/PD example first, then come back with a small project slice.</small>
     </button>
   </div>
   <input id="guidedFolderFiles" type="file" webkitdirectory directory multiple hidden>
