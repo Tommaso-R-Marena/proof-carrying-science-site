@@ -73,20 +73,65 @@
 </section>
 
 <section class="inspector-summary" id="inspectorSummary" hidden>
-  <div class="inspector-kpis">
+  <section class="inspector-review-snapshot" aria-labelledby="inspectorReviewSnapshotTitle">
+    <div class="inspector-review-snapshot-head">
+      <div>
+        <div class="kicker">Reviewer snapshot · actual loaded package</div>
+        <h2 id="inspectorReviewSnapshotTitle">Browser inspection completed. Authoritative verification is still required.</h2>
+        <p id="inspectorReviewSnapshotDetail">PCS inspected the delivered archive locally. The four cards below separate what the browser checked from what only an authoritative verifier receipt can establish.</p>
+      </div>
+      <span class="inspector-review-badge" id="inspectorReviewBadge">INSPECTED</span>
+    </div>
+    <div class="inspector-review-meta" id="inspectorReviewMeta">No package metadata yet.</div>
+    <div class="inspector-review-grid">
+      <article class="inspector-review-card neutral" id="reviewBrowserIntegrity">
+        <small>1 · Browser integrity</small>
+        <strong id="reviewBrowserIntegrityStatus">INSPECTED</strong>
+        <p id="reviewBrowserIntegrityDetail">Local ZIP/member/hash checks appear here.</p>
+      </article>
+      <article class="inspector-review-card neutral" id="reviewClaimDecision">
+        <small>2 · Claim result</small>
+        <strong id="reviewClaimDecisionStatus">DELIVERED DECISIONS ONLY</strong>
+        <p id="reviewClaimDecisionDetail">The browser can read normalized decisions but does not independently replay scientific checks.</p>
+      </article>
+      <article class="inspector-review-card neutral" id="reviewAuthority">
+        <small>3 · Authority</small>
+        <strong id="reviewAuthorityStatus">NOT ESTABLISHED</strong>
+        <p id="reviewAuthorityDetail">Attach a matching production receipt or run the authoritative verifier.</p>
+      </article>
+      <article class="inspector-review-card neutral" id="reviewPolicy">
+        <small>4 · Reviewer policy</small>
+        <strong id="reviewPolicyStatus">NOT EVALUATED</strong>
+        <p id="reviewPolicyDetail">Acceptance belongs to the receiver and follows authoritative verification.</p>
+      </article>
+    </div>
+    <div class="inspector-review-next">
+      <div>
+        <small>Recommended next action</small>
+        <strong id="inspectorReviewNextTitle">Run the authoritative verifier on this exact package.</strong>
+        <p id="inspectorReviewNextDetail">The browser inspector never upgrades its own result to <code>valid:true</code>.</p>
+      </div>
+      <a class="button primary" id="inspectorReviewNextAction" href="#reviewer-handoff">Go to authoritative verification →</a>
+    </div>
+  </section>
+
+  <details class="inspector-technical-summary">
+    <summary>Show technical package details</summary>
+    <div class="inspector-kpis">
     <article><small>BUNDLE SHA-256</small><strong id="bundleHash">—</strong><span id="bundleSize">—</span></article>
     <article><small>ARCHIVE</small><strong id="archiveState">—</strong><span id="memberCount">—</span></article>
     <article><small>MANIFEST BINDING</small><strong id="bindingState">—</strong><span id="bindingDetail">—</span></article>
     <article><small>AUTHORITY</small><strong id="authorityState">INSPECTED</strong><span>authoritative verification remains external</span></article>
     <article><small>CERTIFIED CHECKER TYPES</small><strong id="certifiedCoverage">—</strong><span id="certifiedCoverageDetail">type-level scope only · attach a receipt for package authority</span></article>
-  </div>
+    </div>
+  </details>
 
-  <section class="section-tight">
+  <section class="section-tight" id="trust-boundary-inspection">
     <div class="section-heading-row"><div><div class="kicker">Trust boundary</div><h2>What this browser established—and what it did not.</h2></div><p>PCS deliberately keeps inspection, executable verification, formal authority, and reviewer policy separate.</p></div>
     <div class="inspector-boundaries" id="boundaryCards"></div>
   </section>
 
-  <section class="section-tight assurance-explorer">
+  <section class="section-tight assurance-explorer" id="assurance-explorer">
     <div class="section-heading-row">
       <div><div class="kicker">End-to-end assurance graph</div><h2>Trace each claim from assumptions and artifacts to authority.</h2></div>
       <p>This graph is built from the actual certificate IDs, workflow edges, evidence references, normalized decision index, and—when attached—the verifier receipt.</p>
@@ -141,7 +186,7 @@
     <div class="tablewrap"><table class="inspector-table"><thead><tr><th>Member</th><th>Bytes</th><th>SHA-256</th><th>Binding</th></tr></thead><tbody id="memberRows"></tbody></table></div>
   </section>
 
-  <section class="section-tight split">
+  <section class="section-tight split" id="receipt-review">
     <div class="panel">
       <div class="kicker">Signatures</div><h2>Signature records</h2><div id="signatureCards"></div>
     </div>
@@ -152,7 +197,7 @@
     </div>
   </section>
 
-  <section class="section-tight panel">
+  <section class="section-tight panel" id="reviewer-handoff">
     <div class="kicker">Reviewer handoff</div><h2>Run the authoritative verifier on this exact package.</h2>
     <div class="codecommand"><code>pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json</code><button data-copy="pcs verify-local-v06 delivered.pcs.zip --trust trust.json --receipt receipt.json">Copy</button></div>
     <p class="muted">The browser inspector never upgrades its own result to <code>valid:true</code>. Authoritative validity requires the compiled Lean authority in the production verification path.</p>
