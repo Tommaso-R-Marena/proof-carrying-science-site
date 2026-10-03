@@ -1,0 +1,29 @@
+name: PCS live production health
+
+on:
+  schedule:
+    - cron: "17 13 * * *"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "scripts/check_live_site.py"
+      - ".github/workflows/live-health.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pcs-live-production-health
+  cancel-in-progress: true
+
+jobs:
+  live-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check production site
+        run: python scripts/check_live_site.py

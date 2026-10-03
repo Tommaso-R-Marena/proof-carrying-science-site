@@ -33,6 +33,8 @@ if obs.get("enabled") is not True:
     errors.append("free Workers observability must remain enabled")
 if obs.get("head_sampling_rate") != 1:
     errors.append("observability sampling must remain explicit at 1 for the demo-stage site")
+if obs.get("redact_query_string") is not True:
+    errors.append("observability must redact query strings before persistence")
 if obs.get("issues", {}).get("enabled") is not True:
     errors.append("Cloudflare Issues must remain enabled")
 
@@ -64,6 +66,15 @@ for required in [
 ]:
     if required not in site_js:
         errors.append(f"production Web Analytics wiring missing: {required}")
+
+for required_path in [
+    REPO / ".github" / "workflows" / "live-health.yml",
+    REPO / ".github" / "dependabot.yml",
+    REPO / "FREE_INFRASTRUCTURE.md",
+    REPO / "scripts" / "check_live_site.py",
+]:
+    if not required_path.exists():
+        errors.append(f"free infrastructure control missing: {required_path.relative_to(REPO)}")
 
 privacy = (PUBLIC / "privacy.html").read_text(encoding="utf-8")
 for required in [
