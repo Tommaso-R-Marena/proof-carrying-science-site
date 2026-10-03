@@ -33,6 +33,8 @@ if obs.get("enabled") is not True:
     errors.append("free Workers observability must remain enabled")
 if obs.get("head_sampling_rate") != 1:
     errors.append("observability sampling must remain explicit at 1 for the demo-stage site")
+if obs.get("redact_query_string") is not True:
+    errors.append("observability must redact query strings before persistence")
 if obs.get("issues", {}).get("enabled") is not True:
     errors.append("Cloudflare Issues must remain enabled")
 
