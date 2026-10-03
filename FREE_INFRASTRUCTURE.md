@@ -9,7 +9,7 @@ The public PCS demo is intentionally deployable without a payment card and witho
 | Static hosting + edge delivery | Cloudflare Workers Free static assets | Public PCS website |
 | TLS / workers.dev hostname | Cloudflare Workers Free | HTTPS production endpoint |
 | Aggregate visitor/performance analytics | Cloudflare Web Analytics | Privacy-first traffic and Core Web Vitals |
-| Request/error visibility | Cloudflare Workers Logs | Short-retention operational diagnostics |
+| Request/error visibility | Cloudflare Workers Logs | Short-retention operational diagnostics with request query strings redacted |
 | Error grouping | Cloudflare Workers Issues | Production failure triage |
 | Search-engine notification | IndexNow | Deployment-time URL notification |
 | Repository + CI | GitHub | Source control and website integrity gates |
