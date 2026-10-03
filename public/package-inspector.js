@@ -78,7 +78,7 @@ function evidenceCoverage(e){
   return {
     type,
     certified:LEAN_CERTIFIED_EVIDENCE_TYPES.has(type),
-    label:LEAN_CERTIFIED_EVIDENCE_TYPES.has(type)?"LEAN-CERTIFIED":"EXTERNAL / UNVERIFIED"
+    label:LEAN_CERTIFIED_EVIDENCE_TYPES.has(type)?"CERTIFIED CHECKER TYPE":"OUTSIDE CERTIFIED CHECKER SET"
   };
 }
 function coverageSummary(cert){
@@ -101,6 +101,37 @@ function receiptCommitments(x){
     ["normalized_index_semantic_hash",receipt.normalized_index_semantic_hash,x.index?.index_semantic_hash]
   ].filter(v=>v[1]!=null&&v[2]!=null);
   return {attached:true,matches,all:matches.length>0&&matches.every(v=>v[1]===v[2])};
+}
+function packageAuthorityCoverage(x){
+  const state=receiptCommitments(x);
+  if(!receipt) return {status:"NO_RECEIPT",commitments_match:false,lean_authoritative:false};
+  if(!state.all) return {status:"RECEIPT_MISMATCH",commitments_match:false,lean_authoritative:false};
+  if(receipt.valid===true&&receipt.authoritative===true){
+    return {status:"MATCHING_LEAN_AUTHORITATIVE_RECEIPT",commitments_match:true,lean_authoritative:true,reviewer_accepted:receipt.accepted===true};
+  }
+  if(receipt.valid===false){
+    return {status:"MATCHING_REJECTED_RECEIPT",commitments_match:true,lean_authoritative:false,failed_stage:receipt.failed_stage||null};
+  }
+  return {status:"MATCHING_NONAUTHORITATIVE_RECEIPT",commitments_match:true,lean_authoritative:false};
+}
+function renderCoverageKpi(x){
+  const cov=coverageSummary(x?.cert);
+  const value=$("certifiedCoverage"), detail=$("certifiedCoverageDetail");
+  if(!value||!detail)return;
+  value.textContent=cov.total?cov.certified+"/"+cov.total:"0/0";
+  if(!cov.total){detail.textContent="no evidence items";return}
+  const authority=packageAuthorityCoverage(x);
+  if(authority.lean_authoritative){
+    detail.textContent="checker-type scope · matching Lean-authoritative receipt attached";
+  }else if(authority.status==="RECEIPT_MISMATCH"){
+    detail.textContent="checker-type scope only · attached receipt does not bind this package";
+  }else if(authority.status==="MATCHING_REJECTED_RECEIPT"){
+    detail.textContent="checker-type scope · matching verifier receipt rejected this package";
+  }else if(authority.status==="MATCHING_NONAUTHORITATIVE_RECEIPT"){
+    detail.textContent="checker-type scope only · matching receipt is not Lean-authoritative";
+  }else{
+    detail.textContent="checker-type scope only · attach an authoritative receipt to confirm this package";
+  }
 }
 function renderAuthorityKpi(x){
   const el=$("authorityState"); if(!el||!x)return;
@@ -228,8 +259,12 @@ function inspectionReport(x){
     inspection:{pcs_v06_format:x.packageFormat,exact_signed_member_set:x.exact,manifest_member_hashes_match:x.hashesOk,certificate_manifest_binding:x.certBound},
     certificate:{spec_version:x.cert.spec_version,checker_version:x.cert.checker_version,subject:x.cert.subject,mission_scope:x.cert.mission_scope,semantic_hash:x.cert.semantic_hash,integrity_hash:x.cert.integrity_hash,counts:{claims:(x.cert.claims||[]).length,evidence:(x.cert.evidence||[]).length,artifacts:(x.cert.artifacts||[]).length,workflow_nodes:(x.cert.workflow?.nodes||[]).length}},
     claims:(x.cert.claims||[]).map(cl=>({id:cl.id,kind:cl.kind,predicate_type:cl.predicate?.type,assessment_status:cl.assessment?.status,required_evidence:cl.required_evidence||[],assumptions:cl.assumptions||[]})),
-    formal_coverage:coverageSummary(x.cert),
-    evidence:(x.cert.evidence||[]).map(e=>{const cov=evidenceCoverage(e);return {id:e.id,kind:e.kind,outcome:e.outcome,checker:e.checker,check_type:cov.type||null,formal_coverage:cov.certified?"LEAN_CERTIFIED_BUILTIN":"OUTSIDE_CERTIFIED_BUILTIN_SET",claim_ids:e.claim_ids||[],artifact_ids:e.artifact_ids||[]}}),
+    formal_coverage:{
+      ...coverageSummary(x.cert),
+      classification_scope:"CHECKER_TYPE_ONLY",
+      package_authority:packageAuthorityCoverage(x)
+    },
+    evidence:(x.cert.evidence||[]).map(e=>{const cov=evidenceCoverage(e);return {id:e.id,kind:e.kind,outcome:e.outcome,checker:e.checker,check_type:cov.type||null,checker_semantics:cov.certified?"PROVED_IN_LEAN_FOR_THIS_CHECK_TYPE":"NOT_IN_CERTIFIED_BUILTIN_SET",browser_execution_verified:false,claim_ids:e.claim_ids||[],artifact_ids:e.artifact_ids||[]}}),
     workflow:(x.cert.workflow?.nodes||[]).map(n=>({id:n.id,operation:n.operation,inputs:n.inputs||[],outputs:n.outputs||[],contract_type:n.contract?.type})),
     normalized_decisions:(x.index?.entries||[]).map(d=>({claim_id:d.claim_id,decision:d.decision,path:d.path,wire_semantic_hash:d.wire_semantic_hash})),
     receipt:receipt?{attached:true,commitments_match:rs.all,valid:receipt.valid,authoritative:receipt.authoritative,accepted:receipt.accepted,failed_stage:receipt.failed_stage||null,stages:receipt.stages||null,lean_authority:receipt.lean_authority?{accepted:receipt.lean_authority.accepted,verdict:receipt.lean_authority.verdict,mode:receipt.lean_authority.mode,authority_sha256:receipt.lean_authority.authority_sha256,observation_transcript_sha256:receipt.lean_authority.observation_transcript_sha256}:null}:{attached:false}
@@ -243,9 +278,7 @@ function downloadInspectionReport(x){
 function render(x){
   current=x;$("inspectorSummary").hidden=false;$("bundleHash").textContent=x.bundleHash;$("bundleSize").textContent=x.buffer.byteLength.toLocaleString()+" archive bytes";
   populateExplorerControls(x);
-  const cov=coverageSummary(x.cert);
-  $("certifiedCoverage").textContent=cov.total?cov.certified+"/"+cov.total:"0/0";
-  $("certifiedCoverageDetail").textContent=cov.total?(cov.certified_types.length?cov.certified_types.join(", "):"no certified built-in evidence in this package"):"no evidence items";
+  renderCoverageKpi(x);
   $("archiveState").textContent=x.packageFormat?"PCS v0.6":"CHECK";$("memberCount").textContent=x.entries.size+" ZIP members";
   const bind=x.hashesOk&&x.certBound;$("bindingState").textContent=bind?"MATCH":"CHECK";$("bindingDetail").textContent=bind?"exact signed member set + hashes match":"one or more bindings differ";
   $("memberRows").innerHTML=x.rows.map(r=>'<tr><td><code>'+esc(r.name)+'</code></td><td>'+(r.size??"—")+'</td><td><code>'+esc(short(r.hash))+'</code></td><td>'+chip(r.ok,"MATCH","MISMATCH")+'</td></tr>').join("");
@@ -278,7 +311,7 @@ function renderReceipt(){
   $("receiptStatus").textContent=(state.all?"Receipt commitments match this inspected package. ":"Receipt commitment mismatch detected. ")+"The browser is displaying the receipt's assertions, not independently recreating Lean/replay authority.";
   const lean=receipt.lean_authority;
   box.innerHTML='<div class="receipt-mini"><span>valid</span><strong>'+esc(String(receipt.valid))+'</strong></div><div class="receipt-mini"><span>authoritative</span><strong>'+esc(String(receipt.authoritative))+'</strong></div><div class="receipt-mini"><span>accepted</span><strong>'+esc(String(receipt.accepted))+'</strong></div>'+(lean?'<div class="receipt-mini"><span>Lean authority</span><strong>'+esc(String(lean.verdict||lean.accepted))+'</strong></div>':"")+matches.map(([k,a,b])=>'<div class="receipt-match"><code>'+esc(k)+'</code>'+chip(a===b,"MATCH","MISMATCH")+'</div>').join("");
-  renderAuthorityKpi(current);renderAssuranceGraph(current);
+  renderAuthorityKpi(current);renderCoverageKpi(current);renderAssuranceGraph(current);
 }
 async function inspectFile(file){
   $("dropStatus").textContent="Inspecting "+file.name+"…"; try{render(await analyze(await file.arrayBuffer(),file.name))}catch(e){$("dropStatus").textContent="Rejected: "+e.message;$("inspectorSummary").hidden=true}
