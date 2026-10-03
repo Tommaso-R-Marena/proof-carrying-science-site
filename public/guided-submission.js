@@ -15,10 +15,10 @@
     5:["5. Run independent verification","A prepared draft is not a scientific verdict. The signed bundle must still be replayed by the verifier/reviewer.","READY TO VERIFY","Question: what did independent replay establish?"]
   };
   const DEMO_ACTIONS={
-    2:["Claim looks right · review evidence →","Next: inspect what PCS bound to this typed claim."],
-    3:["Evidence looks right · prepare handoff →","Next: review the draft boundary before any signing."],
-    4:["I reviewed this demo draft →","This prepares a browser draft only; it does not issue a scientific verdict."],
-    5:["See a completed reviewer result →","Next: switch to the reviewer view and see how validity, support, and policy differ."]
+    2:["Review bound evidence →","Next: inspect what PCS bound to this typed claim."],
+    3:["Prepare handoff →","Next: review the draft boundary before any signing."],
+    4:["Prepare reviewed draft →","This prepares a browser draft only; it does not issue a scientific verdict."],
+    5:["Open reviewer result →","Next: switch to the reviewer view and see how validity, support, and policy differ."]
   };
   function renderGuide(step){
     const g=GUIDE[step]||GUIDE[1];
