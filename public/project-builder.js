@@ -80,6 +80,21 @@ function explainPredicate(predicate){
       scope:"This checks the declared computational model contract; it does not establish biological or clinical adequacy."
     };
   }
+  if(p.type==="pkpd_peak_concentration_threshold"){
+    return {
+      template:"PK/PD reported concentration bound",
+      summary:`Every value in ${artifactPathForClaim(p.output_artifact)}[${p.concentration_column||"concentration"}] must be non-negative and no greater than ${String(p.upper_bound??"unspecified")} ${p.unit||""}.`,
+      fields:[
+        ["Model artifact",artifactPathForClaim(p.model_artifact)],
+        ["Output artifact",artifactPathForClaim(p.output_artifact)],
+        ["Concentration column",p.concentration_column||"concentration"],
+        ["Upper bound",String(p.upper_bound??"unspecified")],
+        ["Unit",p.unit||"unspecified"],
+        ["Pass condition","Every committed concentration-table value is at or below the bound"]
+      ],
+      scope:"This certifies the maximum reported table value only; it is not a continuous-time Cmax theorem and does not establish clinical safety."
+    };
+  }
   if(p.type==="pkpd_reference_match"){
     return {
       template:"PK/PD output reproduction",

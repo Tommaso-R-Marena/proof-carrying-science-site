@@ -110,7 +110,7 @@
 
     <article class="trustitem">
       <header><h3>Machine-checked v0.6/v2 theorem stack</h3><span class="chip verified">Integrated</span></header>
-      <p>The current Lean 4.28 frontier layer starts from raw canonical archive bytes and proves the exact v0.6/v2 package/decision chain, independent FIPS 180-4 SHA-256 semantics, canonical STORED-ZIP decoding, and semantic replay for <strong>all five</strong> built-in check families. The separate Mathlib bridge proves that an accepted <code>pkpd_reference_match</code> is within tolerance of the declared real-valued analytic PK/PD model.</p>
+      <p>The current Lean 4.28 frontier layer starts from raw canonical archive bytes and proves the exact v0.6/v2 package/decision chain, independent FIPS 180-4 SHA-256 semantics, canonical STORED-ZIP decoding, and semantic replay for <strong>all six</strong> built-in check families. The separate Mathlib bridge proves that an accepted <code>pkpd_reference_match</code> is within tolerance of the declared real-valued analytic PK/PD model.</p>
       <div class="boundary"><strong>Strongest theorem</strong><span><code>PCS.V2.Frontier.pcs_frontier_archive_acceptance_sound</code>: if the compiled authority accepts raw canonical archive bytes, the archive satisfies <code>CanonicalZip</code>, splits exactly into the package, and satisfies <code>HighAssurance</code>. Its only theorem hypothesis is <code>NoForgery PCS.V2.Ed25519.verify T.pk signed</code>.</span></div>
       <dl>
         <dt>Lean</dt><dd>4.28.0</dd>
@@ -119,7 +119,7 @@
         <dt>Proof escapes</dt><dd>0 <code>sorry</code> · 0 <code>admit</code> · 0 project <code>axiom</code> · 0 <code>unsafe</code>/<code>implemented_by</code>/<code>extern</code>/<code>native_decide</code></dd>
         <dt>Lean vectors</dt><dd>91 executable <code>#guard</code> vectors in V2</dd>
         <dt>Python integration</dt><dd>Full 504-test suite passed with the compiled Lean authority available</dd>
-        <dt>Certified built-ins</dt><dd><code>reaction_balance</code>, <code>unit_compatible</code>, <code>csv_disjoint</code>, <code>pkpd_contract</code>, <code>pkpd_reference_match</code></dd>
+        <dt>Certified built-ins</dt><dd><code>reaction_balance</code>, <code>unit_compatible</code>, <code>csv_disjoint</code>, <code>pkpd_contract</code>, <code>pkpd_reference_match</code>, <code>pkpd_peak_concentration_threshold</code></dd>
       </dl>
     </article>
 
@@ -146,7 +146,7 @@
       <h2>Current verification boundary</h2>
       <div class="timeline">
         <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
-        <div class="timeline-item"><strong>v0.6/v2 frontier assurance layer</strong><span>For canonical STORED archives, the compiled Lean authority decodes raw bytes itself, proves FIPS SHA-256 correspondence, replays all five built-ins with certified checkers, and reaches <code>HighAssurance</code> under the sole <code>NoForgery</code> hypothesis.</span></div>
+        <div class="timeline-item"><strong>v0.6/v2 frontier assurance layer</strong><span>For canonical STORED archives, the compiled Lean authority decodes raw bytes itself, proves FIPS SHA-256 correspondence, replays all six built-ins with certified checkers, and reaches <code>HighAssurance</code> under the sole <code>NoForgery</code> hypothesis.</span></div>
         <div class="timeline-item"><strong>Production → Lean authority gate</strong><span>Python prechecks and external observations are non-authoritative by themselves; final PCS validity requires compiled Lean acceptance, with the authority executable and transcript hashes recorded in the result.</span></div>
         <div class="timeline-item"><strong>Scoped assurance judgment</strong><span><code>Γ ; E ⊢ C @ L</code> under explicit assumptions and evidence.</span></div>
       </div>
@@ -226,7 +226,7 @@
     <article class="card"><div class="num">2</div><h3>Typed predicate</h3><p>The user confirms concrete fields such as artifact IDs, identity keys, units, reaction coefficients, model/output bindings, or numeric tolerances.</p></article>
     <article class="card"><div class="num">3</div><h3>Exact verification</h3><p>The built-in check deterministically implies the predicate recorded in the certificate. Unsupported statements remain explicitly unformalized instead of being guessed.</p></article>
   </div>
-  <div class="boundary" style="margin-top:18px"><strong>Current supported formal claim families</strong><span><code>csv_disjoint</code>, <code>reaction_balance</code>, <code>unit_compatible</code>, <code>pkpd_contract</code>, and <code>pkpd_reference_match</code>.</span></div>
+  <div class="boundary" style="margin-top:18px"><strong>Current supported formal claim families</strong><span><code>csv_disjoint</code>, <code>reaction_balance</code>, <code>unit_compatible</code>, <code>pkpd_contract</code>, <code>pkpd_reference_match</code>, and <code>pkpd_peak_concentration_threshold</code>.</span></div>
 </section>
 
 </main>

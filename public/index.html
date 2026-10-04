@@ -102,7 +102,7 @@
   <div><span>Formal core</span><strong>Frontier theorem integrated</strong><small>46 Lean V2 files · 495 V2 theorem/lemma declarations</small></div>
   <div><span>Production validity</span><strong>Lean-authoritative</strong><small>Python-only acceptance cannot produce authoritative <code>valid:true</code></small></div>
   <div><span>Runtime</span><strong>Cross-platform gates</strong><small>latest hosted CircleCI runtime/restoration gate passed</small></div>
-  <div><span>Initial scope</span><strong>5 Lean-certified built-ins</strong><small>all five initial predicates replayed by proved Lean checkers</small></div>
+  <div><span>Current scope</span><strong>6 Lean-certified built-ins</strong><small>six certified predicate families replayed by proved Lean checkers</small></div>
 </section>
 
 <section class="section product-story" id="product">
@@ -259,7 +259,7 @@
   <div class="proof-boundary-copy">
     <div class="kicker">Trust without hand-waving</div>
     <h2>What is proved, what is checked, and what is still trusted are different things.</h2>
-    <p>The strongest current theorem starts from raw canonical archive bytes and reaches scoped high assurance with a single explicit hypothesis: <code>NoForgery</code> for the Lean Ed25519 trust anchor. SHA-256/FIPS equivalence, canonical STORED ZIP decoding, and replay semantics for all five built-ins are proved in Lean; the remaining boundaries stay explicit.</p>
+    <p>The strongest current theorem starts from raw canonical archive bytes and reaches scoped high assurance with a single explicit hypothesis: <code>NoForgery</code> for the Lean Ed25519 trust anchor. SHA-256/FIPS equivalence, canonical STORED ZIP decoding, and replay semantics for all six built-ins are proved in Lean; the remaining boundaries stay explicit.</p>
     <div class="actions">
       <a class="button primary" href="trust.html">Open Trust Center</a>
       <a class="button secondary" href="architecture.html">See architecture</a>
@@ -272,7 +272,7 @@
         <li>canonical v0.6/v2 representation + exact archive partition</li>
         <li>SHA-256 = independent FIPS 180-4 specification</li>
         <li>canonical STORED ZIP decoding from raw bytes</li>
-        <li>all five built-in replay semantics in Lean</li>
+        <li>all six built-in replay semantics in Lean</li>
         <li>PK/PD match → real analytic model within tolerance</li>
         <li>normalized decisions → scoped high assurance</li>
       </ul>

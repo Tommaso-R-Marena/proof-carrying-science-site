@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claim Review · Proof-Carrying Science</title>
+<meta name="description" content="Review a PCS proof-translation plan as a recursive claim tree: what is formally closable, externally validated, assumed, or unresolved.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/claim-review.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="claim-review-page">
+<div class="topbar"><div class="shell"><span>Claim Review · Local browser inspection · No upload</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="guided-submission.html">Try PCS</a>
+    <a href="project-builder.html">Advanced Mapper</a>
+    <a href="mvp.html">v0.6 MVP</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="architecture.html">Architecture</a>
+    <a href="intake.html">Pilot intake</a>
+    <a class="button dark" href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<main>
+<section class="claim-review-hero">
+  <div>
+    <div class="kicker">Human review surface · Recursive Claim IR</div>
+    <h1>See exactly what PCS can close—and what still keeps the parent claim open.</h1>
+    <p>Open a real <code>pcs-proof-translation-v1</code> plan from the core translator. This page reads its committed <code>pcs-claim-ir-v1</code> and proof-obligation graph locally, then renders the scientific dependency tree without changing any PCS authority state.</p>
+    <div class="actions">
+      <button class="button primary" id="claimReviewChoose" type="button">Open translation JSON</button>
+      <button class="button secondary" id="claimReviewExample" type="button">Load recursive example</button>
+      <a class="button secondary" href="guided-submission.html">Back to Guided Submission</a>
+    </div>
+    <input id="claimReviewFile" type="file" accept=".json,application/json" hidden>
+  </div>
+  <aside class="claim-review-boundary">
+    <span>REVIEW BOUNDARY</span>
+    <strong>This page does not verify, sign, replay, or prove anything.</strong>
+    <p>It visualizes the exact translation plan produced by PCS. The production CLI, replay engine, and Lean authority remain authoritative.</p>
+  </aside>
+</section>
+
+<div id="claimReviewMessage" class="claim-review-message" role="status" aria-live="polite">
+  Load a translation plan or the synthetic recursive example.
+</div>
+
+<section id="claimReviewWorkspace" hidden>
+  <section class="claim-review-first-glance">
+    <div>
+      <span class="claim-review-kicker">Reviewer first glance</span>
+      <h2 id="claimReviewTitle">Recursive scientific claim review</h2>
+      <p id="claimReviewSubtitle">PCS separates machine-closed children from assumptions, external trust, and unresolved scientific composition.</p>
+    </div>
+    <span class="claim-review-source" id="claimReviewSource">LOCAL FILE</span>
+  </section>
+
+  <section class="claim-review-commitments" aria-label="Translation commitments">
+    <article><small>Plan</small><strong id="claimReviewPlanHash">—</strong><span>Translation-plan SHA-256</span></article>
+    <article><small>Claim IR</small><strong id="claimReviewClaimHash">—</strong><span>Recursive Claim IR commitment</span></article>
+    <article><small>Obligation graph</small><strong id="claimReviewGraphHash">—</strong><span>Dependency + obligation commitment</span></article>
+  </section>
+
+  <section class="claim-review-axes" aria-label="Claim review summary">
+    <article class="formal"><small>FORMAL TARGET</small><strong id="claimReviewFormal">0</strong><span>Claims mapped to certified Lean-backed checkers.</span></article>
+    <article class="external"><small>EXTERNAL TRUST</small><strong id="claimReviewExternal">0</strong><span>Claims bound to signed external validators.</span></article>
+    <article class="review"><small>HUMAN / ASSUMED</small><strong id="claimReviewReview">0</strong><span>Composition or assumption judgments still require review.</span></article>
+    <article class="open"><small>BLOCKING OPEN</small><strong id="claimReviewOpen">0</strong><span>Claims with unresolved machine-blocking obligations.</span></article>
+  </section>
+
+  <section class="claim-review-explainer">
+    <div><span>1</span><strong>Scientific statement</strong><small>The parent question the scientist actually cares about.</small></div>
+    <b>→</b>
+    <div><span>2</span><strong>PCS decomposition</strong><small>Required subclaims, assumptions, external obligations, and dependencies.</small></div>
+    <b>→</b>
+    <div><span>3</span><strong>Closure frontier</strong><small>Which leaves have formal targets, external authority, review obligations, or blockers.</small></div>
+    <b>→</b>
+    <div><span>4</span><strong>Parent decision</strong><small>Closed children never silently imply a broader scientific parent.</small></div>
+  </section>
+
+  <section class="claim-review-tree-section">
+    <div class="claim-review-section-head">
+      <div><span class="claim-review-kicker">Claim dependency tree</span><h2>What is proved, trusted, assumed, or still unknown?</h2></div>
+      <div class="claim-review-legend">
+        <span><i class="formal"></i>Lean-backed target</span>
+        <span><i class="external"></i>External validator</span>
+        <span><i class="review"></i>Human / assumption</span>
+        <span><i class="open"></i>Blocking open</span>
+      </div>
+    </div>
+    <div id="claimReviewTree" class="claim-review-tree"></div>
+  </section>
+
+  <section class="claim-review-detail-section">
+    <div class="claim-review-section-head"><div><span class="claim-review-kicker">Selected claim</span><h2 id="claimReviewDetailTitle">Choose a claim node</h2></div></div>
+    <div id="claimReviewDetail" class="claim-review-detail">
+      <p>Select a claim above to inspect the exact typed predicate, formal/external target, dependencies, assumptions, and open obligations.</p>
+    </div>
+  </section>
+
+  <details class="claim-review-technical">
+    <summary>Technical translation summary</summary>
+    <div class="claim-review-tech-grid">
+      <div><small>Claim IR summary</small><pre id="claimReviewIrSummary">{}</pre></div>
+      <div><small>Obligation graph summary</small><pre id="claimReviewGraphSummary">{}</pre></div>
+    </div>
+  </details>
+
+  <section class="claim-review-next">
+    <div><span class="claim-review-kicker">Authority boundary</span><strong>A readable graph is not a scientific verdict.</strong><p>After human confirmation, the ordinary PCS path still requires attestation, deterministic replay, and Lean authority where the check family is certified.</p></div>
+    <a class="button primary" href="result-anatomy.html">See a completed reviewer result →</a>
+  </section>
+</section>
+</main>
+
+<footer><div class="footer-grid"><div><strong>Proof-Carrying Science</strong><p>Make scientific computation independently checkable.</p></div><div><a href="privacy.html">Privacy</a><a href="trust.html">Trust Center</a><a href="contact.html">Contact</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script src="claim-review.js"></script>
+</body>
+</html>

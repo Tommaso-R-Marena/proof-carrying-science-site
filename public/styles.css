@@ -663,3 +663,53 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
   .guided-demo-guide-action small{text-align:left;max-width:none}
   .guided-demo-guide-action .button{width:100%}
 }
+
+/* Recursive Claim IR human review */
+.claim-review-page main{padding-bottom:64px}
+.claim-review-hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);gap:28px;align-items:start;padding:54px 0 34px}
+.claim-review-hero h1{max-width:940px;margin:10px 0 16px;font-size:clamp(36px,5vw,64px);line-height:1.03;letter-spacing:-.035em}
+.claim-review-hero p{max-width:900px;color:var(--muted);font-size:15px;line-height:1.7}
+.claim-review-boundary{padding:22px;border:1px solid #d9c997;border-radius:18px;background:#fffaf0}
+.claim-review-boundary>span{font:800 10px/1 var(--mono);letter-spacing:.1em;color:#8c6919}
+.claim-review-boundary strong{display:block;margin:12px 0 8px;font-size:17px;line-height:1.35}
+.claim-review-boundary p{margin:0;font-size:12.5px}
+.claim-review-message{margin:0 0 24px;padding:13px 15px;border:1px solid #c7d9ee;border-radius:12px;background:#f7fbff;color:#526b84;font-size:13px}
+.claim-review-first-glance{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding:24px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#f8fbff,#fff);box-shadow:var(--shadow-sm)}
+.claim-review-first-glance h2{margin:7px 0 7px;font-size:clamp(24px,3.3vw,38px)}
+.claim-review-first-glance p{margin:0;max-width:840px;color:var(--muted);line-height:1.6}
+.claim-review-kicker{font:800 10px/1 var(--mono);letter-spacing:.09em;color:var(--blue)}
+.claim-review-source{flex:0 0 auto;padding:8px 10px;border-radius:999px;background:#eaf2fc;color:#365f90;font:800 10px/1 var(--mono);letter-spacing:.05em}
+.claim-review-commitments{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.claim-review-commitments article{min-width:0;padding:16px;border:1px solid var(--line);border-radius:13px;background:#fff}
+.claim-review-commitments small,.claim-review-commitments strong,.claim-review-commitments span{display:block}
+.claim-review-commitments small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:800}
+.claim-review-commitments strong{margin:7px 0 5px;font:750 11px/1.4 var(--mono);overflow-wrap:anywhere}
+.claim-review-commitments span{font-size:11px;color:var(--muted)}
+.claim-review-axes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 20px}
+.claim-review-axes article{padding:19px;border:1px solid var(--line);border-top:4px solid #a5b6c9;border-radius:14px;background:#fff}
+.claim-review-axes article.formal{border-top-color:var(--good)}.claim-review-axes article.external{border-top-color:#6d4aff}.claim-review-axes article.review{border-top-color:#d4a346}.claim-review-axes article.open{border-top-color:var(--bad)}
+.claim-review-axes small,.claim-review-axes strong,.claim-review-axes span{display:block}.claim-review-axes small{font:800 9.5px/1 var(--mono);letter-spacing:.075em;color:var(--muted)}.claim-review-axes strong{font-size:30px;margin:8px 0 6px}.claim-review-axes span{font-size:11.5px;line-height:1.5;color:var(--muted)}
+.claim-review-explainer{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;align-items:stretch;gap:0;margin:20px 0 32px}
+.claim-review-explainer>div{padding:16px;border:1px solid var(--line);border-radius:13px;background:#fff}.claim-review-explainer>div>span{display:grid;place-items:center;width:25px;height:25px;margin-bottom:10px;border-radius:50%;background:#eaf2fc;color:#245b96;font-size:10px;font-weight:900}.claim-review-explainer strong,.claim-review-explainer small{display:block}.claim-review-explainer strong{font-size:13px}.claim-review-explainer small{margin-top:6px;color:var(--muted);font-size:10.5px;line-height:1.5}.claim-review-explainer>b{display:grid;place-items:center;color:#9badc2;font-size:18px}
+.claim-review-tree-section,.claim-review-detail-section{margin-top:26px;padding:26px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow-sm)}
+.claim-review-section-head{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;margin-bottom:18px}.claim-review-section-head h2{margin:7px 0 0;font-size:25px}
+.claim-review-legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:10.5px}.claim-review-legend span{display:flex;align-items:center;gap:6px}.claim-review-legend i{width:9px;height:9px;border-radius:50%}.claim-review-legend i.formal{background:var(--good)}.claim-review-legend i.external{background:#6d4aff}.claim-review-legend i.review{background:#d4a346}.claim-review-legend i.open{background:var(--bad)}
+.claim-review-tree{display:grid;gap:14px}
+.claim-review-node{position:relative;padding:17px;border:1px solid var(--line);border-left:5px solid #9fb0c3;border-radius:14px;background:#fbfcfe;cursor:pointer;transition:.15s ease}
+.claim-review-node:hover,.claim-review-node:focus{outline:none;border-color:#88afd9;box-shadow:0 0 0 3px rgba(47,125,244,.08)}
+.claim-review-node.formal{border-left-color:var(--good);background:#f6fcfa}.claim-review-node.external{border-left-color:#6d4aff;background:#faf8ff}.claim-review-node.review{border-left-color:#d4a346;background:#fffaf2}.claim-review-node.open{border-left-color:var(--bad);background:#fff8f9}
+.claim-review-node-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.claim-review-node-head small{display:block;margin-top:5px;color:var(--muted);font:10px/1.35 var(--mono)}
+.claim-review-status{font:850 9px/1 var(--mono);letter-spacing:.065em;color:#51677e}.claim-review-node.formal .claim-review-status{color:var(--good)}.claim-review-node.external .claim-review-status{color:#6d4aff}.claim-review-node.review .claim-review-status{color:#8b681d}.claim-review-node.open .claim-review-status{color:var(--bad)}
+.claim-review-depth{padding:5px 7px;border-radius:999px;background:#edf2f7;color:#64788d;font:750 9px/1 var(--mono)}
+.claim-review-node h3{margin:13px 0 7px;font-size:15px;line-height:1.4}.claim-review-node>p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.55}
+.claim-review-relation,.claim-review-deps{display:block;margin-top:9px;color:#677b90;font-size:10px}.claim-review-children{display:grid;gap:10px;margin:16px 0 0 23px;padding-left:18px;border-left:2px solid #d9e4ef}
+.claim-review-detail{display:grid;gap:12px}.claim-review-detail>p{color:var(--muted)}
+.claim-review-detail-badge{width:max-content;max-width:100%;padding:7px 9px;border-radius:999px;background:#eef3f8;color:#526980;font:850 9px/1 var(--mono);letter-spacing:.06em}.claim-review-detail-badge.formal{background:#e7f7f1;color:var(--good)}.claim-review-detail-badge.external{background:#efeaff;color:#5d3dc1}.claim-review-detail-badge.review{background:#fff1cf;color:#835f13}.claim-review-detail-badge.open{background:#ffe9ec;color:var(--bad)}
+.claim-review-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.claim-review-detail-row{padding:13px;border:1px solid var(--line);border-radius:11px;background:#fbfcfe;min-width:0}.claim-review-detail-row small,.claim-review-detail-row strong,.claim-review-detail-row code{display:block}.claim-review-detail-row small{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.claim-review-detail-row strong,.claim-review-detail-row code{margin-top:6px;font-size:11px;overflow-wrap:anywhere}
+.claim-review-detail-box{padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff}.claim-review-detail-box.formal{border-color:#b9dfd3;background:#f6fcfa}.claim-review-detail-box.external{border-color:#d5caef;background:#faf8ff}.claim-review-detail-box.boundary{border-color:#e4cf9f;background:#fffaf2}.claim-review-detail-box>small,.claim-review-detail-box>strong{display:block}.claim-review-detail-box>small{font:800 9px/1 var(--mono);letter-spacing:.07em;color:var(--muted)}.claim-review-detail-box>strong{margin:8px 0;font-size:13px}.claim-review-detail-box p{margin:0;color:var(--muted);font-size:11.5px;line-height:1.55}.claim-review-detail-box pre{margin:10px 0 0;max-height:300px;overflow:auto;padding:12px;border-radius:9px;background:#0e1828;color:#d8e5f4;font:10.5px/1.55 var(--mono)}
+.claim-review-obligation-list{display:grid;gap:8px;margin-top:10px}.claim-review-obligation-list>div{padding:10px 12px;border-left:3px solid #d4a346;border-radius:0 9px 9px 0;background:#fffaf2}.claim-review-obligation-list>div.blocking{border-left-color:var(--bad);background:#fff7f8}.claim-review-obligation-list strong,.claim-review-obligation-list span{display:block}.claim-review-obligation-list strong{font-size:10px}.claim-review-obligation-list span{margin-top:4px;color:var(--muted);font-size:10.5px;line-height:1.45}
+.claim-review-technical{margin-top:20px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}.claim-review-technical>summary{cursor:pointer;padding:14px 16px;font-weight:800}.claim-review-tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 16px}.claim-review-tech-grid small{display:block;margin-bottom:7px;color:var(--muted);font-size:10px}.claim-review-tech-grid pre{margin:0;min-height:170px;max-height:340px;overflow:auto;padding:13px;border-radius:10px;background:#0e1828;color:#d8e5f4;font:10.5px/1.55 var(--mono)}
+.claim-review-next{display:flex;justify-content:space-between;gap:24px;align-items:center;margin-top:24px;padding:22px;border:1px solid #c8d9ee;border-radius:16px;background:#f8fbff}.claim-review-next strong{display:block;margin:6px 0;font-size:16px}.claim-review-next p{margin:0;max-width:850px;color:var(--muted);font-size:12px;line-height:1.55}
+@media(max-width:900px){.claim-review-hero{grid-template-columns:1fr}.claim-review-axes{grid-template-columns:1fr 1fr}.claim-review-explainer{grid-template-columns:1fr}.claim-review-explainer>b{height:24px;transform:rotate(90deg)}.claim-review-detail-grid{grid-template-columns:1fr 1fr}.claim-review-tech-grid{grid-template-columns:1fr}.claim-review-first-glance,.claim-review-section-head,.claim-review-next{flex-direction:column}.claim-review-commitments{grid-template-columns:1fr}}
+@media(max-width:560px){.claim-review-axes,.claim-review-detail-grid{grid-template-columns:1fr}.claim-review-tree-section,.claim-review-detail-section{padding:18px}.claim-review-children{margin-left:10px;padding-left:10px}.claim-review-hero h1{font-size:38px}}
+

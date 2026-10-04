@@ -48,8 +48,8 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "guided-submission.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
     "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
@@ -60,7 +60,7 @@ for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -77,6 +77,41 @@ for page in ["index.html", "guided-submission.html", "result-anatomy.html", "pro
         errors.append(f"{page}: Project Mapper navigation link is missing")
 
 
+
+claim_review_page = ROOT / "claim-review.html"
+claim_review_js = ROOT / "claim-review.js"
+if claim_review_page.exists():
+    claim_review_text = claim_review_page.read_text(encoding="utf-8")
+    for required_text in [
+        "Human review surface · Recursive Claim IR",
+        "pcs-proof-translation-v1",
+        "pcs-claim-ir-v1",
+        "What is proved, trusted, assumed, or still unknown?",
+        "Closed children never silently imply a broader scientific parent.",
+        "This page does not verify, sign, replay, or prove anything.",
+        'id="claimReviewTree"',
+        'id="claimReviewDetail"',
+        'src="claim-review.js"',
+    ]:
+        if required_text not in claim_review_text:
+            errors.append(f"claim-review.html: Claim IR review contract drift: {required_text}")
+if claim_review_js.exists():
+    claim_review_script = claim_review_js.read_text(encoding="utf-8")
+    for required_text in [
+        'format:"pcs-proof-translation-v1"',
+        'format:"pcs-claim-ir-v1"',
+        "DECOMPOSITION_BLOCKED_BY_CHILDREN",
+        "DECOMPOSITION_LEAF_UNRESOLVED",
+        "DECOMPOSED_CHILDREN_CLOSED_PARENT_REVIEW_REQUIRED",
+        "children_can_set_parent_authority:false",
+        "claim_ir_sha256",
+        "obligation_graph",
+        "EXTERNAL VALIDATOR",
+        "LEAN-BACKED TARGET",
+        "BLOCKING OPEN",
+    ]:
+        if required_text not in claim_review_script:
+            errors.append(f"claim-review.js: Claim IR semantics drift: {required_text}")
 
 result_anatomy_page = ROOT / "result-anatomy.html"
 result_anatomy_js = ROOT / "result-anatomy.js"
@@ -287,6 +322,7 @@ if guided_page.exists():
         "Authoritative check",
         "guidedDemoGuideAction",
         "Demo coach · next action",
+        'href="claim-review.html"',
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -341,6 +377,7 @@ if mapper_js.exists():
         "Unit compatibility",
         "PK/PD model contract",
         "PK/PD output reproduction",
+        "PK/PD reported concentration bound",
         "formal_explanation",
     ]:
         if required_text not in mapper_script:
@@ -421,6 +458,7 @@ for page in ["trust.html", "architecture.html"]:
             "unit_compatible",
             "pkpd_contract",
             "pkpd_reference_match",
+            "pkpd_peak_concentration_threshold",
         ]:
             if required_text not in text_value:
                 errors.append(f"{page}: claim-semantics explanation drift: {required_text}")
@@ -584,6 +622,7 @@ if inspector_script.exists():
         "csv_disjoint",
         "pkpd_contract",
         "pkpd_reference_match",
+        "pkpd_peak_concentration_threshold",
         "CERTIFIED CHECKER TYPE",
         "OUTSIDE CERTIFIED CHECKER SET",
         "CHECKER_TYPE_ONLY",
@@ -715,7 +754,7 @@ if public_status.exists() and fixture_obj is not None:
             "reaction_balance_replay_faithful",
             "sha256_fips1804_equivalence_proved",
             "canonical_stored_zip_lean_decoded",
-            "all_five_builtin_replay_semantics_proved",
+            "all_six_builtin_replay_semantics_proved",
             "pkpd_real_model_semantics_proved",
         ]:
             if formal.get(key) is not True:
@@ -785,6 +824,7 @@ if public_status.exists() and fixture_obj is not None:
             "unit_compatible",
             "pkpd_contract",
             "pkpd_reference_match",
+            "pkpd_peak_concentration_threshold",
         ]:
             errors.append("status.json: supported formal claim type set drift")
         if guided_submission.get("steps") != ["project", "claim", "review", "prepare", "ready"]:

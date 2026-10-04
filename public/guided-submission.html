@@ -198,6 +198,7 @@
       <div><strong>Unit compatibility</strong><span>Two declared units reduce to the same physical dimension.</span></div>
       <div><strong>PK/PD model contract</strong><span>A restricted PK/PD model satisfies PCS representation, positivity, and unit rules.</span></div>
       <div><strong>PK/PD output reproduction</strong><span>Declared output values match the restricted reference equations within explicit tolerances.</span></div>
+      <div><strong>PK/PD reported concentration bound</strong><span>Every concentration in the committed prediction table is at or below an explicit bound in the model-declared concentration unit.</span></div>
     </div>
     <p>If your statement falls outside these templates, PCS should say <strong>not yet formalized</strong> rather than inventing semantics.</p>
   </details>
@@ -240,6 +241,15 @@
   </section>
 
   <div class="guided-review-grid" id="guidedReviewCards"></div>
+
+  <section class="guided-claim-ir-handoff">
+    <div>
+      <span class="guided-review-gate-kicker">Recursive Claim IR review</span>
+      <h3>Need to review a real core translation plan?</h3>
+      <p>Open a <code>pcs-proof-translation-v1</code> JSON locally and inspect its recursive parent/child claims, formal targets, external trust, assumptions, and unresolved blockers.</p>
+    </div>
+    <a class="button secondary" href="claim-review.html">Open Claim Review →</a>
+  </section>
 
   <section class="guided-scope-review" aria-labelledby="guidedScopeReviewTitle">
     <div>

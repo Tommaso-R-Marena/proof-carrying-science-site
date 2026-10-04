@@ -72,7 +72,7 @@ async function analyze(buffer,name){
 function chip(ok,a="PASS",b="CHECK"){return '<span class="chip '+(ok?"verified":"open")+'">'+esc(ok?a:b)+'</span>'}
 function idMap(items){return new Map((Array.isArray(items)?items:[]).filter(x=>x&&x.id).map(x=>[x.id,x]));}
 function uniq(xs){return [...new Set(xs.filter(Boolean))];}
-const LEAN_CERTIFIED_EVIDENCE_TYPES=new Set(["reaction_balance","unit_compatible","csv_disjoint","pkpd_contract","pkpd_reference_match"]);
+const LEAN_CERTIFIED_EVIDENCE_TYPES=new Set(["reaction_balance","unit_compatible","csv_disjoint","pkpd_contract","pkpd_reference_match","pkpd_peak_concentration_threshold"]);
 function evidenceCoverage(e){
   const type=e?.check_spec?.type||"";
   return {
