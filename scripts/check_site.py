@@ -322,6 +322,7 @@ if guided_page.exists():
         "Authoritative check",
         "guidedDemoGuideAction",
         "Demo coach · next action",
+        'href="claim-review.html"',
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -376,6 +377,7 @@ if mapper_js.exists():
         "Unit compatibility",
         "PK/PD model contract",
         "PK/PD output reproduction",
+        "PK/PD reported concentration bound",
         "formal_explanation",
     ]:
         if required_text not in mapper_script:
