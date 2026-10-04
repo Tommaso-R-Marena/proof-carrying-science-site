@@ -27,7 +27,8 @@
       "reaction_balance",
       "unit_compatible",
       "pkpd_contract",
-      "pkpd_reference_match"
+      "pkpd_reference_match",
+      "pkpd_peak_concentration_threshold"
     ],
     "latest_hosted_gate": {
       "provider": "CircleCI",
@@ -311,7 +312,8 @@
         "reaction_balance",
         "unit_compatible",
         "pkpd_contract",
-        "pkpd_reference_match"
+        "pkpd_reference_match",
+        "pkpd_peak_concentration_threshold"
       ],
       "unsupported_claims_fail_closed": true,
       "claim_translation_model": "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation",
@@ -500,7 +502,7 @@
     "python_suite_tests_passed": 504,
     "sha256_fips1804_equivalence_proved": true,
     "canonical_stored_zip_lean_decoded": true,
-    "all_five_builtin_replay_semantics_proved": true,
+    "all_six_builtin_replay_semantics_proved": true,
     "pkpd_real_model_semantics_proved": true,
     "frontier_only_hypothesis": "NoForgery PCS.V2.Ed25519.verify T.pk signed"
   },
