@@ -1443,7 +1443,7 @@ async function adminSkillDecision(request, env, admin, userId) {
   if (!row) throw new ApiError(404,"Skill request not found.","skill_not_found");
   const when=status==="verified"?nowIso():null;
   await env.COMMONS_DB.prepare(
-    "UPDATE skills SET status=?,verification_note=?,verified_at=?,verified_by=? WHERE user_id=? AND skill=?"
+    "UPDATE skills SET status=?,verification_note=?,verified_at=?,verified_by=?,review_due_at=NULL WHERE user_id=? AND skill=?"
   ).bind(status,note,when,admin.id,userId,skill).run();
   await notify(env,{userId,email:user.email_verified?user.email:null,kind:"skill_review",subject:`PCS skill review: ${skill}`,body:`Your ${skill} skill review was marked ${status}.\n\n${note}\n`});
   await audit(env,admin.id,"skill_reviewed","user",userId,{skill,status});
