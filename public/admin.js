@@ -43,9 +43,10 @@
     let override=false;
     try{await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note,override}});}
     catch(e){
-      if((e.code==="verified_skill_required"||e.code==="review_skill_required")&&confirm(e.message+"\n\nUse an explicit administrative override? This will be recorded in the audit log.")){
+      const overrideCodes=new Set(["verified_skill_required","l2_work_required","l3_work_required","l4_review_required","l5_specialist_required","l6_override_required"]);
+      if(overrideCodes.has(e.code)&&confirm(e.message+"\n\nUse an explicit founder calibration override? This should be reserved for equivalent external evidence or a passed synthetic calibration, and it will be recorded in the audit log.")){
         override=true;
-        await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note:note+" [ADMIN OVERRIDE]",override}});
+        await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note:note+" [FOUNDER CALIBRATION OVERRIDE]",override}});
       } else {alert(e.message);return;}
     }
     await load();
