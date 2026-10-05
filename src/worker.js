@@ -66,6 +66,101 @@ function cleanText(value, max = 2000) {
   return String(value || "").trim().slice(0, max);
 }
 
+function randomInt(min, max) {
+  const range = max - min + 1;
+  const buf = new Uint32Array(1);
+  crypto.getRandomValues(buf);
+  return min + (buf[0] % range);
+}
+
+function shuffled(values) {
+  const out = [...values];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = randomInt(0, i);
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function choiceQuestion(id, prompt, correct, distractors) {
+  const labels = shuffled([correct, ...distractors]);
+  const options = labels.map((label, index) => ({ id: String(index + 1), label }));
+  const answer = options.find(option => option.label === correct)?.id;
+  return { question: { id, type: "single_choice", prompt, options }, answer };
+}
+
+function buildCompetencyEvaluation(skill) {
+  const questions = [];
+  const key = {};
+  const add = item => { questions.push(item.question); key[item.question.id] = item.answer; };
+  const n = randomInt(12, 47);
+  const budget = randomInt(3, 8);
+  const risk = randomInt(1, 10);
+  const thresholdPct = randomInt(72, 92);
+  const observedPct = randomInt(65, 98);
+  const token = "tok-" + randomInt(100, 999);
+  const residue = randomInt(8, 80);
+  const proposition = ["P","Q","Safe","Invariant"][randomInt(0,3)];
+
+  if (skill === "research") {
+    add(choiceQuestion("q1", n + " committed evaluation traces satisfy a bounded policy. What is directly supported?", "Those " + n + " committed traces satisfy the bounded policy.", ["All future deployments are safe.", "The model is globally safe.", "The policy is empirically complete."]));
+    add(choiceQuestion("q2", "A committed log is safe, but no premise connects it to the deployed run. What is missing?", "An explicit correspondence premise such as a faithful-log assumption.", ["A larger font in the report.", "A second copy of the same log.", "A stronger reviewer preference."]));
+    add(choiceQuestion("q3", "A declared metric must be at least " + thresholdPct + "%. The measured value is " + observedPct + "%. How should this exact threshold claim be classified?", observedPct >= thresholdPct ? "Supported by this measurement." : "Falsified by this measurement.", observedPct >= thresholdPct ? ["Falsified by this measurement.", "Globally proved.", "Not measurable."] : ["Supported by this measurement.", "Globally proved.", "Not measurable."]));
+    add(choiceQuestion("q4", "A report observes correlation between two variables and concludes one caused the other. What is the main issue?", "The causal conclusion is stronger than the evidence shown.", ["Correlation automatically proves causation.", "The claim becomes formal because it uses numbers.", "No assumptions need to be stated."]));
+  } else if (skill === "python") {
+    add(choiceQuestion("q1", "A checker catches every exception and returns True. What security property does that violate?", "Fail-closed behavior.", ["Deterministic iteration.", "Stable sorting.", "UTF-8 decoding."]));
+    add(choiceQuestion("q2", "A risk checker accepts exactly when risk <= budget. Here risk=" + risk + " and budget=" + budget + ". What should it return?", risk <= budget ? "ACCEPT" : "REJECT", risk <= budget ? ["REJECT", "UNKNOWN", "RETRY"] : ["ACCEPT", "UNKNOWN", "RETRY"]));
+    add(choiceQuestion("q3", "Authorization token " + token + " has already been consumed. A second request presents the same token. What should a single-use checker do?", "Reject the second use.", ["Accept because the signature is unchanged.", "Reset the consumed set.", "Ignore token state."]));
+    add(choiceQuestion("q4", "A test only asserts that valid input passes. Which addition best protects against a fail-open regression?", "A negative test proving malformed/unauthorized input is rejected.", ["A longer variable name.", "A print statement.", "A second positive-only test."]));
+  } else if (skill === "security") {
+    add(choiceQuestion("q1", "A signed authorization token is reused after consumption. What is the primary threat?", "Replay of previously authorized authority.", ["Lossless compression.", "Floating-point rounding.", "CSS overflow."]));
+    add(choiceQuestion("q2", "A token authorizes read:data but is presented for write:data. What should a scope-aware verifier do?", "Reject because the requested scope is not authorized.", ["Accept because the signer is valid.", "Broaden the scope automatically.", "Ignore the operation field."]));
+    add(choiceQuestion("q3", "A token expired " + randomInt(1,24) + " hours ago but has a valid signature. What should the verifier do?", "Reject it as expired.", ["Accept it because signatures override expiry.", "Extend it automatically.", "Treat expiry as cosmetic metadata."]));
+    add(choiceQuestion("q4", "An insider signs a payload that violates the declared safety invariant. What does signature validity establish?", "Who signed the payload—not that its domain semantics are safe.", ["That the payload is safe.", "That every policy accepts it.", "That replay is unnecessary."]));
+  } else if (skill === "ml") {
+    const overlap = randomInt(1, 15);
+    add(choiceQuestion("q1", "The test split shares " + overlap + "% of examples with training data. What is the main evaluation problem?", "Train/test leakage compromises independence.", ["The metric is automatically conservative.", "The model becomes formally verified.", "The overlap improves provenance."]));
+    add(choiceQuestion("q2", "Hyperparameters are repeatedly selected using the final test set. What happens to the test set?", "It is no longer an untouched independent final evaluation.", ["It becomes a training checksum.", "It proves generalization.", "Nothing changes."]));
+    add(choiceQuestion("q3", "A rare harmful class is 2% of data and a model predicts the majority class always. Which statement is safest?", "High overall accuracy can hide failure on the rare harmful class.", ["Accuracy alone proves the evaluator is adequate.", "Class imbalance cannot affect interpretation.", "A majority predictor is necessarily safe."]));
+    add(choiceQuestion("q4", "A result is signed but the evaluator/dataset identifiers are not bound to the receipt. What attack remains?", "Substituting a different evaluator or dataset while reusing the result.", ["Integer overflow in CSS.", "Loss of email delivery.", "A theorem becoming an axiom automatically."]));
+  } else if (skill === "biology") {
+    add(choiceQuestion("q1", "A paper uses 1-based residue numbering. Residue " + residue + " corresponds to which zero-based array index?", String(residue - 1), [String(residue), String(residue + 1), String(Math.max(0,residue - 2))]));
+    const score = randomInt(60, 95) / 100;
+    const thr = randomInt(65, 90) / 100;
+    add(choiceQuestion("q2", "A declared score threshold is >= " + thr.toFixed(2) + ". The committed score is " + score.toFixed(2) + ". What does the checker conclude?", score >= thr ? "Threshold satisfied." : "Threshold not satisfied.", score >= thr ? ["Threshold not satisfied.", "Biological function proved.", "Clinical validity proved."] : ["Threshold satisfied.", "Biological function proved.", "Clinical validity proved."]));
+    const conserved = randomInt(6, 10), total = 10;
+    add(choiceQuestion("q3", conserved + " of " + total + " aligned homologues conserve a residue. What exact empirical fraction is shown?", (conserved/total).toFixed(1), [((conserved-1)/total).toFixed(1), "1.0", "0.0"]));
+    add(choiceQuestion("q4", "A committed sequence/score artifact passes its computational checker. What still needs separate evidence?", "That the committed bytes faithfully represent the relevant external biological object and interpretation.", ["That bytes can be hashed.", "That JSON has braces.", "That the checker returned a boolean."]));
+  } else if (skill === "lean") {
+    add(choiceQuestion("q1", "Lean theorem: theorem keep (h : " + proposition + ") : " + proposition + " := h. What does it establish?", proposition + " under the explicit premise h : " + proposition + ".", ["An unconditional proof of " + proposition + ".", "That every proposition is true.", "That the external world satisfies " + proposition + "."]));
+    add(choiceQuestion("q2", "A theorem compiles only because its proof contains sorry. How should PCS treat it?", "Reject it as a proof escape.", ["Accept it because compilation succeeded.", "Treat sorry as a cryptographic signature.", "Upgrade it to L6 authority."]));
+    add(choiceQuestion("q3", "A Lean theorem proves x = x by rfl, while prose claims a complex safety property. What is authoritative?", "The exact formal theorem statement, not the stronger prose.", ["The prose automatically expands the theorem.", "Compilation proves every nearby comment.", "The longer sentence is authoritative."]));
+    add(choiceQuestion("q4", "Why inspect theorem axiom dependencies after a successful build?", "To detect hidden assumptions or nonstandard trust dependencies behind the theorem.", ["To improve CSS.", "To create more test users.", "To make hashes shorter."]));
+  } else if (skill === "review") {
+    add(choiceQuestion("q1", "A root obligation depends on child A=PROVED and child B=OPEN. Under conjunctive composition, what is the root?", "Not closed; the OPEN dependency prevents acceptance.", ["PROVED because one child passed.", "Automatically waived.", "Equivalent to reviewer preference."]));
+    add(choiceQuestion("q2", "A proof-obligation graph contains two nodes with the same identifier but different claims. What should a fail-closed checker do?", "Reject the graph as ambiguous/invalid.", ["Choose the first silently.", "Average the two claims.", "Mark both proved."]));
+    add(choiceQuestion("q3", "A package is valid and the typed claim is supported, but reviewer policy requires a different signer. What can happen?", "The reviewer can decline acceptance while the verified scientific record remains valid.", ["Package validity must become false.", "The claim must be rewritten as true.", "Signer policy is irrelevant."]));
+    add(choiceQuestion("q4", "Why bind a receipt to exact package/certificate hashes?", "So the review decision cannot be silently reused for different bytes.", ["To make the font smaller.", "To remove the need for replay.", "To let contributors self-approve."]));
+  } else {
+    throw new ApiError(400, "This skill does not have an automated competency screening.", "evaluation_unavailable");
+  }
+
+  return {
+    variant_token: randomToken(12),
+    challenge: {
+      version: "pcs-variable-competency-v1",
+      skill,
+      generated: true,
+      objective_questions: questions,
+      manual_rationale_required: true,
+      note: "Questions are generated from randomized parameterized scenarios and shuffled choices. Passing the auto-score is evidence for manual review, never automatic authority."
+    },
+    answer_key: key,
+    max_score: questions.length,
+    pass_score: Math.ceil(questions.length * 0.75),
+  };
+}
+
 function b64url(bytes) {
   let binary = "";
   const view = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
