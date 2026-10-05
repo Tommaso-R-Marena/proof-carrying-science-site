@@ -27,3 +27,6 @@ CREATE TABLE IF NOT EXISTS competency_evaluations (
 );
 CREATE INDEX IF NOT EXISTS idx_competency_eval_user ON competency_evaluations(user_id, skill, created_at);
 CREATE INDEX IF NOT EXISTS idx_competency_eval_status ON competency_evaluations(status, expires_at);
+
+-- Retire the fixed public CAL-* prompts in favor of per-attempt generated evaluations.
+UPDATE tasks SET status='paused', updated_at=datetime('now') WHERE calibrates_skill IS NOT NULL;
