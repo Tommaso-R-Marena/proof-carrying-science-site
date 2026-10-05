@@ -145,13 +145,14 @@ function buildCompetencyEvaluation(skill) {
     throw new ApiError(400, "This skill does not have an automated competency screening.", "evaluation_unavailable");
   }
 
+  const orderedQuestions = shuffled(questions);
   return {
     variant_token: randomToken(12),
     challenge: {
       version: "pcs-variable-competency-v1",
       skill,
       generated: true,
-      objective_questions: questions,
+      objective_questions: orderedQuestions,
       manual_rationale_required: true,
       note: "Questions are generated from randomized parameterized scenarios and shuffled choices. Passing the auto-score is evidence for manual review, never automatic authority."
     },
