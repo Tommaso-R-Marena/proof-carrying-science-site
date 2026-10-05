@@ -9,11 +9,11 @@
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="topbar"><div class="shell"><span>Static public preview · Local scientific tools · Privacy-first analytics</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>Account-backed Commons · local scientific tools · privacy-first analytics</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div></nav>
 <main>
-<section class="pagehead"><div class="kicker">Privacy</div><h1>Local by design.</h1><p>The current PCS website is static. It has no account system, application backend, database, advertising stack, or scientific-data upload endpoint. Scientific package tools run locally in the browser. The site uses Cloudflare Web Analytics for aggregate traffic and Core Web Vitals measurement, plus Cloudflare Workers Logs and Issues for short-retention operational request/error telemetry. No scientific file contents are sent to PCS by these local tools.</p></section>
+<section class="pagehead"><div class="kicker">Privacy</div><h1>Local by design.</h1><p>PCS now has a small account backend for the AI Safety Commons. Contributor accounts, verified levels/skills, task applications, review decisions, notifications, and audit events are stored in a Cloudflare D1 database in the United States. Scientific package inspection, Project Mapper, browser verifier, and pilot-intake tools remain local in the browser and do not upload scientific file contents to PCS. The site also uses Cloudflare Web Analytics for aggregate traffic/Core Web Vitals and Workers Logs/Issues for operational reliability; request query strings are redacted before observability persistence.</p></section>
 <section class="grid4">
   <article class="card"><div class="num">01</div><h3>Project Mapper stays in-browser</h3><p>Files you explicitly select are read and SHA-256 hashed locally to draft artifact/check metadata. Python/Jupyter text may also be inspected locally for literal file dependencies; it is never executed. The mapper contains no PCS upload endpoint or network API.</p></article>
   <article class="card"><div class="num">02</div><h3>Verifier stays in-browser</h3><p>The legacy browser verifier uses Web Crypto and JavaScript locally. Compatible package JSON and selected extracted-directory files are not transmitted by this site.</p></article>
@@ -27,13 +27,19 @@
   <div class="callout" style="margin-top:28px"><div><h3>Questions about a pilot or data boundary?</h3><p>Contact Tommaso directly before sending sensitive materials.</p></div><a class="button dark" href="mailto:marenatommaso@gmail.com?subject=PCS%20Data%20Handling%20Question">marenatommaso@gmail.com</a></div>
 </section>
 <section class="section">
-  <div class="kicker">AI Safety Commons local state</div>
-  <h2>Contributor planning stays local until you choose to contact PCS.</h2>
+  <div class="kicker">AI Safety Commons account state</div>
+  <h2>Account authority is server-side; scientific project files are still local.</h2>
   <div class="grid3" style="margin-top:24px">
-    <article class="card"><div class="num">PROFILE</div><h3>Browser localStorage</h3><p>The Commons profile builder stores weekly availability, track, work preference, and a self-selected planning level in this browser only. It is not an official PCS contributor credential.</p></article>
-    <article class="card"><div class="num">TASKS</div><h3>Local request list</h3><p>Task-interest clicks are saved locally so the interface can remember them. The current static site has no contributor database or server-side assignment system.</p></article>
-    <article class="card"><div class="num">CONTACT</div><h3>Email only when you choose</h3><p>Requesting a task prepares a <code>mailto:</code> message. Your mail client—and only your deliberate send action—transmits that message to PCS. Browser site data can be cleared through your browser settings.</p></article>
+    <article class="card"><div class="num">ACCOUNT</div><h3>Cloudflare D1</h3><p>The Commons stores your name, email, password-derived verifier, recovery-code hash, verified PCS level, profile preferences, skill-review state, task applications, submissions, decisions, notifications, and audit records. Passwords and recovery codes are not stored in plaintext.</p></article>
+    <article class="card"><div class="num">SESSIONS</div><h3>Secure session cookie</h3><p>Sign-in uses an HttpOnly, Secure, SameSite cookie. Sessions expire after 30 days. Account recovery uses the one-time recovery code shown at signup; PCS stores only its cryptographic hash.</p></article>
+    <article class="card"><div class="num">TASKS</div><h3>Applications + review</h3><p>Higher-level applications, AI-use plans, verification plans, checkpoints, and review outcomes are stored so PCS can enforce levels, verified skills, deadlines, reservation release, and contributor rights. L0 open work remains non-exclusive.</p></article>
   </div>
+  <div class="boundary" style="margin-top:18px"><strong>Browser localStorage</strong><span>The earlier local-only Commons planning profile has been replaced by the account backend. Other local scientific tools may still use ordinary browser state for UI convenience, but selected scientific file contents are not sent to the Commons account database.</span></div>
+</section>
+<section class="section">
+  <div class="kicker">Email + account deletion</div>
+  <h2>Notifications are durable even if email delivery is unavailable.</h2>
+  <p class="section-intro">Task approvals and review results are stored in your PCS account. Transactional email is sent only when PCS has an explicitly configured email provider. You can delete your account from the account interface after confirming your password; related sessions, skills, requests, submissions, and user notifications are deleted through database relationships, while minimal security/operational logs may remain for their normal retention period.</p>
 </section>
 </main>
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="index.html">Home</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>

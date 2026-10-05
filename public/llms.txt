@@ -31,4 +31,8 @@ A PCS-valid package is scoped to an exact typed claim, exact evidence, and expli
 
 
 ## Commons interpretation
-The contributor marketplace is currently a static/manual-coordination pilot. Local profile/task state remains in the browser; task requests prepare email rather than creating a server-side assignment. Proposed bounties are not payable unless a task is explicitly marked funded and PCS confirms written terms. Contributor submissions never become assurance merely because they were submitted: the commons principle is "crowdsource the work, never the truth."
+The contributor marketplace now uses authenticated server-side accounts for contributor authority and task coordination. Every account starts at L0; users cannot self-select higher levels. L0/L1 work is open and non-exclusive. L2+ reserved work requires the server-side level, any exact verified skill required by the task, and explicit PCS approval; pending applications never reserve work. L4/L5 work is high-trust and founder-assigned. Approved reserved work has a first progress checkpoint within 24 hours and stale reservations release automatically.
+
+Short synthetic calibration tasks may verify Python, Lean, security, ML, research, biology, or review skill without extracting unpaid production work. Passing a calibration does not automatically confer L4/L5 authority.
+
+AI assistance is permitted, but higher-trust submissions require disclosure, independent verification, and an explanation of what the work establishes, does not establish, and still assumes. Proposed bounties are not payable unless a task is explicitly marked funded and PCS confirms written terms. Contributor submissions never become assurance merely because they were submitted: the commons principle is "crowdsource the work, never the truth."

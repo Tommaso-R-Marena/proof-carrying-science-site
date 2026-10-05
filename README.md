@@ -8,10 +8,15 @@ Live preview:
 
 ## What is real
 
-The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
+The site uses a deliberately small Cloudflare Worker + D1 backend only for the AI Safety Commons account/coordination layer. Scientific package inspection, project mapping, claim drafting, and verifier/browser tooling remain local-first and do not upload selected scientific files to the Commons database.
+
 - **PCS AI Safety Commons** — a public-good contributor hub that maps bounded AI-safety work into an auditable task → obligation → claim path. The governing principle is “crowdsource the work, never the truth.”
-- **Contributor onboarding + progression** — local browser profile builder, L0–L6 progression, L2 general paid-task eligibility, L4 reviewer-authority threshold, and an explicit Contributor Bill of Rights.
-- **Task marketplace** — filterable pilot inventory with difficulty, expected time, skill track, impact path, verification rule, and explicit volunteer / proposed-bounty / review / specialist-contract status. Requests are coordinated manually by email while no backend exists.
+- **Contributor accounts + verified progression** — every new account starts at L0. Users may self-report interests and availability, but cannot self-select L2–L6. Level and exact task skills are controlled by reviewed evidence. L2 opens general paid-task eligibility; L4 is the start of reviewer-authority eligibility.
+- **Anti-squatting task control** — L0/L1 work is open and non-exclusive. L2/L3 work requires verified level + task-specific skill + founder approval; pending applications do not reserve work. L4/L5 work is high-trust founder-assigned work. Approved reserved work has a first progress checkpoint within 24 hours and automatically releases when stale.
+- **AI-assisted contribution policy** — AI tools are permitted, but higher-trust submissions require disclosure, an independent verification note, and an explanation of what the work establishes, what it does not establish, and what assumptions remain.
+- **Founder review queue** — task applications target a decision within one business day and no later than two business days. Decisions, checkpoints, skill reviews, level changes, and submission reviews are persisted and audited.
+- **Account security** — PBKDF2-SHA256 password derivation, random session tokens stored only by hash, HttpOnly/Secure/SameSite cookies, one-time recovery codes stored only by hash, login lockout, same-origin mutation checks, and D1-backed per-IP rate limiting for public auth/application endpoints.
+- **Task marketplace** — filterable inventory with difficulty, expected time, required verified skill, impact path, verification rule, access mode, and explicit volunteer / proposed-bounty / review / specialist-contract status.
 - **Public-good funding model** — proposed PCS Safety Bounty Fund, grant/donation/sponsorship/commercial cross-subsidy model, funding firewall, and explicit rule that sponsorship cannot purchase a green result.
 - **Organization access model** — broad free public-interest/community participation with paid enterprise value for private deployment, scale, governance, and support; final licensing structure remains subject to legal review.
 
@@ -55,6 +60,8 @@ public/
   governance.html
   organizations.html
   research.html
+  account.html
+  admin.html
   project-builder.html
   mvp.html
   validation.html
@@ -71,6 +78,8 @@ public/
   styles.css
   site.js
   commons.js
+  account.js
+  admin.js
   project-builder.js
   mvp.js
   demo.js
@@ -89,7 +98,7 @@ public/
   robots.txt
 ```
 
-Repository metadata, scripts, Git objects, and documentation remain outside the configured asset directory.
+Repository metadata, scripts, Git objects, the Worker backend (`src/worker.js`), D1 migrations, and documentation remain outside the static asset directory. Wrangler deploys the Worker and `public/` assets as one unit; only `/api/*` runs through the Worker before static asset handling.
 
 ## Local preview
 
@@ -126,17 +135,17 @@ npm run deploy
 
 A successful production deploy also submits the public URL set to IndexNow.
 
-The repository also runs `scripts/check_free_infrastructure.py` in CI. This deliberately keeps the public site on the no-card/static posture: Workers Free static assets, Web Analytics, Workers Logs, and Issues are allowed; adding D1/KV/R2/Queues/AI/other resource bindings requires an explicit review instead of silently entering the deployment configuration.
+The repository also runs `scripts/check_free_infrastructure.py` in CI. The reviewed free-tier posture allows exactly one US-jurisdiction D1 database (`pcs-commons`) for Commons accounts/task coordination plus Workers Free static assets, Web Analytics, Workers Logs, and Issues. Adding any other stateful Cloudflare product still requires explicit cost/privacy review.
 
 A separate card-free operations layer runs a daily production smoke check through GitHub Actions (`scripts/check_live_site.py`) and uses Dependabot for monthly review-only updates to Wrangler/npm metadata and GitHub Actions. No dependency PR is auto-merged. See `FREE_INFRASTRUCTURE.md` for the current policy and deferred services.
 
 ## Security/privacy posture
 
-- no database;
-- no user accounts; the Commons pilot uses localStorage for local planning state and manual email coordination;
+- one reviewed D1 database stores Commons account/task-control records; it is not a scientific-artifact data plane;
+- contributor accounts start at L0 and store only the account/profile/skill/task/review state needed for Commons coordination;
 - privacy-first Cloudflare Web Analytics / Core Web Vitals measurement;
 - no advertising pixels or behavioral tracking; Cloudflare's analytics beacon is the only third-party runtime script;
-- no scientific-data submission endpoint;
+- no Commons endpoint accepts arbitrary scientific project-file uploads; task submissions currently record text plus an optional external artifact/PR URL;
 - verifier package JSON and extracted-directory selections remain local to the browser;
 - Project Mapper file selections, hashes, and manifest drafts remain local to the browser;
 - pilot-intake entries remain local to the browser;
@@ -166,3 +175,25 @@ builds, or project installation hooks.
 
 Free-form language is never treated as the formal predicate. The beginner flow may use the user’s words to highlight a supported template, but the rigorous claim is the typed PCS predicate/check. Current built-ins are dataset disjointness, reaction balance, unit compatibility, PK/PD contract validity, and PK/PD reference matching. Unsupported claims remain explicitly unformalized.
 \nDemo shortcuts: `guided-submission.html?demo=1` launches the synthetic guided walkthrough; `result-anatomy.html` explains the completed v0.6 review result structure.\n
+
+## Commons account and task authority
+
+The Commons deliberately separates **identity**, **level**, **skill**, and **task assignment**:
+
+- every registration begins at L0;
+- L0/L1 tasks are open/non-exclusive, so an inexperienced contributor cannot block other people by “claiming” one;
+- L2+ eligibility is based on server-side verified level;
+- a high-trust task can additionally require a separately verified skill such as `python`, `ml`, `lean`, `security`, `biology`, or `review`;
+- pending L2+ applications do not reserve work;
+- approved reserved work receives a short reservation and a 24-hour progress checkpoint;
+- stale reservations are released by the hourly Worker cron;
+- users cannot edit their own PCS level;
+- founder/admin level changes and overrides are audit-logged.
+
+The Worker implements the public API in `src/worker.js`; schema source of truth is `migrations/0001_commons_auth.sql`.
+
+## Transactional email boundary
+
+The backend always creates durable in-app notifications. It can also send transactional email when `RESEND_API_KEY` and `MAIL_FROM` Worker secrets/config are present. The administrator destination is `marenatommaso@gmail.com`.
+
+No email-provider API key is committed to Git. Until a transactional sender domain/API credential is configured, approvals remain visible in the account dashboard but arbitrary-recipient email delivery is intentionally reported as disabled rather than silently pretending it succeeded.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail CI if the PCS website drifts away from its zero-billing Cloudflare posture."""
+"""Fail CI if the PCS website drifts away from its reviewed free-tier Cloudflare posture."""
 
 from __future__ import annotations
 
@@ -38,12 +38,24 @@ if obs.get("redact_query_string") is not True:
 if obs.get("issues", {}).get("enabled") is not True:
     errors.append("Cloudflare Issues must remain enabled")
 
-# These keys are not categorically bad; they are forbidden here so adding any
-# stateful/paid-surface Cloudflare service requires a deliberate review of the
-# zero-card architecture and privacy disclosure instead of silently appearing.
+# The Commons account system deliberately uses one D1 database on Workers Free.
+# Every other stateful/paid surface remains forbidden unless separately reviewed.
+d1 = cfg.get("d1_databases", [])
+if len(d1) != 1:
+    errors.append("exactly one reviewed Commons D1 binding is required")
+else:
+    db = d1[0]
+    if db.get("binding") != "COMMONS_DB":
+        errors.append("Commons D1 binding must be COMMONS_DB")
+    if db.get("database_name") != "pcs-commons":
+        errors.append("Commons D1 database name drift")
+    if db.get("database_id") != "9e5288c2-efef-4918-b029-7ef001b70064":
+        errors.append("Commons D1 production database ID drift")
+    if db.get("migrations_dir") != "migrations":
+        errors.append("Commons D1 migrations directory drift")
+
 review_required_keys = {
     "r2_buckets",
-    "d1_databases",
     "kv_namespaces",
     "durable_objects",
     "queues",
@@ -56,7 +68,19 @@ review_required_keys = {
 }
 present = sorted(review_required_keys.intersection(cfg))
 if present:
-    errors.append("Cloudflare resource bindings require explicit zero-billing review: " + ", ".join(present))
+    errors.append("unreviewed Cloudflare resource bindings require explicit free-tier/privacy review: " + ", ".join(present))
+
+assets = cfg.get("assets", {})
+if assets.get("binding") != "ASSETS":
+    errors.append("Worker asset binding must be ASSETS")
+if assets.get("run_worker_first") != ["/api/*"]:
+    errors.append("only /api/* should run through the account Worker before static assets")
+
+if cfg.get("main") != "src/worker.js":
+    errors.append("Commons Worker entrypoint must be src/worker.js")
+
+if cfg.get("vars", {}).get("ADMIN_EMAIL") != "marenatommaso@gmail.com":
+    errors.append("Commons admin notification address drift")
 
 site_js = (PUBLIC / "site.js").read_text(encoding="utf-8")
 for required in [
@@ -81,6 +105,9 @@ for required in [
     "Cloudflare Web Analytics",
     "Workers Logs",
     "No scientific file contents are sent to PCS",
+    "D1",
+    "account",
+    "Browser localStorage",
 ]:
     if required not in privacy:
         errors.append(f"privacy disclosure missing: {required}")
@@ -91,4 +118,4 @@ if errors:
         print(f"- {error}")
     raise SystemExit(1)
 
-print("FREE INFRA CHECK: PASS (Workers Free observability + Issues + Web Analytics; no stateful Cloudflare bindings)")
+print("FREE INFRA CHECK: PASS (Workers Free + reviewed D1 account state + static assets + observability; no unreviewed paid/stateful bindings)")

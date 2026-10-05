@@ -8,11 +8,11 @@
 <meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
 </head>
 <body class="commons-page">
-<div class="topbar commons-topbar"><div class="shell"><span>Contributor onboarding · local profile builder · nothing is submitted automatically</span><a href="commons.html">AI Safety Commons</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>Contributor onboarding · account required · verified levels are assigned, never self-selected</span><a href="commons.html">AI Safety Commons</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
 <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-<div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="tasks.html">Find a task</a></div>
+<div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a href="account.html">Account</a><a class="button dark" href="tasks.html">Find a task</a></div>
 </nav>
 <main>
 <section class="pagehead commons-pagehead">
@@ -25,13 +25,13 @@
 
 <section class="contributor-builder">
   <div class="panel contributor-form-panel">
-    <div class="panel-eyebrow">Local planning profile</div>
+    <div class="panel-eyebrow">Contributor account profile</div>
     <h2>What can you contribute this week?</h2>
-    <p>This profile stays in your browser. It is used only to recommend tasks. An official PCS contributor level would require reviewed work.</p>
+    <p>You need an account to contribute. Time, interests, and compensation preference are self-reported; your PCS level and verified skills are controlled by reviewed evidence.</p>
     <form id="contributorProfileForm">
       <div class="commons-form-grid">
         <label><span>Hours available this week</span>
-          <select class="selectinput" name="hours">
+          <select class="selectinput" name="availability_hours">
             <option value="1">About 1 hour</option><option value="2">About 2 hours</option><option value="3">About 3 hours</option>
             <option value="5">About 5 hours</option><option value="8">About 8 hours</option><option value="10">About 10 hours</option><option value="15">About 15 hours</option>
           </select>
@@ -49,31 +49,28 @@
           </select>
         </label>
         <label><span>Work preference</span>
-          <select class="selectinput" name="compensation">
+          <select class="selectinput" name="compensation_preference">
             <option value="either">Volunteer or paid</option>
             <option value="volunteer">Volunteer tasks are fine</option>
             <option value="paid-only">Show me paid / planned-paid work</option>
           </select>
         </label>
-        <label><span>Planning level</span>
-          <select class="selectinput" name="level">
-            <option value="0">L0 · I am new</option><option value="1">L1 · Basic contributor</option><option value="2">L2 · Technical/verified contributor</option>
-            <option value="3">L3 · Investigator</option><option value="4">L4 · Reviewer</option><option value="5">L5 · Specialist</option><option value="6">L6 · Research lead</option>
-          </select>
+        <label><span>Background / interests</span>
+          <textarea class="textinput" name="profile_note" maxlength="1200" placeholder="What can you responsibly check? What would you like to learn?"></textarea>
         </label>
       </div>
-      <div class="actions"><button class="button primary" type="submit">Save local profile + recommend a task</button><a class="button secondary" href="tasks.html">Browse all tasks</a></div>
-      <p id="profileSaved" class="successline" hidden>Saved locally in this browser.</p>
+      <div class="actions"><button class="button primary" type="submit">Save account profile + recommend a task</button><a class="button secondary" href="tasks.html">Browse all tasks</a></div>
+      <p id="profileSaved" class="successline" hidden>Saved to your PCS account. Your verified level was not changed.</p>
     </form>
   </div>
   <aside class="panel local-profile-panel">
-    <div class="panel-eyebrow">Your local profile</div>
+    <div class="panel-eyebrow">Your verified account state</div>
     <div id="localContributorProfile"></div>
   </aside>
 </section>
 
 <section class="section-tight">
-  <div class="section-heading-row"><div><div class="kicker">Recommended next step</div><h2>One bounded contribution, not an open-ended commitment.</h2></div><p>The recommendation is based only on the local planning profile above. It does not assign a task or certify your level.</p></div>
+  <div class="section-heading-row"><div><div class="kicker">Recommended next step</div><h2>One bounded contribution, not an open-ended commitment.</h2></div><p>The recommendation uses your actual PCS level plus the profile above. A recommendation never overrides task-level skill or approval requirements.</p></div>
   <div id="commonsRecommendation"></div>
 </section>
 
@@ -120,8 +117,8 @@
 </section>
 
 <section class="commons-callout">
-  <div><span class="commons-kicker-dark">READY?</span><h2>Find one task that fits the next few hours of your life.</h2><p>Task requests are currently coordinated manually while the contributor backend is being designed. The browser can save your interests locally and prepare an email request.</p></div>
-  <div class="actions"><a class="button primary button-lg" href="tasks.html">Open task marketplace →</a><a class="button ghost button-lg" href="commons.html">Back to Commons</a></div>
+  <div><span class="commons-kicker-dark">READY?</span><h2>Find one task that fits the next few hours of your life.</h2><p>The account and task-control backend is live. L0 open work starts immediately and never blocks anyone else. L2+ reserved work is only assigned after PCS approval; decisions target 1 business day and no later than 2 business days.</p></div>
+  <div class="actions"><a class="button primary button-lg" href="account.html">Create / open my account</a><a class="button primary button-lg" href="tasks.html">Open task marketplace →</a><a class="button ghost button-lg" href="commons.html">Back to Commons</a></div>
 </section>
 </main>
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Useful, bounded, verifiable contributions to safer AI.</p></div><div class="footercol"><strong>Contribute</strong><a href="tasks.html">Task marketplace</a><a href="contributors.html">Progression + impact</a><a href="projects.html">Assurance projects</a></div><div class="footercol"><strong>Principles</strong><a href="governance.html">Governance</a><a href="fund.html">Funding model</a><a href="privacy.html">Privacy</a></div></div></footer>

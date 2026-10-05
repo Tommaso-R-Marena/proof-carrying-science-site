@@ -48,8 +48,8 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "commons.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "commons.js", "account.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
     "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
@@ -245,6 +245,8 @@ commons_contracts = {
     ],
     "contribute.html": [
         "You can help before you are an expert.",
+        "account required",
+        "verified levels are assigned, never self-selected",
         "L2",
         "L4",
         "Contributor Bill of Rights",
@@ -256,8 +258,11 @@ commons_contracts = {
         "Task Marketplace",
         "not yet funded",
         "Every task has a bounded deliverable",
+        "L2+ applications require approval",
+        "no later than 2 business days",
         'id="commonsTaskList"',
         'id="taskComp"',
+        'id="taskApplicationDialog"',
         'src="commons.js"',
     ],
     "projects.html": [
@@ -296,6 +301,23 @@ commons_contracts = {
         "External-world transfer is explicit",
         "integrated into the core repository and independently rebuilt",
     ],
+    "account.html": [
+        "Your level is earned here—not self-declared.",
+        "Every new account starts at L0.",
+        "AI is allowed:",
+        'id="registerForm"',
+        'id="skillForm"',
+        'id="requestList"',
+        'src="account.js"',
+    ],
+    "admin.html": [
+        "Approve access without letting applications block the work.",
+        "24-hour progress checkpoint",
+        "1–2 business-day review deadline",
+        'id="adminRequestList"',
+        'id="adminCheckpointList"',
+        'src="admin.js"',
+    ],
 }
 for page_name, required_texts in commons_contracts.items():
     page = ROOT / page_name
@@ -312,18 +334,73 @@ commons_js = ROOT / "commons.js"
 if commons_js.exists():
     commons_script = commons_js.read_text(encoding="utf-8")
     for required_text in [
-        'const PROFILE_KEY = "pcs-commons-profile-v1"',
-        'const REQUESTS_KEY = "pcs-commons-task-requests-v1"',
         'name:"Verified Contributor"',
         'name:"Reviewer"',
-        'funding:"planned"',
-        "Planned bounty · not yet funded",
-        "requestTask",
-        "mailto:",
-        "official level requires PCS review",
+        'api("/api/me")',
+        'api("/api/tasks")',
+        "Start now · non-exclusive",
+        "Apply for PCS approval",
+        "Pending applications never reserve the task.",
+        'location.href="account.html"',
     ]:
         if required_text not in commons_script:
-            errors.append(f"commons.js: contributor-marketplace contract drift: {required_text}")
+            errors.append(f"commons.js: authenticated contributor-marketplace contract drift: {required_text}")
+
+account_js = ROOT / "account.js"
+if account_js.exists():
+    account_script = account_js.read_text(encoding="utf-8")
+    for required_text in [
+        'api("/api/auth/register"',
+        'api("/api/auth/login"',
+        'api("/api/auth/recover"',
+        'api("/api/profile"',
+        'api("/api/skills/request"',
+        "showRecovery",
+        'api("/api/account/delete"',
+        "verification_note",
+        "understanding_note",
+    ]:
+        if required_text not in account_script:
+            errors.append(f"account.js: account authority contract drift: {required_text}")
+
+admin_js = ROOT / "admin.js"
+if admin_js.exists():
+    admin_script = admin_js.read_text(encoding="utf-8")
+    for required_text in [
+        'api("/api/admin/overview")',
+        "/decision",
+        "/checkpoint",
+        "/skill",
+        "/level",
+        "FOUNDER CALIBRATION OVERRIDE",
+    ]:
+        if required_text not in admin_script:
+            errors.append(f"admin.js: founder approval contract drift: {required_text}")
+
+worker_js = REPO / "src" / "worker.js"
+if not worker_js.exists():
+    errors.append("missing Commons Worker backend: src/worker.js")
+else:
+    worker_script = worker_js.read_text(encoding="utf-8")
+    for required_text in [
+        'const SESSION_COOKIE = "pcs_commons_session"',
+        "PBKDF2",
+        "SameSite=Lax",
+        "Account created at L0.",
+        "task.claim_mode === \"open\"",
+        "addBusinessDaysIso",
+        "Application received. It does not reserve the task.",
+        "checkpoint_due_at",
+        "exclusiveLimit",
+        "verifiedSkills",
+        "RESEND_API_KEY",
+        "ADMIN_BOOTSTRAP_TOKEN",
+        "RATE_LIMIT_SALT",
+        "rateLimit(request, env",
+        "async scheduled",
+    ]:
+        if required_text not in worker_script:
+            errors.append(f"src/worker.js: account/task authority contract drift: {required_text}")
 
 demo_page = ROOT / "demo.html"
 demo_js = ROOT / "demo.js"
@@ -735,12 +812,21 @@ if inspector_script.exists():
         if required_text not in inspector_js:
             errors.append(f"package-inspector.js: assurance dependency engine drift: {required_text}")
 
+NETWORKED_COMMONS_JS = {"commons.js", "account.js", "admin.js"}
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
 
+    # Reviewed Commons clients may call only the same-origin /api backend through
+    # their local api(path, options) helper. They must not embed an external HTTP URL.
+    if js.name in NETWORKED_COMMONS_JS:
+        if "fetch(path,init)" not in text:
+            errors.append(f"{js.name}: expected reviewed same-origin API helper is missing")
+        if re.search(r"https?://", text):
+            errors.append(f"{js.name}: external URL found in reviewed Commons API client")
+        continue
+
     # A literal relative fetch of an existing deployable asset is a same-origin,
-    # read-only static dependency. It does not upload browser-selected data and
-    # therefore preserves the site's local-only scientific-data posture.
+    # read-only static dependency. It does not upload browser-selected data.
     def _strip_static_fetch(match: re.Match[str]) -> str:
         ref = match.group("ref")
         parsed = urlparse(ref)
@@ -758,7 +844,7 @@ for js in ROOT.glob("*.js"):
         text,
     )
     if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", reviewed):
-        errors.append(f"{js.name}: network API found; local-only posture requires review")
+        errors.append(f"{js.name}: network API found; local-only scientific-tool posture requires review")
 
 logo = ROOT / "logo-mark.svg"
 if logo.exists():

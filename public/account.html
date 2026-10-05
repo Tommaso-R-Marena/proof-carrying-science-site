@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Account · PCS AI Safety Commons</title>
+<meta name="description" content="Create and manage your PCS AI Safety Commons contributor account, verified level, skills, task work, and notifications.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/account.html">
+<meta name="robots" content="noindex,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body class="commons-page account-page">
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Commons account · verified levels · task work · AI-use disclosure</span><a href="tasks.html">Task marketplace</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="governance.html">Governance</a><a href="account.html">Account</a><a class="button dark" href="tasks.html">Find work</a></div></nav>
+<main>
+<section class="pagehead commons-pagehead">
+  <div class="kicker">Contributor account</div>
+  <h1>Your level is earned here—not self-declared.</h1>
+  <p>Every new account starts at L0. L0 work is immediately available and non-exclusive. Higher levels, verified skills, and reserved tasks require reviewed evidence and explicit PCS approval.</p>
+  <div class="commons-policy-note"><strong>AI is allowed:</strong><span>You may use AI tools, but higher-trust work requires you to disclose that use, explain how you independently checked the output, and show that you understand what the contribution establishes and what it does not.</span></div>
+</section>
+
+<section id="accountLoggedOut" class="account-auth-grid" hidden>
+  <div class="panel">
+    <div class="panel-eyebrow">Create account</div>
+    <h2>Start at L0 immediately.</h2>
+    <p class="muted">Creating an account does not require founder approval. It lets you begin open L0 work without reserving or blocking anyone else's task.</p>
+    <form id="registerForm">
+      <label class="field"><span>Name</span><input class="textinput" name="display_name" autocomplete="name" required maxlength="80"></label>
+      <label class="field"><span>Email</span><input class="textinput" type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span>Password</span><input class="textinput" type="password" name="password" autocomplete="new-password" required minlength="12" maxlength="128"></label>
+      <label class="field"><span>Confirm password</span><input class="textinput" type="password" name="password_confirm" autocomplete="new-password" required minlength="12" maxlength="128"></label>
+      <label class="honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+      <label class="checkrow"><input type="checkbox" name="ai_policy_ack" required><span>I understand that AI assistance is allowed, but I remain responsible for checking and understanding anything I submit.</span></label>
+      <label class="checkrow"><input type="checkbox" name="terms_ack" required><span>I agree to the Commons contributor rules, compensation disclosures, and <a href="governance.html">Contributor Bill of Rights</a>.</span></label>
+      <div class="actions"><button class="button primary" type="submit">Create account</button></div>
+      <p class="form-message" id="registerMessage" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panel-eyebrow">Sign in</div>
+    <h2>Continue your work.</h2>
+    <form id="loginForm">
+      <label class="field"><span>Email</span><input class="textinput" type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span>Password</span><input class="textinput" type="password" name="password" autocomplete="current-password" required></label>
+      <div class="actions"><button class="button dark" type="submit">Sign in</button></div>
+      <p class="form-message" id="loginMessage" aria-live="polite"></p>
+    </form>
+    <details class="account-recovery">
+      <summary>Lost your password?</summary>
+      <form id="recoverForm">
+        <p class="tiny">Use the recovery code shown once when you created the account. This avoids depending on email for account recovery.</p>
+        <label class="field"><span>Email</span><input class="textinput" type="email" name="email" required></label>
+        <label class="field"><span>Recovery code</span><input class="textinput mono" name="recovery_code" required></label>
+        <label class="field"><span>New password</span><input class="textinput" type="password" name="new_password" minlength="12" maxlength="128" required></label>
+        <button class="button secondary" type="submit">Reset password</button>
+        <p class="form-message" id="recoverMessage" aria-live="polite"></p>
+      </form>
+    </details>
+  </div>
+</section>
+
+<section id="recoveryCodePanel" class="recovery-code-panel" hidden>
+  <div class="panel">
+    <div class="kicker">Save this once</div>
+    <h2>Your account recovery code</h2>
+    <p>PCS stores only a cryptographic hash. Copy this somewhere secure; it will not be shown again.</p>
+    <div class="recovery-code-row"><code id="recoveryCodeValue"></code><button class="button secondary" id="copyRecoveryCode" type="button">Copy</button></div>
+    <button class="button primary" id="recoveryCodeSaved" type="button">I saved it</button>
+  </div>
+</section>
+
+<section id="accountLoggedIn" hidden>
+  <div class="account-summary-grid">
+    <article class="panel account-identity">
+      <div class="panel-eyebrow">Verified account state</div>
+      <div class="account-level-row"><span id="accountLevel" class="commons-level-badge">L0</span><div><h2 id="accountName">Contributor</h2><p id="accountEmail" class="muted"></p></div></div>
+      <div class="account-status-row"><span id="emailVerifyChip" class="commons-chip planned">EMAIL</span><span id="accountRoleChip" class="commons-chip level">CONTRIBUTOR</span></div>
+      <p class="tiny">Your PCS level is assigned by the system/admin from reviewed work. You cannot edit it yourself.</p>
+      <div class="actions"><a class="button primary" id="adminDashboardLink" href="admin.html" hidden>Founder admin</a><button class="button secondary" id="resendVerification" type="button">Send verification email</button><button class="button secondary" id="logoutButton" type="button">Sign out</button></div>
+      <p id="emailStatusMessage" class="form-message" aria-live="polite"></p>
+    </article>
+    <article class="panel">
+      <div class="panel-eyebrow">Access rules</div>
+      <h2>What your level permits</h2>
+      <div id="levelAccessSummary" class="access-summary"></div>
+    </article>
+  </div>
+
+  <section class="section-tight">
+    <div class="section-heading-row"><div><div class="kicker">Profile</div><h2>Time and interests are self-reported. Level is not.</h2></div></div>
+    <div class="panel">
+      <form id="profileForm">
+        <div class="commons-form-grid">
+          <label><span>Hours available this week</span><select class="selectinput" name="availability_hours"><option>1</option><option>2</option><option>3</option><option>5</option><option>8</option><option>10</option><option>15</option><option>20</option></select></label>
+          <label><span>Best-fit track</span><select class="selectinput" name="track"><option value="nontechnical">Nontechnical / operations / annotation</option><option value="research">Research / literature / analysis</option><option value="python">Python / software engineering</option><option value="ml">ML / evaluation</option><option value="biology">Computational biology</option><option value="security">Security / red teaming</option><option value="lean">Lean / formal methods</option><option value="review">Independent review</option></select></label>
+          <label><span>Work preference</span><select class="selectinput" name="compensation_preference"><option value="either">Volunteer or paid</option><option value="volunteer">Volunteer tasks are fine</option><option value="paid-only">Paid/planned-paid work</option></select></label>
+          <label><span>Short background / interests</span><textarea class="textinput" name="profile_note" maxlength="1200" placeholder="What do you know, what do you want to learn, and what kind of work can you responsibly check?"></textarea></label>
+        </div>
+        <button class="button primary" type="submit">Save profile</button>
+        <p id="profileMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="section-heading-row"><div><div class="kicker">Verified skills</div><h2>Credentials can be claimed. Task authority requires evidence.</h2></div><p>For L2+ reserved tasks, the exact required skill must be verified by PCS. Self-reporting “Lean expert” or “security researcher” does not unlock anything.</p></div>
+    <div class="account-skill-grid">
+      <div class="panel"><div id="skillList"></div></div>
+      <div class="panel">
+        <h3>Request skill verification</h3>
+        <form id="skillForm">
+          <label class="field"><span>Skill</span><select class="selectinput" name="skill"><option value="research">Research</option><option value="python">Python</option><option value="ml">ML / evaluation</option><option value="biology">Computational biology</option><option value="security">Security</option><option value="lean">Lean / formal methods</option><option value="review">Independent review</option></select></label>
+          <label class="field"><span>Evidence</span><textarea class="textinput" name="evidence" minlength="80" maxlength="3000" required placeholder="Link or describe work that lets PCS assess whether you can independently check this kind of contribution."></textarea></label>
+          <button class="button secondary" type="submit">Request review</button>
+          <p id="skillMessage" class="form-message" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="section-heading-row"><div><div class="kicker">My work</div><h2>Requests, reservations, checkpoints, and submissions.</h2></div><a class="button secondary" href="tasks.html">Browse tasks</a></div>
+    <div id="requestList" class="account-request-list"></div>
+  </section>
+
+  <section class="section-tight">
+    <div class="section-heading-row"><div><div class="kicker">Notifications</div><h2>Decisions remain visible in your account.</h2></div></div>
+    <div id="notificationList" class="notification-list"></div>
+  </section>
+
+  <section class="section-tight">
+    <div class="panel danger-panel">
+      <div class="panel-eyebrow">Account control</div>
+      <h2>Delete my Commons account</h2>
+      <p class="muted">This deletes your contributor account and its linked sessions, skill records, task requests, submissions, and account notifications. Enter your password to confirm. This does not delete unrelated public GitHub contributions or short-retention infrastructure logs.</p>
+      <form id="deleteAccountForm">
+        <label class="field"><span>Current password</span><input class="textinput" type="password" name="password" autocomplete="current-password" required></label>
+        <button class="button secondary" type="submit">Permanently delete account</button>
+        <p id="deleteAccountMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</section>
+
+<section class="commons-callout">
+  <div><span class="commons-kicker-dark">NO TASK SQUATTING</span><h2>Lower-level work is non-exclusive. Higher-level work is never reserved while waiting for approval.</h2><p>Reserved L2+ work gets a progress checkpoint within 24 hours. Miss it and the reservation is automatically released so qualified people are not blocked for weeks.</p></div>
+  <div class="actions"><a class="button primary button-lg" href="tasks.html">Task marketplace</a><a class="button ghost button-lg" href="governance.html">Contributor rules</a></div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Contributor accounts with verified authority boundaries.</p></div><div class="footercol"><strong>Commons</strong><a href="tasks.html">Tasks</a><a href="contribute.html">Onboarding</a><a href="projects.html">Projects</a></div><div class="footercol"><strong>Trust</strong><a href="governance.html">Governance</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></div></div></footer>
+</div>
+<script src="site.js"></script><script src="account.js"></script>
+</body></html>
