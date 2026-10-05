@@ -723,6 +723,169 @@ async function updateProfile(request, env, user) {
   return json({ ok:true, user:publicUser(fresh) });
 }
 
+
+async function startCompetencyEvaluation(request, env, user) {
+  await rateLimit(request, env, "competency-evaluation", 12, 60);
+  const body = await readBody(request);
+  const skill = String(body.skill || "");
+  const taskId = cleanText(body.task_id, 64) || null;
+  if (!SKILLS.has(skill) || skill === "nontechnical") throw new ApiError(400, "Choose a supported technical/research skill.", "bad_skill");
+
+  const verified = await env.COMMONS_DB.prepare(
+    "SELECT 1 AS ok FROM skills WHERE user_id=? AND skill=? AND status='verified'"
+  ).bind(user.id, skill).first();
+  if (verified) throw new ApiError(409, "This skill is already verified.", "skill_already_verified");
+
+  if (taskId) {
+    const task = await env.COMMONS_DB.prepare("SELECT id,required_skill FROM tasks WHERE id=? AND status='open'").bind(taskId).first();
+    if (!task) throw new ApiError(404, "Selected task is not open.", "task_not_found");
+    if (task.required_skill && task.required_skill !== skill) {
+      throw new ApiError(400, "This evaluation does not match the selected task's required skill.", "skill_task_mismatch");
+    }
+  }
+
+  const existing = await env.COMMONS_DB.prepare(
+    "SELECT id,challenge_json,expires_at,max_score FROM competency_evaluations WHERE user_id=? AND skill=? AND status='open' AND expires_at>? ORDER BY created_at DESC LIMIT 1"
+  ).bind(user.id, skill, nowIso()).first();
+  if (existing) {
+    return json({
+      ok:true,
+      evaluation:{
+        id:existing.id,
+        skill,
+        task_id:taskId,
+        expires_at:existing.expires_at,
+        max_score:Number(existing.max_score),
+        pass_score:Math.ceil(Number(existing.max_score) * 0.75),
+        challenge:JSON.parse(existing.challenge_json),
+      },
+      reused:true,
+      message:"Continuing your current variable competency evaluation. Final approval is still manual."
+    });
+  }
+
+  const since = addHoursIso(nowIso(), -24);
+  const recent = await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM competency_evaluations WHERE user_id=? AND skill=? AND created_at>=?"
+  ).bind(user.id, skill, since).first();
+  if (Number(recent?.n || 0) >= 3) {
+    throw new ApiError(429, "You have reached the 3-attempt daily evaluation limit for this skill. You can still submit a manual application/evidence request now.", "evaluation_attempt_limit");
+  }
+
+  const generated = buildCompetencyEvaluation(skill);
+  const id = crypto.randomUUID();
+  const createdAt = nowIso();
+  const expiresAt = addHoursIso(createdAt, 1);
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO competency_evaluations(
+      id,user_id,skill,task_id,variant_token,challenge_json,answer_key_json,created_at,expires_at,max_score,status
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,'open')`
+  ).bind(
+    id,user.id,skill,taskId,generated.variant_token,
+    JSON.stringify(generated.challenge),JSON.stringify(generated.answer_key),
+    createdAt,expiresAt,generated.max_score
+  ).run();
+  await audit(env,user.id,"competency_evaluation_started","competency_evaluation",id,{skill,task_id:taskId,variant_token:generated.variant_token});
+  return json({
+    ok:true,
+    evaluation:{
+      id,
+      skill,
+      task_id:taskId,
+      expires_at:expiresAt,
+      max_score:generated.max_score,
+      pass_score:generated.pass_score,
+      challenge:generated.challenge,
+    },
+    reused:false,
+    message:"Variable evaluation generated. It is auto-scored, but any passing result still requires manual PCS approval."
+  },201);
+}
+
+async function submitCompetencyEvaluation(request, env, user, evaluationId) {
+  await rateLimit(request, env, "competency-evaluation-submit", 20, 60);
+  const body = await readBody(request);
+  const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
+  const rationale = cleanText(body.rationale, 3000);
+  if (rationale.length < 100) {
+    throw new ApiError(400, "Explain your reasoning and how you checked your answers in at least 100 characters.", "evaluation_rationale_required");
+  }
+
+  const row = await env.COMMONS_DB.prepare(
+    "SELECT * FROM competency_evaluations WHERE id=? AND user_id=?"
+  ).bind(evaluationId,user.id).first();
+  if (!row) throw new ApiError(404, "Evaluation not found.", "evaluation_not_found");
+  if (row.status !== "open") throw new ApiError(409, "This evaluation has already been submitted.", "evaluation_closed");
+  if (row.expires_at <= nowIso()) {
+    await env.COMMONS_DB.prepare("UPDATE competency_evaluations SET status='expired' WHERE id=?").bind(row.id).run();
+    throw new ApiError(409, "This evaluation expired. Generate a new variable evaluation.", "evaluation_expired");
+  }
+
+  const key = JSON.parse(row.answer_key_json || "{}");
+  let score = 0;
+  for (const [questionId, expected] of Object.entries(key)) {
+    if (String(answers[questionId] || "") === String(expected)) score += 1;
+  }
+  const maxScore = Number(row.max_score || Object.keys(key).length || 4);
+  const passScore = Math.ceil(maxScore * 0.75);
+  const autoPass = score >= passScore;
+  const submittedAt = nowIso();
+
+  await env.COMMONS_DB.prepare(
+    "UPDATE competency_evaluations SET status='submitted',submitted_at=?,answers_json=?,rationale=?,score=?,auto_pass=? WHERE id=?"
+  ).bind(submittedAt,JSON.stringify(answers),rationale,score,autoPass?1:0,row.id).run();
+
+  if (!autoPass) {
+    await audit(env,user.id,"competency_evaluation_failed","competency_evaluation",row.id,{skill:row.skill,score,max_score:maxScore});
+    return json({
+      ok:true,
+      auto_pass:false,
+      score,
+      max_score:maxScore,
+      message:"Auto-score: "+score+"/"+maxScore+". This screening did not pass. You may generate another variable evaluation later or submit the manual application/evidence route now."
+    });
+  }
+
+  const due = addBusinessDaysIso(submittedAt, 2);
+  const existingSkill = await env.COMMONS_DB.prepare(
+    "SELECT status FROM skills WHERE user_id=? AND skill=?"
+  ).bind(user.id,row.skill).first();
+  if (existingSkill?.status !== "verified") {
+    const evidence = "Variable competency evaluation "+row.id+" auto-score "+score+"/"+maxScore+". Manual rationale: "+rationale;
+    await env.COMMONS_DB.prepare(
+      `INSERT INTO skills(user_id,skill,status,evidence,requested_at,review_due_at,source,evaluation_id)
+       VALUES(?,?,'pending',?,?,?,?,?)
+       ON CONFLICT(user_id,skill) DO UPDATE SET
+         status='pending',evidence=excluded.evidence,requested_at=excluded.requested_at,
+         review_due_at=excluded.review_due_at,source='evaluation',evaluation_id=excluded.evaluation_id,
+         verification_note=NULL,verified_at=NULL,verified_by=NULL`
+    ).bind(user.id,row.skill,evidence,submittedAt,due,"evaluation",row.id).run();
+    await notify(env,{
+      kind:"skill_review_admin",
+      email:env.ADMIN_EMAIL || null,
+      subject:"[PCS] Passed variable evaluation: "+user.display_name+" — "+row.skill,
+      body:user.display_name+" ("+user.email+", current L"+user.level+") passed the auto-scored "+row.skill+" screening "+score+"/"+maxScore+".\n\nManual rationale:\n"+rationale+"\n\nFinal approval is manual. Target response: within 1 business day; no later than 2 business days ("+due+").\n"
+    });
+    await notify(env,{
+      userId:user.id,
+      email:user.email_verified?user.email:null,
+      kind:"competency_evaluation_passed",
+      subject:"PCS competency evaluation passed: "+row.skill,
+      body:"Your variable "+row.skill+" evaluation auto-scored "+score+"/"+maxScore+". This is screening evidence only; it does not grant authority automatically. PCS will manually review it, targeting a response within 1 business day and no later than 2 business days. Current deadline: "+due+".\n"
+    });
+  }
+
+  await audit(env,user.id,"competency_evaluation_passed","competency_evaluation",row.id,{skill:row.skill,score,max_score:maxScore,manual_review_due_at:due});
+  return json({
+    ok:true,
+    auto_pass:true,
+    score,
+    max_score:maxScore,
+    manual_review_due_at:due,
+    message:"Auto-score: "+score+"/"+maxScore+" — screening passed. Final skill approval is still manual. PCS targets review within 1 business day and no later than 2 business days."
+  });
+}
+
 async function requestSkill(request, env, user) {
   const body = await readBody(request);
   const skill = String(body.skill || "");
