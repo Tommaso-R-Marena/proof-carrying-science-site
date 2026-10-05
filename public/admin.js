@@ -1,7 +1,8 @@
 (() => {
   "use strict";
   const $=(s,r=document)=>r.querySelector(s);
-  const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const $=(s,r=document)=>[...r.querySelectorAll(s)];
+  let currentAdmin=null;
 
   function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
   function fmt(v){if(!v)return"—";try{return new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(v));}catch{return v;}}
@@ -35,7 +36,7 @@
   }
 
   async function setLevel(userId,current){
-    const raw=prompt(`New verified level for this contributor (0–6). Current: L${current}`);
+    const raw=prompt(`New verified technical level for this contributor (0–6). Current: L${current}. L7 is reserved for the unique Founder/Owner and cannot be assigned.`);
     if(raw===null)return;
     const level=Number(raw);
     const note=prompt("Give the evidence-based reason for this level change.");
@@ -44,7 +45,7 @@
     try{await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note,override}});}
     catch(e){
       const overrideCodes=new Set(["verified_skill_required","l2_work_required","l3_work_required","l4_review_required","l5_specialist_required","l6_override_required"]);
-      if(overrideCodes.has(e.code)&&confirm(e.message+"\n\nUse an explicit founder calibration override? This should be reserved for equivalent external evidence or a passed synthetic calibration, and it will be recorded in the audit log.")){
+      if(overrideCodes.has(e.code)&&currentAdmin?.is_owner&&confirm(e.message+"\n\nUse an explicit Founder/Owner override? This is audited and should be used only when the evidence is equivalent to the ordinary gate.")){
         override=true;
         await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note:note+" [FOUNDER CALIBRATION OVERRIDE]",override}});
       } else {alert(e.message);return;}
@@ -129,21 +130,63 @@
     $$("[data-submission-reject]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionReject,"reject")));
   }
 
+  async function governanceChange(user,kind){
+    if(!currentAdmin?.is_owner)return alert("Founder/Owner authority required.");
+    let body={};
+    let question="";
+    if(kind==="grant-admin"){body={role:"admin"};question=`Grant delegated administrator authority to ${user.display_name}? This does not make them Owner or L7.`;}
+    if(kind==="revoke-admin"){body={role:"contributor"};question=`Revoke administrator authority from ${user.display_name}? Their active sessions will be invalidated immediately.`;}
+    if(kind==="suspend"){body={role:"contributor",status:"suspended"};question=`Suspend ${user.display_name}? Any administrator authority will be revoked and active sessions invalidated.`;}
+    if(kind==="reactivate"){body={status:"active"};question=`Reactivate ${user.display_name}? This does not restore administrator authority automatically.`;}
+    if(!question||!confirm(question))return;
+    const note=prompt("Give the governance reason (at least 20 characters).");
+    if(!note)return;
+    body.note=note;
+    try{await api(`/api/admin/users/${encodeURIComponent(user.id)}/governance`,{method:"POST",body});await load();}
+    catch(e){alert(e.message);}
+  }
+
   function renderUsers(items){
     const target=$("#adminUserList");
-    target.innerHTML=items.map(u=>`
+    target.innerHTML=items.map(u=>{
+      const owner=Boolean(u.is_owner);
+      const canGovern=Boolean(currentAdmin?.is_owner)&&!owner;
+      const canSetLevel=!owner&&(Boolean(currentAdmin?.is_owner)||(u.role!=="admin"&&Number(u.level)<6));
+      const levelLabel=owner?"L7 · FOUNDER / OWNER":`L${esc(u.level)}`;
+      const governanceLabel=owner?"OWNER":u.role==="admin"?"ADMIN":"CONTRIBUTOR";
+      const statusClass=u.status==="active"?"volunteer":"planned";
+      let actions="";
+      if(owner){
+        actions='<span class="tiny"><strong>Protected unique owner.</strong> Delegated admins cannot modify this account.</span>';
+      }else{
+        const buttons=[];
+        if(canSetLevel)buttons.push(`<button class="smallbutton" data-level-user="${esc(u.id)}" data-current-level="${esc(u.level)}">Set technical level</button>`);
+        if(!u.email_verified)buttons.push(`<button class="smallbutton" data-email-user="${esc(u.id)}">Verify email manually</button>`);
+        if(canGovern&&u.status==="active"&&u.role!=="admin")buttons.push(`<button class="smallbutton" data-governance="grant-admin" data-user="${esc(u.id)}">Grant admin</button>`);
+        if(canGovern&&u.role==="admin")buttons.push(`<button class="smallbutton" data-governance="revoke-admin" data-user="${esc(u.id)}">Revoke admin</button>`);
+        if(canGovern&&u.status==="active")buttons.push(`<button class="smallbutton" data-governance="suspend" data-user="${esc(u.id)}">Suspend</button>`);
+        if(canGovern&&u.status!=="active")buttons.push(`<button class="smallbutton" data-governance="reactivate" data-user="${esc(u.id)}">Reactivate</button>`);
+        actions=buttons.join("");
+      }
+      return `
       <article class="admin-user-row">
         <div><strong>${esc(u.display_name)}</strong><span>${esc(u.email)}</span></div>
-        <div><span class="commons-chip level">L${esc(u.level)}</span><span class="commons-chip ${u.email_verified?"volunteer":"planned"}">${u.email_verified?"email verified":"email unverified"}</span><span class="commons-chip">${esc(u.track)}</span></div>
-        <div class="actions"><button class="smallbutton" data-level-user="${esc(u.id)}" data-current-level="${esc(u.level)}">Set level</button>${u.email_verified?"":`<button class="smallbutton" data-email-user="${esc(u.id)}">Verify email manually</button>`}</div>
-      </article>`).join("");
+        <div><span class="commons-chip level">${levelLabel}</span><span class="commons-chip">${governanceLabel}</span><span class="commons-chip ${statusClass}">${esc(u.status)}</span><span class="commons-chip ${u.email_verified?"volunteer":"planned"}">${u.email_verified?"email verified":"email unverified"}</span><span class="commons-chip">${esc(u.track)}</span></div>
+        <div class="actions">${actions}</div>
+      </article>`;
+    }).join("");
     $$("[data-level-user]",target).forEach(b=>b.addEventListener("click",()=>setLevel(b.dataset.levelUser,Number(b.dataset.currentLevel))));
     $$("[data-email-user]",target).forEach(b=>b.addEventListener("click",()=>verifyEmail(b.dataset.emailUser)));
+    $$("[data-governance]",target).forEach(b=>b.addEventListener("click",()=>{
+      const user=items.find(u=>u.id===b.dataset.user);
+      if(user)governanceChange(user,b.dataset.governance);
+    }));
   }
 
   async function load(){
     try{
       const data=await api("/api/admin/overview");
+      currentAdmin=data.admin||null;
       $("#adminUnavailable").hidden=true;$("#adminDashboard").hidden=false;
       $("#adminEmailTransport").textContent=data.email_transport?"configured":"not configured";
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
