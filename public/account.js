@@ -5,6 +5,54 @@
   const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
   let state = null;
 
+  function taskIntent() {
+    const params = new URLSearchParams(location.search);
+    const task = String(params.get("task") || "").trim();
+    return /^[A-Za-z0-9._-]{2,64}$/.test(task) ? task : "";
+  }
+
+  function safeNextUrl() {
+    const params = new URLSearchParams(location.search);
+    const raw = String(params.get("next") || "").trim();
+    if (!raw) {
+      const task = taskIntent();
+      return task ? `/tasks.html?task=${encodeURIComponent(task)}` : "";
+    }
+    try {
+      const target = new URL(raw, location.origin);
+      if (target.origin !== location.origin || !target.pathname.endsWith("/tasks.html")) return "";
+      return target.pathname + target.search + target.hash;
+    } catch {
+      return "";
+    }
+  }
+
+  function renderTaskContinuation(authenticated) {
+    const panel = $("#taskContinuationPanel");
+    if (!panel) return;
+    const task = taskIntent();
+    if (!task) { panel.hidden = true; return; }
+    panel.hidden = false;
+    const params = new URLSearchParams(location.search);
+    const reason = String(params.get("reason") || "").trim();
+    $("#taskContinuationTitle").textContent = `Continue with ${task}`;
+    $("#taskContinuationReason").textContent = authenticated
+      ? (reason ? `You are signed in. Previous access check: ${reason} Return to the marketplace to re-check your current eligibility.` : "You are signed in. Return to the marketplace to re-check your current eligibility and apply if the task is unlocked.")
+      : (reason ? `Sign in first. Previous access check: ${reason}` : "Sign in first; PCS will then return you to this task and re-check your verified level and skills.");
+    const link = $("#taskContinuationLink");
+    if (link) {
+      link.href = safeNextUrl() || `/tasks.html?task=${encodeURIComponent(task)}`;
+      link.textContent = authenticated ? "Return to selected task" : "Return after signing in";
+    }
+  }
+
+  function continueAfterLogin() {
+    const next = safeNextUrl();
+    if (!next) return false;
+    location.assign(next);
+    return true;
+  }
+
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
@@ -187,11 +235,13 @@
     renderSkills(data.skills);
     renderRequests(data.requests);
     renderNotifications(data.notifications);
+    renderTaskContinuation(true);
   }
 
   function renderLoggedOut() {
     $("#accountLoggedOut").hidden=false;
     $("#accountLoggedIn").hidden=true;
+    renderTaskContinuation(false);
   }
 
   async function load() {
@@ -223,7 +273,12 @@
   $("#loginForm")?.addEventListener("submit",async event=>{
     event.preventDefault();
     const fd=new FormData(event.currentTarget);
-    try { await api("/api/auth/login",{method:"POST",body:{email:fd.get("email"),password:fd.get("password")}}); setMessage("loginMessage","Signed in.",true); await load(); }
+    try {
+      await api("/api/auth/login",{method:"POST",body:{email:fd.get("email"),password:fd.get("password")}});
+      setMessage("loginMessage","Signed in.",true);
+      if (continueAfterLogin()) return;
+      await load();
+    }
     catch(e){ setMessage("loginMessage",e.message); }
   });
 
@@ -280,7 +335,10 @@
     try { await navigator.clipboard.writeText($("#recoveryCodeValue").textContent); $("#copyRecoveryCode").textContent="Copied"; }
     catch { $("#copyRecoveryCode").textContent="Copy unavailable"; }
   });
-  $("#recoveryCodeSaved")?.addEventListener("click",()=>{$("#recoveryCodePanel").hidden=true;});
+  $("#recoveryCodeSaved")?.addEventListener("click",()=>{
+    $("#recoveryCodePanel").hidden=true;
+    if (continueAfterLogin()) return;
+  });
 
   async function processVerificationLink() {
     const params=new URLSearchParams(location.search);
