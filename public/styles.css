@@ -868,3 +868,11 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
   .common-good-commitment{grid-template-columns:1fr}.commitment-mark{width:68px;height:68px}
   .fund-allocation>div{grid-template-columns:1fr}.fund-allocation strong{justify-self:start}
 }
+
+/* Commons integration on the main PCS homepage */
+.commons-home-intro{padding:58px 0 22px}
+.commons-home-banner{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding:32px 34px;background:linear-gradient(135deg,#edf7ff,#eefbf7);border:1px solid #c9dcec;border-radius:22px}
+.commons-home-banner h2{font-family:var(--display);font-size:38px;letter-spacing:-.03em;margin:0 0 8px}.commons-home-banner p{margin:0;color:var(--muted);line-height:1.6;max-width:800px;font-size:13px}
+.commons-home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:12px}.commons-home-grid a{display:grid;gap:5px;text-decoration:none;padding:19px;background:#fff;border:1px solid var(--line);border-radius:15px;transition:.18s ease}.commons-home-grid a:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.commons-home-grid span{font-size:8px;letter-spacing:.1em;color:var(--blue);font-weight:850}.commons-home-grid strong{font-size:13px}.commons-home-grid small{font-size:10px;color:var(--muted);line-height:1.45}
+@media(max-width:900px){.commons-home-banner{grid-template-columns:1fr}.commons-home-grid{grid-template-columns:1fr}}
