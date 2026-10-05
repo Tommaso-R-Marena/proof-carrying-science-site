@@ -15,10 +15,23 @@
   function msg(id,text,good=false){const n=document.getElementById(id);if(!n)return;n.textContent=text||"";n.className=good?"form-message successline":"form-message validation bad";}
 
   async function requestDecision(id,decision){
-    const note=prompt(decision==="approve"?"Why should this contributor receive this reserved task?":"Why is this application not being approved?");
+    const note=prompt(decision==="approve"?"Why should this contributor receive this reserved task? Include your competency judgment when the required skill is not yet verified.":"Why is this application not being approved?");
     if(!note)return;
-    try{await api(`/api/admin/requests/${encodeURIComponent(id)}/decision`,{method:"POST",body:{decision,note}});await load();}
-    catch(e){alert(e.message);}
+    try{
+      await api(`/api/admin/requests/${encodeURIComponent(id)}/decision`,{method:"POST",body:{decision,note}});
+      await load();
+    }catch(e){
+      if(decision==="approve"&&e.code==="manual_skill_review_required"){
+        const ok=confirm(e.message+"\n\nIf the application itself demonstrates the required competence, click OK to manually verify that skill and approve the task in one audited decision. Otherwise click Cancel and request more evidence or reject.");
+        if(!ok)return;
+        try{
+          await api(`/api/admin/requests/${encodeURIComponent(id)}/decision`,{method:"POST",body:{decision,note,verify_required_skill:true}});
+          await load();
+          return;
+        }catch(second){alert(second.message);return;}
+      }
+      alert(e.message);
+    }
   }
 
   async function submissionDecision(id,decision){
@@ -64,7 +77,7 @@
     if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No pending task applications.</strong><span>The queue is clear.</span></div>';return;}
     target.innerHTML=items.map(r=>`
       <article class="admin-card ${new Date(r.decision_due_at)<new Date()?"overdue":""}">
-        <div class="task-card-top"><div><span class="commons-chip level">${esc(r.task_id)}</span><span class="commons-chip planned">L${esc(r.level)} applicant</span><span class="commons-chip ${r.email_verified?"volunteer":"planned"}">${r.email_verified?"email verified":"email unverified"}</span></div><span class="tiny">due ${fmt(r.decision_due_at)}</span></div>
+        <div class="task-card-top"><div><span class="commons-chip level">${esc(r.task_id)}</span><span class="commons-chip planned">L${esc(r.level)} applicant</span><span class="commons-chip ${r.email_verified?"volunteer":"planned"}">${r.email_verified?"email verified":"email unverified"}</span>${r.required_skill?`<span class="commons-chip ${Number(r.required_skill_verified)?"volunteer":"planned"}">${Number(r.required_skill_verified)?"skill verified":"skill needs manual review"}</span>`:""}</div><span class="tiny">due ${fmt(r.decision_due_at)}</span></div>
         <h3>${esc(r.title)}</h3>
         <p><strong>${esc(r.display_name)}</strong> · ${esc(r.email)} · required skill: ${esc(r.required_skill||"none")}</p>
         <details open><summary>Application</summary><p>${esc(r.application_note)}</p></details>
@@ -102,9 +115,10 @@
     if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No skill reviews pending.</strong><span>High-trust access stays locked until exact skills are verified.</span></div>';return;}
     target.innerHTML=items.map(s=>`
       <article class="admin-card">
-        <div class="task-card-top"><div><span class="commons-chip level">${esc(s.skill)}</span><span class="commons-chip planned">L${esc(s.level)}</span></div><span class="tiny">${fmt(s.requested_at)}</span></div>
+        <div class="task-card-top"><div><span class="commons-chip level">${esc(s.skill)}</span><span class="commons-chip planned">L${esc(s.level)}</span><span class="commons-chip ${s.source==="evaluation"?"volunteer":"planned"}">${esc(s.source||"manual")}</span></div><span class="tiny">review by ${fmt(s.review_due_at||s.requested_at)}</span></div>
         <h3>${esc(s.display_name)}</h3><p>${esc(s.email)}</p>
-        <div class="boundary"><strong>Evidence</strong><span>${esc(s.evidence)}</span></div>
+        ${s.source==="evaluation"?`<div class="boundary"><strong>Auto-scored screening</strong><span>${esc(s.evaluation_score)}/${esc(s.evaluation_max_score)} · passed screening only; final approval is manual.${s.evaluation_task_id?` Task context: ${esc(s.evaluation_task_id)}.`:""}</span></div>`:""}
+        <div class="boundary"><strong>${s.source==="evaluation"?"Evaluation evidence + rationale":"Manual evidence"}</strong><span>${esc(s.evidence)}</span></div>
         <div class="actions"><button class="button primary" data-verify-skill="${esc(s.user_id)}" data-skill="${esc(s.skill)}">Verify skill</button><button class="button secondary" data-reject-skill="${esc(s.user_id)}" data-skill="${esc(s.skill)}">Reject</button></div>
       </article>`).join("");
     all("[data-verify-skill]",target).forEach(b=>b.addEventListener("click",()=>skillDecision(b.dataset.verifySkill,b.dataset.skill,"verified")));
