@@ -372,7 +372,7 @@ if admin_js.exists():
         "/checkpoint",
         "/skill",
         "/level",
-        "ADMIN OVERRIDE",
+        "FOUNDER CALIBRATION OVERRIDE",
     ]:
         if required_text not in admin_script:
             errors.append(f"admin.js: founder approval contract drift: {required_text}")
