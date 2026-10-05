@@ -257,6 +257,15 @@ commons_contracts = {
 tasks_html = ROOT / "tasks.html"
 if tasks_html.exists():
     tasks_text = tasks_html.read_text(encoding="utf-8")
+    for required_text in [
+        "two qualification routes",
+        "variable evaluation",
+        "Apply directly",
+        "final approval is manual",
+        "no later than 2 business days",
+    ]:
+        if required_text not in tasks_text:
+            errors.append(f"tasks.html: competency-route copy drift: {required_text}")
     if "\\n\\n<section class=\"task-market-layout\">" in tasks_text:
         errors.append("tasks.html: literal \\n\\n escape leaked into rendered marketplace")
 
@@ -379,6 +388,10 @@ if account_js.exists():
         'api("/api/auth/recover"',
         'api("/api/profile"',
         'api("/api/skills/request"',
+        'api("/api/evaluations/start"',
+        "/api/evaluations/",
+        "renderEvaluation",
+        "Auto-scored",
         "showRecovery",
         'api("/api/account/delete"',
         "verification_note",
@@ -423,6 +436,14 @@ else:
         "checkpoint_due_at",
         "exclusiveLimit",
         "verifiedSkills",
+        "buildCompetencyEvaluation",
+        "startCompetencyEvaluation",
+        "submitCompetencyEvaluation",
+        "skill_or_application",
+        "manual_skill_review_required",
+        "competency_evaluations",
+        "auto_pass",
+        "review_due_at",
         "RESEND_API_KEY",
         "ADMIN_BOOTSTRAP_TOKEN",
         "RATE_LIMIT_SALT",
@@ -436,6 +457,20 @@ else:
     ]:
         if required_text not in worker_script:
             errors.append(f"src/worker.js: account/task authority contract drift: {required_text}")
+
+competency_migration = REPO / "migrations" / "0003_competency_evaluations.sql"
+if not competency_migration.exists():
+    errors.append("missing variable competency schema: migrations/0003_competency_evaluations.sql")
+else:
+    competency_text = competency_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS competency_evaluations",
+        "review_due_at",
+        "evaluation_id",
+        "UPDATE tasks SET status='paused'",
+    ]:
+        if required_text not in competency_text:
+            errors.append(f"migrations/0003_competency_evaluations.sql: variable competency contract drift: {required_text}")
 
 migration_sql = REPO / "migrations" / "0001_commons_auth.sql"
 if not migration_sql.exists():
