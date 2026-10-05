@@ -107,7 +107,7 @@ for required in [
     "No scientific file contents are sent to PCS",
     "D1",
     "account",
-    "browser localStorage",
+    "Browser localStorage",
 ]:
     if required not in privacy:
         errors.append(f"privacy disclosure missing: {required}")
