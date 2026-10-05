@@ -254,7 +254,7 @@ commons_contracts = {
     ],
     "tasks.html": [
         "Task Marketplace",
-        "Proposed means not yet funded",
+        "not yet funded",
         "What counts as done?",
         'id="commonsTaskList"',
         'id="taskComp"',
@@ -317,7 +317,7 @@ if commons_js.exists():
         'name:"Verified Contributor"',
         'name:"Reviewer"',
         'funding:"planned"',
-        "Proposed bounty",
+        "Planned bounty · not yet funded",
         "requestTask",
         "mailto:",
         "official level requires PCS review",
