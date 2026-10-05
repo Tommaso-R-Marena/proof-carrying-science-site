@@ -294,7 +294,7 @@ commons_contracts = {
         "COMMON GOOD COMMITMENT",
         "Crowdsource the work. Never the authority.",
         "Contributor Bill of Rights",
-        "Variable evaluation",
+        "VARIABLE EVALUATION",
         "No auto-score",
         "No monetary penalty for ordinary volunteer non-completion.",
     ],
