@@ -470,6 +470,14 @@ async function remindPendingReviews(env) {
      ORDER BY r.decision_due_at ASC
      LIMIT 200`
   ).all();
+  const pendingSkills = await env.COMMONS_DB.prepare(
+    `SELECT sk.user_id,sk.skill,sk.requested_at,sk.review_due_at,sk.source,u.display_name,u.email,u.level
+     FROM skills sk JOIN users u ON u.id=sk.user_id
+     WHERE sk.status='pending'
+     ORDER BY COALESCE(sk.review_due_at,sk.requested_at) ASC
+     LIMIT 200`
+  ).all();
+
   const now = new Date();
   for (const row of pending.results || []) {
     const targetAt = new Date(addBusinessDaysIso(row.requested_at, 1));
@@ -477,27 +485,54 @@ async function remindPendingReviews(env) {
     const overdue = now >= hardAt;
     const targetMissed = now >= targetAt;
     if (!targetMissed) continue;
-    const kind = overdue ? `task_request_overdue_admin:${row.id}` : `task_request_target_admin:${row.id}`;
-    const already = await env.COMMONS_DB.prepare(
-      "SELECT 1 AS ok FROM notifications WHERE kind=? LIMIT 1"
-    ).bind(kind).first();
+    const kind = (overdue ? "task_request_overdue_admin:" : "task_request_target_admin:") + row.id;
+    const already = await env.COMMONS_DB.prepare("SELECT 1 AS ok FROM notifications WHERE kind=? LIMIT 1").bind(kind).first();
     if (already) continue;
     await notify(env, {
       kind,
       email: env.ADMIN_EMAIL || null,
-      subject: overdue ? `[PCS OVERDUE] Task request ${row.task_id} — ${row.display_name}` : `[PCS 1-day target] Task request ${row.task_id} — ${row.display_name}`,
+      subject: (overdue ? "[PCS OVERDUE] Task request " : "[PCS 1-day target] Task request ") + row.task_id + " — " + row.display_name,
       body: [
-        `${row.display_name} <${row.email}> is waiting for a decision on ${row.task_id} — ${row.title}.`,
-        `Verified level: L${row.level}`,
-        `Requested: ${row.requested_at}`,
-        `Hard decision deadline: ${row.decision_due_at}`,
+        row.display_name + " <" + row.email + "> is waiting for a decision on " + row.task_id + " — " + row.title + ".",
+        "Verified level: L" + row.level,
+        "Requested: " + row.requested_at,
+        "Hard decision deadline: " + row.decision_due_at,
         overdue ? "The 2-business-day review deadline has passed. Please approve or reject now." : "The 1-business-day response target has been reached. Please review before the hard 2-business-day deadline.",
         "",
-        `Admin dashboard: ${env.PUBLIC_ORIGIN || "https://proof-carrying-science-site.marenatommaso.workers.dev"}/admin.html#requests`,
+        "Admin dashboard: " + (env.PUBLIC_ORIGIN || "https://proof-carrying-science-site.marenatommaso.workers.dev") + "/admin.html#requests",
       ].join("\n"),
     });
   }
-  return pending.results?.length || 0;
+
+  for (const row of pendingSkills.results || []) {
+    const requestedAt = row.requested_at || nowIso();
+    const targetAt = new Date(addBusinessDaysIso(requestedAt, 1));
+    const hardIso = row.review_due_at || addBusinessDaysIso(requestedAt, 2);
+    const hardAt = new Date(hardIso);
+    const overdue = now >= hardAt;
+    const targetMissed = now >= targetAt;
+    if (!targetMissed) continue;
+    const subjectKey = row.user_id + ":" + row.skill;
+    const kind = (overdue ? "skill_review_overdue_admin:" : "skill_review_target_admin:") + subjectKey;
+    const already = await env.COMMONS_DB.prepare("SELECT 1 AS ok FROM notifications WHERE kind=? LIMIT 1").bind(kind).first();
+    if (already) continue;
+    await notify(env,{
+      kind,
+      email:env.ADMIN_EMAIL || null,
+      subject:(overdue ? "[PCS OVERDUE] Competency review " : "[PCS 1-day target] Competency review ") + row.skill + " — " + row.display_name,
+      body:[
+        row.display_name + " <" + row.email + "> is waiting for manual " + row.skill + " competency review.",
+        "Source: " + (row.source || "manual"),
+        "Verified level: L" + row.level,
+        "Requested: " + requestedAt,
+        "Hard review deadline: " + hardIso,
+        overdue ? "The 2-business-day review deadline has passed. Please decide now." : "The 1-business-day response target has been reached. Please review before the hard 2-business-day deadline.",
+        "",
+        "Admin dashboard: " + (env.PUBLIC_ORIGIN || "https://proof-carrying-science-site.marenatommaso.workers.dev") + "/admin.html#skills",
+      ].join("\n"),
+    });
+  }
+  return (pending.results?.length || 0) + (pendingSkills.results?.length || 0);
 }
 
 async function expireStaleWork(env) {
