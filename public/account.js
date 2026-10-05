@@ -156,7 +156,7 @@
     $("#accountLevel").textContent="L"+user.level;
     $("#accountName").textContent=user.display_name;
     $("#accountEmail").textContent=user.email;
-    $("#accountRoleChip").textContent=user.role.toUpperCase();
+    $("#accountRoleChip").textContent=user.role.toUpperCase();\n    $("#adminDashboardLink").hidden=user.role!=="admin";
     $("#emailVerifyChip").textContent=user.email_verified ? "EMAIL VERIFIED" : "EMAIL UNVERIFIED";
     $("#emailVerifyChip").className="commons-chip "+(user.email_verified?"volunteer":"planned");
     $("#resendVerification").hidden=user.email_verified;
