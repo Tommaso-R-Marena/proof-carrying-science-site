@@ -341,10 +341,20 @@ if commons_js.exists():
         "Start now · non-exclusive",
         "Apply for PCS approval",
         "Pending applications never reserve the task.",
-        'location.href="account.html"',
+        "accountTaskHref",
+        "requestedTaskIntent",
+        "handleTaskIntent",
+        "renderProjectTaskReturn",
+        "data-task-id",
     ]:
         if required_text not in commons_script:
             errors.append(f"commons.js: authenticated contributor-marketplace contract drift: {required_text}")
+
+styles_css = ROOT / "styles.css"
+if styles_css.exists():
+    styles_text = styles_css.read_text(encoding="utf-8")
+    if "[hidden]{display:none!important}" not in styles_text:
+        errors.append("styles.css: hidden-state contract drift; auth panels may remain visible after sign-in")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
@@ -359,6 +369,10 @@ if account_js.exists():
         'api("/api/account/delete"',
         "verification_note",
         "understanding_note",
+        "taskContinuationPanel",
+        "safeNextUrl",
+        "continueAfterLogin",
+        'api("/api/tasks")',
     ]:
         if required_text not in account_script:
             errors.append(f"account.js: account authority contract drift: {required_text}")
