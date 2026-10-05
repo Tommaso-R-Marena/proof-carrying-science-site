@@ -255,6 +255,10 @@
       return;
     }
     const banner=$("#taskAccountBanner");
+    if(task.eligibility?.can_start){
+      if(banner)banner.innerHTML=`<strong>Selected task ${esc(task.id)} is unlocked:</strong><span>Use “Start now · non-exclusive” on the highlighted task card. PCS will not start work automatically after sign-in.</span>`;
+      return;
+    }
     if(banner){
       const reason=task.eligibility?.reason||"This task is not currently unlocked for your account.";
       banner.innerHTML=`<strong>Selected task ${esc(task.id)}:</strong><span>${esc(reason)} Update the required level/skill on your account, then return here to apply.</span>`;
