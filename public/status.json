@@ -587,8 +587,17 @@
       "independent_verification_required": true,
       "scope_and_remaining_assumptions_explanation_required": true
     },
-    "calibrations": {
-      "synthetic_nonproduction": true,
+    "competency_evaluations": {
+      "variable_per_attempt": true,
+      "parameterized_scenarios": true,
+      "answer_order_shuffled": true,
+      "objective_auto_scoring": true,
+      "manual_rationale_required": true,
+      "auto_score_grants_authority": false,
+      "final_approval_manual": true,
+      "manual_application_alternative": true,
+      "attempt_limit_per_skill_per_24h": 3,
+      "public_fixed_calibration_tasks_paused": true,
       "skills": [
         "python",
         "lean",
@@ -597,8 +606,7 @@
         "research",
         "biology",
         "review"
-      ],
-      "passing_auto_grants_l4_l5": false
+      ]
     },
     "review_sla": {
       "target_business_days": 1,
