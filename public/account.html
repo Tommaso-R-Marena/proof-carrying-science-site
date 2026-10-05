@@ -128,6 +128,19 @@
     <div class="section-heading-row"><div><div class="kicker">Notifications</div><h2>Decisions remain visible in your account.</h2></div></div>
     <div id="notificationList" class="notification-list"></div>
   </section>
+
+  <section class="section-tight">
+    <div class="panel danger-panel">
+      <div class="panel-eyebrow">Account control</div>
+      <h2>Delete my Commons account</h2>
+      <p class="muted">This deletes your contributor account and its linked sessions, skill records, task requests, submissions, and account notifications. Enter your password to confirm. This does not delete unrelated public GitHub contributions or short-retention infrastructure logs.</p>
+      <form id="deleteAccountForm">
+        <label class="field"><span>Current password</span><input class="textinput" type="password" name="password" autocomplete="current-password" required></label>
+        <button class="button secondary" type="submit">Permanently delete account</button>
+        <p id="deleteAccountMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
 </section>
 
 <section class="commons-callout">
