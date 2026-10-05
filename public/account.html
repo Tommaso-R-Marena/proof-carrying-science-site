@@ -113,22 +113,38 @@
     </div>
   </section>
 
-  <section class="section-tight">
-    <div class="section-heading-row"><div><div class="kicker">Verified skills</div><h2>Credentials can be claimed. Task authority requires evidence.</h2></div><p>For L2+ reserved tasks, the exact required skill must be verified by PCS. Self-reporting “Lean expert” or “security researcher” does not unlock anything.</p></div>
-    <div class="account-skill-grid">
-      <div class="panel"><div id="skillList"></div></div>
+  <section class="section-tight" id="competency">
+    <div class="section-heading-row"><div><div class="kicker">Task competency</div><h2>Two ways to qualify for higher-trust work.</h2></div><p>You do not have to wait for a preset calibration. Either take a newly generated competency evaluation or submit evidence/application for manual review. Auto-grading is screening only: PCS still makes the final approval manually.</p></div>
+    <div class="qualification-choice-banner">
+      <article><span>PATH A</span><strong>Variable competency evaluation</strong><p>PCS generates a fresh parameterized scenario set with shuffled choices for each attempt. Objective questions are auto-scored. A passing score goes to manual approval; it never grants authority automatically.</p></article>
+      <article><span>PATH B</span><strong>Manual application / evidence review</strong><p>Skip the evaluation and submit evidence explaining why you can responsibly perform and check this type of work. PCS targets a response within 1 business day and no later than 2 business days.</p></article>
+    </div>
+    <div class="panel competency-status-panel"><h3>Current skill status</h3><div id="skillList"></div></div>
+    <div class="account-skill-grid qualification-route-grid">
       <div class="panel">
-        <h3>Request skill verification</h3>
+        <div class="panel-eyebrow">Path A · generated evaluation</div>
+        <h3>Take a variable competency evaluation</h3>
+        <p class="muted">Questions are generated from randomized parameters and shuffled answer order. There is no single fixed answer sheet. Up to three attempts per skill per 24 hours; manual application remains available at any time.</p>
+        <form id="evaluationStartForm">
+          <label class="field"><span>Skill</span><select class="selectinput" name="skill"><option value="research">Research</option><option value="python">Python</option><option value="ml">ML / evaluation</option><option value="biology">Computational biology</option><option value="security">Security</option><option value="lean">Lean / formal methods</option><option value="review">Independent review</option></select></label>
+          <button class="button primary" type="submit">Generate my evaluation</button>
+          <p id="evaluationStartMessage" class="form-message" aria-live="polite"></p>
+        </form>
+        <div id="evaluationChallenge" class="competency-evaluation" hidden></div>
+      </div>
+      <div class="panel">
+        <div class="panel-eyebrow">Path B · manual review</div>
+        <h3>Submit competency evidence instead</h3>
+        <p class="muted">Use prior work, coursework, research, code, formalization, or a concrete explanation of equivalent competence. The reviewer may ask follow-up questions. Target response: 1 business day; no later than 2 business days.</p>
         <form id="skillForm">
           <label class="field"><span>Skill</span><select class="selectinput" name="skill"><option value="research">Research</option><option value="python">Python</option><option value="ml">ML / evaluation</option><option value="biology">Computational biology</option><option value="security">Security</option><option value="lean">Lean / formal methods</option><option value="review">Independent review</option></select></label>
-          <label class="field"><span>Evidence</span><textarea class="textinput" name="evidence" minlength="80" maxlength="3000" required placeholder="Link or describe work that lets PCS assess whether you can independently check this kind of contribution."></textarea></label>
-          <button class="button secondary" type="submit">Request review</button>
+          <label class="field"><span>Evidence / qualification case</span><textarea class="textinput" name="evidence" minlength="80" maxlength="3000" required placeholder="Explain why you can independently perform and check this kind of work. Link or describe relevant work where useful."></textarea></label>
+          <button class="button secondary" type="submit">Submit for manual review</button>
           <p id="skillMessage" class="form-message" aria-live="polite"></p>
         </form>
       </div>
     </div>
   </section>
-
   <section class="section-tight">
     <div class="section-heading-row"><div><div class="kicker">My work</div><h2>Requests, reservations, checkpoints, and submissions.</h2></div><a class="button secondary" href="tasks.html">Browse tasks</a></div>
     <div id="requestList" class="account-request-list"></div>
