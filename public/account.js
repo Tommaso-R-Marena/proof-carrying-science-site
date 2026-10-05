@@ -241,6 +241,17 @@
     } catch(e){ setMessage("skillMessage",e.message); }
   });
 
+  $("#deleteAccountForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!confirm("Permanently delete your PCS Commons account and linked account/task data? This cannot be undone.")) return;
+    const fd=new FormData(event.currentTarget);
+    try{
+      await api("/api/account/delete",{method:"POST",body:{password:fd.get("password")}});
+      setMessage("deleteAccountMessage","Account deleted.",true);
+      await load();
+    }catch(e){setMessage("deleteAccountMessage",e.message);}
+  });
+
   $("#logoutButton")?.addEventListener("click",async()=>{ try { await api("/api/auth/logout",{method:"POST",body:{}}); await load(); } catch(e){ alert(e.message); } });
   $("#resendVerification")?.addEventListener("click",async()=>{
     try {
