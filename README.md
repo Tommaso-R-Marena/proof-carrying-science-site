@@ -11,7 +11,7 @@ Live preview:
 The site uses a deliberately small Cloudflare Worker + D1 backend only for the AI Safety Commons account/coordination layer. Scientific package inspection, project mapping, claim drafting, and verifier/browser tooling remain local-first and do not upload selected scientific files to the Commons database.
 
 - **PCS AI Safety Commons** — a public-good contributor hub that maps bounded AI-safety work into an auditable task → obligation → claim path. The governing principle is “crowdsource the work, never the truth.”
-- **Contributor accounts + verified progression** — every new account starts at L0. Users may self-report interests and availability, but cannot self-select L2–L6. Level and exact task skills are controlled by reviewed evidence. L2 opens general paid-task eligibility; L4 is the start of reviewer-authority eligibility.
+- **Contributor accounts + verified progression** — every new account starts at L0. Users may self-report interests and availability, but cannot self-select L2–L6. Level and exact task skills are controlled by reviewed evidence. L2 opens general paid-task eligibility; L4 is the start of reviewer-authority eligibility. Technical progression ends at L6; the unique protected Founder/Owner is displayed as L7 but stored separately from technical level.
 - **Anti-squatting task control** — L0/L1 work is open and non-exclusive. L2/L3 work requires verified level + task-specific skill + founder approval; pending applications do not reserve work. L4/L5 work is high-trust founder-assigned work. Approved reserved work has a first progress checkpoint within 24 hours and automatically releases when stale.
 - **AI-assisted contribution policy** — AI tools are permitted, but higher-trust submissions require disclosure, an independent verification note, and an explanation of what the work establishes, what it does not establish, and what assumptions remain.
 - **Founder review queue** — task applications target a decision within one business day and no later than two business days. Decisions, checkpoints, skill reviews, level changes, and submission reviews are persisted and audited.
@@ -188,9 +188,13 @@ The Commons deliberately separates **identity**, **level**, **skill**, and **tas
 - approved reserved work receives a short reservation and a 24-hour progress checkpoint;
 - stale reservations are released by the hourly Worker cron;
 - users cannot edit their own PCS level;
-- founder/admin level changes and overrides are audit-logged.
+- ordinary administrators cannot modify the protected Founder/Owner account, appoint/demote L6 research leads, or alter peer-admin governance authority;
+- only the unique Owner can grant/revoke administrator status, suspend/restore accounts, or appoint/demote L6s;
+- revoking admin authority or suspending an account immediately invalidates that user's active sessions;
+- the Owner account cannot be self-deleted through the normal account endpoint;
+- all level, governance, and override changes are audit-logged.
 
-The Worker implements the public API in `src/worker.js`; schema source of truth is `migrations/0001_commons_auth.sql`.
+The Worker implements the public API in `src/worker.js`; schema source of truth is `migrations/0001_commons_auth.sql`, including the partial unique index that permits exactly one `is_owner=1` account.
 
 ## Transactional email boundary
 
