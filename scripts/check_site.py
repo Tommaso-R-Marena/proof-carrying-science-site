@@ -247,6 +247,8 @@ commons_contracts = {
         "You can help before you are an expert.",
         "account required",
         "verified levels are assigned, never self-selected",
+        "variable generated evaluation",
+        "manual competency review",
         "L2",
         "L4",
         "Contributor Bill of Rights",
@@ -254,26 +256,14 @@ commons_contracts = {
         'id="commonsLevels"',
         'src="commons.js"',
     ],
-tasks_html = ROOT / "tasks.html"
-if tasks_html.exists():
-    tasks_text = tasks_html.read_text(encoding="utf-8")
-    for required_text in [
-        "two qualification routes",
-        "variable evaluation",
-        "Apply directly",
-        "final approval is manual",
-        "no later than 2 business days",
-    ]:
-        if required_text not in tasks_text:
-            errors.append(f"tasks.html: competency-route copy drift: {required_text}")
-    if "\\n\\n<section class=\"task-market-layout\">" in tasks_text:
-        errors.append("tasks.html: literal \\n\\n escape leaked into rendered marketplace")
-
     "tasks.html": [
         "Task Marketplace",
         "not yet funded",
         "Every task has a bounded deliverable",
-        "L2+ applications require approval",
+        "two qualification routes",
+        "variable evaluation",
+        "Apply directly",
+        "final approval is manual",
         "no later than 2 business days",
         'id="commonsTaskList"',
         'id="taskComp"',
@@ -288,6 +278,8 @@ if tasks_html.exists():
     ],
     "contributors.html": [
         "No public grind leaderboard.",
+        "variable auto-scored evaluation",
+        "manual evidence/application review",
         "L2",
         "L4",
         'id="personalImpact"',
@@ -302,6 +294,8 @@ if tasks_html.exists():
         "COMMON GOOD COMMITMENT",
         "Crowdsource the work. Never the authority.",
         "Contributor Bill of Rights",
+        "Variable evaluation",
+        "No auto-score",
         "No monetary penalty for ordinary volunteer non-completion.",
     ],
     "organizations.html": [
@@ -319,14 +313,19 @@ if tasks_html.exists():
     "account.html": [
         "Your level is earned here—not self-declared.",
         "Every new account starts at L0.",
+        "Two ways to qualify for higher-trust work.",
+        "Variable competency evaluation",
+        "Manual application / evidence review",
         "AI is allowed:",
         'id="registerForm"',
+        'id="evaluationStartForm"',
         'id="skillForm"',
         'id="requestList"',
         'src="account.js"',
     ],
     "admin.html": [
         "Approve access without letting applications block the work.",
+        "Auto-score the screen; keep authority manual.",
         "24-hour progress checkpoint",
         "1–2 business-day review deadline",
         'id="adminRequestList"',
@@ -344,6 +343,14 @@ for page_name, required_texts in commons_contracts.items():
     for required_text in required_texts:
         if required_text not in value:
             errors.append(f"{page_name}: AI Safety Commons contract drift: {required_text}")
+
+tasks_html = ROOT / "tasks.html"
+if tasks_html.exists():
+    tasks_text = tasks_html.read_text(encoding="utf-8")
+    if "\\n\\n<section class=\"task-market-layout\">" in tasks_text:
+        errors.append("tasks.html: literal \\n\\n escape leaked into rendered marketplace")
+    if "</dialog>\\n</main>" in tasks_text:
+        errors.append("tasks.html: literal \\n escape leaked after task application dialog")
 
 commons_js = ROOT / "commons.js"
 if commons_js.exists():
