@@ -876,3 +876,32 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .commons-home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:12px}.commons-home-grid a{display:grid;gap:5px;text-decoration:none;padding:19px;background:#fff;border:1px solid var(--line);border-radius:15px;transition:.18s ease}.commons-home-grid a:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
 .commons-home-grid span{font-size:8px;letter-spacing:.1em;color:var(--blue);font-weight:850}.commons-home-grid strong{font-size:13px}.commons-home-grid small{font-size:10px;color:var(--muted);line-height:1.45}
 @media(max-width:900px){.commons-home-banner{grid-template-columns:1fr}.commons-home-grid{grid-template-columns:1fr}}
+
+
+/* Authenticated Commons accounts + founder approval */
+.account-auth-grid,.account-summary-grid,.account-skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.account-auth-grid{padding:16px 0 50px}
+.account-level-row{display:flex;gap:14px;align-items:center;margin:15px 0}.account-level-row h2{margin:0}.account-level-row p{margin:4px 0 0}
+.account-status-row{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.access-summary{display:grid;gap:5px;padding:16px;background:#f5f8fc;border-radius:13px}.access-summary strong,.access-summary span{display:block}.access-summary span{font-size:12px;color:var(--muted);line-height:1.5}
+.checkrow{display:flex;align-items:flex-start;gap:10px;margin:14px 0;font-size:12px;color:#4d5d72;line-height:1.5}.checkrow input{margin-top:3px}
+.honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.account-recovery{margin-top:24px;border-top:1px solid var(--line);padding-top:16px}.account-recovery summary{cursor:pointer;font-size:12px;font-weight:800}
+.form-message{font-size:11px;line-height:1.45;margin-top:10px;min-height:15px}
+.recovery-code-panel{margin:20px 0}.recovery-code-panel .panel{border-color:#e3c98f;background:#fffaf0}.recovery-code-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0}.recovery-code-row code{display:block;padding:12px 14px;background:#111e2d;color:#e8f0f7;border-radius:10px;word-break:break-all}
+.skill-row{display:grid;grid-template-columns:auto 1fr;gap:9px 12px;padding:13px 0;border-bottom:1px solid var(--line)}.skill-row:last-child{border-bottom:0}.skill-row strong,.skill-row small{display:block}.skill-row small{font-size:9px;color:var(--muted);margin-top:2px}.skill-row p{grid-column:1/-1;margin:0;color:var(--muted);font-size:10px;line-height:1.45}
+.account-request-list,.notification-list,.admin-list{display:grid;gap:11px}
+.account-request-card,.notification-card,.admin-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:20px;box-shadow:var(--shadow-sm)}
+.account-request-card h3,.admin-card h3{font-size:16px;margin:10px 0}.account-request-card>p,.admin-card>p{font-size:11px;color:var(--muted);line-height:1.5}
+.notification-card>div{display:flex;justify-content:space-between;gap:15px;align-items:center}.notification-card strong,.notification-card span{display:block}.notification-card span{font-size:9px;color:var(--muted)}.notification-card p{white-space:pre-wrap;font-size:11px;line-height:1.5;color:#4e5b6c;margin:11px 0 0}
+.current-level{border-color:#9fc5f0;box-shadow:0 0 0 2px rgba(47,125,244,.08)}
+.task-access-state{display:grid;gap:4px;padding:10px 12px;border-radius:10px;margin:12px 0;font-size:10px}.task-access-state strong{font-size:10px}.task-access-state span{font-size:9px;line-height:1.4}
+.task-access-state.allowed{background:#f1faf7;border:1px solid #bfdfd5;color:#2c6658}.task-access-state.locked{background:#f7f8fa;border:1px solid #dfe5ec;color:#697687}
+.task-application-dialog{width:min(720px,calc(100% - 28px));border:1px solid var(--line);border-radius:20px;padding:0;box-shadow:0 30px 80px rgba(7,20,38,.28)}.task-application-dialog::backdrop{background:rgba(5,16,29,.55)}.task-application-dialog form{padding:28px}.task-application-dialog h2{font-family:var(--display);font-size:32px;margin:6px 0 9px}.task-application-dialog p{font-size:12px;line-height:1.55;color:var(--muted)}
+.admin-status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 44px}.admin-status-grid article{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px}.admin-status-grid small,.admin-status-grid strong,.admin-status-grid span{display:block}.admin-status-grid small{font-size:8px;letter-spacing:.08em;color:var(--muted);font-weight:800}.admin-status-grid strong{font-size:13px;margin:5px 0}.admin-status-grid span{font-size:9px;color:var(--muted)}
+.admin-card.overdue{border-color:#d99aa2;background:#fff8f8}.admin-card details{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}.admin-card summary{cursor:pointer;font-size:10px;font-weight:800}.admin-card details p{white-space:pre-wrap}
+.admin-user-row{display:grid;grid-template-columns:1.2fr 1fr auto;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px 15px}.admin-user-row>div:first-child strong,.admin-user-row>div:first-child span{display:block}.admin-user-row>div:first-child span{font-size:9px;color:var(--muted);margin-top:3px}.admin-user-row>div:nth-child(2){display:flex;gap:5px;flex-wrap:wrap}.admin-user-row .actions{margin:0}
+.admin-bootstrap{margin-top:20px}.admin-bootstrap summary{cursor:pointer;font-weight:800}
+.good-text{color:var(--good)!important}.warn-text{color:var(--warn)!important}
+@media(max-width:900px){.account-auth-grid,.account-summary-grid,.account-skill-grid{grid-template-columns:1fr}.admin-status-grid{grid-template-columns:1fr 1fr}.admin-user-row{grid-template-columns:1fr}}
+@media(max-width:580px){.admin-status-grid{grid-template-columns:1fr}.notification-card>div{align-items:flex-start;flex-direction:column}}
