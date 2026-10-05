@@ -1565,8 +1565,9 @@ async function handleApi(request, env) {
       request_sla:"1–2 business days",
       task_policy:{
         L0_L1:"open, non-exclusive tasks; no founder approval needed",
-        L2_L3:"verified level + verified skill + founder approval; pending requests do not reserve work",
-        L4_L5:"high-trust application + verified skill + founder assignment; never self-claimed",
+        L2_L3:"verified level + either verified skill or manual competency review + founder approval; pending requests do not reserve work",
+        L4_L5:"high-trust application + competency evidence + verified skill/founder assignment; never self-claimed",
+        qualification_routes:"variable auto-scored evaluation OR manual application/evidence; all final approvals are manual",
         L6:"research-lead technical authority; appointment/removal is Owner-only",
         OWNER:"unique Founder/Owner governance authority; displayed as L7 but stored separately from technical L0–L6",
         reservations:"first progress checkpoint within 24 hours; stale reservations release automatically",
@@ -1594,6 +1595,9 @@ async function handleApi(request, env) {
   }
   if (method==="PATCH" && path==="/api/profile") return updateProfile(request,env,user);
   if (method==="POST" && path==="/api/skills/request") return requestSkill(request,env,user);
+  if (method==="POST" && path==="/api/evaluations/start") return startCompetencyEvaluation(request,env,user);
+  let evaluationMatch=path.match(/^\/api\/evaluations\/([^/]+)\/submit$/);
+  if (method==="POST" && evaluationMatch) return submitCompetencyEvaluation(request,env,user,decodeURIComponent(evaluationMatch[1]));
   if (method==="POST" && path==="/api/account/delete") {
     if (isOwner(user)) throw new ApiError(403,"The Founder/Owner account cannot be deleted through self-service. Ownership must be transferred or PCS governance must be deliberately shut down first.","owner_delete_protected");
     const body=await readBody(request);
