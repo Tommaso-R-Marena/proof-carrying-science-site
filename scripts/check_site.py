@@ -254,6 +254,12 @@ commons_contracts = {
         'id="commonsLevels"',
         'src="commons.js"',
     ],
+tasks_html = ROOT / "tasks.html"
+if tasks_html.exists():
+    tasks_text = tasks_html.read_text(encoding="utf-8")
+    if "\\n\\n<section class=\"task-market-layout\">" in tasks_text:
+        errors.append("tasks.html: literal \\n\\n escape leaked into rendered marketplace")
+
     "tasks.html": [
         "Task Marketplace",
         "not yet funded",
