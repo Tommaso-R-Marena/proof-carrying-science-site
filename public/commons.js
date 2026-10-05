@@ -136,7 +136,7 @@
     const preferred=eligible.find(t=>(t.required_skill||"nontechnical")===u.track&&Number(t.expected_hours)<=Number(u.availability_hours))||eligible.find(t=>Number(t.expected_hours)<=Number(u.availability_hours))||eligible[0];
     if(!preferred){target.innerHTML='<div class="commons-empty"><strong>No current task matches your verified access.</strong><span>Do an open task at your current level or request skill verification from your account.</span></div>';return;}
     const m=taskMeta(preferred);
-    target.innerHTML=`<div class="recommendation-card"><div><span class="commons-chip level">L${preferred.min_level}</span><span class="commons-chip ${paid(preferred)?"paid":"volunteer"}">${esc(compensationLabel(preferred))}</span></div><h3>${esc(preferred.title)}</h3><p>${esc(preferred.summary)}</p><div class="task-meta"><span><b>${preferred.expected_hours}h</b> expected</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(preferred.claim_mode)}</b> access</span></div><div class="actions"><a class="button primary" href="tasks.html">Open marketplace</a></div></div>`;
+    target.innerHTML=`<div class="commons-recommendation-card"><div class="commons-recommendation-badges"><span class="commons-chip level">L${preferred.min_level}</span><span class="commons-chip ${paid(preferred)?"paid":"volunteer"}">${esc(compensationLabel(preferred))}</span></div><h3>${esc(preferred.title)}</h3><p>${esc(preferred.summary)}</p><div class="task-meta"><span><b>${preferred.expected_hours}h</b> expected</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(preferred.claim_mode)}</b> access</span></div><div class="actions"><a class="button primary" href="tasks.html">Open marketplace</a></div></div>`;
   }
 
   async function initContributorForm(){
