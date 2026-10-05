@@ -915,3 +915,22 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 @media(max-width:580px){.admin-status-grid{grid-template-columns:1fr}.notification-card>div{align-items:flex-start;flex-direction:column}}
 
 .commons-task-card.task-focus{outline:3px solid rgba(47,125,244,.32);outline-offset:3px;box-shadow:0 18px 45px rgba(47,125,244,.14)}
+
+/* Variable competency qualification */
+.qualification-choice-banner{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 18px}
+.qualification-choice-banner article{padding:16px 18px;border:1px solid #c9dcef;border-radius:15px;background:linear-gradient(145deg,#f7fbff,#fff)}
+.qualification-choice-banner article>span{display:block;font-size:8px;font-weight:900;letter-spacing:.09em;color:var(--blue);margin-bottom:7px}
+.qualification-choice-banner article>strong{display:block;font-size:13px;line-height:1.4}
+.qualification-choice-banner article>p{margin:6px 0 0;color:var(--muted);font-size:10px;line-height:1.55}
+.qualification-choice-banner.compact{margin-top:16px}
+.competency-status-panel{margin-bottom:14px}
+.qualification-route-grid{align-items:stretch}
+.competency-evaluation{margin-top:16px;padding-top:15px;border-top:1px solid var(--line)}
+.evaluation-question{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafbfd}
+.evaluation-question legend{padding:0 6px;font-size:11px;font-weight:800;line-height:1.45}
+.evaluation-option{display:flex;gap:9px;align-items:flex-start;padding:8px 9px;margin-top:6px;border:1px solid #e2e8f0;border-radius:9px;background:#fff;font-size:10px;line-height:1.45;cursor:pointer}
+.evaluation-option input{margin-top:2px}
+@media(max-width:760px){
+  .qualification-choice-banner{grid-template-columns:1fr}
+  .qualification-route-grid{grid-template-columns:1fr}
+}
