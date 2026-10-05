@@ -165,9 +165,13 @@
     }
     const e=task.eligibility||{};
     if(e.can_start)return `<button class="button primary" type="button" data-start-task="${esc(task.id)}">Start now · non-exclusive</button>`;
+    if(e.state==="skill_or_application"){
+      const evalUrl=accountTaskHref(task,e,false)+"&evaluation=1";
+      return `<button class="button primary" type="button" data-apply-task="${esc(task.id)}">Apply directly · manual review</button><a class="button secondary" href="${esc(evalUrl)}">Take variable evaluation</a>`;
+    }
     if(e.can_request)return `<button class="button primary" type="button" data-apply-task="${esc(task.id)}">Apply for PCS approval</button>`;
     if(e.state==="login_required")return `<a class="button primary" href="${esc(accountTaskHref(task,e,true))}">Sign in, then return to this task</a>`;
-    return `<a class="button secondary" href="${esc(accountTaskHref(task,e,true))}">See what unlocks this task</a>`;
+    return `<a class="button secondary" href="${esc(accountTaskHref(task,e,true))}">See qualification options</a>`;
   }
 
   function taskCard(task){
@@ -178,7 +182,7 @@
       <div class="task-card-top"><div><span class="commons-chip level">L${task.min_level}</span><span class="commons-chip ${paidClass}">${esc(compensationLabel(task))}</span><span class="commons-chip ${task.claim_mode==="open"?"volunteer":"planned"}">${accessLabel}</span>${task.calibrates_skill?`<span class="commons-chip level">SYNTHETIC ${esc(task.calibrates_skill)} CALIBRATION</span>`:""}</div><code>${esc(task.id)}</code></div>
       <h3>${esc(task.title)}</h3><p>${esc(task.summary)}</p>
       <div class="task-meta"><span><b>${task.expected_hours}h</b> expected</span><span><b>${esc(m.difficulty)}</b> difficulty</span><span><b>${esc(task.required_skill||"entry")}</b> skill gate</span><span><b>${esc(m.impact)}</b> impact</span></div>
-      <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.calibrates_skill?"<span>This is a short, synthetic qualification fixture—not unpaid production work. Passing may verify the named skill; it never self-promotes you to L4/L5.</span>":task.claim_mode!=="open"?"<span>Pending applications never reserve the task. If approved, the first progress checkpoint is due within 24 hours.</span>":""}</div>
+      <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.claim_mode!=="open"?"<span>Qualification route: variable auto-scored evaluation or direct manual application. Final approval is always manual. PCS targets a decision within 1 business day and no later than 2 business days. Pending applications never reserve the task.</span>":""}</div>
       <details class="task-details"><summary>What counts as done?</summary><p><strong>Deliverable:</strong> ${esc(m.deliverable)}</p><p><strong>Verification:</strong> ${esc(m.verification)}</p><p><strong>Project:</strong> ${esc(m.project)}</p></details>
       <div class="task-actions">${accessButton(task)}<a class="button secondary" href="projects.html?task=${encodeURIComponent(task.id)}">See impact path</a></div>
     </article>`;
@@ -224,7 +228,7 @@
     const banner=$("#taskAccountBanner");if(!banner)return;
     if(!snapshot.authenticated){banner.innerHTML='<strong>Account required:</strong><span>Create an account to contribute. You start at L0 and can immediately start open, non-exclusive tasks. Nobody can self-select L4/L5.</span>';return;}
     const u=snapshot.user;
-    banner.innerHTML=`<strong>Signed in: L${u.level} · ${esc(u.display_name)}</strong><span>${u.email_verified?"Email verified.":"Email not verified yet."} Higher-trust work also checks the exact verified skill and founder approval.</span>`;
+    banner.innerHTML=`<strong>Signed in: L${u.level} · ${esc(u.display_name)}</strong><span>${u.email_verified?"Email verified.":"Email not verified yet."} For higher-trust work, either pass a variable competency evaluation or apply directly for manual competency review. Final approval is manual.</span>`;
   }
 
   function renderImpact(){
