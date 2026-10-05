@@ -1,6 +1,6 @@
 const SESSION_COOKIE = "pcs_commons_session";
 const SESSION_DAYS = 30;
-const PASSWORD_ITERATIONS = 100000; // Cloudflare Workers Web Crypto PBKDF2 maximum.
+const PASSWORD_ITERATIONS = 100000; // Workers Web Crypto rejects PBKDF2 iteration counts above 100,000.
 const TERMS_VERSION = "commons-v1";
 
 const TRACKS = new Set(["nontechnical","research","python","ml","biology","security","lean","review"]);
