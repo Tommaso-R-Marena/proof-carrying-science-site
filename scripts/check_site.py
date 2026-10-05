@@ -365,6 +365,10 @@ if styles_css.exists():
         errors.append("styles.css: result-anatomy shortcut nav must override the global fixed nav height")
     if ".reviewer-inspection-shortcuts{height:auto;grid-template-columns:1fr" not in styles_text:
         errors.append("styles.css: mobile result-anatomy shortcut stack must remain auto-height")
+    if "#authority-hierarchy .governance-rules article{grid-template-columns:82px minmax(0,1fr)" not in styles_text:
+        errors.append("styles.css: authority hierarchy labels must reserve enough width for ADMIN/TRUTH")
+    if "#authority-hierarchy .governance-rules article>b{width:auto;min-width:70px" not in styles_text:
+        errors.append("styles.css: authority hierarchy badges must size to label content")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
