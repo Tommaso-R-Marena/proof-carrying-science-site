@@ -25,8 +25,10 @@ CREATE TABLE IF NOT EXISTS users (
   profile_note TEXT NOT NULL DEFAULT '',
   level_review_note TEXT NOT NULL DEFAULT '',
   email_verified INTEGER NOT NULL DEFAULT 0,
-  terms_version TEXT NOT NULL DEFAULT 'commons-v1'
+  terms_version TEXT NOT NULL DEFAULT 'commons-v1',
+  is_owner INTEGER NOT NULL DEFAULT 0 CHECK(is_owner IN (0,1))
 );
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_single_owner ON users(is_owner) WHERE is_owner=1;
 
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
