@@ -4,6 +4,7 @@
   const $ = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
   let state = null;
+  let activeEvaluation = null;
 
   function taskIntent() {
     const params = new URLSearchParams(location.search);
@@ -49,6 +50,8 @@
       : (reason ? `Sign in first. Previous access check: ${reason}` : "Sign in first; PCS will then re-check your verified level and skills for this exact task.");
     const skillForm = $("#skillForm");
     if (authenticated && skillForm && skill && skillForm.elements.skill) skillForm.elements.skill.value = skill;
+    const evaluationForm = $("#evaluationStartForm");
+    if (authenticated && evaluationForm && skill && evaluationForm.elements.skill) evaluationForm.elements.skill.value = skill;
     const link = $("#taskContinuationLink");
     if (link) {
       link.href = safeNextUrl() || `/tasks.html?task=${encodeURIComponent(task)}`;
@@ -135,17 +138,50 @@
     const target = $("#skillList");
     if (!target) return;
     if (!skills.length) {
-      target.innerHTML = '<div class="commons-empty"><strong>No reviewed skills yet.</strong><span>You may still start eligible L0 open work immediately.</span></div>';
+      target.innerHTML = '<div class="commons-empty"><strong>No reviewed skills yet.</strong><span>Use either qualification path below. Auto-scored evaluations still require manual approval.</span></div>';
       return;
     }
     target.innerHTML = skills.map(item => `
       <div class="skill-row">
         <span class="commons-chip ${item.status === "verified" ? "volunteer" : item.status === "rejected" ? "planned" : "level"}">${esc(item.status)}</span>
-        <div><strong>${esc(item.skill)}</strong><small>${item.verified_at ? "Verified "+formatDate(item.verified_at) : item.requested_at ? "Review requested "+formatDate(item.requested_at) : "Self-reported"}</small></div>
-        <p>${esc(item.verification_note || item.evidence || "")}</p>
+        <div><strong>${esc(item.skill)}</strong><small>${item.verified_at ? "Verified "+formatDate(item.verified_at) : item.requested_at ? "Manual review requested "+formatDate(item.requested_at) : "Self-reported"}${item.source ? " · "+esc(item.source) : ""}</small></div>
+        <p>${esc(item.verification_note || item.evidence || "")}${item.status==="pending"&&item.review_due_at ? " Review target: within 1 business day; no later than "+formatDate(item.review_due_at)+"." : ""}</p>
       </div>`).join("");
   }
 
+  function renderEvaluation(evaluation) {
+    activeEvaluation=evaluation;
+    const target=$("#evaluationChallenge");
+    if(!target)return;
+    const questions=evaluation?.challenge?.objective_questions||[];
+    target.hidden=false;
+    target.innerHTML=`
+      <div class="boundary"><strong>${esc(evaluation.skill)} competency screening</strong><span>Fresh generated variant · ${esc(evaluation.max_score)} objective questions · pass screen ${esc(evaluation.pass_score)}/${esc(evaluation.max_score)}. Passing does not grant authority; a human still approves.</span></div>
+      <form id="evaluationSubmitForm">
+        ${questions.map((q,index)=>`<fieldset class="evaluation-question"><legend>${index+1}. ${esc(q.prompt)}</legend>${(q.options||[]).map(opt=>`<label class="evaluation-option"><input type="radio" name="${esc(q.id)}" value="${esc(opt.id)}" required><span>${esc(opt.label)}</span></label>`).join("")}</fieldset>`).join("")}
+        <label class="field"><span>Reasoning / independent check</span><textarea class="textinput" name="rationale" minlength="100" maxlength="3000" required placeholder="Explain your reasoning, what you checked independently, and any uncertainty. This is reviewed by a human even if the objective score passes."></textarea></label>
+        <button class="button primary" type="submit">Submit for auto-score + manual review</button>
+        <p id="evaluationSubmitMessage" class="form-message" aria-live="polite"></p>
+      </form>`;
+    $("#evaluationSubmitForm")?.addEventListener("submit",submitEvaluation);
+    target.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  async function submitEvaluation(event) {
+    event.preventDefault();
+    if(!activeEvaluation)return;
+    const fd=new FormData(event.currentTarget);
+    const answers={};
+    for(const q of activeEvaluation.challenge?.objective_questions||[]) answers[q.id]=fd.get(q.id);
+    try{
+      const result=await api(`/api/evaluations/${encodeURIComponent(activeEvaluation.id)}/submit`,{method:"POST",body:{answers,rationale:fd.get("rationale")}});
+      setMessage("evaluationSubmitMessage",result.message,Boolean(result.auto_pass));
+      if(result.auto_pass){
+        activeEvaluation=null;
+        await load();
+      }
+    }catch(e){setMessage("evaluationSubmitMessage",e.message);}
+  }
   function requestActionButtons(r) {
     if (r.status === "pending") {
       return `<div class="actions"><button class="button secondary" data-withdraw="${esc(r.id)}" type="button">Withdraw application</button></div>`;
@@ -325,6 +361,16 @@
       }});
       setMessage("profileMessage","Profile saved. Your verified PCS level was not changed.",true); await load();
     } catch(e){ setMessage("profileMessage",e.message); }
+  });
+
+  $("#evaluationStartForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const fd=new FormData(event.currentTarget);
+    try{
+      const result=await api("/api/evaluations/start",{method:"POST",body:{skill:fd.get("skill"),task_id:taskIntent()||null}});
+      setMessage("evaluationStartMessage",result.message,true);
+      renderEvaluation(result.evaluation);
+    }catch(e){setMessage("evaluationStartMessage",e.message);}
   });
 
   $("#skillForm")?.addEventListener("submit",async event=>{
