@@ -355,9 +355,10 @@ if account_js.exists():
         'api("/api/auth/recover"',
         'api("/api/profile"',
         'api("/api/skills/request"',
-        "Save this recovery code now",
-        "Your verified level",
-        "AI-assisted work",
+        "showRecovery",
+        'api("/api/account/delete"',
+        "verification_note",
+        "understanding_note",
     ]:
         if required_text not in account_script:
             errors.append(f"account.js: account authority contract drift: {required_text}")
@@ -385,15 +386,17 @@ else:
         'const SESSION_COOKIE = "pcs_commons_session"',
         "PBKDF2",
         "SameSite=Lax",
-        "Every new account starts",
+        "Account created at L0.",
         "task.claim_mode === \"open\"",
         "addBusinessDaysIso",
-        "Pending applications",
+        "Application received. It does not reserve the task.",
         "checkpoint_due_at",
         "exclusiveLimit",
         "verifiedSkills",
         "RESEND_API_KEY",
         "ADMIN_BOOTSTRAP_TOKEN",
+        "RATE_LIMIT_SALT",
+        "rateLimit(request, env",
         "async scheduled",
     ]:
         if required_text not in worker_script:
