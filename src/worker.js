@@ -1213,7 +1213,10 @@ async function adminOverview(request, env) {
   const [pending, checkpoints, submissions, skillReviews, users] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
-              u.display_name,u.email,u.level,u.email_verified
+              u.display_name,u.email,u.level,u.email_verified,
+              CASE WHEN t.required_skill IS NULL THEN 1
+                   WHEN EXISTS(SELECT 1 FROM skills sk WHERE sk.user_id=r.user_id AND sk.skill=t.required_skill AND sk.status='verified') THEN 1
+                   ELSE 0 END AS required_skill_verified
        FROM task_requests r JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=r.user_id
        WHERE r.status='pending' ORDER BY r.decision_due_at ASC,r.requested_at ASC LIMIT 100`
     ).all(),
@@ -1229,8 +1232,13 @@ async function adminOverview(request, env) {
        WHERE s.status IN ('submitted','needs_changes') ORDER BY s.submitted_at ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
-      `SELECT sk.*,u.display_name,u.email,u.level FROM skills sk JOIN users u ON u.id=sk.user_id
-       WHERE sk.status='pending' ORDER BY sk.requested_at ASC LIMIT 100`
+      `SELECT sk.*,u.display_name,u.email,u.level,
+              ce.score AS evaluation_score,ce.max_score AS evaluation_max_score,
+              ce.auto_pass AS evaluation_auto_pass,ce.rationale AS evaluation_rationale,
+              ce.task_id AS evaluation_task_id
+       FROM skills sk JOIN users u ON u.id=sk.user_id
+       LEFT JOIN competency_evaluations ce ON ce.id=sk.evaluation_id
+       WHERE sk.status='pending' ORDER BY COALESCE(sk.review_due_at,sk.requested_at) ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
       `SELECT id,email,display_name,level,role,status,email_verified,track,availability_hours,created_at,last_login_at,is_owner
