@@ -751,7 +751,7 @@ async function submitCheckpoint(request, env, user, requestId) {
 async function submitWork(request, env, user, requestId) {
   const body = await readBody(request);
   const row = await env.COMMONS_DB.prepare(
-    `SELECT r.*,t.title,t.id AS task_id,t.min_level,t.claim_mode,t.required_skill FROM task_requests r JOIN tasks t ON t.id=r.task_id
+    `SELECT r.*,t.title,t.id AS task_id,t.min_level,t.claim_mode,t.required_skill,t.calibrates_skill FROM task_requests r JOIN tasks t ON t.id=r.task_id
      WHERE r.id=? AND r.user_id=?`
   ).bind(requestId,user.id).first();
   if (!row || row.status!=="approved") throw new ApiError(404,"Active approved work record not found.","request_not_active");
@@ -767,7 +767,7 @@ async function submitWork(request, env, user, requestId) {
   const understanding = cleanText(body.understanding_note,4000);
   if (summary.length < 100) throw new ApiError(400,"Summarize the contribution in at least 100 characters.","summary_too_short");
 
-  const highTrust = Number(row.min_level)>=2 || row.claim_mode!=="open";
+  const highTrust = Number(row.min_level)>=2 || row.claim_mode!=="open" || Boolean(row.calibrates_skill);
   if (highTrust && verification.length < 150) throw new ApiError(400,"Higher-trust work requires a detailed independent verification note (at least 150 characters).","verification_too_short");
   if (highTrust && understanding.length < 180) throw new ApiError(400,"Higher-trust work requires an explanation showing you understand what the contribution establishes and what it does not (at least 180 characters).","understanding_too_short");
   if (aiUsed && aiTools.length < 2) throw new ApiError(400,"Name the AI tools used.","ai_tools_required");
@@ -830,7 +830,7 @@ async function adminOverview(request, env) {
        ORDER BY r.checkpoint_due_at ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
-      `SELECT s.*,r.task_id,t.title,u.display_name,u.email,u.level
+      `SELECT s.*,r.task_id,t.title,t.calibrates_skill,u.display_name,u.email,u.level
        FROM submissions s JOIN task_requests r ON r.id=s.request_id JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=s.user_id
        WHERE s.status IN ('submitted','needs_changes') ORDER BY s.submitted_at ASC LIMIT 100`
     ).all(),
@@ -967,7 +967,7 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
   if (!["accept","needs_changes","reject"].includes(decision)) throw new ApiError(400,"Invalid submission decision.","bad_submission_decision");
   if (note.length<20) throw new ApiError(400,"Give a review rationale (at least 20 characters).","review_note_required");
   const row=await env.COMMONS_DB.prepare(
-    `SELECT s.*,r.task_id,r.id AS task_request_id,t.title,t.min_level,u.email,u.email_verified,u.display_name,u.level
+    `SELECT s.*,r.task_id,r.id AS task_request_id,t.title,t.min_level,t.calibrates_skill,u.email,u.email_verified,u.display_name,u.level
      FROM submissions s JOIN task_requests r ON r.id=s.request_id JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=s.user_id
      WHERE s.id=?`
   ).bind(submissionId).first();
@@ -982,8 +982,24 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
       await env.COMMONS_DB.prepare("UPDATE users SET level=1,updated_at=? WHERE id=? AND level=0").bind(nowIso(),row.user_id).run();
       await audit(env,admin.id,"automatic_l1_after_first_acceptance","user",row.user_id,{submission_id:row.id});
     }
+    if (row.calibrates_skill && SKILLS.has(row.calibrates_skill)) {
+      const verifiedAt=nowIso();
+      await env.COMMONS_DB.prepare(
+        `INSERT INTO skills(user_id,skill,status,evidence,verification_note,requested_at,verified_at,verified_by)
+         VALUES(?,?,'verified',?,?,?, ?,?)
+         ON CONFLICT(user_id,skill) DO UPDATE SET
+           status='verified',verification_note=excluded.verification_note,verified_at=excluded.verified_at,verified_by=excluded.verified_by`
+      ).bind(
+        row.user_id,row.calibrates_skill,
+        `Accepted synthetic calibration ${row.task_id}`,
+        `Passed reviewed synthetic calibration ${row.task_id}. ${note}`,
+        row.submitted_at,verifiedAt,admin.id
+      ).run();
+      await audit(env,admin.id,"skill_verified_by_calibration","user",row.user_id,{skill:row.calibrates_skill,task_id:row.task_id,submission_id:row.id});
+    }
   }
-  await notify(env,{userId:row.user_id,email:row.email_verified?row.email:null,kind:"submission_review",subject:`PCS submission review: ${row.task_id}`,body:`Your submission for ${row.task_id} — ${row.title} was marked ${status}.\n\nReview note: ${note}\n`});
+  const skillMessage = decision==="accept" && row.calibrates_skill ? `\n\nThis accepted synthetic calibration also verified your ${row.calibrates_skill} skill. It does not by itself grant a high contributor level or reserve high-trust work.` : "";
+  await notify(env,{userId:row.user_id,email:row.email_verified?row.email:null,kind:"submission_review",subject:`PCS submission review: ${row.task_id}`,body:`Your submission for ${row.task_id} — ${row.title} was marked ${status}.\n\nReview note: ${note}${skillMessage}\n`});
   await audit(env,admin.id,"submission_reviewed","submission",row.id,{task_id:row.task_id,status});
   return json({ok:true,status});
 }
