@@ -1285,7 +1285,29 @@ async function adminDecision(request, env, admin, requestId) {
       const verified = await env.COMMONS_DB.prepare(
         "SELECT 1 AS ok FROM skills WHERE user_id=? AND skill=? AND status='verified'"
       ).bind(row.user_id,row.required_skill).first();
-      if (!verified) throw new ApiError(409,`Applicant no longer has verified ${row.required_skill} skill status.`,"skill_unverified");
+      if (!verified) {
+        if (body.verify_required_skill !== true) {
+          throw new ApiError(409,
+            "This applicant does not yet have verified "+row.required_skill+" status. Review the application as competency evidence; if it is sufficient, explicitly approve while verifying the required skill.",
+            "manual_skill_review_required"
+          );
+        }
+        const verifiedAt = nowIso();
+        await env.COMMONS_DB.prepare(
+          `INSERT INTO skills(user_id,skill,status,evidence,verification_note,requested_at,verified_at,verified_by,review_due_at,source,evaluation_id)
+           VALUES(?,?,'verified',?,?,?,?,?,NULL,'task_application',NULL)
+           ON CONFLICT(user_id,skill) DO UPDATE SET
+             status='verified',evidence=excluded.evidence,verification_note=excluded.verification_note,
+             verified_at=excluded.verified_at,verified_by=excluded.verified_by,
+             review_due_at=NULL,source='task_application',evaluation_id=NULL`
+        ).bind(
+          row.user_id,row.required_skill,
+          "Manual competency evidence from task application "+row.task_id+": "+row.application_note,
+          "Verified during manual task application review. "+note,
+          row.requested_at,verifiedAt,admin.id
+        ).run();
+        await audit(env,admin.id,"skill_verified_by_task_application","user",row.user_id,{skill:row.required_skill,task_id:row.task_id,task_request_id:row.id});
+      }
     }
     const active = await env.COMMONS_DB.prepare(
       `SELECT COUNT(*) AS n FROM task_requests r JOIN tasks t ON t.id=r.task_id
