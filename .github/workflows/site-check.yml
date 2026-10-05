@@ -31,6 +31,7 @@ jobs:
         run: |
           node --check notify-indexnow.mjs
           node --check public/site.js
+          node --check public/commons.js
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
