@@ -74,6 +74,27 @@
     $$("[data-reject-request]",target).forEach(b=>b.addEventListener("click",()=>requestDecision(b.dataset.rejectRequest,"reject")));
   }
 
+  async function checkpointDecision(id,decision){
+    const note=prompt(decision==="accept"?"Why does this checkpoint justify keeping the reservation?":"Why should the reservation be released?");
+    if(!note)return;
+    try{await api(`/api/admin/requests/${encodeURIComponent(id)}/checkpoint`,{method:"POST",body:{decision,note,extend_hours:168}});await load();}
+    catch(e){alert(e.message);}
+  }
+
+  function renderCheckpoints(items){
+    const target=$("#adminCheckpointList");
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No checkpoints awaiting review.</strong><span>Silent reservations are released automatically by the hourly cleanup.</span></div>';return;}
+    target.innerHTML=items.map(r=>`
+      <article class="admin-card">
+        <div class="task-card-top"><div><span class="commons-chip level">${esc(r.task_id)}</span><span class="commons-chip volunteer">L${esc(r.level)}</span></div><span class="tiny">reservation ends ${fmt(r.reservation_expires_at)}</span></div>
+        <h3>${esc(r.title)}</h3><p><strong>${esc(r.display_name)}</strong> · ${esc(r.email)}</p>
+        <div class="boundary"><strong>Progress checkpoint</strong><span>${esc(r.checkpoint_note)}</span></div>
+        <div class="actions"><button class="button primary" data-checkpoint-accept="${esc(r.id)}">Accept + extend up to 7 days</button><button class="button secondary" data-checkpoint-release="${esc(r.id)}">Release reservation</button></div>
+      </article>`).join("");
+    $("[data-checkpoint-accept]",target).forEach(b=>b.addEventListener("click",()=>checkpointDecision(b.dataset.checkpointAccept,"accept")));
+    $("[data-checkpoint-release]",target).forEach(b=>b.addEventListener("click",()=>checkpointDecision(b.dataset.checkpointRelease,"release")));
+  }
+
   function renderSkills(items){
     const target=$("#adminSkillList");
     if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No skill reviews pending.</strong><span>High-trust access stays locked until exact skills are verified.</span></div>';return;}
@@ -125,7 +146,7 @@
       $("#adminUnavailable").hidden=true;$("#adminDashboard").hidden=false;
       $("#adminEmailTransport").textContent=data.email_transport?"configured":"not configured";
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
-      renderRequests(data.pending_requests||[]);renderSkills(data.skill_reviews||[]);renderSubmissions(data.submissions||[]);renderUsers(data.users||[]);
+      renderRequests(data.pending_requests||[]);renderCheckpoints(data.checkpoints||[]);renderSkills(data.skill_reviews||[]);renderSubmissions(data.submissions||[]);renderUsers(data.users||[]);
     }catch(e){
       $("#adminDashboard").hidden=true;$("#adminUnavailable").hidden=false;
       if(e.status!==401&&e.status!==403)msg("bootstrapMessage",e.message);
