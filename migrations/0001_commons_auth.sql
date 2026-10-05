@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   min_level INTEGER NOT NULL DEFAULT 0 CHECK(min_level BETWEEN 0 AND 6),
   claim_mode TEXT NOT NULL CHECK(claim_mode IN ('open','approval','invite')),
   required_skill TEXT,
+  calibrates_skill TEXT,
   expected_hours INTEGER NOT NULL,
   review_sla_business_days INTEGER NOT NULL DEFAULT 2,
   checkpoint_hours INTEGER,
