@@ -812,6 +812,7 @@ async function submitWork(request, env, user, requestId) {
   if (highTrust && understanding.length < 180) throw new ApiError(400,"Higher-trust work requires an explanation showing you understand what the contribution establishes and what it does not (at least 180 characters).","understanding_too_short");
   if (aiUsed && aiTools.length < 2) throw new ApiError(400,"Name the AI tools used.","ai_tools_required");
   if (aiUsed && verification.length < 150) throw new ApiError(400,"AI-assisted work must explain how you independently checked the output.","ai_verification_required");
+  if (aiUsed && understanding.length < 180) throw new ApiError(400,"AI-assisted work must explain what the output establishes, what it does not establish, and what assumptions remain.","ai_understanding_required");
 
   const id = crypto.randomUUID();
   await env.COMMONS_DB.prepare(
