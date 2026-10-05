@@ -26,6 +26,17 @@
       else links.insertBefore(inspectLink, links.firstChild);
     }
 
+    const ensureLink = (href, label, beforeButton = false) => {
+      if (directLinks().some((a) => (a.getAttribute("href") || "").split("?")[0] === href)) return;
+      const link = document.createElement("a");
+      link.href = href;
+      link.textContent = label;
+      const contact = beforeButton ? directLinks().find((a) => a.classList.contains("button")) : null;
+      links.insertBefore(link, contact || links.firstChild);
+    };
+    ensureLink("commons.html", "Commons", true);
+    ensureLink("contribute.html", "Contribute", true);
+
     const mapperLink = directLinks().find((a) => (a.getAttribute("href") || "").split("?")[0] === "project-builder.html");
     if (mapperLink && /Project Mapper/i.test(mapperLink.textContent || "")) {
       mapperLink.textContent = "Advanced Mapper";
@@ -39,7 +50,13 @@
       "demo.html",
       "model-lab.html",
       "intake.html",
-      "privacy.html"
+      "privacy.html",
+      "contributors.html",
+      "projects.html",
+      "fund.html",
+      "governance.html",
+      "organizations.html",
+      "research.html"
     ]);
     const secondaryLinks = directLinks().filter((a) => secondaryHrefs.has((a.getAttribute("href") || "").split("?")[0]));
     if (secondaryLinks.length) {
