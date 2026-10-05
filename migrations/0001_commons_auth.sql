@@ -155,3 +155,10 @@ CREATE TABLE IF NOT EXISTS audit_log (
   FOREIGN KEY(actor_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS idx_audit_subject ON audit_log(subject_type, subject_id, created_at);
+
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key TEXT PRIMARY KEY,
+  window_start TEXT NOT NULL,
+  count INTEGER NOT NULL
+);
