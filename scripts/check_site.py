@@ -368,6 +368,8 @@ if commons_js.exists():
         "handleTaskIntent",
         "renderProjectTaskReturn",
         "data-task-id",
+        "commons-recommendation-card",
+        "commons-recommendation-badges",
     ]:
         if required_text not in commons_script:
             errors.append(f"commons.js: authenticated contributor-marketplace contract drift: {required_text}")
@@ -385,6 +387,10 @@ if styles_css.exists():
         errors.append("styles.css: authority hierarchy labels must reserve enough width for ADMIN/TRUTH")
     if "#authority-hierarchy .governance-rules article>b{width:auto;min-width:70px" not in styles_text:
         errors.append("styles.css: authority hierarchy badges must size to label content")
+    if ".commons-recommendation-card{display:block;min-width:0" not in styles_text:
+        errors.append("styles.css: contributor recommendation card must not inherit Project Mapper grid layout")
+    if ".commons-recommendation-badges{display:flex" not in styles_text:
+        errors.append("styles.css: contributor recommendation badges must remain in their own flex row")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
