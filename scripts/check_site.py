@@ -355,6 +355,10 @@ if styles_css.exists():
     styles_text = styles_css.read_text(encoding="utf-8")
     if "[hidden]{display:none!important}" not in styles_text:
         errors.append("styles.css: hidden-state contract drift; auth panels may remain visible after sign-in")
+    if ".reviewer-inspection-shortcuts{height:auto" not in styles_text:
+        errors.append("styles.css: result-anatomy shortcut nav must override the global fixed nav height")
+    if ".reviewer-inspection-shortcuts{height:auto;grid-template-columns:1fr" not in styles_text:
+        errors.append("styles.css: mobile result-anatomy shortcut stack must remain auto-height")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
