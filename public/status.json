@@ -1,6 +1,6 @@
 {
   "status_format": "pcs-public-status-v1",
-  "updated": "2026-10-03",
+  "updated": "2026-10-05",
   "released": {
     "specification": "pcs-0.5",
     "checker": "pcs-python-kernel/0.5.0",
@@ -551,5 +551,55 @@
     },
     "full_attest_verify_roundtrip_executed": false,
     "hosted_runner_status": "RUNNER_UNAVAILABLE"
+  },
+  "commons": {
+    "release": "authenticated-commons-v1",
+    "account_backend": "DEPLOYED",
+    "storage": {
+      "provider": "Cloudflare D1",
+      "database": "pcs-commons",
+      "jurisdiction": "us",
+      "scientific_artifact_data_plane": false
+    },
+    "authority": {
+      "new_accounts_start_level": 0,
+      "user_editable_level": false,
+      "l0_l1_open_nonexclusive": true,
+      "l2_l3_require_verified_level_skill_and_founder_approval": true,
+      "l4_l5_high_trust_founder_assigned": true,
+      "pending_applications_reserve_tasks": false,
+      "first_reserved_work_checkpoint_hours": 24,
+      "stale_reservations_auto_release": true
+    },
+    "ai_assistance": {
+      "allowed": true,
+      "disclosure_required": true,
+      "independent_verification_required": true,
+      "scope_and_remaining_assumptions_explanation_required": true
+    },
+    "calibrations": {
+      "synthetic_nonproduction": true,
+      "skills": [
+        "python",
+        "lean",
+        "security",
+        "ml",
+        "research",
+        "biology",
+        "review"
+      ],
+      "passing_auto_grants_l4_l5": false
+    },
+    "review_sla": {
+      "target_business_days": 1,
+      "hard_target_business_days": 2,
+      "scheduled_founder_reminders": true
+    },
+    "email": {
+      "durable_in_app_notifications": true,
+      "transactional_adapter": "Resend",
+      "automatic_external_delivery": "PENDING_SENDER_CREDENTIALS",
+      "admin_destination": "marenatommaso@gmail.com"
+    }
   }
 }
