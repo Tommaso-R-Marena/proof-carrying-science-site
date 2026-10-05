@@ -255,7 +255,7 @@ commons_contracts = {
     "tasks.html": [
         "Task Marketplace",
         "not yet funded",
-        "What counts as done?",
+        "Every task has a bounded deliverable",
         'id="commonsTaskList"',
         'id="taskComp"',
         'src="commons.js"',
