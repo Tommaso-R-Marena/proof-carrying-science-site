@@ -561,6 +561,7 @@ async function expireStaleWork(env) {
     });
     await audit(env, null, "task_request_expired", "task_request", row.id, { task_id: row.task_id });
   }
+  await env.COMMONS_DB.prepare("UPDATE competency_evaluations SET status='expired' WHERE status='open' AND expires_at<=?").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE expires_at<=?").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM email_verification_tokens WHERE expires_at<=? OR used_at IS NOT NULL").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM rate_limits WHERE window_start<?").bind(addDaysIso(now, -2)).run();
