@@ -894,22 +894,44 @@ async function requestSkill(request, env, user) {
   const body = await readBody(request);
   const skill = String(body.skill || "");
   const evidence = cleanText(body.evidence, 3000);
-  if (!SKILLS.has(skill)) throw new ApiError(400, "Unknown skill.", "bad_skill");
+  if (!SKILLS.has(skill) || skill === "nontechnical") throw new ApiError(400, "Choose a supported technical/research skill.", "bad_skill");
   if (evidence.length < 80) throw new ApiError(400, "Give enough evidence for a reviewer to assess the skill (at least 80 characters).", "evidence_required");
+
+  const already = await env.COMMONS_DB.prepare(
+    "SELECT status FROM skills WHERE user_id=? AND skill=?"
+  ).bind(user.id,skill).first();
+  if (already?.status === "verified") throw new ApiError(409, "This skill is already verified.", "skill_already_verified");
+
   const now = nowIso();
+  const due = addBusinessDaysIso(now, 2);
   await env.COMMONS_DB.prepare(
-    `INSERT INTO skills(user_id,skill,status,evidence,requested_at)
-     VALUES(?,?,'pending',?,?)
-     ON CONFLICT(user_id,skill) DO UPDATE SET status='pending',evidence=excluded.evidence,requested_at=excluded.requested_at,verification_note=NULL,verified_at=NULL,verified_by=NULL`
-  ).bind(user.id,skill,evidence,now).run();
+    `INSERT INTO skills(user_id,skill,status,evidence,requested_at,review_due_at,source,evaluation_id)
+     VALUES(?,?,'pending',?,?,?,'manual',NULL)
+     ON CONFLICT(user_id,skill) DO UPDATE SET
+       status='pending',evidence=excluded.evidence,requested_at=excluded.requested_at,
+       review_due_at=excluded.review_due_at,source='manual',evaluation_id=NULL,
+       verification_note=NULL,verified_at=NULL,verified_by=NULL`
+  ).bind(user.id,skill,evidence,now,due).run();
+
   await notify(env,{
     kind:"skill_review_admin",
     email:env.ADMIN_EMAIL || null,
-    subject:`[PCS] Skill review: ${user.display_name} — ${skill}`,
-    body:`${user.display_name} (${user.email}, current L${user.level}) requested verification of ${skill}.\n\nEvidence:\n${evidence}\n\nReview in the PCS admin dashboard.\n`,
+    subject:"[PCS] Manual skill review: "+user.display_name+" — "+skill,
+    body:user.display_name+" ("+user.email+", current L"+user.level+") submitted a manual "+skill+" competency application.\n\nEvidence:\n"+evidence+"\n\nTarget response: within 1 business day; no later than 2 business days ("+due+").\n\nReview in the PCS admin dashboard.\n",
   });
-  await audit(env,user.id,"skill_review_requested","user",user.id,{skill});
-  return json({ok:true,message:"Skill verification requested. This does not block L0 open tasks."},201);
+  await notify(env,{
+    userId:user.id,
+    email:user.email_verified?user.email:null,
+    kind:"skill_review_received",
+    subject:"PCS received your competency application: "+skill,
+    body:"PCS received your manual "+skill+" competency application. Final approval is manual. We target a response within 1 business day and no later than 2 business days. Current review deadline: "+due+".\n",
+  });
+  await audit(env,user.id,"skill_review_requested","user",user.id,{skill,source:"manual",review_due_at:due});
+  return json({
+    ok:true,
+    review_due_at:due,
+    message:"Manual competency application received. PCS targets review within 1 business day and no later than 2 business days."
+  },201);
 }
 
 async function listTasks(request, env) {
