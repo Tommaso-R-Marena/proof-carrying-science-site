@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const $=(s,r=document)=>r.querySelector(s);
-  const $=(s,r=document)=>[...r.querySelectorAll(s)];
+  const all=(s,r=document)=>[...r.querySelectorAll(s)];
   let currentAdmin=null;
 
   function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -72,8 +72,8 @@
         <details><summary>Independent verification plan</summary><p>${esc(r.verification_plan)}</p></details>
         <div class="actions"><button class="button primary" data-approve-request="${esc(r.id)}">Approve + reserve</button><button class="button secondary" data-reject-request="${esc(r.id)}">Reject</button></div>
       </article>`).join("");
-    $$("[data-approve-request]",target).forEach(b=>b.addEventListener("click",()=>requestDecision(b.dataset.approveRequest,"approve")));
-    $$("[data-reject-request]",target).forEach(b=>b.addEventListener("click",()=>requestDecision(b.dataset.rejectRequest,"reject")));
+    all("[data-approve-request]",target).forEach(b=>b.addEventListener("click",()=>requestDecision(b.dataset.approveRequest,"approve")));
+    all("[data-reject-request]",target).forEach(b=>b.addEventListener("click",()=>requestDecision(b.dataset.rejectRequest,"reject")));
   }
 
   async function checkpointDecision(id,decision){
@@ -107,8 +107,8 @@
         <div class="boundary"><strong>Evidence</strong><span>${esc(s.evidence)}</span></div>
         <div class="actions"><button class="button primary" data-verify-skill="${esc(s.user_id)}" data-skill="${esc(s.skill)}">Verify skill</button><button class="button secondary" data-reject-skill="${esc(s.user_id)}" data-skill="${esc(s.skill)}">Reject</button></div>
       </article>`).join("");
-    $$("[data-verify-skill]",target).forEach(b=>b.addEventListener("click",()=>skillDecision(b.dataset.verifySkill,b.dataset.skill,"verified")));
-    $$("[data-reject-skill]",target).forEach(b=>b.addEventListener("click",()=>skillDecision(b.dataset.rejectSkill,b.dataset.skill,"rejected")));
+    all("[data-verify-skill]",target).forEach(b=>b.addEventListener("click",()=>skillDecision(b.dataset.verifySkill,b.dataset.skill,"verified")));
+    all("[data-reject-skill]",target).forEach(b=>b.addEventListener("click",()=>skillDecision(b.dataset.rejectSkill,b.dataset.skill,"rejected")));
   }
 
   function renderSubmissions(items){
@@ -125,9 +125,9 @@
         ${s.ai_used?`<details><summary>AI disclosure</summary><p>${esc(s.ai_tools||"AI used; tool not stated")}</p></details>`:""}
         <div class="actions"><button class="button primary" data-submission-accept="${esc(s.id)}">Accept</button><button class="button secondary" data-submission-changes="${esc(s.id)}">Needs changes</button><button class="button secondary" data-submission-reject="${esc(s.id)}">Reject</button></div>
       </article>`).join("");
-    $$("[data-submission-accept]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionAccept,"accept")));
-    $$("[data-submission-changes]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionChanges,"needs_changes")));
-    $$("[data-submission-reject]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionReject,"reject")));
+    all("[data-submission-accept]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionAccept,"accept")));
+    all("[data-submission-changes]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionChanges,"needs_changes")));
+    all("[data-submission-reject]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionReject,"reject")));
   }
 
   async function governanceChange(user,kind){
@@ -175,9 +175,9 @@
         <div class="actions">${actions}</div>
       </article>`;
     }).join("");
-    $$("[data-level-user]",target).forEach(b=>b.addEventListener("click",()=>setLevel(b.dataset.levelUser,Number(b.dataset.currentLevel))));
-    $$("[data-email-user]",target).forEach(b=>b.addEventListener("click",()=>verifyEmail(b.dataset.emailUser)));
-    $$("[data-governance]",target).forEach(b=>b.addEventListener("click",()=>{
+    all("[data-level-user]",target).forEach(b=>b.addEventListener("click",()=>setLevel(b.dataset.levelUser,Number(b.dataset.currentLevel))));
+    all("[data-email-user]",target).forEach(b=>b.addEventListener("click",()=>verifyEmail(b.dataset.emailUser)));
+    all("[data-governance]",target).forEach(b=>b.addEventListener("click",()=>{
       const user=items.find(u=>u.id===b.dataset.user);
       if(user)governanceChange(user,b.dataset.governance);
     }));
