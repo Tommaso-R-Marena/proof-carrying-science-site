@@ -27,18 +27,28 @@
     }
   }
 
-  function renderTaskContinuation(authenticated) {
+  function requestedSkill() {
+    const params = new URLSearchParams(location.search);
+    const skill = String(params.get("skill") || "").trim();
+    return new Set(["nontechnical","research","python","ml","biology","security","lean","review"]).has(skill) ? skill : "";
+  }
+
+  function renderTaskContinuation(authenticated, liveReason="") {
     const panel = $("#taskContinuationPanel");
     if (!panel) return;
     const task = taskIntent();
     if (!task) { panel.hidden = true; return; }
     panel.hidden = false;
     const params = new URLSearchParams(location.search);
-    const reason = String(params.get("reason") || "").trim();
+    const priorReason = String(params.get("reason") || "").trim();
+    const reason = liveReason || priorReason;
+    const skill = requestedSkill();
     $("#taskContinuationTitle").textContent = `Continue with ${task}`;
     $("#taskContinuationReason").textContent = authenticated
-      ? (reason ? `You are signed in. Previous access check: ${reason} Return to the marketplace to re-check your current eligibility.` : "You are signed in. Return to the marketplace to re-check your current eligibility and apply if the task is unlocked.")
-      : (reason ? `Sign in first. Previous access check: ${reason}` : "Sign in first; PCS will then return you to this task and re-check your verified level and skills.");
+      ? (reason ? `Current access check: ${reason}${skill ? ` Required skill: ${skill}.` : ""}` : "You are signed in. Return to the marketplace to re-check your current eligibility and apply if the task is unlocked.")
+      : (reason ? `Sign in first. Previous access check: ${reason}` : "Sign in first; PCS will then re-check your verified level and skills for this exact task.");
+    const skillForm = $("#skillForm");
+    if (authenticated && skillForm && skill && skillForm.elements.skill) skillForm.elements.skill.value = skill;
     const link = $("#taskContinuationLink");
     if (link) {
       link.href = safeNextUrl() || `/tasks.html?task=${encodeURIComponent(task)}`;
@@ -46,9 +56,23 @@
     }
   }
 
-  function continueAfterLogin() {
+  async function continueAfterLogin() {
     const next = safeNextUrl();
     if (!next) return false;
+    const task = taskIntent();
+    if (task) {
+      try {
+        const data = await api("/api/tasks");
+        const selected = (data.tasks || []).find(item => item.id === task);
+        const unlocked = Boolean(selected && (selected.eligibility?.can_request || selected.eligibility?.can_start || (selected.my_request && ["pending","approved"].includes(selected.my_request.status))));
+        if (selected && !unlocked) {
+          renderTaskContinuation(true, selected.eligibility?.reason || "This task is not currently unlocked for your account.");
+          return true;
+        }
+      } catch (_) {
+        // If the eligibility refresh fails, fall back to the preserved marketplace return path.
+      }
+    }
     location.assign(next);
     return true;
   }
@@ -276,8 +300,8 @@
     try {
       await api("/api/auth/login",{method:"POST",body:{email:fd.get("email"),password:fd.get("password")}});
       setMessage("loginMessage","Signed in.",true);
-      if (continueAfterLogin()) return;
       await load();
+      if (await continueAfterLogin()) return;
     }
     catch(e){ setMessage("loginMessage",e.message); }
   });
@@ -335,9 +359,10 @@
     try { await navigator.clipboard.writeText($("#recoveryCodeValue").textContent); $("#copyRecoveryCode").textContent="Copied"; }
     catch { $("#copyRecoveryCode").textContent="Copy unavailable"; }
   });
-  $("#recoveryCodeSaved")?.addEventListener("click",()=>{
+  $("#recoveryCodeSaved")?.addEventListener("click",async()=>{
     $("#recoveryCodePanel").hidden=true;
-    if (continueAfterLogin()) return;
+    await load();
+    if (await continueAfterLogin()) return;
   });
 
   async function processVerificationLink() {
