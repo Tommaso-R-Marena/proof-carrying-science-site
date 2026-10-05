@@ -1017,13 +1017,29 @@ async function adminSetLevel(request, env, admin, userId) {
   if (!user) throw new ApiError(404,"User not found.","user_not_found");
   const skillRows=await env.COMMONS_DB.prepare("SELECT skill FROM skills WHERE user_id=? AND status='verified'").bind(userId).all();
   const skills=new Set((skillRows.results||[]).map(r=>r.skill));
+  const work=await env.COMMONS_DB.prepare(
+    `SELECT
+       COUNT(*) AS accepted_total,
+       SUM(CASE WHEN t.min_level>=2 THEN 1 ELSE 0 END) AS accepted_high_trust
+     FROM submissions s
+     JOIN task_requests r ON r.id=s.request_id
+     JOIN tasks t ON t.id=r.task_id
+     WHERE s.user_id=? AND s.status='accepted'`
+  ).bind(userId).first();
+  const acceptedTotal=Number(work?.accepted_total||0);
+  const acceptedHighTrust=Number(work?.accepted_high_trust||0);
+  const specialistSkills=[...skills].filter(skill=>!["nontechnical","review"].includes(skill));
   if (!override) {
-    if (level>=2 && skills.size===0) throw new ApiError(409,"L2+ requires at least one verified skill unless you explicitly use an administrative override.","verified_skill_required");
-    if (level>=4 && !skills.has("review")) throw new ApiError(409,"L4 reviewer authority requires verified review skill unless you explicitly use an administrative override.","review_skill_required");
+    if (level>=2 && skills.size===0) throw new ApiError(409,"L2+ requires at least one verified skill unless an explicit founder calibration override is recorded.","verified_skill_required");
+    if (level===2 && acceptedTotal<2) throw new ApiError(409,"Ordinary L2 promotion requires at least two accepted contributions plus a verified skill. Use an audited founder override only after an equivalent calibration.","l2_work_required");
+    if (level===3 && (acceptedTotal<3 || acceptedHighTrust<1)) throw new ApiError(409,"Ordinary L3 promotion requires at least three accepted contributions including one high-trust contribution.","l3_work_required");
+    if (level===4 && (!skills.has("review") || acceptedHighTrust<2)) throw new ApiError(409,"Ordinary L4 reviewer authority requires verified review skill plus at least two accepted high-trust contributions.","l4_review_required");
+    if (level===5 && (specialistSkills.length===0 || acceptedHighTrust<3)) throw new ApiError(409,"Ordinary L5 specialist status requires a verified specialist skill plus at least three accepted high-trust contributions.","l5_specialist_required");
+    if (level===6) throw new ApiError(409,"L6 research-lead authority always requires an explicit audited founder override.","l6_override_required");
   }
   await env.COMMONS_DB.prepare("UPDATE users SET level=?,level_review_note=?,updated_at=? WHERE id=?").bind(level,note,nowIso(),userId).run();
   await notify(env,{userId,email:user.email_verified?user.email:null,kind:"level_changed",subject:`PCS contributor level: L${level}`,body:`Your verified PCS contributor level is now L${level}.\n\nReason: ${note}\n\nA level alone never bypasses a task's required verified skill or founder approval.\n`});
-  await audit(env,admin.id,"user_level_changed","user",userId,{from:Number(user.level),to:level,override});
+  await audit(env,admin.id,"user_level_changed","user",userId,{from:Number(user.level),to:level,override,accepted_total:acceptedTotal,accepted_high_trust:acceptedHighTrust,verified_skills:[...skills]});
   return json({ok:true,level});
 }
 
