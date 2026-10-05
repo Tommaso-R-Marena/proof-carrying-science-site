@@ -35,7 +35,7 @@
       links.insertBefore(link, contact || links.firstChild);
     };
     ensureLink("commons.html", "Commons", true);
-    ensureLink("contribute.html", "Contribute", true);
+    ensureLink("contribute.html", "Contribute", true);\n    ensureLink("account.html", "Account", true);
 
     const mapperLink = directLinks().find((a) => (a.getAttribute("href") || "").split("?")[0] === "project-builder.html");
     if (mapperLink && /Project Mapper/i.test(mapperLink.textContent || "")) {
