@@ -436,7 +436,20 @@ function eligibilityFor(task, user, skills) {
     return { state: "verify_email", can_start: false, can_request: false, reason: "Verify your email before requesting reserved work." };
   }
   if (task.required_skill && !skills.has(task.required_skill)) {
-    return { state: "skill_required", can_start: false, can_request: false, reason: `Requires verified ${task.required_skill} skill status.` };
+    if (task.claim_mode !== "open") {
+      return {
+        state: "skill_or_application",
+        can_start: false,
+        can_request: true,
+        reason: `Verified ${task.required_skill} skill is not on file. You may either pass a variable competency evaluation or submit this task application now for manual competency review. Final approval is manual.`
+      };
+    }
+    return {
+      state: "skill_required",
+      can_start: false,
+      can_request: false,
+      reason: `Requires verified ${task.required_skill} skill. Take a variable competency evaluation or submit manual skill evidence for review.`
+    };
   }
   if (task.claim_mode === "open") {
     return { state: "open", can_start: true, can_request: false, reason: "Open, non-exclusive work. Starting it never blocks anyone else." };
