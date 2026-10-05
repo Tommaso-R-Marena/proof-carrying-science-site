@@ -428,5 +428,9 @@
   document.addEventListener("DOMContentLoaded",async()=>{
     await processVerificationLink();
     await load();
+    const params=new URLSearchParams(location.search);
+    if(state?.authenticated && params.get("evaluation")==="1"){
+      setTimeout(()=>document.getElementById("competency")?.scrollIntoView({behavior:"smooth",block:"start"}),120);
+    }
   });
 })();
