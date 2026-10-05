@@ -181,6 +181,10 @@ function publicUser(row) {
     email: row.email,
     display_name: row.display_name,
     level: Number(row.level),
+    technical_level: Number(row.level),
+    display_level: Number(row.is_owner) ? 7 : Number(row.level),
+    is_owner: Boolean(row.is_owner),
+    governance_role: Number(row.is_owner) ? "owner" : row.role,
     role: row.role,
     status: row.status,
     email_verified: Boolean(row.email_verified),
@@ -213,6 +217,22 @@ async function requireUser(request, env) {
 async function requireAdmin(request, env) {
   const user = await requireUser(request, env);
   if (user.role !== "admin") throw new ApiError(403, "Administrator access required.", "admin_required");
+  return user;
+}
+
+function isOwner(user) {
+  return Boolean(Number(user?.is_owner || 0));
+}
+
+function protectOwnerTarget(user) {
+  if (isOwner(user)) {
+    throw new ApiError(403, "The PCS Founder/Owner account is protected and cannot be modified through delegated administration.", "owner_protected");
+  }
+}
+
+async function requireOwner(request, env) {
+  const user = await requireAdmin(request, env);
+  if (!isOwner(user)) throw new ApiError(403, "PCS Founder/Owner authority required.", "owner_required");
   return user;
 }
 
@@ -464,8 +484,8 @@ async function bootstrapAdmin(request, env) {
   if (!validPassword(password)) throw new ApiError(400, "Password must be 12–128 characters.", "weak_password");
   if (displayName.length < 2) throw new ApiError(400, "Enter your name.", "bad_name");
 
-  const admin = await env.COMMONS_DB.prepare("SELECT id FROM users WHERE role='admin' LIMIT 1").first();
-  if (admin) throw new ApiError(409, "PCS admin account already exists.", "admin_exists");
+  const admin = await env.COMMONS_DB.prepare("SELECT id FROM users WHERE is_owner=1 OR role='admin' LIMIT 1").first();
+  if (admin) throw new ApiError(409, "PCS owner/admin account already exists.", "admin_exists");
 
   const id = crypto.randomUUID();
   const salt = randomToken(16);
@@ -477,10 +497,10 @@ async function bootstrapAdmin(request, env) {
     `INSERT INTO users(
       id,email,display_name,password_hash,password_salt,password_iterations,recovery_hash,
       level,role,status,ai_policy_ack,created_at,updated_at,availability_hours,track,compensation_preference,
-      profile_note,email_verified,terms_version
-    ) VALUES(?,?,?,?,?,?,?,6,'admin','active',1,?,?,?,?,?,?,1,?)`
+      profile_note,email_verified,terms_version,is_owner
+    ) VALUES(?,?,?,?,?,?,?,6,'admin','active',1,?,?,?,?,?,?,1,?,1)`
   ).bind(id,email,displayName,passwordHash,salt,PASSWORD_ITERATIONS,recoveryHash,now,now,5,"review","either","PCS owner/admin",TERMS_VERSION).run();
-  await audit(env, id, "admin_bootstrapped", "user", id, {});
+  await audit(env, id, "owner_bootstrapped", "user", id, { display_level: 7, technical_level: 6, unique_owner: true });
   const session = await createSession(env, id);
   const user = await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(id).first();
   return json({
@@ -881,8 +901,8 @@ async function adminOverview(request, env) {
        WHERE sk.status='pending' ORDER BY sk.requested_at ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
-      `SELECT id,email,display_name,level,role,status,email_verified,track,availability_hours,created_at,last_login_at
-       FROM users ORDER BY created_at DESC LIMIT 200`
+      `SELECT id,email,display_name,level,role,status,email_verified,track,availability_hours,created_at,last_login_at,is_owner
+       FROM users ORDER BY is_owner DESC,created_at DESC LIMIT 200`
     ).all(),
   ]);
   return json({
@@ -1052,13 +1072,16 @@ async function adminSkillDecision(request, env, admin, userId) {
   const status=String(body.status||"");
   const note=cleanText(body.note,2000);
   if (!SKILLS.has(skill) || !["verified","rejected"].includes(status)) throw new ApiError(400,"Invalid skill decision.","bad_skill_decision");
+  const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
+  if (!user) throw new ApiError(404,"User not found.","user_not_found");
+  protectOwnerTarget(user);
+  if (user.role==="admin" && !isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may modify another administrator's reviewed authority.","owner_required");
   const row=await env.COMMONS_DB.prepare("SELECT * FROM skills WHERE user_id=? AND skill=?").bind(userId,skill).first();
   if (!row) throw new ApiError(404,"Skill request not found.","skill_not_found");
   const when=status==="verified"?nowIso():null;
   await env.COMMONS_DB.prepare(
     "UPDATE skills SET status=?,verification_note=?,verified_at=?,verified_by=? WHERE user_id=? AND skill=?"
   ).bind(status,note,when,admin.id,userId,skill).run();
-  const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
   await notify(env,{userId,email:user.email_verified?user.email:null,kind:"skill_review",subject:`PCS skill review: ${skill}`,body:`Your ${skill} skill review was marked ${status}.\n\n${note}\n`});
   await audit(env,admin.id,"skill_reviewed","user",userId,{skill,status});
   return json({ok:true,status});
@@ -1069,10 +1092,17 @@ async function adminSetLevel(request, env, admin, userId) {
   const level=Number(body.level);
   const note=cleanText(body.note,2000);
   const override=body.override===true;
-  if (!Number.isInteger(level)||level<0||level>6) throw new ApiError(400,"Level must be L0–L6.","bad_level");
+  if (!Number.isInteger(level)||level<0||level>6) throw new ApiError(400,"Technical level must be L0–L6. L7 is the unique Founder/Owner governance tier and cannot be assigned.","bad_level");
   if (note.length<20) throw new ApiError(400,"Give a promotion/demotion rationale (at least 20 characters).","level_note_required");
   const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
   if (!user) throw new ApiError(404,"User not found.","user_not_found");
+  protectOwnerTarget(user);
+
+  const currentLevel=Number(user.level);
+  if (!isOwner(admin) && (currentLevel===6 || level===6 || user.role==="admin")) {
+    throw new ApiError(403,"Only the Founder/Owner may appoint or demote L6 research leads or modify another administrator's technical authority.","owner_required");
+  }
+
   const skillRows=await env.COMMONS_DB.prepare("SELECT skill FROM skills WHERE user_id=? AND status='verified'").bind(userId).all();
   const skills=new Set((skillRows.results||[]).map(r=>r.skill));
   const work=await env.COMMONS_DB.prepare(
@@ -1087,18 +1117,64 @@ async function adminSetLevel(request, env, admin, userId) {
   const acceptedTotal=Number(work?.accepted_total||0);
   const acceptedHighTrust=Number(work?.accepted_high_trust||0);
   const specialistSkills=[...skills].filter(skill=>!["nontechnical","review"].includes(skill));
-  if (!override) {
+
+  // Evidence gates apply to promotions. Demotions must remain possible when authority needs to be removed.
+  if (!override && level>currentLevel) {
     if (level>=2 && skills.size===0) throw new ApiError(409,"L2+ requires at least one verified skill unless an explicit founder calibration override is recorded.","verified_skill_required");
     if (level===2 && acceptedTotal<2) throw new ApiError(409,"Ordinary L2 promotion requires at least two accepted contributions plus a verified skill. Use an audited founder override only after an equivalent calibration.","l2_work_required");
     if (level===3 && (acceptedTotal<3 || acceptedHighTrust<1)) throw new ApiError(409,"Ordinary L3 promotion requires at least three accepted contributions including one high-trust contribution.","l3_work_required");
     if (level===4 && (!skills.has("review") || acceptedHighTrust<2)) throw new ApiError(409,"Ordinary L4 reviewer authority requires verified review skill plus at least two accepted high-trust contributions.","l4_review_required");
     if (level===5 && (specialistSkills.length===0 || acceptedHighTrust<3)) throw new ApiError(409,"Ordinary L5 specialist status requires a verified specialist skill plus at least three accepted high-trust contributions.","l5_specialist_required");
-    if (level===6) throw new ApiError(409,"L6 research-lead authority always requires an explicit audited founder override.","l6_override_required");
+    if (level===6) throw new ApiError(409,"L6 research-lead authority requires an explicit audited Founder/Owner override.","l6_override_required");
   }
+  if (level===6 && !isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may appoint L6 research leads.","owner_required");
+
   await env.COMMONS_DB.prepare("UPDATE users SET level=?,level_review_note=?,updated_at=? WHERE id=?").bind(level,note,nowIso(),userId).run();
-  await notify(env,{userId,email:user.email_verified?user.email:null,kind:"level_changed",subject:`PCS contributor level: L${level}`,body:`Your verified PCS contributor level is now L${level}.\n\nReason: ${note}\n\nA level alone never bypasses a task's required verified skill or founder approval.\n`});
-  await audit(env,admin.id,"user_level_changed","user",userId,{from:Number(user.level),to:level,override,accepted_total:acceptedTotal,accepted_high_trust:acceptedHighTrust,verified_skills:[...skills]});
+  await notify(env,{userId,email:user.email_verified?user.email:null,kind:"level_changed",subject:`PCS contributor level: L${level}`,body:`Your verified PCS technical level is now L${level}.\n\nReason: ${note}\n\nTechnical level does not grant Founder/Owner governance authority, and task-specific skill/assignment requirements still apply.\n`});
+  await audit(env,admin.id,"user_level_changed","user",userId,{from:currentLevel,to:level,override,owner_actor:isOwner(admin),accepted_total:acceptedTotal,accepted_high_trust:acceptedHighTrust,verified_skills:[...skills]});
   return json({ok:true,level});
+}
+
+async function adminSetGovernance(request, env, admin, userId) {
+  if (!isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may grant or revoke administrator authority or suspend/restore accounts.","owner_required");
+  const body=await readBody(request);
+  const note=cleanText(body.note,2000);
+  if (note.length<20) throw new ApiError(400,"Give a governance rationale (at least 20 characters).","governance_note_required");
+
+  const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
+  if (!user) throw new ApiError(404,"User not found.","user_not_found");
+  protectOwnerTarget(user);
+
+  const requestedRole=body.role===undefined?user.role:String(body.role);
+  const requestedStatus=body.status===undefined?user.status:String(body.status);
+  if (!["contributor","admin"].includes(requestedRole)) throw new ApiError(400,"Role must be contributor or admin.","bad_role");
+  if (!["active","suspended","disabled"].includes(requestedStatus)) throw new ApiError(400,"Status must be active, suspended, or disabled.","bad_status");
+  if (requestedRole==="admin" && requestedStatus!=="active") throw new ApiError(409,"Administrator authority can only be granted to an active account.","admin_must_be_active");
+  if (requestedRole==="admin" && !Number(user.email_verified)) throw new ApiError(409,"Verify the user's email before granting administrator authority.","email_unverified");
+
+  const changedRole=requestedRole!==user.role;
+  const changedStatus=requestedStatus!==user.status;
+  if (!changedRole && !changedStatus) throw new ApiError(400,"No governance change was requested.","no_change");
+
+  await env.COMMONS_DB.prepare("UPDATE users SET role=?,status=?,updated_at=? WHERE id=?").bind(requestedRole,requestedStatus,nowIso(),userId).run();
+
+  const authorityRemoved=(user.role==="admin" && requestedRole!=="admin") || (user.status==="active" && requestedStatus!=="active");
+  if (authorityRemoved) {
+    await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(userId).run();
+  }
+
+  await notify(env,{
+    userId,
+    email:user.email_verified?user.email:null,
+    kind:"governance_changed",
+    subject:"PCS account governance changed",
+    body:`Your PCS governance state changed.\n\nRole: ${user.role} → ${requestedRole}\nStatus: ${user.status} → ${requestedStatus}\n\nReason: ${note}\n\nFounder/Owner governance authority is separate from technical contributor level.\n`,
+  });
+  await audit(env,admin.id,"user_governance_changed","user",userId,{
+    role_from:user.role,role_to:requestedRole,status_from:user.status,status_to:requestedStatus,
+    sessions_revoked:authorityRemoved,note
+  });
+  return json({ok:true,role:requestedRole,status:requestedStatus,sessions_revoked:authorityRemoved});
 }
 
 async function adminVerifyEmail(request, env, admin, userId) {
@@ -1106,6 +1182,8 @@ async function adminVerifyEmail(request, env, admin, userId) {
   if (body.verified!==true) throw new ApiError(400,"This endpoint only performs an explicit manual verification.","bad_manual_verify");
   const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
   if (!user) throw new ApiError(404,"User not found.","user_not_found");
+  protectOwnerTarget(user);
+  if (user.role==="admin" && !isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may modify another administrator's account authority.","owner_required");
   await env.COMMONS_DB.prepare("UPDATE users SET email_verified=1,updated_at=? WHERE id=?").bind(nowIso(),userId).run();
   await audit(env,admin.id,"email_manually_verified","user",userId,{email:user.email});
   return json({ok:true});
@@ -1127,6 +1205,8 @@ async function handleApi(request, env) {
         L0_L1:"open, non-exclusive tasks; no founder approval needed",
         L2_L3:"verified level + verified skill + founder approval; pending requests do not reserve work",
         L4_L5:"high-trust application + verified skill + founder assignment; never self-claimed",
+        L6:"research-lead technical authority; appointment/removal is Owner-only",
+        OWNER:"unique Founder/Owner governance authority; displayed as L7 but stored separately from technical L0–L6",
         reservations:"first progress checkpoint within 24 hours; stale reservations release automatically",
       },
     });
@@ -1153,6 +1233,7 @@ async function handleApi(request, env) {
   if (method==="PATCH" && path==="/api/profile") return updateProfile(request,env,user);
   if (method==="POST" && path==="/api/skills/request") return requestSkill(request,env,user);
   if (method==="POST" && path==="/api/account/delete") {
+    if (isOwner(user)) throw new ApiError(403,"The Founder/Owner account cannot be deleted through self-service. Ownership must be transferred or PCS governance must be deliberately shut down first.","owner_delete_protected");
     const body=await readBody(request);
     const password=String(body.password||"");
     const computed=await derivePassword(password,user.password_salt,Number(user.password_iterations));
@@ -1186,6 +1267,8 @@ async function handleApi(request, env) {
     if (method==="POST" && match) return adminSkillDecision(request,env,user,decodeURIComponent(match[1]));
     match=path.match(/^\/api\/admin\/users\/([^/]+)\/level$/);
     if (method==="POST" && match) return adminSetLevel(request,env,user,decodeURIComponent(match[1]));
+    match=path.match(/^\/api\/admin\/users\/([^/]+)\/governance$/);
+    if (method==="POST" && match) return adminSetGovernance(request,env,user,decodeURIComponent(match[1]));
     match=path.match(/^\/api\/admin\/users\/([^/]+)\/email-verified$/);
     if (method==="POST" && match) return adminVerifyEmail(request,env,user,decodeURIComponent(match[1]));
   }
