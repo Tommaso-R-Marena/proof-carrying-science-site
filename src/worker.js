@@ -685,8 +685,8 @@ async function verifyEmail(request, env) {
 async function me(request, env) {
   const user = await currentUser(request, env);
   if (!user) return json({ authenticated: false, email_transport: Boolean(env.RESEND_API_KEY && env.MAIL_FROM) });
-  const [skills, requests, notifications] = await Promise.all([
-    env.COMMONS_DB.prepare("SELECT skill,status,evidence,verification_note,requested_at,verified_at FROM skills WHERE user_id=? ORDER BY skill").bind(user.id).all(),
+  const [skills, requests, notifications, evaluations] = await Promise.all([
+    env.COMMONS_DB.prepare("SELECT skill,status,evidence,verification_note,requested_at,verified_at,review_due_at,source,evaluation_id FROM skills WHERE user_id=? ORDER BY skill").bind(user.id).all(),
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label
        FROM task_requests r JOIN tasks t ON t.id=r.task_id
@@ -695,6 +695,9 @@ async function me(request, env) {
     env.COMMONS_DB.prepare(
       "SELECT id,kind,subject,body,created_at,read_at,email_state FROM notifications WHERE user_id=? ORDER BY created_at DESC LIMIT 30"
     ).bind(user.id).all(),
+    env.COMMONS_DB.prepare(
+      "SELECT id,skill,task_id,created_at,expires_at,submitted_at,score,max_score,auto_pass,status FROM competency_evaluations WHERE user_id=? ORDER BY created_at DESC LIMIT 20"
+    ).bind(user.id).all(),
   ]);
   return json({
     authenticated: true,
@@ -702,6 +705,7 @@ async function me(request, env) {
     skills: skills.results || [],
     requests: requests.results || [],
     notifications: notifications.results || [],
+    evaluations: evaluations.results || [],
     email_transport: Boolean(env.RESEND_API_KEY && env.MAIL_FROM),
   });
 }
