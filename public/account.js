@@ -48,7 +48,8 @@
     catch { return value; }
   }
 
-  function levelCopy(level) {
+  function levelCopy(level, owner=false) {
+    if (owner) return "<strong>L7 · Founder / Owner</strong><span>Unique governance authority over PCS Commons. Technical competence remains tracked separately at L6; owner status cannot be delegated, self-assigned, or modified by other administrators.</span>";
     if (level === 0) return "<strong>L0 · Learner</strong><span>Open, non-exclusive L0 tasks. No founder approval required.</span>";
     if (level === 1) return "<strong>L1 · Contributor</strong><span>Open L0–L1 work. Higher levels still require reviewed promotion.</span>";
     if (level === 2) return "<strong>L2 · Verified Contributor</strong><span>May apply for reserved L2 work when the required skill is independently verified.</span>";
@@ -153,15 +154,29 @@
     const user=data.user;
     $("#accountLoggedOut").hidden=true;
     $("#accountLoggedIn").hidden=false;
-    $("#accountLevel").textContent="L"+user.level;
+    $("#accountLevel").textContent="L"+(user.display_level ?? user.level);
     $("#accountName").textContent=user.display_name;
     $("#accountEmail").textContent=user.email;
-    $("#accountRoleChip").textContent=user.role.toUpperCase();
+    $("#accountRoleChip").textContent=user.is_owner ? "FOUNDER / OWNER" : user.role.toUpperCase();
     $("#adminDashboardLink").hidden=user.role!=="admin";
     $("#emailVerifyChip").textContent=user.email_verified ? "EMAIL VERIFIED" : "EMAIL UNVERIFIED";
     $("#emailVerifyChip").className="commons-chip "+(user.email_verified?"volunteer":"planned");
     $("#resendVerification").hidden=user.email_verified;
-    $("#levelAccessSummary").innerHTML=levelCopy(user.level);
+    $("#levelAccessSummary").innerHTML=levelCopy(user.level,Boolean(user.is_owner));
+    const deleteForm=$("#deleteAccountForm");
+    const deletePanel=deleteForm?.closest(".danger-panel");
+    if(deleteForm&&deletePanel){
+      deleteForm.hidden=Boolean(user.is_owner);
+      const heading=deletePanel.querySelector("h2");
+      const copy=deletePanel.querySelector("p.muted");
+      if(user.is_owner){
+        if(heading)heading.textContent="Founder/Owner account protection";
+        if(copy)copy.textContent="The unique PCS Founder/Owner account cannot be deleted through self-service. Ownership must be deliberately transferred or governance shut down through a separate protected procedure first.";
+      }else{
+        if(heading)heading.textContent="Delete my Commons account";
+        if(copy)copy.textContent="This deletes your contributor account and its linked sessions, skill records, task requests, submissions, and account notifications. Enter your password to confirm. This does not delete unrelated public GitHub contributions or short-retention infrastructure logs.";
+      }
+    }
 
     const form=$("#profileForm");
     form.elements.availability_hours.value=String(user.availability_hours||1);
