@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   display_name TEXT NOT NULL,
   password_hash TEXT NOT NULL,
   password_salt TEXT NOT NULL,
-  password_iterations INTEGER NOT NULL DEFAULT 250000,
+  password_iterations INTEGER NOT NULL DEFAULT 100000,
   recovery_hash TEXT NOT NULL,
   level INTEGER NOT NULL DEFAULT 0 CHECK(level BETWEEN 0 AND 6),
   role TEXT NOT NULL DEFAULT 'contributor' CHECK(role IN ('contributor','admin')),
