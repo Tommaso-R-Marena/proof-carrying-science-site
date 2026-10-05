@@ -332,6 +332,46 @@ function eligibilityFor(task, user, skills) {
   return { state: "invite", can_start: false, can_request: true, reason: "High-trust application. PCS must explicitly approve and assign it." };
 }
 
+async function remindPendingReviews(env) {
+  const pending = await env.COMMONS_DB.prepare(
+    `SELECT r.id,r.task_id,r.requested_at,r.decision_due_at,t.title,u.display_name,u.email,u.level
+     FROM task_requests r
+     JOIN tasks t ON t.id=r.task_id
+     JOIN users u ON u.id=r.user_id
+     WHERE r.status='pending'
+     ORDER BY r.decision_due_at ASC
+     LIMIT 200`
+  ).all();
+  const now = new Date();
+  for (const row of pending.results || []) {
+    const targetAt = new Date(addBusinessDaysIso(row.requested_at, 1));
+    const hardAt = new Date(row.decision_due_at);
+    const overdue = now >= hardAt;
+    const targetMissed = now >= targetAt;
+    if (!targetMissed) continue;
+    const kind = overdue ? `task_request_overdue_admin:${row.id}` : `task_request_target_admin:${row.id}`;
+    const already = await env.COMMONS_DB.prepare(
+      "SELECT 1 AS ok FROM notifications WHERE kind=? LIMIT 1"
+    ).bind(kind).first();
+    if (already) continue;
+    await notify(env, {
+      kind,
+      email: env.ADMIN_EMAIL || null,
+      subject: overdue ? `[PCS OVERDUE] Task request ${row.task_id} — ${row.display_name}` : `[PCS 1-day target] Task request ${row.task_id} — ${row.display_name}`,
+      body: [
+        `${row.display_name} <${row.email}> is waiting for a decision on ${row.task_id} — ${row.title}.`,
+        `Verified level: L${row.level}`,
+        `Requested: ${row.requested_at}`,
+        `Hard decision deadline: ${row.decision_due_at}`,
+        overdue ? "The 2-business-day review deadline has passed. Please approve or reject now." : "The 1-business-day response target has been reached. Please review before the hard 2-business-day deadline.",
+        "",
+        `Admin dashboard: ${env.PUBLIC_ORIGIN || "https://proof-carrying-science-site.marenatommaso.workers.dev"}/admin.html#requests`,
+      ].join("\n"),
+    });
+  }
+  return pending.results?.length || 0;
+}
+
 async function expireStaleWork(env) {
   const now = nowIso();
   const stale = await env.COMMONS_DB.prepare(
@@ -816,6 +856,7 @@ async function withdrawRequest(request, env, user, requestId) {
 async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
+  await remindPendingReviews(env);
   const [pending, checkpoints, submissions, skillReviews, users] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
@@ -1167,6 +1208,7 @@ export default {
   async scheduled(_event, env, _ctx) {
     try {
       await expireStaleWork(env);
+      await remindPendingReviews(env);
     } catch (error) {
       console.error("PCS Commons scheduled cleanup failed",error);
     }
