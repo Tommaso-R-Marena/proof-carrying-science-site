@@ -58,6 +58,7 @@
     const account=new URL("account.html",location.origin);
     account.searchParams.set("task",task.id);
     account.searchParams.set("next",next.pathname+next.search);
+    if(task.required_skill)account.searchParams.set("skill",task.required_skill);
     if(eligibility?.reason)account.searchParams.set("reason",eligibility.reason);
     return account.pathname+account.search;
   }
@@ -67,6 +68,19 @@
     const task=String(params.get("task")||"").trim();
     if(!/^[A-Za-z0-9._-]{2,64}$/.test(task))return null;
     return {task,apply:params.get("apply")==="1"};
+  }
+
+  function renderProjectTaskReturn(){
+    if(!location.pathname.endsWith("/projects.html"))return;
+    const intent=requestedTaskIntent();
+    if(!intent)return;
+    const head=document.querySelector(".commons-pagehead");
+    if(!head||document.getElementById("projectTaskReturn"))return;
+    const panel=document.createElement("div");
+    panel.id="projectTaskReturn";
+    panel.className="commons-policy-note";
+    panel.innerHTML=`<strong>Inspecting path for ${esc(intent.task)}:</strong><span>This page explains the assurance path; it does not change your task eligibility.</span><a class="button secondary" href="tasks.html?task=${encodeURIComponent(intent.task)}">Return to selected task</a>`;
+    head.insertAdjacentElement("afterend",panel);
   }
 
   function renderLevelTable(){
@@ -258,7 +272,7 @@
   }
 
   document.addEventListener("DOMContentLoaded",async()=>{
-    initFilters();initApplicationDialog();await initContributorForm();
+    renderProjectTaskReturn();initFilters();initApplicationDialog();await initContributorForm();
     try{await refresh();}catch(err){
       const target=$("#commonsTaskList");if(target)target.innerHTML=`<div class="commons-empty"><strong>Account service unavailable.</strong><span>${esc(err.message)}</span></div>`;
       renderLevelTable();
