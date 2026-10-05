@@ -16,6 +16,10 @@ CHECKS = [
     ("/", "text/html", "Proof-Carrying Science"),
     ("/guided-submission.html?demo=1", "text/html", "Try PCS"),
     ("/package-inspector.html", "text/html", "Proof-Carrying Science"),
+    ("/account.html", "text/html", "Your level is earned here"),
+    ("/tasks.html", "text/html", "Task Marketplace"),
+    ("/api/system/status", "application/json", '"request_sla":"1–2 business days"'),
+    ("/api/tasks", "application/json", '"tasks"'),
     ("/status.json", "application/json", '"contact"'),
     ("/sitemap.xml", "application/xml", "<urlset"),
     ("/robots.txt", "text/plain", "User-agent"),
@@ -81,4 +85,4 @@ if errors:
         print(f"- {error}")
     sys.exit(1)
 
-print(f"PCS LIVE HEALTH: PASS ({len(CHECKS)} public endpoints + security headers + status JSON)")
+print(f"PCS LIVE HEALTH: PASS ({len(CHECKS)} public/API endpoints + security headers + status JSON)")
