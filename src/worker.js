@@ -780,12 +780,18 @@ async function withdrawRequest(request, env, user, requestId) {
 async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
-  const [pending, submissions, skillReviews, users] = await Promise.all([
+  const [pending, checkpoints, submissions, skillReviews, users] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
               u.display_name,u.email,u.level,u.email_verified
        FROM task_requests r JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=r.user_id
        WHERE r.status='pending' ORDER BY r.decision_due_at ASC,r.requested_at ASC LIMIT 100`
+    ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT r.*,t.title,t.id AS task_id,u.display_name,u.email,u.level,u.email_verified
+       FROM task_requests r JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=r.user_id
+       WHERE r.status='approved' AND r.checkpoint_status='pending' AND COALESCE(r.checkpoint_note,'')!=''
+       ORDER BY r.checkpoint_due_at ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
       `SELECT s.*,r.task_id,t.title,u.display_name,u.email,u.level
@@ -805,6 +811,7 @@ async function adminOverview(request, env) {
     admin:publicUser(admin),
     email_transport:Boolean(env.RESEND_API_KEY && env.MAIL_FROM),
     pending_requests:pending.results||[],
+    checkpoints:checkpoints.results||[],
     submissions:submissions.results||[],
     skill_reviews:skillReviews.results||[],
     users:users.results||[],
