@@ -264,7 +264,7 @@ commons_contracts = {
         "See exactly where a contribution fits.",
         "Not a claim of global AI safety",
         "Distributed assurance",
-        "Generalizes beyond the evaluated execution",
+        "The result generalizes beyond the evaluated execution",
     ],
     "contributors.html": [
         "No public grind leaderboard.",
