@@ -153,6 +153,27 @@ async function readBody(request) {
   }
 }
 
+
+async function rateLimit(request, env, scope, maxCount, windowMinutes) {
+  if (!env.RATE_LIMIT_SALT) {
+    throw new ApiError(503, "Account abuse protection is not configured.", "rate_limit_unconfigured");
+  }
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const key = await sha256(`${env.RATE_LIMIT_SALT}:${scope}:${ip}`);
+  const now = nowIso();
+  const cutoff = new Date(Date.now() - windowMinutes * 60000).toISOString();
+  const row = await env.COMMONS_DB.prepare(
+    `INSERT INTO rate_limits(key,window_start,count) VALUES(?,?,1)
+     ON CONFLICT(key) DO UPDATE SET
+       count=CASE WHEN rate_limits.window_start<? THEN 1 ELSE rate_limits.count+1 END,
+       window_start=CASE WHEN rate_limits.window_start<? THEN excluded.window_start ELSE rate_limits.window_start END
+     RETURNING count,window_start`
+  ).bind(key, now, cutoff, cutoff).first();
+  if (Number(row?.count || 0) > maxCount) {
+    throw new ApiError(429, "Too many requests. Please wait and try again.", "rate_limited");
+  }
+}
+
 function publicUser(row) {
   if (!row) return null;
   return {
@@ -338,10 +359,12 @@ async function expireStaleWork(env) {
   }
   await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE expires_at<=?").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM email_verification_tokens WHERE expires_at<=? OR used_at IS NOT NULL").bind(now).run();
+  await env.COMMONS_DB.prepare("DELETE FROM rate_limits WHERE window_start<?").bind(addDaysIso(now, -2)).run();
   return stale.results?.length || 0;
 }
 
 async function register(request, env) {
+  await rateLimit(request, env, "register", 5, 60);
   const body = await readBody(request);
   const email = normalizeEmail(body.email);
   const displayName = cleanText(body.display_name, 80);
@@ -389,6 +412,7 @@ async function register(request, env) {
 }
 
 async function bootstrapAdmin(request, env) {
+  await rateLimit(request, env, "admin-bootstrap", 10, 60);
   const body = await readBody(request);
   const email = normalizeEmail(body.email);
   const tokenValue = String(body.bootstrap_token || "");
@@ -428,6 +452,7 @@ async function bootstrapAdmin(request, env) {
 }
 
 async function login(request, env) {
+  await rateLimit(request, env, "login", 30, 15);
   const body = await readBody(request);
   const email = normalizeEmail(body.email);
   const password = String(body.password || "");
@@ -462,6 +487,7 @@ async function login(request, env) {
 }
 
 async function recover(request, env) {
+  await rateLimit(request, env, "recover", 5, 60);
   const body = await readBody(request);
   const email = normalizeEmail(body.email);
   const recoveryCode = String(body.recovery_code || "");
@@ -486,6 +512,7 @@ async function recover(request, env) {
 }
 
 async function verifyEmail(request, env) {
+  await rateLimit(request, env, "verify-email", 20, 60);
   const body = await readBody(request);
   const raw = String(body.token || "");
   if (!raw) throw new ApiError(400, "Verification token is required.", "missing_token");
@@ -588,6 +615,7 @@ async function listTasks(request, env) {
 }
 
 async function startOrRequestTask(request, env, user, taskId) {
+  await rateLimit(request, env, "task-request", 30, 60);
   const body = await readBody(request);
   const task = await env.COMMONS_DB.prepare("SELECT * FROM tasks WHERE id=? AND status='open'").bind(taskId).first();
   if (!task) throw new ApiError(404,"Task not found or not open.","task_not_found");
