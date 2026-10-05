@@ -372,7 +372,9 @@ if admin_js.exists():
         "/checkpoint",
         "/skill",
         "/level",
+        "/governance",
         "FOUNDER CALIBRATION OVERRIDE",
+        "Founder/Owner authority required",
     ]:
         if required_text not in admin_script:
             errors.append(f"admin.js: founder approval contract drift: {required_text}")
@@ -397,10 +399,28 @@ else:
         "ADMIN_BOOTSTRAP_TOKEN",
         "RATE_LIMIT_SALT",
         "rateLimit(request, env",
+        "protectOwnerTarget",
+        "adminSetGovernance",
+        "owner_delete_protected",
+        "owner_required",
+        "sessions_revoked",
         "async scheduled",
     ]:
         if required_text not in worker_script:
             errors.append(f"src/worker.js: account/task authority contract drift: {required_text}")
+
+migration_sql = REPO / "migrations" / "0001_commons_auth.sql"
+if not migration_sql.exists():
+    errors.append("missing Commons schema source: migrations/0001_commons_auth.sql")
+else:
+    migration_text = migration_sql.read_text(encoding="utf-8")
+    for required_text in [
+        "is_owner INTEGER NOT NULL DEFAULT 0",
+        "idx_users_single_owner",
+        "WHERE is_owner=1",
+    ]:
+        if required_text not in migration_text:
+            errors.append(f"migrations/0001_commons_auth.sql: Owner uniqueness contract drift: {required_text}")
 
 demo_page = ROOT / "demo.html"
 demo_js = ROOT / "demo.js"
