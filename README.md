@@ -9,6 +9,11 @@ Live preview:
 ## What is real
 
 The site intentionally has no application backend. Its interactive functionality runs locally in the browser:
+- **PCS AI Safety Commons** — a public-good contributor hub that maps bounded AI-safety work into an auditable task → obligation → claim path. The governing principle is “crowdsource the work, never the truth.”
+- **Contributor onboarding + progression** — local browser profile builder, L0–L6 progression, L2 general paid-task eligibility, L4 reviewer-authority threshold, and an explicit Contributor Bill of Rights.
+- **Task marketplace** — filterable pilot inventory with difficulty, expected time, skill track, impact path, verification rule, and explicit volunteer / proposed-bounty / review / specialist-contract status. Requests are coordinated manually by email while no backend exists.
+- **Public-good funding model** — proposed PCS Safety Bounty Fund, grant/donation/sponsorship/commercial cross-subsidy model, funding firewall, and explicit rule that sponsorship cannot purchase a green result.
+- **Organization access model** — broad free public-interest/community participation with paid enterprise value for private deployment, scale, governance, and support; final licensing structure remains subject to legal review.
 
 - **Completed Result Anatomy** — educational v0.6 result walkthrough showing `valid`, claim status, and `accepted` as separate axes, using the real verifier/receipt field names while explicitly labeling scenario values as illustrative rather than a live verification.\n- **Guided Submission** — beginner-first five-step flow (`Project → Claim → Review → Prepare → Ready`) that reuses the exact browser Project Mapper engine, keeps files local, maps human intent only to supported typed claim templates, renders plain-language explanations from the formal predicate, progressively discloses the exact machine contract, and stops honestly at the authoritative CLI confirmation/signing boundary.\n- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.6/v2 theorem boundary with explicit remaining contracts, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
 - **Machine-readable trust state** — `public/status.json` mirrors the released checker/proof/parity/preview state and is cross-checked against the shipped browser fixture by the deployment gate.
@@ -41,6 +46,15 @@ Only `public/` is deployable.
 ```text
 public/
   index.html
+  commons.html
+  contribute.html
+  tasks.html
+  projects.html
+  contributors.html
+  fund.html
+  governance.html
+  organizations.html
+  research.html
   project-builder.html
   mvp.html
   validation.html
@@ -56,6 +70,7 @@ public/
   404.html
   styles.css
   site.js
+  commons.js
   project-builder.js
   mvp.js
   demo.js
@@ -118,7 +133,7 @@ A separate card-free operations layer runs a daily production smoke check throug
 ## Security/privacy posture
 
 - no database;
-- no user accounts;
+- no user accounts; the Commons pilot uses localStorage for local planning state and manual email coordination;
 - privacy-first Cloudflare Web Analytics / Core Web Vitals measurement;
 - no advertising pixels or behavioral tracking; Cloudflare's analytics beacon is the only third-party runtime script;
 - no scientific-data submission endpoint;

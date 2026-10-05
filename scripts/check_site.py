@@ -48,8 +48,8 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "commons.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
     "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
@@ -202,7 +202,11 @@ index_page = ROOT / "index.html"
 if index_page.exists():
     index_text = index_page.read_text(encoding="utf-8")
     for required_text in [
-        "Don’t just send a result. Send what someone needs to verify it.",
+        "Don’t just claim something is safe. Show what can actually be verified.",
+        "Crowdsource the work. Never the truth.",
+        "Contribute to AI safety",
+        "L2 opens general paid-task eligibility",
+        "L4 is the review-authority threshold",
         "Project + scientific question",
         "Exact files + exact checks",
         "Replayed evidence + explicit decision",
@@ -217,7 +221,7 @@ if index_page.exists():
         'href="package-inspector.html#inspectorDrop"',
         "Start Guided Submission",
         "producer and reviewer are intentionally separate trust roles",
-        "latest hosted CircleCI runtime/restoration gate passed",
+        "published runtime/restoration evidence; CI infrastructure is being hardened",
     ]:
         if required_text not in index_text:
             errors.append(f"index.html: role-entry/usability drift: {required_text}")
@@ -227,6 +231,99 @@ if index_page.exists():
         errors.append("index.html: reviewer role route drift")
     if 'href="guided-submission.html?demo=1"' not in index_text:
         errors.append("index.html: explorer demo route drift")
+
+
+commons_contracts = {
+    "commons.html": [
+        "Crowdsource the work. Never the truth.",
+        "Give one useful hour to AI safety.",
+        "Volunteer and paid work are labeled before you accept it",
+        "Safety Bounty Fund",
+        'href="contribute.html"',
+        'href="tasks.html"',
+        'src="commons.js"',
+    ],
+    "contribute.html": [
+        "You can help before you are an expert.",
+        "L2",
+        "L4",
+        "Contributor Bill of Rights",
+        'id="contributorProfileForm"',
+        'id="commonsLevels"',
+        'src="commons.js"',
+    ],
+    "tasks.html": [
+        "Task Marketplace",
+        "not yet funded",
+        "Every task has a bounded deliverable",
+        'id="commonsTaskList"',
+        'id="taskComp"',
+        'src="commons.js"',
+    ],
+    "projects.html": [
+        "See exactly where a contribution fits.",
+        "Not a claim of global AI safety",
+        "Distributed assurance",
+        "The result generalizes beyond the evaluated execution",
+    ],
+    "contributors.html": [
+        "No public grind leaderboard.",
+        "L2",
+        "L4",
+        'id="personalImpact"',
+    ],
+    "fund.html": [
+        "PCS Safety Bounty Fund",
+        "Not yet opened",
+        "Money must never buy a green result.",
+        "proposed",
+    ],
+    "governance.html": [
+        "COMMON GOOD COMMITMENT",
+        "Crowdsource the work. Never the authority.",
+        "Contributor Bill of Rights",
+        "No monetary penalty for ordinary volunteer non-completion.",
+    ],
+    "organizations.html": [
+        "Broadly free",
+        "Large commercial",
+        "Revenue helps sustain the commons",
+        "Licensing caution",
+    ],
+    "research.html": [
+        "Distributed contributors should not require distributed trust.",
+        "AI safety first",
+        "External-world transfer is explicit",
+        "integrated into the core repository and independently rebuilt",
+    ],
+}
+for page_name, required_texts in commons_contracts.items():
+    page = ROOT / page_name
+    if not page.exists():
+        continue
+    value = page.read_text(encoding="utf-8")
+    if 'src="site.js"' not in value:
+        errors.append(f"{page_name}: shared navigation script is missing")
+    for required_text in required_texts:
+        if required_text not in value:
+            errors.append(f"{page_name}: AI Safety Commons contract drift: {required_text}")
+
+commons_js = ROOT / "commons.js"
+if commons_js.exists():
+    commons_script = commons_js.read_text(encoding="utf-8")
+    for required_text in [
+        'const PROFILE_KEY = "pcs-commons-profile-v1"',
+        'const REQUESTS_KEY = "pcs-commons-task-requests-v1"',
+        'name:"Verified Contributor"',
+        'name:"Reviewer"',
+        'funding:"planned"',
+        "Planned bounty · not yet funded",
+        "requestTask",
+        "mailto:",
+        "official level requires PCS review",
+    ]:
+        if required_text not in commons_script:
+            errors.append(f"commons.js: contributor-marketplace contract drift: {required_text}")
 
 demo_page = ROOT / "demo.html"
 demo_js = ROOT / "demo.js"
@@ -548,6 +645,9 @@ for public_url in [
     "https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html",
     "https://proof-carrying-science-site.marenatommaso.workers.dev/validation-registry.html",
     "https://proof-carrying-science-site.marenatommaso.workers.dev/trust-explorer.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/commons.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/tasks.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/governance.html",
 ]:
     if public_url not in sitemap_text:
         errors.append(f"sitemap.xml: required public URL missing: {public_url}")

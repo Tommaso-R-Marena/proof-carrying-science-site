@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Task Marketplace · PCS AI Safety Commons</title>
+<meta name="description" content="Browse bounded AI-safety tasks by difficulty, time, track, and compensation status.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/tasks.html">
+<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body class="commons-page">
+<div class="topbar commons-topbar"><div class="shell"><span>Task marketplace · pilot inventory · compensation status is explicit</span><a href="governance.html#compensation">Contributor rights</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+<a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+<div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="contribute.html">My contributor profile</a></div>
+</nav>
+<main>
+<section class="pagehead commons-pagehead">
+<div class="kicker">AI Safety Task Marketplace</div>
+<h1>Choose one piece of work with a clear finish line.</h1>
+<p>Every task has a bounded deliverable, an expected time, a difficulty level, a verification rule, and an explicit compensation status. The current marketplace is a pilot: requests are coordinated manually, and proposed bounties are not payable until a task is marked funded.</p>
+<div class="commons-policy-note"><strong>Important:</strong><span><b>“Proposed” means not yet funded.</b> Do not begin a paid/planned-paid task expecting compensation until PCS confirms funding and terms in writing.</span></div>
+</section>
+
+<section class="task-market-layout">
+  <aside class="task-filter-panel panel" aria-label="Task filters">
+    <div class="panel-eyebrow">Filter tasks</div>
+    <label><span>Maximum difficulty</span>
+      <select id="taskLevel" class="selectinput">
+        <option value="0">L0 · Learner</option><option value="1">L1 · Contributor</option><option value="2">L2 · Verified contributor</option>
+        <option value="3">L3 · Investigator</option><option value="4">L4 · Reviewer</option><option value="5">L5 · Specialist</option><option value="6" selected>L6 · All levels</option>
+      </select>
+    </label>
+    <label><span>Compensation</span>
+      <select id="taskComp" class="selectinput">
+        <option value="all">All tasks</option><option value="volunteer">Volunteer only</option><option value="paid">Paid / planned-paid only</option>
+      </select>
+    </label>
+    <label><span>Track</span>
+      <select id="taskSkill" class="selectinput">
+        <option value="all">All tracks</option><option value="nontechnical">Nontechnical</option><option value="research">Research</option>
+        <option value="python">Python</option><option value="ml">ML / evaluation</option><option value="security">Security</option>
+        <option value="lean">Lean / formal methods</option><option value="review">Review</option><option value="biology">Computational biology</option>
+      </select>
+    </label>
+    <label><span>Maximum time</span>
+      <select id="taskHours" class="selectinput">
+        <option value="1">1 hour</option><option value="2">2 hours</option><option value="3">3 hours</option><option value="5">5 hours</option><option value="8">8 hours</option><option value="99" selected>Any time</option>
+      </select>
+    </label>
+    <div class="task-filter-help">
+      <strong>Not sure where to start?</strong>
+      <p>Build a local profile and let PCS suggest a task that fits your time and background.</p>
+      <a class="button secondary" href="contribute.html">Build profile</a>
+    </div>
+  </aside>
+
+  <section class="task-market-results">
+    <div class="task-results-head"><div><div class="kicker">Open + planned work</div><h2 id="taskCount">Tasks</h2></div><a class="button secondary" href="projects.html">See how tasks connect</a></div>
+    <div id="commonsTaskList" class="commons-task-list" aria-live="polite"></div>
+  </section>
+</section>
+
+<section class="section">
+  <div class="section-heading-row"><div><div class="kicker">Task contract</div><h2>Four things must be clear before productive work starts.</h2></div></div>
+  <div class="grid4 commons-contract-grid">
+    <article class="card"><div class="num">01</div><h3>Scope</h3><p>Exactly what artifact, analysis, test, proof, review, or annotation is expected.</p></article>
+    <article class="card"><div class="num">02</div><h3>Acceptance</h3><p>How the result will be verified and what can cause rejection or escalation.</p></article>
+    <article class="card"><div class="num">03</div><h3>Compensation</h3><p>Volunteer, funded bounty, paid review, or specialist contract—disclosed before work begins.</p></article>
+    <article class="card"><div class="num">04</div><h3>Rights + terms</h3><p>Attribution, licensing/IP, confidentiality, payment timing, and review process stated up front.</p></article>
+  </div>
+</section>
+
+<section class="commons-two-col">
+  <div class="panel">
+    <div class="kicker">Reliability, not punishment</div>
+    <h2>Returning a task is allowed.</h2>
+    <p>Tasks should not be held indefinitely, but volunteer accountability should not become coercion. A missed claim window returns the task to the pool. Repeated abandonment may reduce simultaneous reservations or create a cooldown. “Attempted but blocked” is valuable data and should not be treated like disappearing.</p>
+  </div>
+  <div class="panel">
+    <div class="kicker">No quantity leaderboard</div>
+    <h2>Do not optimize for points.</h2>
+    <p>Task count is a poor proxy for safety impact. PCS should recognize hard reproductions, falsifications, useful OPEN findings, proof quality, reviewer agreement, and help given to other contributors—not grinding easy tickets.</p>
+  </div>
+</section>
+
+<section class="commons-callout">
+  <div><span class="commons-kicker-dark">CURRENT PILOT</span><h2>The marketplace is ready to coordinate work before a full account backend exists.</h2><p>Requesting a task saves the request locally and prepares an email. Assignment, payment, and contributor level are confirmed manually until a durable contributor backend is approved and built.</p></div>
+  <div class="actions"><a class="button primary button-lg" href="contribute.html">Set my profile</a><a class="button ghost button-lg" href="governance.html">Read the rules</a></div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Task-level coordination for useful, verifiable AI-safety work.</p></div><div class="footercol"><strong>Marketplace</strong><a href="contribute.html">Onboarding</a><a href="projects.html">Assurance projects</a><a href="contributors.html">Progression</a></div><div class="footercol"><strong>Rules</strong><a href="governance.html">Governance</a><a href="fund.html">Funding</a><a href="contact.html">Contact</a></div></div></footer>
+</div>
+<script src="site.js"></script><script src="commons.js"></script>
+</body></html>

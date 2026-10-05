@@ -1,8 +1,19 @@
 # Proof-Carrying Science
 
-Proof-Carrying Science (PCS) is an assurance system for scientific computation. It packages an exact typed scientific claim with exact artifacts, assumptions, replay evidence, cryptographic bindings, machine-checked assurance, and reviewer-owned acceptance policy.
+Proof-Carrying Science (PCS) is an AI-safety-first, domain-general assurance system for consequential computation. It packages an exact typed claim with exact artifacts, assumptions, replay evidence, cryptographic bindings, machine-checked assurance, and reviewer-owned acceptance policy. The PCS AI Safety Commons adds a public-good contributor model for bounded, verifiable safety work.
 
 Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
+
+## AI Safety Commons
+- Commons overview: /commons.html
+- Contributor onboarding: /contribute.html
+- Task marketplace: /tasks.html
+- Assurance projects / impact graph: /projects.html
+- Contributor progression: /contributors.html
+- Public-good funding model: /fund.html
+- Governance and Contributor Bill of Rights: /governance.html
+- Organization access model: /organizations.html
+- Distributed assurance research model: /research.html
 
 ## Primary pages
 - Product overview: /
@@ -17,3 +28,7 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
 ## Important interpretation
 A PCS-valid package is scoped to an exact typed claim, exact evidence, and explicit assumptions. PCS does not claim that package validity establishes arbitrary biological, clinical, empirical, or regulatory truth. Production v0.6 validity is Lean-authoritative; browser tools are educational, discovery, or inspection surfaces unless explicitly stated otherwise.
+
+
+## Commons interpretation
+The contributor marketplace is currently a static/manual-coordination pilot. Local profile/task state remains in the browser; task requests prepare email rather than creating a server-side assignment. Proposed bounties are not payable unless a task is explicitly marked funded and PCS confirms written terms. Contributor submissions never become assurance merely because they were submitted: the commons principle is "crowdsource the work, never the truth."

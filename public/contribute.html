@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contribute · PCS AI Safety Commons</title>
+<meta name="description" content="Start contributing useful, bounded AI-safety work with or without technical experience.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/contribute.html">
+<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body class="commons-page">
+<div class="topbar commons-topbar"><div class="shell"><span>Contributor onboarding · local profile builder · nothing is submitted automatically</span><a href="commons.html">AI Safety Commons</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+<a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+<div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="tasks.html">Find a task</a></div>
+</nav>
+<main>
+<section class="pagehead commons-pagehead">
+<div class="kicker">Contribute to AI safety</div>
+<h1>You can help before you are an expert.</h1>
+<p>Start from the time and skills you actually have. PCS is designed to turn large safety problems into bounded contributions with clear deliverables, review rules, and visible impact paths.</p>
+<div class="commons-inline-principles"><span>Useful</span><span>Bounded</span><span>Verifiable</span><span>Never forced-positive</span></div>
+<div class="commons-policy-note"><strong>Default weekly rhythm:</strong><span>Start with one active task at a time and aim for roughly one bounded contribution per week. Higher concurrency should be earned through reliability rather than encouraged by a points system.</span></div>
+</section>
+
+<section class="contributor-builder">
+  <div class="panel contributor-form-panel">
+    <div class="panel-eyebrow">Local planning profile</div>
+    <h2>What can you contribute this week?</h2>
+    <p>This profile stays in your browser. It is used only to recommend tasks. An official PCS contributor level would require reviewed work.</p>
+    <form id="contributorProfileForm">
+      <div class="commons-form-grid">
+        <label><span>Hours available this week</span>
+          <select class="selectinput" name="hours">
+            <option value="1">About 1 hour</option><option value="2">About 2 hours</option><option value="3">About 3 hours</option>
+            <option value="5">About 5 hours</option><option value="8">About 8 hours</option><option value="10">About 10 hours</option><option value="15">About 15 hours</option>
+          </select>
+        </label>
+        <label><span>Best-fit track right now</span>
+          <select class="selectinput" name="track">
+            <option value="nontechnical">No technical experience / operations / annotation</option>
+            <option value="research">Research / literature / analysis</option>
+            <option value="python">Python / software engineering</option>
+            <option value="ml">Machine learning / evaluation</option>
+            <option value="biology">Computational biology / science</option>
+            <option value="security">Security / red teaming</option>
+            <option value="lean">Lean / formal methods</option>
+            <option value="review">Independent review / assurance</option>
+          </select>
+        </label>
+        <label><span>Work preference</span>
+          <select class="selectinput" name="compensation">
+            <option value="either">Volunteer or paid</option>
+            <option value="volunteer">Volunteer tasks are fine</option>
+            <option value="paid-only">Show me paid / planned-paid work</option>
+          </select>
+        </label>
+        <label><span>Planning level</span>
+          <select class="selectinput" name="level">
+            <option value="0">L0 · I am new</option><option value="1">L1 · Basic contributor</option><option value="2">L2 · Technical/verified contributor</option>
+            <option value="3">L3 · Investigator</option><option value="4">L4 · Reviewer</option><option value="5">L5 · Specialist</option><option value="6">L6 · Research lead</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions"><button class="button primary" type="submit">Save local profile + recommend a task</button><a class="button secondary" href="tasks.html">Browse all tasks</a></div>
+      <p id="profileSaved" class="successline" hidden>Saved locally in this browser.</p>
+    </form>
+  </div>
+  <aside class="panel local-profile-panel">
+    <div class="panel-eyebrow">Your local profile</div>
+    <div id="localContributorProfile"></div>
+  </aside>
+</section>
+
+<section class="section-tight">
+  <div class="section-heading-row"><div><div class="kicker">Recommended next step</div><h2>One bounded contribution, not an open-ended commitment.</h2></div><p>The recommendation is based only on the local planning profile above. It does not assign a task or certify your level.</p></div>
+  <div id="commonsRecommendation"></div>
+</section>
+
+<section class="section">
+  <div class="section-heading-row">
+    <div><div class="kicker">Progression</div><h2>Reliability earns access. Credentials are useful, but not the only path in.</h2></div>
+    <p>Level controls task complexity and review authority. Compensation is attached to tasks rather than being a secret reward for reaching a rank.</p>
+  </div>
+  <div id="commonsLevels" class="level-stack"></div>
+</section>
+
+<section class="commons-two-col">
+  <div class="panel">
+    <div class="kicker">Why L2 for paid work?</div>
+    <h2>Paid-task eligibility should begin before review authority.</h2>
+    <p>A reliable contributor should not have to reach senior-review status before compensation becomes possible. L2 is where the general paid marketplace opens after verified work. L4 is different: it is the point where PCS may authorize someone to review other contributors' evidence.</p>
+    <div class="boundary"><strong>Qualification is not unpaid labor at scale.</strong><span>A small orientation and qualification task may be required. Productive work should be clearly labeled volunteer, funded bounty, paid review, or specialist contract before it begins.</span></div>
+  </div>
+  <div class="panel">
+    <div class="kicker">Negative results matter</div>
+    <h2>Finding that a claim fails can be the highest-value contribution.</h2>
+    <p>PCS should never create pressure to make an assurance case turn green. Falsifications, unresolved assumptions, reviewer disagreements, and correctly OPEN obligations are valuable outputs.</p>
+    <ul class="commons-checklist">
+      <li>Found a bypass? That counts.</li>
+      <li>Could not reproduce the result? That counts.</li>
+      <li>Found a missing assumption? That counts.</li>
+      <li>Showed a task is underspecified? That counts.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-heading-row"><div><div class="kicker">Contributor Bill of Rights</div><h2>You should know the rules before donating or selling your time.</h2></div><a class="button secondary" href="governance.html">Read full governance</a></div>
+  <div class="rights-grid">
+    <article><strong>Clear scope</strong><span>Know what counts as done before starting.</span></article>
+    <article><strong>Clear compensation</strong><span>Volunteer or paid status disclosed up front.</span></article>
+    <article><strong>Credit</strong><span>Receive attribution unless you prefer anonymity.</span></article>
+    <article><strong>Reasoned rejection</strong><span>Rejected work should have a reviewable reason.</span></article>
+    <article><strong>No hidden volunteer gate</strong><span>Advancement cannot require indefinite unpaid productive labor.</span></article>
+    <article><strong>Safe exit</strong><span>You may return a task; reliability is managed without financial punishment.</span></article>
+    <article><strong>Negative findings protected</strong><span>No pressure to turn a failed claim into a positive one.</span></article>
+    <article><strong>Terms before work</strong><span>Licensing, confidentiality, and payment terms must be visible before productive work begins.</span></article>
+  </div>
+</section>
+
+<section class="commons-callout">
+  <div><span class="commons-kicker-dark">READY?</span><h2>Find one task that fits the next few hours of your life.</h2><p>Task requests are currently coordinated manually while the contributor backend is being designed. The browser can save your interests locally and prepare an email request.</p></div>
+  <div class="actions"><a class="button primary button-lg" href="tasks.html">Open task marketplace →</a><a class="button ghost button-lg" href="commons.html">Back to Commons</a></div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Useful, bounded, verifiable contributions to safer AI.</p></div><div class="footercol"><strong>Contribute</strong><a href="tasks.html">Task marketplace</a><a href="contributors.html">Progression + impact</a><a href="projects.html">Assurance projects</a></div><div class="footercol"><strong>Principles</strong><a href="governance.html">Governance</a><a href="fund.html">Funding model</a><a href="privacy.html">Privacy</a></div></div></footer>
+</div>
+<script src="site.js"></script><script src="commons.js"></script>
+</body>
+</html>
