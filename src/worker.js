@@ -978,7 +978,7 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
   ).bind(status,nowIso(),admin.id,note,row.id).run();
   if (decision==="accept") {
     await env.COMMONS_DB.prepare("UPDATE task_requests SET status='completed',decision_note=? WHERE id=?").bind("Submission accepted.",row.task_request_id).run();
-    if (Number(row.level)===0 && Number(row.min_level)===0) {
+    if (Number(row.level)===0 && Number(row.min_level)===0 && !row.calibrates_skill) {
       await env.COMMONS_DB.prepare("UPDATE users SET level=1,updated_at=? WHERE id=? AND level=0").bind(nowIso(),row.user_id).run();
       await audit(env,admin.id,"automatic_l1_after_first_acceptance","user",row.user_id,{submission_id:row.id});
     }
@@ -1040,7 +1040,7 @@ async function adminSetLevel(request, env, admin, userId) {
      FROM submissions s
      JOIN task_requests r ON r.id=s.request_id
      JOIN tasks t ON t.id=r.task_id
-     WHERE s.user_id=? AND s.status='accepted'`
+     WHERE s.user_id=? AND s.status='accepted' AND t.calibrates_skill IS NULL`
   ).bind(userId).first();
   const acceptedTotal=Number(work?.accepted_total||0);
   const acceptedHighTrust=Number(work?.accepted_high_trust||0);
