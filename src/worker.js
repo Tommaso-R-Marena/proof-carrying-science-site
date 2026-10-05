@@ -704,6 +704,13 @@ async function startOrRequestTask(request, env, user, taskId) {
     subject:`[PCS] Task request ${task.id}: ${user.display_name} (L${user.level})`,
     body:adminBody,
   });
+  const acknowledgement = await notify(env,{
+    userId:user.id,
+    email:user.email,
+    kind:"task_request_received",
+    subject:`PCS received your task application: ${task.id}`,
+    body:`We received your application for ${task.id} — ${task.title}.\n\nIt does NOT reserve or block the task while pending. PCS targets a founder decision within 1 business day and no later than 2 business days. Your current review deadline is ${due}.\n\nYou can see the application status in your PCS account at ${new URL(request.url).origin}/account.html.\n`,
+  });
   await audit(env,user.id,"task_request_created","task_request",id,{task_id:task.id,decision_due_at:due});
   return json({
     ok:true,
@@ -711,6 +718,7 @@ async function startOrRequestTask(request, env, user, taskId) {
     status:"pending",
     exclusive:false,
     admin_email_state:mail.email_state,
+    applicant_email_state:acknowledgement.email_state,
     decision_due_at:due,
     message:"Application received. It does not reserve the task. PCS targets a decision within 1 business day and no later than 2 business days.",
   },201);
