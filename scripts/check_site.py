@@ -1087,7 +1087,8 @@ if guided_js.exists():
         "PCS will not invent semantics.",
         "guidedDiscoveryNext",
         "DEMO_ACTIONS",
-        "See a completed reviewer result",
+        "Review bound evidence →",
+        "Open reviewer result →",
         "does not confirm, sign, or verify it",
         "only the PREPARED DRAFT state exists",
         'window.location.href="result-anatomy.html?scenario=accepted"',
@@ -1283,6 +1284,23 @@ for public_url in [
 ]:
     if public_url not in sitemap_text:
         errors.append(f"sitemap.xml: required public URL missing: {public_url}")
+
+layout_gate = ROOT.parent / ".github" / "workflows" / "site-check.yml"
+layout_script = ROOT.parent / "scripts" / "check_ui_layout.py"
+if not layout_script.exists():
+    errors.append("CI/CD: responsive UI layout gate script is missing")
+if layout_gate.exists():
+    layout_workflow = layout_gate.read_text(encoding="utf-8")
+    for required_text in [
+        "Validate responsive UI layout",
+        "python scripts/check_ui_layout.py",
+        "actions/upload-artifact@v4",
+        "pcs-ui-layout-failures",
+    ]:
+        if required_text not in layout_workflow:
+            errors.append(f"CI/CD: responsive UI layout workflow drift: {required_text}")
+else:
+    errors.append("CI/CD: site-check workflow is missing")
 
 headers = (ROOT / "_headers").read_text(encoding="utf-8") if (ROOT / "_headers").exists() else ""
 for required_header in ["Content-Security-Policy", "X-Content-Type-Options", "X-Frame-Options", "X-Robots-Tag"]:
