@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claim Invalidation v1 · PCS Commons</title><meta name="description" content="A public PCS Commons research program decomposing claim-invalidation semantics and formalization into bounded L0–L5 contributions.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/claim-invalidation-v1.html"><meta name="robots" content="index,follow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"></head>
+<body class="commons-page"><div class="topbar commons-topbar"><div class="shell"><span>Public research program · Claim Invalidation v1</span><a href="tasks.html">Open marketplace</a></div></div>
+<div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="research.html">Research</a><a class="button dark" href="tasks.html?task=INV-001">Start at L0</a></div></nav>
+<main>
+<section class="pagehead commons-pagehead"><div class="kicker">First public PCS Commons research program</div><h1>Which claims must reopen when evidence changes?</h1><p>PCS already computes conservative invalidation over declared dependencies. The open research problem is to make that semantics precise enough to review, adversarially test, and ultimately prove in Lean—without pretending the graph can reveal dependencies that were never represented.</p></section>
+
+<section class="research-thesis">
+<div><span>REAL CORE OBLIGATION</span><h2>Reachability should force reopening. Non-impact requires more.</h2><p>If a changed artifact reaches workflow outputs, evidence, and a claim through declared dependency edges, that claim must be reconsidered. But the converse is stronger: saying an unreachable claim remains valid is sound only when the dependency graph is complete.</p></div>
+<pre><code>changed artifact
+      ↓
+declared workflow edges
+      ↓
+affected artifacts
+      ↓
+affected evidence
+      ↓
+claims that must reopen
+
+unreachable ≠ unaffected
+unless dependency completeness is explicit
+</code></pre>
+</section>
+
+<section class="section">
+<div class="section-heading-row"><div><div class="kicker">Public packet</div><h2>You can contribute without access to the private core repository.</h2></div><p>The pilot publishes the exact small reference semantics and corpus needed for these tasks. Accepted work is reviewed before it can influence PCS core.</p></div>
+<div class="grid4">
+<article class="card"><div class="num">README</div><h3>Program contract</h3><p>Scope, authority boundary, and stage definitions.</p><a href="contributor-packets/invalidation-v1/README.md">Open README →</a></article>
+<article class="card"><div class="num">CORPUS</div><h3>Seed fixtures</h3><p>Three dependency-complete cases plus one hidden-dependency negative control.</p><a href="contributor-packets/invalidation-v1/seed-corpus.json">Open corpus →</a></article>
+<article class="card"><div class="num">REFERENCE</div><h3>Executable semantics</h3><p>A small public snapshot of the current conservative invalidation function.</p><a href="contributor-packets/invalidation-v1/reference_impact.py">Open Python →</a></article>
+<article class="card"><div class="num">SCHEMA</div><h3>Fixture structure</h3><p>Machine-readable structural requirements for corpus contributions.</p><a href="contributor-packets/invalidation-v1/fixture-schema.json">Open schema →</a></article>
+</div>
+</section>
+
+<section class="section" id="program-graph">
+<div class="section-heading-row"><div><div class="kicker">L0 → L5 contribution graph</div><h2>Small work feeds reviewed work; reviewed work feeds proof.</h2></div><p>Lower stages can proceed in parallel where safe. The independent review and formal theorem stages are hard-gated on accepted prerequisite outputs.</p></div>
+<div class="research-pillars invalidation-program">
+<article id="INV-001"><b>L0</b><div><h3>INV-001 · Minimal invalidation fixture</h3><p>Add one hand-checkable graph case with exact affected artifacts, workflow nodes, evidence, and claims.</p><a href="tasks.html?task=INV-001">Open task →</a></div></article>
+<article id="INV-002"><b>L1</b><div><h3>INV-002 · Hidden-dependency counterexample</h3><p>Show concretely why graph non-reachability cannot establish real-world non-impact if a dependency was omitted.</p><a href="tasks.html?task=INV-002">Open task →</a></div></article>
+<article id="INV-003"><b>L2</b><div><h3>INV-003 · Differential/adversarial corpus</h3><p>Build deterministic Python cases that stress the executable invalidation semantics and include dependency-completeness negative controls.</p><a href="tasks.html?task=INV-003">Open task →</a></div></article>
+<article id="INV-004"><b>L3</b><div><h3>INV-004 · Dependency-completeness contract</h3><p>Write the exact assumptions and theorem boundary needed to distinguish mandatory reopening from the stronger unaffected-claim conclusion.</p><a href="tasks.html?task=INV-004">Open task →</a></div></article>
+<article id="INV-005"><b>L4</b><div><h3>INV-005 · Independent adversarial review</h3><p>Attack accepted INV-003 and INV-004 outputs before they can feed formalization. This stage stays locked until both are accepted.</p><a href="tasks.html?task=INV-005">View prerequisites →</a></div></article>
+<article id="INV-006"><b>L5</b><div><h3>INV-006 · Lean invalidation theorem</h3><p>Formalize the strongest sound reachability/reopening theorem. Any non-impact theorem must carry an explicit dependency-completeness hypothesis.</p><a href="tasks.html?task=INV-006">View prerequisites →</a></div></article>
+</div>
+</section>
+
+<section class="commons-two-col">
+<div class="panel"><div class="kicker">What success means</div><h2>Conservative invalidation becomes reviewable and formal.</h2><ul class="commons-checklist"><li>Declared downstream impact is deterministic and adversarially tested.</li><li>The dependency-completeness premise is explicit rather than hidden.</li><li>Independent review attacks both false negatives and false positives.</li><li>The final Lean theorem states exactly what follows—and what does not.</li></ul></div>
+<div class="panel"><div class="kicker">What this does not claim</div><h2>PCS cannot infer invisible dependencies.</h2><ul class="commons-checklist"><li>A graph cannot prove it contains every dependency merely by being internally consistent.</li><li>Unreachable does not mean unaffected without a completeness premise.</li><li>Contributor consensus does not close an obligation.</li><li>A compiling theorem does not justify stronger prose than its exact statement.</li></ul></div>
+</section>
+
+<section class="commons-callout"><div><span class="commons-kicker-dark">CONTRIBUTE NOW</span><h2>The first two stages are deliberately small and non-exclusive.</h2><p>An L0 contributor can add a one-hour fixture without blocking anyone else. Higher-trust stages use the normal PCS competency and manual-approval gates.</p></div><div class="actions"><a class="button primary button-lg" href="tasks.html?task=INV-001">Start INV-001</a><a class="button ghost button-lg" href="tasks.html">All tasks</a></div></section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Public contributions into an auditable assurance graph.</p></div><div class="footercol"><strong>Program</strong><a href="#program-graph">Contribution graph</a><a href="contributor-packets/invalidation-v1/README.md">Public packet</a></div><div class="footercol"><strong>Commons</strong><a href="tasks.html">Tasks</a><a href="research.html">Research</a><a href="governance.html">Governance</a></div></div></footer>
+</div><script src="site.js"></script><script src="commons.js"></script></body></html>
