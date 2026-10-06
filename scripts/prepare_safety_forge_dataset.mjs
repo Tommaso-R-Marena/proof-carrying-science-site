@@ -58,7 +58,8 @@ export function prepareSafetyForgeDataset(document){
     episodes.push({
       scenario_seed:replay.seed,scenario_version:SAFETY_LAB_VERSION,
       split,scenario:{world:scenario.id,risk_budget:scenario.risk_budget,
-        shortcut_risk:scenario.shortcut_risk,initial_guards:[...scenario.initial_guards]},
+        shortcut_risk:scenario.shortcut_risk,report_sensitive:scenario.report_sensitive,
+        initial_guards:[...scenario.initial_guards]},
       data_origin:"opt_in_adult_contributor_synthetic_gameplay_unverified_human_origin",
       verification:"independent_local_replay_of_server_validated_finite_state_simulator",
       attack_episodes:attackEpisodes,repair_episodes:repairEpisodes
