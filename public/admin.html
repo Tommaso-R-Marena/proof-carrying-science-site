@@ -42,6 +42,34 @@
   <section class="section-tight" id="task-curation">
     <div class="section-heading-row"><div><div class="kicker">Marketplace publication</div><h2>Only publish work PCS genuinely needs.</h2></div><p>The marketplace is default-deny. Draft, paused, satisfied, or retired work is not publicly startable—even by direct API ID. Publication changes are Founder/Owner-only and audit-logged.</p></div>
     <div class="boundary"><strong>Rule</strong><span>A useful idea is not automatically a public task. Publish only when PCS has a concrete need, finish line, verification rule, and capacity to review the output.</span></div>
+    <details class="admin-create-task">
+      <summary>Create a new bounded task draft</summary>
+      <form id="adminCreateTaskForm" class="admin-create-task-form">
+        <div class="task-curation-grid">
+          <label><span>Task ID</span><input class="textinput" name="id" required placeholder="OPS-003"></label>
+          <label><span>Category</span><select class="selectinput" name="category"><option>research</option><option>engineering</option><option>security</option><option>review</option><option>operations</option><option>administrative</option><option>marketing</option><option>outreach</option><option>design</option><option>documentation</option><option>community</option></select></label>
+          <label><span>Minimum level</span><select class="selectinput" name="min_level"><option value="0">L0</option><option value="1">L1</option><option value="2">L2</option><option value="3">L3</option><option value="4">L4</option><option value="5">L5</option><option value="6">L6</option></select></label>
+          <label><span>Access</span><select class="selectinput" name="claim_mode"><option value="open">Open / non-exclusive</option><option value="approval">Manual approval</option><option value="invite">High-trust invite</option></select></label>
+          <label><span>Required skill</span><select class="selectinput" name="required_skill"><option value="">None</option><option value="research">research</option><option value="python">python</option><option value="ml">ml</option><option value="biology">biology</option><option value="security">security</option><option value="lean">lean</option><option value="review">review</option></select></label>
+          <label><span>Expected hours</span><input class="textinput" name="expected_hours" type="number" min="1" max="80" value="2"></label>
+          <label><span>Priority 0–100</span><input class="textinput" name="priority" type="number" min="0" max="100" value="50"></label>
+          <label><span>Compensation</span><select class="selectinput" name="compensation_type"><option value="volunteer">Volunteer</option><option value="bounty">Bounty</option><option value="review">Paid review</option><option value="contract">Contract</option></select></label>
+        </div>
+        <label class="field"><span>Title</span><input class="textinput" name="title" minlength="5" maxlength="160" required></label>
+        <label class="field"><span>Summary</span><textarea class="textinput" name="summary" minlength="30" maxlength="1200" rows="3" required></textarea></label>
+        <label class="field"><span>Why PCS needs this now</span><textarea class="textinput" name="why_now" minlength="30" maxlength="2000" rows="3" required></textarea></label>
+        <label class="field"><span>Deliverable</span><textarea class="textinput" name="deliverable" minlength="30" maxlength="3000" rows="3" required></textarea></label>
+        <label class="field"><span>Verification rule</span><textarea class="textinput" name="verification_rule" minlength="30" maxlength="3000" rows="3" required></textarea></label>
+        <label class="field"><span>Acceptance criteria</span><textarea class="textinput" name="acceptance_criteria" minlength="30" maxlength="3000" rows="3" required></textarea></label>
+        <label class="field"><span>Success metric</span><textarea class="textinput" name="success_metric" maxlength="2000" rows="2"></textarea></label>
+        <div class="task-curation-grid">
+          <label><span>Compensation label</span><input class="textinput" name="compensation_label" value="Volunteer"></label>
+          <label><span>Funding</span><select class="selectinput" name="funding_status"><option value="open">Open / volunteer</option><option value="planned">Planned, not funded</option><option value="funded">Funded</option></select></label>
+        </div>
+        <div class="actions"><button class="button primary" type="submit">Create draft task</button><span class="tiny">Creation never publishes automatically.</span></div>
+        <p id="adminCreateTaskMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </details>
     <div id="adminTaskList" class="admin-list"></div>
   </section>
 
