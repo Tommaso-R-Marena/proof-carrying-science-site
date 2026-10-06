@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import {webcrypto} from "node:crypto";
+if(!globalThis.crypto)globalThis.crypto=webcrypto;
+if(!globalThis.btoa)globalThis.btoa=text=>Buffer.from(text,"binary").toString("base64");
 import {
   integrationRepository, validateContributorFiles, contributionPrefix,
   hashSubmissionText, createSubmissionPullRequest, readSubmissionChecks,
