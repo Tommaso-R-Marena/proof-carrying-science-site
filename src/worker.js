@@ -1,4 +1,4 @@
-import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion} from "./production-promotion.js";
+import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
   githubConfigured, createSubmissionPullRequest, readSubmissionChecks,
@@ -1405,7 +1405,10 @@ async function me(request, env) {
       `SELECT s.id,s.request_id,s.status,s.review_note,s.submitted_at,s.github_stage_state,s.github_pr_url,s.github_repo,s.github_branch,s.github_pr_number,
        p.state AS production_promotion_state,p.pr_url AS production_promotion_url,p.merge_sha AS production_merge_sha,
        p.decision_note AS production_review_note
-       FROM submissions s LEFT JOIN production_promotions p ON p.submission_id=s.id
+       FROM submissions s LEFT JOIN production_promotions p ON p.id=(
+         SELECT latest.id FROM production_promotions latest
+         WHERE latest.submission_id=s.id ORDER BY latest.created_at DESC,latest.id DESC LIMIT 1
+       )
        WHERE s.user_id=? ORDER BY s.submitted_at DESC LIMIT 50`
     ).bind(user.id).all(),
   ]);
@@ -3005,7 +3008,7 @@ async function adminPromotionOverview(request,env,admin){
   const [promotions,candidates]=await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT p.id,p.submission_id,p.task_id,p.repo,p.source_pr_number,p.mapping_json,
-       p.rationale,p.state,p.created_at,p.staged_at,p.pr_number,p.pr_url,p.base_sha,
+       p.rationale,p.state,p.attempt,p.created_at,p.staged_at,p.pr_number,p.pr_url,p.base_sha,
        p.head_sha,p.stage_error,p.decision_at,p.decision_note,p.approved_head_sha,p.merged_at,p.merge_sha,
        u.display_name AS contributor
        FROM production_promotions p JOIN submissions s ON s.id=p.submission_id
@@ -3149,6 +3152,41 @@ async function adminPromotionDecision(request,env,admin,id){
   }
   return json({ok:true,state:next,approved_head_sha:head});
 }
+async function adminPromotionSupersede(request,env,admin,id){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can invalidate a production promotion.","owner_required");
+  const body=await readBody(request),reason=cleanText(body.reason,3000);
+  if(reason.length<40)throw new ApiError(400,"Explain why this PR must be superseded and retested (40+ characters).","supersede_reason_required");
+  const {row}=await promotionWithFiles(env,id);
+  if(!["requested","stage_error","staged","approved"].includes(row.state))
+    throw new ApiError(409,"Only an active, unmerged promotion may start a fresh attempt.","promotion_not_supersedable");
+  const attempt=Number(row.attempt||1);
+  if(!Number.isInteger(attempt)||attempt>=50)
+    throw new ApiError(409,"Maximum promotion retries reached; escalate for manual audit.","promotion_attempt_limit");
+  // Never leave a previously approved production PR open. Closing precedes
+  // state reinitialization so an interrupted update fails closed.
+  try{await closeSupersededPromotionPr(env,row);}
+  catch(e){throw new ApiError(502,"Could not close previous PR: "+String(e.message).slice(0,200),"supersede_close_failed");}
+  const change=await env.COMMONS_DB.prepare(
+    `UPDATE production_promotions SET attempt=attempt+1,state='requested',
+       staged_at=NULL,base_sha=NULL,branch=NULL,head_sha=NULL,pr_number=NULL,pr_url=NULL,
+       stage_error=NULL,decision_at=NULL,decision_by=NULL,decision_note=NULL,approved_head_sha=NULL
+       WHERE id=? AND state IN ('requested','stage_error','staged','approved') AND attempt=?`
+  ).bind(id,attempt).run();
+  if(Number(change.meta?.changes||0)!==1)
+    throw new ApiError(409,"Promotion was modified concurrently. Old PR is closed; reconcile before retry.","promotion_supersede_race");
+  await audit(env,admin.id,"production_promotion_superseded","production_promotion",id,{
+    previous_attempt:attempt,next_attempt:attempt+1,previous_state:row.state,
+    previous_pr_url:row.pr_url,previous_approved_head_sha:row.approved_head_sha,
+    source_submission_id:row.submission_id,reason
+  });
+  const stage=await promotionStageRecord(env,{id,created_by:admin.id});
+  return json({ok:true,...stage,attempt:attempt+1,
+    message:stage.state==="staged"
+      ?"Obsolete PR closed; new baseline-bound promotion PR opened. New CI and new explicit Owner approval are required."
+      :"Obsolete PR closed and approval invalidated; next attempt saved but staging failed: "+stage.message
+  });
+}
+
 async function adminPromotionMerge(request,env,admin,id){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can integrate production code.","owner_required");
   const body=await readBody(request),reason=cleanText(body.reason,3000);
@@ -3501,13 +3539,14 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/github/diagnostics") return adminGithubDiagnostics(request,env,admin);
     if(method==="GET"&&path==="/api/admin/promotions")return adminPromotionOverview(request,env,admin);
     if(method==="POST"&&path==="/api/admin/promotions")return adminPromotionCreate(request,env,admin);
-    const promotionMatch=path.match(/^\/api\/admin\/promotions\/([^/]+)\/(stage|checks|decision|merge)$/);
+    const promotionMatch=path.match(/^\/api\/admin\/promotions\/([^/]+)\/(stage|checks|decision|merge|supersede)$/);
     if(promotionMatch){
       const id=decodeURIComponent(promotionMatch[1]),action=promotionMatch[2];
       if(method==="POST"&&action==="stage")return adminPromotionRestage(request,env,admin,id);
       if(method==="GET"&&action==="checks")return adminPromotionChecks(request,env,admin,id);
       if(method==="POST"&&action==="decision")return adminPromotionDecision(request,env,admin,id);
       if(method==="POST"&&action==="merge")return adminPromotionMerge(request,env,admin,id);
+      if(method==="POST"&&action==="supersede")return adminPromotionSupersede(request,env,admin,id);
     }
 
     let submissionFlowMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/(stage|checks|files|merge)$/);
