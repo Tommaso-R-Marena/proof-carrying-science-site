@@ -35,6 +35,16 @@
 <div class="boundary"><strong>Authority rule</strong><span>No auto-score, credential, or model output can grant a verified skill, reserve a higher-trust task, or create reviewer authority by itself. A human PCS reviewer makes the final decision and the decision is audit-logged.</span></div>
 </section>
 
+<section class="section" id="admin-audit">
+<div class="section-heading-row"><div><div class="kicker">Administrative accountability</div><h2>Privileged actions get a separate session and a permanent audit trail.</h2></div><p>Contributor authentication and administrator authentication are deliberately separated. Administrative decisions are preserved independently of user-account lifecycle.</p></div>
+<div class="governance-rules">
+<article><b>LOGIN</b><div><h3>Separate privileged session</h3><p>Admin Center access requires the dedicated administrator sign-in. A normal contributor session cannot call administrator APIs. The privileged session expires after eight hours.</p></div></article>
+<article><b>LOG</b><div><h3>Append-only audit archive</h3><p>Every recorded action is copied with an actor identity snapshot into a SHA-256 hash chain. The database rejects archive updates and deletions through immutable-table triggers.</p></div></article>
+<article><b>VERIFY</b><div><h3>Integrity is checked from the dashboard</h3><p>The Admin Center recomputes the chain and visibly reports whether every archived event links correctly to the preceding event.</p></div></article>
+<article><b>BOUND</b><div><h3>No false claim of physical indestructibility</h3><p>A Cloudflare account/database owner can ultimately destroy infrastructure. PCS therefore calls the archive application-immutable and tamper-evident, not impossible to erase at the infrastructure layer.</p></div></article>
+</div>
+</section>
+
 <section class="section" id="authority-hierarchy">
 <div class="section-heading-row"><div><div class="kicker">Authority hierarchy</div><h2>Technical competence and organizational control are deliberately separate.</h2></div><p>No contributor rank can become Founder/Owner authority by accumulation, vote, payment, or self-declaration.</p></div>
 <div class="governance-rules">
