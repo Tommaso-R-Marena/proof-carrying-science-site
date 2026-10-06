@@ -183,7 +183,7 @@ def static_campaign(c: Campaign) -> None:
         "challenge_entries",
         "WHERE e.status='verified'",
         "adminChallengeDecision",
-        "Challenge entry received. The score is provisional",
+        "Arena entry received. The score is provisional until a reviewer validates",
         "challenge_scorer_unavailable",
         "Leaderboard placement still requires validity review.",
     ])
