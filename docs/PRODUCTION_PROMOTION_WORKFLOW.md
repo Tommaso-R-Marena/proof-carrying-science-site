@@ -40,10 +40,10 @@ production destinations. This is a separate boundary from the original reviewer 
    reviewer explanation, immutable approved SHA, PR link, final merge SHA and history.
    Requests for changes are terminal for the current case; use a newly accepted archive
    submission for a revised production proposal. If the only problem is that `main`
-   advanced while waiting for CI, the Owner can **Supersede / new baseline**: this
-   closes the old PR, invalidates its previous approval, retains the audited case
-   and permits staging the *same immutable accepted archive* again on fresh `main`.
-   The new case must pass fresh CI and new Owner approval; old receipts never transfer.
+   advanced while waiting for CI, the Owner can **Supersede / new baseline**: this closes the old PR, invalidates its previous approval, and increments the
+   existing case's **attempt counter**. PCS automatically stages a *new branch and
+   PR* for the same immutable accepted archive from fresh `main`. All previous
+   decisions remain in the audit log; fresh CI and Owner approval are required.
 
 ## Existing CI quota situation
 
