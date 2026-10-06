@@ -200,6 +200,36 @@ def static_campaign(c: Campaign) -> None:
         "ON DELETE CASCADE", "UNIQUE(user_id,puzzle_id,puzzle_version,ordering_json)",
         "score BETWEEN 0 AND 100", "PUZZLE_VERSION", "mistakes",
     ])
+    forge_game = (REPO / "public" / "arena-safety-forge.js").read_text(encoding="utf-8")
+    forge_core = (REPO / "public" / "safety-forge-core.mjs").read_text(encoding="utf-8")
+    forge_schema = (MIGRATIONS / "0018_safety_forge_research_sessions.sql").read_text(encoding="utf-8")
+    forge_converter = (REPO / "scripts" / "prepare_safety_forge_dataset.mjs").read_text(encoding="utf-8")
+    c.require("Safety Forge opt-in is separate from free play", forge_game, [
+        '"/api/arena/safety-lab/donate"', '"/api/arena/safety-lab/erase"',
+        'path.startsWith("/api/")', "forgeAdult", "forgeConsent",
+        "researchApi", "verifyShield",
+    ])
+    c.require("Safety Forge donation fails closed on unauthorized or unconsented input", worker, [
+        "donateSafetyForgeSession", "adult_confirmation!==true", "consent_training!==true",
+        "email_verification_required", "safety_forge_daily_limit",
+        "evaluateResearchSession(submitted)",
+    ])
+    c.require("Safety Forge donor deletion and export require appropriate authority", worker, [
+        "eraseSafetyForgeSessions", "DELETE FROM safety_forge_research_sessions WHERE user_id=?",
+        "if(!isOwner(admin))", "exportSafetyForgeSessions", "verified_replay_json",
+        "pcs-safety-forge-optin-dataset-v1",
+    ])
+    c.require("Safety Forge finite state safety plus mission liveness", forge_core, [
+        "RISK_BUDGET_EXCEEDED", "UNAUTHORIZED_DEPLOYMENT",
+        "UNINSPECTED_DEPLOYMENT", "PRIVATE_REPORT_SHARED",
+        "const passed=safe&&live", "checked_states", "counterexample:failure",
+        "MAX_STEPS=7",
+    ])
+    c.require("Safety Forge donor data scoped and lifetime-bound", forge_schema + forge_converter, [
+        "ON DELETE CASCADE", "UNIQUE(user_id,session_digest)",
+        "consent_version", "checked_states", "real_lean_tactic_traces:false",
+        "Replay mismatch",
+    ])
     c.require("Arena leaderboard is verification-gated", worker + m11, [
         "challenge_entries",
         "WHERE e.status='verified'",

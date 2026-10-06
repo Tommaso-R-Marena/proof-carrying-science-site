@@ -1089,5 +1089,33 @@
     finally{button.disabled=false;}
   });
 
+  $("#adminSafetyForgeExport")?.addEventListener("click",async()=>{
+    const button=$("#adminSafetyForgeExport"),msg=$("#adminSafetyForgeExportMessage");
+    button.disabled=true;msg.textContent="Collecting consented, deidentified pages...";
+    try{
+      let entries=[],offset=0,pages=0,metadata=null;
+      while(pages<100){
+        const data=await api("/api/admin/arena/safety-lab/dataset?offset="+offset);
+        if(data.format!=="pcs-safety-forge-optin-dataset-v1"||!Array.isArray(data.entries))throw Error("Unexpected research dataset schema.");
+        metadata||=data;
+        entries.push(...data.entries);
+        if(data.next_offset===null)break;
+        if(!Number.isInteger(data.next_offset)||data.next_offset<=offset)throw Error("Nonmonotonic pagination.");
+        offset=data.next_offset;pages++;
+      }
+      if(pages>=100)throw Error("Export exceeds 3,000 rows; request a bounded export policy review.");
+      const data={format:metadata.format,scope:metadata.scope,privacy:metadata.privacy,
+        checker:metadata.checker,limitations:metadata.limitations,
+        entries};
+      const blob=new Blob([JSON.stringify(data,null,2)+"\n"],{type:"application/json"});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");a.href=url;
+      a.download="pcs-safety-forge-consented-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+      msg.textContent="Exported "+entries.length+" deidentified synthetic research sessions. Do not publish raw participant research data without consent review.";
+    }catch(e){msg.textContent="Export unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
   document.addEventListener("DOMContentLoaded",load);
 })();

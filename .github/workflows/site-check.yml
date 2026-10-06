@@ -50,6 +50,9 @@ jobs:
           node --check public/proof-order-core.mjs
           node --check public/arena-proof-quest.js
           node --check scripts/prepare_proof_quest_dataset.mjs
+          node --check public/safety-forge-core.mjs
+          node --check public/arena-safety-forge.js
+          node --check scripts/prepare_safety_forge_dataset.mjs
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -66,6 +69,7 @@ jobs:
           npm run test:quest
           npm run test:catalog
           npm run test:quest:dataset
+          npm run test:safety:forge
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign

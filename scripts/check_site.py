@@ -76,7 +76,7 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "arena-proof-quest.html", "researcher-pilots.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "index.html", "arena-safety-forge.html", "arena-proof-quest.html", "researcher-pilots.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "commons.js", "roles.js", "task-graph.js", "arena.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
@@ -372,6 +372,44 @@ if not (REPO / "migrations" / "0016_proof_quest_adult_consent.sql").is_file():
     errors.append("Proof Quest migration missing.")
 if not (REPO / "migrations" / "0017_curated_needed_tasks_and_roles.sql").is_file():
     errors.append("Curated roles/task migration missing.")
+
+# Synthetic Safety Forge research: all playable steps remain local. Explicit
+# consent may send only bounded choices to the approved same-origin API.
+for lab_name, tokens in {
+    "arena-safety-forge.html": [
+        "Safety Forge", "Break the bot.", 'id="forgeTabAttack"',
+        'id="forgeTabRepair"', 'id="forgeDonate"', 'id="forgeErase"',
+        'id="forgeAdult"', 'id="forgeConsent"', "finite-state",
+        "not", "No account to play",
+    ],
+    "arena-safety-forge.js": [
+        "applyAction", "verifyShield", "researchApi",
+        'path.startsWith("/api/")',
+        '"/api/arena/safety-lab/donate"',
+        '"/api/arena/safety-lab/erase"',
+        "forgeAdult", "forgeConsent",
+    ],
+    "safety-forge-core.mjs": [
+        "SAFETY_LAB_VERSION", "scenarioForSeed", "verifyShield",
+        "evaluateResearchSession", "RISK_BUDGET_EXCEEDED",
+        "PRIVATE_REPORT_SHARED", "UNAUTHORIZED_DEPLOYMENT",
+        "not Lean 4 kernel verification",
+    ],
+    "arena-safety-forge.css": ["@media(max-width:1100px)", "@media(max-width:520px)"],
+}.items():
+    filepath = ROOT / lab_name
+    if not filepath.exists():
+        errors.append(f"Safety Forge missing: {lab_name}")
+        continue
+    source = filepath.read_text(encoding="utf-8")
+    for token in tokens:
+        if token not in source:
+            errors.append(f"Safety Forge {lab_name}: contract drift: {token}")
+
+if not (REPO / "migrations" / "0018_safety_forge_research_sessions.sql").is_file():
+    errors.append("Safety Forge additive research migration missing")
+if not (REPO / "scripts" / "prepare_safety_forge_dataset.mjs").is_file():
+    errors.append("Safety Forge independent replay converter missing")
 
 commons_contracts = {
     "commons.html": [
@@ -1333,7 +1371,7 @@ if inspector_script.exists():
 # research-preview clients must stay local-only. Review the EXACT API data path.
 NETWORKED_COMMONS_JS = {
     "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
-    "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js",
+    "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js", "arena-safety-forge.js",
 }
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
