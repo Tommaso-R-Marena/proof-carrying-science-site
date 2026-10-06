@@ -32,6 +32,9 @@ jobs:
           node --check notify-indexnow.mjs
           node --check public/site.js
           node --check public/commons.js
+          node --check public/roles.js
+          node --check public/task-graph.js
+          node --check public/arena.js
           node --check public/account.js
           node --check public/admin-login.js
           node --check public/admin.js
