@@ -218,3 +218,8 @@ No email-provider API key is committed to Git. Until a transactional sender doma
 ## GitHub-backed Commons submissions
 
 Contributor artifacts can be staged in isolated GitHub PRs, checked through Lean/PCS or website CI, independently reviewed, and integrated with an authorized Owner action. Small 10/30-minute tasks and evidence-based outreach tasks are supported. Setup, privilege boundaries, and limits: [Contribution Submission Pipeline](docs/CONTRIBUTION_SUBMISSION_PIPELINE.md).
+
+
+## Production promotion after Commons acceptance
+
+Accepted contributions are initially archived, not deployed. The Owner can now use a separately audited production promotion queue requiring source-byte matching, narrow path maps, fresh Lean/PCS or site CI checks, exact-SHA approval and a second Owner merge. See [Production Promotion Workflow](docs/PRODUCTION_PROMOTION_WORKFLOW.md).
