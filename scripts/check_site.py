@@ -325,11 +325,11 @@ for pilot_file, required_tokens in {
 
 if (ROOT / "researcher-pilot-ui.js").is_file():
     pilot_code = (ROOT / "researcher-pilot-ui.js").read_text(encoding="utf-8")
-    if re.search(r"\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(", pilot_code):
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", pilot_code):
         errors.append("researcher pilot must remain local-only and not auto-submit requests")
 if (ROOT / "researcher-pilot-core.mjs").is_file():
     pilot_code = (ROOT / "researcher-pilot-core.mjs").read_text(encoding="utf-8")
-    if re.search(r"\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(", pilot_code):
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", pilot_code):
         errors.append("researcher pilot core must remain local-only")
 
 
