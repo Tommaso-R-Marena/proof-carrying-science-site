@@ -128,6 +128,7 @@
   // Two independent sessions: an ordinary L0–L6 account is not admin authority.
   // Default links remain usable if the status endpoints are offline.
   const readSession = async (path) => {
+    if (path !== "/api/me" && path !== "/api/admin/session") return null;
     try {
       const response = await fetch(path, {credentials:"same-origin",cache:"no-store"});
       return response.ok ? await response.json() : null;
