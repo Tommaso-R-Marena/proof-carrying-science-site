@@ -439,6 +439,80 @@
     }));
   }
 
+  let adminGraphSnapshot={tasks:[],edges:[],groups:[]};
+
+  function taskOptions(tasks,selected=""){
+    return tasks.map(task=>`<option value="${esc(task.id)}" ${task.id===selected?"selected":""}>${esc(task.id)} · ${esc(task.title)}</option>`).join("");
+  }
+
+  function syncDependencyGroupOptions(){
+    const form=$("#adminDependencyEdgeForm");if(!form)return;
+    const taskId=form.elements.task_id.value;
+    const groups=adminGraphSnapshot.groups.filter(group=>group.task_id===taskId);
+    const current=form.elements.group_id.value;
+    form.elements.group_id.innerHTML='<option value="">No group</option>'+groups.map(group=>`<option value="${esc(group.id)}">${esc(group.id)} · ${esc(group.label)}</option>`).join("");
+    if(groups.some(group=>group.id===current))form.elements.group_id.value=current;
+  }
+
+  function renderDependencyEditor(tasks,edges,groups){
+    adminGraphSnapshot={tasks:[...tasks],edges:[...edges],groups:[...groups]};
+    const groupForm=$("#adminDependencyGroupForm"),edgeForm=$("#adminDependencyEdgeForm");
+    if(groupForm){
+      const previous=groupForm.elements.task_id.value;
+      groupForm.elements.task_id.innerHTML=taskOptions(tasks,previous);
+    }
+    if(edgeForm){
+      const previousTask=edgeForm.elements.task_id.value,previousPrereq=edgeForm.elements.depends_on_task_id.value;
+      edgeForm.elements.task_id.innerHTML=taskOptions(tasks,previousTask);
+      edgeForm.elements.depends_on_task_id.innerHTML=taskOptions(tasks,previousPrereq);
+      syncDependencyGroupOptions();
+    }
+
+    const target=$("#adminDependencyList");if(!target)return;
+    const byTask=new Map();
+    for(const task of tasks)byTask.set(task.id,{task,edges:[],groups:[]});
+    for(const edge of edges){if(byTask.has(edge.task_id))byTask.get(edge.task_id).edges.push(edge);}
+    for(const group of groups){if(byTask.has(group.task_id))byTask.get(group.task_id).groups.push(group);}
+    const populated=[...byTask.values()].filter(row=>row.edges.length||row.groups.length);
+    if(!populated.length){
+      target.innerHTML='<div class="commons-empty"><strong>No dependency structure declared yet.</strong><span>Create a blocking gate or an explicit informative/hard edge above.</span></div>';
+      return;
+    }
+    target.innerHTML=populated.map(({task,edges:taskEdges,groups:taskGroups})=>`
+      <article class="admin-card admin-dependency-card">
+        <div class="task-card-top"><div><span class="commons-chip category">${esc(task.category||"research")}</span><span class="commons-chip level">L${esc(task.min_level)}</span></div><code>${esc(task.id)}</code></div>
+        <h3>${esc(task.title)}</h3>
+        ${taskGroups.length?`<div class="admin-dependency-groups"><strong>Gate groups</strong>${taskGroups.map(group=>{
+          const members=taskEdges.filter(edge=>edge.group_id===group.id);
+          return `<div><span><b>${esc(group.label)}</b><small>${esc(group.mode)} · min ${esc(group.min_satisfied)} · ${members.length} edge${members.length===1?"":"s"}</small></span>${currentAdmin?.is_owner?`<button class="smallbutton" type="button" data-delete-dependency-group="${esc(group.id)}" data-task="${esc(task.id)}" ${members.length?"disabled":""}>Delete empty group</button>`:""}</div>`;
+        }).join("")}</div>`:""}
+        <div class="admin-dependency-edges">
+          ${taskEdges.length?taskEdges.map(edge=>`<div class="admin-dependency-edge">
+            <div><span class="commons-chip ${edge.dependency_type==="hard"?"planned":"category"}">${esc(edge.dependency_type)}</span><code>${esc(edge.depends_on_task_id)}</code><b>→ ${esc(edge.relation||"requires")}</b><small>criticality ${esc(edge.criticality??50)}${edge.group_id?` · group ${esc(edge.group_id)}`:""}</small></div>
+            <p>${esc(edge.artifact_contract||edge.rationale||"")}</p>
+            ${currentAdmin?.is_owner?`<button class="smallbutton" type="button" data-delete-dependency="${esc(edge.depends_on_task_id)}" data-task="${esc(task.id)}">Delete edge</button>`:""}
+          </div>`).join(""):'<span class="tiny">No edges yet.</span>'}
+        </div>
+      </article>`).join("");
+
+    all("[data-delete-dependency]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const reason=prompt("Why are you deleting this dependency edge? This is audit-logged (minimum 20 characters).");
+      if(!reason)return;
+      try{
+        await api(`/api/admin/tasks/${encodeURIComponent(button.dataset.task)}/dependencies/${encodeURIComponent(button.dataset.deleteDependency)}`,{method:"DELETE",body:{reason}});
+        await load();
+      }catch(e){alert(e.message);}
+    }));
+    all("[data-delete-dependency-group]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const reason=prompt("Why are you deleting this empty dependency gate? This is audit-logged (minimum 20 characters).");
+      if(!reason)return;
+      try{
+        await api(`/api/admin/tasks/${encodeURIComponent(button.dataset.task)}/dependency-groups/${encodeURIComponent(button.dataset.deleteDependencyGroup)}`,{method:"DELETE",body:{reason}});
+        await load();
+      }catch(e){alert(e.message);}
+    }));
+  }
+
   async function roleDecision(application,decision){
     const result=await openAdminAction({
       title:`${decision==="approve"?"Approve":"Reject"} role application`,
@@ -594,6 +668,7 @@
       $("#adminEmailTransportDetail").textContent=data.email_transport_name==="gmail_apps_script"?"Gmail · Apps Script relay":data.email_transport_name==="resend"?"Resend":"No outbound provider";
       $("#adminMailTestButton").disabled=!data.email_transport;
       renderTaskCuration(data.tasks||[]);
+      renderDependencyEditor(data.tasks||[],data.dependency_edges||[],data.dependency_groups||[]);
       renderChallengeEntries(data.challenge_entries||[]);
       renderRoleApplications(data.role_applications||[]);
       renderRequests(data.pending_requests||[]);
@@ -639,6 +714,45 @@
       files:[...adminActionFiles],
     };
     finishAdminAction(result);
+  });
+
+  $("#adminDependencyEdgeForm")?.elements.task_id?.addEventListener("change",syncDependencyGroupOptions);
+  $("#adminDependencyEdgeForm")?.elements.dependency_type?.addEventListener("change",event=>{
+    const form=$("#adminDependencyEdgeForm");
+    if(event.currentTarget.value==="informative")form.elements.group_id.value="";
+  });
+
+  $("#adminDependencyGroupForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!currentAdmin?.is_owner){alert("Founder/Owner authority required.");return;}
+    const form=event.currentTarget,fd=new FormData(form),taskId=String(fd.get("task_id")||""),message=$("#adminDependencyGroupMessage");
+    const body=Object.fromEntries(fd.entries());
+    delete body.task_id;
+    body.min_satisfied=Number(body.min_satisfied);
+    body.sort_order=Number(body.sort_order);
+    message.textContent="Saving gate…";message.className="form-message";
+    try{
+      await api(`/api/admin/tasks/${encodeURIComponent(taskId)}/dependency-groups`,{method:"POST",body});
+      message.textContent="Dependency gate saved.";message.className="form-message successline";
+      form.elements.reason.value="";
+      await load();
+    }catch(e){message.textContent=e.message;message.className="form-message validation bad";}
+  });
+
+  $("#adminDependencyEdgeForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!currentAdmin?.is_owner){alert("Founder/Owner authority required.");return;}
+    const form=event.currentTarget,fd=new FormData(form),taskId=String(fd.get("task_id")||""),message=$("#adminDependencyEdgeMessage");
+    const body=Object.fromEntries(fd.entries());
+    delete body.task_id;
+    body.criticality=Number(body.criticality);
+    message.textContent="Saving edge…";message.className="form-message";
+    try{
+      await api(`/api/admin/tasks/${encodeURIComponent(taskId)}/dependencies`,{method:"POST",body});
+      message.textContent="Dependency edge saved.";message.className="form-message successline";
+      form.elements.change_reason.value="";
+      await load();
+    }catch(e){message.textContent=e.message;message.className="form-message validation bad";}
   });
 
   $("#adminCreateTaskForm")?.addEventListener("submit",async event=>{
