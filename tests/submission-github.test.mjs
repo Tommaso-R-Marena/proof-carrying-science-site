@@ -59,9 +59,18 @@ function withMockGithub(conclusion){
       base:{ref:"main"},head:{ref:branch,repo:{full_name:repo},sha},
       html_url:"https://github.com/example/pull/42",merged:false,draft:false
     });
-    if(path.endsWith("/check-runs"))return reply(200,{check_runs:conclusion==null?[]:[{
-      name:"PCS Submission Verification",app:{slug:"github-actions"},
-      status:"completed",conclusion,html_url:"https://github.com/example/check"
+    if(path.endsWith("/actions/runs")||path.endsWith("/actions/runs/"))return reply(200,{workflow_runs:[]});
+    if(path.endsWith("/actions/workflows/pcs-submission.yml/runs")){
+      return reply(200,{workflow_runs:conclusion==null?[]:[{
+        id:91,head_sha:sha,event:"pull_request",status:"completed",conclusion,
+        pull_requests:[{number:42}],created_at:"2026-10-06T00:00:00Z",
+        html_url:"https://github.com/example/actions/runs/91"
+      }]});
+    }
+    if(path.endsWith("/actions/runs/91/jobs"))return reply(200,{jobs:[{
+      name:"PCS Submission Verification",status:"completed",conclusion,
+      steps:conclusion==="no_steps"?[]:[{name:"Verify artifacts",status:"completed",conclusion}],
+      html_url:"https://github.com/example/actions/jobs/5"
     }]});
     throw new Error("Unexpected mock request: "+init.method+" "+u.href);
   };
@@ -91,7 +100,7 @@ test("creates a restricted branch/PR and checks exact file bytes",async()=>{
 });
 
 test("missing or failed runner never produces a verified result",async()=>{
-  for(const outcome of [null,"failure"]){
+  for(const outcome of [null,"failure","no_steps"]){
     const mock=withMockGithub(outcome);
     try{
       const check=await readSubmissionChecks({PCS_GITHUB_TOKEN:"test-only-token"},{
@@ -101,4 +110,16 @@ test("missing or failed runner never produces a verified result",async()=>{
       assert.equal(check.state,outcome?"failed":"pending");
     }finally{mock.restore();}
   }
+});
+
+test("GitHub read-only diagnostic reports missing Actions permission without exposing secrets",async()=>{
+  const mock=withMockGithub("success");
+  try{
+    const {githubAccessReport}=await import("../src/contribution-github.js");
+    const report=await githubAccessReport({PCS_GITHUB_TOKEN:"test-only-token"});
+    assert.equal(report.configured,true);
+    assert.equal(report.repositories.length,2);
+    assert.ok(report.repositories.every(r=>r.contents_read&&r.actions_read));
+    assert.equal(JSON.stringify(report).includes("test-only-token"),false);
+  }finally{mock.restore();}
 });
