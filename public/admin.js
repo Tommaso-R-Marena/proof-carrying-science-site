@@ -413,7 +413,8 @@
             <span class="commons-chip ${p.state==="merged"?"volunteer":"planned"}">${esc(p.state)}</span>
           </div><span class="tiny">${fmt(p.created_at)}</span></div>
           <h3>Promotion ${esc(p.id.slice(0,8))} · ${esc(p.contributor)}</h3>
-          <p class="tiny">Source contribution: ${esc(p.submission_id)} · accepted archive PR #${esc(p.source_pr_number)}</p>
+          <p class="tiny">Source contribution: ${esc(p.submission_id)} · accepted archive
+            <a href="https://github.com/${esc(p.repo)}/pull/${esc(p.source_pr_number)}" target="_blank" rel="noopener noreferrer">PR #${esc(p.source_pr_number)} ↗</a></p>
           <div class="pcs-submission-contract"><strong>Exact proposed production paths</strong>
             ${maps.map(x=>`<p><code>${esc(x.filename)}</code> → <code>${esc(x.path)}</code></p>`).join("")}
           </div>
@@ -454,6 +455,33 @@
       ?`Source: ${candidate.repo}. Reviewed contributor: ${candidate.contributor}. Exact source files: ${names.join(", ")}. Reviewer note: ${candidate.review_note||"Not provided."}`
       :"Choose a previously accepted and archived submission.";
     $("#promotionFileMappings").value=names.map(n=>n+" => ").join("\n");
+    const original=$("#promotionOriginalPr");
+    const valid=Boolean(candidate&&["Tommaso-R-Marena/proof-carrying-science",
+      "Tommaso-R-Marena/proof-carrying-science-site"].includes(candidate.repo)
+      &&Number.isInteger(Number(candidate.source_pr_number))&&Number(candidate.source_pr_number)>0);
+    original.hidden=!valid;
+    if(valid)original.href="https://github.com/"+candidate.repo+"/pull/"+candidate.source_pr_number;
+    else original.removeAttribute("href");
+    $("#promotionSourcePreview").replaceChildren();
+  });
+  $("#promotionInspectSource")?.addEventListener("click",async()=>{
+    const submissionId=$("#promotionSource").value;
+    const target=$("#promotionSourcePreview");
+    target.replaceChildren();
+    if(!submissionId){target.textContent="First select an accepted archived submission.";return;}
+    const button=$("#promotionInspectSource");
+    button.disabled=true;
+    try{
+      const response=await api(`/api/admin/submissions/${encodeURIComponent(submissionId)}/files`);
+      if(!response.files?.length){target.textContent="No saved source files for this submission.";return;}
+      for(const f of response.files){
+        const section=document.createElement("section");
+        const heading=document.createElement("strong");heading.textContent=f.filename+" · SHA-256: "+f.sha256;
+        const pre=document.createElement("pre");pre.className="pcs-review-code";pre.textContent=f.content;
+        section.append(heading,pre);target.appendChild(section);
+      }
+    }catch(e){target.textContent="Source inspection unavailable: "+e.message;}
+    finally{button.disabled=false;}
   });
   $("#promotionCreateForm")?.addEventListener("submit",async event=>{
     event.preventDefault();

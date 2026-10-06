@@ -1403,7 +1403,8 @@ async function me(request, env) {
     ).bind(user.id).all(),
     env.COMMONS_DB.prepare(
       `SELECT s.id,s.request_id,s.status,s.review_note,s.submitted_at,s.github_stage_state,s.github_pr_url,s.github_repo,s.github_branch,s.github_pr_number,
-       p.state AS production_promotion_state,p.pr_url AS production_promotion_url,p.merge_sha AS production_merge_sha
+       p.state AS production_promotion_state,p.pr_url AS production_promotion_url,p.merge_sha AS production_merge_sha,
+       p.decision_note AS production_review_note
        FROM submissions s LEFT JOIN production_promotions p ON p.submission_id=s.id
        WHERE s.user_id=? ORDER BY s.submitted_at DESC LIMIT 50`
     ).bind(user.id).all(),
@@ -3130,6 +3131,22 @@ async function adminPromotionDecision(request,env,admin,id){
   await audit(env,admin.id,"production_promotion_decided","production_promotion",row.id,{
     decision,head_sha:head,reason:note
   });
+  if(decision!=="approve"){
+    try{
+      const contributor=await env.COMMONS_DB.prepare(
+        `SELECT u.id,u.email,u.email_verified FROM users u
+         JOIN submissions s ON s.user_id=u.id WHERE s.id=?`
+      ).bind(row.submission_id).first();
+      if(contributor)await notify(env,{
+        userId:contributor.id,email:contributor.email_verified?contributor.email:null,
+        kind:"production_promotion_review",
+        subject:`PCS production promotion ${next}: ${row.task_id}`,
+        body:`The proposed production promotion of your accepted contribution was marked ${next}.\n\nReviewer note: ${note}\n\nThe accepted archive remains unchanged. If improvements are requested, submit a new revision for independent review; PCS cannot silently edit a previously accepted artifact.\n`
+      });
+    }catch(error){
+      console.error("Promotion reviewer notification unavailable",String(error?.message||error));
+    }
+  }
   return json({ok:true,state:next,approved_head_sha:head});
 }
 async function adminPromotionMerge(request,env,admin,id){
