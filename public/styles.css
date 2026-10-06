@@ -1236,3 +1236,10 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 #promotionQueueStatus{padding:8px 0}
 #promotionQueue .actions button{min-width:0;white-space:normal}
 @media(max-width:740px){.pcs-promotion-form{padding:15px}}
+
+/* Task catalog: make the actual requested contribution immediately visible. */
+.task-required-output{margin:12px 0;padding:12px 15px;border:1px solid #d6e3ed;border-radius:10px;background:#f0f6ff;display:flex;flex-direction:column;gap:5px;overflow-wrap:anywhere;line-height:1.55}
+.task-required-output strong{font-size:.85rem;color:#2b5c8d}
+.task-required-output span{color:#283d58;font-size:.92rem}
+.qualification-choice-banner article>a.button{align-self:flex-start;margin-top:12px;min-height:44px}
+@media(max-width:620px){.qualification-choice-banner article>a.button{width:100%;text-align:center}}
