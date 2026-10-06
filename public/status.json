@@ -618,6 +618,21 @@
       "transactional_adapter": "Resend",
       "automatic_external_delivery": "PENDING_SENDER_CREDENTIALS",
       "admin_destination": "marenatommaso@gmail.com"
+    },
+    "administration": {
+      "separate_admin_login": true,
+      "separate_privileged_session": true,
+      "privileged_session_hours": 8,
+      "cookie_http_only": true,
+      "cookie_same_site": "Strict",
+      "contributor_session_does_not_authorize_admin_api": true,
+      "centralized_admin_dashboard": true,
+      "approval_history": true,
+      "admin_action_history": true,
+      "immutable_audit_archive": true,
+      "audit_hash_chain": "SHA-256",
+      "database_update_delete_triggers": true,
+      "infrastructure_owner_can_destroy_database": true
     }
   }
 }
