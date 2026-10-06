@@ -931,7 +931,7 @@ async function taskDependencies(env, taskId) {
     env.COMMONS_DB.prepare(
       `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.rationale,d.group_id,d.relation,
               d.required_outcome,d.artifact_contract,d.criticality,t.title AS depends_on_title,
-              CASE WHEN EXISTS(
+              CASE WHEN t.need_status='satisfied' OR EXISTS(
                 SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
               ) THEN 1 ELSE 0 END AS completed
        FROM task_dependencies d
@@ -960,15 +960,15 @@ async function publicTaskGraph(env) {
     ).all(),
     env.COMMONS_DB.prepare(
       `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.group_id,d.relation,d.required_outcome,
-              d.artifact_contract,d.criticality,d.rationale,
-              CASE WHEN EXISTS(
+              d.artifact_contract,d.criticality,d.rationale,source.title AS depends_on_title,
+              source.publication_state AS source_publication_state,source.need_status AS source_need_status,
+              CASE WHEN source.need_status='satisfied' OR EXISTS(
                 SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
               ) THEN 1 ELSE 0 END AS completed
        FROM task_dependencies d
        JOIN tasks target ON target.id=d.task_id
        JOIN tasks source ON source.id=d.depends_on_task_id
        WHERE target.publication_state='published' AND target.need_status='needed'
-         AND source.publication_state='published'
        ORDER BY d.criticality DESC,d.task_id,d.depends_on_task_id`
     ).all(),
     env.COMMONS_DB.prepare(
