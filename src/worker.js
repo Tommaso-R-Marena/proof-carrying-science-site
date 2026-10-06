@@ -2838,6 +2838,13 @@ async function adminCheckpoint(request, env, admin, requestId) {
   return json({ok:true,status:"approved",reservation_expires_at:expiry});
 }
 
+async function linkedSubmissionFiles(env,submissionId){
+  const result=await env.COMMONS_DB.prepare(
+    "SELECT filename,content,sha256 FROM submission_files WHERE submission_id=? ORDER BY filename"
+  ).bind(submissionId).all();
+  return result.results||[];
+}
+
 async function submissionWithFiles(env, submissionId) {
   const submission=await env.COMMONS_DB.prepare(
     `SELECT s.*,r.task_id,t.title,t.integration_target,t.category
@@ -2845,10 +2852,8 @@ async function submissionWithFiles(env, submissionId) {
      JOIN tasks t ON t.id=r.task_id WHERE s.id=?`
   ).bind(submissionId).first();
   if(!submission)throw new ApiError(404,"Submission not found.","submission_not_found");
-  const files=await env.COMMONS_DB.prepare(
-    "SELECT filename,content,sha256 FROM submission_files WHERE submission_id=? ORDER BY filename"
-  ).bind(submissionId).all();
-  return {submission,files:files.results||[]};
+  const files=await linkedSubmissionFiles(env,submissionId);
+  return {submission,files};
 }
 
 async function stagePersistedSubmission(env,submissionId) {
@@ -2898,13 +2903,13 @@ async function adminSubmissionFiles(request,env,admin,submissionId) {
 }
 
 async function adminSubmissionChecks(request,env,admin,submissionId) {
-  const {submission:s}=await submissionWithFiles(env,submissionId);
+  const {submission:s,files}=await submissionWithFiles(env,submissionId);
   if(!s.github_pr_number) return json({ok:true,state:s.github_stage_state,
     message:s.github_stage_error||"No GitHub PR has been opened.",verified:false});
   try {
     const result=await readSubmissionChecks(env,{
       repo:s.github_repo,branch:s.github_branch,number:s.github_pr_number,
-      taskId:s.task_id,submissionId:s.id
+      taskId:s.task_id,submissionId:s.id,expectedFiles:files
     });
     return json({ok:true,...result});
   }catch(e){
@@ -2914,7 +2919,7 @@ async function adminSubmissionChecks(request,env,admin,submissionId) {
 
 async function adminMergeSubmission(request,env,admin,submissionId) {
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner may merge staged GitHub contributions.","owner_required");
-  const {submission:s}=await submissionWithFiles(env,submissionId);
+  const {submission:s,files}=await submissionWithFiles(env,submissionId);
   if(s.status!=="accepted"||s.github_stage_state!=="staged"||!s.github_pr_number)
     throw new ApiError(409,"Accept the submission after green CI before integrating.","merge_not_ready");
   const body=await readBody(request);
@@ -2924,7 +2929,7 @@ async function adminMergeSubmission(request,env,admin,submissionId) {
   try{
     checked=await readSubmissionChecks(env,{
       repo:s.github_repo,branch:s.github_branch,number:s.github_pr_number,
-      taskId:s.task_id,submissionId:s.id
+      taskId:s.task_id,submissionId:s.id,expectedFiles:files
     });
   }catch(e){throw new ApiError(502,"GitHub checks cannot be verified: "+String(e.message).slice(0,180),"github_checks_missing");}
   if(!checked.verified)throw new ApiError(409,"GitHub CI is not green; merging remains blocked.","github_ci_not_passed");
@@ -2965,7 +2970,7 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
     let check;
     try{check=await readSubmissionChecks(env,{
       repo:row.github_repo,branch:row.github_branch,number:row.github_pr_number,
-      taskId:row.task_id,submissionId:row.id
+      taskId:row.task_id,submissionId:row.id,expectedFiles:await linkedSubmissionFiles(env,row.id)
     });}
     catch(e){throw new ApiError(502,"CI verification unavailable: "+String(e.message).slice(0,160),"github_ci_unavailable");}
     if(!check.verified)throw new ApiError(409,"Required PCS Submission Verification is not green. Ask for improvements or rerun CI.","github_ci_not_passed");
