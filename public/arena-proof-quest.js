@@ -5,6 +5,16 @@ let selected=PUZZLES[0],chosen=[],hints=0,seen=new Set(),stars=0,last=null;
 const escapeHtml=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const shuffled=a=>[...a].sort(()=>Math.random()-.5); // cosmetic only; scoring is order-independent
 
+async function proofQuestApi(path,body){
+  if(typeof path!=="string" || !path.startsWith("/api/"))throw Error("Same-origin PCS API path required.");
+  if(!["/api/arena/proof-order/attempt","/api/arena/proof-order/erase"].includes(path)){
+    throw Error("Proof Quest allows only explicit opt-in submission and personal erasure.");
+  }
+  const response=await fetch(path,{method:"POST",credentials:"same-origin",
+    headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+  const data=await response.json().catch(()=>({message:"Invalid response from PCS."}));
+  return {response,data};
+}
 function buttonList(){
   $("questPuzzleList").replaceChildren();
   PUZZLES.forEach((p,index)=>{
@@ -102,8 +112,7 @@ $("questDonate").addEventListener("click",async()=>{
   if(!$("questAdult").checked||!$("questConsent").checked){message.textContent="Data contribution requires both adult confirmation and explicit consent. Everyone can still play.";return;}
   $("questDonate").disabled=true;
   try{
-    const response=await fetch("/api/arena/proof-order/attempt",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({...last,adult_confirmation:true,consent_training:true})});
-    const data=await response.json();
+    const {response,data}=await proofQuestApi("/api/arena/proof-order/attempt",{...last,adult_confirmation:true,consent_training:true});
     if(!response.ok)throw Error(data.message||"Could not contribute attempt.");
     message.textContent="Thank you! "+data.message+" Only synthetic puzzle order data was stored.";
   }catch(e){message.textContent=e.message+" You can keep playing without contributing research data.";}
@@ -113,8 +122,7 @@ $("questErase").addEventListener("click",async()=>{
   if(!confirm("Delete all your donated Proof Quest data?"))return;
   const message=$("questDonationMessage");
   try{
-    const response=await fetch("/api/arena/proof-order/erase",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:"{}"});
-    const data=await response.json();
+    const {response,data}=await proofQuestApi("/api/arena/proof-order/erase",{});
     if(!response.ok)throw Error(data.message||"Could not delete research data.");
     message.textContent="Your donated puzzle attempts were deleted.";
   }catch(e){message.textContent=e.message;}
