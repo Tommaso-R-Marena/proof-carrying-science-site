@@ -165,7 +165,7 @@ function selectSeed(nextSeed){
   seed=nextSeed;mission=scenarioForSeed(seed);
   attacks=[];repairs=[];shield=new Set(mission.initial_guards);lastCheck=null;
   $("forgeWorldIcon").textContent=mission.icon;$("forgeMissionTitle").textContent=mission.name;
-  $("forgeMissionStory").textContent=mission.story;
+  $("forgeMissionStory").textContent=mission.story+" Shortcut risk: "+mission.shortcut_risk+"; budget: "+mission.risk_budget+". Report: "+(mission.report_sensitive?"sensitive — permission matters":"public telemetry — no personal consent needed")+". Each seed has its own rules.";
   $("forgeMissionGoal").textContent=mission.mission;
   $("forgeSeed").textContent=String(seed);
   $("forgeTabRepair").textContent="🛠️ 2 · Repair the shield";
