@@ -48,8 +48,8 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "commons.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "commons.js", "roles.js", "task-graph.js", "arena.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
     "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
@@ -347,6 +347,9 @@ commons_contracts = {
         'id="adminAuditList"',
         'id="adminActionDialog"',
         'id="adminActionFiles"',
+        'id="adminTaskList"',
+        'id="adminRoleApplicationList"',
+        'id="adminChallengeEntryList"',
         "Supporting evidence",
         'src="admin.js"',
     ],
@@ -397,6 +400,45 @@ if commons_js.exists():
         if required_text not in commons_script:
             errors.append(f"commons.js: authenticated contributor-marketplace contract drift: {required_text}")
 
+roles_page = ROOT / "roles.html"
+roles_js = ROOT / "roles.js"
+if roles_page.exists():
+    value = roles_page.read_text(encoding="utf-8")
+    for required_text in ["Some useful work is a responsibility, not a ticket.",'id="roleList"','src="roles.js"']:
+        if required_text not in value:
+            errors.append(f"roles.html: ongoing-role contract drift: {required_text}")
+if roles_js.exists():
+    value = roles_js.read_text(encoding="utf-8")
+    for required_text in ["/api/roles","/apply","roleApplicationDialog"]:
+        if required_text not in value:
+            errors.append(f"roles.js: role-application contract drift: {required_text}")
+
+task_graph_page = ROOT / "task-graph.html"
+task_graph_js = ROOT / "task-graph.js"
+if task_graph_page.exists():
+    value = task_graph_page.read_text(encoding="utf-8")
+    for required_text in ["What unlocks what—and exactly why?","ALL, ANY, and AT_LEAST",'id="taskGraphPrograms"','src="task-graph.js"']:
+        if required_text not in value:
+            errors.append(f"task-graph.html: dependency-graph contract drift: {required_text}")
+if task_graph_js.exists():
+    value = task_graph_js.read_text(encoding="utf-8")
+    for required_text in ["/api/task-graph","artifact_contract","criticality","required_outcome"]:
+        if required_text not in value:
+            errors.append(f"task-graph.js: dependency-graph client drift: {required_text}")
+
+arena_page = ROOT / "arena.html"
+arena_js = ROOT / "arena.js"
+if arena_page.exists():
+    value = arena_page.read_text(encoding="utf-8")
+    for required_text in ["PCS Arena","There is no global points leaderboard","only validated entries appear on a leaderboard",'id="arenaChallenges"','src="arena.js"']:
+        if required_text not in value:
+            errors.append(f"arena.html: Arena authority contract drift: {required_text}")
+if arena_js.exists():
+    value = arena_js.read_text(encoding="utf-8")
+    for required_text in ["/api/challenges","Provisional score","verified score","data-enter-challenge"]:
+        if required_text not in value:
+            errors.append(f"arena.js: Arena client drift: {required_text}")
+
 styles_css = ROOT / "styles.css"
 if styles_css.exists():
     styles_text = styles_css.read_text(encoding="utf-8")
@@ -424,6 +466,10 @@ if styles_css.exists():
         errors.append("styles.css: controls/chips must not overflow their containers")
     if "/* Audited admin action dialog */" not in styles_text:
         errors.append("styles.css: audited admin action dialog styles are missing")
+    if "/* Curated work, roles, and rich dependency graph */" not in styles_text:
+        errors.append("styles.css: curated-work/dependency styles are missing")
+    if "/* PCS Arena */" not in styles_text:
+        errors.append("styles.css: PCS Arena styles are missing")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
@@ -503,8 +549,20 @@ else:
         "adminRevokeSkill",
         "ADMIN_EVIDENCE_MAX_FILES",
         "taskDependencies",
+        "dependencyState",
         "dependency_required",
-        "hardDependencyBlock",
+        "publicTaskGraph",
+        "publication_state='published'",
+        "need_status='needed'",
+        "adminCreateTask",
+        "adminCurateTask",
+        "applyForRole",
+        "adminRoleDecision",
+        "listChallenges",
+        "submitChallengeEntry",
+        "adminChallengeDecision",
+        "challengeScore",
+        "challenge_scorer_unavailable",
         "reservation_key",
         "task_already_reserved",
         "reservation_released_after_level_demotion",
@@ -566,6 +624,55 @@ else:
     ]:
         if required_text not in program_text:
             errors.append(f"migrations/0006_claim_invalidation_program.sql: program contract drift: {required_text}")
+
+curated_work_migration = REPO / "migrations" / "0009_curated_work_and_roles.sql"
+if not curated_work_migration.exists():
+    errors.append("missing curated-work migration: migrations/0009_curated_work_and_roles.sql")
+else:
+    curated_text = curated_work_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "publication_state",
+        "need_status",
+        "role_openings",
+        "role_applications",
+        "UPDATE tasks SET publication_state='draft'",
+        "'MKT-001'",
+        "'ADM-001'",
+        "'OUT-001'",
+    ]:
+        if required_text not in curated_text:
+            errors.append(f"migrations/0009_curated_work_and_roles.sql: curated-work contract drift: {required_text}")
+
+rich_graph_migration = REPO / "migrations" / "0010_rich_task_dependency_graph.sql"
+if not rich_graph_migration.exists():
+    errors.append("missing rich dependency graph migration: migrations/0010_rich_task_dependency_graph.sql")
+else:
+    graph_text = rich_graph_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "task_dependency_groups",
+        "artifact_contract",
+        "criticality",
+        "mode TEXT NOT NULL CHECK(mode IN ('all','any','at_least'))",
+        "INV-006-formalization",
+    ]:
+        if required_text not in graph_text:
+            errors.append(f"migrations/0010_rich_task_dependency_graph.sql: dependency-graph contract drift: {required_text}")
+
+arena_migration = REPO / "migrations" / "0011_pcs_arena.sql"
+if not arena_migration.exists():
+    errors.append("missing PCS Arena migration: migrations/0011_pcs_arena.sql")
+else:
+    arena_text = arena_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS challenges",
+        "CREATE TABLE IF NOT EXISTS challenge_entries",
+        "verification_mode",
+        "leaderboard_state",
+        "'ARENA-INV-001'",
+        "'manual_gate'",
+    ]:
+        if required_text not in arena_text:
+            errors.append(f"migrations/0011_pcs_arena.sql: Arena contract drift: {required_text}")
 
 reservation_migration = REPO / "migrations" / "0007_reserved_task_exclusivity.sql"
 if not reservation_migration.exists():
