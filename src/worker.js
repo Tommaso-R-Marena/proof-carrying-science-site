@@ -1,3 +1,4 @@
+import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion} from "./production-promotion.js";
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
   githubConfigured, createSubmissionPullRequest, readSubmissionChecks,
@@ -2985,6 +2986,174 @@ async function adminMergeSubmission(request,env,admin,submissionId) {
   return json({ok:true,merged:true,merge_sha:merged.merge_sha,pr_url:merged.pr_url});
 }
 
+// Unlike submission acceptance, promotion can change production source.
+async function promotionWithFiles(env,id){
+  const row=await env.COMMONS_DB.prepare(
+    `SELECT p.*,s.status AS source_status,s.github_stage_state AS source_stage,s.github_repo AS source_repo
+     FROM production_promotions p JOIN submissions s ON s.id=p.submission_id
+     WHERE p.id=?`
+  ).bind(id).first();
+  if(!row)throw new ApiError(404,"Promotion request not found.","promotion_missing");
+  const files=await linkedSubmissionFiles(env,row.submission_id);
+  return {row,files};
+}
+async function adminPromotionOverview(request,env,admin){
+  const [promotions,candidates]=await Promise.all([
+    env.COMMONS_DB.prepare(
+      `SELECT p.id,p.submission_id,p.task_id,p.repo,p.source_pr_number,p.mapping_json,
+       p.rationale,p.state,p.created_at,p.staged_at,p.pr_number,p.pr_url,p.base_sha,
+       p.head_sha,p.stage_error,p.decision_at,p.decision_note,p.approved_head_sha,p.merged_at,p.merge_sha,
+       u.display_name AS contributor
+       FROM production_promotions p JOIN submissions s ON s.id=p.submission_id
+       JOIN users u ON u.id=s.user_id
+       ORDER BY p.created_at DESC LIMIT 100`
+    ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT s.id AS submission_id,r.task_id,t.title,s.github_repo AS repo,
+       s.github_pr_number AS source_pr_number,s.review_note,s.submitted_at,
+       u.display_name AS contributor,
+       (SELECT GROUP_CONCAT(f.filename,' | ') FROM submission_files f WHERE f.submission_id=s.id) AS filenames
+       FROM submissions s JOIN task_requests r ON r.id=s.request_id
+       JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=s.user_id
+       WHERE s.status='accepted' AND s.github_stage_state='merged'
+         AND s.github_repo IN ('Tommaso-R-Marena/proof-carrying-science','Tommaso-R-Marena/proof-carrying-science-site')
+         AND EXISTS(SELECT 1 FROM submission_files f WHERE f.submission_id=s.id)
+         AND NOT EXISTS(SELECT 1 FROM production_promotions p WHERE p.submission_id=s.id)
+       ORDER BY s.submitted_at DESC LIMIT 100`
+    ).all()
+  ]);
+  return json({ok:true,can_manage:isOwner(admin),
+    promotions:promotions.results||[],candidates:candidates.results||[]},200,{"cache-control":"no-store"});
+}
+async function promotionStageRecord(env,p){
+  const {row,files}=await promotionWithFiles(env,p.id);
+  if(!["requested","stage_error"].includes(row.state))
+    throw new ApiError(409,"This promotion cannot be staged again; begin with a new accepted submission.","promotion_already_staged");
+  if(row.source_status!=="accepted"||row.source_stage!=="merged"||
+     row.source_repo!==row.repo)
+    throw new ApiError(409,"Only reviewed, accepted and GitHub-archived submissions may be promoted.","source_not_archived");
+  try{
+    const stage=await stagePromotion(env,row,files);
+    const changed=await env.COMMONS_DB.prepare(
+      `UPDATE production_promotions SET state='staged',staged_at=?,base_sha=?,branch=?,head_sha=?,
+       pr_number=?,pr_url=?,stage_error=NULL WHERE id=? AND state IN ('requested','stage_error')`
+    ).bind(nowIso(),stage.base_sha,stage.branch,stage.head_sha||null,stage.pr_number,stage.pr_url,row.id).run();
+    if(Number(changed.meta?.changes||0)!==1)throw new Error("Promotion staging decision raced with another review.");
+    await audit(env,p.created_by||row.created_by,"production_promotion_staged","production_promotion",row.id,{
+      repo:row.repo,pr_number:stage.pr_number,base_sha:stage.base_sha,paths:JSON.parse(row.mapping_json).map(x=>x.path)
+    });
+    return {state:"staged",...stage};
+  }catch(error){
+    await env.COMMONS_DB.prepare(
+      `UPDATE production_promotions SET state='stage_error',stage_error=? WHERE id=? AND state IN ('requested','stage_error')`
+    ).bind(String(error.message||error).slice(0,340),row.id).run();
+    return {state:"stage_error",message:String(error.message||error).slice(0,340)};
+  }
+}
+async function adminPromotionCreate(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can request source promotion.","owner_required");
+  const body=await readBody(request);
+  const submissionId=String(body.submission_id||"");
+  const rationale=cleanText(body.rationale,3000);
+  if(!/^[a-f0-9-]{36}$/i.test(submissionId))throw new ApiError(400,"Select an accepted submission.","bad_submission_id");
+  if(rationale.length<40)throw new ApiError(400,"Explain the production change and trust boundaries (at least 40 characters).","promotion_rationale_required");
+  const source=await env.COMMONS_DB.prepare(
+    `SELECT s.*,r.task_id,t.integration_target
+     FROM submissions s JOIN task_requests r ON r.id=s.request_id
+     JOIN tasks t ON t.id=r.task_id WHERE s.id=?`
+  ).bind(submissionId).first();
+  if(!source||source.status!=="accepted"||source.github_stage_state!=="merged"||
+     !integrationRepository(source.integration_target)||
+     integrationRepository(source.integration_target)!==source.github_repo||
+     !Number.isInteger(Number(source.github_pr_number))||Number(source.github_pr_number)<1)
+    throw new ApiError(409,"Promotions require an accepted GitHub-archived submission, never a direct upload.","source_not_eligible");
+  const files=await linkedSubmissionFiles(env,source.id);
+  let mappings;
+  try{mappings=validatePromotionMappings(source.github_repo,files,body.mappings);}
+  catch(e){throw new ApiError(400,String(e.message).slice(0,260),"unsafe_production_mapping");}
+  const id=crypto.randomUUID(),created=nowIso();
+  try{
+    await env.COMMONS_DB.prepare(
+      `INSERT INTO production_promotions(id,submission_id,task_id,repo,source_pr_number,mapping_json,
+       rationale,created_at,created_by,state) VALUES(?,?,?,?,?,?,?,?,?,'requested')`
+    ).bind(id,source.id,source.task_id,source.github_repo,source.github_pr_number,
+      JSON.stringify(mappings),rationale,created,admin.id).run();
+  }catch(e){
+    if(/UNIQUE/i.test(String(e.message)))throw new ApiError(409,"This submission already has a promotion case.","promotion_exists");
+    throw e;
+  }
+  await audit(env,admin.id,"production_promotion_requested","production_promotion",id,{
+    submission_id:source.id,repo:source.github_repo,mappings,reason:rationale
+  });
+  const stage=await promotionStageRecord(env,{id,created_by:admin.id});
+  return json({ok:true,promotion_id:id,...stage,
+    message:stage.state==="staged"
+      ?"Production promotion PR opened; fresh tests and explicit Owner approval are still required."
+      :"Promotion saved, but GitHub staging is blocked: "+stage.message},201);
+}
+async function adminPromotionRestage(request,env,admin,id){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can stage promotion.","owner_required");
+  const result=await promotionStageRecord(env,{id,created_by:admin.id});
+  return json({ok:true,...result});
+}
+async function adminPromotionChecks(request,env,admin,id){
+  const {row,files}=await promotionWithFiles(env,id);
+  if(!["staged","approved"].includes(row.state))
+    return json({ok:true,status:row.state,verified:false,message:row.stage_error||"Not staged for production."});
+  try{return json({ok:true,...await verifyPromotion(env,row,files)},200,{"cache-control":"no-store"});}
+  catch(e){return json({ok:true,status:"blocked",verified:false,message:String(e.message).slice(0,350)},200,{"cache-control":"no-store"});}
+}
+async function adminPromotionDecision(request,env,admin,id){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner may approve production promotion.","owner_required");
+  const body=await readBody(request),decision=String(body.decision||""),note=cleanText(body.note,3000);
+  if(!["approve","needs_changes","reject"].includes(decision))throw new ApiError(400,"Invalid promotion decision.","promotion_decision_invalid");
+  if(note.length<40)throw new ApiError(400,"Record a substantive production-risk review (at least 40 characters).","promotion_review_required");
+  const {row,files}=await promotionWithFiles(env,id);
+  if(row.state!=="staged")throw new ApiError(409,"Promotion must be staged and undecided.","promotion_not_reviewable");
+  let head=null;
+  if(decision==="approve"){
+    let check;
+    try{check=await verifyPromotion(env,row,files);}
+    catch(e){throw new ApiError(409,"Production checks blocked: "+String(e.message).slice(0,250),"promotion_not_verified");}
+    if(!check.verified)throw new ApiError(409,"Fresh, executed CI has not passed on this exact promotion commit.","promotion_ci_required");
+    head=check.head_sha;
+  }
+  const next=decision==="approve"?"approved":decision==="reject"?"rejected":"needs_changes";
+  const written=await env.COMMONS_DB.prepare(
+    `UPDATE production_promotions SET state=?,decision_at=?,decision_by=?,decision_note=?,approved_head_sha=?
+     WHERE id=? AND state='staged'`
+  ).bind(next,nowIso(),admin.id,note,head,row.id).run();
+  if(Number(written.meta?.changes||0)!==1)throw new ApiError(409,"A concurrent reviewer already decided this promotion.","promotion_race");
+  await audit(env,admin.id,"production_promotion_decided","production_promotion",row.id,{
+    decision,head_sha:head,reason:note
+  });
+  return json({ok:true,state:next,approved_head_sha:head});
+}
+async function adminPromotionMerge(request,env,admin,id){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can integrate production code.","owner_required");
+  const body=await readBody(request),reason=cleanText(body.reason,3000);
+  if(reason.length<40)throw new ApiError(400,"Record the final integration rationale (at least 40 characters).","integration_note_required");
+  const {row,files}=await promotionWithFiles(env,id);
+  if(row.state!=="approved"||!row.approved_head_sha)
+    throw new ApiError(409,"This promotion lacks explicit approval on an exact tested SHA.","promotion_not_approved");
+  if(row.source_status!=="accepted"||row.source_stage!=="merged"||row.source_repo!==row.repo)
+    throw new ApiError(409,"The archived contribution no longer meets promotion prerequisites.","source_no_longer_eligible");
+  let outcome;
+  try{outcome=await mergePromotion(env,row,files,row.approved_head_sha);}
+  catch(e){throw new ApiError(409,"Production merge blocked: "+String(e.message).slice(0,280),"promotion_merge_blocked");}
+  const changed=await env.COMMONS_DB.prepare(
+    "UPDATE production_promotions SET state='merged',merged_at=?,merge_sha=? WHERE id=? AND state='approved'"
+  ).bind(nowIso(),outcome.sha,id).run();
+  if(Number(changed.meta?.changes||0)!==1)throw new ApiError(409,"Promotion status changed during merge; reconcile repository.","promotion_merge_race");
+  await audit(env,admin.id,"production_promotion_merged","production_promotion",id,{
+    repo:row.repo,pr_number:row.pr_number,sha:outcome.sha,approved_head_sha:row.approved_head_sha,reason
+  });
+  await notify(env,{kind:"production_promotion_completed",email:env.ADMIN_EMAIL||null,
+    subject:`[PCS] Production promotion completed: ${row.task_id}`,
+    body:`PCS production promotion ${id} was merged into ${row.repo}.\nPR: ${outcome.pr_url}\nCommit: ${outcome.sha}\nRationale: ${reason}\n`});
+  return json({ok:true,state:"merged",merge_sha:outcome.sha,pr_url:outcome.pr_url});
+}
+
 async function adminSubmissionDecision(request, env, admin, submissionId) {
   const body=await readBody(request);
   const decision=String(body.decision||"");
@@ -3298,6 +3467,17 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
     if (method==="GET" && path==="/api/admin/github/diagnostics") return adminGithubDiagnostics(request,env,admin);
+    if(method==="GET"&&path==="/api/admin/promotions")return adminPromotionOverview(request,env,admin);
+    if(method==="POST"&&path==="/api/admin/promotions")return adminPromotionCreate(request,env,admin);
+    const promotionMatch=path.match(/^\/api\/admin\/promotions\/([^/]+)\/(stage|checks|decision|merge)$/);
+    if(promotionMatch){
+      const id=decodeURIComponent(promotionMatch[1]),action=promotionMatch[2];
+      if(method==="POST"&&action==="stage")return adminPromotionRestage(request,env,admin,id);
+      if(method==="GET"&&action==="checks")return adminPromotionChecks(request,env,admin,id);
+      if(method==="POST"&&action==="decision")return adminPromotionDecision(request,env,admin,id);
+      if(method==="POST"&&action==="merge")return adminPromotionMerge(request,env,admin,id);
+    }
+
     let submissionFlowMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/(stage|checks|files|merge)$/);
     if(submissionFlowMatch){
       const id=decodeURIComponent(submissionFlowMatch[1]), action=submissionFlowMatch[2];
