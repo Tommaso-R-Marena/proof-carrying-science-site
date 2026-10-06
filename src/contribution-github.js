@@ -198,7 +198,7 @@ export async function readSubmissionChecks(env,{repo,branch,number,taskId,submis
     }
     for(const file of expectedFiles){
       const actual=await github(env,repo,"GET",`contents/${prefix}${file.filename}?ref=${encodeURIComponent(head)}`);
-      const base64=String(actual.content||"").replace(/\\s/g,"");
+      const base64=String(actual.content||"").replace(/\s/g,"");
       if(!base64 || base64!==base64Utf8(file.content)){
         throw new Error("Staged PR bytes no longer match the saved submission: "+file.filename);
       }
