@@ -85,6 +85,7 @@
       ]},
       {heading:"ADVANCED",links:[
         ["claim-review.html","Claim & obligation review"],
+        ["arena-proof-quest.html","Play Proof Quest · free"],
         ["researcher-pilots.html","Independent researcher pilots"],
         ["trust.html","Trust Center"],
         ["validation.html","Validation evidence"],
