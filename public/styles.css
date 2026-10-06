@@ -1155,3 +1155,45 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .admin-dependency-edge>.smallbutton{grid-column:2;grid-row:1/3}
 @media(max-width:980px){.admin-graph-editor{grid-template-columns:1fr}}
 @media(max-width:620px){.admin-dependency-edge{grid-template-columns:1fr}.admin-dependency-edge>.smallbutton{grid-column:1;grid-row:auto}.admin-dependency-groups>div{align-items:flex-start;flex-direction:column}}
+
+
+/* Consistent role-aware navigation and easy-to-scan contributor/admin workspaces. */
+.pcs-global-nav{gap:11px;font-size:12px}
+.pcs-global-nav .nav-primary-link{font-weight:800;color:#195b9e}
+.pcs-global-nav .nav-find-work{font-weight:780}
+.pcs-global-nav .navmore>summary{font-weight:680}
+.pcs-global-nav .navmore-menu{min-width:260px;max-height:min(70vh,570px);overflow-y:auto;overscroll-behavior:contain}
+.pcs-global-nav .navmore-heading{display:block;margin:9px 10px 3px;font-size:10px;font-weight:850;letter-spacing:.08em;color:#526c89}
+.pcs-global-nav .nav-account-entry{font-weight:760}
+.pcs-global-nav .nav-admin-entry{border-left:1px solid var(--line);padding-left:12px;font-weight:780;color:#334b67}
+.pcs-global-nav .navmore>summary:focus-visible{outline:3px solid rgba(47,125,244,.4);outline-offset:4px;border-radius:5px}
+.pcs-action-hub{margin:20px 0 26px;padding:23px;border:1px solid #d5e1ec;border-radius:17px;background:#f8fafc}
+.pcs-hub-intro h2{font-size:clamp(22px,2.3vw,31px);margin:4px 0 9px;line-height:1.17}
+.pcs-hub-intro p{font-size:13px;line-height:1.6;color:#52657b;max-width:900px;margin:0 0 18px}
+.pcs-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pcs-quick-link{display:flex;flex-direction:column;gap:7px;min-width:0;padding:15px 16px;border:1px solid #dbe4ec;border-radius:12px;background:#fff;text-decoration:none}
+.pcs-quick-link strong{font-size:14px;line-height:1.35;color:#163e69}
+.pcs-quick-link span{font-size:12px;line-height:1.5;color:#52677d}
+.pcs-quick-link:hover,.pcs-quick-link:focus-visible{border-color:#8eb5e1;box-shadow:0 4px 16px rgba(34,75,110,.09)}
+.admin-workflow-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.admin-workflow-section{height:auto;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:2px;min-width:0;padding:15px;border:1px solid #dbe4ec;border-radius:12px;background:#fff}
+.admin-workflow-section strong{font-size:13px;line-height:1.4;margin-bottom:7px;color:#192d45}
+.admin-workflow-section a{font-size:12px;line-height:1.45;text-decoration:none;color:#285987;padding:7px 4px;border-radius:6px;overflow-wrap:anywhere}
+.admin-workflow-section a:hover,.admin-workflow-section a:focus-visible{background:#eef5fd;color:#163c64}
+.admin-login-alternative{font-size:12px!important;margin:-8px 0 16px!important}
+.admin-login-alternative a{font-weight:750}
+@media(max-width:1180px){
+  .js .navtoggle{display:flex}
+  .js nav:has(> .pcs-global-nav){position:relative}
+  .js .pcs-global-nav{display:none;position:absolute;z-index:50;top:62px;right:0;width:min(370px,calc(100vw - 32px));flex-direction:column;align-items:stretch;gap:4px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);max-height:calc(100vh - 95px);overflow-y:auto}
+  .js .pcs-global-nav.open{display:flex}
+  .js .pcs-global-nav>a{padding:11px 12px;border-radius:9px}
+  .js .pcs-global-nav>a:hover{background:#f4f7fb}
+  .js .pcs-global-nav .navmore{width:100%}
+  .js .pcs-global-nav .navmore>summary{padding:11px 12px;border-radius:9px}
+  .js .pcs-global-nav .navmore-menu{position:static;width:auto;min-width:0;max-height:none;margin:3px 0 7px;padding:5px 0 5px 12px;border:0;border-left:2px solid #e0e7ef;border-radius:0;box-shadow:none;overflow:visible}
+  .js .pcs-global-nav .navmore-menu a{white-space:normal}
+  .js .pcs-global-nav .nav-admin-entry{border-left:0;border-top:1px solid var(--line);padding:13px 12px 11px}
+}
+@media(max-width:980px){.admin-workflow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.pcs-quick-grid{grid-template-columns:1fr}.admin-workflow-grid{grid-template-columns:1fr}.pcs-action-hub{padding:16px}}
