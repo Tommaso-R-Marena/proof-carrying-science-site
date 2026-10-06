@@ -59,7 +59,7 @@
       return details;
     };
 
-    addLink(links, "guided-submission.html", "Try PCS", "nav-primary-link");
+    addLink(links, "research-preview.html", "Try PCS", "nav-primary-link");
     addLink(links, "tasks.html", "Find work", "nav-find-work");
 
     addMenu("Contribute", [
@@ -78,6 +78,7 @@
     ]);
     addMenu("Verify", [
       {heading:"GET STARTED",links:[
+        ["research-preview.html","Research preview · no login"],
         ["guided-submission.html","Guided submission"],
         ["package-inspector.html","Inspect a PCS package"],
         ["result-anatomy.html","Understand verification results"]
