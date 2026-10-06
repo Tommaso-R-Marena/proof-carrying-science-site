@@ -1155,8 +1155,8 @@ async function verifyAuditArchive(env) {
 
 const APPROVAL_ACTIONS = new Set([
   "task_request_approved","task_request_rejected","checkpoint_accepted","checkpoint_released",
-  "submission_reviewed","skill_reviewed","skill_verified_by_task_application",
-  "user_level_changed","user_governance_changed","email_manually_verified"
+  "submission_reviewed","skill_reviewed","skill_verified_by_task_application","skill_revoked",
+  "reservation_released_after_skill_revocation","user_level_changed","user_governance_changed","email_manually_verified"
 ]);
 
 async function adminAuditFeed(request, env) {
