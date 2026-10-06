@@ -1225,3 +1225,14 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .pcs-ci-state{font-size:12px;line-height:1.55;color:#68582f}.pcs-ci-good{color:#136a4c}.pcs-ci-error{color:#a53043}
 @media(max-width:800px){.pcs-review-steps{grid-template-columns:1fr 1fr}.pcs-form-columns{grid-template-columns:1fr}}
 @media(max-width:520px){.pcs-work-dialog form{padding:17px}.pcs-review-steps{grid-template-columns:1fr}}
+
+/* Deliberately explicit production-promotion review, not part of normal contribution approval. */
+.pcs-promotion-form{padding:20px;margin:20px 0;border:1px solid #c4d6e9;border-radius:13px}
+.pcs-promotion-form h3{font-size:18px;margin:0 0 12px}
+.pcs-promotion-form .field{display:grid;gap:7px;margin:12px 0}
+.pcs-promotion-form small{font-size:11px;line-height:1.6;color:#536b83}
+.pcs-promotion-form code,.pcs-review-card code{overflow-wrap:anywhere}
+#promotionDecisionDialog{max-width:min(740px,calc(100vw - 26px))}
+#promotionQueueStatus{padding:8px 0}
+#promotionQueue .actions button{min-width:0;white-space:normal}
+@media(max-width:740px){.pcs-promotion-form{padding:15px}}
