@@ -244,6 +244,37 @@ function evidenceName(name) {
     .slice(0, 180) || "evidence";
 }
 
+function looksLikeUtf8Text(bytes) {
+  if (!bytes?.length) return false;
+  const sample = bytes.subarray(0, Math.min(bytes.length, 65536));
+  let controls = 0;
+  for (const byte of sample) {
+    if (byte === 0) return false;
+    if (byte < 9 || (byte > 13 && byte < 32)) controls++;
+  }
+  return controls <= Math.max(2, Math.floor(sample.length * 0.01));
+}
+
+function evidenceContentMatches(ext, bytes) {
+  if (ext === "pdf") {
+    return bytes.length >= 5 &&
+      bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46 && bytes[4] === 0x2d;
+  }
+  if (ext === "png") {
+    const sig=[0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a];
+    return bytes.length>=8 && sig.every((value,index)=>bytes[index]===value);
+  }
+  if (ext === "jpg" || ext === "jpeg") {
+    return bytes.length>=3 && bytes[0]===0xff && bytes[1]===0xd8 && bytes[2]===0xff;
+  }
+  if (ext === "webp") {
+    return bytes.length>=12 &&
+      String.fromCharCode(...bytes.subarray(0,4))==="RIFF" &&
+      String.fromCharCode(...bytes.subarray(8,12))==="WEBP";
+  }
+  return looksLikeUtf8Text(bytes);
+}
+
 function bytesToBase64(bytes) {
   let binary = "";
   const step = 0x8000;
@@ -324,6 +355,9 @@ async function adminUploadEvidence(request, env, admin) {
       throw new ApiError(400,`${name}: unsupported file type. Allowed: PDF, TXT, MD, CSV, JSON, LOG, LEAN, PY, PNG, JPG/JPEG, WEBP.`,"unsupported_evidence_type");
     }
     const bytes = new Uint8Array(await file.arrayBuffer());
+    if (!evidenceContentMatches(ext,bytes)) {
+      throw new ApiError(400,`${name}: file contents do not match the allowed ${ext.toUpperCase()} format.`,"evidence_type_mismatch");
+    }
     const sha = await sha256Hex(bytes);
     const id = crypto.randomUUID();
     const chunkCount = Math.ceil(bytes.length / ADMIN_EVIDENCE_CHUNK_BYTES);
@@ -454,8 +488,8 @@ function requireSameOrigin(request) {
   const origin = request.headers.get("origin");
   if (origin && origin !== url.origin) throw new ApiError(403, "Cross-origin state changes are not allowed.", "bad_origin");
   const fetchSite = request.headers.get("sec-fetch-site");
-  if (fetchSite && !["same-origin", "same-site", "none"].includes(fetchSite)) {
-    throw new ApiError(403, "Cross-site state changes are not allowed.", "bad_fetch_site");
+  if (fetchSite && !["same-origin", "none"].includes(fetchSite)) {
+    throw new ApiError(403, "Only same-origin browser state changes are allowed.", "bad_fetch_site");
   }
 }
 
