@@ -1402,7 +1402,10 @@ async function me(request, env) {
       "SELECT id,skill,task_id,created_at,expires_at,submitted_at,score,max_score,auto_pass,status FROM competency_evaluations WHERE user_id=? ORDER BY created_at DESC LIMIT 20"
     ).bind(user.id).all(),
     env.COMMONS_DB.prepare(
-      "SELECT id,request_id,status,review_note,submitted_at,github_stage_state,github_pr_url,github_repo,github_branch,github_pr_number FROM submissions WHERE user_id=? ORDER BY submitted_at DESC LIMIT 50"
+      `SELECT s.id,s.request_id,s.status,s.review_note,s.submitted_at,s.github_stage_state,s.github_pr_url,s.github_repo,s.github_branch,s.github_pr_number,
+       p.state AS production_promotion_state,p.pr_url AS production_promotion_url,p.merge_sha AS production_merge_sha
+       FROM submissions s LEFT JOIN production_promotions p ON p.submission_id=s.id
+       WHERE s.user_id=? ORDER BY s.submitted_at DESC LIMIT 50`
     ).bind(user.id).all(),
   ]);
   return json({
