@@ -738,6 +738,8 @@
       $("#adminPendingCount").textContent=String((data.pending_requests||[]).length);
       $("#adminSkillCount").textContent=String((data.skill_reviews||[]).length);
       $("#adminSubmissionCount").textContent=String((data.submissions||[]).length);
+      $("#adminGithubStatus").textContent=data.github_transport_configured?"configured":"needs setup";
+      $("#adminGithubStatus").className=data.github_transport_configured?"good-text":"warn-text";
       $("#adminEmailTransport").textContent=data.email_transport?"configured":"not configured";
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
       $("#adminEmailTransportDetail").textContent=data.email_transport_name==="gmail_apps_script"?"Gmail · Apps Script relay":data.email_transport_name==="resend"?"Resend":"No outbound provider";
