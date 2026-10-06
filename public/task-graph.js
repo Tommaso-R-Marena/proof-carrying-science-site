@@ -5,6 +5,7 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 let graph={tasks:[],edges:[],groups:[]};
 
 async function api(path){
+    if(typeof path!=="string" || !path.startsWith("/api/")) throw new Error("Same-origin PCS API path required.");
   const res=await fetch(path,{credentials:"same-origin"});
   const data=await res.json().catch(()=>({message:"Invalid server response."}));
   if(!res.ok)throw new Error(data.message||"Request failed.");

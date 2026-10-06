@@ -2,6 +2,7 @@
   "use strict";
   const $=s=>document.querySelector(s);
   async function api(path,options={}){
+    if(typeof path!=="string" || !path.startsWith("/api/")) throw new Error("Same-origin PCS API path required.");
     const init={credentials:"same-origin",...options};
     if(init.body&&typeof init.body!=="string"){
       init.headers={...(init.headers||{}),"content-type":"application/json"};

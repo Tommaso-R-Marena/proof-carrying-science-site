@@ -271,7 +271,7 @@ for preview_name, expected_tokens in {
     ],
     "research-preview-engine.mjs": [
         "evaluateTrace", "evaluateModel", "forbidden_action",
-        "max_cumulative_risk", "signed", "Lean theorem",
+        "max_cumulative_risk", "digital signature", "Lean theorem",
     ],
     "research-preview.js": [
         "lean_checked:false", "signed:false", "independently_replayed:false",
@@ -363,7 +363,7 @@ commons_contracts = {
         "PCS Safety Bounty Fund",
         "Not yet opened",
         "Money must never buy a green result.",
-        "proposed",
+        "Funding conversations are manual right now.",
     ],
     "governance.html": [
         "COMMON GOOD COMMITMENT",
@@ -375,7 +375,7 @@ commons_contracts = {
     ],
     "organizations.html": [
         "Broadly free",
-        "Large commercial",
+        "large commercial organizations",
         "Revenue helps sustain the commons",
         "Licensing caution",
     ],
@@ -586,7 +586,8 @@ if admin_js.exists():
         "/skill",
         "/level",
         "/governance",
-        "FOUNDER CALIBRATION OVERRIDE",
+        "adminActionOverride",
+        "allowOverride",
         "Founder/Owner authority required",
     ]:
         if required_text not in admin_script:
@@ -1246,21 +1247,31 @@ if inspector_script.exists():
         if required_text not in inspector_js:
             errors.append(f"package-inspector.js: assurance dependency engine drift: {required_text}")
 
-NETWORKED_COMMONS_JS = {"commons.js", "account.js", "admin.js"}
+# The Commons is intentionally server-backed; the scientific discovery and
+# research-preview clients must stay local-only. Review the EXACT API data path.
+NETWORKED_COMMONS_JS = {
+    "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
+    "admin-login.js", "arena.js", "site.js",
+}
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
 
-    # Reviewed Commons clients may call only the same-origin /api backend through
-    # their local api(path, options) helper. They must not embed an external HTTP URL.
     if js.name in NETWORKED_COMMONS_JS:
-        if "fetch(path,init)" not in text:
-            errors.append(f"{js.name}: expected reviewed same-origin API helper is missing")
-        if re.search(r"https?://", text):
-            errors.append(f"{js.name}: external URL found in reviewed Commons API client")
+        # All network requests by these reviewed clients must pass a local path
+        # named 'path'. GitHub URLs are allowed as navigational links, NOT fetches.
+        if not re.search(r"\bfetch\s*\(\s*path\s*,", text):
+            errors.append(f"{js.name}: reviewed same-origin fetch helper missing")
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
+            errors.append(f"{js.name}: unreviewed network API call or arbitrary fetch target")
+        if js.name == "site.js":
+            if 'path !== "/api/me"' not in text or 'path !== "/api/admin/session"' not in text:
+                errors.append("site.js: reviewed session endpoint allowlist missing")
+        elif 'path.startsWith("/api/")' not in text:
+            errors.append(f"{js.name}: runtime same-origin /api/ route guard missing")
         continue
 
-    # A literal relative fetch of an existing deployable asset is a same-origin,
-    # read-only static dependency. It does not upload browser-selected data.
+    # A literal same-origin GET of a deployable static asset is not a scientific
+    # file upload. Other network primitives on scientific tools must be reviewed.
     def _strip_static_fetch(match: re.Match[str]) -> str:
         ref = match.group("ref")
         parsed = urlparse(ref)
@@ -1926,11 +1937,11 @@ for rel, tokens in {
                       "contributorSubmissionChecks", "github_stage_state",
                       "expectedFiles:files", "github_ci_not_passed"],
     "src/contribution-github.js": ["PCS Submission Verification", "contributionPrefix",
-                                     "expectedFiles", "github-actions", "mergeStagedPullRequest"],
+                                     "expectedFiles", "actions/workflows/", "mergeStagedPullRequest"],
     "migrations/0013_submission_automation_microtasks.sql": ["submission_files", "expected_minutes",
                                                                "MKT-MICRO-001", "'draft'"],
     ".github/workflows/pcs-submission.yml": ["PCS Submission Verification", "contents: read"],
-    "tests/submission-github.test.mjs": ["fail", "verified", "github-actions", "stage"],
+    "tests/submission-github.test.mjs": ["fail", "verified", "actions/workflows/pcs-submission.yml/runs", "stage"],
     "docs/CONTRIBUTION_SUBMISSION_PIPELINE.md": ["PCS_GITHUB_TOKEN", "10 or 30 minute", "Github"]
 }.items():
     p = REPO / rel
