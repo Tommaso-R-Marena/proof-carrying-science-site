@@ -843,23 +843,59 @@ async function verifiedSkills(env, userId) {
   return new Set((result.results || []).map(r => r.skill));
 }
 
-function hardDependencyBlock(dependencies=[]) {
-  return (dependencies||[]).filter(dep=>dep.dependency_type==="hard"&&!dep.completed);
+function dependencyState(edges=[],groups=[]) {
+  const normalizedEdges=edges||[];
+  const normalizedGroups=groups||[];
+  const groupResults=[];
+  const grouped=new Set();
+
+  for(const group of normalizedGroups){
+    const members=normalizedEdges.filter(edge=>edge.group_id===group.id);
+    members.forEach(edge=>grouped.add(edge.depends_on_task_id+"|"+edge.task_id));
+    const satisfied=members.filter(edge=>edge.completed).length;
+    const required=group.mode==="all"?members.length:group.mode==="any"?1:Math.max(1,Number(group.min_satisfied||1));
+    const complete=satisfied>=required;
+    groupResults.push({
+      ...group,
+      satisfied,
+      total:members.length,
+      required,
+      complete,
+      missing:members.filter(edge=>!edge.completed).map(edge=>edge.depends_on_task_id),
+    });
+  }
+
+  const legacyHard=normalizedEdges.filter(edge=>
+    edge.dependency_type==="hard" &&
+    !edge.group_id &&
+    !edge.completed
+  );
+
+  const blockedGroups=groupResults.filter(group=>!group.complete);
+  return {
+    complete:legacyHard.length===0&&blockedGroups.length===0,
+    blocked_edges:legacyHard,
+    groups:groupResults,
+    blocked_groups:blockedGroups,
+  };
 }
 
-function eligibilityFor(task, user, skills, dependencies=[]) {
+function eligibilityFor(task, user, skills, dependency={complete:true,blocked_edges:[],blocked_groups:[]}) {
   if (!user) return { state: "login_required", can_start: false, can_request: false, reason: "Create an account or sign in." };
   if (user.status !== "active") return { state: "locked", can_start: false, can_request: false, reason: "Account is not active." };
   if (Number(user.level) < Number(task.min_level)) {
     return { state: "level_required", can_start: false, can_request: false, reason: `Requires PCS level L${task.min_level}. Your verified level is L${user.level}.` };
   }
-  const blockedDeps=hardDependencyBlock(dependencies);
-  if (blockedDeps.length) {
+  if (!dependency.complete) {
+    const labels=[
+      ...(dependency.blocked_groups||[]).map(group=>group.label+" ("+group.satisfied+"/"+group.required+")"),
+      ...(dependency.blocked_edges||[]).map(edge=>edge.depends_on_task_id),
+    ];
     return {
       state:"dependency_required",
       can_start:false,
       can_request:false,
-      reason:"Program prerequisites remain open: "+blockedDeps.map(dep=>dep.depends_on_task_id).join(", ")+". PCS will unlock this stage after those contributions are accepted."
+      reason:"Prerequisite gate remains open: "+labels.join(", ")+". The dependency graph shows exactly which accepted outputs unlock this work."
     };
   }
   if (task.claim_mode !== "open" && !Number(user.email_verified)) {
@@ -891,17 +927,62 @@ function eligibilityFor(task, user, skills, dependencies=[]) {
 }
 
 async function taskDependencies(env, taskId) {
-  const rows=await env.COMMONS_DB.prepare(
-    `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.rationale,t.title AS depends_on_title,
-            CASE WHEN EXISTS(
-              SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
-            ) THEN 1 ELSE 0 END AS completed
-     FROM task_dependencies d
-     JOIN tasks t ON t.id=d.depends_on_task_id
-     WHERE d.task_id=?
-     ORDER BY CASE d.dependency_type WHEN 'hard' THEN 0 ELSE 1 END,d.depends_on_task_id`
-  ).bind(taskId).all();
-  return (rows.results||[]).map(row=>({...row,completed:Boolean(Number(row.completed))}));
+  const [edgeRows,groupRows]=await Promise.all([
+    env.COMMONS_DB.prepare(
+      `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.rationale,d.group_id,d.relation,
+              d.required_outcome,d.artifact_contract,d.criticality,t.title AS depends_on_title,
+              CASE WHEN EXISTS(
+                SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
+              ) THEN 1 ELSE 0 END AS completed
+       FROM task_dependencies d
+       JOIN tasks t ON t.id=d.depends_on_task_id
+       WHERE d.task_id=?
+       ORDER BY d.criticality DESC,d.depends_on_task_id`
+    ).bind(taskId).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT id,task_id,label,mode,min_satisfied,description,sort_order
+       FROM task_dependency_groups WHERE task_id=? ORDER BY sort_order,id`
+    ).bind(taskId).all(),
+  ]);
+  const edges=(edgeRows.results||[]).map(row=>({...row,completed:Boolean(Number(row.completed))}));
+  const groups=groupRows.results||[];
+  return {edges,groups,state:dependencyState(edges,groups)};
+}
+
+async function publicTaskGraph(env) {
+  const [tasks,edges,groups]=await Promise.all([
+    env.COMMONS_DB.prepare(
+      `SELECT id,title,summary,min_level,claim_mode,required_skill,program_id,program_step,category,
+              priority,why_now,deliverable,verification_rule,acceptance_criteria,success_metric
+       FROM tasks
+       WHERE status='open' AND publication_state='published' AND need_status='needed'
+       ORDER BY priority DESC,COALESCE(program_id,''),COALESCE(program_step,999),id`
+    ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.group_id,d.relation,d.required_outcome,
+              d.artifact_contract,d.criticality,d.rationale,
+              CASE WHEN EXISTS(
+                SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
+              ) THEN 1 ELSE 0 END AS completed
+       FROM task_dependencies d
+       JOIN tasks target ON target.id=d.task_id
+       JOIN tasks source ON source.id=d.depends_on_task_id
+       WHERE target.publication_state='published' AND target.need_status='needed'
+         AND source.publication_state='published'
+       ORDER BY d.criticality DESC,d.task_id,d.depends_on_task_id`
+    ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT g.* FROM task_dependency_groups g
+       JOIN tasks t ON t.id=g.task_id
+       WHERE t.publication_state='published' AND t.need_status='needed'
+       ORDER BY g.task_id,g.sort_order,g.id`
+    ).all(),
+  ]);
+  return {
+    tasks:tasks.results||[],
+    edges:(edges.results||[]).map(row=>({...row,completed:Boolean(Number(row.completed))})),
+    groups:groups.results||[],
+  };
 }
 
 async function remindPendingReviews(env) {
