@@ -20,6 +20,7 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
 ## Primary pages
 - Product overview: /
+- Proof Quest (educational ordering game; no Lean proof authority; optional adult-only research donation): /arena-proof-quest.html
 - Research preview (bounded local browser calculations; not Lean proofs): /research-preview.html
 - Independent researcher pilots (falsification, local draft and opt-in contact): /researcher-pilots.html
 - Guided Submission: /guided-submission.html
