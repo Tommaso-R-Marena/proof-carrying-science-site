@@ -6,8 +6,8 @@ const TARGETS = Object.freeze({
   site: "Tommaso-R-Marena/proof-carrying-science-site",
 });
 const CHECK_NAME = "PCS Submission Verification";
-const EXTENSIONS = new Set(["lean","py","md","txt","json","js","html","css","csv"]);
-const FILENAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|html|css|csv)$/;
+const EXTENSIONS = new Set(["lean","py","md","txt","json","js","mjs","html","css","csv"]);
+const FILENAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|mjs|html|css|csv)$/;
 const PROHIBITED = /(^|[^A-Za-z0-9_])(sorry|admit|axiom|unsafe|extern|native_decide|implemented_by)([^A-Za-z0-9_]|$)/;
 
 export function integrationRepository(target) {
