@@ -20,7 +20,7 @@ jobs:
   live-health:
     # Never consume GitHub-hosted minutes; Cloudflare Builds is primary CI.
     # Enable only after a private Linux x64 runner labeled pcs-ci is registered.
-    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' }}
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: [self-hosted, linux, x64, pcs-ci]
     timeout-minutes: 5
     steps:
