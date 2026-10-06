@@ -3,6 +3,11 @@
   const $=(s,r=document)=>r.querySelector(s);
   const all=(s,r=document)=>[...r.querySelectorAll(s)];
   let currentAdmin=null;
+  const auditFeeds={
+    approvals:{events:[],next:null},
+    admin:{events:[],next:null},
+    all:{events:[],next:null},
+  };
 
   function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
   function fmt(v){if(!v)return"—";try{return new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(v));}catch{return v;}}
@@ -106,8 +111,8 @@
         <div class="boundary"><strong>Progress checkpoint</strong><span>${esc(r.checkpoint_note)}</span></div>
         <div class="actions"><button class="button primary" data-checkpoint-accept="${esc(r.id)}">Accept + extend up to 7 days</button><button class="button secondary" data-checkpoint-release="${esc(r.id)}">Release reservation</button></div>
       </article>`).join("");
-    $("[data-checkpoint-accept]",target).forEach(b=>b.addEventListener("click",()=>checkpointDecision(b.dataset.checkpointAccept,"accept")));
-    $("[data-checkpoint-release]",target).forEach(b=>b.addEventListener("click",()=>checkpointDecision(b.dataset.checkpointRelease,"release")));
+    all("[data-checkpoint-accept]",target).forEach(b=>b.addEventListener("click",()=>checkpointDecision(b.dataset.checkpointAccept,"accept")));
+    all("[data-checkpoint-release]",target).forEach(b=>b.addEventListener("click",()=>checkpointDecision(b.dataset.checkpointRelease,"release")));
   }
 
   function renderSkills(items){
@@ -160,6 +165,94 @@
     catch(e){alert(e.message);}
   }
 
+
+  function parseDetail(value){
+    try{return JSON.parse(value||"{}");}catch{return {raw:String(value||"")};}
+  }
+
+  function prettyDetail(value){
+    const detail=parseDetail(value);
+    return JSON.stringify(detail,null,2);
+  }
+
+  function auditMatches(event,query){
+    if(!query)return true;
+    const hay=[
+      event.action,event.actor_name,event.actor_email,event.actor_role,
+      event.subject_type,event.subject_id,event.detail_json,String(event.seq)
+    ].join(" ").toLowerCase();
+    return hay.includes(query.toLowerCase());
+  }
+
+  function auditCard(event){
+    const actor=event.actor_name || event.actor_email || (event.actor_user_id ? "user "+event.actor_user_id : "system");
+    const role=event.actor_role ? ` · ${event.actor_role}` : "";
+    const hash=String(event.event_hash||"");
+    return `
+      <article class="admin-audit-card">
+        <div class="admin-audit-top">
+          <div><span class="commons-chip level">#${esc(event.seq)}</span><span class="commons-chip">${esc(event.action)}</span><span class="commons-chip ${event.actor_role==="owner"?"paid":event.actor_role==="admin"?"volunteer":""}">${esc(event.actor_role||"system")}</span></div>
+          <span class="tiny">${fmt(event.created_at)}</span>
+        </div>
+        <h3>${esc(event.action.replaceAll("_"," "))}</h3>
+        <p><strong>${esc(actor)}</strong>${esc(role)} → ${esc(event.subject_type)} · <code>${esc(event.subject_id)}</code></p>
+        <details><summary>Recorded detail</summary><pre class="admin-audit-json">${esc(prettyDetail(event.detail_json))}</pre></details>
+        <div class="admin-audit-hash"><span>event hash</span><code title="${esc(hash)}">${esc(hash.slice(0,20))}…</code></div>
+      </article>`;
+  }
+
+  function renderAuditFeed(kind){
+    const config={
+      approvals:{target:"#adminApprovalHistory",button:"#loadMoreApprovals"},
+      admin:{target:"#adminActionHistory",button:"#loadMoreAdminActions"},
+      all:{target:"#adminAuditList",button:"#loadMoreAudit"},
+    }[kind];
+    const target=$(config.target);
+    if(!target)return;
+    const search=kind==="all"?($("#adminAuditSearch")?.value||"").trim():"";
+    const items=auditFeeds[kind].events.filter(event=>auditMatches(event,search));
+    target.innerHTML=items.length?items.map(auditCard).join(""):'<div class="commons-empty"><strong>No matching audit events.</strong><span>This view is read-only.</span></div>';
+    const button=$(config.button);
+    if(button){
+      button.hidden=!auditFeeds[kind].next;
+      button.disabled=!auditFeeds[kind].next;
+    }
+  }
+
+  function renderAuditIntegrity(integrity){
+    const top=$("#adminAuditIntegrity");
+    const panel=$("#auditIntegrityPanel");
+    if(!integrity)return;
+    const label=integrity.ok?`VERIFIED · ${integrity.count} events`:`BROKEN AT #${integrity.broken_seq||"?"}`;
+    if(top){top.textContent=label;top.className=integrity.ok?"good-text":"warn-text";}
+    if(panel){
+      panel.className="audit-integrity-panel "+(integrity.ok?"verified":"broken");
+      panel.innerHTML=integrity.ok
+        ? `<strong>Hash chain verified.</strong><span>${esc(integrity.count)} archived events link correctly from the PCS genesis marker to head <code>${esc(String(integrity.head||"").slice(0,24))}…</code>.</span>`
+        : `<strong>Audit integrity check failed.</strong><span>Failure at sequence ${esc(integrity.broken_seq||"?")} · ${esc(integrity.reason||"unknown mismatch")}. Treat the archive as potentially altered until investigated.</span>`;
+    }
+  }
+
+  async function loadAuditFeed(kind,{append=false}={}){
+    const feed=auditFeeds[kind];
+    const qs=new URLSearchParams({kind,limit:"100"});
+    if(append&&feed.next)qs.set("before_seq",String(feed.next));
+    const data=await api("/api/admin/audit?"+qs.toString());
+    feed.events=append?[...feed.events,...(data.events||[])]:data.events||[];
+    feed.next=data.next_before||null;
+    renderAuditIntegrity(data.integrity);
+    renderAuditFeed(kind);
+  }
+
+  async function reloadAuditFeeds(){
+    for(const feed of Object.values(auditFeeds)){feed.events=[];feed.next=null;}
+    await Promise.all([
+      loadAuditFeed("approvals"),
+      loadAuditFeed("admin"),
+      loadAuditFeed("all"),
+    ]);
+  }
+
   function renderUsers(items){
     const target=$("#adminUserList");
     target.innerHTML=items.map(u=>{
@@ -202,22 +295,34 @@
       const data=await api("/api/admin/overview");
       currentAdmin=data.admin||null;
       $("#adminUnavailable").hidden=true;$("#adminDashboard").hidden=false;
+      $("#adminIdentity").textContent=currentAdmin?.is_owner?"L7 · Founder / Owner":(currentAdmin?.display_name||"Administrator");
+      $("#adminPendingCount").textContent=String((data.pending_requests||[]).length);
+      $("#adminSkillCount").textContent=String((data.skill_reviews||[]).length);
+      $("#adminSubmissionCount").textContent=String((data.submissions||[]).length);
       $("#adminEmailTransport").textContent=data.email_transport?"configured":"not configured";
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
-      renderRequests(data.pending_requests||[]);renderCheckpoints(data.checkpoints||[]);renderSkills(data.skill_reviews||[]);renderSubmissions(data.submissions||[]);renderUsers(data.users||[]);
+      renderRequests(data.pending_requests||[]);
+      renderCheckpoints(data.checkpoints||[]);
+      renderSkills(data.skill_reviews||[]);
+      renderSubmissions(data.submissions||[]);
+      renderUsers(data.users||[]);
+      await reloadAuditFeeds();
     }catch(e){
       $("#adminDashboard").hidden=true;$("#adminUnavailable").hidden=false;
-      if(e.status!==401&&e.status!==403)msg("bootstrapMessage",e.message);
+      if(e.status!==401&&e.status!==403)console.error(e);
     }
   }
 
-  $("#bootstrapForm")?.addEventListener("submit",async event=>{
-    event.preventDefault();const fd=new FormData(event.currentTarget);
-    try{
-      const result=await api("/api/admin/bootstrap",{method:"POST",body:{email:fd.get("email"),display_name:fd.get("display_name"),password:fd.get("password"),bootstrap_token:fd.get("bootstrap_token")}});
-      $("#adminRecoveryCode").textContent=result.recovery_code;$("#adminRecoveryPanel").hidden=false;msg("bootstrapMessage","Owner account created. Save the recovery code.",true);await load();
-    }catch(e){msg("bootstrapMessage",e.message);}
+  $("#adminLogoutButton")?.addEventListener("click",async()=>{
+    try{await api("/api/admin/logout",{method:"POST"});}catch(_){}
+    location.replace("admin-login.html");
   });
+
+  $("#loadMoreApprovals")?.addEventListener("click",()=>loadAuditFeed("approvals",{append:true}).catch(e=>alert(e.message)));
+  $("#loadMoreAdminActions")?.addEventListener("click",()=>loadAuditFeed("admin",{append:true}).catch(e=>alert(e.message)));
+  $("#loadMoreAudit")?.addEventListener("click",()=>loadAuditFeed("all",{append:true}).catch(e=>alert(e.message)));
+  $("#refreshAuditButton")?.addEventListener("click",()=>reloadAuditFeeds().catch(e=>alert(e.message)));
+  $("#adminAuditSearch")?.addEventListener("input",()=>renderAuditFeed("all"));
 
   document.addEventListener("DOMContentLoaded",load);
 })();
