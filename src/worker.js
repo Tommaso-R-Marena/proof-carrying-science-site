@@ -993,7 +993,7 @@ async function expireStaleWork(env) {
   ).bind(now, now).all();
   for (const row of stale.results || []) {
     await env.COMMONS_DB.prepare(
-      "UPDATE task_requests SET status='expired', checkpoint_status=CASE WHEN checkpoint_status='pending' THEN 'missed' ELSE checkpoint_status END WHERE id=? AND status='approved'"
+      "UPDATE task_requests SET status='expired', checkpoint_status=CASE WHEN checkpoint_status='pending' THEN 'missed' ELSE checkpoint_status END,reservation_key=NULL WHERE id=? AND status='approved'"
     ).bind(row.id).run();
     await notify(env, {
       userId: row.user_id,
@@ -1728,6 +1728,13 @@ async function submitWork(request, env, user, requestId) {
      WHERE r.id=? AND r.user_id=?`
   ).bind(requestId,user.id).first();
   if (!row || row.status!=="approved") throw new ApiError(404,"Active approved work record not found.","request_not_active");
+  if (Number(user.level)<Number(row.min_level)) throw new ApiError(409,"Your verified level no longer meets this task requirement.","level_changed");
+  if (row.required_skill) {
+    const stillVerified=await env.COMMONS_DB.prepare(
+      "SELECT 1 AS ok FROM skills WHERE user_id=? AND skill=? AND status='verified'"
+    ).bind(user.id,row.required_skill).first();
+    if (!stillVerified) throw new ApiError(409,"Your required verified skill is no longer active for this task.","skill_changed");
+  }
   if (row.claim_mode!=="open" && row.reservation_expires_at && row.reservation_expires_at<=nowIso()) {
     throw new ApiError(409,"Reservation expired before submission.","reservation_expired");
   }
@@ -1782,7 +1789,7 @@ async function submitWork(request, env, user, requestId) {
 async function withdrawRequest(request, env, user, requestId) {
   const row = await env.COMMONS_DB.prepare("SELECT * FROM task_requests WHERE id=? AND user_id=?").bind(requestId,user.id).first();
   if (!row || !["pending","approved"].includes(row.status)) throw new ApiError(404,"Active request not found.","request_not_active");
-  await env.COMMONS_DB.prepare("UPDATE task_requests SET status='withdrawn',decision_at=?,decision_note=? WHERE id=?").bind(nowIso(),"Withdrawn by contributor.",row.id).run();
+  await env.COMMONS_DB.prepare("UPDATE task_requests SET status='withdrawn',decision_at=?,decision_note=?,reservation_key=NULL WHERE id=?").bind(nowIso(),"Withdrawn by contributor.",row.id).run();
   await audit(env,user.id,"task_request_withdrawn","task_request",row.id,{task_id:row.task_id});
   return json({ok:true,message:"Task released/withdrawn. No penalty is applied for ordinary withdrawal."});
 }
@@ -1922,10 +1929,24 @@ async function adminDecision(request, env, admin, requestId) {
     const checkpointHours = Math.min(Math.max(Number(row.checkpoint_hours||24),12),48);
     const expiry = addHoursIso(now,reservationHours);
     const checkpoint = addHoursIso(now,checkpointHours);
-    await env.COMMONS_DB.prepare(
-      `UPDATE task_requests SET status='approved',decision_at=?,decided_by=?,decision_note=?,
-       reservation_expires_at=?,checkpoint_due_at=?,checkpoint_status='pending',last_progress_at=? WHERE id=?`
-    ).bind(now,admin.id,note,expiry,checkpoint,now,row.id).run();
+    try {
+      const claimed=await env.COMMONS_DB.prepare(
+        `UPDATE task_requests SET status='approved',decision_at=?,decided_by=?,decision_note=?,
+         reservation_expires_at=?,checkpoint_due_at=?,checkpoint_status='pending',last_progress_at=?,
+         reservation_key=task_id
+         WHERE id=? AND status='pending'`
+      ).bind(now,admin.id,note,expiry,checkpoint,now,row.id).run();
+      if (Number(claimed?.meta?.changes||0)!==1) {
+        throw new ApiError(409,"This application was already decided by another administrator action.","request_already_decided");
+      }
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      const message=String(error?.message||error||"");
+      if (/UNIQUE constraint failed|idx_task_requests_unique_reservation/i.test(message)) {
+        throw new ApiError(409,"This reserved task is already assigned to another contributor.","task_already_reserved");
+      }
+      throw error;
+    }
     await notify(env,{
       userId:row.user_id,
       email:row.email_verified?row.email:null,
@@ -1937,9 +1958,10 @@ async function adminDecision(request, env, admin, requestId) {
     return json({ok:true,status:"approved",reservation_expires_at:expiry,checkpoint_due_at:checkpoint});
   }
 
-  await env.COMMONS_DB.prepare(
-    "UPDATE task_requests SET status='rejected',decision_at=?,decided_by=?,decision_note=?,checkpoint_status='not_required' WHERE id=?"
+  const rejected=await env.COMMONS_DB.prepare(
+    "UPDATE task_requests SET status='rejected',decision_at=?,decided_by=?,decision_note=?,checkpoint_status='not_required',reservation_key=NULL WHERE id=? AND status='pending'"
   ).bind(nowIso(),admin.id,note,row.id).run();
+  if (Number(rejected?.meta?.changes||0)!==1) throw new ApiError(409,"This application was already decided by another administrator action.","request_already_decided");
   await notify(env,{
     userId:row.user_id,
     email:row.email_verified?row.email:null,
@@ -1966,7 +1988,7 @@ async function adminCheckpoint(request, env, admin, requestId) {
 
   if (decision==="release") {
     await env.COMMONS_DB.prepare(
-      "UPDATE task_requests SET status='expired',checkpoint_status='missed',decision_note=? WHERE id=?"
+      "UPDATE task_requests SET status='expired',checkpoint_status='missed',decision_note=?,reservation_key=NULL WHERE id=?"
     ).bind(note||"Checkpoint did not justify holding the reservation.",row.id).run();
     await notify(env,{userId:row.user_id,email:row.email_verified?row.email:null,kind:"checkpoint_released",subject:`PCS task released: ${row.task_id}`,body:`PCS released your reservation for ${row.task_id} after checkpoint review.\n\n${note}\n`});
     await audit(env,admin.id,"checkpoint_released","task_request",row.id,{task_id:row.task_id});
@@ -2001,7 +2023,7 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
     "UPDATE submissions SET status=?,reviewed_at=?,reviewed_by=?,review_note=? WHERE id=?"
   ).bind(status,nowIso(),admin.id,note,row.id).run();
   if (decision==="accept") {
-    await env.COMMONS_DB.prepare("UPDATE task_requests SET status='completed',decision_note=? WHERE id=?").bind("Submission accepted.",row.task_request_id).run();
+    await env.COMMONS_DB.prepare("UPDATE task_requests SET status='completed',decision_note=?,reservation_key=NULL WHERE id=?").bind("Submission accepted.",row.task_request_id).run();
     if (Number(row.level)===0 && Number(row.min_level)===0 && !row.calibrates_skill) {
       await env.COMMONS_DB.prepare("UPDATE users SET level=1,updated_at=? WHERE id=? AND level=0").bind(nowIso(),row.user_id).run();
       await audit(env,admin.id,"automatic_l1_after_first_acceptance","user",row.user_id,{submission_id:row.id});
@@ -2079,7 +2101,7 @@ async function adminRevokeSkill(request, env, admin, userId) {
   for(const task of active.results||[]) {
     await env.COMMONS_DB.prepare(
       `UPDATE task_requests SET status='expired',reservation_expires_at=?,checkpoint_status='not_required',
-       decision_note=COALESCE(decision_note,'') || ? WHERE id=?`
+       decision_note=COALESCE(decision_note,'') || ?,reservation_key=NULL WHERE id=?`
     ).bind(now,"\nSkill "+skill+" was revoked by PCS Owner: "+note,task.id).run();
     await audit(env,admin.id,"reservation_released_after_skill_revocation","task_request",task.id,{
       task_id:task.task_id,skill,user_id:userId
@@ -2148,13 +2170,32 @@ async function adminSetLevel(request, env, admin, userId) {
   if (level===6 && !isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may appoint L6 research leads.","owner_required");
 
   await env.COMMONS_DB.prepare("UPDATE users SET level=?,level_review_note=?,updated_at=? WHERE id=?").bind(level,note,nowIso(),userId).run();
-  await notify(env,{userId,email:user.email_verified?user.email:null,kind:"level_changed",subject:`PCS contributor level: L${level}`,body:`Your verified PCS technical level is now L${level}.\n\nReason: ${note}\n\nTechnical level does not grant Founder/Owner governance authority, and task-specific skill/assignment requirements still apply.\n`});
+  let releasedForDemotion=[];
+  if (level<currentLevel) {
+    const active=await env.COMMONS_DB.prepare(
+      `SELECT r.id,r.task_id,t.title,t.min_level
+       FROM task_requests r JOIN tasks t ON t.id=r.task_id
+       WHERE r.user_id=? AND r.status='approved' AND t.claim_mode!='open' AND t.min_level>?`
+    ).bind(userId,level).all();
+    releasedForDemotion=active.results||[];
+    for(const task of releasedForDemotion) {
+      await env.COMMONS_DB.prepare(
+        `UPDATE task_requests SET status='expired',reservation_expires_at=?,checkpoint_status='not_required',
+         reservation_key=NULL,decision_note=COALESCE(decision_note,'') || ? WHERE id=? AND status='approved'`
+      ).bind(nowIso(),"\nReservation released because verified level was reduced below L"+task.min_level+".",task.id).run();
+      await audit(env,admin.id,"reservation_released_after_level_demotion","task_request",task.id,{
+        task_id:task.task_id,user_id:userId,required_level:Number(task.min_level),new_level:level
+      });
+    }
+  }
+  await notify(env,{userId,email:user.email_verified?user.email:null,kind:"level_changed",subject:`PCS contributor level: L${level}`,body:`Your verified PCS technical level is now L${level}.\n\nReason: ${note}\n\nTechnical level does not grant Founder/Owner governance authority, and task-specific skill/assignment requirements still apply.${releasedForDemotion.length?"\n\n"+releasedForDemotion.length+" active reserved task(s) above your new level were released.":""}\n`});
   await audit(env,admin.id,"user_level_changed","user",userId,{
     from:currentLevel,to:level,override,owner_actor:isOwner(admin),
     accepted_total:acceptedTotal,accepted_high_trust:acceptedHighTrust,verified_skills:[...skills],
-    rationale:note,evidence:auditEvidenceSummary(evidence)
+    rationale:note,evidence:auditEvidenceSummary(evidence),
+    released_reservations:releasedForDemotion.map(task=>({request_id:task.id,task_id:task.task_id,required_level:Number(task.min_level)}))
   });
-  return json({ok:true,level});
+  return json({ok:true,level,released_reservations:releasedForDemotion.length});
 }
 
 async function adminSetGovernance(request, env, admin, userId) {
