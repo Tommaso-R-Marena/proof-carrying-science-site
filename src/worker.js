@@ -343,9 +343,22 @@ async function requireUser(request, env) {
   return user;
 }
 
+async function currentAdminUser(request, env) {
+  const token = parseCookies(request)[ADMIN_SESSION_COOKIE];
+  if (!token) return null;
+  const tokenHash = await sha256(token);
+  const row = await env.COMMONS_DB.prepare(
+    `SELECT u.* FROM admin_sessions s JOIN users u ON u.id=s.user_id
+     WHERE s.token_hash=? AND s.expires_at>? AND u.status='active' AND u.role='admin'`
+  ).bind(tokenHash, nowIso()).first();
+  if (!row) return null;
+  await env.COMMONS_DB.prepare("UPDATE admin_sessions SET last_seen_at=? WHERE token_hash=?").bind(nowIso(), tokenHash).run();
+  return row;
+}
+
 async function requireAdmin(request, env) {
-  const user = await requireUser(request, env);
-  if (user.role !== "admin") throw new ApiError(403, "Administrator access required.", "admin_required");
+  const user = await currentAdminUser(request, env);
+  if (!user) throw new ApiError(401, "Administrator sign-in required.", "admin_login_required");
   return user;
 }
 
@@ -376,16 +389,94 @@ async function createSession(env, userId) {
   return token;
 }
 
+async function createAdminSession(env, userId) {
+  const token = randomToken(32);
+  const tokenHash = await sha256(token);
+  const created = nowIso();
+  const expires = addHoursIso(created, ADMIN_SESSION_HOURS);
+  await env.COMMONS_DB.prepare(
+    "INSERT INTO admin_sessions(token_hash,user_id,created_at,expires_at,last_seen_at) VALUES(?,?,?,?,?)"
+  ).bind(tokenHash, userId, created, expires, created).run();
+  return token;
+}
+
 async function deleteSession(request, env) {
   const token = parseCookies(request)[SESSION_COOKIE];
   if (!token) return;
   await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE token_hash=?").bind(await sha256(token)).run();
 }
 
+async function deleteAdminSession(request, env) {
+  const token = parseCookies(request)[ADMIN_SESSION_COOKIE];
+  if (!token) return;
+  await env.COMMONS_DB.prepare("DELETE FROM admin_sessions WHERE token_hash=?").bind(await sha256(token)).run();
+}
+
+function auditHashInput({prevHash,eventId,actorUserId,actorEmail,actorName,actorRole,action,subjectType,subjectId,detailJson,createdAt}) {
+  return [
+    "pcs-audit-v1",
+    prevHash,
+    eventId,
+    actorUserId || "",
+    actorEmail || "",
+    actorName || "",
+    actorRole || "",
+    action,
+    subjectType,
+    subjectId,
+    detailJson,
+    createdAt,
+  ].join("\n");
+}
+
+async function appendAuditArchive(env, {eventId,legacyAuditId=null,actorUserId=null,action,subjectType,subjectId,detailJson,createdAt}) {
+  const actor = actorUserId
+    ? await env.COMMONS_DB.prepare("SELECT email,display_name,role,is_owner FROM users WHERE id=?").bind(actorUserId).first()
+    : null;
+  const actorEmail = actor?.email || "";
+  const actorName = actor?.display_name || "";
+  const actorRole = Number(actor?.is_owner) ? "owner" : (actor?.role || "");
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const latest = await env.COMMONS_DB.prepare("SELECT event_hash FROM audit_archive ORDER BY seq DESC LIMIT 1").first();
+    const prevHash = latest?.event_hash || AUDIT_GENESIS;
+    const eventHash = await sha256Hex(auditHashInput({
+      prevHash,eventId,actorUserId,actorEmail,actorName,actorRole,action,subjectType,subjectId,detailJson,createdAt
+    }));
+    try {
+      await env.COMMONS_DB.prepare(
+        `INSERT INTO audit_archive(
+          event_id,legacy_audit_id,actor_user_id,actor_email,actor_name,actor_role,
+          action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash
+        ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+      ).bind(
+        eventId,legacyAuditId,actorUserId,actorEmail,actorName,actorRole,
+        action,subjectType,subjectId,detailJson,createdAt,prevHash,eventHash
+      ).run();
+      return eventHash;
+    } catch (error) {
+      if (attempt === 3) throw error;
+    }
+  }
+}
+
 async function audit(env, actorUserId, action, subjectType, subjectId, detail = {}) {
+  const id = crypto.randomUUID();
+  const createdAt = nowIso();
+  const detailJson = JSON.stringify(detail);
   await env.COMMONS_DB.prepare(
     "INSERT INTO audit_log(id,actor_user_id,action,subject_type,subject_id,detail_json,created_at) VALUES(?,?,?,?,?,?,?)"
-  ).bind(crypto.randomUUID(), actorUserId || null, action, subjectType, subjectId, JSON.stringify(detail), nowIso()).run();
+  ).bind(id, actorUserId || null, action, subjectType, subjectId, detailJson, createdAt).run();
+  await appendAuditArchive(env,{
+    eventId:id,
+    legacyAuditId:id,
+    actorUserId:actorUserId||null,
+    action,
+    subjectType,
+    subjectId,
+    detailJson,
+    createdAt,
+  });
 }
 
 async function sendMail(env, to, subject, text) {
