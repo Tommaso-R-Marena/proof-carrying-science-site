@@ -1085,3 +1085,15 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .audit-evidence-links{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .audit-evidence-links a{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid #d7e4f1;border-radius:8px;background:#f8fbff;text-decoration:none;color:#285f9b;font-size:8px;font-weight:800}
 @media(max-width:580px){.admin-action-form{padding:20px}.admin-action-head h2{font-size:25px}.admin-action-buttons{display:grid;grid-template-columns:1fr}.admin-action-buttons .button{width:100%}.admin-file-picker{width:100%}}
+
+/* Public research program task graph */
+.commons-chip.program{background:#eef5ff;border-color:#c6d9f1;color:#2a5f98}
+.program-task{border-color:#bfd5eb;background:linear-gradient(145deg,#fff,#f8fbff)}
+.task-dependency-list{display:grid;gap:7px;margin:14px 0;padding:12px 13px;border:1px solid #d9e5f1;border-radius:12px;background:#f8fbff}
+.task-dependency-list>strong{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#52677e}
+.task-dependency-list>span{display:flex;gap:7px;align-items:flex-start;min-width:0;font-size:9px;line-height:1.45;color:#53677f}
+.task-dependency-list>span b{flex:0 0 auto;min-width:34px;text-align:center;border-radius:999px;padding:3px 6px;font-size:7px;letter-spacing:.04em}
+.task-dependency-list>span.complete b{background:#e8f7f1;color:#14745d}
+.task-dependency-list>span.blocked b{background:#fff0f2;color:#9f4252}
+.task-dependency-list>span.informative b{background:#eef4fb;color:#3e6388}
+.invalidation-program article{scroll-margin-top:80px}
