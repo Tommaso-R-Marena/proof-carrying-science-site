@@ -5,6 +5,7 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let snapshot={user:null,challenges:[]};
 async function api(path,options={}){
+    if(typeof path!=="string" || !path.startsWith("/api/")) throw new Error("Same-origin PCS API path required.");
   const init={credentials:"same-origin",...options};
   if(init.body&&typeof init.body!=="string"){init.headers={...(init.headers||{}),"content-type":"application/json"};init.body=JSON.stringify(init.body);}
   const res=await fetch(path,init);const data=await res.json().catch(()=>({message:"Invalid server response."}));
