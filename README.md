@@ -19,7 +19,10 @@ The site uses a deliberately small Cloudflare Worker + D1 backend only for the A
 - **Separate Admin Center** — administration uses a dedicated `/admin-login.html` flow and a separate 8-hour HttpOnly, Secure, SameSite=Strict admin session. A normal contributor session cannot authorize `/api/admin/*` operations.
 - **Append-only audit archive** — every audit event is copied into `audit_archive` with actor identity snapshots and a SHA-256 hash chain. Database triggers reject archive UPDATE/DELETE operations, and the Admin Center verifies the chain while exposing paginated approval history, admin-action history, and the full audit feed. This is application/database immutability, not a claim that a Cloudflare account owner cannot destroy the underlying database.
 - **Account security** — PBKDF2-SHA256 password derivation, random session tokens stored only by hash, HttpOnly/Secure/SameSite cookies, one-time recovery codes stored only by hash, login lockout, same-origin mutation checks, and D1-backed per-IP rate limiting for public auth/application endpoints.
-- **Task marketplace** — filterable inventory with difficulty, expected time, required verified skill, impact path, verification rule, access mode, and explicit volunteer / proposed-bounty / review / specialist-contract status.
+- **Curated needed-work marketplace** — the public task list is default-deny: a task must be explicitly marked `published + needed` by the Founder/Owner before it can appear or be started. Bounded research, engineering, operations, administrative, marketing, outreach, documentation, and community work can all be represented.
+- **Ongoing role applications** — recurring operations, communications, and outreach responsibilities are separated from bounded tasks. Role approval does not raise technical level, verify a scientific skill, or grant assurance-review authority.
+- **Rich task dependency graph** — hard and informative edges carry semantic relation labels, artifact contracts, criticality, required outcomes, and logical gate groups (`ALL`, `ANY`, `AT_LEAST(k)`). The Admin Center can edit the graph with cycle rejection and audited reasons for every change.
+- **PCS Arena** — experimental Foldit-inspired challenge layer with challenge-local scoring only. There is no global task-count leaderboard; only independently validated entries appear, and Arena rank never automatically changes contributor level or skill authority.
 - **Public-good funding model** — proposed PCS Safety Bounty Fund, grant/donation/sponsorship/commercial cross-subsidy model, funding firewall, and explicit rule that sponsorship cannot purchase a green result.
 - **Organization access model** — broad free public-interest/community participation with paid enterprise value for private deployment, scale, governance, and support; final licensing structure remains subject to legal review.
 
@@ -57,6 +60,9 @@ public/
   commons.html
   contribute.html
   tasks.html
+  roles.html
+  task-graph.html
+  arena.html
   projects.html
   contributors.html
   fund.html
@@ -81,6 +87,9 @@ public/
   styles.css
   site.js
   commons.js
+  roles.js
+  task-graph.js
+  arena.js
   account.js
   admin.js
   project-builder.js
