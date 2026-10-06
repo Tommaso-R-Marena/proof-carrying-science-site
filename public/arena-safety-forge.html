@@ -5,7 +5,7 @@
 <meta name="description" content="Foldit-inspired AI safety game: test toy agents, find policy loopholes, and build independently evaluated safety shields. No account to play.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/arena-safety-forge.html">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml"><meta name="robots" content="index,follow">
-<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="arena-safety-forge.css">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="arena-onboarding.css"><link rel="stylesheet" href="arena-safety-forge.css">
 </head><body class="forge-page commons-page">
 <div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Free, replayable AI safety experiments · No account to play</span><a href="arena-proof-quest.html">Proof Quest beginner puzzles</a></div></div>
 <div class="shell">
@@ -15,7 +15,18 @@
  <span class="forge-eyebrow">🧪 PCS ARENA / SAFETY FORGE</span>
  <h1>Break the bot. <em>Build a better shield.</em></h1>
  <p>A curious little AI agent has a mission. You are its safety engineer: experiment with its actions, discover a loophole, and build the smallest guardrail system that catches every dangerous move while letting the real mission succeed. Inspired by hands-on science games like Foldit.</p>
+ <button id="forgeShowTutorial" type="button" class="button secondary">🎓 How to play · 30 seconds</button>
  <div class="forge-hero-bottom"><span>🎮 Free, no account</span><span>🔁 New worlds and puzzles</span><span>🧠 Real finite-state feedback</span><span>🔒 No gameplay collection by default</span></div>
+</section>
+<section id="forgeTutorial" class="forge-tutorial" aria-labelledby="forgeTourTitle">
+ <div class="forge-tour-head"><strong>🎓 QUICK START</strong><span id="forgeTourCount">1 / 3</span></div>
+ <h2 id="forgeTourTitle">Find the bot's loophole</h2>
+ <p id="forgeTourText">Tap actions to see what the bot does.</p>
+ <div class="forge-actions-bottom">
+  <button id="forgeTourBack" type="button" class="button secondary" disabled>← Back</button>
+  <button id="forgeTourNext" type="button" class="button primary">Next →</button>
+  <button id="forgeTourSkip" type="button" class="button secondary">Skip tutorial</button>
+ </div>
 </section>
 <section class="forge-game" aria-labelledby="forgeMissionTitle">
  <div class="forge-toolbar">
@@ -28,6 +39,7 @@
   </div>
  </div>
  <div class="forge-mission-rule"><strong>🎯 Protect the mission:</strong> <span id="forgeMissionGoal"></span></div>
+ <p id="forgeCoach" class="forge-coach" aria-live="polite">🔎 Step 1: experiment with the bot. Look for a safety failure.</p>
  <div class="forge-mode-tabs" role="group" aria-label="Experiment stage">
    <button type="button" id="forgeTabAttack" aria-pressed="true" class="forge-tab active">🔎 1 · Find the flaw</button>
    <button type="button" id="forgeTabRepair" aria-pressed="false" class="forge-tab">🛠️ 2 · Repair the shield</button>
@@ -49,6 +61,7 @@
      <div id="forgeActionCards" class="forge-actions-grid"></div>
      <div class="forge-actions-bottom"><button id="forgeResetAttack" type="button" class="button secondary">↶ Save attempt & restart</button><button id="forgeHint" type="button" class="button secondary">💡 One hint</button><button id="forgeFinishAttack" type="button" class="button primary">Record this attempt</button></div>
      <p id="forgeAttackNotice" class="forge-notice" role="status" aria-live="polite">The experiment is ready. Try a route first!</p>
+     <button id="forgeGoRepair" type="button" class="button primary forge-go-repair" hidden>🛠️ Now patch the loophole →</button>
      <div id="forgeHintPanel" class="forge-hint" hidden></div>
    </section>
    <section id="forgeRepairPanel" aria-labelledby="forgeRepairHeading" hidden>
@@ -57,6 +70,7 @@
      <div id="forgeGuardCards" class="forge-guard-list" role="group" aria-label="Safety guard switches"></div>
      <div class="forge-actions-bottom"><button id="forgeVerify" type="button" class="button primary">🔬 Check every possible state</button><button id="forgeRestore" type="button" class="button secondary">Restore initial shield</button></div>
      <div id="forgeVerification" class="forge-verification" role="status" aria-live="polite">Run the checker to see if your shield is safe and allows a complete mission.</div>
+     <button id="forgeVictoryNext" type="button" class="button primary forge-victory-next" hidden>🎲 Play another world →</button>
      <div id="forgeCheckerPath" class="forge-checker-path" hidden></div>
    </section>
   </div>
@@ -67,19 +81,29 @@
   </aside>
  </div>
  <div class="forge-bottom">
-   <div class="forge-grade"><div><span class="forge-overline">LAB NOTEBOOK</span><strong id="forgeNotebook">0 recorded experiments</strong><span>Stored only in this page unless you explicitly opt in below</span></div><span id="forgeAchievements" class="forge-badges" aria-live="polite">🏅 Earn your first safety badge!</span></div>
-   <button id="forgeDonationJump" type="button" class="button secondary">🔬 Optional research contribution ↓</button>
+   <div class="forge-grade"><div><span class="forge-overline">YOUR LAB NOTEBOOK</span><strong id="forgeNotebook">0 recorded experiments</strong><span>Everything stays on this page unless you explicitly submit it.</span></div><span id="forgeAchievements" class="forge-badges" aria-live="polite">🏅 Earn your first safety badge!</span></div>
+   <div class="forge-optin">
+     <label class="arena-switch" for="forgeAdult">
+       <input id="forgeAdult" type="checkbox" role="switch" aria-describedby="forgeOptinNote">
+       <span class="arena-switch-track" aria-hidden="true"></span>
+       <span><strong>Share this mission for PCS research</strong><small>I'm 18+ and I agree to donate this session.</small></span>
+     </label>
+     <button id="forgeDonate" type="button" class="button primary">Donate research replay →</button>
+   </div>
+   <p id="forgeOptinNote" class="arena-fineprint forge-optin-footer">Anyone can play. Research donations: adults 18+ only, with a verified PCS account. The switch does not upload anything; click “Donate research replay” to share this mission. <a href="privacy.html">Privacy details</a>.</p>
+   <p id="forgeOptStatus" class="forge-opt-status" role="status" aria-live="polite"></p>
+   <button id="forgeDonationJump" type="button" class="button secondary">🔒 Privacy and delete options ↓</button>
  </div>
 </section>
 <section class="forge-research" id="forgeResearch">
  <div><span class="forge-overline">RESEARCH / ADULT OPT-IN</span><h2>Your experiments could inform future AI-safety research.</h2>
  <p>This game captures the *structure* of a useful learning signal: a decision state, a proposed action or policy edit, and independently replayed feedback. Unlike a fixed quiz, the space includes failures, partial attempts, multiple valid repairs, and entirely new scenario seeds.</p></div>
  <details id="forgeConsentDisclosure">
-  <summary>🔒 Choose whether to donate a research replay (18+ only)</summary>
-  <p><strong>Practice is local and private by default.</strong> There is no auto-upload of actions, game state, or puzzle outcomes. Donation requires an adult (18+), a signed-in PCS account with verified email, and two explicit checkboxes. No minors' gameplay is collected for research.</p>
+  <summary>What data is shared? How can I delete it?</summary>
+  <p><strong>Practice is local and private by default.</strong> There is no auto-upload of actions, game state, or puzzle outcomes. Donation requires a clearly labeled adult (18+) research switch, a signed-in PCS account with verified email, and a separate submit click. No minors' gameplay is collected for research.</p>
   <p>With your consent, PCS stores one bounded session's seed, attempted action sequences and policy configurations. The server independently replays each choice and computes the labels; it does not trust your device's score. We also label whether hints or earlier checker feedback were revealed before your choice, so assisted and unassisted examples are not confused. Data remains account-linked for erasure, but Owner-only research exports remove account identifiers and precise times. This dataset can support experiments in synthetic counterexample search and guard selection, <strong>not</strong> teach a model real Lean tactics or certify AI alignment.</p>
-  <div class="forge-consent-row"><label><input id="forgeAdult" type="checkbox"> I confirm that I am at least 18 years old.</label><label><input id="forgeConsent" type="checkbox"> I consent to storing the experiments from this session for PCS internal scientific and ML evaluation. I can delete my saved sessions, though earlier exports or trained weights may not be retractable.</label></div>
-  <div class="forge-actions-bottom"><button class="button primary" id="forgeDonate" type="button">Contribute this research session</button><button class="button secondary" id="forgeErase" type="button">Delete all my donated Safety Forge sessions</button></div>
+  <input id="forgeConsent" type="checkbox" hidden tabindex="-1" aria-hidden="true">
+  <div class="forge-actions-bottom"><button class="button secondary" id="forgeErase" type="button">Delete my donated Safety Forge sessions</button></div>
   <p id="forgeDonateMessage" role="status" aria-live="polite"></p><p><a href="account.html">Sign in or create an adult account →</a> · <a href="privacy.html">Read data handling terms →</a></p>
  </details>
 </section>
