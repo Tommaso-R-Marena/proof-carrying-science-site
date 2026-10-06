@@ -3131,6 +3131,22 @@ async function adminPromotionDecision(request,env,admin,id){
   await audit(env,admin.id,"production_promotion_decided","production_promotion",row.id,{
     decision,head_sha:head,reason:note
   });
+  if(decision!=="approve"){
+    try{
+      const contributor=await env.COMMONS_DB.prepare(
+        `SELECT u.id,u.email,u.email_verified FROM users u
+         JOIN submissions s ON s.user_id=u.id WHERE s.id=?`
+      ).bind(row.submission_id).first();
+      if(contributor)await notify(env,{
+        userId:contributor.id,email:contributor.email_verified?contributor.email:null,
+        kind:"production_promotion_review",
+        subject:`PCS production promotion ${next}: ${row.task_id}`,
+        body:`The proposed production promotion of your accepted contribution was marked ${next}.\n\nReviewer note: ${note}\n\nThe accepted archive remains unchanged. If improvements are requested, submit a new revision for independent review; PCS cannot silently edit a previously accepted artifact.\n`
+      });
+    }catch(error){
+      console.error("Promotion reviewer notification unavailable",String(error?.message||error));
+    }
+  }
   return json({ok:true,state:next,approved_head_sha:head});
 }
 async function adminPromotionMerge(request,env,admin,id){
