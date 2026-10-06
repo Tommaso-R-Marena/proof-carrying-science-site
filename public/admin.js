@@ -390,6 +390,89 @@
     ]);
   }
 
+  function taskStateChip(task){
+    const published=task.publication_state==="published"&&task.need_status==="needed"&&task.status==="open";
+    return `<span class="commons-chip ${published?"volunteer":"planned"}">${published?"PUBLIC":"HIDDEN"} · ${esc(task.publication_state)} / ${esc(task.need_status)}</span>`;
+  }
+
+  function renderTaskCuration(items){
+    const target=$("#adminTaskList");if(!target)return;
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No task records.</strong><span>The catalog is empty.</span></div>';return;}
+    target.innerHTML=items.map(task=>`
+      <article class="admin-card task-curation-card" data-curation-task="${esc(task.id)}">
+        <div class="task-card-top"><div><span class="commons-chip level">L${esc(task.min_level)}</span>${taskStateChip(task)}<span class="commons-chip category">${esc(task.category||"research")}</span></div><code>${esc(task.id)}</code></div>
+        <h3>${esc(task.title)}</h3><p>${esc(task.summary)}</p>
+        <div class="task-curation-why"><strong>Why now</strong><span>${esc(task.why_now||"No current-need rationale recorded.")}</span></div>
+        <div class="task-curation-grid">
+          <label><span>Publication</span><select class="selectinput" data-curation-publication>
+            ${["draft","published","paused","retired"].map(v=>`<option value="${v}" ${task.publication_state===v?"selected":""}>${v}</option>`).join("")}
+          </select></label>
+          <label><span>Need state</span><select class="selectinput" data-curation-need>
+            ${["needed","satisfied","retired"].map(v=>`<option value="${v}" ${task.need_status===v?"selected":""}>${v}</option>`).join("")}
+          </select></label>
+          <label><span>Category</span><select class="selectinput" data-curation-category>
+            ${["research","engineering","security","review","operations","administrative","marketing","outreach","design","documentation","community"].map(v=>`<option value="${v}" ${task.category===v?"selected":""}>${v}</option>`).join("")}
+          </select></label>
+          <label><span>Priority</span><input class="textinput" data-curation-priority type="number" min="0" max="100" value="${esc(task.priority??50)}"></label>
+        </div>
+        <label class="field"><span>Current need rationale</span><textarea class="textinput" data-curation-why rows="2" maxlength="2000">${esc(task.why_now||"")}</textarea></label>
+        <label class="field"><span>Reason for this publication change</span><textarea class="textinput" data-curation-reason rows="2" minlength="20" maxlength="2000" placeholder="Required when saving. Explain why this task should or should not be publicly available now."></textarea></label>
+        <div class="actions">${currentAdmin?.is_owner?'<button class="button primary" type="button" data-save-curation>Save audited curation</button>':'<span class="tiny">Founder/Owner controls publication.</span>'}<a class="button secondary" href="task-graph.html?task=${encodeURIComponent(task.id)}" target="_blank" rel="noopener">View graph</a></div>
+      </article>`).join("");
+    all("[data-save-curation]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const card=button.closest("[data-curation-task]"),id=card.dataset.curationTask;
+      const reason=card.querySelector("[data-curation-reason]").value.trim();
+      if(reason.length<20)return alert("Give a curation rationale of at least 20 characters.");
+      button.disabled=true;
+      try{
+        await api(`/api/admin/tasks/${encodeURIComponent(id)}/curation`,{method:"POST",body:{
+          publication_state:card.querySelector("[data-curation-publication]").value,
+          need_status:card.querySelector("[data-curation-need]").value,
+          category:card.querySelector("[data-curation-category]").value,
+          priority:Number(card.querySelector("[data-curation-priority]").value),
+          why_now:card.querySelector("[data-curation-why]").value,
+          reason
+        }});
+        await load();
+      }catch(e){alert(e.message);}
+      finally{button.disabled=false;}
+    }));
+  }
+
+  async function roleDecision(application,decision){
+    const result=await openAdminAction({
+      title:`${decision==="approve"?"Approve":"Reject"} role application`,
+      description:`${application.display_name} applied for ${application.title}. Record why this recurring responsibility is or is not a good fit.`,
+      confirmLabel:decision==="approve"?"Approve role":"Reject application",
+      warning:decision==="approve"?"Role approval does not change technical level, verified skills, or assurance-review authority.":"The applicant may continue taking ordinary eligible tasks."
+    });
+    if(!result)return;
+    try{
+      await api(`/api/admin/roles/applications/${encodeURIComponent(application.id)}/decision`,{method:"POST",body:{decision,note:result.note}});
+      await load();
+    }catch(e){alert(e.message);}
+  }
+
+  function renderRoleApplications(items){
+    const target=$("#adminRoleApplicationList");if(!target)return;
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No role applications pending.</strong><span>Ongoing roles are reviewed separately from task reservations.</span></div>';return;}
+    target.innerHTML=items.map(a=>`
+      <article class="admin-card">
+        <div class="task-card-top"><div><span class="commons-chip category">${esc(a.category)}</span><span class="commons-chip level">L${esc(a.level)}</span></div><span class="tiny">${fmt(a.requested_at)}</span></div>
+        <h3>${esc(a.title)}</h3><p><strong>${esc(a.display_name)}</strong> · ${esc(a.email)} · expected role load ${esc(a.expected_hours_per_week)}h/week</p>
+        <details open><summary>Why / contribution plan</summary><p>${esc(a.note)}</p></details>
+        <details><summary>Relevant experience</summary><p>${esc(a.experience)}</p></details>
+        <details><summary>Availability</summary><p>${esc(a.availability)}</p></details>
+        <div class="actions"><button class="button primary" data-role-approve="${esc(a.id)}">Approve role</button><button class="button secondary" data-role-reject="${esc(a.id)}">Reject</button></div>
+      </article>`).join("");
+    all("[data-role-approve]",target).forEach(btn=>btn.addEventListener("click",()=>{
+      const app=items.find(x=>x.id===btn.dataset.roleApprove);if(app)roleDecision(app,"approve");
+    }));
+    all("[data-role-reject]",target).forEach(btn=>btn.addEventListener("click",()=>{
+      const app=items.find(x=>x.id===btn.dataset.roleReject);if(app)roleDecision(app,"reject");
+    }));
+  }
+
   function renderUsers(items,verifiedSkills=[]){
     const target=$("#adminUserList");
     const skillsByUser=new Map();
@@ -458,6 +541,8 @@
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
       $("#adminEmailTransportDetail").textContent=data.email_transport_name==="gmail_apps_script"?"Gmail · Apps Script relay":data.email_transport_name==="resend"?"Resend":"No outbound provider";
       $("#adminMailTestButton").disabled=!data.email_transport;
+      renderTaskCuration(data.tasks||[]);
+      renderRoleApplications(data.role_applications||[]);
       renderRequests(data.pending_requests||[]);
       renderCheckpoints(data.checkpoints||[]);
       renderSkills(data.skill_reviews||[]);
