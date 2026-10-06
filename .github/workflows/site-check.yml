@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -39,6 +41,8 @@ jobs:
           node --check public/admin-login.js
           node --check public/admin.js
           node --check src/worker.js
+          node --check src/contribution-github.js
+          node --check src/production-promotion.js
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -46,6 +50,10 @@ jobs:
           node --check public/package-inspector.js
           node --check public/trust-explorer.js
           node --check public/validation-registry.js
+      - name: Run Commons submission and production promotion security regressions
+        run: |
+          npm run test:submissions
+          npm run test:promotions
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign
