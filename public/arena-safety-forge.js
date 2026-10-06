@@ -11,7 +11,7 @@ let seed=1,mission=null,mode="attack",agent=initialState(),acted=[],ended=false;
 let shield=new Set(),attacks=[],repairs=[],hinted=false,lastCheck=null;
 
 async function researchApi(path,body){
-  if(typeof path!=="string"||!["/api/arena/safety-lab/donate","/api/arena/safety-lab/erase"].includes(path))throw Error("Unsupported research endpoint.");
+  if(typeof path!=="string"||!path.startsWith("/api/")||!["/api/arena/safety-lab/donate","/api/arena/safety-lab/erase"].includes(path))throw Error("Unsupported same-origin research endpoint.");
   const response=await fetch(path,{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
   const data=await response.json().catch(()=>({message:"Invalid response."}));
   if(!response.ok)throw Error(data.message||"Research request failed.");
