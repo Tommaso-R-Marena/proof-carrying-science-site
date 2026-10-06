@@ -33,7 +33,7 @@ jobs:
           node --check public/site.js
           node --check public/commons.js
           node --check public/account.js
-          node --check public/admin.js
+          node --check public/admin-login.js\n          node --check public/admin.js
           node --check src/worker.js
           node --check public/project-builder.js
           node --check public/guided-submission.js
