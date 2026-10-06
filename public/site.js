@@ -85,6 +85,7 @@
       ]},
       {heading:"ADVANCED",links:[
         ["claim-review.html","Claim & obligation review"],
+        ["researcher-pilots.html","Independent researcher pilots"],
         ["trust.html","Trust Center"],
         ["validation.html","Validation evidence"],
         ["project-builder.html","Advanced Project Mapper"],
