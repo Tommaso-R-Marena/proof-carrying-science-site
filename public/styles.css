@@ -1245,3 +1245,12 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .task-required-output span{color:#283d58;font-size:.92rem}
 .qualification-choice-banner article>a.button{align-self:flex-start;margin-top:12px;min-height:44px}
 @media(max-width:620px){.qualification-choice-banner article>a.button{width:100%;text-align:center}}
+
+/* Compact audit summaries, on-demand D1-backed full history. */
+.admin-audit-disclosure{border:1px solid var(--line,#dbe3ea);border-radius:1rem;padding:1rem}
+.admin-audit-disclosure>summary{display:flex;gap:.35rem;flex-direction:column;cursor:pointer;font-weight:700;line-height:1.5;padding:.2rem}
+.admin-audit-disclosure>summary small{font-weight:400;opacity:.78}
+.admin-audit-disclosure[open]>summary{padding-bottom:1rem}
+.admin-audit-controls{display:flex;flex-wrap:wrap;gap:.7rem;align-items:end}
+.admin-audit-controls label{min-width:11rem;flex:1 1 12rem}
+.admin-audit-controls .textinput,.admin-audit-controls .selectinput{width:100%}
