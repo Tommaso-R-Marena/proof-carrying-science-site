@@ -45,6 +45,8 @@ jobs:
           node --check src/production-promotion.js
           node --check public/research-preview-engine.mjs
           node --check public/research-preview.js
+          node --check public/researcher-pilot-core.mjs
+          node --check public/researcher-pilot-ui.js
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -57,6 +59,7 @@ jobs:
           npm run test:submissions
           npm run test:promotions
           npm run test:preview
+          npm run test:pilots
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign
