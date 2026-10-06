@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / "contributions" / "pcs-submissions"
-NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|html|css|csv)$")
+NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|mjs|html|css|csv)$")
 TASK = re.compile(r"^[A-Z][A-Z0-9._-]{2,31}$")
 UUID = re.compile(r"^[0-9a-f-]{36}$", re.I)
 FORBIDDEN = re.compile(r"(^|[^A-Za-z0-9_])(sorry|admit|axiom|unsafe|extern|native_decide|implemented_by)([^A-Za-z0-9_]|$)")
