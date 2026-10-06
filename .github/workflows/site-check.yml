@@ -23,10 +23,10 @@ jobs:
     if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: [self-hosted, linux, x64, pcs-ci]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - uses: actions/setup-node@v4
@@ -79,8 +79,6 @@ jobs:
           npm run test:safety:benchmark
       - name: Validate deployable static site
         run: python scripts/check_site.py
-      # Optional browser-only regression on an isolated, registered self-hosted runner.
-      # Cloudflare Workers Builds separately validates static security and all Node tests.
       - name: Validate responsive UI layout
         run: python scripts/check_ui_layout.py
       - name: Upload UI layout failure screenshots
@@ -91,6 +89,9 @@ jobs:
           path: artifacts/ui-layout
           if-no-files-found: ignore
           retention-days: 7
+      - name: Run defensive security campaign
+        run: python scripts/security_campaign.py --static
+
       - name: Run defensive security campaign
         run: python scripts/security_campaign.py --static
       - name: Enforce zero-billing Cloudflare posture
