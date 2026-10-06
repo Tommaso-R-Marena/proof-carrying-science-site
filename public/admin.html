@@ -6,40 +6,37 @@
 <meta name="robots" content="noindex,nofollow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
 </head>
 <body class="commons-page admin-page">
-<div class="topbar commons-topbar"><div class="shell"><span>PCS Commons administration · approval queue · contributor authority</span><a href="account.html">Account</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Admin Center · approvals · authority · immutable audit</span><a href="account.html">Contributor account</a></div></div>
 <div class="shell">
-<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="tasks.html">Tasks</a><a href="account.html">Account</a><a class="button dark" href="admin.html">Admin</a></div></nav>
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="tasks.html">Tasks</a><a href="account.html">Account</a><a class="button dark" href="admin.html">Admin Center</a></div></nav>
 <main>
 <section class="pagehead commons-pagehead">
-  <div class="kicker">Founder administration</div>
-  <h1>Approve access without letting applications block the work.</h1>
-  <p>Pending L2+ applications do not reserve tasks. An approved reservation gets a 24-hour progress checkpoint and automatically releases if the contributor goes silent. The queue is ordered by the 1–2 business-day review deadline.</p>
+  <div class="kicker">Privileged administration</div>
+  <h1>One place for approvals, authority, operations, and audit history.</h1>
+  <p>The Admin Center uses a separate privileged session. Review pending work, manage contributor authority, inspect every recorded administrative decision, and verify the append-only audit archive from this dashboard.</p>
 </section>
 
 <section id="adminUnavailable" class="panel" hidden>
-  <h2>Administrator session required.</h2>
-  <p class="muted">Sign in with the PCS owner account, or use the one-time bootstrap form if the owner account has not been created yet.</p>
-  <div class="actions"><a class="button primary" href="account.html">Sign in</a></div>
-  <details class="admin-bootstrap">
-    <summary>First-time owner setup</summary>
-    <form id="bootstrapForm">
-      <label class="field"><span>Owner email</span><input class="textinput" name="email" type="email" value="marenatommaso@gmail.com" required></label>
-      <label class="field"><span>Name</span><input class="textinput" name="display_name" value="Tommaso Marena" required></label>
-      <label class="field"><span>New password</span><input class="textinput" name="password" type="password" minlength="12" maxlength="128" required></label>
-      <label class="field"><span>One-time bootstrap token</span><input class="textinput mono" name="bootstrap_token" required></label>
-      <button class="button dark" type="submit">Create owner account</button>
-      <p id="bootstrapMessage" class="form-message" aria-live="polite"></p>
-    </form>
-  </details>
+  <div class="panel-eyebrow">Separate privileged session</div>
+  <h2>Administrator sign-in required.</h2>
+  <p class="muted">A normal contributor/account session does not unlock administration. Use the dedicated admin sign-in to create an 8-hour privileged session.</p>
+  <div class="actions"><a class="button primary" href="admin-login.html">Admin sign in</a><a class="button secondary" href="account.html">Contributor account</a></div>
 </section>
 
 <section id="adminDashboard" hidden>
-  <div class="admin-status-grid">
-    <article><small>OWNER AUTHORITY</small><strong>L7 · Founder / Owner</strong><span>Unique governance tier; technical ceiling remains L6</span></article>
-    <article><small>REQUEST SLA</small><strong>Target ≤1 business day</strong><span>Hard queue deadline: 2 business days</span></article>
-    <article><small>RESERVATION</small><strong>24h checkpoint</strong><span>Silent reservations auto-release</span></article>
-    <article><small>AI POLICY</small><strong>Allowed + disclosed</strong><span>Contributor must independently verify</span></article>
+  <div class="admin-status-grid admin-ops-grid">
+    <article><small>ADMIN SESSION</small><strong id="adminIdentity">Checking…</strong><span>Separate privileged session · 8h maximum</span></article>
+    <article><small>PENDING TASKS</small><strong id="adminPendingCount">0</strong><span>Applications waiting for decision</span></article>
+    <article><small>COMPETENCY REVIEWS</small><strong id="adminSkillCount">0</strong><span>Manual skill/evaluation approvals</span></article>
+    <article><small>SUBMISSIONS</small><strong id="adminSubmissionCount">0</strong><span>Work waiting for review</span></article>
+    <article><small>AUDIT INTEGRITY</small><strong id="adminAuditIntegrity">Checking…</strong><span>Hash-chain verification</span></article>
     <article><small>EMAIL</small><strong id="adminEmailTransport">Checking…</strong><span>Provider status</span></article>
+  </div>
+  <div class="admin-toolbar">
+    <nav class="admin-anchor-nav" aria-label="Admin Center sections">
+      <a href="#requests">Pending approvals</a><a href="#skills">Competency</a><a href="#submissions">Submissions</a><a href="#users">People & authority</a><a href="#approval-history">Approval history</a><a href="#admin-actions">Admin actions</a><a href="#audit-log">Audit log</a>
+    </nav>
+    <button class="button secondary" id="adminLogoutButton" type="button">Admin sign out</button>
   </div>
 
   <section class="section-tight" id="requests">
@@ -66,13 +63,31 @@
     <div class="section-heading-row"><div><div class="kicker">Contributor + governance authority</div><h2>Technical rank and governance power are separate.</h2></div><p>L0–L6 are technical/research levels. L7 is the unique Founder/Owner governance display: only the Owner can appoint or demote L6s, grant or revoke administrator authority, suspend accounts, or modify another administrator. Every change is audited.</p></div>
     <div id="adminUserList" class="admin-list"></div>
   </section>
+
+  <section class="section-tight admin-history-section" id="approval-history">
+    <div class="section-heading-row"><div><div class="kicker">Approval history</div><h2>Every recorded approval and rejection.</h2></div><p>Task decisions, competency decisions, submission reviews, checkpoints, level changes, and governance decisions are preserved in the audit archive.</p></div>
+    <div id="adminApprovalHistory" class="admin-audit-list"></div>
+    <div class="actions"><button class="button secondary" id="loadMoreApprovals" type="button">Load older approvals</button></div>
+  </section>
+
+  <section class="section-tight admin-history-section" id="admin-actions">
+    <div class="section-heading-row"><div><div class="kicker">Administrative actions</div><h2>Who changed what, and when.</h2></div><p>This view includes actions performed by the Founder/Owner or delegated administrators, with actor identity snapshotted at event time.</p></div>
+    <div id="adminActionHistory" class="admin-audit-list"></div>
+    <div class="actions"><button class="button secondary" id="loadMoreAdminActions" type="button">Load older admin actions</button></div>
+  </section>
+
+  <section class="section-tight admin-history-section" id="audit-log">
+    <div class="section-heading-row"><div><div class="kicker">Immutable audit archive</div><h2>Append-only, hash-chained operational history.</h2></div><p>Application/database rules reject updates and deletions to this archive. Each event commits to the previous event hash. Infrastructure owners could still destroy the underlying database itself, so this is tamper-evident and application-immutable—not physically indestructible.</p></div>
+    <div id="auditIntegrityPanel" class="audit-integrity-panel"></div>
+    <div class="admin-audit-controls"><label>Search displayed events <input id="adminAuditSearch" class="textinput" type="search" placeholder="action, actor, subject, detail"></label><button class="button secondary" id="refreshAuditButton" type="button">Refresh + verify</button></div>
+    <div id="adminAuditList" class="admin-audit-list"></div>
+    <div class="actions"><button class="button secondary" id="loadMoreAudit" type="button">Load older log entries</button></div>
+  </section>
 </section>
 
-<section id="adminRecoveryPanel" class="recovery-code-panel" hidden>
-  <div class="panel"><div class="kicker">Owner recovery code</div><h2>Save this once.</h2><div class="recovery-code-row"><code id="adminRecoveryCode"></code></div><p class="tiny">This code can reset the owner password without email. Store it securely.</p></div>
-</section>
+
 </main>
-<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Founder-controlled task authority with auditable contributor progression.</p></div><div class="footercol"><strong>Admin</strong><a href="account.html">Owner account</a><a href="tasks.html">Task marketplace</a></div><div class="footercol"><strong>Rules</strong><a href="governance.html">Governance</a><a href="privacy.html">Privacy</a></div></div></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Founder-controlled task authority with auditable contributor progression.</p></div><div class="footercol"><strong>Admin</strong><a href="admin-login.html">Admin sign in</a><a href="admin.html">Admin Center</a><a href="account.html">Contributor account</a></div><div class="footercol"><strong>Rules</strong><a href="governance.html">Governance</a><a href="privacy.html">Privacy</a></div></div></footer>
 </div>
 <script src="site.js"></script><script src="admin.js"></script>
 </body></html>
