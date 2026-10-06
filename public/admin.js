@@ -1115,16 +1115,33 @@
 
   $("#adminProofQuestExport")?.addEventListener("click",async()=>{
     const button=$("#adminProofQuestExport"),msg=$("#adminProofQuestExportMessage");
-    button.disabled=true;msg.textContent="Preparing a deidentified dataset...";
+    button.disabled=true;msg.textContent="Collecting consented, deidentified puzzle pages...";
     try{
-      const dataset=await api("/api/admin/arena/proof-order/dataset");
-      if(!dataset || dataset.format!=="pcs-proof-order-optin-research-dataset-v1")throw Error("Unexpected data format.");
+      let examples=[],cursor=null,pages=0,metadata=null;
+      const seen=new Set();
+      do{
+        const suffix=cursor?"?after="+encodeURIComponent(cursor):"";
+        const page=await api("/api/admin/arena/proof-order/dataset"+suffix);
+        if(page.format!=="pcs-proof-order-optin-research-dataset-v1"||!Array.isArray(page.examples))
+          throw Error("Unexpected research dataset schema.");
+        metadata||=page;
+        examples.push(...page.examples);
+        if(page.next_cursor===null){cursor=null;break;}
+        if(typeof page.next_cursor!=="string"||seen.has(page.next_cursor))
+          throw Error("Invalid or nonmonotonic export cursor.");
+        seen.add(page.next_cursor);cursor=page.next_cursor;
+        pages++;
+      }while(pages<250);
+      if(cursor!==null)throw Error("Export exceeds 50,000 rows; request a reviewed batch export.");
+      const dataset={format:metadata.format,provenance:metadata.provenance,
+        excludes:metadata.excludes,source_validation:metadata.source_validation,
+        limitations:metadata.limitations,count:examples.length,examples};
       const blob=new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const anchor=document.createElement("a");anchor.href=url;
       anchor.download="pcs-proof-quest-adult-optin-"+new Date().toISOString().slice(0,10)+".json";
       document.body.appendChild(anchor);anchor.click();anchor.remove();URL.revokeObjectURL(url);
-      msg.textContent="Exported "+dataset.count+" anonymized research choices; verify review rights before sharing.";
+      msg.textContent="Exported "+examples.length+" deidentified puzzle choices. Keep puzzle families disjoint between training and evaluation.";
     }catch(e){msg.textContent="Export unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
