@@ -34,7 +34,7 @@
       <nav class="admin-workflow-section" aria-label="Review queue shortcuts">
         <strong>Review queue</strong>
         <a href="#requests">Task applications →</a><a href="#roles">Role applications →</a>
-        <a href="#skills">Competency requests →</a><a href="#submissions">Task submissions →</a>
+        <a href="#skills">Competency requests →</a><a href="#submissions">Task submissions →</a><a href="#promotions">Production promotions →</a>
         <a href="#arena">Arena validation →</a>
       </nav>
       <nav class="admin-workflow-section" aria-label="Planning shortcuts">
@@ -68,7 +68,7 @@
   </div>
   <div class="admin-toolbar">
     <nav class="admin-anchor-nav" aria-label="Admin Center sections">
-      <a href="#task-curation">Published work</a><a href="#dependency-editor">Dependency graph</a><a href="#arena">Arena review</a><a href="#roles">Role applications</a><a href="#requests">Pending approvals</a><a href="#skills">Competency</a><a href="#submissions">Submissions</a><a href="#users">People & authority</a><a href="#approval-history">Approval history</a><a href="#admin-actions">Admin actions</a><a href="#audit-log">Audit log</a>
+      <a href="#task-curation">Published work</a><a href="#dependency-editor">Dependency graph</a><a href="#arena">Arena review</a><a href="#roles">Role applications</a><a href="#requests">Pending approvals</a><a href="#skills">Competency</a><a href="#submissions">Submissions</a><a href="#promotions">Production promotion</a><a href="#users">People & authority</a><a href="#approval-history">Approval history</a><a href="#admin-actions">Admin actions</a><a href="#audit-log">Audit log</a>
     </nav>
     <button class="button secondary" id="adminLogoutButton" type="button">Admin sign out</button>
   </div>
@@ -180,6 +180,36 @@
     <div class="section-heading-row"><div><div class="kicker">Submission triage</div><h2>Inspect → run CI → request fixes or accept → integrate.</h2></div><p>For GitHub-backed tasks, submission files are staged to isolated branches. Only a successful check on the exact PR head permits acceptance, and only the Founder/Owner can merge. A passing CI result never proves scientific truth.</p></div>
     <div class="pcs-submission-contract"><strong>Decision guide:</strong> Check the artifact and claimed scope, inspect GitHub results, request improvements when necessary, and document the independent review rationale. Marketing/outreach evidence is classified as activity or independently supported outcome; neither rewards unsolicited spam.</div>
     <div id="adminSubmissionList" class="admin-list"></div>
+  </section>
+
+  <section class="section-tight" id="promotions" aria-labelledby="promotionsTitle">
+    <div class="section-heading-row">
+      <div><div class="kicker">Production source integration</div>
+      <h2 id="promotionsTitle">Promote checked contributions into PCS production</h2></div>
+      <p>Separate from accepting an archive contribution. The Owner must map each reviewed original file to a narrowly permitted production path. A fresh Lean/PCS or website CI run on the exact promotion PR is required, followed by explicit approval and a final merge check.</p>
+    </div>
+    <div class="pcs-submission-contract">
+      <strong>Production gate:</strong> accepted archived source → exact-byte mapping → isolated production PR → fresh runnable tests → Owner approval on a specific commit → Owner squash merge. Missing CI (including quota exhaustion) blocks approval and merging. No 'force pass' control exists.
+    </div>
+    <form id="promotionCreateForm" class="panel pcs-promotion-form" hidden>
+      <h3>Open a production promotion request</h3>
+      <label class="field"><span>Accepted and archived source</span>
+        <select name="submission_id" id="promotionSource" class="selectinput" required><option value="">Select accepted contribution</option></select>
+      </label>
+      <p id="promotionSourceDetails" class="tiny">Only work accepted, independently reviewed, and merged into the GitHub contribution archive can be promoted.</p>
+      <label class="field"><span>Production file destinations (one per original file)</span>
+        <textarea class="textinput" id="promotionFileMappings" name="mappings" rows="3" required placeholder="result.lean => formal/PCS/V2/Result.lean"></textarea>
+        <small>Use exactly <code>uploaded-filename =&gt; repository/path.ext</code> on each line. No wildcards, arbitrary paths, workflow changes, or direct-to-main pushes. Example destinations: <code>formal/PCS/V2/NewProof.lean</code> or <code>public/account.js</code>.</small>
+      </label>
+      <label class="field"><span>Why is this safe and beneficial to promote?</span>
+        <textarea class="textinput" name="rationale" minlength="40" maxlength="3000" rows="3" required placeholder="What exact claim, assumption, validation contract and production behavior will change?"></textarea>
+      </label>
+      <div class="actions"><button class="button primary" type="submit">Create source-bound promotion PR</button><span class="tiny">The PR will remain unapproved until fresh CI and separate review.</span></div>
+      <p id="promotionCreateMessage" class="form-message" aria-live="polite"></p>
+    </form>
+    <div class="section-heading-row"><h3>Promotion review &amp; integration queue</h3><button class="button secondary" type="button" id="refreshPromotions">Refresh status</button></div>
+    <p id="promotionQueueStatus" class="muted" aria-live="polite"></p>
+    <div id="promotionQueue" class="admin-list"></div>
   </section>
 
   <section class="section-tight" id="users">
