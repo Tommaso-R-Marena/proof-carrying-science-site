@@ -153,6 +153,12 @@
 
   <section class="section-tight" id="arena">
     <div class="section-heading-row"><div><div class="kicker">PCS Arena validation</div><h2>Validate the science before validating the score.</h2></div><p>Leaderboard placement is challenge-local. Review the artifact, correct any claimed structure counts, and only then verify or reject the entry. Arena results never automatically change contributor level or skill authority.</p></div>
+    <div class="panel" style="margin:18px 0">
+      <h3>Research data storage · Cloudflare D1</h3>
+      <p>Accounts and verified, explicitly consented adult game submissions remain in the existing D1 database. No anonymous gameplay is collected for research. Durable Objects and Workflows are available on Free, but are not needed to duplicate this private research ledger.</p>
+      <button id="adminResearchStorageRefresh" type="button" class="button secondary">Check stored research data</button>
+      <p id="adminResearchStorageStatus" class="form-message" role="status" aria-live="polite">Research storage counts have not been requested.</p>
+    </div>
     <div class="panel" style="margin:18px 0"><h3>Proof Quest adult opt-in research dataset</h3><p>Only the Founder/Owner may inspect a deidentified training-research export. Entries contain synthetic puzzle step orders, scores, hints and puzzle versions; they are not Lean proofs. Account IDs and emails are excluded from the export. Contributors may erase their stored attempts.</p><button id="adminProofQuestExport" type="button" class="button secondary">Export consented puzzle dataset (.json)</button><p id="adminProofQuestExportMessage" class="form-message" aria-live="polite"></p></div>
     <div class="panel" style="margin:18px 0">
   <h3>Safety Forge · synthetic AI-safety training research</h3>
