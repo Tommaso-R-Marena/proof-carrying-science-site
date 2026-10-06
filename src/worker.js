@@ -3621,6 +3621,29 @@ async function eraseSafetyForgeSessions(env,user){
   return json({ok:true,deleted:Number(result.meta?.changes||0),
     message:"Active database rows deleted. Historic backups or exported copies may have different retention."});
 }
+async function adminArenaStorage(env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can inspect research-data storage summaries.","owner_required");
+  // No participant-level identifiers or raw gameplay are returned.
+  const [quest,forge]=await Promise.all([
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(ordering_json)),0) AS payload_bytes FROM proof_order_research_attempts"
+    ).first(),
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(submitted_choices_json)+LENGTH(verified_replay_json)),0) AS payload_bytes FROM safety_forge_research_sessions"
+    ).first(),
+  ]);
+  return json({
+    ok:true,storage:"Cloudflare D1",
+    source_of_truth:"Verified, consented adult research submissions only; anonymous gameplay is not collected.",
+    databases:{commons:"pcs-commons"},
+    collections:{
+      proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
+      safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)}
+    },
+    caveat:"Approximate JSON payload bytes, excluding SQLite indexes, metadata, users and audit records; inspect Cloudflare D1 for authoritative capacity and usage."
+  });
+}
+
 async function exportSafetyForgeSessions(request,env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Founder/Owner authority required for researcher dataset export.","owner_required");
   const url=new URL(request.url);
@@ -3689,6 +3712,7 @@ async function handleApi(request, env) {
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
+    if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
