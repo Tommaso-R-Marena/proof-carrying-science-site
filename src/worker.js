@@ -1985,15 +1985,16 @@ async function adminCheckpoint(request, env, admin, requestId) {
   const row = await env.COMMONS_DB.prepare(
     `SELECT r.*,t.id AS task_id,t.title,u.email,u.email_verified,u.display_name
      FROM task_requests r JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=r.user_id
-     WHERE r.id=? AND r.status='approved'`
+     WHERE r.id=? AND r.status='approved' AND r.checkpoint_status='pending'`
   ).bind(requestId).first();
   if (!row) throw new ApiError(404,"Active request not found.","request_not_found");
   if (!row.checkpoint_note) throw new ApiError(409,"Contributor has not submitted a checkpoint.","checkpoint_missing");
 
   if (decision==="release") {
-    await env.COMMONS_DB.prepare(
-      "UPDATE task_requests SET status='expired',checkpoint_status='missed',decision_note=?,reservation_key=NULL WHERE id=?"
+    const released=await env.COMMONS_DB.prepare(
+      "UPDATE task_requests SET status='expired',checkpoint_status='missed',decision_note=?,reservation_key=NULL WHERE id=? AND status='approved' AND checkpoint_status='pending'"
     ).bind(note||"Checkpoint did not justify holding the reservation.",row.id).run();
+    if (Number(released?.meta?.changes||0)!==1) throw new ApiError(409,"This checkpoint was already decided by another administrator action.","checkpoint_already_decided");
     await notify(env,{userId:row.user_id,email:row.email_verified?row.email:null,kind:"checkpoint_released",subject:`PCS task released: ${row.task_id}`,body:`PCS released your reservation for ${row.task_id} after checkpoint review.\n\n${note}\n`});
     await audit(env,admin.id,"checkpoint_released","task_request",row.id,{task_id:row.task_id});
     return json({ok:true,status:"expired"});
@@ -2002,9 +2003,10 @@ async function adminCheckpoint(request, env, admin, requestId) {
   if (Number(row.extension_count||0)>=2) throw new ApiError(409,"This reservation has already received the maximum two checkpoint extensions. Review the task manually.","extension_limit");
   const extendHours=Math.min(Math.max(Number(body.extend_hours||168),24),168);
   const expiry=addHoursIso(nowIso(),extendHours);
-  await env.COMMONS_DB.prepare(
-    "UPDATE task_requests SET checkpoint_status='accepted',reservation_expires_at=?,extension_count=extension_count+1,last_progress_at=? WHERE id=?"
+  const accepted=await env.COMMONS_DB.prepare(
+    "UPDATE task_requests SET checkpoint_status='accepted',reservation_expires_at=?,extension_count=extension_count+1,last_progress_at=? WHERE id=? AND status='approved' AND checkpoint_status='pending'"
   ).bind(expiry,nowIso(),row.id).run();
+  if (Number(accepted?.meta?.changes||0)!==1) throw new ApiError(409,"This checkpoint was already decided by another administrator action.","checkpoint_already_decided");
   await notify(env,{userId:row.user_id,email:row.email_verified?row.email:null,kind:"checkpoint_accepted",subject:`PCS checkpoint accepted: ${row.task_id}`,body:`Your progress checkpoint for ${row.task_id} was accepted. The reservation now runs through ${expiry}.\n\n${note}\n`});
   await audit(env,admin.id,"checkpoint_accepted","task_request",row.id,{task_id:row.task_id,expiry});
   return json({ok:true,status:"approved",reservation_expires_at:expiry});
@@ -2022,10 +2024,14 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
      WHERE s.id=?`
   ).bind(submissionId).first();
   if (!row) throw new ApiError(404,"Submission not found.","submission_not_found");
+  if (!["submitted","needs_changes"].includes(row.status)) {
+    throw new ApiError(409,"This submission already has a final review decision.","submission_already_decided");
+  }
   const status=decision==="accept"?"accepted":decision==="needs_changes"?"needs_changes":"rejected";
-  await env.COMMONS_DB.prepare(
-    "UPDATE submissions SET status=?,reviewed_at=?,reviewed_by=?,review_note=? WHERE id=?"
+  const reviewed=await env.COMMONS_DB.prepare(
+    "UPDATE submissions SET status=?,reviewed_at=?,reviewed_by=?,review_note=? WHERE id=? AND status IN ('submitted','needs_changes')"
   ).bind(status,nowIso(),admin.id,note,row.id).run();
+  if (Number(reviewed?.meta?.changes||0)!==1) throw new ApiError(409,"This submission was already decided by another administrator action.","submission_already_decided");
   if (decision==="accept") {
     await env.COMMONS_DB.prepare("UPDATE task_requests SET status='completed',decision_note=?,reservation_key=NULL WHERE id=?").bind("Submission accepted.",row.task_request_id).run();
     if (Number(row.level)===0 && Number(row.min_level)===0 && !row.calibrates_skill) {
@@ -2066,10 +2072,14 @@ async function adminSkillDecision(request, env, admin, userId) {
   if (user.role==="admin" && !isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may modify another administrator's reviewed authority.","owner_required");
   const row=await env.COMMONS_DB.prepare("SELECT * FROM skills WHERE user_id=? AND skill=?").bind(userId,skill).first();
   if (!row) throw new ApiError(404,"Skill request not found.","skill_not_found");
+  if (row.status!=="pending") {
+    throw new ApiError(409,"Only a pending skill review can be decided here. Verified skills require the Founder/Owner revocation flow.","skill_not_pending");
+  }
   const when=status==="verified"?nowIso():null;
-  await env.COMMONS_DB.prepare(
-    "UPDATE skills SET status=?,verification_note=?,verified_at=?,verified_by=?,review_due_at=NULL WHERE user_id=? AND skill=?"
+  const decided=await env.COMMONS_DB.prepare(
+    "UPDATE skills SET status=?,verification_note=?,verified_at=?,verified_by=?,review_due_at=NULL WHERE user_id=? AND skill=? AND status='pending'"
   ).bind(status,note,when,admin.id,userId,skill).run();
+  if (Number(decided?.meta?.changes||0)!==1) throw new ApiError(409,"This skill review was already decided by another administrator action.","skill_already_decided");
   await notify(env,{userId,email:user.email_verified?user.email:null,kind:"skill_review",subject:`PCS skill review: ${skill}`,body:`Your ${skill} skill review was marked ${status}.\n\n${note}\n`});
   await audit(env,admin.id,"skill_reviewed","user",userId,{skill,status});
   return json({ok:true,status});
