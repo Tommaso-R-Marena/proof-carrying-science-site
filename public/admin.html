@@ -64,7 +64,7 @@
     <article><small>SUBMISSIONS</small><strong id="adminSubmissionCount">0</strong><span>Work waiting for review</span></article>
     <article><small>AUDIT INTEGRITY</small><strong id="adminAuditIntegrity">Checking…</strong><span>Hash-chain verification</span></article>
     <article><small>EMAIL</small><strong id="adminEmailTransport">Checking…</strong><span id="adminEmailTransportDetail">Provider status</span><button class="smallbutton" id="adminMailTestButton" type="button">Send test email</button></article>
-    <article><small>GITHUB STAGING</small><strong id="adminGithubStatus">Checking…</strong><span>Requires scoped GitHub token; no merges without passing CI and Owner action.</span><a href="#submissions">Review staged work ↓</a></article>
+    <article><small>GITHUB STAGING</small><strong id="adminGithubStatus">Checking…</strong><span>Read-only access diagnostics; integration requires verified CI and Owner action.</span><button class="smallbutton" type="button" id="adminGithubTestButton">Test GitHub access</button><span id="adminGithubTestResult" role="status" aria-live="polite"></span><a href="#submissions">Review staged work ↓</a></article>
   </div>
   <div class="admin-toolbar">
     <nav class="admin-anchor-nav" aria-label="Admin Center sections">
