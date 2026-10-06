@@ -479,28 +479,99 @@ async function audit(env, actorUserId, action, subjectType, subjectId, detail = 
   });
 }
 
+function mailRelayConfigured(env) {
+  return Boolean(env.MAIL_RELAY_URL && env.MAIL_RELAY_SECRET);
+}
+
+function resendConfigured(env) {
+  return emailTransportConfigured(env);
+}
+
+function emailTransportConfigured(env) {
+  return mailRelayConfigured(env) || resendConfigured(env);
+}
+
+function emailTransportName(env) {
+  if (mailRelayConfigured(env)) return "gmail_apps_script";
+  if (resendConfigured(env)) return "resend";
+  return "disabled";
+}
+
+async function hmacHex(secret, value) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = new Uint8Array(await crypto.subtle.sign("HMAC", key, encoder.encode(value)));
+  return [...signature].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function sendRelayMail(env, to, subject, text) {
+  const timestamp = String(Date.now());
+  const nonce = randomToken(18);
+  const canonical = [timestamp, nonce, to, subject, text].join("\n");
+  const signature = await hmacHex(env.MAIL_RELAY_SECRET, canonical);
+  const response = await fetch(env.MAIL_RELAY_URL, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      timestamp,
+      nonce,
+      to,
+      subject,
+      text,
+      signature,
+    }),
+  });
+  const responseText = (await response.text()).slice(0, 1000);
+  if (!response.ok) {
+    return { state: "failed", error: `Gmail relay returned ${response.status}: ${responseText}` };
+  }
+  let payload = null;
+  try { payload = JSON.parse(responseText); } catch {}
+  if (!payload?.ok) {
+    return { state: "failed", error: `Gmail relay rejected the message: ${responseText || "unknown error"}` };
+  }
+  return { state: "sent", error: null, provider: "gmail_apps_script" };
+}
+
+async function sendResendMail(env, to, subject, text) {
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "authorization": `Bearer ${env.RESEND_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      from: env.MAIL_FROM,
+      to: [to],
+      reply_to: env.ADMIN_EMAIL || undefined,
+      subject,
+      text,
+    }),
+  });
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 500);
+    return { state: "failed", error: `Resend returned ${response.status}: ${detail}` };
+  }
+  return { state: "sent", error: null, provider: "resend" };
+}
+
 async function sendMail(env, to, subject, text) {
-  if (!env.RESEND_API_KEY || !env.MAIL_FROM) return { state: "disabled", error: "Transactional email transport is not configured." };
+  if (!emailTransportConfigured(env)) {
+    return { state: "disabled", error: "Transactional email transport is not configured." };
+  }
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "authorization": `Bearer ${env.RESEND_API_KEY}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        from: env.MAIL_FROM,
-        to: [to],
-        reply_to: env.ADMIN_EMAIL || undefined,
-        subject,
-        text,
-      }),
-    });
-    if (!response.ok) {
-      const detail = (await response.text()).slice(0, 500);
-      return { state: "failed", error: `Email provider returned ${response.status}: ${detail}` };
+    if (mailRelayConfigured(env)) {
+      const relay = await sendRelayMail(env, to, subject, text);
+      if (relay.state === "sent" || !resendConfigured(env)) return relay;
     }
-    return { state: "sent", error: null };
+    if (resendConfigured(env)) return await sendResendMail(env, to, subject, text);
+    return { state: "failed", error: "All configured email transports failed." };
   } catch (error) {
     return { state: "failed", error: String(error).slice(0, 500) };
   }
@@ -976,7 +1047,7 @@ async function verifyEmail(request, env) {
 
 async function me(request, env) {
   const user = await currentUser(request, env);
-  if (!user) return json({ authenticated: false, email_transport: Boolean(env.RESEND_API_KEY && env.MAIL_FROM) });
+  if (!user) return json({ authenticated: false, email_transport: emailTransportConfigured(env) });
   const [skills, requests, notifications, evaluations] = await Promise.all([
     env.COMMONS_DB.prepare("SELECT skill,status,evidence,verification_note,requested_at,verified_at,review_due_at,source,evaluation_id FROM skills WHERE user_id=? ORDER BY skill").bind(user.id).all(),
     env.COMMONS_DB.prepare(
@@ -998,7 +1069,7 @@ async function me(request, env) {
     requests: requests.results || [],
     notifications: notifications.results || [],
     evaluations: evaluations.results || [],
-    email_transport: Boolean(env.RESEND_API_KEY && env.MAIL_FROM),
+    email_transport: emailTransportConfigured(env),
   });
 }
 
@@ -1491,7 +1562,8 @@ async function adminOverview(request, env) {
   ]);
   return json({
     admin:publicUser(admin),
-    email_transport:Boolean(env.RESEND_API_KEY && env.MAIL_FROM),
+    email_transport:emailTransportConfigured(env),
+    email_transport_name:emailTransportName(env),
     pending_requests:pending.results||[],
     checkpoints:checkpoints.results||[],
     submissions:submissions.results||[],
@@ -1506,6 +1578,19 @@ async function adminOverview(request, env) {
       ai_use:"allowed with disclosure; higher-trust submissions require independent verification and scope explanation",
     },
   });
+}
+
+async function adminTestMail(request, env, admin) {
+  if (!env.ADMIN_EMAIL) throw new ApiError(500,"ADMIN_EMAIL is not configured.","admin_email_missing");
+  const result = await sendMail(
+    env,
+    env.ADMIN_EMAIL,
+    "PCS email transport test",
+    "This is a test from the PCS Admin Center.\n\nIf you received this message, transactional email is working through " + emailTransportName(env) + ".\n"
+  );
+  await audit(env,admin.id,"email_transport_test","email",env.ADMIN_EMAIL,{state:result.state,provider:result.provider||emailTransportName(env),error:result.error||null});
+  if (result.state !== "sent") throw new ApiError(502,result.error||"Email test failed.","mail_test_failed");
+  return json({ok:true,message:"Test email sent.",provider:result.provider||emailTransportName(env)});
 }
 
 async function adminDecision(request, env, admin, requestId) {
@@ -1806,7 +1891,7 @@ async function handleApi(request, env) {
     return json({
       ok:true,
       accounts:true,
-      email_transport:Boolean(env.RESEND_API_KEY && env.MAIL_FROM),
+      email_transport:emailTransportConfigured(env),
       request_sla:"1–2 business days",
       task_policy:{
         L0_L1:"open, non-exclusive tasks; no founder approval needed",
@@ -1838,6 +1923,7 @@ async function handleApi(request, env) {
     const admin=await requireAdmin(request,env);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
+    if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
 
     let adminMatch=path.match(/^\/api\/admin\/requests\/([^/]+)\/decision$/);
     if (method==="POST" && adminMatch) return adminDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
