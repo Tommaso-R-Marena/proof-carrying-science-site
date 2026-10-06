@@ -2370,7 +2370,7 @@ async function adminChallengeDecision(request, env, admin, entryId) {
       claims:body.claims??row.claims,
     });
   }
-  const score=challengeScore(challenge.id,counts);
+  const score=challengeScore(row.challenge_id,counts);
   const status=decision==="verify"?"verified":"rejected";
   const verifiedAt=decision==="verify"?nowIso():null;
   const changed=await env.COMMONS_DB.prepare(
