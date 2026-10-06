@@ -6,10 +6,10 @@ This repository remains **private**. GitHub Actions jobs no longer use `ubuntu-l
 
 Primary automated CI/CD uses **Cloudflare Workers Builds** (the Cloudflare build quota, not GitHub Actions):
 - GitHub repository `Tommaso-R-Marena/proof-carrying-science-site`, production branch `main`.
-- Production **build** command: `npm run ci:zero-minutes`.
+- Production **build** command: existing full static-security and Node-test suite (compatibility command while pre-existing branches are active). Once the CI branch reaches `main`, this can be simplified to `npm run ci:zero-minutes`.
 - Production **deploy** command: `npx wrangler deploy`, only after a successful build; no build on failed checks.
-- Preview **build** command: `npm run ci:zero-minutes`.
-- Preview **deploy** command: `npx wrangler preview`, on non-main branches only; cannot promote a PR to production.
+- Preview **build** command: the same full static-security and Node-test suite, plus Wrangler dry-run. New branches can also run `npm run ci:zero-minutes` locally.
+- Preview **deploy** command: `npx wrangler deploy --dry-run` on non-main branches only; never publishes preview or production. Creating live preview URLs is deferred until a separate nonproduction D1 database is intentionally configured. Cloudflare's build verdict and logs provide PR CI feedback.
 - Node 22 and Python 3.12 are pinned in `.node-version` / `.python-version`.
 - `ci:zero-minutes` runs syntax checks, static release/zero-billing checks, security campaign, all existing Node test families and a Wrangler deployment dry-run. It does **not** require secrets or deploy from inside the check step.
 - `wrangler.jsonc` keeps the live production D1 binding exactly as before but explicitly **does not bind D1 to previews**. This protects production data. Public static pages and games can be previewed; account-backed APIs will not work in previews until a separate staging D1 database and associated secrets are deliberately provisioned.
@@ -18,7 +18,7 @@ Cloudflare Workers Builds free tier currently has a **3,000 build-minute/month s
 
 ### One-time configuration, performed through the Cloudflare Builds API
 
-Existing Cloudflare worker: `proof-carrying-science-site`. Existing GitHub repository connection and build token are reused. The Cloudflare dashboard under Workers & Pages → proof-carrying-science-site → Settings → Builds displays the production and preview triggers. **Do not** recreate production Secrets in Preview, and never set the Preview D1 database to the production database ID.
+Existing Cloudflare worker: `proof-carrying-science-site`. Existing GitHub repository connection and build token are reused. The Cloudflare dashboard under Workers & Pages → proof-carrying-science-site → Settings → Builds displays the production and PR-validation triggers. The production trigger watches `main` only; non-main build checks use dry-run deployment and cannot affect production. **Do not** recreate production Secrets in Preview, and never set the Preview D1 database to the production database ID.
 
 ### Optional self-hosted runner
 
