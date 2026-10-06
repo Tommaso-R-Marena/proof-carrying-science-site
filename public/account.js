@@ -218,6 +218,7 @@
             <strong>Submission · ${esc(s.status)}</strong>
             <span>GitHub: ${esc(s.github_stage_state||"not applicable")}
             ${s.github_pr_url&&String(s.github_pr_url).startsWith("https://github.com/Tommaso-R-Marena/")?` · <a href="${esc(s.github_pr_url)}" target="_blank" rel="noopener noreferrer">Open PR ↗</a>`:""}</span>
+            ${s.github_pr_number?`<button class="button secondary" data-my-git-checks="${esc(s.id)}" type="button">Refresh CI result</button><span id="myGitStatus-${esc(s.id)}" aria-live="polite"></span>`:""}
             ${s.review_note?`<p><strong>Reviewer feedback:</strong> ${esc(s.review_note)}</p>`:""}
           </div>`).join("")}
         ${requestActionButtons(r)}
@@ -234,7 +235,18 @@
       try { await api(`/api/requests/${encodeURIComponent(btn.dataset.checkpoint)}/checkpoint`,{method:"POST",body:{note}}); alert("Checkpoint submitted."); await load(); }
       catch(e){ alert(e.message); }
     }));
-    $$("[data-submit-work]",target).forEach(btn=>btn.addEventListener("click",()=>{
+    $("[data-my-git-checks]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const id=button.dataset.myGitChecks;
+      const status=document.getElementById("myGitStatus-"+id);
+      if(status)status.textContent="Checking GitHub CI…";
+      button.disabled=true;
+      try{
+        const result=await api(`/api/submissions/${encodeURIComponent(id)}/checks`);
+        if(status)status.textContent=`${result.state}: ${result.message}`;
+      }catch(e){if(status)status.textContent=e.message;}
+      finally{button.disabled=false;}
+    }));
+    $("[data-submit-work]",target).forEach(btn=>btn.addEventListener("click",()=>{
       const task=requests.find(r=>r.id===btn.dataset.submitWork);
       if(task)openWorkSubmission(task);
     }));
