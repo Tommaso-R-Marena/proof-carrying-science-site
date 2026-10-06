@@ -5,6 +5,7 @@
   const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
   let state = null;
   let activeEvaluation = null;
+  let activeWorkRequest = null;
 
   function taskIntent() {
     const params = new URLSearchParams(location.search);
@@ -212,6 +213,14 @@
         ${r.status==="pending" ? `<p class="tiny"><strong>Approval SLA:</strong> PCS targets 1 business day and no later than 2 business days. Current decision deadline: ${formatDate(r.decision_due_at)}. This pending request does not reserve the task.</p>` : ""}
         ${r.status==="approved" && r.claim_mode!=="open" ? `<p class="tiny"><strong>Reservation:</strong> checkpoint due ${formatDate(r.checkpoint_due_at)} · current reservation ends ${formatDate(r.reservation_expires_at)}. Missing the checkpoint releases the work automatically.</p>` : ""}
         ${r.decision_note ? `<p class="tiny"><strong>PCS note:</strong> ${esc(r.decision_note)}</p>` : ""}
+        ${(state?.submissions||[]).filter(s=>s.request_id===r.id).map(s=>`
+          <div class="pcs-submission-history">
+            <strong>Submission · ${esc(s.status)}</strong>
+            <span>GitHub: ${esc(s.github_stage_state||"not applicable")}
+            ${s.github_pr_url&&String(s.github_pr_url).startsWith("https://github.com/Tommaso-R-Marena/")?` · <a href="${esc(s.github_pr_url)}" target="_blank" rel="noopener noreferrer">Open PR ↗</a>`:""}</span>
+            ${s.github_pr_number?`<button class="button secondary" data-my-git-checks="${esc(s.id)}" type="button">Refresh CI result</button><span id="myGitStatus-${esc(s.id)}" aria-live="polite"></span>`:""}
+            ${s.review_note?`<p><strong>Reviewer feedback:</strong> ${esc(s.review_note)}</p>`:""}
+          </div>`).join("")}
         ${requestActionButtons(r)}
       </article>`).join("");
 
@@ -226,23 +235,92 @@
       try { await api(`/api/requests/${encodeURIComponent(btn.dataset.checkpoint)}/checkpoint`,{method:"POST",body:{note}}); alert("Checkpoint submitted."); await load(); }
       catch(e){ alert(e.message); }
     }));
-    $$("[data-submit-work]",target).forEach(btn=>btn.addEventListener("click",async()=>{
-      const summary=prompt("Summarize the contribution (minimum 100 characters).");
-      if (!summary) return;
-      const artifact_url=prompt("Artifact / PR / commit URL (optional):") || "";
-      const ai_used=confirm("Did you use an AI assistant in producing this contribution? Click OK for yes, Cancel for no.");
-      const ai_tools=ai_used ? (prompt("Which AI tool(s) did you use?") || "") : "";
-      const verification_note=prompt("How did you independently verify the work? Higher-trust tasks require a detailed note.") || "";
-      const understanding_note=prompt("Explain what your contribution establishes, what it does NOT establish, and any remaining assumptions. Higher-trust tasks require a detailed answer.") || "";
-      try {
-        await api(`/api/requests/${encodeURIComponent(btn.dataset.submitWork)}/submit`,{
-          method:"POST",body:{summary,artifact_url,ai_used,ai_tools,verification_note,understanding_note}
-        });
-        alert("Submission received for review.");
-        await load();
-      } catch(e){ alert(e.message); }
+    $("[data-my-git-checks]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const id=button.dataset.myGitChecks;
+      const status=document.getElementById("myGitStatus-"+id);
+      if(status)status.textContent="Checking GitHub CI…";
+      button.disabled=true;
+      try{
+        const result=await api(`/api/submissions/${encodeURIComponent(id)}/checks`);
+        if(status)status.textContent=`${result.state}: ${result.message}`;
+      }catch(e){if(status)status.textContent=e.message;}
+      finally{button.disabled=false;}
+    }));
+    $("[data-submit-work]",target).forEach(btn=>btn.addEventListener("click",()=>{
+      const task=requests.find(r=>r.id===btn.dataset.submitWork);
+      if(task)openWorkSubmission(task);
     }));
   }
+
+  function openWorkSubmission(task){
+    activeWorkRequest=task;
+    const dialog=$("#workSubmissionDialog"),form=$("#workSubmissionForm");
+    if(!dialog||!form)return;
+    form.reset();
+    $("#workSubmissionTitle").textContent="Submit "+task.task_id+" — "+task.title;
+    $("#workSubmissionRequirements").textContent="Your submission is linked to your approved work record. Include exact artifacts and independent verification; technical work is checked before review.";
+    const checklist=$("#workSubmissionChecklist");
+    checklist.replaceChildren();
+    for(const [label,description] of [
+      ["Deliverable",task.deliverable||"Use the published task deliverable."],
+      ["Verification",task.verification_rule||"Explain your independent checks."],
+      ["Acceptance",task.acceptance_criteria||"Meet the published task criteria."]
+    ]){
+      const line=document.createElement("p");
+      const strong=document.createElement("strong");strong.textContent=label+": ";
+      line.append(strong,document.createTextNode(description));checklist.appendChild(line);
+    }
+    const route=task.integration_target||"none";
+    $("#workGithubHint").textContent=route==="core"
+      ?"GitHub-enabled: attach text artifacts. PCS will stage them into a review PR in the core repository and request Lean/PCS checks."
+      :route==="site"
+        ?"GitHub-enabled: attach text artifacts. PCS will stage them into a review PR in the site repository and request website checks."
+        :"This is a review-only task. Evidence files and/or a verifiable URL are sent to PCS reviewers; no code is automatically merged.";
+    $("#outreachEvidenceSection").hidden=!["marketing","outreach"].includes(task.task_category);
+    $("#workSubmissionMessage").textContent="";
+    dialog.showModal();
+  }
+
+  $("#workSubmissionCancel")?.addEventListener("click",()=>$("#workSubmissionDialog").close());
+  $("#workSubmissionForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const form=event.currentTarget,msg=$("#workSubmissionMessage"),send=$("#workSubmissionSend");
+    if(!activeWorkRequest)return;
+    const fd=new FormData(form);
+    const files=[...($("#workSubmissionFiles").files||[])];
+    if(files.length>3){setMessage("workSubmissionMessage","Attach at most three text files.");return;}
+    const attachments=[];
+    let total=0;
+    for(const file of files){
+      if(file.size>20000||file.size===0){setMessage("workSubmissionMessage","Each text file must be between 1 byte and 20 KB.");return;}
+      total+=file.size;
+      if(total>40000){setMessage("workSubmissionMessage","Files must total at most 40 KB.");return;}
+      if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|html|css|csv)$/.test(file.name)||file.name.includes("..")){
+        setMessage("workSubmissionMessage","Rename attachments using simple safe filenames and supported text extensions.");return;
+      }
+      attachments.push({name:file.name,content:await file.text()});
+    }
+    const isOutreach=["marketing","outreach"].includes(activeWorkRequest.task_category);
+    const body={
+      summary:fd.get("summary"),artifact_url:fd.get("artifact_url"),
+      ai_used:fd.get("ai_used")==="on",ai_tools:fd.get("ai_tools"),
+      verification_note:fd.get("verification_note"),understanding_note:fd.get("understanding_note"),
+      evidence_kind:isOutreach?fd.get("evidence_kind"):"none",
+      outcome_metric:isOutreach?fd.get("outcome_metric"):null,
+      outcome_count:isOutreach?fd.get("outcome_count"):null,
+      files:attachments
+    };
+    send.disabled=true;
+    msg.textContent="Saving submission and requesting applicable checks…";
+    try{
+      const response=await api(`/api/requests/${encodeURIComponent(activeWorkRequest.id)}/submit`,{method:"POST",body});
+      setMessage("workSubmissionMessage",response.message,true);
+      form.reset();
+      await load();
+      $("#workSubmissionDialog").close();
+    }catch(e){setMessage("workSubmissionMessage",e.message);}
+    finally{send.disabled=false;}
+  });
 
   function renderNotifications(items=[]) {
     const target=$("#notificationList");

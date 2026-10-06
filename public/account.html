@@ -183,6 +183,41 @@
   </section>
 </section>
 
+<dialog id="workSubmissionDialog" class="pcs-work-dialog" aria-labelledby="workSubmissionTitle">
+  <form id="workSubmissionForm">
+    <div class="kicker">Contribute evidence · independent review</div>
+    <h2 id="workSubmissionTitle">Submit completed work</h2>
+    <p id="workSubmissionRequirements" class="muted">A reviewer will inspect what you submit and the applicable verification report.</p>
+    <div id="workSubmissionChecklist" class="pcs-submission-contract"></div>
+    <label class="field"><span>What did you produce? (at least 100 characters)</span>
+      <textarea class="textinput" name="summary" minlength="100" maxlength="4000" rows="4" required placeholder="Summarize the actual deliverable and where the evidence can be checked."></textarea></label>
+    <label class="field"><span>Public evidence link or existing GitHub PR (optional for attached files)</span>
+      <input class="textinput" name="artifact_url" type="url" maxlength="1000" placeholder="https://"></label>
+    <label class="field"><span>Attach up to 3 small, UTF-8 text files for automatic GitHub staging or reviewer inspection</span>
+      <input class="textinput" id="workSubmissionFiles" type="file" multiple accept=".lean,.py,.js,.json,.md,.txt,.html,.css,.csv">
+      <small>Max 20 KB per file, 40 KB total. Never upload secrets, private participant details, or confidential research data.</small></label>
+    <div id="workGithubHint" class="pcs-submission-contract"></div>
+    <div id="outreachEvidenceSection" class="pcs-evidence-fields" hidden>
+      <h3>Outreach evidence, not vanity points</h3>
+      <p>Verified activity (e.g. a reviewed draft or a public post) is different from measurable outcomes. Do not claim clicks, replies, or signups without evidence and consent.</p>
+      <div class="pcs-form-columns">
+        <label class="field"><span>Evidence classification</span><select name="evidence_kind" class="selectinput"><option value="activity">Activity completed, no outcome claimed</option><option value="outcome">Measurable outcome with proof</option></select></label>
+        <label class="field"><span>Verified metric (only for outcomes)</span><select name="outcome_metric" class="selectinput"><option value="">No outcome claimed</option><option value="qualified_reply">Qualified replies</option><option value="verified_click">Verified clicks</option><option value="consenting_signup">Consenting signups</option><option value="confirmed_meeting">Confirmed meetings</option></select></label>
+        <label class="field"><span>Supported count (only for outcomes)</span><input class="textinput" name="outcome_count" type="number" min="1" max="1000000" placeholder="Not applicable to activity"></label>
+      </div>
+    </div>
+    <label class="field"><span>Independent check: how did you verify the deliverable?</span>
+      <textarea class="textinput" name="verification_note" maxlength="4000" rows="3" placeholder="Include reproducible commands, links, calculations, observations, or review steps."></textarea></label>
+    <label class="field"><span>Scope: what does this demonstrate, and what does it not prove?</span>
+      <textarea class="textinput" name="understanding_note" maxlength="4000" rows="3" placeholder="Identify open assumptions, unresolved errors, or limitations."></textarea></label>
+    <label class="checkrow"><input name="ai_used" type="checkbox"><span>I used AI tools to help produce this contribution.</span></label>
+    <label class="field"><span>AI tools used (required if checked)</span><input class="textinput" name="ai_tools" maxlength="1000" placeholder="Example: ChatGPT, followed by my own checks"></label>
+    <p class="tiny">Submitting does not certify correctness. Applicable files may open a GitHub PR automatically; CI results and acceptance remain separate.</p>
+    <div class="actions"><button class="button primary" id="workSubmissionSend" type="submit">Submit for checks and review</button><button class="button secondary" id="workSubmissionCancel" type="button">Cancel</button></div>
+    <p id="workSubmissionMessage" class="form-message" aria-live="polite"></p>
+  </form>
+</dialog>
+
 <section class="commons-callout">
   <div><span class="commons-kicker-dark">NO TASK SQUATTING</span><h2>Lower-level work is non-exclusive. Higher-level work is never reserved while waiting for approval.</h2><p>Reserved L2+ work gets a progress checkpoint within 24 hours. Miss it and the reservation is automatically released so qualified people are not blocked for weeks.</p></div>
   <div class="actions"><a class="button primary button-lg" href="tasks.html">Task marketplace</a><a class="button ghost button-lg" href="governance.html">Contributor rules</a></div>

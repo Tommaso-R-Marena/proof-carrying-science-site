@@ -256,20 +256,89 @@
     all("[data-reject-skill]",target).forEach(b=>b.addEventListener("click",()=>skillDecision(b.dataset.rejectSkill,b.dataset.skill,"rejected")));
   }
 
+  async function githubSubmissionAction(id,action){
+    const endpoint=`/api/admin/submissions/${encodeURIComponent(id)}/${action}`;
+    try {
+      const response=await api(endpoint,{method:action==="checks"?"GET":"POST",
+        ...(action==="merge"?{body:{note:prompt("Explain why the exact tested PR may now be integrated (minimum 20 characters).")||""}}:{})});
+      const result=$("#pcsGitStatus-"+id);
+      if(result){
+        result.textContent=action==="checks"
+          ?`${response.state.toUpperCase()}: ${response.message||"No result provided"}`
+          :action==="merge"?"Merged into GitHub (PR is now integrated)."
+          :"Staged a GitHub pull request; check CI before accepting.";
+        result.className="pcs-ci-state "+(response.verified?"pcs-ci-good":"");
+      }
+      if(action!=="checks")await load();
+    }catch(e){
+      const result=$("#pcsGitStatus-"+id);
+      if(result){result.textContent=e.message;result.className="pcs-ci-state pcs-ci-error";}
+      else alert(e.message);
+    }
+  }
+
+  async function inspectSubmissionFiles(id){
+    const target=$("#pcsFiles-"+id);if(!target)return;
+    try{
+      const data=await api(`/api/admin/submissions/${encodeURIComponent(id)}/files`);
+      target.replaceChildren();
+      if(!data.files?.length){target.textContent="No attached text artifacts; inspect the external evidence link.";return;}
+      for(const f of data.files){
+        const section=document.createElement("section");
+        const heading=document.createElement("strong");
+        heading.textContent=f.filename+" · SHA-256 "+f.sha256;
+        const pre=document.createElement("pre");pre.className="pcs-review-code";pre.textContent=f.content;
+        section.append(heading,pre);target.append(section);
+      }
+    }catch(e){target.textContent=e.message;}
+  }
+
   function renderSubmissions(items){
     const target=$("#adminSubmissionList");
-    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No submissions awaiting review.</strong><span>Accepted L0 work automatically advances a contributor to L1.</span></div>';return;}
-    target.innerHTML=items.map(s=>`
-      <article class="admin-card">
-        <div class="task-card-top"><div><span class="commons-chip level">${esc(s.task_id)}</span><span class="commons-chip ${s.ai_used?"planned":"volunteer"}">${s.ai_used?"AI used":"no AI declared"}</span></div><span class="tiny">${fmt(s.submitted_at)}</span></div>
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No action needed in the submission queue.</strong><span>New work and accepted GitHub PRs awaiting integration will appear here.</span></div>';return;}
+    target.innerHTML=items.map(s=>{
+      const source=s.github_stage_state||"not_applicable";
+      const isGithub=source!=="not_applicable";
+      const ready=s.status==="accepted"&&source==="staged";
+      const url=String(s.github_pr_url||"");
+      const verifiedLink=url.startsWith("https://github.com/Tommaso-R-Marena/");
+      return `
+      <article class="admin-card pcs-review-card">
+        <div class="task-card-top"><div><span class="commons-chip level">${esc(s.task_id)}</span><span class="commons-chip ${s.ai_used?"planned":"volunteer"}">${s.ai_used?"AI used":"no AI declared"}</span><span class="commons-chip ${s.status==="accepted"?"volunteer":"planned"}">${esc(s.status)}</span></div><span class="tiny">${fmt(s.submitted_at)}</span></div>
         <h3>${esc(s.title)}</h3><p><strong>${esc(s.display_name)}</strong> · L${esc(s.level)} · ${esc(s.email)}</p>
+        <div class="pcs-review-steps">
+          <span>1. Examine evidence</span><span>2. Check Lean/PCS or site CI</span><span>3. Decide / request refinement</span><span>4. Owner integrates PR</span>
+        </div>
         <details open><summary>Contribution summary</summary><p>${esc(s.summary)}</p></details>
-        ${s.artifact_url?`<p><a href="${esc(s.artifact_url)}" target="_blank" rel="noopener">Open submitted artifact ↗</a></p>`:""}
+        ${s.artifact_url&&/^https:\/\//.test(s.artifact_url)?`<p><a href="${esc(s.artifact_url)}" target="_blank" rel="noopener noreferrer">Open external supporting evidence ↗</a></p>`:""}
+        <p class="tiny"><strong>Attached files:</strong> ${esc(s.file_count||0)} · <strong>Evidence type:</strong> ${esc(s.evidence_kind||"none")}
+          ${s.evidence_kind==="outcome"?` · ${esc(s.outcome_metric)}: ${esc(s.outcome_count)} (claimed; reviewer must check source)`:""}
+        </p>
+        <div class="actions"><button class="button secondary" data-inspect-files="${esc(s.id)}">Inspect source/evidence files</button></div>
+        <div id="pcsFiles-${esc(s.id)}" class="pcs-review-files"></div>
         <details><summary>Independent verification</summary><p>${esc(s.verification_note)}</p></details>
-        <details><summary>Understanding / scope</summary><p>${esc(s.understanding_note)}</p></details>
+        <details><summary>Scope and remaining assumptions</summary><p>${esc(s.understanding_note)}</p></details>
         ${s.ai_used?`<details><summary>AI disclosure</summary><p>${esc(s.ai_tools||"AI used; tool not stated")}</p></details>`:""}
-        <div class="actions"><button class="button primary" data-submission-accept="${esc(s.id)}">Accept</button><button class="button secondary" data-submission-changes="${esc(s.id)}">Needs changes</button><button class="button secondary" data-submission-reject="${esc(s.id)}">Reject</button></div>
-      </article>`).join("");
+        ${isGithub?`
+          <div class="pcs-git-review">
+            <strong>GitHub staging: ${esc(source)}</strong>
+            ${verifiedLink?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open staged PR ↗</a>`:""}
+            <p>Check status is obtained from GitHub for the current PR head. A passing check is only a technical prerequisite.</p>
+            <p class="pcs-ci-state" id="pcsGitStatus-${esc(s.id)}">${esc(s.github_stage_error||"Click Check CI to get the live verification result.")}</p>
+            <div class="actions">
+              ${!s.github_pr_number?`<button class="button secondary" data-git-stage="${esc(s.id)}">Stage / retry GitHub PR</button>`:""}
+              ${s.github_pr_number?`<button class="button secondary" data-git-checks="${esc(s.id)}">Check CI status</button>`:""}
+              ${ready&&currentAdmin?.is_owner?`<button class="button primary" data-git-merge="${esc(s.id)}">Integrate checked PR</button>`:""}
+            </div>
+          </div>`
+          :'<p class="pcs-ci-state">Review-only task. No GitHub PR or Lean CI is required; evaluate the submitted evidence directly.</p>'}
+        ${s.status!=="accepted"?`<div class="actions"><button class="button primary" data-submission-accept="${esc(s.id)}">Accept reviewed work</button><button class="button secondary" data-submission-changes="${esc(s.id)}">Request improvements</button><button class="button secondary" data-submission-reject="${esc(s.id)}">Reject</button></div>`:""}
+      </article>`;
+    }).join("");
+    all("[data-inspect-files]",target).forEach(b=>b.addEventListener("click",()=>inspectSubmissionFiles(b.dataset.inspectFiles)));
+    all("[data-git-stage]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitStage,"stage")));
+    all("[data-git-checks]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitChecks,"checks")));
+    all("[data-git-merge]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitMerge,"merge")));
     all("[data-submission-accept]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionAccept,"accept")));
     all("[data-submission-changes]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionChanges,"needs_changes")));
     all("[data-submission-reject]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionReject,"reject")));
@@ -414,6 +483,10 @@
             ${["research","engineering","security","review","operations","administrative","marketing","outreach","design","documentation","community"].map(v=>`<option value="${v}" ${task.category===v?"selected":""}>${v}</option>`).join("")}
           </select></label>
           <label><span>Priority</span><input class="textinput" data-curation-priority type="number" min="0" max="100" value="${esc(task.priority??50)}"></label>
+          <label><span>Expected duration (minutes)</span><input class="textinput" data-curation-minutes type="number" min="10" max="4800" step="5" value="${esc(task.expected_minutes??Number(task.expected_hours||1)*60)}"></label>
+          <label><span>GitHub delivery</span><select class="selectinput" data-curation-github>
+            ${[["none","Reviewer evidence only"],["core","Core repository PR"],["site","Website repository PR"]].map(([value,label])=>`<option value="${value}" ${task.integration_target===value?"selected":""}>${label}</option>`).join("")}
+          </select></label>
         </div>
         <label class="field"><span>Current need rationale</span><textarea class="textinput" data-curation-why rows="2" maxlength="2000">${esc(task.why_now||"")}</textarea></label>
         <label class="field"><span>Reason for this publication change</span><textarea class="textinput" data-curation-reason rows="2" minlength="20" maxlength="2000" placeholder="Required when saving. Explain why this task should or should not be publicly available now."></textarea></label>
@@ -430,6 +503,8 @@
           need_status:card.querySelector("[data-curation-need]").value,
           category:card.querySelector("[data-curation-category]").value,
           priority:Number(card.querySelector("[data-curation-priority]").value),
+          expected_minutes:Number(card.querySelector("[data-curation-minutes]").value),
+          integration_target:card.querySelector("[data-curation-github]").value,
           why_now:card.querySelector("[data-curation-why]").value,
           reason
         }});
@@ -663,6 +738,8 @@
       $("#adminPendingCount").textContent=String((data.pending_requests||[]).length);
       $("#adminSkillCount").textContent=String((data.skill_reviews||[]).length);
       $("#adminSubmissionCount").textContent=String((data.submissions||[]).length);
+      $("#adminGithubStatus").textContent=data.github_transport_configured?"configured":"needs setup";
+      $("#adminGithubStatus").className=data.github_transport_configured?"good-text":"warn-text";
       $("#adminEmailTransport").textContent=data.email_transport?"configured":"not configured";
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
       $("#adminEmailTransportDetail").textContent=data.email_transport_name==="gmail_apps_script"?"Gmail · Apps Script relay":data.email_transport_name==="resend"?"Resend":"No outbound provider";
@@ -761,14 +838,14 @@
     const form=event.currentTarget,fd=new FormData(form),message=$("#adminCreateTaskMessage");
     const body=Object.fromEntries(fd.entries());
     body.min_level=Number(body.min_level);
-    body.expected_hours=Number(body.expected_hours);
+    body.expected_minutes=Number(body.expected_minutes);
     body.priority=Number(body.priority);
     message.textContent="Creating draft…";message.className="form-message";
     try{
       const result=await api("/api/admin/tasks",{method:"POST",body});
       message.textContent=result.message;message.className="form-message successline";
       form.reset();
-      form.elements.expected_hours.value="2";form.elements.priority.value="50";form.elements.compensation_label.value="Volunteer";
+      form.elements.expected_minutes.value="30";form.elements.priority.value="50";form.elements.compensation_label.value="Volunteer";
       await load();
     }catch(e){message.textContent=e.message;message.className="form-message validation bad";}
   });

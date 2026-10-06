@@ -1,0 +1,38 @@
+name: PCS submission verification
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'contributions/pcs-submissions/**'
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: PCS Submission Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify artifact integrity and declared file digests
+        run: python scripts/check_contribution_bundle.py
+      - name: Check submitted JavaScript syntax without running untrusted scripts
+        run: |
+          find contributions/pcs-submissions -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
+      - name: Check submitted Python syntax without running untrusted scripts
+        run: |
+          find contributions/pcs-submissions -type f -name '*.py' -print0 | xargs -0 -r -n1 python -m py_compile
+      - name: Validate PCS site routes and security contract
+        run: |
+          python scripts/check_site.py
+          python scripts/security_campaign.py
+      - name: Explain assurance limit
+        run: |
+          echo 'This checks contribution manifests, syntax and website regressions, not a production deployment.'

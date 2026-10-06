@@ -213,3 +213,8 @@ The Worker implements the public API in `src/worker.js`; schema source of truth 
 The backend always creates durable in-app notifications. It can also send transactional email when `RESEND_API_KEY` and `MAIL_FROM` Worker secrets/config are present. The administrator destination is `marenatommaso@gmail.com`.
 
 No email-provider API key is committed to Git. Until a transactional sender domain/API credential is configured, approvals remain visible in the account dashboard but arbitrary-recipient email delivery is intentionally reported as disabled rather than silently pretending it succeeded.
+
+
+## GitHub-backed Commons submissions
+
+Contributor artifacts can be staged in isolated GitHub PRs, checked through Lean/PCS or website CI, independently reviewed, and integrated with an authorized Owner action. Small 10/30-minute tasks and evidence-based outreach tasks are supported. Setup, privilege boundaries, and limits: [Contribution Submission Pipeline](docs/CONTRIBUTION_SUBMISSION_PIPELINE.md).

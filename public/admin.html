@@ -64,6 +64,7 @@
     <article><small>SUBMISSIONS</small><strong id="adminSubmissionCount">0</strong><span>Work waiting for review</span></article>
     <article><small>AUDIT INTEGRITY</small><strong id="adminAuditIntegrity">Checking…</strong><span>Hash-chain verification</span></article>
     <article><small>EMAIL</small><strong id="adminEmailTransport">Checking…</strong><span id="adminEmailTransportDetail">Provider status</span><button class="smallbutton" id="adminMailTestButton" type="button">Send test email</button></article>
+    <article><small>GITHUB STAGING</small><strong id="adminGithubStatus">Checking…</strong><span>Requires scoped GitHub token; no merges without passing CI and Owner action.</span><a href="#submissions">Review staged work ↓</a></article>
   </div>
   <div class="admin-toolbar">
     <nav class="admin-anchor-nav" aria-label="Admin Center sections">
@@ -84,7 +85,8 @@
           <label><span>Minimum level</span><select class="selectinput" name="min_level"><option value="0">L0</option><option value="1">L1</option><option value="2">L2</option><option value="3">L3</option><option value="4">L4</option><option value="5">L5</option><option value="6">L6</option></select></label>
           <label><span>Access</span><select class="selectinput" name="claim_mode"><option value="open">Open / non-exclusive</option><option value="approval">Manual approval</option><option value="invite">High-trust invite</option></select></label>
           <label><span>Required skill</span><select class="selectinput" name="required_skill"><option value="">None</option><option value="research">research</option><option value="python">python</option><option value="ml">ml</option><option value="biology">biology</option><option value="security">security</option><option value="lean">lean</option><option value="review">review</option></select></label>
-          <label><span>Expected hours</span><input class="textinput" name="expected_hours" type="number" min="1" max="80" value="2"></label>
+          <label><span>Expected minutes (10-minute tasks supported)</span><input class="textinput" name="expected_minutes" type="number" min="10" max="4800" step="5" value="30"></label>
+          <label><span>GitHub integration route</span><select class="selectinput" name="integration_target"><option value="none">Manual evidence review</option><option value="core">PCS formal/core repository</option><option value="site">PCS website repository</option></select></label>
           <label><span>Priority 0–100</span><input class="textinput" name="priority" type="number" min="0" max="100" value="50"></label>
           <label><span>Compensation</span><select class="selectinput" name="compensation_type"><option value="volunteer">Volunteer</option><option value="bounty">Bounty</option><option value="review">Paid review</option><option value="contract">Contract</option></select></label>
         </div>
@@ -175,7 +177,8 @@
   </section>
 
   <section class="section-tight" id="submissions">
-    <div class="section-heading-row"><div><div class="kicker">Submissions</div><h2>Reward verified work, including valid negative results.</h2></div></div>
+    <div class="section-heading-row"><div><div class="kicker">Submission triage</div><h2>Inspect → run CI → request fixes or accept → integrate.</h2></div><p>For GitHub-backed tasks, submission files are staged to isolated branches. Only a successful check on the exact PR head permits acceptance, and only the Founder/Owner can merge. A passing CI result never proves scientific truth.</p></div>
+    <div class="pcs-submission-contract"><strong>Decision guide:</strong> Check the artifact and claimed scope, inspect GitHub results, request improvements when necessary, and document the independent review rationale. Marketing/outreach evidence is classified as activity or independently supported outcome; neither rewards unsolicited spam.</div>
     <div id="adminSubmissionList" class="admin-list"></div>
   </section>
 
