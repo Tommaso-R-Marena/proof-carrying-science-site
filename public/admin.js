@@ -453,6 +453,58 @@
     }catch(e){alert(e.message);}
   }
 
+  async function challengeDecision(entry,decision,card){
+    const result=await openAdminAction({
+      title:decision==="verify"?"Validate Arena entry":"Reject Arena entry",
+      description:`${entry.display_name} submitted ${entry.leaderboard_alias} to ${entry.challenge_title}. The public leaderboard must reflect validity, not merely a low claimed score.`,
+      confirmLabel:decision==="verify"?"Validate + rank":"Reject entry",
+      warning:decision==="verify"?"Check the artifact itself and correct the structure counts below before validating. Arena rank never grants technical authority.":"Rejected entries stay out of the public leaderboard."
+    });
+    if(!result)return;
+    const body={decision,note:result.note};
+    if(decision==="verify"){
+      body.workflow_nodes=Number(card.querySelector("[data-arena-workflow]").value);
+      body.dependency_edges=Number(card.querySelector("[data-arena-edges]").value);
+      body.evidence_items=Number(card.querySelector("[data-arena-evidence]").value);
+      body.claims=Number(card.querySelector("[data-arena-claims]").value);
+    }
+    try{
+      const response=await api(`/api/admin/challenges/entries/${encodeURIComponent(entry.id)}/decision`,{method:"POST",body});
+      if(decision==="verify")alert(`Arena entry validated. Verified leaderboard score: ${response.score}.`);
+      await load();
+    }catch(e){alert(e.message);}
+  }
+
+  function renderChallengeEntries(items){
+    const target=$("#adminChallengeEntryList");if(!target)return;
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No Arena entries awaiting validation.</strong><span>Only reviewed entries can appear on a public leaderboard.</span></div>';return;}
+    target.innerHTML=items.map(entry=>`
+      <article class="admin-card arena-review-card" data-arena-entry="${esc(entry.id)}">
+        <div class="task-card-top"><div><span class="commons-chip program">${esc(entry.challenge_id)}</span><span class="commons-chip planned">PROVISIONAL SCORE ${esc(entry.raw_score)}</span><span class="commons-chip level">L${esc(entry.level)}</span></div><span class="tiny">${fmt(entry.submitted_at)}</span></div>
+        <h3>${esc(entry.leaderboard_alias)} · ${esc(entry.challenge_title)}</h3>
+        <p><strong>${esc(entry.display_name)}</strong> · ${esc(entry.email)}</p>
+        <details open><summary>Candidate summary</summary><p>${esc(entry.summary)}</p></details>
+        <details open><summary>Hidden-dependency explanation</summary><p>${esc(entry.hidden_dependency_explanation)}</p></details>
+        <p><a href="${esc(entry.artifact_url)}" target="_blank" rel="noopener">Inspect submitted artifact ↗</a></p>
+        <div class="arena-review-counts">
+          <label><span>Workflow nodes</span><input class="textinput" data-arena-workflow type="number" min="0" max="1000" value="${esc(entry.workflow_nodes)}"></label>
+          <label><span>Declared edges</span><input class="textinput" data-arena-edges type="number" min="0" max="1000" value="${esc(entry.dependency_edges)}"></label>
+          <label><span>Evidence items</span><input class="textinput" data-arena-evidence type="number" min="1" max="1000" value="${esc(entry.evidence_items)}"></label>
+          <label><span>Claims</span><input class="textinput" data-arena-claims type="number" min="2" max="1000" value="${esc(entry.claims)}"></label>
+        </div>
+        <div class="boundary"><strong>Scoring rule</strong><span>${esc(entry.scoring_rule)}</span></div>
+        <div class="actions"><button class="button primary" data-arena-verify="${esc(entry.id)}">Validate + rank</button><button class="button secondary" data-arena-reject="${esc(entry.id)}">Reject</button></div>
+      </article>`).join("");
+    all("[data-arena-verify]",target).forEach(btn=>btn.addEventListener("click",()=>{
+      const entry=items.find(x=>x.id===btn.dataset.arenaVerify),card=btn.closest("[data-arena-entry]");
+      if(entry&&card)challengeDecision(entry,"verify",card);
+    }));
+    all("[data-arena-reject]",target).forEach(btn=>btn.addEventListener("click",()=>{
+      const entry=items.find(x=>x.id===btn.dataset.arenaReject),card=btn.closest("[data-arena-entry]");
+      if(entry&&card)challengeDecision(entry,"reject",card);
+    }));
+  }
+
   function renderRoleApplications(items){
     const target=$("#adminRoleApplicationList");if(!target)return;
     if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No role applications pending.</strong><span>Ongoing roles are reviewed separately from task reservations.</span></div>';return;}
@@ -542,6 +594,7 @@
       $("#adminEmailTransportDetail").textContent=data.email_transport_name==="gmail_apps_script"?"Gmail · Apps Script relay":data.email_transport_name==="resend"?"Resend":"No outbound provider";
       $("#adminMailTestButton").disabled=!data.email_transport;
       renderTaskCuration(data.tasks||[]);
+      renderChallengeEntries(data.challenge_entries||[]);
       renderRoleApplications(data.role_applications||[]);
       renderRequests(data.pending_requests||[]);
       renderCheckpoints(data.checkpoints||[]);
