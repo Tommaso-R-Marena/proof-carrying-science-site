@@ -9,6 +9,7 @@ const $=id=>document.getElementById(id);
 const actionById=new Map(ACTIONS.map(a=>[a.id,a]));
 let seed=1,mission=null,mode="attack",agent=initialState(),acted=[],ended=false;
 let shield=new Set(),attacks=[],repairs=[],hinted=false,lastCheck=null;
+const badges={counterexample:false,verified_repair:false,overblocking:false};
 
 async function researchApi(path,body){
   if(typeof path!=="string"||!path.startsWith("/api/")||!["/api/arena/safety-lab/donate","/api/arena/safety-lab/erase"].includes(path))throw Error("Unsupported same-origin research endpoint.");
@@ -26,6 +27,13 @@ function addLog(message,status=""){
   if(log.children.length===1&&log.firstElementChild.textContent==="Choose an action to begin...")log.replaceChildren();
   log.prepend(li);
   while(log.children.length>35)log.lastElementChild.remove();
+}
+function renderBadges(){
+  const names=[];
+  if(badges.counterexample)names.push("🔎 Counterexample detective");
+  if(badges.overblocking)names.push("🧩 Overblocking spotted");
+  if(badges.verified_repair)names.push("🛡️ Shield architect");
+  $("forgeAchievements").textContent=names.length?names.join(" · "):"🏅 Earn your first safety badge!";
 }
 function stats(){
   $("forgeNotebook").textContent=(attacks.length+repairs.length)+" recorded experiments";
@@ -87,6 +95,7 @@ function play(action){
   notice.classList.toggle("unsafe",event.unsafe);notice.classList.toggle("goal",event.goal);
   ended=event.unsafe||event.goal||acted.length>=MAX_STEPS;
   if(event.unsafe){
+    badges.counterexample=true;renderBadges();
     addLog("🧠 Counterexample discovered: this exact trace can be replayed. Try repairing the guardrail system.","unsafe");
     $("forgeTabRepair").textContent="🛠️ 2 · Repair the shield ✨";
   }
@@ -138,6 +147,9 @@ function verify(){
   try{
     const result=verifyShield(seed,[...shield]);
     lastCheck=result;
+    if(result.passed)badges.verified_repair=true;
+    if(result.safe&&!result.live)badges.overblocking=true;
+    renderBadges();
     const trial={guards:[...shield].sort()};
     if(!repairs.some(x=>JSON.stringify(x)===JSON.stringify(trial))){
       if(repairs.length<MAX_TRIALS)repairs.push(trial);
@@ -183,6 +195,15 @@ function selectSeed(nextSeed){
 $("forgeTabAttack").addEventListener("click",()=>showMode("attack"));
 $("forgeTabRepair").addEventListener("click",()=>{if(acted.length)recordAttack();showMode("repair");});
 $("forgeNew").addEventListener("click",()=>selectSeed(1+Math.floor(Math.random()*9999999)));
+$("forgeDaily").addEventListener("click",()=>selectSeed(1+(Math.floor(Date.now()/86400000)%9999999)));
+$("forgeShare").addEventListener("click",async()=>{
+  const output=$("forgeShareStatus");
+  try{
+    if(!navigator.clipboard?.writeText)throw Error("Copy unavailable in this browser.");
+    await navigator.clipboard.writeText(location.href);
+    output.textContent="Challenge link copied. Anyone can replay the same seed.";
+  }catch(e){output.textContent="Copy unavailable; copy the page URL to share this seed.";}
+});
 $("forgeResetAttack").addEventListener("click",()=>resetAttack());
 $("forgeFinishAttack").addEventListener("click",()=>{recordAttack();resetAttack(false);});
 $("forgeHint").addEventListener("click",()=>{
@@ -232,3 +253,4 @@ $("forgeErase").addEventListener("click",async()=>{
 });
 const qs=new URLSearchParams(location.search),fromUrl=Number(qs.get("seed"));
 selectSeed(Number.isSafeInteger(fromUrl)&&fromUrl>=1&&fromUrl<=9999999?fromUrl:1+Math.floor(Math.random()*9999999));
+renderBadges();
