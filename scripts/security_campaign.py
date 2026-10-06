@@ -179,6 +179,27 @@ def static_campaign(c: Campaign) -> None:
         "positive_fixture_baseline",
         "countermodel_for_assumption",
     ])
+    game = (REPO / "public" / "arena-proof-quest.js").read_text(encoding="utf-8")
+    puzzle = (REPO / "public" / "proof-order-core.mjs").read_text(encoding="utf-8")
+    migration = (MIGRATIONS / "0016_proof_quest_adult_consent.sql").read_text(encoding="utf-8")
+    c.require("Proof Quest practice does not auto-upload", game, [
+        "questAdult", "questConsent", "proofQuestApi",
+        '"/api/arena/proof-order/attempt"', '"/api/arena/proof-order/erase"',
+    ])
+    c.require("Proof Quest research requires adult consent and verified email", worker, [
+        "adult_confirmation!==true", "consent_training!==true",
+        "email_verification_required", "proof_quest_daily_cap",
+        "gradeOrder(body.puzzle_id,body.order,body.hints_used)",
+    ])
+    c.require("Proof Quest Owner export excludes account identity", worker, [
+        "if(!isOwner(admin))", "pcs-proof-order-optin-research-dataset-v1",
+        '"user_id","email","IP address","name"',
+        "DELETE FROM proof_order_research_attempts WHERE user_id=?",
+    ])
+    c.require("Proof Quest data limits and deletion are enforced by database", migration + puzzle, [
+        "ON DELETE CASCADE", "UNIQUE(user_id,puzzle_id,puzzle_version,ordering_json)",
+        "score BETWEEN 0 AND 100", "PUZZLE_VERSION", "mistakes",
+    ])
     c.require("Arena leaderboard is verification-gated", worker + m11, [
         "challenge_entries",
         "WHERE e.status='verified'",
