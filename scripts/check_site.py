@@ -48,7 +48,7 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "commons.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
@@ -274,7 +274,18 @@ commons_contracts = {
         "See exactly where a contribution fits.",
         "Not a claim of global AI safety",
         "Distributed assurance",
+        "Claim Invalidation v1",
         "The result generalizes beyond the evaluated execution",
+    ],
+    "claim-invalidation-v1.html": [
+        "First public PCS Commons research program",
+        "Which claims must reopen when evidence changes?",
+        "unreachable ≠ unaffected",
+        "INV-001",
+        "INV-006",
+        "dependency completeness",
+        "contributor-packets/invalidation-v1/seed-corpus.json",
+        "contributor-packets/invalidation-v1/reference_impact.py",
     ],
     "contributors.html": [
         "No public grind leaderboard.",
@@ -377,6 +388,11 @@ if commons_js.exists():
         "data-task-id",
         "commons-recommendation-card",
         "commons-recommendation-badges",
+        "task-dependency-list",
+        "dependency_required",
+        "claim-invalidation-v1.html",
+        "program_id",
+        "acceptance_criteria",
     ]:
         if required_text not in commons_script:
             errors.append(f"commons.js: authenticated contributor-marketplace contract drift: {required_text}")
@@ -486,6 +502,9 @@ else:
         "validateEvidenceRefs",
         "adminRevokeSkill",
         "ADMIN_EVIDENCE_MAX_FILES",
+        "taskDependencies",
+        "dependency_required",
+        "hardDependencyBlock",
         "Account created at L0.",
         "task.claim_mode === \"open\"",
         "addBusinessDaysIso",
@@ -528,6 +547,22 @@ else:
     ]:
         if required_text not in competency_text:
             errors.append(f"migrations/0003_competency_evaluations.sql: variable competency contract drift: {required_text}")
+
+claim_program_migration = REPO / "migrations" / "0006_claim_invalidation_program.sql"
+if not claim_program_migration.exists():
+    errors.append("missing claim-invalidation program migration: migrations/0006_claim_invalidation_program.sql")
+else:
+    program_text = claim_program_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "ALTER TABLE tasks ADD COLUMN program_id",
+        "CREATE TABLE IF NOT EXISTS task_dependencies",
+        "'INV-001'",
+        "'INV-006'",
+        "'hard'",
+        "dependency-completeness",
+    ]:
+        if required_text not in program_text:
+            errors.append(f"migrations/0006_claim_invalidation_program.sql: program contract drift: {required_text}")
 
 admin_evidence_migration = REPO / "migrations" / "0005_admin_action_evidence.sql"
 if not admin_evidence_migration.exists():
@@ -911,6 +946,7 @@ for public_url in [
     "https://proof-carrying-science-site.marenatommaso.workers.dev/commons.html",
     "https://proof-carrying-science-site.marenatommaso.workers.dev/tasks.html",
     "https://proof-carrying-science-site.marenatommaso.workers.dev/governance.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/claim-invalidation-v1.html",
 ]:
     if public_url not in sitemap_text:
         errors.append(f"sitemap.xml: required public URL missing: {public_url}")
