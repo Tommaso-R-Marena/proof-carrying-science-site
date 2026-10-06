@@ -1883,6 +1883,35 @@ if fixture_obj is not None and reference_js.exists():
     except Exception as exc:
         errors.append(f"pcs-reference.js: cannot validate embedded package: {type(exc).__name__}: {exc}")
 
+# Submission pipeline contract: new trust paths must stay discoverable and fail closed.
+for rel, tokens in {
+    "public/account.html": ["workSubmissionDialog", "workSubmissionForm", "workSubmissionFiles",
+                            "outreachEvidenceSection", "workSubmissionChecklist"],
+    "public/account.js": ["openWorkSubmission", "/api/submissions/", "Refresh CI result",
+                          "evidence_kind", "files:attachments"],
+    "public/admin.html": ["adminGithubStatus", "Inspect", "Integrate"],
+    "public/admin.js": ["data-git-stage", "data-git-checks", "data-git-merge", "data-inspect-files"],
+    "public/commons.js": ["taskDuration", "expected_minutes"],
+    "src/worker.js": ["stagePersistedSubmission", "adminMergeSubmission",
+                      "contributorSubmissionChecks", "github_stage_state",
+                      "expectedFiles:files", "github_ci_not_passed"],
+    "src/contribution-github.js": ["PCS Submission Verification", "contributionPrefix",
+                                     "expectedFiles", "github-actions", "mergeStagedPullRequest"],
+    "migrations/0013_submission_automation_microtasks.sql": ["submission_files", "expected_minutes",
+                                                               "MKT-MICRO-001", "'draft'"],
+    ".github/workflows/pcs-submission.yml": ["PCS Submission Verification", "contents: read"],
+    "tests/submission-github.test.mjs": ["fail", "verified", "github-actions", "stage"],
+    "docs/CONTRIBUTION_SUBMISSION_PIPELINE.md": ["PCS_GITHUB_TOKEN", "micro", "Github"]
+}.items():
+    p = REPO / rel
+    if not p.exists():
+        errors.append(f"missing submission integration source: {rel}")
+        continue
+    data = p.read_text(encoding="utf-8")
+    for token in tokens:
+        if token.lower() not in data.lower():
+            errors.append(f"{rel}: submission integration contract missing: {token}")
+
 if errors:
     print("SITE CHECK: FAIL")
     for err in errors:
