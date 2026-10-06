@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Independent Researcher Pilots · Proof-Carrying Science</title>
+<meta name="description" content="Reproduce, challenge, and report bounded PCS research claims. Create a non-sensitive evaluation plan locally, test negative controls, and share only what you choose.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/researcher-pilots.html">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="researcher-pilots.css">
+</head>
+<body class="pilots-page">
+<div class="topbar"><div class="shell"><span>PCS independent research pilots · Explicit assumptions · Falsification encouraged</span><a href="trust.html">Trust Center</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+<div class="navlinks"><a href="researcher-pilots.html">Research pilots</a><a href="research-preview.html">Try a local check</a><a href="validation.html">Validation</a><a href="trust.html">Trust</a><a class="button dark" href="contact.html">Contact</a></div></nav>
+<main>
+<section class="pilots-hero">
+  <div class="kicker">Seeking independent scrutiny, not endorsements</div>
+  <h1>Help us find where a proof-carrying claim stops being trustworthy.</h1>
+  <p>PCS is developing independent assurance for scientific computation and bounded AI safety. We want researchers who will reproduce a result, construct a counterexample, or expose an assumption that an application might otherwise hide.</p>
+  <div class="pilots-hero-actions">
+    <a class="button primary" href="#create-evaluation">Plan an independent evaluation →</a>
+    <a class="button secondary" href="research-preview.html">Start with a 2-minute example</a>
+  </div>
+  <div class="pilots-trust-note"><strong>Current availability:</strong> Public browser calculations, guided draft tools, package inspection, and documented validation evidence. The formal core repository remains private; the newest Aristotle repair, live core CI, and cross-project adapters are not yet production-verified. Contact us for an approved, appropriately scoped deeper review.</div>
+</section>
+<section class="pilots-section" aria-labelledby="pilotTracksTitle">
+  <div class="kicker">Choose a falsifiable objective</div>
+  <h2 id="pilotTracksTitle">Three useful types of evaluation</h2>
+  <div class="pilots-track-grid">
+    <article><span class="pilots-tag">01 · REPRODUCE</span><h3>Can an independent machine get the same result?</h3><p>Record exact inputs, verifier and toolchain versions, expected outcomes, failures and environmental dependencies. A reported PASS without executed steps is not reproduction.</p></article>
+    <article><span class="pilots-tag">02 · FALSIFY</span><h3>Can a changed input pass when it should fail?</h3><p>Mutate an artifact digest, an unknown checker tag, a prohibited action, or a required dependency. Distinguish a correctly signed input from an independently supported claim.</p></article>
+    <article><span class="pilots-tag">03 · TRUST BOUNDARY</span><h3>Which assumption connects records to reality?</h3><p>Identify the obligations between formal trace properties, production binaries, I/O, audit logs, and deployed behavior. Missing <code>FaithfulLog</code> evidence must remain visible.</p></article>
+  </div>
+</section>
+<section class="pilots-section">
+  <div class="kicker">What you can examine right now</div>
+  <h2>Start from a real, explicitly bounded surface</h2>
+  <div class="pilots-paths">
+    <a href="research-preview.html"><span>RUN</span><strong>Browser research preview</strong><small>Run finite local checks; try forbidden actions or perturbed numeric values</small></a>
+    <a href="guided-submission.html?demo=1"><span>PREPARE</span><strong>Guided project draft</strong><small>Inspect typed claims and bindings; a draft is not an accepted certificate</small></a>
+    <a href="package-inspector.html"><span>INSPECT</span><strong>PCS package inspector</strong><small>Inspect local package structure and trust boundaries, without uploading files</small></a>
+    <a href="result-anatomy.html"><span>REVIEW</span><strong>Result anatomy</strong><small>Separate artifact validity, claim support, reviewer policy and unresolved obligations</small></a>
+  </div>
+</section>
+<section class="pilots-section pilots-workflow" id="create-evaluation" aria-labelledby="pilotCreateTitle">
+  <div class="kicker">Local-only evaluation plan</div>
+  <h2 id="pilotCreateTitle">Create a reproducible test plan in your browser</h2>
+  <p>This form builds an <em>unsigned research evaluation draft</em>, not a PCS verification receipt. Nothing is submitted automatically. You decide whether to save the JSON or open an email to the PCS team. Do not paste credentials, unpublished research source, patient data, confidential files, or secrets.</p>
+  <form id="pilotDraftForm" class="pilots-form" novalidate>
+    <div class="pilots-two">
+      <label>Evaluation track
+        <select name="track" required><option value="falsify">Falsification / negative control</option><option value="reproduce">Independent reproduction</option><option value="trust_boundary">Trust boundary / assumptions</option></select>
+      </label>
+      <label>Test target
+        <select name="target" required><option value="browser_preview">Public browser preview</option><option value="guided_draft">Guided draft workflow</option><option value="package_inspector">Local package inspector</option><option value="independent_pcs_cli">Independently run PCS CLI</option></select>
+      </label>
+    </div>
+    <label>Exact version, tag, or commit (use <code>not-known</code> for an unrun plan)
+      <input type="text" name="source_version" value="not-known" maxlength="80" required>
+    </label>
+    <label>Bounded claim under examination
+      <textarea name="claim" rows="3" maxlength="1000" required>The recorded AI-policy trace has no action 7 and never exceeds cumulative risk 4.</textarea>
+    </label>
+    <label>Test or negative-control procedure
+      <textarea name="experiment" rows="3" maxlength="1600" required>Change a declared event action to 7; rerun the same local check.</textarea>
+    </label>
+    <label>Expected outcome if the verifier is correct
+      <textarea name="expected" rows="2" maxlength="1000" required>The modified recorded trace fails its finite policy check.</textarea>
+    </label>
+    <div class="pilots-two">
+      <label>Observation so far (self-reported, not authenticated)
+        <select name="observed"><option value="not_run">Not run yet</option><option value="expected">Matched expectation</option><option value="unexpected">Unexpected result / possible bug</option><option value="inconclusive">Inconclusive</option></select>
+      </label>
+      <label>Public, non-sensitive evidence reference (optional)
+        <input type="text" name="evidence_reference" maxlength="450" placeholder="Versioned public report or test identifier">
+      </label>
+    </div>
+    <label>Assumptions that might fail
+      <textarea name="assumptions" rows="2" maxlength="1000" required>This evaluates the submitted record, not whether a deployed system produced a faithful log.</textarea>
+    </label>
+    <label>Limits and unresolved questions
+      <textarea name="limitations" rows="2" maxlength="1000" required>Browser-only demonstration. No Lean build or cryptographic certificate was verified.</textarea>
+    </label>
+    <div class="pilots-actions">
+      <button class="button secondary" type="button" id="pilotExample">Restore safe example</button>
+      <button class="button primary" type="submit">Validate the plan →</button>
+    </div>
+  </form>
+  <p id="pilotDraftError" role="alert" hidden></p>
+  <div id="pilotDraftResult" class="pilots-result" hidden aria-live="polite">
+    <strong>Locally validated plan · NOT PCS-VERIFIED</strong>
+    <p>Your plan is structurally complete. A researcher's observation is not a kernel check or a cryptographically authenticated result. Save the JSON and share only non-sensitive information.</p>
+    <pre id="pilotDraftPreview"></pre>
+    <div class="pilots-actions">
+      <button class="button secondary" type="button" id="pilotDownload">Save evaluation plan (.json)</button>
+      <button class="button primary" type="button" id="pilotEmail">Compose a pilot email ↗</button>
+    </div>
+    <p class="pilots-small">Email opens your own mail app; it is never sent automatically. To submit a real evaluation, record input hashes, your environment, observed verifier output, and at least one failure case.</p>
+  </div>
+</section>
+<section class="pilots-section">
+  <div class="kicker">What qualifies as useful independent evidence?</div>
+  <h2>Our evaluation acceptance standard</h2>
+  <div class="pilots-matrix">
+    <div><strong>Reproducible</strong><p>Pin the source SHA and environment, give the exact command, expected output, and actual logs with executed test steps.</p></div>
+    <div><strong>Falsifiable</strong><p>Use a negative control that should be rejected. A properly signed false claim or unknown checker must not become proof.</p></div>
+    <div><strong>Scoped</strong><p>Write the precise mathematical or computational conclusion. State how signatures, empirical models, compiler behavior, and deployed logs enter the argument.</p></div>
+    <div><strong>Auditable</strong><p>Separate reviewer observations and acceptance policy from the verifier result. Keep confidential project materials private unless an authorized sharing channel is agreed.</p></div>
+  </div>
+  <p class="pilots-small">PCS has not yet certified this end-to-end independent research pilot system. Private or sensitive research can be evaluated through an explicit separate arrangement—not through this static page.</p>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Public-interest research in bounded, independently inspectable assurance.</p></div><div class="footercol"><strong>Research</strong><a href="research-preview.html">Research preview</a><a href="researcher-pilots.html">Independent pilots</a><a href="validation.html">Validation</a><a href="result-anatomy.html">Result anatomy</a></div><div class="footercol"><strong>Policy</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script type="module" src="researcher-pilot-ui.js"></script>
+</body>
+</html>
