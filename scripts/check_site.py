@@ -505,6 +505,9 @@ else:
         "taskDependencies",
         "dependency_required",
         "hardDependencyBlock",
+        "reservation_key",
+        "task_already_reserved",
+        "reservation_released_after_level_demotion",
         "Account created at L0.",
         "task.claim_mode === \"open\"",
         "addBusinessDaysIso",
@@ -563,6 +566,19 @@ else:
     ]:
         if required_text not in program_text:
             errors.append(f"migrations/0006_claim_invalidation_program.sql: program contract drift: {required_text}")
+
+reservation_migration = REPO / "migrations" / "0007_reserved_task_exclusivity.sql"
+if not reservation_migration.exists():
+    errors.append("missing reserved-task exclusivity migration: migrations/0007_reserved_task_exclusivity.sql")
+else:
+    reservation_text = reservation_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "ALTER TABLE task_requests ADD COLUMN reservation_key",
+        "idx_task_requests_unique_reservation",
+        "WHERE reservation_key IS NOT NULL",
+    ]:
+        if required_text not in reservation_text:
+            errors.append(f"migrations/0007_reserved_task_exclusivity.sql: reservation exclusivity drift: {required_text}")
 
 admin_evidence_migration = REPO / "migrations" / "0005_admin_action_evidence.sql"
 if not admin_evidence_migration.exists():
