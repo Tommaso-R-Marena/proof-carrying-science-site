@@ -1912,6 +1912,30 @@ for rel, tokens in {
         if token.lower() not in data.lower():
             errors.append(f"{rel}: submission integration contract missing: {token}")
 
+# Production promotions are a second, explicitly Owner-authorized trust boundary.
+for rel, terms in {
+    "public/admin.html": ["id=\"promotions\"", "promotionCreateForm", "promotionDecisionDialog", "promotionQueue"],
+    "public/admin.js": ["loadPromotions", "promotionAction", "promotionDecisionForm", "promotionFileMappings"],
+    "src/worker.js": ["adminPromotionCreate", "adminPromotionDecision", "adminPromotionMerge",
+                      "isOwner(admin)", "approved_head_sha", "promotion_ci_required"],
+    "src/production-promotion.js": ["validatePromotionMappings", "archiveSource", "verifyPromotion",
+                                     "mergePromotion", "pcs-promotion.yml", "required.every"],
+    "migrations/0014_production_promotions.sql": ["approved_head_sha", "production_promotions", "merge_sha"],
+    ".github/workflows/pcs-promotion.yml": ["PCS Promotion Verification", "contents: read",
+                                            "Check archive-to-production exact bytes", "npm run test:promotions"],
+    "scripts/check_promotion_bundle.py": ["PCS PROMOTION FILE GATE", "expected", "source_bytes!=produced_bytes"],
+    "tests/production-promotion.test.mjs": ["fail", "stale", "mergePromotion"],
+    "docs/PRODUCTION_PROMOTION_WORKFLOW.md": ["Owner", "archive", "main"]
+}.items():
+    path=REPO / rel
+    if not path.is_file():
+        errors.append(f"missing production-promotion contract file: {rel}")
+        continue
+    data=path.read_text(encoding="utf-8")
+    for term in terms:
+        if term.lower() not in data.lower():
+            errors.append(f"{rel}: production promotion contract missing: {term}")
+
 if errors:
     print("SITE CHECK: FAIL")
     for err in errors:
