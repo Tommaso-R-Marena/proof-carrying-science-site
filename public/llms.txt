@@ -7,7 +7,10 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 ## AI Safety Commons
 - Commons overview: /commons.html
 - Contributor onboarding: /contribute.html
-- Task marketplace: /tasks.html
+- Curated currently-needed tasks: /tasks.html
+- Ongoing role applications: /roles.html
+- Task dependency graph: /task-graph.html
+- PCS Arena scientific challenges: /arena.html
 - Assurance projects / impact graph: /projects.html
 - Contributor progression: /contributors.html
 - Public-good funding model: /fund.html
@@ -31,7 +34,7 @@ A PCS-valid package is scoped to an exact typed claim, exact evidence, and expli
 
 
 ## Commons interpretation
-The contributor marketplace now uses authenticated server-side accounts for contributor authority and task coordination. Every account starts at L0; users cannot self-select higher levels. L0/L1 work is open and non-exclusive. For higher-trust work, contributors have two routes: (1) take a fresh parameterized competency evaluation with shuffled choices and objective auto-scoring, or (2) submit the task/skill application directly for manual competency review. A passing auto-score is evidence only; final skill and task authority is always a manual PCS decision. Pending applications never reserve work. PCS targets manual review within 1 business day and no later than 2 business days. L4/L5 work remains high-trust and founder-assigned. Approved reserved work has a first progress checkpoint within 24 hours and stale reservations release automatically.
+The contributor system now uses authenticated server-side accounts for contributor authority and task coordination. The public task marketplace is default-deny: only work explicitly marked published + needed is exposed. Recurring responsibilities are separate role applications, and the PCS Arena is a separate verifier-gated challenge layer rather than a global points system. Every account starts at L0; users cannot self-select higher levels. L0/L1 work is open and non-exclusive. For higher-trust work, contributors have two routes: (1) take a fresh parameterized competency evaluation with shuffled choices and objective auto-scoring, or (2) submit the task/skill application directly for manual competency review. A passing auto-score is evidence only; final skill and task authority is always a manual PCS decision. Pending applications never reserve work. PCS targets manual review within 1 business day and no later than 2 business days. L4/L5 work remains high-trust and founder-assigned. Approved reserved work has a first progress checkpoint within 24 hours and stale reservations release automatically.
 
 The former fixed public CAL-* calibration tasks are paused. The variable evaluation system covers Python, Lean, security, ML, research, biology, and review skills, requires a manual reasoning note, limits repeated attempts, and never automatically confers contributor level or review authority.
 
