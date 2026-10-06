@@ -1,9 +1,28 @@
 import {PUZZLES,PUZZLE_VERSION,gradeOrder} from "./proof-order-core.mjs";
 
 const $=id=>document.getElementById(id);
-let selected=PUZZLES[0],chosen=[],hints=0,seen=new Set(),stars=0,last=null;
+let selected=PUZZLES[0],chosen=[],hints=0,seen=new Set(),stars=0,last=null,bankOrder=[],tourStep=0;
 const escapeHtml=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const shuffled=a=>[...a].sort(()=>Math.random()-.5); // cosmetic only; scoring is order-independent
+// Randomizing the deck prevents the original source-order solution being given away.
+function shuffled(input){const a=[...input];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const tour=[["Find the next step 🧩","Each card is part of a little mystery. Put the steps in an order that makes sense."],["Tap, undo, or hint 🃏","Tap a card to place it. Try different orders, Undo a choice, or request a gentle Hint."],["Check, learn, and level up ⭐","Once you've placed every card, check your route. You'll see your mistakes and can retry or play the next mission."]];
+function tourRender(){
+  const [name,description]=tour[tourStep];
+  $("questTourTitle").textContent=name;$("questTourText").textContent=description;
+  $("questTourCount").textContent=(tourStep+1)+" / "+tour.length;
+  $("questTourBack").disabled=tourStep===0;
+  $("questTourNext").textContent=tourStep===tour.length-1?"Play now →":"Next →";
+}
+$("questShowTutorial").addEventListener("click",()=>{tourStep=0;tourRender();$("questTutorial").hidden=false;$("questTutorial").scrollIntoView({behavior:"smooth",block:"center"});});
+$("questTourBack").addEventListener("click",()=>{tourStep=Math.max(0,tourStep-1);tourRender();});
+$("questTourNext").addEventListener("click",()=>{if(tourStep===tour.length-1){$("questTutorial").hidden=true;$("questAvailable").querySelector("button")?.focus();}else{tourStep++;tourRender();}});
+$("questTourSkip").addEventListener("click",()=>{$("questTutorial").hidden=true;});
+tourRender();
+$("questAdult").addEventListener("change",()=>{
+  $("questConsent").checked=$("questAdult").checked;
+  $("questDonationMessage").textContent=$("questAdult").checked
+    ?"Opted in for this run. Nothing has been submitted yet.":"Research sharing is switched off.";
+});
 
 async function proofQuestApi(path,body){
   if(typeof path!=="string" || !path.startsWith("/api/"))throw Error("Same-origin PCS API path required.");
@@ -27,7 +46,7 @@ function buttonList(){
   });
 }
 function choosePuzzle(id){
-  selected=PUZZLES.find(p=>p.id===id)||PUZZLES[0];chosen=[];hints=0;last=null;
+  selected=PUZZLES.find(p=>p.id===id)||PUZZLES[0];chosen=[];hints=0;last=null;bankOrder=shuffled(selected.nodes.map(n=>n.id));
   $("questLevel").textContent="LEVEL "+selected.level;
   $("questTitle").textContent=selected.title;
   $("questTopic").textContent=selected.topic;
@@ -35,6 +54,7 @@ function choosePuzzle(id){
   $("questGoal").textContent=selected.goal;
   $("questFeedback").hidden=true;$("questHintText").hidden=true;
   $("questResearch").hidden=false;$("questAdult").checked=false;$("questConsent").checked=false;
+  $("questNext").hidden=true;$("questTryAgain").hidden=true;
   $("questDonationMessage").textContent="";
   buttonList();render();
 }
@@ -42,11 +62,12 @@ function render(){
   const available=$("questAvailable");const trail=$("questTrail");
   available.replaceChildren();trail.replaceChildren();
   // Display order is stable for this render, so clicking a step does not reorder other available options.
-  for(const n of selected.nodes.filter(n=>!chosen.includes(n.id))){
+  for(const n of bankOrder.map(id=>selected.nodes.find(n=>n.id===id)).filter(n=>!chosen.includes(n.id))){
     const b=document.createElement("button");b.type="button";b.className="quest-step";
     b.textContent=n.label;b.title="Add "+n.label+" to your proof path";
     b.addEventListener("click",()=>{
       chosen.push(n.id);last=null;$("questFeedback").hidden=true;$("questResearch").hidden=false;
+      $("questNext").hidden=true;$("questTryAgain").hidden=true;
       render();
     });available.appendChild(b);
   }
@@ -58,13 +79,18 @@ function render(){
   $("questEmpty").hidden=chosen.length>0;
   $("questUndo").disabled=chosen.length===0;
   $("questCheck").disabled=chosen.length!==selected.nodes.length;
+  $("questProgress").max=selected.nodes.length;$("questProgress").value=chosen.length;
+  $("questProgressLabel").textContent=chosen.length+" / "+selected.nodes.length+" steps placed";
+  $("questLive").textContent=chosen.length===0?"Tap a card to start!":chosen.length===selected.nodes.length
+    ?"Path complete! Check whether your steps work.":(selected.nodes.length-chosen.length)+" cards left. You can Undo at any time.";
 }
 $("questUndo").addEventListener("click",()=>{
-  chosen.pop();last=null;$("questFeedback").hidden=true;$("questResearch").hidden=false;render();
+  chosen.pop();last=null;$("questFeedback").hidden=true;$("questResearch").hidden=false;
+  $("questNext").hidden=true;$("questTryAgain").hidden=true;render();
 });
 $("questRestart").addEventListener("click",()=>choosePuzzle(selected.id));
 $("questHint").addEventListener("click",()=>{
-  hints++;
+  hints=Math.min(20,hints+1);
   const completed=new Set(chosen);
   const next=selected.nodes.find(n=>!completed.has(n.id)&&n.needs.every(x=>completed.has(x)));
   const box=$("questHintText");box.hidden=false;
@@ -101,15 +127,23 @@ $("questCheck").addEventListener("click",()=>{
     fine.textContent="This checks the toy ordering, not an actual Lean proof or deployed AI behavior.";
     box.appendChild(fine);
     $("questResearch").hidden=false;
+    $("questNext").hidden=!result.valid;$("questTryAgain").hidden=result.valid;
+    $("questLive").textContent=result.valid?"🎉 Great job! Ready for another mission?":"Every mistake teaches a dependency. Try another route!";
     box.scrollIntoView({behavior:"smooth",block:"nearest"});
   }catch(e){
     const box=$("questFeedback");box.hidden=false;box.textContent=e.message;box.classList.add("bad");
   }
 });
+$("questNext").addEventListener("click",()=>{
+  const index=PUZZLES.findIndex(p=>p.id===selected.id);
+  choosePuzzle(PUZZLES[(index+1)%PUZZLES.length].id);
+  $("questAvailable").scrollIntoView({behavior:"smooth",block:"center"});
+});
+$("questTryAgain").addEventListener("click",()=>choosePuzzle(selected.id));
 $("questDonate").addEventListener("click",async()=>{
   const message=$("questDonationMessage");message.textContent="";
   if(!last){message.textContent="Finish a puzzle first.";return;}
-  if(!$("questAdult").checked||!$("questConsent").checked){message.textContent="Data contribution requires both adult confirmation and explicit consent. Everyone can still play.";return;}
+  if(!$("questAdult").checked||!$("questConsent").checked){message.textContent="Turn on the switch to confirm you are 18+ and agree to share this run. Anyone can still play.";$("questAdult").focus();return;}
   $("questDonate").disabled=true;
   try{
     const {response,data}=await proofQuestApi("/api/arena/proof-order/attempt",{...last,adult_confirmation:true,consent_training:true});

@@ -5,7 +5,7 @@
 <meta name="description" content="Play a beginner-friendly proof-ordering game. Learn why evidence and proof steps need prerequisites, with optional adult-only research-data contribution.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/arena-proof-quest.html">
 <meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="arena-proof-quest.css">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="arena-onboarding.css"><link rel="stylesheet" href="arena-proof-quest.css">
 </head><body class="commons-page quest-page">
 <div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · A free proof-order adventure · No account to play</span><a href="arena.html">All Arena challenges</a></div></div>
 <div class="shell">
@@ -14,9 +14,21 @@
 <section class="quest-hero">
   <span class="quest-pill">🧩 PROOF QUEST · BEGINNER FRIENDLY</span>
   <h1>Build a proof, one little step at a time.</h1>
-  <p>Every big idea needs smaller ideas first. Click the cards in an order that makes sense. You can experiment, get hints, and try again. No Lean 4 knowledge required!</p>
+  <p>Pick a card, build your path, and solve bite-size mysteries. Every mission gets a fresh shuffle, and more than one winning path can exist. No coding or time limits!</p>
+  <button type="button" id="questShowTutorial" class="button secondary">🎓 How to play · 30 seconds</button>
   <p class="quest-disclaimer"><strong>Important:</strong> This is not a Lean 4 proof and does not run Lean. It teaches the prerequisite-order idea using synthetic puzzles.</p>
   <div class="quest-stats"><span>✨ <strong id="questSolved">0</strong> puzzles solved this visit</span><span>⭐ <strong id="questStars">0</strong> stars earned</span><span>🧠 No timer. No penalty for trying.</span></div>
+</section>
+<section class="section" aria-label="Next game"><div class="commons-home-banner"><div><div class="kicker">NEXT LEVEL · SAFETY FORGE</div><h2>Ready to experiment with a real simulated agent?</h2><p>Find unsafe action sequences, adjust safety shields, and run a finite-state verification check. Each scenario is generated from a seed; unlike these eight fixed puzzles, your experiments produce candidate search and repair data.</p></div><a href="arena-safety-forge.html" class="button primary">Enter Safety Forge →</a></div></section>
+<section id="questTutorial" class="quest-tutorial" aria-labelledby="questTourTitle">
+  <div class="quest-tour-head"><strong>🎓 QUICK START</strong><span id="questTourCount">1 / 3</span></div>
+  <h2 id="questTourTitle">Welcome, detective!</h2>
+  <p id="questTourText">Pick the steps in an order that makes sense.</p>
+  <div class="quest-actions">
+    <button id="questTourBack" type="button" class="button secondary" disabled>← Back</button>
+    <button id="questTourNext" type="button" class="button primary">Next →</button>
+    <button id="questTourSkip" type="button" class="button secondary">Skip tutorial</button>
+  </div>
 </section>
 <div class="quest-layout">
   <aside class="quest-sidebar" aria-label="Choose a puzzle">
@@ -28,6 +40,9 @@
     <div class="quest-board-top"><span class="quest-level" id="questLevel">LEVEL 1</span><span class="quest-topic" id="questTopic">Everyday logic</span></div>
     <h2 id="questTitle">Loading...</h2><p id="questStory"></p>
     <div class="quest-target">🎯 <strong>Your mission:</strong> <span id="questGoal"></span></div>
+    <div class="quest-progress-head"><strong id="questProgressLabel">0 steps placed</strong><span>Tap cards to build your path</span></div>
+    <progress id="questProgress" value="0" max="5">0%</progress>
+    <p id="questLive" class="quest-live" role="status" aria-live="polite">Choose any card to begin!</p>
     <div class="quest-board-columns">
       <div class="quest-card-bank"><h3>🃏 Step cards</h3><p>Choose what can happen next.</p><div id="questAvailable" class="quest-card-list" aria-live="polite"></div></div>
       <div class="quest-card-trail"><h3>🏗️ Your proof path</h3><p>Steps you placed in order.</p><ol id="questTrail" class="quest-trail-list" aria-live="polite"></ol><div class="quest-drop-hint" id="questEmpty">Your first step goes here!</div></div>
@@ -38,19 +53,28 @@
       <button class="button secondary" type="button" id="questRestart">Start over</button>
       <button class="button primary" type="button" id="questCheck" disabled>Check my proof path →</button>
     </div>
+    <div class="quest-actions"><button id="questNext" type="button" class="button primary" hidden>Next mission →</button><button id="questTryAgain" type="button" class="button secondary" hidden>🔁 Try again</button></div>
     <div id="questHintText" class="quest-hint" hidden aria-live="polite"></div>
     <div id="questFeedback" class="quest-feedback" hidden role="status" aria-live="polite"></div>
     <div id="questResearch" class="quest-research">
+      <div class="quest-optin">
+        <label class="arena-switch" for="questAdult">
+          <input type="checkbox" role="switch" id="questAdult" aria-describedby="questOptinNote">
+          <span class="arena-switch-track" aria-hidden="true"></span>
+          <span><strong>Share this run for PCS research</strong><small>I'm 18+ and I agree to donate this puzzle attempt.</small></span>
+        </label>
+        <button class="button primary" id="questDonate" type="button">Share finished run →</button>
+      </div>
+      <p id="questOptinNote" class="arena-fineprint">Anyone can play. Research donations: adults 18+ only, with a verified PCS account. The switch does not upload anything; only “Share finished run” submits data. <a href="privacy.html">Details</a>.</p>
+      <p id="questDonationMessage" role="status" aria-live="polite"></p>
+      <input id="questConsent" type="checkbox" hidden tabindex="-1" aria-hidden="true">
       <details id="questResearchDisclosure">
-        <summary>🔬 Optional: help PCS research (adults 18+ only)</summary>
+        <summary>What is shared, and how do I delete it?</summary>
         <p><strong>Playing is always free and private.</strong> The puzzle does not send your choices to PCS. Adults with a PCS account and verified email may separately choose to donate one completed ordering for research on prerequisite-order planning.</p>
         <p>The donated record contains the puzzle ID/version, ordered step IDs, hints used, quality score, and timestamp. It is connected privately to your account for withdrawal/deletion, but research exports omit your account ID. This is <em>synthetic ordering data</em>, not valid Lean traces or a promise that a model learned to prove theorems. No data from minors is accepted.</p>
-        <label class="quest-consent"><input type="checkbox" id="questAdult"> I confirm I am 18 or older.</label>
-        <label class="quest-consent"><input type="checkbox" id="questConsent"> I voluntarily consent to PCS storing this one puzzle attempt for internal research and model-development evaluation. I understand I can delete my donated attempts.</label>
-        <button class="button primary" id="questDonate" type="button">Contribute this attempt</button>
         <button class="button secondary" id="questErase" type="button">Delete all my donated attempts</button>
         <a class="quest-account-link" href="account.html">Sign in / create an adult account →</a>
-        <p id="questDonationMessage" aria-live="polite"></p>
+
       </details>
     </div>
   </section>

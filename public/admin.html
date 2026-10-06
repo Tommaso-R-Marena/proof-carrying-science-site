@@ -154,7 +154,14 @@
   <section class="section-tight" id="arena">
     <div class="section-heading-row"><div><div class="kicker">PCS Arena validation</div><h2>Validate the science before validating the score.</h2></div><p>Leaderboard placement is challenge-local. Review the artifact, correct any claimed structure counts, and only then verify or reject the entry. Arena results never automatically change contributor level or skill authority.</p></div>
     <div class="panel" style="margin:18px 0"><h3>Proof Quest adult opt-in research dataset</h3><p>Only the Founder/Owner may inspect a deidentified training-research export. Entries contain synthetic puzzle step orders, scores, hints and puzzle versions; they are not Lean proofs. Account IDs and emails are excluded from the export. Contributors may erase their stored attempts.</p><button id="adminProofQuestExport" type="button" class="button secondary">Export consented puzzle dataset (.json)</button><p id="adminProofQuestExportMessage" class="form-message" aria-live="polite"></p></div>
-    <div id="adminChallengeEntryList" class="admin-list"></div>
+    <div class="panel" style="margin:18px 0">
+  <h3>Safety Forge · synthetic AI-safety training research</h3>
+  <p>Export explicitly donated adult simulation sessions: real action decisions, independently replayed unsafe traces, and exhaustively checked shield proposals. This is not actual Lean tactic training data. Export is Owner-only and removes contributor identity.</p>
+  <button class="button secondary" id="adminSafetyForgeExport" type="button">Export opt-in Safety Forge dataset (.json)</button>
+  <p class="form-message" id="adminSafetyForgeExportMessage" aria-live="polite"></p>
+  <a href="arena-safety-forge.html">Play the new Safety Forge game →</a>
+</div>
+<div id="adminChallengeEntryList" class="admin-list"></div>
   </section>
 
   <section class="section-tight" id="roles">

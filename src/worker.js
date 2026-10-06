@@ -1,3 +1,4 @@
+import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
 import {gradeOrder,PUZZLE_VERSION,PUZZLE_BY_ID} from "../public/proof-order-core.mjs";
 import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
 import {
@@ -3563,6 +3564,84 @@ async function exportProofQuestDataset(env,admin){
   });
 }
 
+// Safety Forge records only explicit adult opt-in bounded simulation sessions.
+// Anonymous play is local; client-supplied results/labels are never trusted.
+const SAFETY_FORGE_CONSENT="pcs-safety-forge-adult-optin-v1";
+async function donateSafetyForgeSession(request,env,user){
+  await rateLimit(request,env,"safety-forge-donation",12,60);
+  if(!Number(user.email_verified))throw new ApiError(403,"Verify your account email before contributing research data.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+     Object.keys(body).sort().join(",")!=="adult_confirmation,attack_trials,consent_training,repair_trials,scenario_seed,scenario_version"){
+    throw new ApiError(400,"Unexpected Safety Forge submission fields.","invalid_safety_forge_payload");
+  }
+  if(body.adult_confirmation!==true||body.consent_training!==true){
+    throw new ApiError(403,"Research donation requires explicit confirmation of age 18+ and consent; free play remains available.","adult_consent_required");
+  }
+  const submitted={
+    scenario_seed:body.scenario_seed,
+    scenario_version:body.scenario_version,
+    attack_trials:body.attack_trials,
+    repair_trials:body.repair_trials
+  };
+  let replay;
+  try{replay=evaluateResearchSession(submitted);}
+  catch(error){throw new ApiError(400,error.message||"Invalid bounded simulation session.","safety_forge_replay_rejected");}
+  const recent=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM safety_forge_research_sessions WHERE user_id=? AND created_at>=?"
+  ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
+  if(Number(recent?.n||0)>=10)throw new ApiError(429,"Daily optional research-data limit reached; you can keep playing privately.","safety_forge_daily_limit");
+  // The D1 session_digest column is constrained to 64 lowercase hex characters.
+  // sha256() deliberately returns base64url for cookie/rate-limit tokens (43 chars),
+  // so research receipts MUST use sha256Hex() rather than sha256().
+  const digest=await sha256Hex(JSON.stringify(submitted));
+  const result=await env.COMMONS_DB.prepare(
+    `INSERT OR IGNORE INTO safety_forge_research_sessions(
+       id,user_id,scenario_seed,scenario_version,session_digest,
+       submitted_choices_json,verified_replay_json,attack_count,repair_count,
+       unsafe_witness_count,valid_repair_count,consent_version,created_at
+     ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+  ).bind(crypto.randomUUID(),user.id,replay.seed,SAFETY_LAB_VERSION,digest,
+    JSON.stringify(submitted),JSON.stringify(replay),replay.attacks.length,replay.repairs.length,
+    replay.attacks.filter(x=>x.detected_unsafe).length,replay.repairs.filter(x=>x.passed).length,
+    SAFETY_FORGE_CONSENT,nowIso()).run();
+  const recorded=Number(result.meta?.changes||0)>0;
+  return json({ok:true,recorded,unsafe_trials:replay.attacks.filter(x=>x.detected_unsafe).length,
+    valid_repairs:replay.repairs.filter(x=>x.passed).length,
+    message:recorded?"Your independently replayed synthetic trials were recorded.":"Identical research session already contributed."});
+}
+async function eraseSafetyForgeSessions(env,user){
+  const result=await env.COMMONS_DB.prepare(
+    "DELETE FROM safety_forge_research_sessions WHERE user_id=?"
+  ).bind(user.id).run();
+  return json({ok:true,deleted:Number(result.meta?.changes||0),
+    message:"Active database rows deleted. Historic backups or exported copies may have different retention."});
+}
+async function exportSafetyForgeSessions(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Founder/Owner authority required for researcher dataset export.","owner_required");
+  const url=new URL(request.url);
+  const raw=url.searchParams.get("offset")||"0";
+  if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid bounded export offset.","bad_export_offset");
+  const offset=Number(raw);
+  const rows=await env.COMMONS_DB.prepare(
+    `SELECT verified_replay_json,created_at FROM safety_forge_research_sessions
+       ORDER BY created_at,id LIMIT 30 OFFSET ?`
+  ).bind(offset).all();
+  const entries=(rows.results||[]).map(row=>({
+    replay:JSON.parse(row.verified_replay_json),
+    collected_day:String(row.created_at).slice(0,10)
+  }));
+  return json({format:"pcs-safety-forge-optin-dataset-v1",
+    scope:"Adult self-attested and consented gameplay on synthetic, finite agent policies only.",
+    privacy:"No account IDs, emails, IPs, names, raw user metadata or precise timestamps in export.",
+    checker:"Deterministically replayed server-side against PCS Safety Forge v1 at submission.",
+    limitations:["No true Lean tactic data or independent proof certificate.",
+      "Age is self-declared, not independently identity-verified.",
+      "Gameplay authenticity and independence cannot be proven from replay alone.",
+      "Withdrawal cannot automatically retract prior offline research exports or learned model weights."],
+    entries,next_offset:entries.length===30?offset+30:null});
+}
+
 async function handleApi(request, env) {
   requireSameOrigin(request);
   const url=new URL(request.url);
@@ -3606,6 +3685,7 @@ async function handleApi(request, env) {
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
+    if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
@@ -3685,6 +3765,8 @@ async function handleApi(request, env) {
   if (method==="POST" && challengeMatch) return submitChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
   if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
+  if (method==="POST" && path==="/api/arena/safety-lab/donate") return donateSafetyForgeSession(request,env,user);
+  if (method==="POST" && path==="/api/arena/safety-lab/erase") return eraseSafetyForgeSessions(env,user);
   if (method==="POST" && path==="/api/arena/proof-order/attempt") return donateProofQuestAttempt(request,env,user);
   if (method==="POST" && path==="/api/arena/proof-order/erase") return eraseProofQuestAttempts(env,user);
   if (method==="POST" && path==="/api/skills/request") return requestSkill(request,env,user);

@@ -18,7 +18,10 @@ permissions:
 
 jobs:
   site-check:
-    runs-on: ubuntu-latest
+    # Never consume GitHub-hosted minutes; Cloudflare Builds is primary CI.
+    # Enable only after a private Linux x64 runner labeled pcs-ci is registered.
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: [self-hosted, linux, x64, pcs-ci]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,6 +53,10 @@ jobs:
           node --check public/proof-order-core.mjs
           node --check public/arena-proof-quest.js
           node --check scripts/prepare_proof_quest_dataset.mjs
+          node --check public/safety-forge-core.mjs
+          node --check public/arena-safety-forge.js
+          node --check scripts/prepare_safety_forge_dataset.mjs
+          node --check scripts/benchmark_safety_forge.mjs
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -64,8 +71,12 @@ jobs:
           npm run test:preview
           npm run test:pilots
           npm run test:quest
+          npm run test:arena:onboarding
           npm run test:catalog
           npm run test:quest:dataset
+          npm run test:safety:forge
+          node --check tests/safety-forge-worker.test.mjs
+          npm run test:safety:benchmark
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign
