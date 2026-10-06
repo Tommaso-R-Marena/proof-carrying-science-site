@@ -1,4 +1,4 @@
-import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion} from "./production-promotion.js";
+import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
   githubConfigured, createSubmissionPullRequest, readSubmissionChecks,
@@ -3022,7 +3022,7 @@ async function adminPromotionOverview(request,env,admin){
        WHERE s.status='accepted' AND s.github_stage_state='merged'
          AND s.github_repo IN ('Tommaso-R-Marena/proof-carrying-science','Tommaso-R-Marena/proof-carrying-science-site')
          AND EXISTS(SELECT 1 FROM submission_files f WHERE f.submission_id=s.id)
-         AND NOT EXISTS(SELECT 1 FROM production_promotions p WHERE p.submission_id=s.id)
+         AND NOT EXISTS(SELECT 1 FROM production_promotions p WHERE p.submission_id=s.id AND p.state IN ('requested','stage_error','staged','approved','merged'))
        ORDER BY s.submitted_at DESC LIMIT 100`
     ).all()
   ]);
@@ -3149,6 +3149,31 @@ async function adminPromotionDecision(request,env,admin,id){
   }
   return json({ok:true,state:next,approved_head_sha:head});
 }
+async function adminPromotionSupersede(request,env,admin,id){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can invalidate a production promotion.","owner_required");
+  const body=await readBody(request),reason=cleanText(body.reason,3000);
+  if(reason.length<40)throw new ApiError(400,"Explain why this PR must be superseded and retested (40+ characters).","supersede_reason_required");
+  const {row}=await promotionWithFiles(env,id);
+  if(!["requested","stage_error","staged","approved"].includes(row.state))
+    throw new ApiError(409,"Only an active, unmerged promotion can be superseded.","promotion_not_supersedable");
+  // Old PR closure is essential. Otherwise an obsolete review might still be
+  // merged by a repository maintainer outside the PCS Admin Center.
+  try{await closeSupersededPromotionPr(env,row);}
+  catch(e){throw new ApiError(502,"Could not close old production PR: "+String(e.message).slice(0,220),"supersede_close_failed");}
+  const result=await env.COMMONS_DB.prepare(
+    `UPDATE production_promotions SET state='superseded',decision_at=?,decision_by=?,
+       decision_note=?,approved_head_sha=NULL WHERE id=? AND state IN ('requested','stage_error','staged','approved')`
+  ).bind(nowIso(),admin.id,reason,id).run();
+  if(Number(result.meta?.changes||0)!==1)
+    throw new ApiError(409,"Promotion changed concurrently; refresh and reconcile the old PR.","promotion_supersede_race");
+  await audit(env,admin.id,"production_promotion_superseded","production_promotion",id,{
+    previous_state:row.state,source_submission_id:row.submission_id,
+    old_pr_number:row.pr_number,reason
+  });
+  return json({ok:true,state:"superseded",
+    message:"Old promotion PR closed and approval invalidated. Select the same accepted archive again to open a fresh baseline-bound PR with fresh checks."});
+}
+
 async function adminPromotionMerge(request,env,admin,id){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can integrate production code.","owner_required");
   const body=await readBody(request),reason=cleanText(body.reason,3000);
@@ -3501,13 +3526,14 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/github/diagnostics") return adminGithubDiagnostics(request,env,admin);
     if(method==="GET"&&path==="/api/admin/promotions")return adminPromotionOverview(request,env,admin);
     if(method==="POST"&&path==="/api/admin/promotions")return adminPromotionCreate(request,env,admin);
-    const promotionMatch=path.match(/^\/api\/admin\/promotions\/([^/]+)\/(stage|checks|decision|merge)$/);
+    const promotionMatch=path.match(/^\/api\/admin\/promotions\/([^/]+)\/(stage|checks|decision|merge|supersede)$/);
     if(promotionMatch){
       const id=decodeURIComponent(promotionMatch[1]),action=promotionMatch[2];
       if(method==="POST"&&action==="stage")return adminPromotionRestage(request,env,admin,id);
       if(method==="GET"&&action==="checks")return adminPromotionChecks(request,env,admin,id);
       if(method==="POST"&&action==="decision")return adminPromotionDecision(request,env,admin,id);
       if(method==="POST"&&action==="merge")return adminPromotionMerge(request,env,admin,id);
+      if(method==="POST"&&action==="supersede")return adminPromotionSupersede(request,env,admin,id);
     }
 
     let submissionFlowMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/(stage|checks|files|merge)$/);
