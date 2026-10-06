@@ -212,7 +212,21 @@
     <div id="promotionQueue" class="admin-list"></div>
   </section>
 
-  <section class="section-tight" id="users">
+  <dialog id="promotionDecisionDialog" class="pcs-work-dialog" aria-labelledby="promotionDecisionTitle">
+      <form id="promotionDecisionForm">
+        <div class="kicker">Founder / Owner authorization</div>
+        <h2 id="promotionDecisionTitle">Review production promotion</h2>
+        <p id="promotionDecisionContext" class="muted"></p>
+        <label class="field"><span>Exact independent-review and integration rationale (40+ characters)</span>
+          <textarea id="promotionDecisionNote" class="textinput" minlength="40" maxlength="3000" rows="5" required placeholder="Which assumptions, exact tests and source changes justify this action?"></textarea>
+        </label>
+        <p class="pcs-submission-contract">Approval and merge are distinct audited actions. The server independently rechecks archive hashes, the production PR diff, CI execution on the exact SHA, and the pinned main branch.</p>
+        <div class="actions"><button class="button primary" id="promotionDecisionConfirm" type="submit">Confirm decision</button><button class="button secondary" id="promotionDecisionCancel" type="button">Cancel</button></div>
+        <p id="promotionDecisionStatus" class="form-message" aria-live="polite"></p>
+      </form>
+    </dialog>
+
+    <section class="section-tight" id="users">
     <div class="section-heading-row"><div><div class="kicker">Contributor + governance authority</div><h2>Technical rank and governance power are separate.</h2></div><p>L0–L6 are technical/research levels. L7 is the unique Founder/Owner governance display: only the Owner can appoint or demote L6s, grant or revoke administrator authority, suspend accounts, or modify another administrator. Every change is audited.</p></div>
     <div id="adminUserList" class="admin-list"></div>
   </section>
