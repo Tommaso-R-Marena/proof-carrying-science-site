@@ -1402,7 +1402,10 @@ async function me(request, env) {
       "SELECT id,skill,task_id,created_at,expires_at,submitted_at,score,max_score,auto_pass,status FROM competency_evaluations WHERE user_id=? ORDER BY created_at DESC LIMIT 20"
     ).bind(user.id).all(),
     env.COMMONS_DB.prepare(
-      "SELECT id,request_id,status,review_note,submitted_at,github_stage_state,github_pr_url,github_repo,github_branch,github_pr_number FROM submissions WHERE user_id=? ORDER BY submitted_at DESC LIMIT 50"
+      `SELECT s.id,s.request_id,s.status,s.review_note,s.submitted_at,s.github_stage_state,s.github_pr_url,s.github_repo,s.github_branch,s.github_pr_number,
+       p.state AS production_promotion_state,p.pr_url AS production_promotion_url,p.merge_sha AS production_merge_sha
+       FROM submissions s LEFT JOIN production_promotions p ON p.submission_id=s.id
+       WHERE s.user_id=? ORDER BY s.submitted_at DESC LIMIT 50`
     ).bind(user.id).all(),
   ]);
   return json({
@@ -3148,9 +3151,21 @@ async function adminPromotionMerge(request,env,admin,id){
   await audit(env,admin.id,"production_promotion_merged","production_promotion",id,{
     repo:row.repo,pr_number:row.pr_number,sha:outcome.sha,approved_head_sha:row.approved_head_sha,reason
   });
-  await notify(env,{kind:"production_promotion_completed",email:env.ADMIN_EMAIL||null,
-    subject:`[PCS] Production promotion completed: ${row.task_id}`,
-    body:`PCS production promotion ${id} was merged into ${row.repo}.\nPR: ${outcome.pr_url}\nCommit: ${outcome.sha}\nRationale: ${reason}\n`});
+  try{
+    await notify(env,{kind:"production_promotion_completed",email:env.ADMIN_EMAIL||null,
+      subject:`[PCS] Production promotion completed: ${row.task_id}`,
+      body:`PCS production promotion ${id} was merged into ${row.repo}.\nPR: ${outcome.pr_url}\nCommit: ${outcome.sha}\nRationale: ${reason}\n`});
+    const recipient=await env.COMMONS_DB.prepare(
+      `SELECT u.id,u.email,u.email_verified FROM users u
+       JOIN submissions s ON s.user_id=u.id WHERE s.id=?`
+    ).bind(row.submission_id).first();
+    if(recipient)await notify(env,{userId:recipient.id,email:recipient.email_verified?recipient.email:null,
+      kind:"production_contribution_promoted",
+      subject:`Your PCS contribution has reached production: ${row.task_id}`,
+      body:`Your accepted PCS contribution has been separately reviewed, tested and promoted into production source.\n\nPull request: ${outcome.pr_url}\nCommit: ${outcome.sha}\n\nA passing verification certifies only the stated tests, not external scientific truth.\n`});
+  }catch(error){
+    console.error("Production promotion notification error (merge already recorded)",String(error?.message||error));
+  }
   return json({ok:true,state:"merged",merge_sha:outcome.sha,pr_url:outcome.pr_url});
 }
 

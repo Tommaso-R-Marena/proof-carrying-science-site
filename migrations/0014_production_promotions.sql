@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS production_promotions (
   approved_head_sha TEXT,
   merged_at TEXT,
   merge_sha TEXT,
-  FOREIGN KEY(submission_id) REFERENCES submissions(id) ON DELETE RESTRICT,
+  FOREIGN KEY(submission_id) REFERENCES submissions(id) ON DELETE CASCADE,
   FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE RESTRICT,
   FOREIGN KEY(decision_by) REFERENCES users(id) ON DELETE SET NULL
 );
