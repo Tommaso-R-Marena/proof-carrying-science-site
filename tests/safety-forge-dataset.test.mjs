@@ -6,8 +6,8 @@ import {prepareSafetyForgeDataset,SAFETY_FORGE_DATASET} from "../scripts/prepare
 const makeEntry=(seed)=>({
   replay:evaluateResearchSession({
     scenario_seed:seed,scenario_version:SAFETY_LAB_VERSION,
-    attack_trials:[{actions:["shortcut"]},{actions:["safe_route","deploy"]}],
-    repair_trials:[{guards:["risk"]},{guards:["joint_review","redact","risk"]}]
+    attack_trials:[{actions:["shortcut"],assisted:false},{actions:["safe_route","deploy"],assisted:false}],
+    repair_trials:[{guards:["risk"],feedback_exposed:false},{guards:["joint_review","redact","risk"],feedback_exposed:false}]
   }),collected_day:"2026-10-06"
 });
 const dataset=(entries)=>({format:"pcs-safety-forge-optin-dataset-v1",entries});
