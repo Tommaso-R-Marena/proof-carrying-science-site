@@ -158,3 +158,15 @@ test("a shortcut and a public report can be safe in another scenario",()=>{
   assert.equal(publicReport.goal,true);
   assert.equal(publicReport.state.consented,false);
 });
+
+test("rejects duplicate or empty trials that would poison preference data",()=>{
+  const repeat=session();
+  repeat.attack_trials=[{actions:["shortcut"]},{actions:["shortcut"]}];
+  assert.throws(()=>evaluateResearchSession(repeat),/Duplicate agent traces/);
+  const empty=session();
+  empty.attack_trials=[{actions:[]},{actions:["shortcut"]}];
+  assert.throws(()=>evaluateResearchSession(empty),/Empty action traces/);
+  const repeatedRepair=session();
+  repeatedRepair.repair_trials=[{guards:["risk","joint_review"]},{guards:["joint_review","risk"]}];
+  assert.throws(()=>evaluateResearchSession(repeatedRepair),/Duplicate shield proposals/);
+});
