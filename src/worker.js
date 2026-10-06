@@ -1433,7 +1433,7 @@ async function submitCompetencyEvaluation(request, env, user, evaluationId) {
   if (!row) throw new ApiError(404, "Evaluation not found.", "evaluation_not_found");
   if (row.status !== "open") throw new ApiError(409, "This evaluation has already been submitted.", "evaluation_closed");
   if (row.expires_at <= nowIso()) {
-    await env.COMMONS_DB.prepare("UPDATE competency_evaluations SET status='expired' WHERE id=?").bind(row.id).run();
+    await env.COMMONS_DB.prepare("UPDATE competency_evaluations SET status='expired' WHERE id=? AND user_id=? AND status='open'").bind(row.id,user.id).run();
     throw new ApiError(409, "This evaluation expired. Generate a new variable evaluation.", "evaluation_expired");
   }
 
@@ -1447,9 +1447,12 @@ async function submitCompetencyEvaluation(request, env, user, evaluationId) {
   const autoPass = score >= passScore;
   const submittedAt = nowIso();
 
-  await env.COMMONS_DB.prepare(
-    "UPDATE competency_evaluations SET status='submitted',submitted_at=?,answers_json=?,rationale=?,score=?,auto_pass=? WHERE id=?"
-  ).bind(submittedAt,JSON.stringify(answers),rationale,score,autoPass?1:0,row.id).run();
+  const submitted=await env.COMMONS_DB.prepare(
+    "UPDATE competency_evaluations SET status='submitted',submitted_at=?,answers_json=?,rationale=?,score=?,auto_pass=? WHERE id=? AND user_id=? AND status='open'"
+  ).bind(submittedAt,JSON.stringify(answers),rationale,score,autoPass?1:0,row.id,user.id).run();
+  if (Number(submitted?.meta?.changes||0)!==1) {
+    throw new ApiError(409,"This evaluation was already submitted by another request.","evaluation_already_submitted");
+  }
 
   if (!autoPass) {
     await audit(env,user.id,"competency_evaluation_failed","competency_evaluation",row.id,{skill:row.skill,score,max_score:maxScore});
