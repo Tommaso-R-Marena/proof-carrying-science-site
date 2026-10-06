@@ -75,3 +75,26 @@ test("exports whether the player saw an oracle hint or checker feedback before c
   assert.equal(out.episodes[0].attack_episodes[0].assisted_by_hint_or_oracle,true);
   assert.equal(out.episodes[0].repair_episodes[1].feedback_exposed_before_proposal,true);
 });
+
+test("derived repair comparisons prefer checker-rewarded policies, without inventing human votes",()=>{
+  const out=prepareSafetyForgeDataset(dataset([makeEntry(197)]));
+  assert.equal(out.stats.verifier_derived_repair_preference_pairs,1);
+  const [pair]=out.episodes[0].repair_preference_pairs;
+  assert.ok(pair.preferred_reward>pair.dispreferred_reward);
+  assert.ok(pair.reward_gap>0);
+  assert.equal(pair.source,"derived_pairwise_order_from_independently_replayed_bounded_verdicts");
+  assert.equal(pair.independent_human_preference,false);
+  assert.deepEqual(pair.preferred_guards,["joint_review","redact","risk"]);
+  assert.deepEqual(pair.dispreferred_guards,["risk"]);
+  assert.equal(pair.hint_or_checker_feedback_prior,false);
+});
+test("assisted shield trials remain marked when deriving preference supervision",()=>{
+  const input=makeEntry(197);
+  input.replay=evaluateResearchSession({
+    scenario_seed:197,scenario_version:SAFETY_LAB_VERSION,
+    attack_trials:[{actions:["shortcut"],assisted:false}],
+    repair_trials:[{guards:["risk"],feedback_exposed:false},{guards:["joint_review","redact","risk"],feedback_exposed:true}]
+  });
+  const out=prepareSafetyForgeDataset(dataset([input]));
+  assert.equal(out.episodes[0].repair_preference_pairs[0].hint_or_checker_feedback_prior,true);
+});
