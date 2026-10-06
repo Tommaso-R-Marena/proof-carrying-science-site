@@ -13,6 +13,8 @@
     "test:quest:dataset": "node --test tests/proof-quest-dataset.test.mjs",
     "test:safety:forge": "node --test tests/safety-forge.test.mjs tests/safety-forge-dataset.test.mjs tests/safety-forge-worker.test.mjs",
     "test:safety:benchmark": "node --test tests/safety-forge-benchmark.test.mjs",
+    "ci:syntax": "find public src scripts tests -type f \\( -name '*.js' -o -name '*.mjs' \\) -print0 | xargs -0 -r -n1 node --check",
+    "ci:zero-minutes": "npm run ci:syntax && npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:arena:onboarding && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run deploy:dry-run",
     "test:arena:onboarding": "node --test tests/arena-onboarding.test.mjs"
   },
   "devDependencies": {

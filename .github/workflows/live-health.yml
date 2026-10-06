@@ -18,7 +18,10 @@ concurrency:
 
 jobs:
   live-health:
-    runs-on: ubuntu-latest
+    # Never consume GitHub-hosted minutes; Cloudflare Builds is primary CI.
+    # Enable only after a private Linux x64 runner labeled pcs-ci is registered.
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' }}
+    runs-on: [self-hosted, linux, x64, pcs-ci]
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
