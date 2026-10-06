@@ -3558,7 +3558,7 @@ async function exportProofQuestDataset(env,admin){
       order:JSON.parse(r.ordering_json),hints_used:Number(r.hints_used),
       score:Number(r.score),constraints_satisfied:Number(r.correct_constraints),
       total_constraints:Number(r.total_constraints),valid_order:Boolean(r.valid_order),
-      collected_at:r.created_at
+      collected_day:String(r.created_at).slice(0,10)
     }))
   });
 }
