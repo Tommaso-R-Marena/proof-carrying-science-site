@@ -24,6 +24,39 @@
 </section>
 
 <section id="adminDashboard" hidden>
+  <section class="pcs-action-hub admin-workflow-hub" aria-labelledby="adminStartTitle">
+    <div class="pcs-hub-intro">
+      <div class="kicker">Admin starting point</div>
+      <h2 id="adminStartTitle">Go straight to the work you need.</h2>
+      <p>Admin operations are grouped here; every section remains available below. Use the public links to see exactly what a contributor sees. Administrative actions remain protected by server-side permissions.</p>
+    </div>
+    <div class="admin-workflow-grid">
+      <nav class="admin-workflow-section" aria-label="Review queue shortcuts">
+        <strong>Review queue</strong>
+        <a href="#requests">Task applications →</a><a href="#roles">Role applications →</a>
+        <a href="#skills">Competency requests →</a><a href="#submissions">Task submissions →</a>
+        <a href="#arena">Arena validation →</a>
+      </nav>
+      <nav class="admin-workflow-section" aria-label="Planning shortcuts">
+        <strong>Curate & plan</strong>
+        <a href="#task-curation">Publish or retire needed work →</a>
+        <a href="#dependency-editor">Edit dependency gates and edges →</a>
+      </nav>
+      <nav class="admin-workflow-section" aria-label="People and audit shortcuts">
+        <strong>People & accountability</strong>
+        <a href="#users">Manage people and authority →</a>
+        <a href="#approval-history">Approval decisions →</a>
+        <a href="#admin-actions">Administrative actions →</a>
+        <a href="#audit-log">Audit archive →</a>
+      </nav>
+      <nav class="admin-workflow-section admin-public-links" aria-label="Contributor view shortcuts">
+        <strong>Open the public experience</strong>
+        <a href="tasks.html">Public task marketplace ↗</a><a href="roles.html">Public roles ↗</a>
+        <a href="task-graph.html">Public task graph ↗</a><a href="arena.html">Public Arena ↗</a>
+        <a href="account.html">My contributor account ↗</a>
+      </nav>
+    </div>
+  </section>
   <div class="admin-status-grid admin-ops-grid">
     <article><small>ADMIN SESSION</small><strong id="adminIdentity">Checking…</strong><span>Separate privileged session · 8h maximum</span></article>
     <article><small>PENDING TASKS</small><strong id="adminPendingCount">0</strong><span>Applications waiting for decision</span></article>
