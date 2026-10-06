@@ -4,9 +4,9 @@
   const all=(s,r=document)=>[...r.querySelectorAll(s)];
   let currentAdmin=null;
   const auditFeeds={
-    approvals:{events:[],next:null},
-    admin:{events:[],next:null},
-    all:{events:[],next:null},
+    approvals:{events:[],next:null,requestId:0},
+    admin:{events:[],next:null,requestId:0},
+    all:{events:[],next:null,requestId:0},
   };
 
   function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -597,8 +597,7 @@
     }[kind];
     const target=$(config.target);
     if(!target)return;
-    const search=kind==="all"?($("#adminAuditSearch")?.value||"").trim():"";
-    const items=auditFeeds[kind].events.filter(event=>auditMatches(event,search));
+    const items=auditFeeds[kind].events;
     target.innerHTML=items.length?items.map(auditCard).join(""):'<div class="commons-empty"><strong>No matching audit events.</strong><span>This view is read-only.</span></div>';
     const button=$(config.button);
     if(button){
@@ -621,24 +620,38 @@
     }
   }
 
-  async function loadAuditFeed(kind,{append=false}={}){
+  async function loadAuditFeed(kind,{append=false,verify=false}={}){
     const feed=auditFeeds[kind];
-    const qs=new URLSearchParams({kind,limit:"100"});
+    if(append&&!feed.next)return;
+    const requestId=++feed.requestId;
+    const limit=kind==="approvals"?"5":kind==="admin"?"10":($("#adminAuditPageSize")?.value||"25");
+    const qs=new URLSearchParams({kind,limit});
+    if(kind==="all"){
+      const q=($("#adminAuditSearch")?.value||"").trim();
+      if(q)qs.set("q",q);
+      if(verify)qs.set("verify","1");
+    }
     if(append&&feed.next)qs.set("before_seq",String(feed.next));
     const data=await api("/api/admin/audit?"+qs.toString());
+    if(requestId!==feed.requestId)return;
     feed.events=append?[...feed.events,...(data.events||[])]:data.events||[];
     feed.next=data.next_before||null;
-    renderAuditIntegrity(data.integrity);
+    if(data.integrity)renderAuditIntegrity(data.integrity);
     renderAuditFeed(kind);
   }
 
   async function reloadAuditFeeds(){
-    for(const feed of Object.values(auditFeeds)){feed.events=[];feed.next=null;}
-    await Promise.all([
-      loadAuditFeed("approvals"),
-      loadAuditFeed("admin"),
-      loadAuditFeed("all"),
-    ]);
+    for(const feed of Object.values(auditFeeds)){
+      feed.requestId++;feed.events=[];feed.next=null;
+    }
+    const requests=[loadAuditFeed("approvals"),loadAuditFeed("admin")];
+    if($("#adminAuditDatabaseDisclosure")?.open){
+      requests.push(loadAuditFeed("all",{verify:true}));
+    }else{
+      requests.push(api("/api/admin/audit?kind=all&limit=1&verify=1")
+        .then(data=>renderAuditIntegrity(data.integrity)));
+    }
+    await Promise.all(requests);
   }
 
   function taskStateChip(task){
@@ -1070,21 +1083,65 @@
   $("#loadMoreApprovals")?.addEventListener("click",()=>loadAuditFeed("approvals",{append:true}).catch(e=>alert(e.message)));
   $("#loadMoreAdminActions")?.addEventListener("click",()=>loadAuditFeed("admin",{append:true}).catch(e=>alert(e.message)));
   $("#loadMoreAudit")?.addEventListener("click",()=>loadAuditFeed("all",{append:true}).catch(e=>alert(e.message)));
+  $("#adminAuditDatabaseDisclosure")?.addEventListener("toggle",event=>{
+    if(event.target.open)loadAuditFeed("all",{verify:true}).catch(e=>alert(e.message));
+  });
+  $("#adminOpenAudit")?.addEventListener("click",()=>{
+    const detail=$("#adminAuditDatabaseDisclosure");
+    if(detail){detail.open=true;detail.scrollIntoView({behavior:"smooth",block:"start"});}
+  });
   $("#refreshAuditButton")?.addEventListener("click",()=>reloadAuditFeeds().catch(e=>alert(e.message)));
-  $("#adminAuditSearch")?.addEventListener("input",()=>renderAuditFeed("all"));
+  let auditSearchTimer;
+  $("#adminAuditSearch")?.addEventListener("input",()=>{
+    clearTimeout(auditSearchTimer);
+    auditSearchTimer=setTimeout(()=>loadAuditFeed("all").catch(e=>alert(e.message)),300);
+  });
+  $("#adminAuditPageSize")?.addEventListener("change",()=>loadAuditFeed("all").catch(e=>alert(e.message)));
+
+  $("#adminResearchStorageRefresh")?.addEventListener("click",async()=>{
+    const button=$("#adminResearchStorageRefresh"),status=$("#adminResearchStorageStatus");
+    button.disabled=true;status.textContent="Checking account-linked, consented research entries…";
+    try{
+      const result=await api("/api/admin/arena/storage");
+      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge;
+      if(!pq||!sf)throw Error("Unexpected storage report.");
+      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes));
+      status.textContent="Proof Quest: "+Number(pq.rows).toLocaleString()+
+        " adult opt-in examples · Safety Forge: "+Number(sf.rows).toLocaleString()+
+        " verified synthetic sessions · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
+    }catch(e){status.textContent="Storage check unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
 
   $("#adminProofQuestExport")?.addEventListener("click",async()=>{
     const button=$("#adminProofQuestExport"),msg=$("#adminProofQuestExportMessage");
-    button.disabled=true;msg.textContent="Preparing a deidentified dataset...";
+    button.disabled=true;msg.textContent="Collecting consented, deidentified puzzle pages...";
     try{
-      const dataset=await api("/api/admin/arena/proof-order/dataset");
-      if(!dataset || dataset.format!=="pcs-proof-order-optin-research-dataset-v1")throw Error("Unexpected data format.");
+      let examples=[],cursor=null,pages=0,metadata=null;
+      const seen=new Set();
+      do{
+        const suffix=cursor?"?after="+encodeURIComponent(cursor):"";
+        const page=await api("/api/admin/arena/proof-order/dataset"+suffix);
+        if(page.format!=="pcs-proof-order-optin-research-dataset-v1"||!Array.isArray(page.examples))
+          throw Error("Unexpected research dataset schema.");
+        metadata||=page;
+        examples.push(...page.examples);
+        if(page.next_cursor===null){cursor=null;break;}
+        if(typeof page.next_cursor!=="string"||seen.has(page.next_cursor))
+          throw Error("Invalid or nonmonotonic export cursor.");
+        seen.add(page.next_cursor);cursor=page.next_cursor;
+        pages++;
+      }while(pages<250);
+      if(cursor!==null)throw Error("Export exceeds 50,000 rows; request a reviewed batch export.");
+      const dataset={format:metadata.format,provenance:metadata.provenance,
+        excludes:metadata.excludes,source_validation:metadata.source_validation,
+        limitations:metadata.limitations,count:examples.length,examples};
       const blob=new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const anchor=document.createElement("a");anchor.href=url;
       anchor.download="pcs-proof-quest-adult-optin-"+new Date().toISOString().slice(0,10)+".json";
       document.body.appendChild(anchor);anchor.click();anchor.remove();URL.revokeObjectURL(url);
-      msg.textContent="Exported "+dataset.count+" anonymized research choices; verify review rights before sharing.";
+      msg.textContent="Exported "+examples.length+" deidentified puzzle choices. Keep puzzle families disjoint between training and evaluation.";
     }catch(e){msg.textContent="Export unavailable: "+e.message;}
     finally{button.disabled=false;}
   });

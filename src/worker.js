@@ -1,3 +1,4 @@
+import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
 import {gradeOrder,PUZZLE_VERSION,PUZZLE_BY_ID} from "../public/proof-order-core.mjs";
 import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
@@ -1316,34 +1317,37 @@ const APPROVAL_ACTIONS = new Set([
 
 async function adminAuditFeed(request, env) {
   await requireAdmin(request,env);
-  const url = new URL(request.url);
-  const rawLimit = Number(url.searchParams.get("limit") || 100);
-  const limit = Math.min(Math.max(Number.isFinite(rawLimit)?Math.trunc(rawLimit):100,25),200);
-  const before = Number(url.searchParams.get("before_seq") || 0);
-  const kind = String(url.searchParams.get("kind") || "all");
-  const params = [];
-  let where = "1=1";
-  if (before > 0) { where += " AND seq<?"; params.push(before); }
-  if (kind === "admin") where += " AND actor_role IN ('owner','admin')";
-  if (kind === "approvals") {
+  let page;
+  try { page=parseAuditPage(new URL(request.url).searchParams); }
+  catch(error){ throw new ApiError(400,error.message,"invalid_audit_query"); }
+  const params=[];
+  let where="1=1";
+  if(page.before!==null){where+=" AND seq<?";params.push(page.before);}
+  if(page.kind==="admin")where+=" AND actor_role IN ('owner','admin')";
+  if(page.kind==="approvals"){
     const actions=[...APPROVAL_ACTIONS];
-    where += " AND action IN ("+actions.map(()=>"?").join(",")+")";
+    where+=" AND action IN ("+actions.map(()=>"?").join(",")+")";
     params.push(...actions);
   }
-  const result = await env.COMMONS_DB.prepare(
+  if(page.query){
+    const pattern=auditSearchPattern(page.query);
+    const columns=["action","actor_email","actor_name","subject_type","subject_id","detail_json"];
+    where+=" AND ("+columns.map(col=>col+" LIKE ? ESCAPE '\\'").join(" OR ")+")";
+    params.push(...columns.map(()=>pattern));
+  }
+  const result=await env.COMMONS_DB.prepare(
     `SELECT seq,event_id,actor_user_id,actor_email,actor_name,actor_role,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash
      FROM audit_archive WHERE ${where} ORDER BY seq DESC LIMIT ?`
-  ).bind(...params,limit).all();
-  const rows = result.results || [];
+  ).bind(...params,page.limit+1).all();
+  const fetched=result.results||[];
+  const rows=fetched.slice(0,page.limit);
   return json({
-    ok:true,
-    kind,
-    events:rows,
-    next_before:rows.length===limit?Number(rows[rows.length-1].seq):null,
-    integrity:await verifyAuditArchive(env),
+    ok:true,kind:page.kind,events:rows,
+    next_before:fetched.length>page.limit?Number(rows[rows.length-1].seq):null,
+    integrity:page.verify&&page.kind==="all"&&page.before===null
+      ?await verifyAuditArchive(env):null,
   });
 }
-
 
 async function recover(request, env) {
   await rateLimit(request, env, "recover", 5, 60);
@@ -3537,13 +3541,26 @@ async function eraseProofQuestAttempts(env,user){
   return json({ok:true,deleted:Number(removed.meta?.changes||0),
     message:"Your personally linked Proof Quest research entries have been deleted from the active database; existing deidentified exports or backups may have their own retention."});
 }
-async function exportProofQuestDataset(env,admin){
+async function exportProofQuestDataset(request,env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can export voluntary training examples.","owner_required");
-  const rows=await env.COMMONS_DB.prepare(
-    `SELECT puzzle_id,puzzle_version,ordering_json,hints_used,score,correct_constraints,
+  const cursor=String(new URL(request.url).searchParams.get("after")||"");
+  if(cursor && !/^[0-9a-f-]{36}$/.test(cursor))throw new ApiError(400,"Invalid export cursor.","invalid_research_cursor");
+  let cursorDate=null;
+  if(cursor){
+    const last=await env.COMMONS_DB.prepare("SELECT created_at FROM proof_order_research_attempts WHERE id=?").bind(cursor).first();
+    if(!last)throw new ApiError(400,"Export cursor no longer exists; restart the export.","expired_research_cursor");
+    cursorDate=String(last.created_at);
+  }
+  const where=cursorDate?"WHERE (created_at>? OR (created_at=? AND id>?))":"";
+  const params=cursorDate?[cursorDate,cursorDate,cursor]:[];
+  const result=await env.COMMONS_DB.prepare(
+    `SELECT id,puzzle_id,puzzle_version,ordering_json,hints_used,score,correct_constraints,
       total_constraints,valid_order,created_at
-      FROM proof_order_research_attempts ORDER BY created_at ASC LIMIT 500`
-  ).all();
+      FROM proof_order_research_attempts ${where}
+      ORDER BY created_at ASC,id ASC LIMIT 201`
+  ).bind(...params).all();
+  const fetched=result.results||[];
+  const rows=fetched.slice(0,200);
   return json({
     format:"pcs-proof-order-optin-research-dataset-v1",
     provenance:"Human-entered choices on synthetic deterministic dependency puzzles, opt-in verified adult account only.",
@@ -3552,9 +3569,10 @@ async function exportProofQuestDataset(env,admin){
     limitations:["Self-declared age, not independently identity-verified.",
       "Adversarial or low-quality ordering sequences may be present.",
       "Correct puzzle orders are synthetic dependency constraints, not Lean tactic trajectories.",
-      "Capped to first 500 examples; paginate in a separate audited release before large-scale use."],
-    count:(rows.results||[]).length,
-    examples:(rows.results||[]).map(r=>({
+      "Keep puzzle families separate between training and held-out evaluation to prevent leakage."],
+    count:rows.length,
+    next_cursor:fetched.length>200?rows[rows.length-1].id:null,
+    examples:rows.map(r=>({
       puzzle_id:r.puzzle_id,puzzle_version:r.puzzle_version,
       order:JSON.parse(r.ordering_json),hints_used:Number(r.hints_used),
       score:Number(r.score),constraints_satisfied:Number(r.correct_constraints),
@@ -3617,6 +3635,29 @@ async function eraseSafetyForgeSessions(env,user){
   return json({ok:true,deleted:Number(result.meta?.changes||0),
     message:"Active database rows deleted. Historic backups or exported copies may have different retention."});
 }
+async function adminArenaStorage(env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can inspect research-data storage summaries.","owner_required");
+  // No participant-level identifiers or raw gameplay are returned.
+  const [quest,forge]=await Promise.all([
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(ordering_json AS BLOB))),0) AS payload_bytes FROM proof_order_research_attempts"
+    ).first(),
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(submitted_choices_json AS BLOB))+LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM safety_forge_research_sessions"
+    ).first(),
+  ]);
+  return json({
+    ok:true,storage:"Cloudflare D1",
+    source_of_truth:"Verified, consented adult research submissions only; anonymous gameplay is not collected.",
+    databases:{commons:"pcs-commons"},
+    collections:{
+      proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
+      safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)}
+    },
+    caveat:"Approximate JSON payload bytes, excluding SQLite indexes, metadata, users and audit records; inspect Cloudflare D1 for authoritative capacity and usage."
+  });
+}
+
 async function exportSafetyForgeSessions(request,env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Founder/Owner authority required for researcher dataset export.","owner_required");
   const url=new URL(request.url);
@@ -3685,8 +3726,9 @@ async function handleApi(request, env) {
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
+    if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
-    if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(env,admin);
+    if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
