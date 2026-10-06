@@ -1073,5 +1073,21 @@
   $("#refreshAuditButton")?.addEventListener("click",()=>reloadAuditFeeds().catch(e=>alert(e.message)));
   $("#adminAuditSearch")?.addEventListener("input",()=>renderAuditFeed("all"));
 
+  $("#adminProofQuestExport")?.addEventListener("click",async()=>{
+    const button=$("#adminProofQuestExport"),msg=$("#adminProofQuestExportMessage");
+    button.disabled=true;msg.textContent="Preparing a deidentified dataset...";
+    try{
+      const dataset=await api("/api/admin/arena/proof-order/dataset");
+      if(!dataset || dataset.format!=="pcs-proof-order-optin-research-dataset-v1")throw Error("Unexpected data format.");
+      const blob=new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"});
+      const url=URL.createObjectURL(blob);
+      const anchor=document.createElement("a");anchor.href=url;
+      anchor.download="pcs-proof-quest-adult-optin-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(anchor);anchor.click();anchor.remove();URL.revokeObjectURL(url);
+      msg.textContent="Exported "+dataset.count+" anonymized research choices; verify review rights before sharing.";
+    }catch(e){msg.textContent="Export unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
   document.addEventListener("DOMContentLoaded",load);
 })();
