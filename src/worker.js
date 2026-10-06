@@ -1405,7 +1405,10 @@ async function me(request, env) {
       `SELECT s.id,s.request_id,s.status,s.review_note,s.submitted_at,s.github_stage_state,s.github_pr_url,s.github_repo,s.github_branch,s.github_pr_number,
        p.state AS production_promotion_state,p.pr_url AS production_promotion_url,p.merge_sha AS production_merge_sha,
        p.decision_note AS production_review_note
-       FROM submissions s LEFT JOIN production_promotions p ON p.submission_id=s.id
+       FROM submissions s LEFT JOIN production_promotions p ON p.id=(
+         SELECT latest.id FROM production_promotions latest
+         WHERE latest.submission_id=s.id ORDER BY latest.created_at DESC,latest.id DESC LIMIT 1
+       )
        WHERE s.user_id=? ORDER BY s.submitted_at DESC LIMIT 50`
     ).bind(user.id).all(),
   ]);
