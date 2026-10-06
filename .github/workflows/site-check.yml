@@ -71,6 +71,7 @@ jobs:
           npm run test:preview
           npm run test:pilots
           npm run test:quest
+          npm run test:arena:onboarding
           npm run test:catalog
           npm run test:quest:dataset
           npm run test:safety:forge

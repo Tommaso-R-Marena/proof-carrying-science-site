@@ -55,6 +55,28 @@ export function prepareSafetyForgeDataset(document){
       found_counterexample:r.counterexample,
       witnessed_safe_mission:r.safe_mission
     }));
+    // Human-proposed guards receive pairwise preferences only when the bounded
+    // verifier provides distinguishable outcomes in the SAME scenario.
+    // These pairs are derived labels, not independent human preference votes.
+    const repairPreferencePairs=[];
+    for(let i=0;i<repairEpisodes.length;i++){
+      for(let j=i+1;j<repairEpisodes.length;j++){
+        const left=repairEpisodes[i],right=repairEpisodes[j];
+        if(left.reward===right.reward)continue;
+        const preferred=left.reward>right.reward?left:right;
+        const dispreferred=left.reward>right.reward?right:left;
+        repairPreferencePairs.push({
+          preferred_trial:preferred.trial,dispreferred_trial:dispreferred.trial,
+          preferred_guards:[...preferred.selected_guards],
+          dispreferred_guards:[...dispreferred.selected_guards],
+          preferred_reward:preferred.reward,dispreferred_reward:dispreferred.reward,
+          reward_gap:preferred.reward-dispreferred.reward,
+          hint_or_checker_feedback_prior:preferred.feedback_exposed_before_proposal||dispreferred.feedback_exposed_before_proposal,
+          source:"derived_pairwise_order_from_independently_replayed_bounded_verdicts",
+          independent_human_preference:false
+        });
+      }
+    }
     episodes.push({
       scenario_seed:replay.seed,scenario_version:SAFETY_LAB_VERSION,
       split,scenario:{world:scenario.id,risk_budget:scenario.risk_budget,
@@ -62,7 +84,8 @@ export function prepareSafetyForgeDataset(document){
         initial_guards:[...scenario.initial_guards]},
       data_origin:"opt_in_adult_contributor_synthetic_gameplay_unverified_human_origin",
       verification:"independent_local_replay_of_server_validated_finite_state_simulator",
-      attack_episodes:attackEpisodes,repair_episodes:repairEpisodes
+      attack_episodes:attackEpisodes,repair_episodes:repairEpisodes,
+      repair_preference_pairs:repairPreferencePairs
     });
     seeds.add(replay.seed);
   }
@@ -72,12 +95,14 @@ export function prepareSafetyForgeDataset(document){
     collection:"Self-attested 18+ voluntary submissions with verified PCS account email.",
     privacy:"All account IDs, names, emails, network addresses and timestamps are discarded.",
     split_rule:"scenario_seed % 7 == 0 is evaluation; never split one seed across training and evaluation.",
-    label_semantics:"Finite synthetic state/action transition, bounded counterexample and policy-repair reward.",
+    label_semantics:"Finite synthetic state/action transitions, bounded checker reward and within-scenario verifier-derived repair preference pairs.",
     caution:[
       "These are simulated lab decisions, not real-world AI or Lean proofs.",
       "The simulator's policy spec is an explicit assumption and may not match any deployed system.",
       "Human authenticity, expertise, independent discovery, and consent-age assertion are not cryptographically proved.",
       "Use deduplication, source sampling audits and holdouts; reward gaming and train/test transfer remain open questions.",
+      "Pairwise repair labels are derived from the same verified trials, not independently collected human preferences; do not count them as independent observations.",
+      "Hint-exposed choices must be excluded from unassisted-discovery evaluations.",
       "Real proof-search RL needs proof-state observations and kernel-checked results on independent Lean 4 benchmarks."
     ],
     stats:{sessions:episodes.length,distinct_seeds:seeds.size,
@@ -85,6 +110,7 @@ export function prepareSafetyForgeDataset(document){
       evaluation:episodes.filter(x=>x.split==="evaluation").length,
       attack_trajectories:episodes.reduce((n,x)=>n+x.attack_episodes.length,0),
       repair_proposals:episodes.reduce((n,x)=>n+x.repair_episodes.length,0),
+      verifier_derived_repair_preference_pairs:episodes.reduce((n,x)=>n+x.repair_preference_pairs.length,0),
       verified_counterexamples:episodes.reduce((n,x)=>n+x.attack_episodes.filter(y=>y.found_failure).length,0),
       verified_repairs:episodes.reduce((n,x)=>n+x.repair_episodes.filter(y=>y.verified_within_bound).length,0)},
     episodes
