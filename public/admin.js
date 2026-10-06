@@ -13,7 +13,8 @@
   function fmt(v){if(!v)return"—";try{return new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(v));}catch{return v;}}
   async function api(path,options={}){
     const init={credentials:"same-origin",...options};
-    if(init.body&&typeof init.body!=="string"){init.headers={...(init.headers||{}),"content-type":"application/json"};init.body=JSON.stringify(init.body);}
+    const isForm=typeof FormData!=="undefined" && init.body instanceof FormData;
+    if(init.body&&typeof init.body!=="string"&&!isForm){init.headers={...(init.headers||{}),"content-type":"application/json"};init.body=JSON.stringify(init.body);}
     const res=await fetch(path,init);const data=await res.json().catch(()=>({message:"Invalid server response."}));
     if(!res.ok){const e=new Error(data.message||"Request failed.");e.status=res.status;e.code=data.error;throw e;}return data;
   }
