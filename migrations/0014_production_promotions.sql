@@ -2,14 +2,14 @@
 -- No legacy submission is silently approved for promotion.
 CREATE TABLE IF NOT EXISTS production_promotions (
   id TEXT PRIMARY KEY,
-  submission_id TEXT NOT NULL,
+  submission_id TEXT NOT NULL UNIQUE,
   task_id TEXT NOT NULL,
   repo TEXT NOT NULL CHECK (repo IN ('Tommaso-R-Marena/proof-carrying-science','Tommaso-R-Marena/proof-carrying-science-site')),
   source_pr_number INTEGER NOT NULL CHECK (source_pr_number>0),
   mapping_json TEXT NOT NULL,
   rationale TEXT NOT NULL,
   state TEXT NOT NULL DEFAULT 'requested'
-    CHECK(state IN ('requested','stage_error','staged','needs_changes','rejected','superseded','approved','merged')),
+    CHECK(state IN ('requested','stage_error','staged','needs_changes','rejected','approved','merged')),
   created_at TEXT NOT NULL,
   created_by TEXT NOT NULL,
   staged_at TEXT,
@@ -30,9 +30,3 @@ CREATE TABLE IF NOT EXISTS production_promotions (
   FOREIGN KEY(decision_by) REFERENCES users(id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS idx_production_promotions_state ON production_promotions(state,created_at);
-
--- Exactly one active/merged promotion per accepted archive. Superseded or
--- rejected cases remain auditable while allowing a new baseline-bound case.
-CREATE UNIQUE INDEX IF NOT EXISTS idx_production_promotions_live_submission
-  ON production_promotions(submission_id)
-  WHERE state IN ('requested','stage_error','staged','approved','merged');
