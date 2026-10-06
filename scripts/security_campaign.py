@@ -47,6 +47,7 @@ def static_campaign(c: Campaign) -> None:
     headers = HEADERS.read_text(encoding="utf-8")
     m4 = (MIGRATIONS / "0004_admin_sessions_immutable_audit.sql").read_text(encoding="utf-8")
     m5 = (MIGRATIONS / "0005_admin_action_evidence.sql").read_text(encoding="utf-8")
+    m7 = (MIGRATIONS / "0007_reserved_task_exclusivity.sql").read_text(encoding="utf-8")
     m1 = (MIGRATIONS / "0001_commons_auth.sql").read_text(encoding="utf-8")
 
     c.require("origin guard", worker, [
@@ -96,6 +97,20 @@ def static_campaign(c: Campaign) -> None:
         "pending_limit",
         "open_task_limit",
         "Pending applications never reserve",
+    ])
+    c.require("database reservation exclusivity", worker + m7, [
+        "reservation_key",
+        "idx_task_requests_unique_reservation",
+        "task_already_reserved",
+        "request_already_decided",
+        "WHERE id=? AND status='pending'",
+    ])
+    c.require("stale authority fails closed", worker, [
+        "reservation_released_after_level_demotion",
+        "reservation_released_after_skill_revocation",
+        "Your verified level no longer meets this task requirement.",
+        "Your required verified skill is no longer active for this task.",
+        "released_reservations",
     ])
     c.require("immutable audit archive", worker + m4, [
         "audit_archive",
