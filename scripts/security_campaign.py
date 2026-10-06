@@ -51,6 +51,9 @@ def static_campaign(c: Campaign) -> None:
     m5 = (MIGRATIONS / "0005_admin_action_evidence.sql").read_text(encoding="utf-8")
     m7 = (MIGRATIONS / "0007_reserved_task_exclusivity.sql").read_text(encoding="utf-8")
     m8 = (MIGRATIONS / "0008_contributor_concurrency_guards.sql").read_text(encoding="utf-8")
+    m9 = (MIGRATIONS / "0009_curated_work_and_roles.sql").read_text(encoding="utf-8")
+    m10 = (MIGRATIONS / "0010_rich_task_dependency_graph.sql").read_text(encoding="utf-8")
+    m11 = (MIGRATIONS / "0011_pcs_arena.sql").read_text(encoding="utf-8")
     m1 = (MIGRATIONS / "0001_commons_auth.sql").read_text(encoding="utf-8")
 
     c.require("origin guard", worker, [
@@ -140,6 +143,44 @@ def static_campaign(c: Campaign) -> None:
         "submission_already_decided",
         "request_already_decided",
     ])
+    c.require("marketplace publication is default-deny", worker + m9, [
+        "UPDATE tasks SET publication_state='draft'",
+        "publication_state='published'",
+        "need_status='needed'",
+        "adminCurateTask",
+        "Only the Founder/Owner can publish or retire marketplace work.",
+        "adminCreateTask",
+        "publication_state:\"draft\"",
+    ])
+    c.require("ongoing roles cannot masquerade as task authority", worker + m9, [
+        "role_openings",
+        "role_applications",
+        "applyForRole",
+        "adminRoleDecision",
+        "This is an ongoing role application, not a task reservation.",
+    ])
+    c.require("dependency graph carries explicit gate semantics", worker + m10, [
+        "task_dependency_groups",
+        "dependencyState",
+        "artifact_contract",
+        "criticality",
+        "mode TEXT NOT NULL CHECK(mode IN ('all','any','at_least'))",
+    ])
+    c.require("Arena leaderboard is verification-gated", worker + m11, [
+        "challenge_entries",
+        "WHERE e.status='verified'",
+        "adminChallengeDecision",
+        "Challenge entry received. The score is provisional",
+        "challenge_scorer_unavailable",
+        "Leaderboard placement still requires validity review.",
+    ])
+    c.require("Arena score is server-side and challenge-specific", worker, [
+        'challengeId!==\"ARENA-INV-001\"',
+        "challengeScore(challenge.id,counts)",
+        "challengeScore(row.challenge_id,counts)",
+        "leaderboard_alias_taken",
+    ])
+
     c.require("immutable audit archive", worker + m4, [
         "audit_archive",
         "audit_archive_no_update",
@@ -242,6 +283,32 @@ def live_campaign(c: Campaign, base_url: str) -> None:
             c.check("live status JSON", parsed.get("ok") is True, "ok=true")
         except Exception as exc:
             c.check("live status JSON", False, f"invalid JSON: {exc}")
+
+    status, _, payload = request(base + "/api/tasks")
+    c.check("live curated task endpoint", status == 200, f"HTTP {status}")
+    if status == 200:
+        try:
+            task_data = json.loads(payload)
+            tasks = task_data.get("tasks", [])
+            forbidden = [row.get("id") for row in tasks if str(row.get("id", "")).startswith(("AS-", "SCI-", "CAL-"))]
+            c.check("legacy/generic catalog is not public", not forbidden, "hidden" if not forbidden else "unexpected public IDs: " + ", ".join(forbidden))
+            c.check(
+                "all public tasks explicitly needed",
+                all(row.get("publication_state") == "published" and row.get("need_status") == "needed" for row in tasks),
+                f"{len(tasks)} public task(s)",
+            )
+        except Exception as exc:
+            c.check("live curated task JSON", False, f"invalid JSON: {exc}")
+
+    status, _, payload = request(base + "/api/challenges")
+    c.check("live Arena endpoint", status == 200, f"HTTP {status}")
+    if status == 200:
+        try:
+            arena = json.loads(payload)
+            leaked = [entry for challenge in arena.get("challenges", []) for entry in challenge.get("leaderboard", []) if "status" in entry]
+            c.check("Arena leaderboard exposes verified projection only", not leaked, "verified-only public projection")
+        except Exception as exc:
+            c.check("live Arena JSON", False, f"invalid JSON: {exc}")
 
     status, _, payload = request(base + "/api/admin/session")
     c.check("unauth admin session is harmless", status == 200, f"HTTP {status}")
