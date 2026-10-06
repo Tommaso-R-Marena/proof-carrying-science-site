@@ -356,6 +356,9 @@ commons_contracts = {
         'id="adminTaskList"',
         'id="adminRoleApplicationList"',
         'id="adminChallengeEntryList"',
+        'id="adminDependencyList"',
+        'id="adminDependencyGroupForm"',
+        'id="adminDependencyEdgeForm"',
         "Supporting evidence",
         'src="admin.js"',
     ],
@@ -476,6 +479,8 @@ if styles_css.exists():
         errors.append("styles.css: curated-work/dependency styles are missing")
     if "/* PCS Arena */" not in styles_text:
         errors.append("styles.css: PCS Arena styles are missing")
+    if "/* Admin dependency graph editor */" not in styles_text:
+        errors.append("styles.css: Admin dependency graph editor styles are missing")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
@@ -558,6 +563,11 @@ else:
         "dependencyState",
         "dependency_required",
         "publicTaskGraph",
+        "adminUpsertDependencyGroup",
+        "adminUpsertDependency",
+        "adminDeleteDependency",
+        "dependencyWouldCycle",
+        "dependency_cycle",
         "publication_state='published'",
         "need_status='needed'",
         "adminCreateTask",
@@ -679,6 +689,21 @@ else:
     ]:
         if required_text not in arena_text:
             errors.append(f"migrations/0011_pcs_arena.sql: Arena contract drift: {required_text}")
+
+dependency_edge_enrichment_migration = REPO / "migrations" / "0012_dependency_edge_enrichment.sql"
+if not dependency_edge_enrichment_migration.exists():
+    errors.append("missing dependency-edge enrichment migration: migrations/0012_dependency_edge_enrichment.sql")
+else:
+    edge_text = dependency_edge_enrichment_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "positive_fixture_baseline",
+        "negative_control_counterexample",
+        "minimal_model_example",
+        "countermodel_for_assumption",
+        "artifact_contract",
+    ]:
+        if required_text not in edge_text:
+            errors.append(f"migrations/0012_dependency_edge_enrichment.sql: edge-semantics drift: {required_text}")
 
 reservation_migration = REPO / "migrations" / "0007_reserved_task_exclusivity.sql"
 if not reservation_migration.exists():
