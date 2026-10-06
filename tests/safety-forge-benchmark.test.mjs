@@ -6,8 +6,8 @@ import {benchmarkSafetyForgePolicy} from "../scripts/benchmark_safety_forge.mjs"
 function entry(seed){
   return {replay:evaluateResearchSession({
     scenario_seed:seed,scenario_version:SAFETY_LAB_VERSION,
-    attack_trials:[{actions:["shortcut"]},{actions:["safe_route","deploy"]}],
-    repair_trials:[{guards:["risk"]},{guards:["joint_review","risk","redact"]}]
+    attack_trials:[{actions:["shortcut"],assisted:false},{actions:["safe_route","deploy"],assisted:false}],
+    repair_trials:[{guards:["risk"],feedback_exposed:false},{guards:["joint_review","risk","redact"],feedback_exposed:false}]
   }),collected_day:"2026-10-06"};
 }
 const dataset=seeds=>prepareSafetyForgeDataset({format:"pcs-safety-forge-optin-dataset-v1",entries:seeds.map(entry)});
