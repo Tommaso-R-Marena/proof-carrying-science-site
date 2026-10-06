@@ -18,7 +18,7 @@
     "test:arena:onboarding": "node --test tests/arena-onboarding.test.mjs"
   },
   "devDependencies": {
-    "wrangler": "4.144.0"
+    "wrangler": "4.147.0"
   },
   "type": "module"
 }
