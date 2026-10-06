@@ -76,7 +76,7 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "index.html", "researcher-pilots.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "commons.js", "roles.js", "task-graph.js", "arena.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
@@ -289,6 +289,48 @@ for preview_name, expected_tokens in {
     for expected_token in expected_tokens:
         if expected_token not in preview_text:
             errors.append(f"research preview {preview_name}: contract drift: {expected_token}")
+
+
+# Researcher pilot preparation must be local-only, explicitly nonauthoritative,
+# and independent of protected production approval or arbitrary remote execution.
+for pilot_file, required_tokens in {
+    "researcher-pilots.html": [
+        "Independent Researcher Pilots", "Falsification", "NOT PCS-VERIFIED",
+        'id="pilotDraftForm"', 'id="pilotDraftResult"',
+        'src="researcher-pilot-ui.js"', 'href="research-preview.html"',
+        "The formal core repository remains private",
+    ],
+    "researcher-pilot-core.mjs": [
+        "pcs-independent-pilot-draft-v1", "signed:false",
+        "authoritative:false", 'pcs_verdict:"NOT_EVALUATED"',
+        'independent_verification:"NOT_ATTESTED"',
+        "validatePilotInput", "emailSummary",
+    ],
+    "researcher-pilot-ui.js": [
+        "researcher-pilot-core.mjs", "mailto:",
+        "URL.createObjectURL", "textContent",
+    ],
+    "researcher-pilots.css": [
+        "@media(max-width:860px)", "@media(max-width:620px)",
+    ],
+}.items():
+    candidate = ROOT / pilot_file
+    if not candidate.is_file():
+        errors.append(f"researcher pilot: missing {pilot_file}")
+        continue
+    contents = candidate.read_text(encoding="utf-8")
+    for required_token in required_tokens:
+        if required_token not in contents:
+            errors.append(f"researcher pilot {pilot_file}: contract drift: {required_token}")
+
+if (ROOT / "researcher-pilot-ui.js").is_file():
+    pilot_code = (ROOT / "researcher-pilot-ui.js").read_text(encoding="utf-8")
+    if re.search(r"\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(", pilot_code):
+        errors.append("researcher pilot must remain local-only and not auto-submit requests")
+if (ROOT / "researcher-pilot-core.mjs").is_file():
+    pilot_code = (ROOT / "researcher-pilot-core.mjs").read_text(encoding="utf-8")
+    if re.search(r"\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(", pilot_code):
+        errors.append("researcher pilot core must remain local-only")
 
 
 commons_contracts = {
