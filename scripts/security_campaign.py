@@ -13,6 +13,7 @@ REPO = Path(__file__).resolve().parents[1]
 WORKER = REPO / "src" / "worker.js"
 ADMIN_JS = REPO / "public" / "admin.js"
 HEADERS = REPO / "public" / "_headers"
+MAIL_RELAY = REPO / "ops" / "google-apps-script-mail-relay.gs"
 MIGRATIONS = REPO / "migrations"
 
 PRODUCTION = "https://proof-carrying-science-site.marenatommaso.workers.dev"
@@ -45,6 +46,7 @@ def static_campaign(c: Campaign) -> None:
     worker = WORKER.read_text(encoding="utf-8")
     admin_js = ADMIN_JS.read_text(encoding="utf-8")
     headers = HEADERS.read_text(encoding="utf-8")
+    mail_relay = MAIL_RELAY.read_text(encoding="utf-8")
     m4 = (MIGRATIONS / "0004_admin_sessions_immutable_audit.sql").read_text(encoding="utf-8")
     m5 = (MIGRATIONS / "0005_admin_action_evidence.sql").read_text(encoding="utf-8")
     m7 = (MIGRATIONS / "0007_reserved_task_exclusivity.sql").read_text(encoding="utf-8")
@@ -154,6 +156,19 @@ def static_campaign(c: Campaign) -> None:
         "nonce",
         "hmacHex",
     ])
+    c.require("mail relay replay resistance", mail_relay, [
+        "LockService.getScriptLock",
+        "PropertiesService.getScriptProperties",
+        "PCS_NONCE_PREFIX",
+        "replay_detected",
+        "stale_request",
+        "constantTimeEqual_",
+    ])
+    c.check(
+        "mail replay authority is not best-effort cache",
+        "CacheService.getScriptCache" not in mail_relay,
+        "nonce authority uses persistent locked properties, not CacheService",
+    )
     c.require("admin audit evidence UI", admin_js, [
         "openAdminAction",
         "uploadActionEvidence",
