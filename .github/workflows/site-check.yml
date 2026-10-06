@@ -43,6 +43,8 @@ jobs:
           node --check src/worker.js
           node --check src/contribution-github.js
           node --check src/production-promotion.js
+          node --check public/research-preview-engine.mjs
+          node --check public/research-preview.js
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -54,6 +56,7 @@ jobs:
         run: |
           npm run test:submissions
           npm run test:promotions
+          npm run test:preview
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign
