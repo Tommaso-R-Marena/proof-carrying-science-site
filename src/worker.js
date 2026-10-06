@@ -3626,10 +3626,10 @@ async function adminArenaStorage(env,admin){
   // No participant-level identifiers or raw gameplay are returned.
   const [quest,forge]=await Promise.all([
     env.COMMONS_DB.prepare(
-      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(ordering_json)),0) AS payload_bytes FROM proof_order_research_attempts"
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(ordering_json AS BLOB))),0) AS payload_bytes FROM proof_order_research_attempts"
     ).first(),
     env.COMMONS_DB.prepare(
-      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(submitted_choices_json)+LENGTH(verified_replay_json)),0) AS payload_bytes FROM safety_forge_research_sessions"
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(submitted_choices_json AS BLOB))+LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM safety_forge_research_sessions"
     ).first(),
   ]);
   return json({
