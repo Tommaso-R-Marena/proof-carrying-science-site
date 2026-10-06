@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Safety Forge · PCS Arena — Experiment with AI safety</title>
+<meta name="description" content="Foldit-inspired AI safety game: test toy agents, find policy loopholes, and build independently evaluated safety shields. No account to play.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/arena-safety-forge.html">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><meta name="robots" content="index,follow">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="arena-safety-forge.css">
+</head><body class="forge-page commons-page">
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Free, replayable AI safety experiments · No account to play</span><a href="arena-proof-quest.html">Proof Quest beginner puzzles</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="arena-safety-forge.html">Safety Forge</a><a href="arena.html">Arena</a><a href="tasks.html">Help PCS</a><a href="trust.html">Trust</a><a class="button dark" href="account.html">Account</a></div></nav>
+<main>
+<section class="forge-hero">
+ <span class="forge-eyebrow">🧪 PCS ARENA / SAFETY FORGE</span>
+ <h1>Break the bot. <em>Build a better shield.</em></h1>
+ <p>A curious little AI agent has a mission. You are its safety engineer: experiment with its actions, discover a loophole, and build the smallest guardrail system that catches every dangerous move while letting the real mission succeed. Inspired by hands-on science games like Foldit.</p>
+ <div class="forge-hero-bottom"><span>🎮 Free, no account</span><span>🔁 New worlds and puzzles</span><span>🧠 Real finite-state feedback</span><span>🔒 No gameplay collection by default</span></div>
+</section>
+<section class="forge-game" aria-labelledby="forgeMissionTitle">
+ <div class="forge-toolbar">
+  <div class="forge-world"><span id="forgeWorldIcon" class="forge-world-icon">🌲</span><div><span class="forge-overline">MISSION CONTROL / SCENARIO <span id="forgeSeed">—</span></span><h2 id="forgeMissionTitle">Loading mission...</h2><p id="forgeMissionStory"></p></div></div>
+  <button id="forgeNew" type="button" class="button secondary">🎲 Generate a new mission</button>
+ </div>
+ <div class="forge-mission-rule"><strong>🎯 Protect the mission:</strong> <span id="forgeMissionGoal"></span></div>
+ <div class="forge-mode-tabs" role="group" aria-label="Experiment stage">
+   <button type="button" id="forgeTabAttack" aria-pressed="true" class="forge-tab active">🔎 1 · Find the flaw</button>
+   <button type="button" id="forgeTabRepair" aria-pressed="false" class="forge-tab">🛠️ 2 · Repair the shield</button>
+ </div>
+ <div class="forge-lab-layout">
+  <aside class="forge-side-card">
+    <h3>🤖 Agent dashboard</h3><p class="forge-small">This is a fictional, finite-state agent—not a real robot.</p>
+    <div class="forge-agent" aria-hidden="true"><div class="forge-agent-face">🤖</div><div class="forge-agent-glow"></div></div>
+    <div class="forge-meter-label"><strong>Risk meter</strong><span id="forgeRisk">0 / 3</span></div>
+    <div class="forge-risk-track"><div id="forgeRiskFill"></div></div>
+    <div id="forgeStateBadges" class="forge-state-badges" aria-live="polite"></div>
+    <div class="forge-mini"><strong>Current shield</strong><div id="forgeCurrentGuards"></div></div>
+    <div class="forge-mini"><strong>Experiment counter</strong><span id="forgeAttemptCounts">No trials yet</span></div>
+  </aside>
+  <div class="forge-main">
+   <section id="forgeAttackPanel" aria-labelledby="forgeAttackHeading">
+     <div class="forge-step-head"><div><span class="forge-overline">MISSION ONE / RED TEAM</span><h3 id="forgeAttackHeading">Can you make the bot break its rules?</h3></div><span id="forgeActionCounter" class="forge-counter">0 / 7 actions</span></div>
+     <p>Click actions in any order. Some are blocked by the existing shield, and some can expose a genuine safety failure. Try again with a new strategy if needed.</p>
+     <div id="forgeActionCards" class="forge-actions-grid"></div>
+     <div class="forge-actions-bottom"><button id="forgeResetAttack" type="button" class="button secondary">↶ Save attempt & restart</button><button id="forgeHint" type="button" class="button secondary">💡 One hint</button><button id="forgeFinishAttack" type="button" class="button primary">Record this attempt</button></div>
+     <p id="forgeAttackNotice" class="forge-notice" role="status" aria-live="polite">The experiment is ready. Try a route first!</p>
+     <div id="forgeHintPanel" class="forge-hint" hidden></div>
+   </section>
+   <section id="forgeRepairPanel" aria-labelledby="forgeRepairHeading" hidden>
+     <div class="forge-step-head"><div><span class="forge-overline">MISSION TWO / BLUE TEAM</span><h3 id="forgeRepairHeading">Patch the loopholes. Keep the mission alive.</h3></div><span id="forgeGuardCost" class="forge-counter">Shield cost: 0</span></div>
+     <p>Toggle safety shields and run a complete bounded check. A crude “block everything” shield fails because the bot must still complete its legitimate mission. Strong, inexpensive fixes score best.</p>
+     <div id="forgeGuardCards" class="forge-guard-list" role="group" aria-label="Safety guard switches"></div>
+     <div class="forge-actions-bottom"><button id="forgeVerify" type="button" class="button primary">🔬 Check every possible state</button><button id="forgeRestore" type="button" class="button secondary">Restore initial shield</button></div>
+     <div id="forgeVerification" class="forge-verification" role="status" aria-live="polite">Run the checker to see if your shield is safe and allows a complete mission.</div>
+     <div id="forgeCheckerPath" class="forge-checker-path" hidden></div>
+   </section>
+  </div>
+  <aside class="forge-log">
+    <div class="forge-log-head"><h3>📡 Experiment log</h3><button id="forgeClearLog" type="button">Clear view</button></div>
+    <ol id="forgeEventLog" aria-live="polite"><li>Choose an action to begin...</li></ol>
+    <div class="forge-insight"><strong>Why this matters</strong><p>Finding a shortest unsafe trace teaches counterexample search. Testing patches against all reachable states teaches repair and policy evaluation. Both produce measurable, replayable decisions.</p></div>
+  </aside>
+ </div>
+ <div class="forge-bottom">
+   <div class="forge-grade"><div><span class="forge-overline">LAB NOTEBOOK</span><strong id="forgeNotebook">0 recorded experiments</strong><span>Stored only in this page unless you explicitly opt in below</span></div><span class="forge-spark">✦ ✦ ✦</span></div>
+   <button id="forgeDonationJump" type="button" class="button secondary">🔬 Optional research contribution ↓</button>
+ </div>
+</section>
+<section class="forge-research" id="forgeResearch">
+ <div><span class="forge-overline">RESEARCH / ADULT OPT-IN</span><h2>Your experiments could inform future AI-safety research.</h2>
+ <p>This game captures the *structure* of a useful learning signal: a decision state, a proposed action or policy edit, and independently replayed feedback. Unlike a fixed quiz, the space includes failures, partial attempts, multiple valid repairs, and entirely new scenario seeds.</p></div>
+ <details id="forgeConsentDisclosure">
+  <summary>🔒 Choose whether to donate a research replay (18+ only)</summary>
+  <p><strong>Practice is local and private by default.</strong> There is no auto-upload of actions, game state, or puzzle outcomes. Donation requires an adult (18+), a signed-in PCS account with verified email, and two explicit checkboxes. No minors' gameplay is collected for research.</p>
+  <p>With your consent, PCS stores one bounded session's seed, attempted action sequences and policy configurations. The server independently replays each choice and computes the labels; it does not trust your device's score. Data remains account-linked for erasure, but Owner-only research exports remove account identifiers and precise times. This dataset can support experiments in synthetic counterexample search and guard selection, <strong>not</strong> teach a model real Lean tactics or certify AI alignment.</p>
+  <div class="forge-consent-row"><label><input id="forgeAdult" type="checkbox"> I confirm that I am at least 18 years old.</label><label><input id="forgeConsent" type="checkbox"> I consent to storing the experiments from this session for PCS internal scientific and ML evaluation. I can delete my saved sessions, though earlier exports or trained weights may not be retractable.</label></div>
+  <div class="forge-actions-bottom"><button class="button primary" id="forgeDonate" type="button">Contribute this research session</button><button class="button secondary" id="forgeErase" type="button">Delete all my donated Safety Forge sessions</button></div>
+  <p id="forgeDonateMessage" role="status" aria-live="polite"></p><p><a href="account.html">Sign in or create an adult account →</a> · <a href="privacy.html">Read data handling terms →</a></p>
+ </details>
+</section>
+<section class="forge-beyond"><h2>What would make this useful to a real model?</h2><div class="forge-explain-grid"><article><strong>01 · Explore, don't memorize</strong><p>Different seeds change worlds, risk budgets, and existing guards. The same visible action can be safe or unsafe in a different state.</p></article><article><strong>02 · Discover counterexamples</strong><p>Both successes and unsuccessful search traces teach which decisions led to a safety violation, as checked by a deterministic simulator.</p></article><article><strong>03 · Verify repairs independently</strong><p>An exhaustive finite-state evaluator finds missed cases and confirms that the legitimate goal remains achievable. No reward for simply disabling everything.</p></article><article><strong>04 · Keep science honest</strong><p>Game traces are synthetic supervision only. Real progress requires held-out evaluations, explicit trust assumptions, and eventually Lean-kernel checks on actual proof objects.</p></article></div></section>
+<section class="forge-next"><div><h2>Want a gentler first quest?</h2><p>Our original eight step-order puzzles are still here. They teach the prerequisite skills that feed into Safety Forge.</p></div><a href="arena-proof-quest.html" class="button secondary">Play classic Proof Quest →</a></section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Verifiability first; honest about uncertainty.</p></div><div class="footercol"><strong>Research</strong><a href="arena.html">Arena</a><a href="researcher-pilots.html">Independent pilots</a><a href="trust.html">Trust Center</a></div><div class="footercol"><strong>Privacy</strong><a href="privacy.html">Privacy policy</a><a href="account.html">Account and deletion</a></div></div></footer>
+</div><script src="site.js"></script><script type="module" src="arena-safety-forge.js"></script></body></html>
