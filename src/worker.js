@@ -2065,6 +2065,61 @@ async function adminRoleDecision(request, env, admin, applicationId) {
   return json({ok:true,status});
 }
 
+async function adminCreateTask(request, env, admin) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can create marketplace work.","owner_required");
+  const body=await readBody(request);
+  const id=String(body.id||"").trim().toUpperCase();
+  const title=cleanText(body.title,160);
+  const summary=cleanText(body.summary,1200);
+  const whyNow=cleanText(body.why_now,2000);
+  const deliverable=cleanText(body.deliverable,3000);
+  const verification=cleanText(body.verification_rule,3000);
+  const criteria=cleanText(body.acceptance_criteria,3000);
+  const successMetric=cleanText(body.success_metric,2000);
+  const category=String(body.category||"research");
+  const claimMode=String(body.claim_mode||"open");
+  const requiredSkill=String(body.required_skill||"").trim()||null;
+  const minLevel=Number(body.min_level??0);
+  const expectedHours=Number(body.expected_hours??1);
+  const priority=Math.max(0,Math.min(100,Math.trunc(Number(body.priority??50))));
+  const compensationType=String(body.compensation_type||"volunteer");
+  const compensationLabel=cleanText(body.compensation_label,120)||"Volunteer";
+  const fundingStatus=String(body.funding_status||"open");
+  const categories=new Set(["research","engineering","security","review","operations","administrative","marketing","outreach","design","documentation","community"]);
+  if(!/^[A-Z][A-Z0-9._-]{2,31}$/.test(id))throw new ApiError(400,"Task ID must be 3–32 uppercase letters/numbers/dashes/dots/underscores.","bad_task_id");
+  if(title.length<5||summary.length<30)throw new ApiError(400,"Give the task a clear title and summary.","bad_task_copy");
+  if(whyNow.length<30)throw new ApiError(400,"Explain why PCS needs this task now (at least 30 characters).","why_now_required");
+  if(deliverable.length<30||verification.length<30||criteria.length<30)throw new ApiError(400,"Deliverable, verification rule, and acceptance criteria must each be specific.","task_contract_required");
+  if(!categories.has(category))throw new ApiError(400,"Invalid task category.","bad_task_category");
+  if(!["open","approval","invite"].includes(claimMode))throw new ApiError(400,"Invalid claim mode.","bad_claim_mode");
+  if(!Number.isInteger(minLevel)||minLevel<0||minLevel>6)throw new ApiError(400,"Minimum level must be L0–L6.","bad_level");
+  if(!Number.isFinite(expectedHours)||expectedHours<1||expectedHours>80)throw new ApiError(400,"Expected hours must be between 1 and 80.","bad_hours");
+  if(requiredSkill&&!SKILLS.has(requiredSkill))throw new ApiError(400,"Required skill is not supported.","bad_skill");
+  if(!["volunteer","bounty","review","contract"].includes(compensationType))throw new ApiError(400,"Invalid compensation type.","bad_compensation");
+  if(!["open","planned","funded"].includes(fundingStatus))throw new ApiError(400,"Invalid funding status.","bad_funding_status");
+  const existing=await env.COMMONS_DB.prepare("SELECT 1 AS ok FROM tasks WHERE id=?").bind(id).first();
+  if(existing)throw new ApiError(409,"A task with that ID already exists.","task_exists");
+  const now=nowIso();
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO tasks(
+      id,title,summary,min_level,claim_mode,required_skill,calibrates_skill,expected_hours,
+      review_sla_business_days,checkpoint_hours,reservation_hours,max_active_per_user,status,
+      compensation_type,compensation_label,funding_status,created_at,updated_at,
+      deliverable,verification_rule,acceptance_criteria,publication_state,category,work_type,
+      need_status,priority,why_now,success_metric
+    ) VALUES(?,?,?,?,?,?,NULL,?,2,24,72,1,'open',?,?,?,?,?,?,?,?,?,'draft',?,'task','needed',?,?,?)`
+  ).bind(
+    id,title,summary,minLevel,claimMode,requiredSkill,expectedHours,
+    compensationType,compensationLabel,fundingStatus,now,now,
+    deliverable,verification,criteria,category,priority,whyNow,successMetric||null
+  ).run();
+  await audit(env,admin.id,"task_draft_created","task",id,{
+    category,min_level:minLevel,claim_mode:claimMode,required_skill:requiredSkill,
+    expected_hours:expectedHours,priority,why_now:whyNow
+  });
+  return json({ok:true,task_id:id,publication_state:"draft",message:"Draft task created. Review it in Marketplace publication before publishing."},201);
+}
+
 async function adminCurateTask(request, env, admin, taskId) {
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can publish or retire marketplace work.","owner_required");
   const task=await env.COMMONS_DB.prepare("SELECT * FROM tasks WHERE id=?").bind(taskId).first();
@@ -2629,6 +2684,7 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
+    if (method==="POST" && path==="/api/admin/tasks") return adminCreateTask(request,env,admin);
     let taskCurationMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/curation$/);
     if (method==="POST" && taskCurationMatch) return adminCurateTask(request,env,admin,decodeURIComponent(taskCurationMatch[1]));
     let roleDecisionMatch=path.match(/^\/api\/admin\/roles\/applications\/([^/]+)\/decision$/);
