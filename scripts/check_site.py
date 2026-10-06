@@ -249,7 +249,8 @@ if index_page.exists():
         'href="package-inspector.html#inspectorDrop"',
         "Start Guided Submission",
         "producer and reviewer are intentionally separate trust roles",
-        "published runtime/restoration evidence; CI infrastructure is being hardened",
+        "Core PR verification is currently pending; no claim of fresh CI",
+        'href="research-preview.html"',
     ]:
         if required_text not in index_text:
             errors.append(f"index.html: role-entry/usability drift: {required_text}")
@@ -259,6 +260,35 @@ if index_page.exists():
         errors.append("index.html: reviewer role route drift")
     if 'href="guided-submission.html?demo=1"' not in index_text:
         errors.append("index.html: explorer demo route drift")
+
+
+# Public research-preview examples must never masquerade as kernel evidence.
+for preview_name, expected_tokens in {
+    "research-preview.html": [
+        "Research Preview", "No account required", "not Lean proofs",
+        'id="previewInput"', 'id="previewResult"',
+        'src="research-preview.js"', 'href="package-inspector.html"',
+    ],
+    "research-preview-engine.mjs": [
+        "evaluateTrace", "evaluateModel", "forbidden_action",
+        "max_cumulative_risk", "signed", "Lean theorem",
+    ],
+    "research-preview.js": [
+        "lean_checked:false", "signed:false", "independently_replayed:false",
+        "textContent", "research-preview-engine.mjs",
+    ],
+    "research-preview.css": [
+        "@media(max-width:900px)", "@media(max-width:580px)",
+    ],
+}.items():
+    preview_path = ROOT / preview_name
+    if not preview_path.is_file():
+        errors.append(f"research preview: missing required {preview_name}")
+        continue
+    preview_text = preview_path.read_text(encoding="utf-8")
+    for expected_token in expected_tokens:
+        if expected_token not in preview_text:
+            errors.append(f"research preview {preview_name}: contract drift: {expected_token}")
 
 
 commons_contracts = {

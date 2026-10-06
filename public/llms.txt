@@ -20,6 +20,7 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
 ## Primary pages
 - Product overview: /
+- Research preview (bounded local browser calculations; not Lean proofs): /research-preview.html
 - Guided Submission: /guided-submission.html
 - PCS Package Inspector: /package-inspector.html
 - Result anatomy: /result-anatomy.html

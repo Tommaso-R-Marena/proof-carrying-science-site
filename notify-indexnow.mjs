@@ -4,6 +4,7 @@ const origin = `https://${host}`;
 const keyLocation = `${origin}/${key}.txt`;
 const paths = [
   "/",
+  "/research-preview.html",
   "/guided-submission.html",
   "/package-inspector.html",
   "/result-anatomy.html",
