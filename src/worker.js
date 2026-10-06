@@ -1,3 +1,4 @@
+import {gradeOrder,PUZZLE_VERSION,PUZZLE_BY_ID} from "../public/proof-order-core.mjs";
 import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
@@ -3490,6 +3491,78 @@ async function adminVerifyEmail(request, env, admin, userId) {
   return json({ok:true});
 }
 
+// Research data is NEVER collected from anonymous/underage practice. A verified
+// adult contributor has to choose to donate each individual ordering.
+const PROOF_QUEST_CONSENT = "pcs-proof-quest-adult-optin-v1";
+async function donateProofQuestAttempt(request,env,user){
+  await rateLimit(request,env,"proof-quest-optin",20,60);
+  if(!Number(user.email_verified))throw new ApiError(403,"Verify your contributor email before opting into research data donation.","email_verification_required");
+  const body=await readBody(request);
+  if(!body || typeof body!=="object" || Array.isArray(body) ||
+     Object.keys(body).sort().join(",")!=="adult_confirmation,consent_training,hints_used,order,puzzle_id,puzzle_version"){
+    throw new ApiError(400,"Use the explicit, documented Proof Quest donation fields.","invalid_proof_quest_payload");
+  }
+  if(body.adult_confirmation!==true || body.consent_training!==true){
+    throw new ApiError(403,"Research donation is for consenting adults 18+ only. Practice is always available.","adult_consent_required");
+  }
+  if(body.puzzle_version!==PUZZLE_VERSION || typeof body.puzzle_id!=="string" || !PUZZLE_BY_ID.has(body.puzzle_id)){
+    throw new ApiError(400,"Unknown or outdated puzzle version.","unsupported_puzzle");
+  }
+  let grade;
+  try{grade=gradeOrder(body.puzzle_id,body.order,body.hints_used);}
+  catch(err){throw new ApiError(400,err.message||"Invalid ordering.","bad_puzzle_attempt");}
+  const today=new Date(Date.now()-86400000).toISOString();
+  const recent=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM proof_order_research_attempts WHERE user_id=? AND created_at>=?"
+  ).bind(user.id,today).first();
+  if(Number(recent?.n||0)>=20)throw new ApiError(429,"Daily research-data contribution limit reached. You may still play privately.","proof_quest_daily_cap");
+  const text=JSON.stringify(body.order),created=nowIso();
+  const inserted=await env.COMMONS_DB.prepare(
+    `INSERT OR IGNORE INTO proof_order_research_attempts(
+       id,user_id,puzzle_id,puzzle_version,ordering_json,hints_used,score,
+       correct_constraints,total_constraints,valid_order,consent_version,created_at
+     ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
+  ).bind(crypto.randomUUID(),user.id,body.puzzle_id,body.puzzle_version,text,
+    body.hints_used,grade.score,grade.correct,grade.total,grade.valid?1:0,
+    PROOF_QUEST_CONSENT,created).run();
+  const unique=Number(inserted.meta?.changes||0)>0;
+  return json({ok:true,recorded:unique,score:grade.score,valid:grade.valid,
+    message:unique?"Opted-in adult research example recorded.":"This exact ordering was already donated; nothing new was stored."});
+}
+async function eraseProofQuestAttempts(env,user){
+  const removed=await env.COMMONS_DB.prepare(
+    "DELETE FROM proof_order_research_attempts WHERE user_id=?"
+  ).bind(user.id).run();
+  return json({ok:true,deleted:Number(removed.meta?.changes||0),
+    message:"Your personally linked Proof Quest research entries have been deleted from the active database; existing deidentified exports or backups may have their own retention."});
+}
+async function exportProofQuestDataset(env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can export voluntary training examples.","owner_required");
+  const rows=await env.COMMONS_DB.prepare(
+    `SELECT puzzle_id,puzzle_version,ordering_json,hints_used,score,correct_constraints,
+      total_constraints,valid_order,created_at
+      FROM proof_order_research_attempts ORDER BY created_at ASC LIMIT 500`
+  ).all();
+  return json({
+    format:"pcs-proof-order-optin-research-dataset-v1",
+    provenance:"Human-entered choices on synthetic deterministic dependency puzzles, opt-in verified adult account only.",
+    excludes:["user_id","email","IP address","name"],
+    source_validation:"server-side deterministic constraint scoring; not Lean kernel authority",
+    limitations:["Self-declared age, not independently identity-verified.",
+      "Adversarial or low-quality ordering sequences may be present.",
+      "Correct puzzle orders are synthetic dependency constraints, not Lean tactic trajectories.",
+      "Capped to first 500 examples; paginate in a separate audited release before large-scale use."],
+    count:(rows.results||[]).length,
+    examples:(rows.results||[]).map(r=>({
+      puzzle_id:r.puzzle_id,puzzle_version:r.puzzle_version,
+      order:JSON.parse(r.ordering_json),hints_used:Number(r.hints_used),
+      score:Number(r.score),constraints_satisfied:Number(r.correct_constraints),
+      total_constraints:Number(r.total_constraints),valid_order:Boolean(r.valid_order),
+      collected_at:r.created_at
+    }))
+  });
+}
+
 async function handleApi(request, env) {
   requireSameOrigin(request);
   const url=new URL(request.url);
@@ -3533,6 +3606,7 @@ async function handleApi(request, env) {
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
+    if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
@@ -3611,6 +3685,8 @@ async function handleApi(request, env) {
   if (method==="POST" && challengeMatch) return submitChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
   if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
+  if (method==="POST" && path==="/api/arena/proof-order/attempt") return donateProofQuestAttempt(request,env,user);
+  if (method==="POST" && path==="/api/arena/proof-order/erase") return eraseProofQuestAttempts(env,user);
   if (method==="POST" && path==="/api/skills/request") return requestSkill(request,env,user);
   if (method==="POST" && path==="/api/evaluations/start") return startCompetencyEvaluation(request,env,user);
   let evaluationMatch=path.match(/^\/api\/evaluations\/([^/]+)\/submit$/);
