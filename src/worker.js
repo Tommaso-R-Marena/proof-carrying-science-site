@@ -843,11 +843,24 @@ async function verifiedSkills(env, userId) {
   return new Set((result.results || []).map(r => r.skill));
 }
 
-function eligibilityFor(task, user, skills) {
+function hardDependencyBlock(dependencies=[]) {
+  return (dependencies||[]).filter(dep=>dep.dependency_type==="hard"&&!dep.completed);
+}
+
+function eligibilityFor(task, user, skills, dependencies=[]) {
   if (!user) return { state: "login_required", can_start: false, can_request: false, reason: "Create an account or sign in." };
   if (user.status !== "active") return { state: "locked", can_start: false, can_request: false, reason: "Account is not active." };
   if (Number(user.level) < Number(task.min_level)) {
     return { state: "level_required", can_start: false, can_request: false, reason: `Requires PCS level L${task.min_level}. Your verified level is L${user.level}.` };
+  }
+  const blockedDeps=hardDependencyBlock(dependencies);
+  if (blockedDeps.length) {
+    return {
+      state:"dependency_required",
+      can_start:false,
+      can_request:false,
+      reason:"Program prerequisites remain open: "+blockedDeps.map(dep=>dep.depends_on_task_id).join(", ")+". PCS will unlock this stage after those contributions are accepted."
+    };
   }
   if (task.claim_mode !== "open" && !Number(user.email_verified)) {
     return { state: "verify_email", can_start: false, can_request: false, reason: "Verify your email before requesting reserved work." };
@@ -875,6 +888,20 @@ function eligibilityFor(task, user, skills) {
     return { state: "approval", can_start: false, can_request: true, reason: "Application required. Requesting does not reserve the task." };
   }
   return { state: "invite", can_start: false, can_request: true, reason: "High-trust application. PCS must explicitly approve and assign it." };
+}
+
+async function taskDependencies(env, taskId) {
+  const rows=await env.COMMONS_DB.prepare(
+    `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.rationale,t.title AS depends_on_title,
+            CASE WHEN EXISTS(
+              SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
+            ) THEN 1 ELSE 0 END AS completed
+     FROM task_dependencies d
+     JOIN tasks t ON t.id=d.depends_on_task_id
+     WHERE d.task_id=?
+     ORDER BY CASE d.dependency_type WHEN 'hard' THEN 0 ELSE 1 END,d.depends_on_task_id`
+  ).bind(taskId).all();
+  return (rows.results||[]).map(row=>({...row,completed:Boolean(Number(row.completed))}));
 }
 
 async function remindPendingReviews(env) {
@@ -1523,8 +1550,21 @@ async function listTasks(request, env) {
   const user = await currentUser(request, env);
   const skillSet = user ? await verifiedSkills(env,user.id) : new Set();
   const tasks = await env.COMMONS_DB.prepare(
-    "SELECT * FROM tasks WHERE status='open' ORDER BY min_level,id"
+    "SELECT * FROM tasks WHERE status='open' ORDER BY COALESCE(program_id,''),COALESCE(program_step,999),min_level,id"
   ).all();
+  const depRows = await env.COMMONS_DB.prepare(
+    `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.rationale,t.title AS depends_on_title,
+            CASE WHEN EXISTS(
+              SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
+            ) THEN 1 ELSE 0 END AS completed
+     FROM task_dependencies d JOIN tasks t ON t.id=d.depends_on_task_id
+     ORDER BY d.task_id,d.depends_on_task_id`
+  ).all();
+  const depsByTask=new Map();
+  for(const row of depRows.results||[]){
+    if(!depsByTask.has(row.task_id))depsByTask.set(row.task_id,[]);
+    depsByTask.get(row.task_id).push({...row,completed:Boolean(Number(row.completed))});
+  }
   let requestMap = new Map();
   if (user) {
     const own = await env.COMMONS_DB.prepare(
@@ -1534,11 +1574,15 @@ async function listTasks(request, env) {
   }
   return json({
     user: user ? publicUser(user) : null,
-    tasks: (tasks.results || []).map(task => ({
-      ...task,
-      eligibility: eligibilityFor(task,user,skillSet),
-      my_request: requestMap.get(task.id) || null,
-    })),
+    tasks: (tasks.results || []).map(task => {
+      const dependencies=depsByTask.get(task.id)||[];
+      return {
+        ...task,
+        dependencies,
+        eligibility: eligibilityFor(task,user,skillSet,dependencies),
+        my_request: requestMap.get(task.id) || null,
+      };
+    }),
   });
 }
 
@@ -1548,7 +1592,8 @@ async function startOrRequestTask(request, env, user, taskId) {
   const task = await env.COMMONS_DB.prepare("SELECT * FROM tasks WHERE id=? AND status='open'").bind(taskId).first();
   if (!task) throw new ApiError(404,"Task not found or not open.","task_not_found");
   const skills = await verifiedSkills(env,user.id);
-  const eligibility = eligibilityFor(task,user,skills);
+  const dependencies=await taskDependencies(env,task.id);
+  const eligibility = eligibilityFor(task,user,skills,dependencies);
   if (!eligibility.can_start && !eligibility.can_request) throw new ApiError(403,eligibility.reason,eligibility.state);
 
   const existing = await env.COMMONS_DB.prepare(
