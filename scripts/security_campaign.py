@@ -96,7 +96,7 @@ def static_campaign(c: Campaign) -> None:
         "already_active",
         "pending_limit",
         "open_task_limit",
-        "Pending applications never reserve",
+        "Application received. It does not reserve the task.",
     ])
     c.require("database reservation exclusivity", worker + m7, [
         "reservation_key",
