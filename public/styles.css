@@ -1184,7 +1184,7 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .admin-login-alternative a{font-weight:750}
 @media(max-width:1180px){
   .js .navtoggle{display:flex}
-  .js nav:has(> .pcs-global-nav){position:relative}
+  .js nav.pcs-nav-ready{position:relative}
   .js .pcs-global-nav{display:none;position:absolute;z-index:50;top:62px;right:0;width:min(370px,calc(100vw - 32px));flex-direction:column;align-items:stretch;gap:4px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);max-height:calc(100vh - 95px);overflow-y:auto}
   .js .pcs-global-nav.open{display:flex}
   .js .pcs-global-nav>a{padding:11px 12px;border-radius:9px}
