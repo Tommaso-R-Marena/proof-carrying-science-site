@@ -439,7 +439,7 @@
       all("[data-promotion-checks]",queue).forEach(button=>button.addEventListener("click",()=>promotionAction(button.dataset.promotionChecks,"checks")));
       all("[data-promotion-stage]",queue).forEach(button=>button.addEventListener("click",()=>promotionAction(button.dataset.promotionStage,"stage")));
       for(const action of ["approve","needs_changes","reject","merge"]){
-        all("[data-promotion-"+action+"]",queue).forEach(button=>button.addEventListener("click",()=>promotionNoteAction(button.dataset["promotion"+action.split("_").map(x=>x[0].toUpperCase()+x.slice(1)).join("")],action)));
+        all("[data-promotion-"+action+"]",queue).forEach(button=>button.addEventListener("click",()=>promotionNoteAction(button.getAttribute("data-promotion-"+action),action)));
       }
     }catch(e){
       status.textContent="Promotion dashboard unavailable: "+e.message;
