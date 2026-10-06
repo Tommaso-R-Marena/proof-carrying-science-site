@@ -1,0 +1,50 @@
+/* Isolated researcher-pilot page styles; keep the rest of PCS unaffected. */
+.pilots-page main{padding-bottom:62px}
+.pilots-hero{max-width:980px;padding:64px 0 28px}
+.pilots-hero h1{font:600 clamp(2.2rem,4.9vw,4.0rem)/1.11 var(--display);letter-spacing:-.035em;max-width:850px;margin:14px 0 18px}
+.pilots-hero>p{font-size:clamp(1rem,1.7vw,1.2rem);line-height:1.7;color:var(--ink2);max-width:800px}
+.pilots-hero-actions,.pilots-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:24px 0}
+.pilots-hero-actions>a,.pilots-actions>button{min-height:44px}
+.pilots-trust-note{background:#e8f0fc;color:#25456e;border-left:4px solid #527cc0;border-radius:0 8px 8px 0;padding:17px 21px;margin-top:18px;line-height:1.7;font-size:.94rem}
+.pilots-section{padding:34px 0}
+.pilots-section>h2{font-size:clamp(1.55rem,3vw,2.2rem);line-height:1.22;margin:12px 0 20px;max-width:850px}
+.pilots-section>p{line-height:1.75;color:#4a5c77;max-width:900px}
+.pilots-track-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.pilots-track-grid article{padding:25px 23px;background:white;border:1px solid #d8e3ed;border-radius:15px}
+.pilots-track-grid article h3{font-size:1.15rem;line-height:1.44;margin:14px 0}
+.pilots-track-grid article p{line-height:1.7;color:#56667d;font-size:.95rem}
+.pilots-tag{color:#356bad;font-size:.73rem;letter-spacing:.07em;font-weight:800}
+.pilots-paths{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.pilots-paths a{display:flex;flex-direction:column;gap:9px;border:1px solid #d9e3ed;border-radius:12px;padding:22px;background:#fff;text-decoration:none}
+.pilots-paths a:hover,.pilots-paths a:focus-visible{border-color:#4174b9;box-shadow:0 6px 19px rgba(17,58,112,.09)}
+.pilots-paths a span{color:#3266a5;font-size:.74rem;font-weight:800;letter-spacing:.08em}
+.pilots-paths a strong{font-size:1.12rem}
+.pilots-paths a small{font-size:.9rem;line-height:1.65;color:#52637d}
+.pilots-workflow{background:#fff;border:1px solid #d9e3ef;padding:clamp(22px,4vw,40px);border-radius:19px;box-shadow:0 16px 38px rgba(10,40,73,.05)}
+.pilots-form{display:flex;flex-direction:column;gap:17px;margin:26px 0 0}
+.pilots-form label{display:flex;flex-direction:column;gap:8px;font-size:.92rem;font-weight:680;min-width:0}
+.pilots-form select,.pilots-form input,.pilots-form textarea{font:400 .97rem/1.5 var(--sans);padding:11px 13px;min-width:0;width:100%;border:1px solid #a5b6cb;border-radius:9px;background:#fff;color:#14253f}
+.pilots-form textarea{resize:vertical;min-height:83px}
+.pilots-form :is(input,select,textarea,button):focus-visible{outline:3px solid #3377d2;outline-offset:2px}
+.pilots-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#pilotDraftError{border:1px solid #e7a0a8;background:#fff0f0;color:#92252e;padding:14px;border-radius:8px;line-height:1.6}
+.pilots-result{background:#edf5ff;border:1px solid #b8d0ee;border-radius:12px;padding:21px;margin-top:18px;max-width:100%;overflow:hidden}
+.pilots-result>strong{color:#1d4d83;font-size:1rem}
+.pilots-result>p{line-height:1.65}
+.pilots-result pre{white-space:pre-wrap;overflow-wrap:anywhere;font:.78rem/1.55 ui-monospace,Consolas,monospace;padding:16px;background:#fff;border:1px solid #d4dfee;border-radius:9px;max-height:350px;overflow:auto}
+.pilots-small{color:#53637a;font-size:.9rem;line-height:1.7}
+.pilots-matrix{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.pilots-matrix>div{padding:20px 21px;background:white;border:1px solid #dce3ed;border-radius:10px}
+.pilots-matrix p{color:#5a6a81;line-height:1.65;font-size:.92rem;margin-bottom:0}
+@media(max-width:860px){
+ .pilots-track-grid{grid-template-columns:1fr}
+ .pilots-hero{padding-top:40px}
+}
+@media(max-width:620px){
+ .pilots-page .shell{width:calc(100% - 26px)}
+ .pilots-two,.pilots-paths,.pilots-matrix{grid-template-columns:1fr}
+ .pilots-hero h1{font-size:2.18rem}
+ .pilots-actions{flex-direction:column;align-items:stretch}
+ .pilots-actions button{width:100%}
+ .pilots-workflow{padding:20px 15px}
+}
