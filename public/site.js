@@ -12,6 +12,7 @@
 
   document.querySelectorAll(".navlinks").forEach((links) => {
     links.classList.add("pcs-global-nav");
+    links.closest("nav")?.classList.add("pcs-nav-ready");
     links.replaceChildren();
 
     const addLink = (parent, href, label, className = "") => {
