@@ -20,6 +20,103 @@
   }
   function msg(id,text,good=false){const n=document.getElementById(id);if(!n)return;n.textContent=text||"";n.className=good?"form-message successline":"form-message validation bad";}
 
+  const ADMIN_EVIDENCE_MAX_FILES=4;
+  const ADMIN_EVIDENCE_MAX_FILE_BYTES=2*1024*1024;
+  const ADMIN_EVIDENCE_MAX_TOTAL_BYTES=6*1024*1024;
+  const ADMIN_EVIDENCE_EXTENSIONS=new Set(["pdf","txt","md","csv","json","log","lean","py","png","jpg","jpeg","webp"]);
+  let adminActionResolver=null;
+  let adminActionFiles=[];
+
+  function fileExt(name){
+    const value=String(name||"");
+    const dot=value.lastIndexOf(".");
+    return dot>0?value.slice(dot+1).toLowerCase():"";
+  }
+  function formatBytes(bytes){
+    const n=Number(bytes||0);
+    if(n<1024)return n+" B";
+    if(n<1024*1024)return (n/1024).toFixed(n<10*1024?1:0)+" KiB";
+    return (n/(1024*1024)).toFixed(1)+" MiB";
+  }
+  function validateEvidenceFiles(files){
+    if(files.length>ADMIN_EVIDENCE_MAX_FILES)return {ok:false,message:`Attach at most ${ADMIN_EVIDENCE_MAX_FILES} files.`};
+    let total=0;
+    for(const file of files){
+      const ext=fileExt(file.name);
+      if(!ADMIN_EVIDENCE_EXTENSIONS.has(ext))return {ok:false,message:`${file.name}: unsupported type.`};
+      if(file.size<=0)return {ok:false,message:`${file.name}: file is empty.`};
+      if(file.size>ADMIN_EVIDENCE_MAX_FILE_BYTES)return {ok:false,message:`${file.name}: exceeds the 2 MiB per-file limit.`};
+      total+=file.size;
+    }
+    if(total>ADMIN_EVIDENCE_MAX_TOTAL_BYTES)return {ok:false,message:"Attachments exceed the 6 MiB total limit."};
+    return {ok:true,total};
+  }
+  function renderActionFiles(){
+    const target=$("#adminActionFileList");
+    if(!target)return;
+    target.innerHTML=adminActionFiles.length?adminActionFiles.map((file,index)=>`
+      <div class="admin-file-item">
+        <div><strong>${esc(file.name)}</strong><small>${esc(fileExt(file.name).toUpperCase())} · ${formatBytes(file.size)}</small></div>
+        <button type="button" data-remove-admin-file="${index}">Remove</button>
+      </div>`).join(""):'<span class="tiny">No evidence files attached.</span>';
+    all("[data-remove-admin-file]",target).forEach(button=>button.addEventListener("click",()=>{
+      adminActionFiles.splice(Number(button.dataset.removeAdminFile),1);
+      renderActionFiles();
+    }));
+  }
+  function finishAdminAction(value){
+    const resolve=adminActionResolver;
+    adminActionResolver=null;
+    const dialog=$("#adminActionDialog");
+    if(dialog?.open)dialog.close();
+    if(resolve)resolve(value);
+  }
+  function openAdminAction(config){
+    const dialog=$("#adminActionDialog");
+    if(!dialog)return Promise.resolve(null);
+    $("#adminActionTitle").textContent=config.title||"Administrative action";
+    $("#adminActionDescription").textContent=config.description||"";
+    $("#adminActionNote").value=config.note||"";
+    $("#adminActionMessage").textContent="";
+    $("#adminActionConfirm").textContent=config.confirmLabel||"Confirm action";
+
+    const levelField=$("#adminActionLevelField");
+    levelField.hidden=!config.levelField;
+    if(config.levelField)$("#adminActionLevel").value=String(config.currentLevel??0);
+
+    const skillField=$("#adminActionSkillField");
+    skillField.hidden=!config.skill;
+    $("#adminActionSkill").textContent=config.skill||"";
+
+    const overrideField=$("#adminActionOverrideField");
+    overrideField.hidden=!config.allowOverride;
+    $("#adminActionOverride").checked=false;
+
+    const warning=$("#adminActionWarning");
+    warning.hidden=!config.warning;
+    warning.textContent=config.warning||"";
+
+    const fileInput=$("#adminActionFiles");
+    fileInput.value="";
+    adminActionFiles=[];
+    renderActionFiles();
+
+    dialog.showModal();
+    setTimeout(()=>config.levelField?$("#adminActionLevel").focus():$("#adminActionNote").focus(),40);
+    return new Promise(resolve=>{adminActionResolver=resolve;});
+  }
+  async function uploadActionEvidence(files,purpose,userId){
+    if(!files?.length)return [];
+    const validation=validateEvidenceFiles(files);
+    if(!validation.ok)throw new Error(validation.message);
+    const form=new FormData();
+    form.set("purpose",purpose);
+    if(userId)form.set("subject_user_id",userId);
+    files.forEach(file=>form.append("files",file,file.name));
+    const result=await api("/api/admin/evidence",{method:"POST",body:form});
+    return (result.files||[]).map(file=>file.id);
+  }
+
   async function requestDecision(id,decision){
     const note=prompt(decision==="approve"?"Why should this contributor receive this reserved task? Include your competency judgment when the required skill is not yet verified.":"Why is this application not being approved?");
     if(!note)return;
