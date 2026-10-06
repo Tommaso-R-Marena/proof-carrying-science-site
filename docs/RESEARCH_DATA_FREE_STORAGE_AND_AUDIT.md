@@ -10,6 +10,8 @@ The dashboard now presents **5 recent approval decisions** and **10 recent admin
 
 The Arena section has a **Founder/Owner-only storage summary** (record counts and approximate JSON payload bytes). It intentionally does not enumerate individual players and does not expose identity-linked training examples in public endpoints.
 
+**Research export pagination:** The Proof Quest owner export now pages 200 rows at a time using a stable `(created_at,id)` cursor rather than silently returning only the oldest 500 examples. Raw cursor IDs remain within the privileged API and are excluded from the downloaded dataset. The existing Safety Forge export already uses bounded pages. These files are **synthetic training/evaluation examples**, not a proof of successful model training.
+
 ## Why not put personal information in a second database immediately?
 
 Cloudflare's **Workers Free** currently includes:
