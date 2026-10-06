@@ -379,12 +379,18 @@
     ]);
   }
 
-  function renderUsers(items){
+  function renderUsers(items,verifiedSkills=[]){
     const target=$("#adminUserList");
+    const skillsByUser=new Map();
+    for(const row of verifiedSkills){
+      if(!skillsByUser.has(row.user_id))skillsByUser.set(row.user_id,[]);
+      skillsByUser.get(row.user_id).push(row);
+    }
     target.innerHTML=items.map(u=>{
       const owner=Boolean(u.is_owner);
       const canGovern=Boolean(currentAdmin?.is_owner)&&!owner;
       const canSetLevel=!owner&&(Boolean(currentAdmin?.is_owner)||(u.role!=="admin"&&Number(u.level)<6));
+      const userSkills=skillsByUser.get(u.id)||[];
       const levelLabel=owner?"L7 · FOUNDER / OWNER":`L${esc(u.level)}`;
       const governanceLabel=owner?"OWNER":u.role==="admin"?"ADMIN":"CONTRIBUTOR";
       const statusClass=u.status==="active"?"volunteer":"planned";
@@ -393,7 +399,7 @@
         actions='<span class="tiny"><strong>Protected unique owner.</strong> Delegated admins cannot modify this account.</span>';
       }else{
         const buttons=[];
-        if(canSetLevel)buttons.push(`<button class="smallbutton" data-level-user="${esc(u.id)}" data-current-level="${esc(u.level)}">Set technical level</button>`);
+        if(canSetLevel)buttons.push(`<button class="smallbutton" data-level-user="${esc(u.id)}" data-current-level="${esc(u.level)}" data-user-name="${esc(u.display_name)}">Set technical level</button>`);
         if(!u.email_verified)buttons.push(`<button class="smallbutton" data-email-user="${esc(u.id)}">Verify email manually</button>`);
         if(canGovern&&u.status==="active"&&u.role!=="admin")buttons.push(`<button class="smallbutton" data-governance="grant-admin" data-user="${esc(u.id)}">Grant admin</button>`);
         if(canGovern&&u.role==="admin")buttons.push(`<button class="smallbutton" data-governance="revoke-admin" data-user="${esc(u.id)}">Revoke admin</button>`);
@@ -401,18 +407,30 @@
         if(canGovern&&u.status!=="active")buttons.push(`<button class="smallbutton" data-governance="reactivate" data-user="${esc(u.id)}">Reactivate</button>`);
         actions=buttons.join("");
       }
+      const skillControls=userSkills.length
+        ? `<div class="admin-user-skills"><span>Verified skills</span>${userSkills.map(s=>`
+            <span class="skill-control"><span>${esc(s.skill)}</span>${currentAdmin?.is_owner&&!owner?`<button type="button" data-revoke-skill="${esc(s.skill)}" data-user="${esc(u.id)}" aria-label="Revoke ${esc(s.skill)} skill">Revoke</button>`:""}</span>`).join("")}</div>`
+        : '<div class="admin-user-skills"><span>Verified skills</span><span class="tiny">none</span></div>';
       return `
       <article class="admin-user-row">
-        <div><strong>${esc(u.display_name)}</strong><span>${esc(u.email)}</span></div>
+        <div><strong>${esc(u.display_name)}</strong><span>${esc(u.email)}</span>${skillControls}</div>
         <div><span class="commons-chip level">${levelLabel}</span><span class="commons-chip">${governanceLabel}</span><span class="commons-chip ${statusClass}">${esc(u.status)}</span><span class="commons-chip ${u.email_verified?"volunteer":"planned"}">${u.email_verified?"email verified":"email unverified"}</span><span class="commons-chip">${esc(u.track)}</span></div>
         <div class="actions">${actions}</div>
       </article>`;
     }).join("");
-    all("[data-level-user]",target).forEach(b=>b.addEventListener("click",()=>setLevel(b.dataset.levelUser,Number(b.dataset.currentLevel))));
-    all("[data-email-user]",target).forEach(b=>b.addEventListener("click",()=>verifyEmail(b.dataset.emailUser)));
-    all("[data-governance]",target).forEach(b=>b.addEventListener("click",()=>{
-      const user=items.find(u=>u.id===b.dataset.user);
-      if(user)governanceChange(user,b.dataset.governance);
+    all("[data-level-user]",target).forEach(button=>button.addEventListener("click",()=>setLevel(
+      button.dataset.levelUser,
+      Number(button.dataset.currentLevel),
+      button.dataset.userName||"this contributor"
+    )));
+    all("[data-email-user]",target).forEach(button=>button.addEventListener("click",()=>verifyEmail(button.dataset.emailUser)));
+    all("[data-revoke-skill]",target).forEach(button=>button.addEventListener("click",()=>{
+      const user=items.find(u=>u.id===button.dataset.user);
+      if(user)revokeSkill(user,button.dataset.revokeSkill);
+    }));
+    all("[data-governance]",target).forEach(button=>button.addEventListener("click",()=>{
+      const user=items.find(u=>u.id===button.dataset.user);
+      if(user)governanceChange(user,button.dataset.governance);
     }));
   }
 
@@ -433,7 +451,7 @@
       renderCheckpoints(data.checkpoints||[]);
       renderSkills(data.skill_reviews||[]);
       renderSubmissions(data.submissions||[]);
-      renderUsers(data.users||[]);
+      renderUsers(data.users||[],data.verified_skills||[]);
       await reloadAuditFeeds();
     }catch(e){
       $("#adminDashboard").hidden=true;$("#adminUnavailable").hidden=false;
