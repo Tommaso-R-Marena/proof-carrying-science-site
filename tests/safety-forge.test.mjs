@@ -115,10 +115,11 @@ test("research replay recomputes independent state/action labels and returns no 
   const replay=evaluateResearchSession(session());
   assert.equal(replay.attacks.length,2);assert.equal(replay.repairs.length,2);
   assert.equal(replay.attacks[0].detected_unsafe,true);
-  assert.equal(replay.attacks[1].detected_unsafe,true);
+  assert.equal(replay.attacks[1].detected_unsafe,false); // Initial shield prevents this premature deployment
   assert.equal(replay.repairs[1].passed,true);
   assert.equal(replay.quality,"FINITE_SYNTHETIC_REPLAY_ONLY");
-  assert.ok(replay.attacks[1].events[1].state_after.deployed);
+  assert.equal(replay.attacks[1].events[1].blocked,true);
+  assert.equal(replay.attacks[1].events[1].state_after.deployed,false);
   assert.equal(replay.format,"pcs-safety-forge-replay-v1");
   assert.doesNotMatch(JSON.stringify(replay),/Lean_kernel_passed|PCS_ACCEPT/);
 });
