@@ -214,10 +214,10 @@
 
   function filterAndRenderTasks(){
     const target=$("#commonsTaskList");if(!target)return;
-    const level=Number($("#taskLevel")?.value??6),comp=$("#taskComp")?.value||"all",skill=$("#taskSkill")?.value||"all",hours=Number($("#taskHours")?.value||99);
-    const shown=snapshot.tasks.filter(t=>Number(t.min_level)<=level&&(comp==="all"||(comp==="paid"?paid(t):!paid(t)))&&(skill==="all"||(t.required_skill||"nontechnical")===skill)&&Number(t.expected_hours)<=hours);
-    target.innerHTML=shown.map(taskCard).join("")||'<div class="commons-empty"><strong>No tasks match those filters.</strong><span>Adjust level, time, compensation, or track.</span></div>';
-    const count=$("#taskCount");if(count)count.textContent=`${shown.length} task${shown.length===1?"":"s"} shown`;
+    const level=Number($("#taskLevel")?.value??6),comp=$("#taskComp")?.value||"all",skill=$("#taskSkill")?.value||"all",category=$("#taskCategory")?.value||"all",hours=Number($("#taskHours")?.value||99);
+    const shown=snapshot.tasks.filter(t=>Number(t.min_level)<=level&&(comp==="all"||(comp==="paid"?paid(t):!paid(t)))&&(skill==="all"||(t.required_skill||"nontechnical")===skill)&&(category==="all"||(t.category||"research")===category)&&Number(t.expected_hours)<=hours);
+    target.innerHTML=shown.map(taskCard).join("")||'<div class="commons-empty"><strong>No currently needed tasks match those filters.</strong><span>Adjust category, level, time, compensation, or track—or check ongoing Roles.</span></div>';
+    const count=$("#taskCount");if(count)count.textContent=`${shown.length} currently needed task${shown.length===1?"":"s"} shown`;
     $$("[data-start-task]",target).forEach(btn=>btn.addEventListener("click",()=>startTask(btn.dataset.startTask)));
     $$("[data-apply-task]",target).forEach(btn=>btn.addEventListener("click",()=>openApplication(btn.dataset.applyTask)));
   }
@@ -300,7 +300,7 @@
   }
 
   function initFilters(){
-    ["taskLevel","taskComp","taskSkill","taskHours"].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener("input",filterAndRenderTasks);el.addEventListener("change",filterAndRenderTasks);}});
+    ["taskLevel","taskComp","taskSkill","taskCategory","taskHours"].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener("input",filterAndRenderTasks);el.addEventListener("change",filterAndRenderTasks);}});
   }
 
   document.addEventListener("DOMContentLoaded",async()=>{
