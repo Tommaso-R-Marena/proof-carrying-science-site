@@ -16,6 +16,16 @@ CHECKS = [
     ("/", "text/html", "Proof-Carrying Science"),
     ("/guided-submission.html?demo=1", "text/html", "Try PCS"),
     ("/package-inspector.html", "text/html", "Proof-Carrying Science"),
+    ("/account.html", "text/html", "Your level is earned here"),
+    ("/tasks.html", "text/html", "Only work PCS actually needs should be here."),
+    ("/roles.html", "text/html", "Some useful work is a responsibility, not a ticket."),
+    ("/task-graph.html", "text/html", "What unlocks what—and exactly why?"),
+    ("/arena.html", "text/html", "Compete on a score only when the score is worth optimizing."),
+    ("/api/system/status", "application/json", '"request_sla":"1–2 business days"'),
+    ("/api/tasks", "application/json", '"tasks"'),
+    ("/api/roles", "application/json", '"roles"'),
+    ("/api/task-graph", "application/json", '"edges"'),
+    ("/api/challenges", "application/json", '"challenges"'),
     ("/status.json", "application/json", '"contact"'),
     ("/sitemap.xml", "application/xml", "<urlset"),
     ("/robots.txt", "text/plain", "User-agent"),
@@ -60,6 +70,39 @@ for path, expected_type, expected_text in CHECKS:
     except Exception as exc:
         errors.append(f"{path}: request failed: {type(exc).__name__}: {exc}")
 
+# Public work endpoints have stronger semantic checks than simple marker matching.
+try:
+    req = urllib.request.Request(
+        BASE + "/api/tasks",
+        headers={"User-Agent": "PCS-Free-Health-Check/1.0"},
+        method="GET",
+    )
+    with urllib.request.urlopen(req, timeout=TIMEOUT, context=context) as response:
+        task_doc = json.loads(response.read().decode("utf-8"))
+    tasks = task_doc.get("tasks", [])
+    leaked = [row.get("id") for row in tasks if str(row.get("id", "")).startswith(("AS-", "SCI-", "CAL-"))]
+    if leaked:
+        errors.append("/api/tasks: hidden legacy/generic task leaked publicly: " + ", ".join(leaked))
+    if any(row.get("publication_state") != "published" or row.get("need_status") != "needed" for row in tasks):
+        errors.append("/api/tasks: public task missing published+needed gating")
+except Exception as exc:
+    errors.append(f"/api/tasks: semantic check failed: {type(exc).__name__}: {exc}")
+
+try:
+    req = urllib.request.Request(
+        BASE + "/api/challenges",
+        headers={"User-Agent": "PCS-Free-Health-Check/1.0"},
+        method="GET",
+    )
+    with urllib.request.urlopen(req, timeout=TIMEOUT, context=context) as response:
+        arena_doc = json.loads(response.read().decode("utf-8"))
+    for challenge in arena_doc.get("challenges", []):
+        for entry in challenge.get("leaderboard", []):
+            if "status" in entry:
+                errors.append("/api/challenges: public leaderboard leaked internal entry status")
+except Exception as exc:
+    errors.append(f"/api/challenges: semantic check failed: {type(exc).__name__}: {exc}")
+
 # Parse the machine-readable status separately so a syntactically broken status
 # page cannot pass merely because it contains the expected marker.
 try:
@@ -81,4 +124,4 @@ if errors:
         print(f"- {error}")
     sys.exit(1)
 
-print(f"PCS LIVE HEALTH: PASS ({len(CHECKS)} public endpoints + security headers + status JSON)")
+print(f"PCS LIVE HEALTH: PASS ({len(CHECKS)} public/API endpoints + security headers + status JSON)")

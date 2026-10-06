@@ -1,0 +1,47 @@
+name: PCS production promotion verification
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'contributions/pcs-promotions/**'
+permissions:
+  contents: read
+jobs:
+  promotion:
+    # Never consume GitHub-hosted minutes; Cloudflare Builds is primary CI.
+    # Enable only after a private Linux x64 runner labeled pcs-ci is registered.
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    name: PCS Promotion Verification
+    runs-on: [self-hosted, linux, x64, pcs-ci]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check archive-to-production exact bytes and file scope
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python scripts/check_promotion_bundle.py
+      - name: Check PCS site source/links
+        run: python scripts/check_site.py
+      - name: Run adversarial site/security campaign
+        run: python scripts/security_campaign.py
+      - name: Check Worker and browser JavaScript syntax
+        run: |
+          node --check src/worker.js
+          node --check src/production-promotion.js
+          node --check public/admin.js
+          node --check public/account.js
+      - name: Run submission and production-promotion integration tests
+        run: |
+          npm run test:submissions
+          npm run test:promotions
+      - name: Interpret result scope
+        run: echo 'Passing site checks does not certify a deployed site or real-world scientific correctness.'

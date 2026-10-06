@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assurance Projects · PCS AI Safety Commons</title><meta name="description" content="See how individual contributor tasks connect to larger AI-safety assurance cases.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/projects.html"><meta name="robots" content="index,follow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"></head>
+<body class="commons-page"><div class="topbar commons-topbar"><div class="shell"><span>Assurance projects · task → obligation → claim</span><a href="tasks.html">Browse tasks</a></div></div>
+<div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="tasks.html">Take a task</a></div></nav>
+<main>
+<section class="pagehead commons-pagehead"><div class="kicker">Impact graph</div><h1>See exactly where a contribution fits.</h1><p>PCS should make it possible to trace a two-hour contribution upward into the obligation it helps discharge and the larger claim that obligation supports. A completed task is not itself a proof: only verified evidence can change an assurance state.</p></section>
+
+<section class="project-board" id="ai-safety-v0-1">
+<div class="project-board-head"><div><span class="commons-chip level">FLAGSHIP PILOT</span><h2>AI Safety v0.1 · bounded autonomous-agent authorization</h2><p>Target claim: within a declared evaluation execution, the committed agent trace respects the declared authorization policy and risk-accounting rules.</p></div><div class="project-summary"><strong>PILOT</strong><span>Not a claim of global AI safety</span></div></div>
+<div class="assurance-case-graph">
+  <article class="case-root"><small>ROOT</small><h3>Agent respected the declared authorization policy in evaluation E.</h3><p>Conclusion is scoped to the committed evaluation world and explicit policy semantics.</p></article>
+  <div class="case-branches">
+    <article class="case-node verified"><span>FORMAL / CHECKER</span><h4>Authorization tokens cannot be reused.</h4><p>Target: state-transition invariant with executable and/or Lean semantics.</p><a href="tasks.html">Relevant tasks: AS-005, AS-009 →</a></article>
+    <article class="case-node replay"><span>REPLAY</span><h4>No declared forbidden action occurs in the committed trace.</h4><p>Target: deterministic trace parsing and independent replay.</p><a href="tasks.html">Relevant tasks: AS-001, AS-004 →</a></article>
+    <article class="case-node review"><span>REVIEW</span><h4>The evaluator and policy binding are complete.</h4><p>Target: identify substitution gaps, missing commitments, and underspecified semantics.</p><a href="tasks.html">Relevant tasks: AS-006, AS-008 →</a></article>
+    <article class="case-node open"><span>OPEN</span><h4>The result generalizes beyond the evaluated execution.</h4><p>This is not silently inferred from a passing bounded trace. It remains empirical or open until separate evidence exists.</p></article>
+  </div>
+</div>
+<div class="project-legend"><span><i class="verified"></i> formally/checker-backed</span><span><i class="replay"></i> reproducible</span><span><i class="review"></i> independent review</span><span><i class="open"></i> explicitly open</span></div>
+</section>
+
+<section class="project-board secondary-project" id="claim-invalidation-v1">
+<div class="project-board-head"><div><span class="commons-chip volunteer">PUBLIC RESEARCH · LIVE</span><h2>Claim Invalidation v1 · when must a claim reopen?</h2><p>A real open PCS core obligation decomposed from L0 fixtures through L5 Lean formalization. The program tests the difference between conservative downstream reopening and the stronger claim that an unreachable node is unaffected.</p></div><div class="project-summary"><strong>6 STAGES</strong><span>L4/L5 hard-gated by accepted prerequisites</span></div></div>
+<div class="grid3">
+<article class="card"><div class="num">L0–L1</div><h3>Fixture + counterexample</h3><p>Expand the public corpus and expose the hidden-dependency boundary with minimal examples.</p></article>
+<article class="card"><div class="num">L2–L4</div><h3>Adversarial semantics</h3><p>Stress the executable invalidation logic, specify dependency completeness, and independently review both.</p></article>
+<article class="card"><div class="num">L5</div><h3>Lean theorem</h3><p>Formalize reachability/reopening soundness while keeping non-impact conditional on explicit completeness.</p></article>
+</div>
+<div class="actions"><a class="button primary" href="claim-invalidation-v1.html">Open public program</a><a class="button secondary" href="tasks.html?task=INV-001">Start the L0 task</a></div>
+</section>
+
+<section class="section" id="distributed-assurance">
+<div class="section-heading-row"><div><div class="kicker">Distributed assurance</div><h2>Contributors propose work. Verification controls authority.</h2></div><p>A volunteer, specialist, or AI system can propose a decomposition, evidence item, test, proof, or attack. The proposal does not become authoritative because of who submitted it.</p></div>
+<div class="workflow commons-workflow">
+<div class="workflow-step"><div class="step">1</div><div><strong>Root claim is typed</strong><span>Define the exact bounded proposition and the committed computational world it refers to.</span></div></div>
+<div class="workflow-step"><div class="step">2</div><div><strong>Dependencies become obligations</strong><span>Decompose into formal, computational, empirical, reviewed, and OPEN nodes.</span></div></div>
+<div class="workflow-step"><div class="step">3</div><div><strong>Human-addressable leaves become tasks</strong><span>Each task gets scope, time, acceptance criteria, funding status, and provenance.</span></div></div>
+<div class="workflow-step"><div class="step">4</div><div><strong>Submissions are checked</strong><span>Machine verification, independent reproduction, formal proof, or qualified review determines whether a leaf closes.</span></div></div>
+<div class="workflow-step"><div class="step">5</div><div><strong>Root status is recomputed</strong><span>Only accepted leaves and semantics-preserving composition can support the root. Missing or failed leaves remain visible.</span></div></div>
+</div>
+</section>
+
+<section class="project-board secondary-project" id="cross-domain-pilot">
+<div class="project-board-head"><div><span class="commons-chip planned">DOMAIN-GENERAL ROADMAP</span><h2>Cross-domain pilot · computational biology</h2><p>A future adapter should demonstrate the same discipline outside AI safety: a claim about committed sequence/score artifacts, with explicit separation between computational truth and external biological truth.</p></div><div class="project-summary"><strong>PLANNED</strong><span>Adapter work follows the same kernel</span></div></div>
+<div class="grid3">
+<article class="card"><div class="num">COMPUTATIONAL</div><h3>Committed data world</h3><p>Sequence, residue indices, scores, thresholds, and exact artifacts are cryptographically bound.</p></article>
+<article class="card"><div class="num">DOMAIN</div><h3>Adapter semantics</h3><p>Local domain obligations explain what accepted checks imply about those committed artifacts.</p></article>
+<article class="card"><div class="num">EXTERNAL WORLD</div><h3>Separate correspondence</h3><p>Whether those bytes faithfully represent a real biological object remains an explicit domain/data premise.</p></article>
+</div>
+</section>
+
+<section class="section-tight"><div class="callout"><div><h3>Want your work to connect to a real assurance case?</h3><p>Start with the task marketplace. Every listed task includes an impact category and project.</p></div><div class="actions"><a class="button dark" href="tasks.html">Browse tasks</a><a class="button secondary" href="research.html">Read the research model</a></div></div></section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Auditable paths from bounded work to bounded assurance.</p></div><div class="footercol"><strong>Commons</strong><a href="tasks.html">Tasks</a><a href="contributors.html">Contributors</a><a href="fund.html">Fund</a></div><div class="footercol"><strong>Proof</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="governance.html">Governance</a></div></div></footer>
+</div><script src="site.js"></script><script src="commons.js"></script></body></html>

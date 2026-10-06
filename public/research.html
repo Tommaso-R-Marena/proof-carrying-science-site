@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research Model · PCS AI Safety Commons</title><meta name="description" content="The research architecture behind distributed proof-carrying assurance, including claim graphs, untrusted contributors, bounded AI-safety claims, and explicit external-world assumptions.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/research.html"><meta name="robots" content="index,follow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"></head>
+<body class="commons-page"><div class="topbar commons-topbar"><div class="shell"><span>Research model · bounded claims · explicit trust boundaries</span><a href="trust.html">Technical Trust Center</a></div></div>
+<div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="architecture.html">Architecture</a></div></nav>
+<main>
+<section class="pagehead commons-pagehead"><div class="kicker">Research architecture</div><h1>Distributed contributors should not require distributed trust.</h1><p>The research goal is to make a large assurance problem decomposable without making the final conclusion depend on the honesty, seniority, or popularity of the people—or AI systems—who propose its parts.</p></section>
+
+<section class="research-thesis">
+<div><span>RESEARCH THESIS</span><h2>Domain-specific meaning should plug into a domain-independent assurance kernel.</h2><p>PCS separates a typed domain claim, a committed computational world, a proof-obligation graph, local validators, and the rules that allow valid leaves to imply their parents. This is the architecture needed for both cross-domain science and distributed AI-safety work.</p></div>
+<pre><code>typed domain claim
+      ↓
+Claim IR / obligation graph
+      ↓
+formal proof | replay | empirical evidence | review | OPEN
+      ↓
+verified local obligations
+      ↓
+scoped root assurance
+</code></pre>
+</section>
+
+<section class="section">
+<div class="section-heading-row"><div><div class="kicker">AI safety first</div><h2>Start with claims we can honestly bound.</h2></div><p>PCS should not claim to prove that an arbitrary model is globally safe. The first AI-safety program targets properties that can be expressed over exact traces, policies, artifacts, evaluators, and state transitions.</p></div>
+<div class="grid3">
+<article class="card"><div class="num">TRACE</div><h3>Bounded behavior</h3><p>No declared forbidden action occurs in a committed evaluation trace; cumulative risk remains within an explicit budget.</p></article>
+<article class="card"><div class="num">AUTHORITY</div><h3>Policy enforcement</h3><p>Every tool call has appropriate authorization; a consumed authorization cannot be silently reused.</p></article>
+<article class="card"><div class="num">EVALUATION</div><h3>Evidence integrity</h3><p>Exact model, evaluator, dataset, policy, configuration, environment, and result commitments remain bound together.</p></article>
+</div>
+</section>
+
+<section class="section">
+<div class="section-heading-row"><div><div class="kicker">Five research pillars</div><h2>What the formal program is trying to establish.</h2></div></div>
+<div class="research-pillars">
+<article><b>01</b><div><h3>Domain adapter soundness</h3><p>A domain can inherit PCS assurance when it supplies local semantics-preservation and validator-soundness obligations rather than assuming the desired conclusion.</p></div></article>
+<article><b>02</b><div><h3>Obligation-graph soundness</h3><p>Accepted finite graphs reject cycles, missing dependencies, unsupported leaves, and unresolved obligations; sound local rules compose toward the root.</p></div></article>
+<article><b>03</b><div><h3>Untrusted proposer non-authority</h3><p>Human or AI proposal strategies may be arbitrary. Proposal authority alone cannot manufacture assurance if deterministic checks remain authoritative.</p></div></article>
+<article><b>04</b><div><h3>Executable end-to-end refinement</h3><p>The actual authority binary and signed package path should refine the same semantics used in the theorem—not a disconnected toy model.</p></div></article>
+<article><b>05</b><div><h3>External-world transfer is explicit</h3><p>Proofs over committed bytes do not automatically become claims about a deployed system, a patient, a protein, or the physical world. Data correspondence is a separate premise.</p></div></article>
+</div>
+<div class="commons-policy-note"><strong>Status note:</strong><span>The public site describes this research program and existing PCS v0.6 trust architecture. New Aristotle-generated generic-domain / AI-safety formal results should be integrated into the core repository and independently rebuilt before this page is upgraded to claim those specific theorems as released PCS results.</span></div>
+</section>
+
+<section class="section">
+<div class="section-heading-row"><div><div class="kicker">Crowdsourced safety theorem target</div><h2>Benefit from the crowd without trusting the crowd.</h2></div></div>
+<div class="research-equation"><span>arbitrary contributors</span><b>+</b><span>untrusted submissions</span><b>+</b><span>verified obligation boundary</span><b>⇒</b><strong>root assurance only when valid</strong></div>
+<p class="section-intro">The key social architecture follows from the same research goal: contributors can propose decompositions, evidence, repairs, attacks, or proofs, but an unverified contribution cannot close a leaf merely because the submitter is respected or because many people agree.</p>
+</section>
+
+<section class="commons-two-col">
+<div class="panel"><div class="kicker">What PCS can establish</div><h2>Scoped computational assurance.</h2><ul class="commons-checklist"><li>Exact committed artifacts and claims were bound together.</li><li>Supported checks were replayed under their declared semantics.</li><li>Accepted graph obligations satisfied their local rules.</li><li>Formal results hold under their visible hypotheses.</li></ul></div>
+<div class="panel"><div class="kicker">What PCS cannot infer for free</div><h2>External truth and human intent.</h2><ul class="commons-checklist"><li>That committed bytes faithfully represent an external deployment.</li><li>That a natural-language statement was what the human “really meant.”</li><li>That a bounded evaluation proves global AI safety.</li><li>That empirical adequacy follows from formal consistency.</li></ul></div>
+</section>
+
+<section class="section">
+<div class="section-heading-row"><div><div class="kicker">Cross-domain ambition</div><h2>AI safety is the wedge. The kernel should remain scientific infrastructure.</h2></div></div>
+<div class="grid3">
+<article class="card"><div class="num">AI SAFETY</div><h3>Agents, policies, evaluations</h3><p>Trace invariants, authorization, evaluator binding, resource budgets, reproducibility, and red-team evidence.</p></article>
+<article class="card"><div class="num">BIOLOGY</div><h3>Computational biology</h3><p>Claims about exact sequences, structures, scores, simulations, and analysis artifacts—with external biological correspondence explicit.</p></article>
+<article class="card"><div class="num">SCIENCE</div><h3>Other computational disciplines</h3><p>New adapters can contribute local semantics without modifying the core idea that proofs, replay, evidence, and trust boundaries stay separate.</p></article>
+</div>
+</section>
+
+<section class="commons-callout"><div><span class="commons-kicker-dark">RESEARCH + PRODUCT</span><h2>The contributor platform is not separate from PCS. It is a user interface for the obligation graph.</h2><p>The long-term system turns formally meaningful open obligations into human-scale research work, then routes accepted outputs back into an auditable assurance case.</p></div><div class="actions"><a class="button primary button-lg" href="projects.html">See impact graph</a><a class="button ghost button-lg" href="trust.html">Trust Center</a></div></section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Formal assurance, reproducible computation, and distributed human contribution.</p></div><div class="footercol"><strong>Research</strong><a href="architecture.html">Architecture</a><a href="trust.html">Trust Center</a><a href="validation.html">Validation</a></div><div class="footercol"><strong>Commons</strong><a href="projects.html">Projects</a><a href="tasks.html">Tasks</a><a href="governance.html">Governance</a></div></div></footer>
+</div><script src="site.js"></script><script src="commons.js"></script></body></html>

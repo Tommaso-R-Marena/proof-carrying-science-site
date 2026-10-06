@@ -1,6 +1,6 @@
 {
   "status_format": "pcs-public-status-v1",
-  "updated": "2026-10-03",
+  "updated": "2026-10-05",
   "released": {
     "specification": "pcs-0.5",
     "checker": "pcs-python-kernel/0.5.0",
@@ -27,7 +27,8 @@
       "reaction_balance",
       "unit_compatible",
       "pkpd_contract",
-      "pkpd_reference_match"
+      "pkpd_reference_match",
+      "pkpd_peak_concentration_threshold"
     ],
     "latest_hosted_gate": {
       "provider": "CircleCI",
@@ -311,7 +312,8 @@
         "reaction_balance",
         "unit_compatible",
         "pkpd_contract",
-        "pkpd_reference_match"
+        "pkpd_reference_match",
+        "pkpd_peak_concentration_threshold"
       ],
       "unsupported_claims_fail_closed": true,
       "claim_translation_model": "intent -> supported template -> typed fields -> exact predicate/check -> generated explanation",
@@ -500,7 +502,7 @@
     "python_suite_tests_passed": 504,
     "sha256_fips1804_equivalence_proved": true,
     "canonical_stored_zip_lean_decoded": true,
-    "all_five_builtin_replay_semantics_proved": true,
+    "all_six_builtin_replay_semantics_proved": true,
     "pkpd_real_model_semantics_proved": true,
     "frontier_only_hypothesis": "NoForgery PCS.V2.Ed25519.verify T.pk signed"
   },
@@ -549,5 +551,88 @@
     },
     "full_attest_verify_roundtrip_executed": false,
     "hosted_runner_status": "RUNNER_UNAVAILABLE"
+  },
+  "commons": {
+    "release": "authenticated-commons-v1",
+    "account_backend": "DEPLOYED",
+    "storage": {
+      "provider": "Cloudflare D1",
+      "database": "pcs-commons",
+      "jurisdiction": "us",
+      "scientific_artifact_data_plane": false
+    },
+    "authority": {
+      "new_accounts_start_level": 0,
+      "user_editable_level": false,
+      "l0_l1_open_nonexclusive": true,
+      "l2_l3_require_verified_level_skill_and_founder_approval": true,
+      "l4_l5_high_trust_founder_assigned": true,
+      "technical_level_ceiling": 6,
+      "unique_owner_display_level": 7,
+      "owner_stored_separately_from_technical_level": true,
+      "owner_unique_database_constraint": true,
+      "only_owner_can_appoint_or_demote_l6": true,
+      "only_owner_can_grant_or_revoke_admin": true,
+      "only_owner_can_suspend_or_restore_accounts": true,
+      "delegated_admins_cannot_modify_owner": true,
+      "authority_revocation_invalidates_sessions": true,
+      "owner_self_delete_protected": true,
+      "pending_applications_reserve_tasks": false,
+      "first_reserved_work_checkpoint_hours": 24,
+      "stale_reservations_auto_release": true
+    },
+    "ai_assistance": {
+      "allowed": true,
+      "disclosure_required": true,
+      "independent_verification_required": true,
+      "scope_and_remaining_assumptions_explanation_required": true
+    },
+    "competency_evaluations": {
+      "variable_per_attempt": true,
+      "parameterized_scenarios": true,
+      "answer_order_shuffled": true,
+      "objective_auto_scoring": true,
+      "manual_rationale_required": true,
+      "auto_score_grants_authority": false,
+      "final_approval_manual": true,
+      "manual_application_alternative": true,
+      "attempt_limit_per_skill_per_24h": 3,
+      "public_fixed_calibration_tasks_paused": true,
+      "skills": [
+        "python",
+        "lean",
+        "security",
+        "ml",
+        "research",
+        "biology",
+        "review"
+      ]
+    },
+    "review_sla": {
+      "target_business_days": 1,
+      "hard_target_business_days": 2,
+      "scheduled_founder_reminders": true
+    },
+    "email": {
+      "durable_in_app_notifications": true,
+      "transactional_adapter": "Resend",
+      "automatic_external_delivery": "PENDING_SENDER_CREDENTIALS",
+      "admin_destination": "marenatommaso@gmail.com"
+    },
+    "administration": {
+      "separate_admin_login": true,
+      "separate_privileged_session": true,
+      "privileged_session_hours": 8,
+      "cookie_http_only": true,
+      "cookie_same_site": "Strict",
+      "contributor_session_does_not_authorize_admin_api": true,
+      "centralized_admin_dashboard": true,
+      "approval_history": true,
+      "admin_action_history": true,
+      "immutable_audit_archive": true,
+      "audit_hash_chain": "SHA-256",
+      "database_update_delete_triggers": true,
+      "infrastructure_owner_can_destroy_database": true
+    }
   }
 }

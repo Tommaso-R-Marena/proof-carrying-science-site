@@ -1,11 +1,29 @@
 # Proof-Carrying Science
 
-Proof-Carrying Science (PCS) is an assurance system for scientific computation. It packages an exact typed scientific claim with exact artifacts, assumptions, replay evidence, cryptographic bindings, machine-checked assurance, and reviewer-owned acceptance policy.
+Proof-Carrying Science (PCS) is an AI-safety-first, domain-general assurance system for consequential computation. It packages an exact typed claim with exact artifacts, assumptions, replay evidence, cryptographic bindings, machine-checked assurance, and reviewer-owned acceptance policy. The PCS AI Safety Commons adds a public-good contributor model for bounded, verifiable safety work.
 
 Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
+## AI Safety Commons
+- Commons overview: /commons.html
+- Contributor onboarding: /contribute.html
+- Curated currently-needed tasks: /tasks.html
+- Ongoing role applications: /roles.html
+- Task dependency graph: /task-graph.html
+- PCS Arena scientific challenges: /arena.html
+- Assurance projects / impact graph: /projects.html
+- Contributor progression: /contributors.html
+- Public-good funding model: /fund.html
+- Governance and Contributor Bill of Rights: /governance.html
+- Organization access model: /organizations.html
+- Distributed assurance research model: /research.html
+
 ## Primary pages
 - Product overview: /
+- Safety Forge (dynamic, bounded synthetic AI-safety counterexample search and shield repair; not Lean proof verification): /arena-safety-forge.html
+- Proof Quest (educational ordering game; no Lean proof authority; optional adult-only research donation): /arena-proof-quest.html
+- Research preview (bounded local browser calculations; not Lean proofs): /research-preview.html
+- Independent researcher pilots (falsification, local draft and opt-in contact): /researcher-pilots.html
 - Guided Submission: /guided-submission.html
 - PCS Package Inspector: /package-inspector.html
 - Result anatomy: /result-anatomy.html
@@ -17,3 +35,11 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
 ## Important interpretation
 A PCS-valid package is scoped to an exact typed claim, exact evidence, and explicit assumptions. PCS does not claim that package validity establishes arbitrary biological, clinical, empirical, or regulatory truth. Production v0.6 validity is Lean-authoritative; browser tools are educational, discovery, or inspection surfaces unless explicitly stated otherwise.
+
+
+## Commons interpretation
+The contributor system now uses authenticated server-side accounts for contributor authority and task coordination. The public task marketplace is default-deny: only work explicitly marked published + needed is exposed. Recurring responsibilities are separate role applications, and the PCS Arena is a separate verifier-gated challenge layer rather than a global points system. Every account starts at L0; users cannot self-select higher levels. L0/L1 work is open and non-exclusive. For higher-trust work, contributors have two routes: (1) take a fresh parameterized competency evaluation with shuffled choices and objective auto-scoring, or (2) submit the task/skill application directly for manual competency review. A passing auto-score is evidence only; final skill and task authority is always a manual PCS decision. Pending applications never reserve work. PCS targets manual review within 1 business day and no later than 2 business days. L4/L5 work remains high-trust and founder-assigned. Approved reserved work has a first progress checkpoint within 24 hours and stale reservations release automatically.
+
+The former fixed public CAL-* calibration tasks are paused. The variable evaluation system covers Python, Lean, security, ML, research, biology, and review skills, requires a manual reasoning note, limits repeated attempts, and never automatically confers contributor level or review authority.
+
+AI assistance is permitted, but higher-trust submissions require disclosure, independent verification, and an explanation of what the work establishes, does not establish, and still assumes. Proposed bounties are not payable unless a task is explicitly marked funded and PCS confirms written terms. Contributor submissions never become assurance merely because they were submitted: the commons principle is "crowdsource the work, never the truth."

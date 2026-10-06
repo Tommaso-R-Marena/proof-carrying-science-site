@@ -1,0 +1,33 @@
+/* Shared PCS Arena onboarding and explicit, readable single-switch adult research consent. */
+.quest-tutorial,.forge-tutorial{border:1px solid #cad9eb;background:linear-gradient(120deg,#ebf5ff,#f7f0ff);border-radius:17px;padding:21px 24px;margin:4px 0 23px;color:#23415f}
+.quest-tutorial h2,.forge-tutorial h2{margin:12px 0 6px;font-size:1.48rem;line-height:1.3}
+.quest-tutorial p,.forge-tutorial p{max-width:800px;color:#51667e;line-height:1.65;font-size:.96rem}
+.quest-tour-head,.forge-tour-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.85rem;color:#315e92;font-weight:750}
+.quest-tutorial .quest-actions,.forge-tutorial .forge-actions-bottom{margin-top:17px}
+.quest-progress-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#506987;font-size:.83rem;margin-top:13px}
+#questProgress{display:block;width:100%;height:12px;accent-color:#258164;margin:8px 0}
+.quest-live{font-size:.87rem!important;margin:8px 0!important;color:#486382!important}
+.quest-optin,.forge-optin{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.arena-switch{display:inline-flex;align-items:center;gap:12px;cursor:pointer;position:relative;min-height:48px;max-width:640px}
+.arena-switch>input{position:absolute;left:0;top:50%;transform:translateY(-50%);height:28px;width:45px;opacity:0;cursor:pointer}
+.arena-switch-track{display:block;width:45px;height:27px;background:#a7bacb;border-radius:30px;position:relative;flex:none;transition:background .18s}
+.arena-switch-track:after{content:"";position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 4px #18395744;transition:transform .18s}
+.arena-switch>input:checked+.arena-switch-track{background:#198268}
+.arena-switch>input:checked+.arena-switch-track:after{transform:translateX(18px)}
+.arena-switch>input:focus-visible+.arena-switch-track{outline:3px solid #2576d3;outline-offset:3px}
+.arena-switch strong{display:block;color:#214760;font-size:.93rem;line-height:1.35}
+.arena-switch small{display:block;color:#4e637d;font-size:.82rem;margin-top:4px;line-height:1.5}
+.arena-fineprint{font-size:.83rem!important;color:#54677d!important;line-height:1.55!important;margin:9px 0 12px!important;max-width:980px}
+.arena-fineprint a{text-decoration:underline}
+.quest-research>details{margin-top:13px}
+.quest-research>details summary{font-size:.88rem}
+.forge-optin{flex:1;min-width:min(320px,100%)}.forge-optin .arena-switch{flex:1}
+.forge-bottom{flex-wrap:wrap}
+.forge-optin-footer{width:100%;font-size:.83rem}
+.forge-opt-status{font-size:.83rem;line-height:1.5;color:#335d7b}
+.forge-victory-next[hidden],.forge-go-repair[hidden]{display:none}
+@media(max-width:600px){.quest-tutorial,.forge-tutorial{padding:16px}.quest-optin,.forge-optin{align-items:stretch;flex-direction:column}.quest-optin>.button,.forge-optin>.button{width:100%}.quest-tour-head,.forge-tour-head{font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){.arena-switch-track,.arena-switch-track:after{transition:none}}
+
+/* Author-level hidden styles override shared button display rules. */
+#questNext[hidden],#questTryAgain[hidden],#questTutorial[hidden],#forgeTutorial[hidden],#forgeGoRepair[hidden],#forgeVictoryNext[hidden]{display:none!important}

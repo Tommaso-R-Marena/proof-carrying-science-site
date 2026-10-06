@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research Preview · Proof-Carrying Science</title>
+<meta name="description" content="Run honest, bounded example checks in your browser, then inspect what PCS proves, reproduces and still trusts. No account or upload required.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/research-preview.html">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="research-preview.css">
+</head>
+<body class="preview-page">
+<div class="topbar"><div class="shell"><span>PCS research preview · No account required · Local-only example calculations</span><a href="trust.html">Trust boundaries</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks"><a href="research-preview.html">Research preview</a><a href="guided-submission.html">Guided submission</a><a href="package-inspector.html">Inspect packages</a><a href="trust.html">Trust Center</a><a class="button dark" href="contact.html">Contact</a></div>
+</nav>
+<main>
+<section class="preview-intro">
+  <div class="kicker">A practical, bounded research preview</div>
+  <h1>See what gets checked—and what remains unproved.</h1>
+  <p class="preview-lede">Try an AI-policy trace or synthetic scientific model in your own browser. Change the input to make a check fail. Then explore the separate PCS evidence and proof-review workflows.</p>
+  <div class="preview-meta">
+    <span>✓ Runs without an account</span><span>✓ No file upload or server execution</span><span>✓ Failure cases included</span>
+  </div>
+  <p class="preview-boundary"><strong>Scope:</strong> These two live exercises are <em>ordinary JavaScript calculations</em>, not Lean proofs, signed PCS certificates, or claims of deployed AI safety. They are an on-ramp to understanding the genuine, separately verified PCS workflow. The newest Aristotle golden-archive theorems are awaiting integration and independent build reproduction.</p>
+</section>
+<section class="preview-workbench" aria-labelledby="previewWorkbenchTitle">
+  <div class="preview-workbench-head">
+    <div><span class="kicker">Live, inspectable examples</span><h2 id="previewWorkbenchTitle">Change an input. Run the check. Inspect the boundary.</h2></div>
+    <label for="previewMode">Choose an example
+      <select id="previewMode">
+        <option value="trace">AI-safety bounded trace</option>
+        <option value="model">Synthetic PK/PD model</option>
+      </select>
+    </label>
+  </div>
+  <p id="previewTraceExplain">For the trace, <strong>action 7 is forbidden</strong> and cumulative declared risk must never exceed 4. This checks the supplied record, not whether a deployed agent produced that record faithfully.</p>
+  <p id="previewModelExplain" hidden>For the synthetic scientific example, recompute <code>C(t)=(dose/volume) × exp(−k×t)</code> and compare the supplied values against a declared absolute tolerance. This is not empirical validation.</p>
+  <label for="previewInput" class="preview-input-label">Editable JSON input</label>
+  <textarea id="previewInput" rows="13" spellcheck="false" autocomplete="off" aria-describedby="previewInputHelp"></textarea>
+  <p id="previewInputHelp" class="preview-help">Input is interpreted as data only; no arbitrary code is executed. Up to 64 events or observations. Validation rejects malformed and unsupported fields.</p>
+  <div class="preview-buttons">
+    <button type="button" id="previewValid" class="button secondary">Load passing example</button>
+    <button type="button" id="previewInvalid" class="button secondary">Load failing example</button>
+    <button type="button" id="previewRun" class="button primary">Run local check →</button>
+  </div>
+  <p id="previewError" role="alert" hidden></p>
+  <div class="preview-results" id="previewResult" hidden aria-live="polite">
+    <span class="preview-verdict" id="previewVerdict"></span>
+    <h3 id="previewSummary"></h3>
+    <div class="preview-result-columns">
+      <div><strong>What was calculated</strong><p id="previewChecked"></p></div>
+      <div><strong>What remains open or trusted</strong><p id="previewBoundary"></p></div>
+    </div>
+    <details><summary>Individual steps and numeric comparisons</summary><ol id="previewRows"></ol></details>
+    <div class="preview-export"><button type="button" class="button secondary" id="previewDownload" disabled>Save unsigned local assessment (JSON)</button><small>This file is not a signed receipt or verification certificate.</small></div>
+  </div>
+</section>
+<section class="preview-next" aria-labelledby="previewNextTitle">
+  <span class="kicker">Move from the exercises to PCS proper</span>
+  <h2 id="previewNextTitle">Three ways to explore the actual assurance workflow</h2>
+  <div class="preview-next-grid">
+    <article>
+      <span class="preview-step">01 / PREPARE</span>
+      <h3>Map your scientific question</h3>
+      <p>Use the real local-first project mapper to inspect files and prepare typed claims. This creates a draft—not a PASS.</p>
+      <a class="button secondary" href="guided-submission.html?demo=1">Try the guided PCS example →</a>
+    </article>
+    <article>
+      <span class="preview-step">02 / INSPECT</span>
+      <h3>Inspect a real PCS package</h3>
+      <p>Inspect local package members, cryptographic bindings, and verification limits. Inspection alone cannot establish the Lean authority's verdict.</p>
+      <a class="button secondary" href="package-inspector.html">Open package inspector →</a>
+    </article>
+    <article>
+      <span class="preview-step">03 / REVIEW</span>
+      <h3>See the layers of a result</h3>
+      <p>Understand what was formally established, reproduced computationally, trusted as an assumption, or left unresolved.</p>
+      <a class="button secondary" href="result-anatomy.html">View result anatomy →</a>
+    </article>
+  </div>
+</section>
+<section class="preview-limits" aria-labelledby="previewLimitsTitle">
+  <div class="kicker">Publication and operational status</div>
+  <h2 id="previewLimitsTitle">An open preview of the interface—not an open-source release of the private research</h2>
+  <div class="preview-status-grid">
+    <div><strong>Available now</strong><p>Public browser exercises, local file discovery, package inspection, research explanations, and contributor information.</p></div>
+    <div><strong>Not available through this page</strong><p>Server-side execution of submitted code, Lean kernel runs, confidential research source, production promotion without Owner approval, or a certificate of AI alignment.</p></div>
+    <div><strong>Validation still needed</strong><p>Independent host reproduction of the latest Aristotle formalization, restored mandatory core CI, and external review of a complete PCS verification workflow.</p></div>
+  </div>
+  <p>Interested in testing PCS against a bounded research claim? <a href="contact.html">Contact us for a carefully scoped pilot</a>. Do not submit secret or sensitive data through public forms.</p>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent, bounded computational assurance for the common good.</p></div><div class="footercol"><strong>Explore</strong><a href="research-preview.html">Research preview</a><a href="guided-submission.html">Guided submission</a><a href="package-inspector.html">Package inspector</a><a href="validation.html">Validation</a></div><div class="footercol"><strong>Trust & contact</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a><a href="mailto:marenatommaso@gmail.com">Email</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script type="module" src="research-preview.js"></script>
+</body>
+</html>

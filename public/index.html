@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Proof-Carrying Science · Verifiable Scientific Computation</title>
-<meta name="description" content="Proof-Carrying Science packages a computational claim with the exact files, environment, and checks needed for independent verification and reviewer-owned acceptance.">
+<title>Proof-Carrying Science · Proof-Carrying AI Safety for the Common Good</title>
+<meta name="description" content="Proof-Carrying Science is building AI-safety-first, domain-general assurance infrastructure: verify bounded claims, expose what remains open, and let people contribute useful safety work.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
-<meta property="og:title" content="Proof-Carrying Science · Verifiable Scientific Computation">
-<meta property="og:description" content="Send a computational result with the exact files and checks another party needs to independently verify it.">
+<meta property="og:title" content="Proof-Carrying Science · Proof-Carrying AI Safety">
+<meta property="og:description" content="Verify bounded safety claims and contribute useful, checkable work to a public-good AI-safety commons.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://proof-carrying-science-site.marenatommaso.workers.dev/">
 <meta property="og:site_name" content="Proof-Carrying Science">
@@ -21,7 +21,7 @@
 <body class="home-revamp">
 <div class="topbar">
   <div class="shell">
-    <span>PCS v0.6 · Public technical preview · Browser tools keep project files local</span>
+    <span>PCS v0.6 · AI-safety-first public-good assurance · Browser scientific tools keep project files local</span>
     <a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a>
   </div>
 </div>
@@ -31,7 +31,7 @@
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
   <div class="navlinks">
     <a href="#product">Product</a>
-    <a href="guided-submission.html?demo=1">Demo</a>
+    <a href="research-preview.html">Research preview</a>
     <a href="result-anatomy.html">Results</a>
     <a href="validation.html">Validation</a>
     <a href="trust.html">Trust Center</a>
@@ -48,9 +48,9 @@
   <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
   <div class="hero-revamp-grid">
     <div class="hero-revamp-copy">
-      <div class="eyebrow">Independent verification for scientific computation</div>
-      <h1>Don’t just send a result. Send what someone needs to verify it.</h1>
-      <p class="hero-lead">PCS packages a computational claim with the exact files, environment, and checks behind it so another party can independently replay the evidence and decide whether to accept it.</p>
+      <div class="eyebrow">AI-safety-first assurance for the common good</div>
+      <h1>Don’t just claim something is safe. Show what can actually be verified.</h1>
+      <p class="hero-lead">PCS turns bounded claims into auditable evidence: exact artifacts, typed obligations, replayable checks, formal semantics, and explicit OPEN boundaries. AI safety is the first public-good focus; the underlying assurance architecture remains scientific and domain-general.</p>
 
       <div class="hero-plain-flow" aria-label="PCS in three steps">
         <div><small>You provide</small><strong>Project + scientific question</strong></div>
@@ -61,13 +61,15 @@
       </div>
 
       <div class="actions">
-        <a class="button primary button-lg" href="guided-submission.html?demo=1">See PCS work on an example →</a>
-        <a class="button hero-secondary button-lg" href="guided-submission.html">Use my own project</a>
+        <a class="button primary button-lg" href="research-preview.html">Run a free browser example →</a>
+        <a class="button hero-secondary button-lg" href="guided-submission.html?demo=1">Explore the guided PCS flow</a>
+        <a class="button hero-secondary button-lg" href="commons.html">Contribute to AI safety</a>
       </div>
       <div class="hero-proof-row" aria-label="Why PCS is different">
         <span><i></i> independent replay, not a recorded PASS</span>
         <span><i></i> exact files and checks stay bound together</span>
         <span><i></i> acceptance stays with the reviewer</span>
+        <span><i></i> anyone can contribute work; nobody can vote a claim true</span>
       </div>
     </div>
 
@@ -93,16 +95,71 @@
         <div><small>CLAIM</small><strong>COMPUTATIONALLY_SUPPORTED</strong></div>
         <div><small>POLICY</small><strong>ACCEPTED</strong></div>
       </div>
-      <p>Example only. PCS can establish scoped support for the exact computational claim and evidence shown; it does not turn a green result into a claim that the broader science is universally true.</p>
+      <p>Illustrative result only—not a freshly executed Lean verification. See the <a href="research-preview.html">runnable browser checks</a> and the <a href="result-anatomy.html">independent reviewer workflow</a>. A green result never proves universal AI safety.</p>
     </div>
   </div>
 </section>
 
+<section class="section preview-home-onramp" aria-labelledby="previewHomeTitle">
+  <div class="kicker">No login · no upload · local calculation</div>
+  <h2 id="previewHomeTitle">Start with a result you can make fail.</h2>
+  <p>Run small, real browser calculations with passing and failing inputs. Then inspect the actual PCS package and reviewer workflows. These starter checks are <strong>not</strong> kernel proofs, signatures, or claims about a deployed AI system.</p>
+  <div class="commons-home-grid">
+    <a href="research-preview.html"><span>01 · RUN A CHECK</span><strong>Try a bounded AI-safety trace</strong><small>Change an action or risk budget. See an explicit violation.</small></a>
+    <a href="research-preview.html"><span>02 · COMPUTE</span><strong>Recompute a scientific prediction</strong><small>Explore a synthetic model and deliberately break a tolerance.</small></a>
+    <a href="package-inspector.html"><span>03 · INSPECT</span><strong>Examine real PCS evidence</strong><small>Inspect package bindings locally; distinguish inspection from independent verification.</small></a>
+  </div>
+  <p><a href="trust.html">What PCS proves, reproduces, and still trusts →</a></p>
+</section>
+
+<section class="section" aria-labelledby="homeSafetyForge">
+ <div class="commons-home-banner"><div><div class="kicker">NEW · AI-SAFETY GAME LAB</div>
+  <h2 id="homeSafetyForge">🧪 Find unsafe decisions. Invent a better shield.</h2>
+  <p>Try dynamic toy-agent missions, search for counterexamples, and repair policies against an exhaustive bounded simulator. Free and playable without an account; opt-in research donation available to adults only.</p>
+ </div><a class="button primary" href="arena-safety-forge.html">Play Safety Forge →</a></div>
+</section>
+<section class="section" aria-labelledby="homeProofQuest">
+  <div class="commons-home-banner">
+    <div><div class="kicker">Everyone can learn proof planning</div>
+      <h2 id="homeProofQuest">🧩 Play PCS Proof Quest</h2>
+      <p>Put reasoning cards in order, receive beginner-friendly hints, and try eight levels. No account needed; learning outcomes are not formal proof certificates.</p>
+    </div>
+    <a class="button primary" href="arena-proof-quest.html">Play the game →</a>
+  </div>
+</section>
+
+<section class="section pilot-home-callout" aria-labelledby="pilotHomeTitle">
+  <div class="commons-home-banner">
+    <div>
+      <div class="kicker">Independent technical evaluations welcome</div>
+      <h2 id="pilotHomeTitle">Try to reproduce—or break—a bounded PCS claim.</h2>
+      <p>We are seeking researchers to test exact-version reproductions, negative controls and trust assumptions. The public browser tools are ready to examine now; a private-core or sensitive-data pilot requires a separate agreed review process.</p>
+    </div>
+    <a class="button primary" href="researcher-pilots.html">Plan a research pilot →</a>
+  </div>
+</section>
+
+<section class="commons-home-intro" aria-labelledby="commonsHomeTitle">
+  <div class="commons-home-banner">
+    <div>
+      <div class="kicker">PCS AI Safety Commons</div>
+      <h2 id="commonsHomeTitle">Crowdsource the work. Never the truth.</h2>
+      <p>People who care about AI safety should be able to do something useful even if they are not yet domain experts. PCS decomposes larger assurance problems into bounded work with explicit acceptance rules, then keeps final authority behind verification and review.</p>
+    </div>
+    <a class="button primary" href="commons.html">Enter the Commons →</a>
+  </div>
+  <div class="commons-home-grid">
+    <a href="contribute.html"><span>CONTRIBUTE</span><strong>No expertise? Start at L0.</strong><small>Learn by doing one useful, reviewable task.</small></a>
+    <a href="tasks.html"><span>WORK</span><strong>Volunteer or paid is visible up front.</strong><small>L2 opens general paid-task eligibility; L4 is the review-authority threshold.</small></a>
+    <a href="fund.html"><span>FUND</span><strong>Commercial success should subsidize public safety work.</strong><small>Grants and large organizational users can support infrastructure and a Safety Bounty Fund.</small></a>
+  </div>
+</section>
+
 <section class="signal-strip" aria-label="Current system status">
-  <div><span>Formal core</span><strong>Frontier theorem integrated</strong><small>46 Lean V2 files · 495 V2 theorem/lemma declarations</small></div>
+  <div><span>Formal core</span><strong>Kernel-checked assurance foundations</strong><small>Latest Aristotle golden proofs awaiting reproduction and integration</small></div>
   <div><span>Production validity</span><strong>Lean-authoritative</strong><small>Python-only acceptance cannot produce authoritative <code>valid:true</code></small></div>
-  <div><span>Runtime</span><strong>Cross-platform gates</strong><small>latest hosted CircleCI runtime/restoration gate passed</small></div>
-  <div><span>Initial scope</span><strong>5 Lean-certified built-ins</strong><small>all five initial predicates replayed by proved Lean checkers</small></div>
+  <div><span>Runtime</span><strong>Bounded validation, explicit gaps</strong><small>Core PR verification is currently pending; no claim of fresh CI</small></div>
+  <div><span>Public-good focus</span><strong>AI Safety Commons pilot</strong><small>bounded tasks, paid/volunteer transparency, and auditable impact paths</small></div>
 </section>
 
 <section class="section product-story" id="product">
@@ -259,7 +316,7 @@
   <div class="proof-boundary-copy">
     <div class="kicker">Trust without hand-waving</div>
     <h2>What is proved, what is checked, and what is still trusted are different things.</h2>
-    <p>The strongest current theorem starts from raw canonical archive bytes and reaches scoped high assurance with a single explicit hypothesis: <code>NoForgery</code> for the Lean Ed25519 trust anchor. SHA-256/FIPS equivalence, canonical STORED ZIP decoding, and replay semantics for all five built-ins are proved in Lean; the remaining boundaries stay explicit.</p>
+    <p>The strongest current theorem starts from raw canonical archive bytes and reaches scoped high assurance with a single explicit hypothesis: <code>NoForgery</code> for the Lean Ed25519 trust anchor. SHA-256/FIPS equivalence, canonical STORED ZIP decoding, and replay semantics for all six built-ins are proved in Lean; the remaining boundaries stay explicit.</p>
     <div class="actions">
       <a class="button primary" href="trust.html">Open Trust Center</a>
       <a class="button secondary" href="architecture.html">See architecture</a>
@@ -272,7 +329,7 @@
         <li>canonical v0.6/v2 representation + exact archive partition</li>
         <li>SHA-256 = independent FIPS 180-4 specification</li>
         <li>canonical STORED ZIP decoding from raw bytes</li>
-        <li>all five built-in replay semantics in Lean</li>
+        <li>all six built-in replay semantics in Lean</li>
         <li>PK/PD match → real analytic model within tolerance</li>
         <li>normalized decisions → scoped high assurance</li>
       </ul>
@@ -320,14 +377,15 @@
 
 <section class="section final-cta" id="research">
   <div>
-    <div class="kicker">Computational biopharma first</div>
-    <h2>Start with one bounded claim that matters.</h2>
-    <p>PCS is not trying to “prove arbitrary science.” The initial wedge is a small number of high-consequence computational claims where exact replay, provenance, formal semantics, and independent review create immediate value.</p>
+    <div class="kicker">AI safety first · domain-general by design</div>
+    <h2>Start with one bounded claim that matters—and let more people help verify it.</h2>
+    <p>PCS is not trying to “prove arbitrary AI safety” or arbitrary science. The immediate focus is bounded, high-consequence AI-safety claims where exact replay, formal semantics, adversarial testing, provenance, and independent review can create real assurance. The same kernel is intended to support additional computational disciplines through explicit domain adapters.</p>
   </div>
   <div class="final-cta-actions">
-    <a class="button primary button-lg" href="guided-submission.html">Try PCS on a project</a>
-    <a class="button secondary button-lg" href="intake.html">Build pilot intake</a>
-    <a class="button secondary button-lg" href="contact.html">Discuss a design-partner pilot</a>
+    <a class="button primary button-lg" href="contribute.html">Contribute to AI safety</a>
+    <a class="button secondary button-lg" href="tasks.html">Browse bounded tasks</a>
+    <a class="button secondary button-lg" href="guided-submission.html">Verify a project</a>
+    <a class="button secondary button-lg" href="contact.html">Discuss funding or a pilot</a>
   </div>
 </section>
 
@@ -337,7 +395,7 @@
   <div class="footergrid">
     <div class="footerbrand">
       <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-      <p>Independent assurance infrastructure for critical scientific computation.</p>
+      <p>AI-safety-first assurance infrastructure for the common good, with a domain-general scientific core.</p>
     </div>
     <div class="footercol"><strong>Product</strong><a href="guided-submission.html">Try PCS</a><a href="result-anatomy.html">Result anatomy</a><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a></div>
     <div class="footercol"><strong>Trust & contact</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="privacy.html">Privacy</a><a href="contact.html">Design-partner inquiry</a><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div>

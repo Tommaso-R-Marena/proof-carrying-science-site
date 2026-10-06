@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Sign In · Proof-Carrying Science</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body class="commons-page admin-login-page">
+<div class="topbar commons-topbar"><div class="shell"><span>PCS administration · separate privileged session</span><a href="account.html">Contributor account</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="tasks.html">Tasks</a><a href="account.html">Account</a></div></nav>
+<main class="admin-login-main">
+<section class="admin-login-card">
+  <div class="kicker">Privileged administration</div>
+  <h1>Admin sign in</h1>
+  <p>This is a separate administrative session from your contributor account session. Only accounts explicitly granted administrator authority can enter the Admin Center.</p>
+  <p class="admin-login-alternative">Looking for ordinary contributor access? <a href="account.html">Sign in or create a contributor account →</a></p>
+  <form id="adminLoginForm">
+    <label class="field"><span>Administrator email</span><input class="textinput" name="email" type="email" autocomplete="username" required></label>
+    <label class="field"><span>Password</span><input class="textinput" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required></label>
+    <button class="button dark" type="submit">Sign in to Admin Center</button>
+    <p id="adminLoginMessage" class="form-message" aria-live="polite"></p>
+  </form>
+  <div class="admin-login-security">
+    <strong>Administrative session protections</strong>
+    <span>Separate HttpOnly cookie · SameSite=Strict · 8-hour session · authority rechecked on every admin API call</span>
+  </div>
+  <p class="tiny">Forgot your password? Use the recovery flow on <a href="account.html">your PCS account page</a>. A normal contributor login does not grant access to the Admin Center.</p>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Administrative authority is separated from contributor access.</p></div><div class="footercol"><strong>Admin</strong><a href="admin-login.html">Admin sign in</a><a href="admin.html">Admin Center</a></div><div class="footercol"><strong>Public</strong><a href="commons.html">Commons</a><a href="governance.html">Governance</a></div></div></footer>
+</div>
+<script src="site.js"></script><script src="admin-login.js"></script>
+</body></html>

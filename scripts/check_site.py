@@ -24,9 +24,37 @@ if site_js.exists():
         "navmore",
         "More PCS resources",
         'aria-current", "page"',
+        "pcs-global-nav",
+        "Admin sign in",
+        "Admin Center",
+        "account.html",
+        "roles.html",
+        "arena.html",
+        "task-graph.html",
+        "/api/me",
+        "/api/admin/session",
     ]:
         if required_text not in site_script:
             errors.append(f"site.js: navigation hierarchy drift: {required_text}")
+
+# Navigation discoverability and privilege boundaries must not regress.
+for name, required_tokens in {
+    "account.html": ["pcs-action-hub", "accountNextTitle", "Find eligible tasks", "roles.html", "arena.html", "task-graph.html"],
+    "admin.html": ["admin-workflow-hub", "adminStartTitle", "Open the public experience", 'href="#requests"', 'href="#users"', 'href="#dependency-editor"'],
+    "admin-login.html": ["adminLoginForm", "admin-login-alternative", 'href="account.html"'],
+}.items():
+    page = ROOT / name
+    if page.exists():
+        text_value = page.read_text(encoding="utf-8")
+        for token in required_tokens:
+            if token not in text_value:
+                errors.append(f"{name}: access-path discoverability drift: {token}")
+
+account_script = ROOT / "account.js"
+if account_script.exists():
+    account_text = account_script.read_text(encoding="utf-8")
+    if "Reviewer authority is separately approved" not in account_text:
+        errors.append("account.js: higher-level access guidance lost privilege separation")
 
 for html_path in HTML_FILES:
     text = html_path.read_text(encoding="utf-8")
@@ -48,8 +76,8 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "guided-submission.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "arena-safety-forge.html", "arena-proof-quest.html", "researcher-pilots.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "commons.js", "roles.js", "task-graph.js", "arena.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
     "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
@@ -60,7 +88,7 @@ for name in required:
     if not (ROOT / name).exists():
         errors.append(f"missing required deployable file: {name}")
 
-for page in ["index.html", "guided-submission.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
+for page in ["index.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html"]:
     p = ROOT / page
     if not p.exists():
         continue
@@ -77,6 +105,41 @@ for page in ["index.html", "guided-submission.html", "result-anatomy.html", "pro
         errors.append(f"{page}: Project Mapper navigation link is missing")
 
 
+
+claim_review_page = ROOT / "claim-review.html"
+claim_review_js = ROOT / "claim-review.js"
+if claim_review_page.exists():
+    claim_review_text = claim_review_page.read_text(encoding="utf-8")
+    for required_text in [
+        "Human review surface · Recursive Claim IR",
+        "pcs-proof-translation-v1",
+        "pcs-claim-ir-v1",
+        "What is proved, trusted, assumed, or still unknown?",
+        "Closed children never silently imply a broader scientific parent.",
+        "This page does not verify, sign, replay, or prove anything.",
+        'id="claimReviewTree"',
+        'id="claimReviewDetail"',
+        'src="claim-review.js"',
+    ]:
+        if required_text not in claim_review_text:
+            errors.append(f"claim-review.html: Claim IR review contract drift: {required_text}")
+if claim_review_js.exists():
+    claim_review_script = claim_review_js.read_text(encoding="utf-8")
+    for required_text in [
+        'format:"pcs-proof-translation-v1"',
+        'format:"pcs-claim-ir-v1"',
+        "DECOMPOSITION_BLOCKED_BY_CHILDREN",
+        "DECOMPOSITION_LEAF_UNRESOLVED",
+        "DECOMPOSED_CHILDREN_CLOSED_PARENT_REVIEW_REQUIRED",
+        "children_can_set_parent_authority:false",
+        "claim_ir_sha256",
+        "obligation_graph",
+        "EXTERNAL VALIDATOR",
+        "LEAN-BACKED TARGET",
+        "BLOCKING OPEN",
+    ]:
+        if required_text not in claim_review_script:
+            errors.append(f"claim-review.js: Claim IR semantics drift: {required_text}")
 
 result_anatomy_page = ROOT / "result-anatomy.html"
 result_anatomy_js = ROOT / "result-anatomy.js"
@@ -167,7 +230,11 @@ index_page = ROOT / "index.html"
 if index_page.exists():
     index_text = index_page.read_text(encoding="utf-8")
     for required_text in [
-        "Don’t just send a result. Send what someone needs to verify it.",
+        "Don’t just claim something is safe. Show what can actually be verified.",
+        "Crowdsource the work. Never the truth.",
+        "Contribute to AI safety",
+        "L2 opens general paid-task eligibility",
+        "L4 is the review-authority threshold",
         "Project + scientific question",
         "Exact files + exact checks",
         "Replayed evidence + explicit decision",
@@ -182,7 +249,8 @@ if index_page.exists():
         'href="package-inspector.html#inspectorDrop"',
         "Start Guided Submission",
         "producer and reviewer are intentionally separate trust roles",
-        "latest hosted CircleCI runtime/restoration gate passed",
+        "Core PR verification is currently pending; no claim of fresh CI",
+        'href="research-preview.html"',
     ]:
         if required_text not in index_text:
             errors.append(f"index.html: role-entry/usability drift: {required_text}")
@@ -192,6 +260,701 @@ if index_page.exists():
         errors.append("index.html: reviewer role route drift")
     if 'href="guided-submission.html?demo=1"' not in index_text:
         errors.append("index.html: explorer demo route drift")
+
+
+# Public research-preview examples must never masquerade as kernel evidence.
+for preview_name, expected_tokens in {
+    "research-preview.html": [
+        "Research Preview", "No account required", "not Lean proofs",
+        'id="previewInput"', 'id="previewResult"',
+        'src="research-preview.js"', 'href="package-inspector.html"',
+    ],
+    "research-preview-engine.mjs": [
+        "evaluateTrace", "evaluateModel", "forbidden_action",
+        "max_cumulative_risk", "digital signature", "Lean theorem",
+    ],
+    "research-preview.js": [
+        "lean_checked:false", "signed:false", "independently_replayed:false",
+        "textContent", "research-preview-engine.mjs",
+    ],
+    "research-preview.css": [
+        "@media(max-width:900px)", "@media(max-width:580px)",
+    ],
+}.items():
+    preview_path = ROOT / preview_name
+    if not preview_path.is_file():
+        errors.append(f"research preview: missing required {preview_name}")
+        continue
+    preview_text = preview_path.read_text(encoding="utf-8")
+    for expected_token in expected_tokens:
+        if expected_token not in preview_text:
+            errors.append(f"research preview {preview_name}: contract drift: {expected_token}")
+
+
+# Researcher pilot preparation must be local-only, explicitly nonauthoritative,
+# and independent of protected production approval or arbitrary remote execution.
+for pilot_file, required_tokens in {
+    "researcher-pilots.html": [
+        "Independent Researcher Pilots", "Falsification", "NOT PCS-VERIFIED",
+        'id="pilotDraftForm"', 'id="pilotDraftResult"',
+        'src="researcher-pilot-ui.js"', 'href="research-preview.html"',
+        "The formal core repository remains private",
+    ],
+    "researcher-pilot-core.mjs": [
+        "pcs-independent-pilot-draft-v1", "signed:false",
+        "authoritative:false", 'pcs_verdict:"NOT_EVALUATED"',
+        'independent_verification:"NOT_ATTESTED"',
+        "validatePilotInput", "emailSummary",
+    ],
+    "researcher-pilot-ui.js": [
+        "researcher-pilot-core.mjs", "mailto:",
+        "URL.createObjectURL", "textContent",
+    ],
+    "researcher-pilots.css": [
+        "@media(max-width:860px)", "@media(max-width:620px)",
+    ],
+}.items():
+    candidate = ROOT / pilot_file
+    if not candidate.is_file():
+        errors.append(f"researcher pilot: missing {pilot_file}")
+        continue
+    contents = candidate.read_text(encoding="utf-8")
+    for required_token in required_tokens:
+        if required_token not in contents:
+            errors.append(f"researcher pilot {pilot_file}: contract drift: {required_token}")
+
+if (ROOT / "researcher-pilot-ui.js").is_file():
+    pilot_code = (ROOT / "researcher-pilot-ui.js").read_text(encoding="utf-8")
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", pilot_code):
+        errors.append("researcher pilot must remain local-only and not auto-submit requests")
+if (ROOT / "researcher-pilot-core.mjs").is_file():
+    pilot_code = (ROOT / "researcher-pilot-core.mjs").read_text(encoding="utf-8")
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", pilot_code):
+        errors.append("researcher pilot core must remain local-only")
+
+
+# Keep Proof Quest practice accessible without an account and prohibit hidden
+# scientific-data transfer or silently accepted underage research donations.
+for proof_name, tokens in {
+    "arena-proof-quest.html": [
+        "Proof Quest", 'id="questCheck"', 'id="questDonate"', 'id="questErase"',
+        'id="questAdult"', 'id="questConsent"', "No account to play",
+        "not a Lean 4 proof", "adults 18+ only",
+    ],
+    "arena-proof-quest.js": [
+        "gradeOrder", "proofQuestApi", 'path.startsWith("/api/")',
+        '"/api/arena/proof-order/attempt"', '"/api/arena/proof-order/erase"',
+        "questAdult", "questConsent", "questDonationMessage",
+    ],
+    "proof-order-core.mjs": [
+        "PUZZLE_VERSION", "gradeOrder", "needs", "mistakes",
+        "not a Lean 4 proof", "PUZZLES",
+    ],
+    "arena-proof-quest.css": ["@media(max-width:860px)", "@media(max-width:560px)"],
+}.items():
+    p = ROOT / proof_name
+    if not p.exists():
+        errors.append(f"Proof Quest missing {proof_name}")
+        continue
+    source = p.read_text(encoding="utf-8")
+    for token in tokens:
+        if token not in source:
+            errors.append(f"Proof Quest {proof_name}: contract drift {token}")
+
+for proof_phrase in [
+    "adult_confirmation!==true", "consent_training!==true",
+    "proof_order_research_attempts", "PUZZLE_VERSION", "gradeOrder(",
+    "if(!isOwner(admin))", "email_verification_required", "eraseProofQuestAttempts",
+]:
+    if proof_phrase not in (REPO / "src" / "worker.js").read_text(encoding="utf-8"):
+        errors.append(f"Proof Quest server authority missing: {proof_phrase}")
+if not (REPO / "migrations" / "0016_proof_quest_adult_consent.sql").is_file():
+    errors.append("Proof Quest migration missing.")
+if not (REPO / "migrations" / "0017_curated_needed_tasks_and_roles.sql").is_file():
+    errors.append("Curated roles/task migration missing.")
+
+# Synthetic Safety Forge research: all playable steps remain local. Explicit
+# consent may send only bounded choices to the approved same-origin API.
+for lab_name, tokens in {
+    "arena-safety-forge.html": [
+        "Safety Forge", "Break the bot.", 'id="forgeTabAttack"',
+        'id="forgeTabRepair"', 'id="forgeDonate"', 'id="forgeErase"',
+        'id="forgeAdult"', 'id="forgeConsent"', "finite-state",
+        "not", "No account to play",
+    ],
+    "arena-safety-forge.js": [
+        "applyAction", "verifyShield", "researchApi",
+        'path.startsWith("/api/")',
+        '"/api/arena/safety-lab/donate"',
+        '"/api/arena/safety-lab/erase"',
+        "forgeAdult", "forgeConsent",
+    ],
+    "safety-forge-core.mjs": [
+        "SAFETY_LAB_VERSION", "scenarioForSeed", "verifyShield",
+        "evaluateResearchSession", "RISK_BUDGET_EXCEEDED",
+        "PRIVATE_REPORT_SHARED", "UNAUTHORIZED_DEPLOYMENT",
+        "not Lean 4 kernel verification",
+    ],
+    "arena-safety-forge.css": ["@media(max-width:1100px)", "@media(max-width:520px)"],
+}.items():
+    filepath = ROOT / lab_name
+    if not filepath.exists():
+        errors.append(f"Safety Forge missing: {lab_name}")
+        continue
+    source = filepath.read_text(encoding="utf-8")
+    for token in tokens:
+        if token not in source:
+            errors.append(f"Safety Forge {lab_name}: contract drift: {token}")
+
+if not (REPO / "migrations" / "0018_safety_forge_research_sessions.sql").is_file():
+    errors.append("Safety Forge additive research migration missing")
+if not (REPO / "scripts" / "prepare_safety_forge_dataset.mjs").is_file():
+    errors.append("Safety Forge independent replay converter missing")
+
+commons_contracts = {
+    "commons.html": [
+        "Crowdsource the work. Never the truth.",
+        "Give one useful hour to AI safety.",
+        "Volunteer and paid work are labeled before you accept it",
+        "Safety Bounty Fund",
+        'href="contribute.html"',
+        'href="tasks.html"',
+        'src="commons.js"',
+    ],
+    "contribute.html": [
+        "You can help before you are an expert.",
+        "account required",
+        "verified levels are assigned, never self-selected",
+        "variable generated evaluation",
+        "manual competency review",
+        "L2",
+        "L4",
+        "Contributor Bill of Rights",
+        'id="contributorProfileForm"',
+        'id="commonsLevels"',
+        'src="commons.js"',
+    ],
+    "tasks.html": [
+        "Only work PCS actually needs should be here.",
+        "explicit Founder publication",
+        "published + needed",
+        "administrative",
+        "marketing",
+        "ongoing responsibilities live under Roles instead",
+        "variable evaluation",
+        "Apply directly",
+        "final approval is manual",
+        "Leaderboards belong only where the score means something.",
+        'id="commonsTaskList"',
+        'id="taskComp"',
+        'id="taskCategory"',
+        'href="roles.html"',
+        'href="task-graph.html"',
+        'href="arena.html"',
+        'id="taskApplicationDialog"',
+        'src="commons.js"',
+    ],
+    "projects.html": [
+        "See exactly where a contribution fits.",
+        "Not a claim of global AI safety",
+        "Distributed assurance",
+        "Claim Invalidation v1",
+        "The result generalizes beyond the evaluated execution",
+    ],
+    "claim-invalidation-v1.html": [
+        "First public PCS Commons research program",
+        "Which claims must reopen when evidence changes?",
+        "unreachable ≠ unaffected",
+        "INV-001",
+        "INV-006",
+        "dependency completeness",
+        "contributor-packets/invalidation-v1/seed-corpus.json",
+        "contributor-packets/invalidation-v1/reference_impact.py",
+    ],
+    "contributors.html": [
+        "No public grind leaderboard.",
+        "variable auto-scored evaluation",
+        "manual evidence/application review",
+        "L2",
+        "L4",
+        'id="personalImpact"',
+    ],
+    "fund.html": [
+        "PCS Safety Bounty Fund",
+        "Not yet opened",
+        "Money must never buy a green result.",
+        "Funding conversations are manual right now.",
+    ],
+    "governance.html": [
+        "COMMON GOOD COMMITMENT",
+        "Crowdsource the work. Never the authority.",
+        "Contributor Bill of Rights",
+        "VARIABLE EVALUATION",
+        "No auto-score",
+        "No monetary penalty for ordinary volunteer non-completion.",
+    ],
+    "organizations.html": [
+        "Broadly free",
+        "large commercial organizations",
+        "Revenue helps sustain the commons",
+        "Licensing caution",
+    ],
+    "research.html": [
+        "Distributed contributors should not require distributed trust.",
+        "AI safety first",
+        "External-world transfer is explicit",
+        "integrated into the core repository and independently rebuilt",
+    ],
+    "account.html": [
+        "Your level is earned here—not self-declared.",
+        "Every new account starts at L0.",
+        "Two ways to qualify for higher-trust work.",
+        "Variable competency evaluation",
+        "Manual application / evidence review",
+        "AI is allowed:",
+        'id="registerForm"',
+        'id="evaluationStartForm"',
+        'id="skillForm"',
+        'id="requestList"',
+        'href="admin-login.html"',
+        'src="account.js"',
+    ],
+    "admin.html": [
+        "One place for approvals, authority, operations, and audit history.",
+        "Separate privileged session",
+        "Approval history",
+        "Administrative actions",
+        "Immutable audit archive",
+        'id="adminRequestList"',
+        'id="adminApprovalHistory"',
+        'id="adminActionHistory"',
+        'id="adminAuditList"',
+        'id="adminActionDialog"',
+        'id="adminActionFiles"',
+        'id="adminTaskList"',
+        'id="adminRoleApplicationList"',
+        'id="adminChallengeEntryList"',
+        'id="adminDependencyList"',
+        'id="adminDependencyGroupForm"',
+        'id="adminDependencyEdgeForm"',
+        "Supporting evidence",
+        'src="admin.js"',
+    ],
+}
+for page_name, required_texts in commons_contracts.items():
+    page = ROOT / page_name
+    if not page.exists():
+        continue
+    value = page.read_text(encoding="utf-8")
+    if 'src="site.js"' not in value:
+        errors.append(f"{page_name}: shared navigation script is missing")
+    for required_text in required_texts:
+        if required_text not in value:
+            errors.append(f"{page_name}: AI Safety Commons contract drift: {required_text}")
+
+tasks_html = ROOT / "tasks.html"
+if tasks_html.exists():
+    tasks_text = tasks_html.read_text(encoding="utf-8")
+    if "\\n\\n<section class=\"task-market-layout\">" in tasks_text:
+        errors.append("tasks.html: literal \\n\\n escape leaked into rendered marketplace")
+    if "</dialog>\\n</main>" in tasks_text:
+        errors.append("tasks.html: literal \\n escape leaked after task application dialog")
+
+commons_js = ROOT / "commons.js"
+if commons_js.exists():
+    commons_script = commons_js.read_text(encoding="utf-8")
+    for required_text in [
+        'name:"Verified Contributor"',
+        'name:"Reviewer"',
+        'api("/api/me")',
+        'api("/api/tasks")',
+        "Start now · non-exclusive",
+        "Apply for PCS approval",
+        "Pending applications never reserve the task.",
+        "accountTaskHref",
+        "requestedTaskIntent",
+        "handleTaskIntent",
+        "renderProjectTaskReturn",
+        "data-task-id",
+        "commons-recommendation-card",
+        "commons-recommendation-badges",
+        "task-dependency-list",
+        "dependency_required",
+        "claim-invalidation-v1.html",
+        "program_id",
+        "acceptance_criteria",
+    ]:
+        if required_text not in commons_script:
+            errors.append(f"commons.js: authenticated contributor-marketplace contract drift: {required_text}")
+
+roles_page = ROOT / "roles.html"
+roles_js = ROOT / "roles.js"
+if roles_page.exists():
+    value = roles_page.read_text(encoding="utf-8")
+    for required_text in ["Some useful work is a responsibility, not a ticket.",'id="roleList"','src="roles.js"']:
+        if required_text not in value:
+            errors.append(f"roles.html: ongoing-role contract drift: {required_text}")
+if roles_js.exists():
+    value = roles_js.read_text(encoding="utf-8")
+    for required_text in ["/api/roles","/apply","roleApplicationDialog"]:
+        if required_text not in value:
+            errors.append(f"roles.js: role-application contract drift: {required_text}")
+
+task_graph_page = ROOT / "task-graph.html"
+task_graph_js = ROOT / "task-graph.js"
+if task_graph_page.exists():
+    value = task_graph_page.read_text(encoding="utf-8")
+    for required_text in ["What unlocks what—and exactly why?","ALL, ANY, and AT_LEAST",'id="taskGraphPrograms"','src="task-graph.js"']:
+        if required_text not in value:
+            errors.append(f"task-graph.html: dependency-graph contract drift: {required_text}")
+if task_graph_js.exists():
+    value = task_graph_js.read_text(encoding="utf-8")
+    for required_text in ["/api/task-graph","artifact_contract","criticality","required_outcome"]:
+        if required_text not in value:
+            errors.append(f"task-graph.js: dependency-graph client drift: {required_text}")
+
+arena_page = ROOT / "arena.html"
+arena_js = ROOT / "arena.js"
+if arena_page.exists():
+    value = arena_page.read_text(encoding="utf-8")
+    for required_text in ["PCS Arena","There is no global points leaderboard","only validated entries appear on a leaderboard",'id="arenaChallenges"','src="arena.js"']:
+        if required_text not in value:
+            errors.append(f"arena.html: Arena authority contract drift: {required_text}")
+if arena_js.exists():
+    value = arena_js.read_text(encoding="utf-8")
+    for required_text in ["/api/challenges","Provisional score","verified score","data-enter-challenge"]:
+        if required_text not in value:
+            errors.append(f"arena.js: Arena client drift: {required_text}")
+
+styles_css = ROOT / "styles.css"
+if styles_css.exists():
+    styles_text = styles_css.read_text(encoding="utf-8")
+    if "[hidden]{display:none!important}" not in styles_text:
+        errors.append("styles.css: hidden-state contract drift; auth panels may remain visible after sign-in")
+    if ".reviewer-inspection-shortcuts{height:auto" not in styles_text:
+        errors.append("styles.css: result-anatomy shortcut nav must override the global fixed nav height")
+    if ".reviewer-inspection-shortcuts{height:auto;grid-template-columns:1fr" not in styles_text:
+        errors.append("styles.css: mobile result-anatomy shortcut stack must remain auto-height")
+    if "#authority-hierarchy .governance-rules article{grid-template-columns:82px minmax(0,1fr)" not in styles_text:
+        errors.append("styles.css: authority hierarchy labels must reserve enough width for ADMIN/TRUTH")
+    if "#authority-hierarchy .governance-rules article>b{width:auto;min-width:70px" not in styles_text:
+        errors.append("styles.css: authority hierarchy badges must size to label content")
+    if ".commons-recommendation-card{display:block;min-width:0" not in styles_text:
+        errors.append("styles.css: contributor recommendation card must not inherit Project Mapper grid layout")
+    if ".commons-recommendation-badges{display:flex" not in styles_text:
+        errors.append("styles.css: contributor recommendation badges must remain in their own flex row")
+    if "/* Shared layout-safety layer" not in styles_text:
+        errors.append("styles.css: shared layout-safety layer is missing")
+    if ".governance-rules article{\n  grid-template-columns:minmax(72px,max-content) minmax(0,1fr);" not in styles_text:
+        errors.append("styles.css: governance labels must use content-aware columns")
+    if ".governance-rules article>b{\n  width:auto;" not in styles_text:
+        errors.append("styles.css: governance badges must size to their content")
+    if ".button,.smallbutton,.commons-chip{\n  max-width:100%;" not in styles_text:
+        errors.append("styles.css: controls/chips must not overflow their containers")
+    if "/* Audited admin action dialog */" not in styles_text:
+        errors.append("styles.css: audited admin action dialog styles are missing")
+    if "/* Curated work, roles, and rich dependency graph */" not in styles_text:
+        errors.append("styles.css: curated-work/dependency styles are missing")
+    if "/* PCS Arena */" not in styles_text:
+        errors.append("styles.css: PCS Arena styles are missing")
+    if "/* Admin dependency graph editor */" not in styles_text:
+        errors.append("styles.css: Admin dependency graph editor styles are missing")
+
+account_js = ROOT / "account.js"
+if account_js.exists():
+    account_script = account_js.read_text(encoding="utf-8")
+    for required_text in [
+        'api("/api/auth/register"',
+        'api("/api/auth/login"',
+        'api("/api/auth/recover"',
+        'api("/api/profile"',
+        'api("/api/skills/request"',
+        'api("/api/evaluations/start"',
+        "/api/evaluations/",
+        "renderEvaluation",
+        "Auto-scored",
+        "showRecovery",
+        'api("/api/account/delete"',
+        "verification_note",
+        "understanding_note",
+        "taskContinuationPanel",
+        "safeNextUrl",
+        "continueAfterLogin",
+        'api("/api/tasks")',
+    ]:
+        if required_text not in account_script:
+            errors.append(f"account.js: account authority contract drift: {required_text}")
+
+admin_js = ROOT / "admin.js"
+if admin_js.exists():
+    admin_script = admin_js.read_text(encoding="utf-8")
+    for required_text in [
+        'api("/api/admin/overview")',
+        'api("/api/admin/audit?',
+        'api("/api/admin/logout"',
+        "renderAuditIntegrity",
+        "adminApprovalHistory",
+        "adminActionHistory",
+        "adminAuditList",
+        "openAdminAction",
+        "uploadActionEvidence",
+        "revokeSkill",
+        "/api/admin/evidence",
+        "/skill/revoke",
+        "/decision",
+        "/checkpoint",
+        "/skill",
+        "/level",
+        "/governance",
+        "adminActionOverride",
+        "allowOverride",
+        "Founder/Owner authority required",
+    ]:
+        if required_text not in admin_script:
+            errors.append(f"admin.js: founder approval contract drift: {required_text}")
+
+worker_js = REPO / "src" / "worker.js"
+if not worker_js.exists():
+    errors.append("missing Commons Worker backend: src/worker.js")
+else:
+    worker_script = worker_js.read_text(encoding="utf-8")
+    for required_text in [
+        'const SESSION_COOKIE = "pcs_commons_session"',
+        "PBKDF2",
+        "SameSite=Lax",
+        'const ADMIN_SESSION_COOKIE = "pcs_admin_session"',
+        "SameSite=Strict",
+        "createAdminSession",
+        "currentAdminUser",
+        "adminLogin",
+        "adminSessionStatus",
+        "adminLogout",
+        "audit_archive",
+        "appendAuditArchive",
+        "verifyAuditArchive",
+        "adminAuditFeed",
+        "adminUploadEvidence",
+        "adminDownloadEvidence",
+        "validateEvidenceRefs",
+        "adminRevokeSkill",
+        "ADMIN_EVIDENCE_MAX_FILES",
+        "taskDependencies",
+        "dependencyState",
+        "dependency_required",
+        "publicTaskGraph",
+        "adminUpsertDependencyGroup",
+        "adminUpsertDependency",
+        "adminDeleteDependency",
+        "dependencyWouldCycle",
+        "dependency_cycle",
+        "publication_state='published'",
+        "need_status='needed'",
+        "adminCreateTask",
+        "adminCurateTask",
+        "applyForRole",
+        "adminRoleDecision",
+        "listChallenges",
+        "submitChallengeEntry",
+        "adminChallengeDecision",
+        "challengeScore",
+        "challenge_scorer_unavailable",
+        "reservation_key",
+        "task_already_reserved",
+        "reservation_released_after_level_demotion",
+        "Account created at L0.",
+        "task.claim_mode === \"open\"",
+        "addBusinessDaysIso",
+        "Application received. It does not reserve the task.",
+        "checkpoint_due_at",
+        "exclusiveLimit",
+        "verifiedSkills",
+        "buildCompetencyEvaluation",
+        "startCompetencyEvaluation",
+        "submitCompetencyEvaluation",
+        "skill_or_application",
+        "manual_skill_review_required",
+        "competency_evaluations",
+        "auto_pass",
+        "review_due_at",
+        "RESEND_API_KEY",
+        "ADMIN_BOOTSTRAP_TOKEN",
+        "RATE_LIMIT_SALT",
+        "rateLimit(request, env",
+        "protectOwnerTarget",
+        "adminSetGovernance",
+        "owner_delete_protected",
+        "owner_required",
+        "sessions_revoked",
+        "async scheduled",
+    ]:
+        if required_text not in worker_script:
+            errors.append(f"src/worker.js: account/task authority contract drift: {required_text}")
+
+competency_migration = REPO / "migrations" / "0003_competency_evaluations.sql"
+if not competency_migration.exists():
+    errors.append("missing variable competency schema: migrations/0003_competency_evaluations.sql")
+else:
+    competency_text = competency_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS competency_evaluations",
+        "review_due_at",
+        "evaluation_id",
+        "UPDATE tasks SET status='paused'",
+    ]:
+        if required_text not in competency_text:
+            errors.append(f"migrations/0003_competency_evaluations.sql: variable competency contract drift: {required_text}")
+
+claim_program_migration = REPO / "migrations" / "0006_claim_invalidation_program.sql"
+if not claim_program_migration.exists():
+    errors.append("missing claim-invalidation program migration: migrations/0006_claim_invalidation_program.sql")
+else:
+    program_text = claim_program_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "ALTER TABLE tasks ADD COLUMN program_id",
+        "CREATE TABLE IF NOT EXISTS task_dependencies",
+        "'INV-001'",
+        "'INV-006'",
+        "'hard'",
+        "dependency-completeness",
+    ]:
+        if required_text not in program_text:
+            errors.append(f"migrations/0006_claim_invalidation_program.sql: program contract drift: {required_text}")
+
+curated_work_migration = REPO / "migrations" / "0009_curated_work_and_roles.sql"
+if not curated_work_migration.exists():
+    errors.append("missing curated-work migration: migrations/0009_curated_work_and_roles.sql")
+else:
+    curated_text = curated_work_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "publication_state",
+        "need_status",
+        "role_openings",
+        "role_applications",
+        "UPDATE tasks SET publication_state='draft'",
+        "'MKT-001'",
+        "'ADM-001'",
+        "'OUT-001'",
+    ]:
+        if required_text not in curated_text:
+            errors.append(f"migrations/0009_curated_work_and_roles.sql: curated-work contract drift: {required_text}")
+
+rich_graph_migration = REPO / "migrations" / "0010_rich_task_dependency_graph.sql"
+if not rich_graph_migration.exists():
+    errors.append("missing rich dependency graph migration: migrations/0010_rich_task_dependency_graph.sql")
+else:
+    graph_text = rich_graph_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "task_dependency_groups",
+        "artifact_contract",
+        "criticality",
+        "mode TEXT NOT NULL CHECK(mode IN ('all','any','at_least'))",
+        "INV-006-formalization",
+    ]:
+        if required_text not in graph_text:
+            errors.append(f"migrations/0010_rich_task_dependency_graph.sql: dependency-graph contract drift: {required_text}")
+
+arena_migration = REPO / "migrations" / "0011_pcs_arena.sql"
+if not arena_migration.exists():
+    errors.append("missing PCS Arena migration: migrations/0011_pcs_arena.sql")
+else:
+    arena_text = arena_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS challenges",
+        "CREATE TABLE IF NOT EXISTS challenge_entries",
+        "verification_mode",
+        "leaderboard_state",
+        "'ARENA-INV-001'",
+        "'manual_gate'",
+    ]:
+        if required_text not in arena_text:
+            errors.append(f"migrations/0011_pcs_arena.sql: Arena contract drift: {required_text}")
+
+dependency_edge_enrichment_migration = REPO / "migrations" / "0012_dependency_edge_enrichment.sql"
+if not dependency_edge_enrichment_migration.exists():
+    errors.append("missing dependency-edge enrichment migration: migrations/0012_dependency_edge_enrichment.sql")
+else:
+    edge_text = dependency_edge_enrichment_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "positive_fixture_baseline",
+        "negative_control_counterexample",
+        "minimal_model_example",
+        "countermodel_for_assumption",
+        "artifact_contract",
+    ]:
+        if required_text not in edge_text:
+            errors.append(f"migrations/0012_dependency_edge_enrichment.sql: edge-semantics drift: {required_text}")
+
+reservation_migration = REPO / "migrations" / "0007_reserved_task_exclusivity.sql"
+if not reservation_migration.exists():
+    errors.append("missing reserved-task exclusivity migration: migrations/0007_reserved_task_exclusivity.sql")
+else:
+    reservation_text = reservation_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "ALTER TABLE task_requests ADD COLUMN reservation_key",
+        "idx_task_requests_unique_reservation",
+        "WHERE reservation_key IS NOT NULL",
+    ]:
+        if required_text not in reservation_text:
+            errors.append(f"migrations/0007_reserved_task_exclusivity.sql: reservation exclusivity drift: {required_text}")
+
+admin_evidence_migration = REPO / "migrations" / "0005_admin_action_evidence.sql"
+if not admin_evidence_migration.exists():
+    errors.append("missing immutable admin evidence schema: migrations/0005_admin_action_evidence.sql")
+else:
+    evidence_text = admin_evidence_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS admin_evidence_files",
+        "CREATE TABLE IF NOT EXISTS admin_evidence_chunks",
+        "admin_evidence_files_no_update",
+        "admin_evidence_files_no_delete",
+        "admin_evidence_chunks_no_update",
+        "admin_evidence_chunks_no_delete",
+    ]:
+        if required_text not in evidence_text:
+            errors.append(f"migrations/0005_admin_action_evidence.sql: evidence immutability contract drift: {required_text}")
+
+admin_audit_migration = REPO / "migrations" / "0004_admin_sessions_immutable_audit.sql"
+if not admin_audit_migration.exists():
+    errors.append("missing admin/audit migration: migrations/0004_admin_sessions_immutable_audit.sql")
+else:
+    admin_audit_text = admin_audit_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS admin_sessions",
+        "CREATE TABLE IF NOT EXISTS audit_archive",
+        "audit_archive_no_update",
+        "audit_archive_no_delete",
+        "audit_log_no_delete",
+        "prev_hash TEXT NOT NULL UNIQUE",
+        "event_hash TEXT NOT NULL UNIQUE",
+    ]:
+        if required_text not in admin_audit_text:
+            errors.append(f"migrations/0004_admin_sessions_immutable_audit.sql: admin/audit contract drift: {required_text}")
+
+admin_login_page = ROOT / "admin-login.html"
+admin_login_js = ROOT / "admin-login.js"
+if admin_login_page.exists():
+    value = admin_login_page.read_text(encoding="utf-8")
+    for required_text in ["Admin sign in","separate administrative session",'id="adminLoginForm"','src="admin-login.js"']:
+        if required_text not in value:
+            errors.append(f"admin-login.html: privileged-login contract drift: {required_text}")
+if admin_login_js.exists():
+    value = admin_login_js.read_text(encoding="utf-8")
+    for required_text in ['/api/admin/session','/api/admin/login','location.replace("admin.html")']:
+        if required_text not in value:
+            errors.append(f"admin-login.js: privileged-login contract drift: {required_text}")
+
+migration_sql = REPO / "migrations" / "0001_commons_auth.sql"
+if not migration_sql.exists():
+    errors.append("missing Commons schema source: migrations/0001_commons_auth.sql")
+else:
+    migration_text = migration_sql.read_text(encoding="utf-8")
+    for required_text in [
+        "is_owner INTEGER NOT NULL DEFAULT 0",
+        "idx_users_single_owner",
+        "WHERE is_owner=1",
+    ]:
+        if required_text not in migration_text:
+            errors.append(f"migrations/0001_commons_auth.sql: Owner uniqueness contract drift: {required_text}")
 
 demo_page = ROOT / "demo.html"
 demo_js = ROOT / "demo.js"
@@ -287,6 +1050,7 @@ if guided_page.exists():
         "Authoritative check",
         "guidedDemoGuideAction",
         "Demo coach · next action",
+        'href="claim-review.html"',
     ]:
         if required_text not in guided_text:
             errors.append(f"guided-submission.html: guided flow contract drift: {required_text}")
@@ -342,6 +1106,7 @@ if mapper_js.exists():
         "Unit compatibility",
         "PK/PD model contract",
         "PK/PD output reproduction",
+        "PK/PD reported concentration bound",
         "formal_explanation",
     ]:
         if required_text not in mapper_script:
@@ -422,6 +1187,7 @@ for page in ["trust.html", "architecture.html"]:
             "unit_compatible",
             "pkpd_contract",
             "pkpd_reference_match",
+            "pkpd_peak_concentration_threshold",
         ]:
             if required_text not in text_value:
                 errors.append(f"{page}: claim-semantics explanation drift: {required_text}")
@@ -511,6 +1277,10 @@ for public_url in [
     "https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html",
     "https://proof-carrying-science-site.marenatommaso.workers.dev/validation-registry.html",
     "https://proof-carrying-science-site.marenatommaso.workers.dev/trust-explorer.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/commons.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/tasks.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/governance.html",
+    "https://proof-carrying-science-site.marenatommaso.workers.dev/claim-invalidation-v1.html",
 ]:
     if public_url not in sitemap_text:
         errors.append(f"sitemap.xml: required public URL missing: {public_url}")
@@ -602,6 +1372,7 @@ if inspector_script.exists():
         "csv_disjoint",
         "pkpd_contract",
         "pkpd_reference_match",
+        "pkpd_peak_concentration_threshold",
         "CERTIFIED CHECKER TYPE",
         "OUTSIDE CERTIFIED CHECKER SET",
         "CHECKER_TYPE_ONLY",
@@ -614,12 +1385,31 @@ if inspector_script.exists():
         if required_text not in inspector_js:
             errors.append(f"package-inspector.js: assurance dependency engine drift: {required_text}")
 
+# The Commons is intentionally server-backed; the scientific discovery and
+# research-preview clients must stay local-only. Review the EXACT API data path.
+NETWORKED_COMMONS_JS = {
+    "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
+    "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js", "arena-safety-forge.js",
+}
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
 
-    # A literal relative fetch of an existing deployable asset is a same-origin,
-    # read-only static dependency. It does not upload browser-selected data and
-    # therefore preserves the site's local-only scientific-data posture.
+    if js.name in NETWORKED_COMMONS_JS:
+        # All network requests by these reviewed clients must pass a local path
+        # named 'path'. GitHub URLs are allowed as navigational links, NOT fetches.
+        if not re.search(r"\bfetch\s*\(\s*path\s*,", text):
+            errors.append(f"{js.name}: reviewed same-origin fetch helper missing")
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
+            errors.append(f"{js.name}: unreviewed network API call or arbitrary fetch target")
+        if js.name == "site.js":
+            if 'path !== "/api/me"' not in text or 'path !== "/api/admin/session"' not in text:
+                errors.append("site.js: reviewed session endpoint allowlist missing")
+        elif 'path.startsWith("/api/")' not in text:
+            errors.append(f"{js.name}: runtime same-origin /api/ route guard missing")
+        continue
+
+    # A literal same-origin GET of a deployable static asset is not a scientific
+    # file upload. Other network primitives on scientific tools must be reviewed.
     def _strip_static_fetch(match: re.Match[str]) -> str:
         ref = match.group("ref")
         parsed = urlparse(ref)
@@ -637,7 +1427,7 @@ for js in ROOT.glob("*.js"):
         text,
     )
     if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", reviewed):
-        errors.append(f"{js.name}: network API found; local-only posture requires review")
+        errors.append(f"{js.name}: network API found; local-only scientific-tool posture requires review")
 
 logo = ROOT / "logo-mark.svg"
 if logo.exists():
@@ -733,7 +1523,7 @@ if public_status.exists() and fixture_obj is not None:
             "reaction_balance_replay_faithful",
             "sha256_fips1804_equivalence_proved",
             "canonical_stored_zip_lean_decoded",
-            "all_five_builtin_replay_semantics_proved",
+            "all_six_builtin_replay_semantics_proved",
             "pkpd_real_model_semantics_proved",
         ]:
             if formal.get(key) is not True:
@@ -803,6 +1593,7 @@ if public_status.exists() and fixture_obj is not None:
             "unit_compatible",
             "pkpd_contract",
             "pkpd_reference_match",
+            "pkpd_peak_concentration_threshold",
         ]:
             errors.append("status.json: supported formal claim type set drift")
         if guided_submission.get("steps") != ["project", "claim", "review", "prepare", "ready"]:
@@ -1270,6 +2061,59 @@ if fixture_obj is not None and reference_js.exists():
             errors.append("pcs-reference.js: embedded package differs from downloadable production fixture")
     except Exception as exc:
         errors.append(f"pcs-reference.js: cannot validate embedded package: {type(exc).__name__}: {exc}")
+
+# Submission pipeline contract: new trust paths must stay discoverable and fail closed.
+for rel, tokens in {
+    "public/account.html": ["workSubmissionDialog", "workSubmissionForm", "workSubmissionFiles",
+                            "outreachEvidenceSection", "workSubmissionChecklist"],
+    "public/account.js": ["openWorkSubmission", "/api/submissions/", "Refresh CI result",
+                          "evidence_kind", "files:attachments"],
+    "public/admin.html": ["adminGithubStatus", "Inspect", "Integrate"],
+    "public/admin.js": ["data-git-stage", "data-git-checks", "data-git-merge", "data-inspect-files"],
+    "public/commons.js": ["taskDuration", "expected_minutes"],
+    "src/worker.js": ["stagePersistedSubmission", "adminMergeSubmission",
+                      "contributorSubmissionChecks", "github_stage_state",
+                      "expectedFiles:files", "github_ci_not_passed"],
+    "src/contribution-github.js": ["PCS Submission Verification", "contributionPrefix",
+                                     "expectedFiles", "actions/workflows/", "mergeStagedPullRequest"],
+    "migrations/0013_submission_automation_microtasks.sql": ["submission_files", "expected_minutes",
+                                                               "MKT-MICRO-001", "'draft'"],
+    ".github/workflows/pcs-submission.yml": ["PCS Submission Verification", "contents: read"],
+    "tests/submission-github.test.mjs": ["fail", "verified", "actions/workflows/pcs-submission.yml/runs", "stage"],
+    "docs/CONTRIBUTION_SUBMISSION_PIPELINE.md": ["PCS_GITHUB_TOKEN", "10 or 30 minute", "Github"]
+}.items():
+    p = REPO / rel
+    if not p.exists():
+        errors.append(f"missing submission integration source: {rel}")
+        continue
+    data = p.read_text(encoding="utf-8")
+    for token in tokens:
+        if token.lower() not in data.lower():
+            errors.append(f"{rel}: submission integration contract missing: {token}")
+
+# Production promotions are a second, explicitly Owner-authorized trust boundary.
+for rel, terms in {
+    "public/admin.html": ["id=\"promotions\"", "promotionCreateForm", "promotionDecisionDialog", "promotionQueue"],
+    "public/admin.js": ["loadPromotions", "promotionAction", "promotionDecisionForm", "promotionFileMappings"],
+    "src/worker.js": ["adminPromotionCreate", "adminPromotionDecision", "adminPromotionMerge",
+                      "isOwner(admin)", "approved_head_sha", "promotion_ci_required"],
+    "src/production-promotion.js": ["validatePromotionMappings", "archiveSource", "verifyPromotion",
+                                     "mergePromotion", "pcs-promotion.yml", "required.every"],
+    "migrations/0014_production_promotions.sql": ["approved_head_sha", "production_promotions", "merge_sha"],
+    ".github/workflows/pcs-promotion.yml": ["PCS Promotion Verification", "contents: read",
+                                            "Check archive-to-production exact bytes", "npm run test:promotions"],
+    "scripts/check_promotion_bundle.py": ["PCS PROMOTION FILE GATE", "expected", "source_bytes!=produced_bytes"],
+    "tests/production-promotion.test.mjs": ["fail", "stale", "mergePromotion"],
+    "docs/PRODUCTION_PROMOTION_WORKFLOW.md": ["Owner", "archive", "main"]
+}.items():
+    path=REPO / rel
+    if not path.is_file():
+        errors.append(f"missing production-promotion contract file: {rel}")
+        continue
+    data=path.read_text(encoding="utf-8")
+    for term in terms:
+        if term.lower() not in data.lower():
+            errors.append(f"{rel}: production promotion contract missing: {term}")
 
 if errors:
     print("SITE CHECK: FAIL")

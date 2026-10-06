@@ -18,9 +18,14 @@ permissions:
 
 jobs:
   site-check:
-    runs-on: ubuntu-latest
+    # Never consume GitHub-hosted minutes; Cloudflare Builds is primary CI.
+    # Enable only after a private Linux x64 runner labeled pcs-ci is registered.
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: [self-hosted, linux, x64, pcs-ci]
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -31,6 +36,27 @@ jobs:
         run: |
           node --check notify-indexnow.mjs
           node --check public/site.js
+          node --check public/commons.js
+          node --check public/roles.js
+          node --check public/task-graph.js
+          node --check public/arena.js
+          node --check public/account.js
+          node --check public/admin-login.js
+          node --check public/admin.js
+          node --check src/worker.js
+          node --check src/contribution-github.js
+          node --check src/production-promotion.js
+          node --check public/research-preview-engine.mjs
+          node --check public/research-preview.js
+          node --check public/researcher-pilot-core.mjs
+          node --check public/researcher-pilot-ui.js
+          node --check public/proof-order-core.mjs
+          node --check public/arena-proof-quest.js
+          node --check scripts/prepare_proof_quest_dataset.mjs
+          node --check public/safety-forge-core.mjs
+          node --check public/arena-safety-forge.js
+          node --check scripts/prepare_safety_forge_dataset.mjs
+          node --check scripts/benchmark_safety_forge.mjs
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -38,8 +64,23 @@ jobs:
           node --check public/package-inspector.js
           node --check public/trust-explorer.js
           node --check public/validation-registry.js
+      - name: Run Commons submission and production promotion security regressions
+        run: |
+          npm run test:submissions
+          npm run test:promotions
+          npm run test:preview
+          npm run test:pilots
+          npm run test:quest
+          npm run test:arena:onboarding
+          npm run test:catalog
+          npm run test:quest:dataset
+          npm run test:safety:forge
+          node --check tests/safety-forge-worker.test.mjs
+          npm run test:safety:benchmark
       - name: Validate deployable static site
         run: python scripts/check_site.py
+      # Optional browser-only regression on an isolated, registered self-hosted runner.
+      # Cloudflare Workers Builds separately validates static security and all Node tests.
       - name: Validate responsive UI layout
         run: python scripts/check_ui_layout.py
       - name: Upload UI layout failure screenshots
@@ -50,6 +91,8 @@ jobs:
           path: artifacts/ui-layout
           if-no-files-found: ignore
           retention-days: 7
+      - name: Run defensive security campaign
+        run: python scripts/security_campaign.py --static
       - name: Enforce zero-billing Cloudflare posture
         run: python scripts/check_free_infrastructure.py
       - name: Install pinned Wrangler

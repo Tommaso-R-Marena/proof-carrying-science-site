@@ -1,0 +1,323 @@
+(() => {
+  "use strict";
+
+  const LEVELS = [
+    {level:0,name:"Learner",review:false,paid:false,description:"Start immediately on open, non-exclusive orientation, annotation, and reproduction tasks."},
+    {level:1,name:"Contributor",review:false,paid:"limited",description:"Earned after reviewed entry-level work; expands open evidence and research tasks."},
+    {level:2,name:"Verified Contributor",review:false,paid:true,description:"Eligible to apply for bounded paid/technical tasks when the exact required skill is verified."},
+    {level:3,name:"Investigator",review:false,paid:true,description:"Advanced decomposition, benchmarking, evaluator analysis, and technical investigation."},
+    {level:4,name:"Reviewer",review:true,paid:true,description:"Independent-review authority eligible only with verified review competence and explicit assignment."},
+    {level:5,name:"Specialist",review:true,paid:true,description:"Formal methods, security, ML evaluation, biology, and other specialist work—still skill-gated per task."},
+    {level:6,name:"Research Lead",review:true,paid:true,description:"Program ownership and assurance-case leadership under explicit PCS authority."},
+  ];
+
+  const META = {
+    "AS-001":{project:"AI Safety v0.1",impact:"Evaluation integrity",difficulty:"Easy",deliverable:"A structured reproduction record: expected count, observed count, ambiguities, and whether the instructions were sufficient.",verification:"A second reviewer compares the record against the frozen trace fixture."},
+    "AS-002":{project:"AI Safety v0.1",impact:"Trace semantics",difficulty:"Easy",deliverable:"Structured allowed/forbidden/ambiguous labels plus a short justification for ambiguous cases.",verification:"Agreement against a hidden reference set plus review of disagreements."},
+    "AS-003":{project:"AI Safety v0.1",impact:"Epistemic calibration",difficulty:"Easy",deliverable:"A claim/evidence table marking supported, overstated, under-specified, or OPEN statements.",verification:"Independent review using the same evidence rubric."},
+    "OPS-001":{project:"Contributor infrastructure",impact:"Usability / access",difficulty:"Easy",deliverable:"Structured usability notes and a yes/no answer: could you tell what useful result was expected?",verification:"Product maintainer triage and before/after copy comparison."},
+    "AS-004":{project:"AI Safety v0.1",impact:"Authorization invariants",difficulty:"Moderate",deliverable:"Machine-readable adversarial test cases plus expected accept/reject outcomes and attack rationale.",verification:"Cases execute deterministically and are reviewed for novelty and correctness."},
+    "AS-005":{project:"AI Safety v0.1",impact:"Resource / authority safety",difficulty:"Moderate",deliverable:"Checker, unit tests, malformed-input tests, and a short trust-boundary note.",verification:"PCS reruns the tests and adversarially mutates fixtures."},
+    "AS-006":{project:"AI Safety v0.1",impact:"Evaluation integrity",difficulty:"Advanced",deliverable:"Threat model, missing-binding findings, and concrete regression tests.",verification:"Findings are reproduced by a second technical reviewer."},
+    "AS-007":{project:"AI Safety v0.1",impact:"Claim IR / obligation graph",difficulty:"Advanced",deliverable:"A proposed obligation DAG with dependency rationale and unresolved assumptions.",verification:"Separate reviewer checks completeness and non-circularity."},
+    "AS-008":{project:"AI Safety v0.1",impact:"Independent review",difficulty:"Reviewer",deliverable:"A review record with accept/reject/OPEN findings per node.",verification:"Reviewer eligibility is assigned by PCS; disagreement is escalated rather than averaged."},
+    "AS-009":{project:"AI Safety v0.1",impact:"Formal assurance",difficulty:"Specialist",deliverable:"Compiling Lean theorem, axiom audit, counterexample attempts, and explanation of assumptions.",verification:"Independent Lean review plus clean build and proof-escape audit."},
+    "AS-010":{project:"Distributed assurance",impact:"Crowdsource work, not authority",difficulty:"Specialist",deliverable:"Attack corpus, successful/failed exploits, and regression recommendations.",verification:"Every claimed exploit must be independently reproduced."},
+    "SCI-001":{project:"Cross-domain pilot",impact:"Domain generality",difficulty:"Advanced",deliverable:"Claim specification, data-world boundary, leaf obligations, and explicit external-world assumptions.",verification:"Domain review plus PCS structural review."},
+    "CAL-PY-001":{project:"Contributor calibration",impact:"Python skill verification",difficulty:"Calibration",deliverable:"Repair the synthetic fail-open checker and add a regression test; explain why the original behavior was unsafe.",verification:"Founder/technical review. Acceptance may verify Python skill but is not production work."},
+    "CAL-LEAN-001":{project:"Contributor calibration",impact:"Lean skill verification",difficulty:"Calibration",deliverable:"Repair the synthetic theorem/proof boundary and explain statement, assumptions, axiom footprint, and why compilation alone is not enough.",verification:"Founder/formal review. Acceptance may verify Lean skill but grants no automatic high level."},
+    "CAL-SEC-001":{project:"Contributor calibration",impact:"Security skill verification",difficulty:"Calibration",deliverable:"Give a concrete synthetic bypass or a rigorous reason proposed attacks fail, plus a regression case.",verification:"Founder/security review on a non-production fixture."},
+    "CAL-ML-001":{project:"Contributor calibration",impact:"ML evaluation skill verification",difficulty:"Calibration",deliverable:"Identify leakage/binding/metric issues in the synthetic evaluation and specify a reproducible correction.",verification:"Founder/ML review on a non-production fixture."},
+    "CAL-RES-001":{project:"Contributor calibration",impact:"Research skill verification",difficulty:"Calibration",deliverable:"Separate supported, overstated, under-specified, and OPEN statements in the synthetic evidence packet.",verification:"Founder/research review on a non-production fixture."},
+    "CAL-BIO-001":{project:"Contributor calibration",impact:"Computational-biology skill verification",difficulty:"Calibration",deliverable:"Check sequence/index/score semantics and explicitly separate committed-artifact truth from external biological truth.",verification:"Founder/domain review on a non-production fixture."},
+    "CAL-REV-001":{project:"Contributor calibration",impact:"Review skill verification",difficulty:"Calibration",deliverable:"Identify missing dependencies and over-closure in a synthetic assurance graph and issue reasoned accept/reject/OPEN findings.",verification:"Founder review. Passing verifies review skill only; L4 still requires separate promotion evidence."},
+  };
+
+  const $=(s,r=document)=>r.querySelector(s);
+  const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  let snapshot={authenticated:false,user:null,requests:[],skills:[],tasks:[]};
+  let taskIntentHandled=false;
+
+  function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  async function api(path,options={}){
+    if(typeof path!=="string" || !path.startsWith("/api/")) throw new Error("Same-origin PCS API path required.");
+    const init={credentials:"same-origin",...options};
+    if(init.body&&typeof init.body!=="string"){init.headers={...(init.headers||{}),"content-type":"application/json"};init.body=JSON.stringify(init.body);}
+    const res=await fetch(path,init);const data=await res.json().catch(()=>({message:"Invalid server response."}));
+    if(!res.ok){const e=new Error(data.message||"Request failed.");e.code=data.error;e.status=res.status;throw e;}return data;
+  }
+  function fmt(v){if(!v)return"—";try{return new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"short"}).format(new Date(v));}catch{return v;}}
+  function compensationLabel(task){return task.compensation_label||"Volunteer";}
+  function paid(task){return task.compensation_type!=="volunteer";}
+  function difficulty(task){return META[task.id]?.difficulty||("L"+task.min_level);}
+  function programLabel(task){
+    if(task.program_id==="claim-invalidation-v1")return "Claim Invalidation v1";
+    return task.program_id||"";
+  }
+  function taskMeta(task){
+    const fallback=META[task.id]||{};
+    return {
+      project:programLabel(task)||fallback.project||"PCS Commons",
+      impact:task.program_id==="claim-invalidation-v1"?"Claim/evidence invalidation semantics":fallback.impact||"Public assurance",
+      difficulty:fallback.difficulty||("L"+task.min_level),
+      deliverable:task.deliverable||fallback.deliverable||"Deliver the bounded output described by the task.",
+      verification:task.verification_rule||fallback.verification||"PCS reviews the result against the stated acceptance criteria."
+    };
+  }
+
+  function accountTaskHref(task, eligibility, apply=true){
+    const next=new URL("tasks.html",location.origin);
+    next.searchParams.set("task",task.id);
+    if(apply)next.searchParams.set("apply","1");
+    const account=new URL("account.html",location.origin);
+    account.searchParams.set("task",task.id);
+    account.searchParams.set("next",next.pathname+next.search);
+    if(task.required_skill)account.searchParams.set("skill",task.required_skill);
+    if(eligibility?.reason)account.searchParams.set("reason",eligibility.reason);
+    return account.pathname+account.search;
+  }
+
+  function requestedTaskIntent(){
+    const params=new URLSearchParams(location.search);
+    const task=String(params.get("task")||"").trim();
+    if(!/^[A-Za-z0-9._-]{2,64}$/.test(task))return null;
+    return {task,apply:params.get("apply")==="1"};
+  }
+
+  function renderProjectTaskReturn(){
+    if(!location.pathname.endsWith("/projects.html"))return;
+    const intent=requestedTaskIntent();
+    if(!intent)return;
+    const head=document.querySelector(".commons-pagehead");
+    if(!head||document.getElementById("projectTaskReturn"))return;
+    const panel=document.createElement("div");
+    panel.id="projectTaskReturn";
+    panel.className="commons-policy-note";
+    panel.innerHTML=`<strong>Inspecting path for ${esc(intent.task)}:</strong><span>This page explains the assurance path; it does not change your task eligibility.</span><a class="button secondary" href="tasks.html?task=${encodeURIComponent(intent.task)}">Return to selected task</a>`;
+    head.insertAdjacentElement("afterend",panel);
+  }
+
+  function renderLevelTable(){
+    const target=$("#commonsLevels");if(!target)return;
+    const actual=snapshot.user?.level;
+    target.innerHTML=LEVELS.map(item=>`
+      <article class="level-card ${actual===item.level?"current-level":""}">
+        <div class="level-number">L${item.level}</div>
+        <div><h3>${esc(item.name)}${actual===item.level?" · your verified level":""}</h3><p>${esc(item.description)}</p>
+        <div class="level-access"><span>${item.paid===true?"Paid-task eligibility":"Public/entry task access"}</span><span>${item.review?"Reviewer-authority eligible":"No review authority"}</span></div></div>
+      </article>`).join("");
+  }
+
+  function profileForm(){
+    return $("#contributorProfileForm");
+  }
+
+  function renderProfile(){
+    const target=$("#localContributorProfile");if(!target)return;
+    const form=profileForm();
+    if(!snapshot.authenticated){
+      target.innerHTML='<div class="commons-empty"><strong>Account required.</strong><span>Create an account to contribute. Every account starts at L0; nobody can self-declare L4 or L5.</span><a class="button primary" href="account.html">Create / sign in</a></div>';
+      if(form){$$("input,select,textarea,button",form).forEach(el=>el.disabled=true);}
+      return;
+    }
+    const u=snapshot.user;
+    target.innerHTML=`
+      <div class="local-profile-head"><span class="commons-level-badge">L${u.level}</span><div><strong>${esc(LEVELS[u.level]?.name||"Contributor")}</strong><small>Verified PCS level · controlled by reviewed work</small></div></div>
+      <dl class="local-profile-grid">
+        <div><dt>Email</dt><dd>${u.email_verified?"Verified":"Unverified"}</dd></div>
+        <div><dt>Time</dt><dd>${u.availability_hours} h/week</dd></div>
+        <div><dt>Track</dt><dd>${esc(u.track)}</dd></div>
+        <div><dt>Work preference</dt><dd>${esc(u.compensation_preference)}</dd></div>
+      </dl>
+      <p class="tiny"><strong>Authority:</strong> your level cannot be edited here. L2+ tasks also require the exact verified skill and PCS approval; L4/L5 work is never self-claimed.</p>
+      <div class="actions"><a class="button secondary" href="account.html">Manage account + skills</a></div>`;
+    if(form){
+      $$("input,select,textarea,button",form).forEach(el=>el.disabled=false);
+      form.elements.availability_hours.value=String(u.availability_hours||1);
+      form.elements.track.value=u.track||"nontechnical";
+      form.elements.compensation_preference.value=u.compensation_preference||"either";
+      form.elements.profile_note.value=u.profile_note||"";
+    }
+  }
+
+  function recommendTask(){
+    const target=$("#commonsRecommendation");if(!target)return;
+    if(!snapshot.authenticated){
+      target.innerHTML='<div class="commons-empty"><strong>Create an account first.</strong><span>You will start at L0 and can begin open, non-exclusive work immediately.</span><a class="button primary" href="account.html">Create account</a></div>';return;
+    }
+    const u=snapshot.user;
+    const eligible=snapshot.tasks.filter(t=>t.eligibility?.can_start||t.eligibility?.can_request);
+    const preferred=eligible.find(t=>(t.required_skill||"nontechnical")===u.track&&Number(t.expected_hours)<=Number(u.availability_hours))||eligible.find(t=>Number(t.expected_hours)<=Number(u.availability_hours))||eligible[0];
+    if(!preferred){target.innerHTML='<div class="commons-empty"><strong>No current task matches your verified access.</strong><span>Do an open task at your current level or request skill verification from your account.</span></div>';return;}
+    const m=taskMeta(preferred);
+    target.innerHTML=`<div class="commons-recommendation-card"><div class="commons-recommendation-badges"><span class="commons-chip level">L${preferred.min_level}</span><span class="commons-chip ${paid(preferred)?"paid":"volunteer"}">${esc(compensationLabel(preferred))}</span></div><h3>${esc(preferred.title)}</h3><p>${esc(preferred.summary)}</p><div class="task-meta"><span><b>${taskDuration(preferred)}</b> expected</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(preferred.claim_mode)}</b> access</span></div><div class="actions"><a class="button primary" href="tasks.html">Open marketplace</a></div></div>`;
+  }
+
+  async function initContributorForm(){
+    const form=profileForm();if(!form)return;
+    form.addEventListener("submit",async e=>{
+      e.preventDefault();
+      if(!snapshot.authenticated){location.href="account.html";return;}
+      const fd=new FormData(form);
+      try{
+        const result=await api("/api/profile",{method:"PATCH",body:{
+          availability_hours:Number(fd.get("availability_hours")),track:fd.get("track"),
+          compensation_preference:fd.get("compensation_preference"),profile_note:fd.get("profile_note")
+        }});
+        snapshot.user=result.user;
+        const msg=$("#profileSaved");if(msg){msg.hidden=false;setTimeout(()=>msg.hidden=true,3000);}
+        renderProfile();recommendTask();renderLevelTable();
+      }catch(err){alert(err.message);}
+    });
+  }
+
+  function accessButton(task){
+    const req=task.my_request;
+    if(req&&["pending","approved"].includes(req.status)){
+      const label=req.status==="pending"?"Application pending · does not reserve":"Active work record";
+      return `<a class="button secondary" href="${esc(accountTaskHref(task,task.eligibility,false))}">${label}</a>`;
+    }
+    const e=task.eligibility||{};
+    if(e.can_start)return `<button class="button primary" type="button" data-start-task="${esc(task.id)}">Start now · non-exclusive</button>`;
+    if(e.state==="skill_or_application"){
+      const evalUrl=accountTaskHref(task,e,false)+"&evaluation=1";
+      return `<button class="button primary" type="button" data-apply-task="${esc(task.id)}">Apply directly · manual review</button><a class="button secondary" href="${esc(evalUrl)}">Take variable evaluation</a>`;
+    }
+    if(e.can_request)return `<button class="button primary" type="button" data-apply-task="${esc(task.id)}">Apply for PCS approval</button>`;
+    if(e.state==="dependency_required")return `<a class="button secondary" href="claim-invalidation-v1.html">See program prerequisites</a>`;
+    if(e.state==="login_required")return `<a class="button primary" href="${esc(accountTaskHref(task,e,true))}">Sign in, then return to this task</a>`;
+    return `<a class="button secondary" href="${esc(accountTaskHref(task,e,true))}">See qualification options</a>`;
+  }
+
+  function taskDuration(task){
+    const minutes=Number(task.expected_minutes ?? Number(task.expected_hours||1)*60);
+    return minutes<60 ? minutes+" min" : minutes%60===0?minutes/60+"h":Math.floor(minutes/60)+"h "+minutes%60+"m";
+  }
+  function taskCard(task){
+    const m=taskMeta(task), e=task.eligibility||{};
+    const paidClass=paid(task)?"paid":"volunteer";
+    const accessLabel=task.claim_mode==="open"?"OPEN · NON-EXCLUSIVE":task.claim_mode==="approval"?"FOUNDER APPROVAL":"HIGH-TRUST ASSIGNMENT";
+    const deps=Array.isArray(task.dependencies)?task.dependencies:[];
+    const groups=Array.isArray(task.dependency_groups)?task.dependency_groups:[];
+    const program=programLabel(task);
+    const category=String(task.category||"research");
+    const dependencyHtml=(deps.length||groups.length)?`
+      <div class="task-dependency-list">
+        <strong>Dependency contract</strong>
+        ${groups.map(group=>`<span class="${group.complete?"complete":"blocked"}"><b>${group.complete?"✓":"LOCK"}</b> ${esc(group.label)} · ${esc(group.mode==="all"?"all required":group.mode==="any"?"any one":`at least ${group.required}`)} · ${esc(group.satisfied)}/${esc(group.total)} satisfied</span>`).join("")}
+        ${deps.map(dep=>`<span class="${dep.completed?"complete":dep.dependency_type==="hard"?"blocked":"informative"}"><b>${dep.completed?"✓":dep.dependency_type==="hard"?"LOCK":"INFO"}</b> ${esc(dep.depends_on_task_id)} → ${esc(dep.relation||"requires")} · ${esc(dep.depends_on_title||"prerequisite")}${dep.artifact_contract?`<small>${esc(dep.artifact_contract)}</small>`:""}</span>`).join("")}
+      </div>`:"";
+    const sourceHtml=task.source_ref?`<p><strong>Core source:</strong> <code>${esc(task.source_ref)}</code></p>`:"";
+    const criteriaHtml=task.acceptance_criteria?`<p><strong>Acceptance criteria:</strong> ${esc(task.acceptance_criteria)}</p>`:"";
+    return `<article class="commons-task-card ${program?"program-task":""}" data-task-id="${esc(task.id)}" data-level="${task.min_level}" data-comp="${paid(task)?"paid":"volunteer"}" data-skill="${esc(task.required_skill||"nontechnical")}" data-category="${esc(category)}" data-hours="${task.expected_hours}" data-minutes="${task.expected_minutes??Number(task.expected_hours||1)*60}">
+      <div class="task-card-top"><div><span class="commons-chip level">L${task.min_level}</span><span class="commons-chip category">${esc(category.replaceAll("_"," "))}</span><span class="commons-chip ${paidClass}">${esc(compensationLabel(task))}</span><span class="commons-chip ${task.claim_mode==="open"?"volunteer":"planned"}">${accessLabel}</span>${program?`<span class="commons-chip program">${esc(program)} · STEP ${esc(task.program_step)}</span>`:""}</div><code>${esc(task.id)}</code></div>
+      <h3>${esc(task.title)}</h3><p>${esc(task.summary)}</p>
+      ${task.why_now?`<div class="task-why-now"><strong>Why PCS needs this now</strong><span>${esc(task.why_now)}</span></div>`:""}
+      <div class="task-meta"><span><b>${taskDuration(task)}</b> expected</span><span><b>${esc(m.difficulty)}</b> difficulty</span><span><b>${esc(task.required_skill||"entry")}</b> skill gate</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(task.priority??50)}</b> priority</span></div>
+      ${dependencyHtml}
+      <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.claim_mode!=="open"?"<span>Qualification route: variable auto-scored evaluation or direct manual application. Final approval is always manual. PCS targets a decision within 1 business day and no later than 2 business days. Pending applications never reserve the task.</span>":""}</div>
+      <div class="task-required-output"><strong>Exactly what to submit:</strong> <span>${esc(m.deliverable)}</span></div>
+      <details class="task-details"><summary>How PCS checks the work · exact acceptance</summary><p><strong>Independent review:</strong> ${esc(m.verification)}</p>${criteriaHtml}${task.success_metric?`<p><strong>Success metric:</strong> ${esc(task.success_metric)}</p>`:""}${sourceHtml}<p><strong>Project:</strong> ${esc(m.project)}</p></details>
+      <div class="task-actions">${accessButton(task)}${program?`<a class="button secondary" href="claim-invalidation-v1.html#${encodeURIComponent(task.id)}">Open public task packet</a>`:`<a class="button secondary" href="task-graph.html?task=${encodeURIComponent(task.id)}">See dependency path</a>`}</div>
+    </article>`;
+  }
+
+  function filterAndRenderTasks(){
+    const target=$("#commonsTaskList");if(!target)return;
+    const level=Number($("#taskLevel")?.value??6),comp=$("#taskComp")?.value||"all",skill=$("#taskSkill")?.value||"all",category=$("#taskCategory")?.value||"all",minutes=Number($("#taskHours")?.value||9999);
+    const shown=snapshot.tasks.filter(t=>Number(t.min_level)<=level&&(comp==="all"||(comp==="paid"?paid(t):!paid(t)))&&(skill==="all"||(t.required_skill||"nontechnical")===skill)&&(category==="all"||(t.category||"research")===category)&&Number(t.expected_minutes??Number(t.expected_hours||1)*60)<=minutes);
+    target.innerHTML=shown.map(taskCard).join("")||'<div class="commons-empty"><strong>No currently needed tasks match those filters.</strong><span>Adjust category, level, time, compensation, or track—or check ongoing Roles.</span></div>';
+    const count=$("#taskCount");if(count)count.textContent=`${shown.length} currently needed task${shown.length===1?"":"s"} shown`;
+    $$("[data-start-task]",target).forEach(btn=>btn.addEventListener("click",()=>startTask(btn.dataset.startTask)));
+    $$("[data-apply-task]",target).forEach(btn=>btn.addEventListener("click",()=>openApplication(btn.dataset.applyTask)));
+  }
+
+  async function startTask(id){
+    try{
+      const result=await api(`/api/tasks/${encodeURIComponent(id)}/request`,{method:"POST",body:{application_note:"Starting an eligible open non-exclusive task.",ai_use_plan:"AI use, if any, will be disclosed at submission.",verification_plan:"I will follow the task acceptance criteria and record enough evidence for independent review."}});
+      alert(result.message);await refresh();
+    }catch(err){alert(err.message);}
+  }
+
+  function openApplication(id){
+    const dialog=$("#taskApplicationDialog"),form=$("#taskApplicationForm");if(!dialog||!form)return;
+    const task=snapshot.tasks.find(t=>t.id===id);
+    form.reset();form.elements.task_id.value=id;$("#taskApplicationTitle").textContent=`Apply for ${id} — ${task?.title||"task"}`;$("#taskApplicationMessage").textContent="";dialog.showModal();
+  }
+
+  function initApplicationDialog(){
+    const dialog=$("#taskApplicationDialog"),form=$("#taskApplicationForm");if(!dialog||!form)return;
+    $("#closeTaskApplication")?.addEventListener("click",()=>dialog.close());
+    form.addEventListener("submit",async e=>{
+      e.preventDefault();const fd=new FormData(form),id=fd.get("task_id");const msg=$("#taskApplicationMessage");
+      try{
+        const result=await api(`/api/tasks/${encodeURIComponent(id)}/request`,{method:"POST",body:{application_note:fd.get("application_note"),ai_use_plan:fd.get("ai_use_plan"),verification_plan:fd.get("verification_plan")}});
+        msg.textContent=result.message+" Decision deadline: "+fmt(result.decision_due_at);msg.className="form-message successline";
+        setTimeout(()=>{dialog.close();refresh();},1400);
+      }catch(err){msg.textContent=err.message;msg.className="form-message validation bad";}
+    });
+  }
+
+  function renderTaskAccountBanner(){
+    const banner=$("#taskAccountBanner");if(!banner)return;
+    if(!snapshot.authenticated){banner.innerHTML='<strong>Account required:</strong><span>Create an account to contribute. You start at L0 and can immediately start open, non-exclusive tasks. Nobody can self-select L4/L5.</span>';return;}
+    const u=snapshot.user;
+    banner.innerHTML=`<strong>Signed in: L${u.level} · ${esc(u.display_name)}</strong><span>${u.email_verified?"Email verified.":"Email not verified yet."} For higher-trust work, either pass a variable competency evaluation or apply directly for manual competency review. Final approval is manual.</span>`;
+  }
+
+  function renderImpact(){
+    const target=$("#personalImpact");if(!target)return;
+    if(!snapshot.authenticated){target.innerHTML='<p class="muted">Sign in to see your actual task applications and work records.</p>';return;}
+    const reqs=snapshot.requests||[];
+    if(!reqs.length){target.innerHTML='<p class="muted">No work records yet. Start an open L0 task from the marketplace.</p>';return;}
+    target.innerHTML=reqs.map(r=>`<div class="impact-request"><code>${esc(r.task_id)}</code><div><strong>${esc(r.title)}</strong><span>${esc(r.status)} · requested ${fmt(r.requested_at)}</span></div><b>${esc(r.status).toUpperCase()}</b></div>`).join("");
+  }
+
+  function handleTaskIntent(){
+    const intent=requestedTaskIntent();
+    if(!intent)return;
+    const task=snapshot.tasks.find(t=>t.id===intent.task);
+    const card=[...document.querySelectorAll("[data-task-id]")].find(el=>el.dataset.taskId===intent.task);
+    if(card){
+      card.classList.add("task-focus");
+      card.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+    if(taskIntentHandled||!intent.apply||!task)return;
+    taskIntentHandled=true;
+    const url=new URL(location.href);
+    url.searchParams.delete("apply");
+    history.replaceState({},document.title,url.pathname+url.search+url.hash);
+    if(task.my_request&&["pending","approved"].includes(task.my_request.status))return;
+    if(task.eligibility?.can_request){
+      setTimeout(()=>openApplication(task.id),250);
+      return;
+    }
+    const banner=$("#taskAccountBanner");
+    if(task.eligibility?.can_start){
+      if(banner)banner.innerHTML=`<strong>Selected task ${esc(task.id)} is unlocked:</strong><span>Use “Start now · non-exclusive” on the highlighted task card. PCS will not start work automatically after sign-in.</span>`;
+      return;
+    }
+    if(banner){
+      const reason=task.eligibility?.reason||"This task is not currently unlocked for your account.";
+      banner.innerHTML=`<strong>Selected task ${esc(task.id)}:</strong><span>${esc(reason)} Update the required level/skill on your account, then return here to apply.</span>`;
+    }
+  }
+
+  async function refresh(){
+    const [me,tasks]=await Promise.all([api("/api/me"),api("/api/tasks")]);
+    snapshot={...me,tasks:tasks.tasks||[],user:me.user||tasks.user||null,authenticated:Boolean(me.authenticated),requests:me.requests||[],skills:me.skills||[]};
+    renderLevelTable();renderProfile();recommendTask();filterAndRenderTasks();renderTaskAccountBanner();renderImpact();handleTaskIntent();
+  }
+
+  function initFilters(){
+    ["taskLevel","taskComp","taskSkill","taskCategory","taskHours"].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener("input",filterAndRenderTasks);el.addEventListener("change",filterAndRenderTasks);}});
+  }
+
+  document.addEventListener("DOMContentLoaded",async()=>{
+    renderProjectTaskReturn();initFilters();initApplicationDialog();await initContributorForm();
+    try{await refresh();}catch(err){
+      const target=$("#commonsTaskList");if(target)target.innerHTML=`<div class="commons-empty"><strong>Account service unavailable.</strong><span>${esc(err.message)}</span></div>`;
+      renderLevelTable();
+    }
+  });
+})();

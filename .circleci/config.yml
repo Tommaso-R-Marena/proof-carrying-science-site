@@ -19,3 +19,4 @@ workflows:
               only:
                 - main
                 - v06-mvp-product
+                - product/claim-ir-human-review-v1

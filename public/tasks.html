@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Needed Work · PCS Commons</title>
+<meta name="description" content="Browse only the bounded work PCS has explicitly marked as currently needed.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/tasks.html">
+<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head>
+<body class="commons-page">
+<div class="topbar commons-topbar"><div class="shell"><span>Needed work · explicit Founder publication · hidden/draft ideas never appear</span><a href="governance.html#compensation">Contributor rights</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+<a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+<div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="roles.html">Roles</a><a href="task-graph.html">Graph</a><a href="arena.html">Arena</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a href="account.html">Account</a><a class="button dark" href="contribute.html">My contributor profile</a></div>
+</nav>
+<main>
+<section class="pagehead commons-pagehead">
+<div class="kicker">Curated PCS Work</div>
+<h1>Only work PCS actually needs should be here.</h1>
+  <p><strong>Have only 10 or 30 minutes?</strong> Use the Maximum time filter. Marketing and outreach work is welcome when it has a specific deliverable, approved messaging, and verifiable evidence—not mass unsolicited posting or guessed conversion numbers.</p>
+<p>PCS now defaults to hiding work. A task appears here only when the Founder/Owner has explicitly marked it published + needed. Bounded research, engineering, administrative, operations, outreach, and communications work can all appear here; ongoing responsibilities live under Roles instead. Every listed task still has a concrete deliverable, verification rule, and finish line.</p>
+<div class="qualification-choice-banner compact">
+  <article><span>OPTION A</span><strong>Take a variable evaluation</strong><p>Fresh parameterized questions + shuffled choices. Auto-scored, then manually approved.</p><a class="button primary" href="account.html?qualification=evaluation#evaluationStartForm">Take the evaluation →</a></article>
+  <article><span>OPTION B</span><strong>Apply directly</strong><p>Explain your competence. PCS targets a response within 1 business day and no later than 2 business days.</p><a class="button secondary" href="account.html?qualification=application#skillForm">Submit an application →</a></article>
+</div>
+<div class="commons-policy-note"><strong>Newcomer path:</strong><span>Start at L0. There are practical tasks in all 11 categories, including documentation, operations, accessibility, community, and outreach. Every published task names its exact output and review rule. <a href="arena-safety-forge.html">Safety Forge</a> is a free way to practice first.</span></div>
+<div class="commons-policy-note"><strong>Important:</strong><span><b>“Proposed” means not yet funded.</b> Do not begin a paid/planned-paid task expecting compensation until PCS confirms funding and terms in writing.</span></div>
+</section>
+
+<div id="taskAccountBanner" class="commons-policy-note"><strong>Account:</strong><span>Checking your verified PCS level and task access…</span></div>
+
+<section class="task-market-layout">
+  <aside class="task-filter-panel panel" aria-label="Task filters">
+    <div class="panel-eyebrow">Filter tasks</div>
+    <label><span>Maximum difficulty</span>
+      <select id="taskLevel" class="selectinput">
+        <option value="0">L0 · Learner</option><option value="1">L1 · Contributor</option><option value="2">L2 · Verified contributor</option>
+        <option value="3">L3 · Investigator</option><option value="4">L4 · Reviewer</option><option value="5">L5 · Specialist</option><option value="6" selected>L6 · All levels</option>
+      </select>
+    </label>
+    <label><span>Compensation</span>
+      <select id="taskComp" class="selectinput">
+        <option value="all">All tasks</option><option value="volunteer">Volunteer only</option><option value="paid">Paid / planned-paid only</option>
+      </select>
+    </label>
+    <label><span>Work category</span>
+      <select id="taskCategory" class="selectinput">
+        <option value="all">All categories</option>
+        <option value="research">Research</option><option value="engineering">Engineering</option>
+        <option value="security">Security</option><option value="review">Review</option>
+        <option value="operations">Operations / QA</option><option value="administrative">Administrative</option>
+        <option value="marketing">Marketing / communications</option><option value="outreach">Outreach</option>
+        <option value="design">Design</option><option value="documentation">Documentation</option><option value="community">Community</option>
+      </select>
+    </label>
+    <label><span>Track</span>
+      <select id="taskSkill" class="selectinput">
+        <option value="all">All tracks</option><option value="nontechnical">Nontechnical</option><option value="research">Research</option>
+        <option value="python">Python</option><option value="ml">ML / evaluation</option><option value="security">Security</option>
+        <option value="lean">Lean / formal methods</option><option value="review">Review</option><option value="biology">Computational biology</option>
+      </select>
+    </label>
+    <label><span>Maximum time</span>
+      <select id="taskHours" class="selectinput">
+        <option value="10">10 minutes</option><option value="30">30 minutes</option><option value="60">Up to 1 hour</option>
+        <option value="120">Up to 2 hours</option><option value="180">Up to 3 hours</option>
+        <option value="300">Up to 5 hours</option><option value="480">Up to 8 hours</option>
+        <option value="9999" selected>Any duration</option>
+      </select>
+    </label>
+    <div class="task-filter-help">
+      <strong>Not sure where to start?</strong>
+      <p>Create/sign into your account and let PCS use your verified level plus your time and background.</p>
+      <a class="button secondary" href="contribute.html">Build profile</a>
+    </div>
+  </aside>
+
+  <section class="task-market-results">
+    <div class="task-results-head"><div><div class="kicker">Published + currently needed</div><h2 id="taskCount">Tasks</h2></div><div class="actions"><a class="button secondary" href="task-graph.html">Dependency graph</a><a class="button secondary" href="roles.html">Ongoing roles</a></div></div>
+    <div id="commonsTaskList" class="commons-task-list" aria-live="polite"></div>
+  </section>
+</section>
+
+<section class="section">
+  <div class="section-heading-row"><div><div class="kicker">Task contract</div><h2>Four things must be clear before productive work starts.</h2></div></div>
+  <div class="grid4 commons-contract-grid">
+    <article class="card"><div class="num">01</div><h3>Scope</h3><p>Exactly what artifact, analysis, test, proof, review, or annotation is expected.</p></article>
+    <article class="card"><div class="num">02</div><h3>Acceptance</h3><p>How the result will be verified and what can cause rejection or escalation.</p></article>
+    <article class="card"><div class="num">03</div><h3>Compensation</h3><p>Volunteer, funded bounty, paid review, or specialist contract—disclosed before work begins.</p></article>
+    <article class="card"><div class="num">04</div><h3>Rights + terms</h3><p>Attribution, licensing/IP, confidentiality, payment timing, and review process stated up front.</p></article>
+  </div>
+</section>
+
+<section class="commons-two-col">
+  <div class="panel">
+    <div class="kicker">Reliability, not punishment</div>
+    <h2>Returning a task is allowed.</h2>
+    <p>Tasks should not be held indefinitely, but volunteer accountability should not become coercion. A missed claim window returns the task to the pool. Repeated abandonment may reduce simultaneous reservations or create a cooldown. “Attempted but blocked” is valuable data and should not be treated like disappearing.</p>
+  </div>
+  <div class="panel">
+    <div class="kicker">Gamification boundary</div>
+    <h2>Leaderboards belong only where the score means something.</h2>
+    <p>Ordinary tasks are not a points grind. PCS can use challenge-specific scoring only when a result is objectively checkable or independently validated—similar in spirit to scientific puzzle systems. Research quality, falsification, and difficult negative findings must never lose to raw task count.</p>
+  </div>
+</section>
+
+<section class="commons-callout">
+  <div><span class="commons-kicker-dark">CURRENT PILOT</span><h2>Qualification can be demonstrated or reviewed—never self-declared.</h2><p>L0–L1 open tasks can be started immediately and never become exclusive. For L2+ work, contributors may pass a variable auto-scored competency screening or submit the task application directly for manual review. Either way, final approval is manual, targets 1 business day and no later than 2 business days, and only then creates a reservation. Approved reserved work must show progress within 24 hours or it releases automatically.</p></div>
+  <div class="actions"><a class="button primary button-lg" href="contribute.html">Set my profile</a><a class="button ghost button-lg" href="roles.html">Apply for an ongoing role</a><a class="button ghost button-lg" href="governance.html">Read the rules</a></div>
+</section>
+<dialog id="taskApplicationDialog" class="task-application-dialog">
+  <form id="taskApplicationForm" method="dialog">
+    <div class="panel-eyebrow">High-trust task application</div>
+    <h2 id="taskApplicationTitle">Apply for task</h2>
+    <p>Applying does <strong>not</strong> reserve the task. If the exact skill is already verified, PCS uses that record. If it is not, this application itself can be reviewed as competency evidence. You may also take the variable evaluation instead. In every case, final approval is manual and PCS targets a decision within 1 business day and no later than 2 business days.</p>
+    <input type="hidden" name="task_id">
+    <label class="field"><span>Why are you qualified, and what will you do?</span><textarea class="textinput" name="application_note" minlength="120" maxlength="3000" required></textarea></label>
+    <label class="field"><span>How will you use AI, if at all?</span><textarea class="textinput" name="ai_use_plan" minlength="60" maxlength="2000" required placeholder="AI is allowed. State what you may use it for and what you personally remain responsible for checking."></textarea></label>
+    <label class="field"><span>How will you independently verify the work?</span><textarea class="textinput" name="verification_plan" minlength="120" maxlength="3000" required></textarea></label>
+    <div class="actions"><button class="button primary" type="submit">Send application to PCS</button><button class="button secondary" type="button" id="closeTaskApplication">Cancel</button></div>
+    <p id="taskApplicationMessage" class="form-message" aria-live="polite"></p>
+  </form>
+</dialog>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Task-level coordination for useful, verifiable AI-safety work.</p></div><div class="footercol"><strong>Marketplace</strong><a href="contribute.html">Onboarding</a><a href="projects.html">Assurance projects</a><a href="contributors.html">Progression</a></div><div class="footercol"><strong>Rules</strong><a href="governance.html">Governance</a><a href="fund.html">Funding</a><a href="contact.html">Contact</a></div></div></footer>
+</div>
+<script src="site.js"></script><script src="commons.js"></script>
+</body></html>
