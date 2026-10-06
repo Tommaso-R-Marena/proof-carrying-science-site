@@ -48,8 +48,8 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
-    "styles.css", "site.js", "commons.js", "account.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
+    "index.html", "commons.html", "contribute.html", "tasks.html", "projects.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "styles.css", "site.js", "commons.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
     "validation-registry.html", "validation-registry.js", "sitemap.xml", "llms.txt",
@@ -321,15 +321,19 @@ commons_contracts = {
         'id="evaluationStartForm"',
         'id="skillForm"',
         'id="requestList"',
+        'href="admin-login.html"',
         'src="account.js"',
     ],
     "admin.html": [
-        "Approve access without letting applications block the work.",
-        "Auto-score the screen; keep authority manual.",
-        "24-hour progress checkpoint",
-        "1–2 business-day review deadline",
+        "One place for approvals, authority, operations, and audit history.",
+        "Separate privileged session",
+        "Approval history",
+        "Administrative actions",
+        "Immutable audit archive",
         'id="adminRequestList"',
-        'id="adminCheckpointList"',
+        'id="adminApprovalHistory"',
+        'id="adminActionHistory"',
+        'id="adminAuditList"',
         'src="admin.js"',
     ],
 }
@@ -422,6 +426,12 @@ if admin_js.exists():
     admin_script = admin_js.read_text(encoding="utf-8")
     for required_text in [
         'api("/api/admin/overview")',
+        'api("/api/admin/audit?',
+        'api("/api/admin/logout"',
+        "renderAuditIntegrity",
+        "adminApprovalHistory",
+        "adminActionHistory",
+        "adminAuditList",
         "/decision",
         "/checkpoint",
         "/skill",
@@ -442,6 +452,17 @@ else:
         'const SESSION_COOKIE = "pcs_commons_session"',
         "PBKDF2",
         "SameSite=Lax",
+        'const ADMIN_SESSION_COOKIE = "pcs_admin_session"',
+        "SameSite=Strict",
+        "createAdminSession",
+        "currentAdminUser",
+        "adminLogin",
+        "adminSessionStatus",
+        "adminLogout",
+        "audit_archive",
+        "appendAuditArchive",
+        "verifyAuditArchive",
+        "adminAuditFeed",
         "Account created at L0.",
         "task.claim_mode === \"open\"",
         "addBusinessDaysIso",
@@ -484,6 +505,36 @@ else:
     ]:
         if required_text not in competency_text:
             errors.append(f"migrations/0003_competency_evaluations.sql: variable competency contract drift: {required_text}")
+
+admin_audit_migration = REPO / "migrations" / "0004_admin_sessions_immutable_audit.sql"
+if not admin_audit_migration.exists():
+    errors.append("missing admin/audit migration: migrations/0004_admin_sessions_immutable_audit.sql")
+else:
+    admin_audit_text = admin_audit_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS admin_sessions",
+        "CREATE TABLE IF NOT EXISTS audit_archive",
+        "audit_archive_no_update",
+        "audit_archive_no_delete",
+        "audit_log_no_delete",
+        "prev_hash TEXT NOT NULL UNIQUE",
+        "event_hash TEXT NOT NULL UNIQUE",
+    ]:
+        if required_text not in admin_audit_text:
+            errors.append(f"migrations/0004_admin_sessions_immutable_audit.sql: admin/audit contract drift: {required_text}")
+
+admin_login_page = ROOT / "admin-login.html"
+admin_login_js = ROOT / "admin-login.js"
+if admin_login_page.exists():
+    value = admin_login_page.read_text(encoding="utf-8")
+    for required_text in ["Admin sign in","separate administrative session",'id="adminLoginForm"','src="admin-login.js"']:
+        if required_text not in value:
+            errors.append(f"admin-login.html: privileged-login contract drift: {required_text}")
+if admin_login_js.exists():
+    value = admin_login_js.read_text(encoding="utf-8")
+    for required_text in ['/api/admin/session','/api/admin/login','location.replace("admin.html")']:
+        if required_text not in value:
+            errors.append(f"admin-login.js: privileged-login contract drift: {required_text}")
 
 migration_sql = REPO / "migrations" / "0001_commons_auth.sql"
 if not migration_sql.exists():
