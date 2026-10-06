@@ -357,10 +357,11 @@
       approve:"Approve this exact, freshly tested commit for production. Explain how you evaluated scientific scope, regressions and trust boundaries.",
       needs_changes:"Request improvements. This existing artifact stays unchanged; the contributor must provide a new accepted, archived submission for a revised promotion.",
       reject:"Reject the proposed production source change with a concrete rationale.",
-      merge:"Final production integration. The server will recheck the approved SHA, exact archived bytes, PR file inventory, current main baseline and fresh CI."
+      merge:"Final production integration. The server will recheck the approved SHA, exact archived bytes, PR file inventory, current main baseline and fresh CI.",
+      supersede:"Close this obsolete production PR, revoke its old approval, and make the accepted archived source eligible for a new PR against current main. The original promotion remains in the audit archive."
     };
     $("#promotionDecisionTitle").textContent={
-      approve:"Approve production promotion",needs_changes:"Request changes",reject:"Reject promotion",merge:"Merge verified production PR"
+      approve:"Approve production promotion",needs_changes:"Request changes",reject:"Reject promotion",merge:"Merge verified production PR",supersede:"Supersede stale promotion PR"
     }[action];
     $("#promotionDecisionContext").textContent=descriptions[action];
     $("#promotionDecisionNote").value="";
@@ -434,12 +435,13 @@
               <button type="button" class="button secondary" data-promotion-needs_changes="${esc(p.id)}">Request improvements</button>
               <button type="button" class="button secondary" data-promotion-reject="${esc(p.id)}">Reject</button>`:""}
             ${p.state==="approved"&&data.can_manage?`<button type="button" class="button primary" data-promotion-merge="${esc(p.id)}">Integrate into production</button>`:""}
+            ${["requested","stage_error","staged","approved"].includes(p.state)&&data.can_manage?`<button type="button" class="button secondary" data-promotion-supersede="${esc(p.id)}">Supersede / new baseline</button>`:""}
           </div>
         </article>`;
       }).join("")||'<div class="commons-empty"><strong>No promoted source changes yet.</strong><span>Each case must originate in a reviewed GitHub archive and pass new tests.</span></div>';
       all("[data-promotion-checks]",queue).forEach(button=>button.addEventListener("click",()=>promotionAction(button.dataset.promotionChecks,"checks")));
       all("[data-promotion-stage]",queue).forEach(button=>button.addEventListener("click",()=>promotionAction(button.dataset.promotionStage,"stage")));
-      for(const action of ["approve","needs_changes","reject","merge"]){
+      for(const action of ["approve","needs_changes","reject","merge","supersede"]){
         all("[data-promotion-"+action+"]",queue).forEach(button=>button.addEventListener("click",()=>promotionNoteAction(button.getAttribute("data-promotion-"+action),action)));
       }
     }catch(e){
@@ -515,8 +517,8 @@
     if(!id||note.length<40){$("#promotionDecisionStatus").textContent="Write a reason of at least 40 characters.";return;}
     const btn=$("#promotionDecisionConfirm");btn.disabled=true;
     $("#promotionDecisionStatus").textContent="Rechecking exact source, current PR and required CI…";
-    const endpoint=action==="merge"?"merge":"decision";
-    const body=action==="merge"?{reason:note}:{decision:action,note};
+    const endpoint=action==="merge"?"merge":action==="supersede"?"supersede":"decision";
+    const body=action==="merge"||action==="supersede"?{reason:note}:{decision:action,note};
     const ok=await promotionAction(id,endpoint,body);
     btn.disabled=false;
     if(ok)$("#promotionDecisionDialog").close();
