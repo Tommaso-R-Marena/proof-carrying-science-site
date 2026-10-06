@@ -213,6 +213,7 @@ def static_campaign(c: Campaign) -> None:
         "donateSafetyForgeSession", "adult_confirmation!==true", "consent_training!==true",
         "email_verification_required", "safety_forge_daily_limit",
         "evaluateResearchSession(submitted)",
+        "const digest=await sha256Hex(JSON.stringify(submitted));",
     ])
     c.require("Safety Forge donor deletion and export require appropriate authority", worker, [
         "eraseSafetyForgeSessions", "DELETE FROM safety_forge_research_sessions WHERE user_id=?",

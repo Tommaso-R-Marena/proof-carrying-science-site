@@ -41,6 +41,10 @@ The simulator defines its own small reference-world rules. Successful exhaustive
 - Record and audit duplicates, approximate participant count without deidentifying linkage leakage, hint use where later explicitly disclosed, and gaming/bot contamination. Server replay authenticates *simulated semantics*, **not** that a human independently invented the policy.
 - For actual Lean 4 alignment/proof-search research, create a separate trusted adapter from real `goal state → tactic → new goal state → kernel proof verdict` episodes. Bind them to exact Lean/Mathlib build hashes; reject unknown checker types. Do not use toy game data as real Lean proofs.
 
+## Donation backend integrity correction
+
+The adult-only research session table requires a **64-character lowercase hexadecimal SHA-256 digest** for `session_digest`. The first implementation mistakenly reused `sha256()` (43-character base64url, appropriate for auth/rate-limit tokens), so a valid donation could fail D1's CHECK constraint. The Worker now uses `sha256Hex(JSON.stringify(submitted))`. An integration regression test exercises the real Worker route with a database-contract mock, verifies exact hexadecimal length, user/consent protection, Owner-only export, self-erasure and malformed-client rejection. Production records were zero at discovery; no prior donated samples were lost.
+
 ## How to test locally
 
 ```bash

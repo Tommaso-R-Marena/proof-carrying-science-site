@@ -71,6 +71,7 @@ jobs:
           npm run test:catalog
           npm run test:quest:dataset
           npm run test:safety:forge
+          node --check tests/safety-forge-worker.test.mjs
           npm run test:safety:benchmark
       - name: Validate deployable static site
         run: python scripts/check_site.py
