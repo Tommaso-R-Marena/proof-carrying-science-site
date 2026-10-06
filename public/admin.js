@@ -850,6 +850,22 @@
     }catch(e){message.textContent=e.message;message.className="form-message validation bad";}
   });
 
+  $("#adminGithubTestButton")?.addEventListener("click",async()=>{
+    const button=$("#adminGithubTestButton"),target=$("#adminGithubTestResult");
+    button.disabled=true; target.textContent="Checking permission scopes on both repositories…";
+    try{
+      const report=await api("/api/admin/github/diagnostics");
+      const lines=(report.repositories||[]).map(r=>
+        r.repository+": Git contents "+(r.contents_read?"accessible":"unavailable")+
+        "; Actions runs "+(r.actions_read?"accessible":"unavailable")+
+        (r.contents_error?"; "+r.contents_error:"")+
+        (r.actions_error?"; "+r.actions_error:"")
+      );
+      target.textContent=[report.message,...lines].join(" | ");
+    }catch(e){target.textContent="Diagnostic failed: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
   $("#adminMailTestButton")?.addEventListener("click",async()=>{
     const button=$("#adminMailTestButton");
     button.disabled=true;

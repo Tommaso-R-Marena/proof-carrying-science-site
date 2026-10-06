@@ -204,16 +204,59 @@ export async function readSubmissionChecks(env,{repo,branch,number,taskId,submis
       }
     }
   }
-  const checks=await github(env,repo,"GET",`commits/${head}/check-runs?per_page=100`);
-  const candidates=(checks.check_runs||[]).filter(x=>x.name===CHECK_NAME && x.app?.slug==="github-actions");
-  const run=candidates.sort((a,b)=>String(b.started_at||b.created_at||"").localeCompare(String(a.started_at||a.created_at||"")))[0];
-  const state=!run?"pending":run.status!=="completed"?"running":run.conclusion==="success"?"passed":"failed";
+  // Use Actions READ (available on fine-grained PATs) instead of Checks READ.
+  // Require a completed workflow *and* an actually executed successful job.
+  // A runner-less failure or exhausted-minute run is never equivalent to PASS.
+  const workflow="pcs-submission.yml";
+  const listing=await github(env,repo,"GET",
+    `actions/workflows/${workflow}/runs?event=pull_request&head_sha=${encodeURIComponent(head)}&per_page=50`);
+  const runs=(listing.workflow_runs||[]).filter(r=>
+    r.head_sha===head && r.event==="pull_request" &&
+    Array.isArray(r.pull_requests) && r.pull_requests.some(p=>Number(p.number)===Number(number))
+  ).sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0) ||
+    Number(b.run_attempt||0)-Number(a.run_attempt||0));
+  const run=runs[0]||null;
+  let state=!run?"pending":run.status!=="completed"?"running":"failed";
+  let conclusion=run?.conclusion||null, checkRunUrl=run?.html_url||null;
+  if(run&&run.status==="completed"&&run.conclusion==="success"){
+    const response=await github(env,repo,"GET",`actions/runs/${run.id}/jobs?per_page=100`);
+    const jobs=(response.jobs||[]).filter(job=>job.name===CHECK_NAME);
+    const validJob=jobs.length===1 && jobs[0].status==="completed" &&
+      jobs[0].conclusion==="success" && Array.isArray(jobs[0].steps) &&
+      jobs[0].steps.length>0 &&
+      jobs[0].steps.every(step=>step.status==="completed" &&
+        (step.conclusion==="success"||step.conclusion==="skipped"));
+    state=validJob?"passed":"failed";
+    checkRunUrl=jobs[0]?.html_url||checkRunUrl;
+  }
   return {
-    state,verified:state==="passed",head_sha:head,check_run_url:run?.html_url||null,
-    conclusion:run?.conclusion||null,pr_url:pr.html_url,
+    state,verified:state==="passed",head_sha:head,check_run_url:checkRunUrl,
+    conclusion,pr_url:pr.html_url,
     merged:Boolean(pr.merged),draft:Boolean(pr.draft),files:files.map(x=>x.filename),
-    message:!run?"GitHub has not reported the required CI check; do not integrate.":run.status!=="completed"?"Verification is still running.":run.conclusion==="success"?"CI passed; independent review is still required.":"CI is not green; request improvements or rerun the checks."
+    message:!run?"The dedicated PCS submission workflow has not reported a result; do not integrate.":
+      run.status!=="completed"?"GitHub workflow is queued or running.":
+      state==="passed"?"PCS submission CI passed; independent scientific review is still required.":
+      "GitHub submission CI failed or never executed its required job. Integration remains blocked."
   };
+}
+
+export async function githubAccessReport(env) {
+  if(!githubConfigured(env)) return {configured:false,repositories:[],message:"PCS_GITHUB_TOKEN is missing."};
+  const repositories=[];
+  for(const [target,repo] of Object.entries(TARGETS)){
+    const result={target,repository:repo,contents_read:false,actions_read:false};
+    try{
+      const ref=await github(env,repo,"GET","git/ref/heads/main");
+      result.contents_read=Boolean(ref?.object?.sha);
+    }catch(error){result.contents_error=String(error.message).slice(0,160);}
+    try{
+      const actions=await github(env,repo,"GET","actions/runs?per_page=1");
+      result.actions_read=Array.isArray(actions.workflow_runs);
+    }catch(error){result.actions_error=String(error.message).slice(0,160);}
+    repositories.push(result);
+  }
+  return {configured:true,repositories,
+    message:"Read-only connectivity test. Token write permissions and CI-minute balances are not tested; never interpret connectivity as a passed verification."};
 }
 
 export async function mergeStagedPullRequest(env,link,expectedHead) {
