@@ -14,7 +14,7 @@
 ## One-time Worker setup
 
 - Configure a fine-grained GitHub personal access token limited to **only** `Tommaso-R-Marena/proof-carrying-science` and `Tommaso-R-Marena/proof-carrying-science-site`.
-- Permissions: repository Contents **Read and write**, Pull requests **Read and write**, Checks **Read-only**, Metadata **Read-only**. Short expiration and regular rotation strongly advised.
+- Permissions: repository Contents **Read and write**, Pull requests **Read and write**, Actions **Read-only**, Metadata **Read-only**. The verifier reads the dedicated Actions workflow and executed job results, not the Checks API. Short expiration and regular rotation strongly advised.
 - Store it as the Cloudflare Worker secret `PCS_GITHUB_TOKEN` using `npx wrangler secret put PCS_GITHUB_TOKEN` in the website repository root, or the Worker secrets UI. **Never paste it into a website form, GitHub issue, repository file, or ChatGPT conversation.**
 - Apply `migrations/0013_submission_automation_microtasks.sql` **before** production code deployment. The existing live D1 schema was manually evolved and has no `d1_migrations` history, so do **not** blindly run all old migrations against it; reconcile migration history first. New empty installations can use Wrangler's normal migrations process. The 0013 SQL is additive and its five task seeds are unpublished drafts.
 - Verify that the contributor PR workflows exist on the default branch of both repositories and that GitHub Actions runners execute the jobs. While the runner allocation issue persists, checks will remain PENDING and merges blocked.
@@ -28,3 +28,9 @@ If `PCS_GITHUB_TOKEN` is missing or GitHub rejects a request, the submitted work
 - Measured outcomes require a verified HTTPS evidence reference, specific metric and count. Allowed metrics: qualified replies, verified clicks, consenting signups and confirmed meetings. All remain **claimed** until independent review.
 - Do not reward unsolicited message volume, raw post counts, scraped personal data, unverifiable impressions, or fake engagement. Proof of sending is not proof of results.
 - The five seeded short tasks start as **drafts**. The Owner decides which are needed and publishes them using the audited Marketplace curation workflow.
+
+## CI quota outage diagnostics
+
+Use Admin Center → **Test GitHub access** to confirm server-side access to both repositories and to GitHub Actions run metadata without revealing the secret. This read-only diagnostic does not prove branch/PR write privileges and cannot read your paid-minute balance. A GitHub workflow that fails without a runner or that never runs its verification steps **fails closed**; it does not unlock review or integration.
+
+When a hosted CI plan exhausts its allotment, retain the pending status until verified checks can actually run. Do not spoof commit statuses, mark unexecuted checks successful, or weaken required GitHub branch checks to force an integration. CircleCI and GitHub billing states must be inspected in their provider dashboards. Cloudflare Workers Builds runs website deployment tests separately and is not a substitute for testing the core Lean contribution on the exact GitHub PR head.
