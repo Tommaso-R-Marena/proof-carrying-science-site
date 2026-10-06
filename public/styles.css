@@ -934,3 +934,35 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
   .qualification-choice-banner{grid-template-columns:1fr}
   .qualification-route-grid{grid-template-columns:1fr}
 }
+
+/* Admin Center privileged session + immutable audit */
+.admin-login-main{min-height:68vh;display:grid;place-items:center;padding:58px 0 80px}
+.admin-login-card{width:min(560px,100%);padding:30px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--shadow)}
+.admin-login-card h1{font-family:var(--display);font-size:42px;letter-spacing:-.03em;margin:10px 0 12px}
+.admin-login-card>p{color:var(--muted);font-size:13px;line-height:1.65;margin-bottom:22px}
+.admin-login-security{display:grid;gap:4px;margin-top:20px;padding:13px 15px;border:1px solid #c9dcef;border-radius:12px;background:#f6f9fe}
+.admin-login-security strong{font-size:11px}.admin-login-security span{font-size:9px;line-height:1.5;color:var(--muted)}
+.admin-ops-grid{grid-template-columns:repeat(3,1fr)}
+.admin-toolbar{position:sticky;top:8px;z-index:18;display:flex;justify-content:space-between;gap:14px;align-items:center;margin:20px 0 28px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.96);box-shadow:var(--shadow-sm);backdrop-filter:blur(10px)}
+.admin-anchor-nav{height:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.admin-anchor-nav a{padding:7px 9px;border-radius:8px;text-decoration:none;color:#51657e;font-size:9px;font-weight:800}
+.admin-anchor-nav a:hover,.admin-anchor-nav a:focus-visible{background:#edf4ff;color:#245f9e;outline:none}
+.admin-history-section{scroll-margin-top:86px}
+.admin-audit-list{display:grid;gap:10px}
+.admin-audit-card{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:var(--shadow-sm)}
+.admin-audit-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.admin-audit-top>div{display:flex;gap:6px;flex-wrap:wrap}
+.admin-audit-card h3{font-size:13px;text-transform:none;margin:11px 0 6px}
+.admin-audit-card>p{margin:0;color:var(--muted);font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+.admin-audit-card code{font-size:9px}
+.admin-audit-card details{margin-top:10px}.admin-audit-card summary{cursor:pointer;font-size:9px;font-weight:800;color:#52677e}
+.admin-audit-json{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0;padding:10px;border-radius:9px;background:#f6f8fb;border:1px solid #e3e9f0;font-size:8.5px;line-height:1.5;color:#43556b}
+.admin-audit-hash{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid #edf1f5}
+.admin-audit-hash span{font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800}
+.audit-integrity-panel{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;padding:14px 16px;border-radius:12px;border:1px solid var(--line)}
+.audit-integrity-panel strong,.audit-integrity-panel span{display:block}.audit-integrity-panel strong{flex:0 0 auto;font-size:11px}.audit-integrity-panel span{font-size:10px;line-height:1.5;color:var(--muted)}
+.audit-integrity-panel.verified{border-color:#b9dfd2;background:#f4fbf8}.audit-integrity-panel.verified strong{color:#14745d}
+.audit-integrity-panel.broken{border-color:#e6b7be;background:#fff7f8}.audit-integrity-panel.broken strong{color:#a33b4b}
+.admin-audit-controls{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:10px;align-items:end;margin-bottom:14px}
+.admin-audit-controls label{display:grid;gap:6px;font-size:9px;font-weight:800;color:#52677e}
+@media(max-width:900px){.admin-ops-grid{grid-template-columns:1fr 1fr}.admin-toolbar{position:static;align-items:flex-start;flex-direction:column}.admin-anchor-nav{width:100%}}
+@media(max-width:620px){.admin-ops-grid{grid-template-columns:1fr}.admin-audit-controls{grid-template-columns:1fr}.admin-audit-top,.admin-audit-hash{align-items:flex-start;flex-direction:column}.admin-login-card{padding:22px}.admin-login-card h1{font-size:34px}}
