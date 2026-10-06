@@ -17,7 +17,10 @@ test("seeds generate reproducible, varied missions with strong bounds",()=>{
   const worlds=new Set(Array.from({length:60},(_,i)=>scenarioForSeed(i+1).id));
   assert.equal(worlds.size,4);
   const scenarios=Array.from({length:50},(_,i)=>scenarioForSeed(i+100));
-  assert.ok(scenarios.every(s=>s.shortcut_risk>s.risk_budget));
+  assert.ok(scenarios.some(s=>s.shortcut_risk>s.risk_budget));
+  assert.ok(scenarios.some(s=>s.shortcut_risk<=s.risk_budget));
+  assert.ok(scenarios.some(s=>s.report_sensitive));
+  assert.ok(scenarios.some(s=>!s.report_sensitive));
   assert.ok(scenarios.every(s=>s.initial_guards.length<4));
   for(const bad of [0,-1,1.5,10000000,Infinity,"3",null])
     assert.throws(()=>scenarioForSeed(bad),/Seed must/);
