@@ -54,7 +54,7 @@ function simulatedGitHub({outcome="success",missingStep=false,changeMain=false,
     if(p.endsWith("/pulls")&&method==="GET")return reply(200,[]);
     if(p.endsWith("/pulls")&&method==="POST")return reply(201,{
       number:10,html_url:"https://github.com/test/pr/10",
-      head:{ref:`pcs/promote/${id}`,sha:headSha}
+      head:{ref:`pcs/promote/${id}/r1`,sha:headSha}
     });
     if(p.includes("/contents/")){
       const path=decodeURIComponent(p.split("/contents/")[1]);
