@@ -216,7 +216,8 @@
       <div class="task-meta"><span><b>${taskDuration(task)}</b> expected</span><span><b>${esc(m.difficulty)}</b> difficulty</span><span><b>${esc(task.required_skill||"entry")}</b> skill gate</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(task.priority??50)}</b> priority</span></div>
       ${dependencyHtml}
       <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.claim_mode!=="open"?"<span>Qualification route: variable auto-scored evaluation or direct manual application. Final approval is always manual. PCS targets a decision within 1 business day and no later than 2 business days. Pending applications never reserve the task.</span>":""}</div>
-      <details class="task-details"><summary>What counts as done?</summary><p><strong>Deliverable:</strong> ${esc(m.deliverable)}</p><p><strong>Verification:</strong> ${esc(m.verification)}</p>${criteriaHtml}${task.success_metric?`<p><strong>Success metric:</strong> ${esc(task.success_metric)}</p>`:""}${sourceHtml}<p><strong>Project:</strong> ${esc(m.project)}</p></details>
+      <div class="task-required-output"><strong>Exactly what to submit:</strong> <span>${esc(m.deliverable)}</span></div>
+      <details class="task-details"><summary>How PCS checks the work · exact acceptance</summary><p><strong>Independent review:</strong> ${esc(m.verification)}</p>${criteriaHtml}${task.success_metric?`<p><strong>Success metric:</strong> ${esc(task.success_metric)}</p>`:""}${sourceHtml}<p><strong>Project:</strong> ${esc(m.project)}</p></details>
       <div class="task-actions">${accessButton(task)}${program?`<a class="button secondary" href="claim-invalidation-v1.html#${encodeURIComponent(task.id)}">Open public task packet</a>`:`<a class="button secondary" href="task-graph.html?task=${encodeURIComponent(task.id)}">See dependency path</a>`}</div>
     </article>`;
   }
