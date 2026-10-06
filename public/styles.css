@@ -966,3 +966,88 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .admin-audit-controls label{display:grid;gap:6px;font-size:9px;font-weight:800;color:#52677e}
 @media(max-width:900px){.admin-ops-grid{grid-template-columns:1fr 1fr}.admin-toolbar{position:static;align-items:flex-start;flex-direction:column}.admin-anchor-nav{width:100%}}
 @media(max-width:620px){.admin-ops-grid{grid-template-columns:1fr}.admin-audit-controls{grid-template-columns:1fr}.admin-audit-top,.admin-audit-hash{align-items:flex-start;flex-direction:column}.admin-login-card{padding:22px}.admin-login-card h1{font-size:34px}}
+
+/* Shared layout-safety layer
+   Prevent card/grid/flex text from colliding when labels or content are wider
+   than the original design assumption. Keep component-specific layout above;
+   these rules only make sizing intrinsically safe. */
+:is(
+  .grid2,.grid3,.grid4,.split,.contact-band,.footergrid,.statusgrid,.trustgrid,
+  .account-auth-grid,.account-summary-grid,.account-skill-grid,.admin-status-grid,
+  .qualification-choice-banner,.task-market-layout,.project-board-head,.research-thesis,
+  .authority-lanes,.case-branches,.admin-user-row
+)>*{min-width:0}
+
+:is(
+  .card,.panel,.commons-task-card,.admin-card,.admin-user-row,.rowcard,.trustitem,
+  .qualification-choice-banner article,.admin-status-grid article,.governance-rules article,
+  .research-pillars article,.access-tier,.project-board,.commons-recommendation-card
+){min-width:0;max-width:100%}
+
+:is(
+  .card,.panel,.commons-task-card,.admin-card,.admin-user-row,.rowcard,.trustitem,
+  .qualification-choice-banner article,.admin-status-grid article,.governance-rules article,
+  .research-pillars article,.access-tier,.project-board,.commons-recommendation-card
+) :is(p,span,strong,small,h1,h2,h3,h4,li,dd,dt,code){max-width:100%}
+
+:is(
+  .card,.panel,.commons-task-card,.admin-card,.admin-user-row,.rowcard,.trustitem,
+  .qualification-choice-banner article,.admin-status-grid article,.governance-rules article,
+  .research-pillars article,.access-tier,.project-board,.commons-recommendation-card
+) :is(p,span,small,li,dd,dt,code){overflow-wrap:break-word;word-break:normal}
+
+.governance-rules article{
+  grid-template-columns:minmax(72px,max-content) minmax(0,1fr);
+  align-items:start;
+}
+.governance-rules article>b{
+  width:auto;
+  min-width:0;
+  max-width:100%;
+  height:auto;
+  min-height:36px;
+  padding:9px 11px;
+  line-height:1.15;
+  white-space:nowrap;
+  justify-self:start;
+  text-align:center;
+}
+.governance-rules article>div{min-width:0}
+
+.research-pillars article{grid-template-columns:minmax(54px,max-content) minmax(0,1fr)}
+.research-pillars b{
+  width:auto;
+  min-width:44px;
+  max-width:100%;
+  height:auto;
+  min-height:44px;
+  padding:8px 10px;
+  white-space:normal;
+  overflow-wrap:break-word;
+  text-align:center;
+}
+
+.task-card-top>*,
+.project-board-head>*,
+.admin-audit-top>*,
+.admin-audit-hash>*,
+.commons-policy-note>*,
+.callout>*,
+.toggle>*,
+.resultline>*{min-width:0}
+
+.button,.smallbutton,.commons-chip{
+  max-width:100%;
+  white-space:normal;
+  text-align:center;
+  line-height:1.25;
+}
+
+@media(max-width:580px){
+  .governance-rules article{grid-template-columns:1fr;gap:11px}
+  .governance-rules article>b{
+    width:max-content;
+    max-width:100%;
+    white-space:normal;
+  }
+}
