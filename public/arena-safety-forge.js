@@ -9,7 +9,27 @@ const $=id=>document.getElementById(id);
 const actionById=new Map(ACTIONS.map(a=>[a.id,a]));
 let seed=1,mission=null,mode="attack",agent=initialState(),acted=[],ended=false;
 let shield=new Set(),attacks=[],repairs=[],hinted=false,lastCheck=null;
-let hintExposed=false,oracleExposed=false,repairFeedbackExposed=false;
+let hintExposed=false,oracleExposed=false,repairFeedbackExposed=false,tourStep=0;
+const tour=[
+  ["Find a loophole 🔎","Tap actions to experiment with a fictional bot. Try routes, request permission, and look for a safety failure."],
+  ["Build a better shield 🛡️","Choose Repair the shield, then flip protection switches on and off. Cheap fixes are great, but don't stop the real mission."],
+  ["Check and level up 🏆","Check every possible state. Green means no unsafe behavior is reachable AND the intended mission can still finish. Then try another seed."]
+];
+function renderTour(){const [title,description]=tour[tourStep];
+  $("forgeTourTitle").textContent=title;$("forgeTourText").textContent=description;
+  $("forgeTourCount").textContent=(tourStep+1)+" / "+tour.length;
+  $("forgeTourBack").disabled=tourStep===0;
+  $("forgeTourNext").textContent=tourStep===tour.length-1?"Start playing →":"Next →";
+}
+$("forgeShowTutorial").addEventListener("click",()=>{tourStep=0;renderTour();$("forgeTutorial").hidden=false;$("forgeTutorial").scrollIntoView({behavior:"smooth",block:"center"});});
+$("forgeTourBack").addEventListener("click",()=>{tourStep=Math.max(0,tourStep-1);renderTour();});
+$("forgeTourNext").addEventListener("click",()=>{if(tourStep===tour.length-1){$("forgeTutorial").hidden=true;$("forgeActionCards").querySelector("button")?.focus();}else{tourStep++;renderTour();}});
+$("forgeTourSkip").addEventListener("click",()=>{$("forgeTutorial").hidden=true;});
+renderTour();
+$("forgeAdult").addEventListener("change",()=>{
+  $("forgeConsent").checked=$("forgeAdult").checked;
+  $("forgeOptStatus").textContent=$("forgeAdult").checked?"Opted in for this mission. Nothing has been uploaded.":"Research sharing is switched off.";
+});
 const badges={counterexample:false,verified_repair:false,overblocking:false};
 
 async function researchApi(path,body){
@@ -101,6 +121,18 @@ function play(action){
     $("forgeTabRepair").textContent="🛠️ 2 · Repair the shield ✨";
   }
   if(ended&&!event.unsafe&&!event.goal)addLog("Experiment ended. Every attempt, including failures, can inform search.","");
+  if(ended){
+    recordAttack(); // Record locally only; never auto-upload.
+    $("forgeGoRepair").hidden=false;
+    $("forgeCoach").textContent=event.unsafe
+      ?"🎯 You found a breach! Try repairing the shield and blocking every unsafe route."
+      :event.goal?"✅ The bot completed this route. Can you protect every possible route?"
+      :"🧪 Your attempt is saved locally. Try another route or repair the shield.";
+  }else{
+    $("forgeCoach").textContent=event.blocked
+      ?"🚧 That action was blocked. Try a different route or strategy."
+      :"🤖 The bot acted. Keep exploring until you find a failure or reach the goal.";
+  }
   agentStatus();renderActionCards();
 }
 function recordAttack(){
@@ -119,7 +151,9 @@ function resetAttack(record=true){
   agent=initialState();acted=[];ended=false;hinted=false;
   $("forgeAttackNotice").textContent="New local experiment ready! Change the order or choose another route.";
   $("forgeAttackNotice").className="forge-notice";
-  $("forgeHintPanel").hidden=true;agentStatus();renderActionCards();
+  $("forgeHintPanel").hidden=true;$("forgeGoRepair").hidden=true;
+  $("forgeCoach").textContent="🔎 Part 1: experiment with actions and find a safety problem. You can always restart.";
+  agentStatus();renderActionCards();
 }
 function renderGuards(){
   const target=$("forgeGuardCards");target.replaceChildren();
@@ -130,7 +164,7 @@ function renderGuards(){
       if(check.checked)shield.add(guard.id);else shield.delete(guard.id);
       lastCheck=null;$("forgeVerification").className="forge-verification";
       $("forgeVerification").textContent="Shield changed. Run the checker to validate this exact configuration.";
-      $("forgeCheckerPath").hidden=true;updateGuardCost();
+      $("forgeCheckerPath").hidden=true;$("forgeVictoryNext").hidden=true;updateGuardCost();
     });
     label.appendChild(check);addText(label,"span",guard.icon,"forge-guard-icon");
     const text=addText(label,"span","");
@@ -156,6 +190,11 @@ function verify(){
       if(repairs.length<MAX_TRIALS)repairs.push(trial);
       else addLog("Notebook full for shield trials; you can keep practicing.", "");
     }
+    $("forgeVictoryNext").hidden=!result.passed;
+    $("forgeCoach").textContent=result.passed
+      ?"🏆 Your shield passed! Can you beat your score, or try a new world?"
+      :result.safe?"🚧 Safe, but too restrictive. Remove a guard to let the real mission finish."
+      :"🔎 A counterexample remains. Study its path, adjust your switches, and check again.";
     const status=$("forgeVerification");
     status.className="forge-verification "+(result.passed?"passed":"failed");
     status.textContent=result.passed
@@ -186,6 +225,7 @@ function selectSeed(nextSeed){
   $("forgeSeed").textContent=String(seed);
   $("forgeTabRepair").textContent="🛠️ 2 · Repair the shield";
   $("forgeAdult").checked=false;$("forgeConsent").checked=false;
+  $("forgeOptStatus").textContent="";$("forgeVictoryNext").hidden=true;
   $("forgeDonateMessage").textContent="";
   $("forgeEventLog").replaceChildren();
   addLog("🎲 Generated scenario "+seed+". Challenge: find a counterexample, then redesign the shield.");
@@ -196,6 +236,8 @@ function selectSeed(nextSeed){
     history.replaceState({},"",url.pathname+url.search+url.hash);
   }catch{ /* Browser URL decoration is optional. */ }
 }
+$("forgeGoRepair").addEventListener("click",()=>{recordAttack();showMode("repair");$("forgeGuardCards").scrollIntoView({behavior:"smooth",block:"nearest"});});
+$("forgeVictoryNext").addEventListener("click",()=>selectSeed(1+Math.floor(Math.random()*9999999)));
 $("forgeTabAttack").addEventListener("click",()=>showMode("attack"));
 $("forgeTabRepair").addEventListener("click",()=>{if(acted.length)recordAttack();showMode("repair");});
 $("forgeNew").addEventListener("click",()=>selectSeed(1+Math.floor(Math.random()*9999999)));
@@ -233,8 +275,8 @@ $("forgeDonationJump").addEventListener("click",()=>{
 $("forgeDonate").addEventListener("click",async()=>{
   const msg=$("forgeDonateMessage");msg.textContent="";
   if(acted.length)recordAttack();
-  if(!$("forgeAdult").checked||!$("forgeConsent").checked){msg.textContent="Optional donation requires both adult confirmation and research consent. Everyone can still play.";return;}
-  if(attacks.length+repairs.length<2){msg.textContent="Try at least two different experiments first. Gameplay remains private until you choose to donate.";return;}
+  if(!$("forgeAdult").checked||!$("forgeConsent").checked){msg.textContent="Turn on research sharing to confirm that you are 18+ and agree to donate this mission. Anyone can play.";$("forgeOptStatus").textContent=msg.textContent;$("forgeAdult").focus();return;}
+  if(attacks.length+repairs.length<2){msg.textContent="Try at least two different experiments first (agent routes or shield checks).";$("forgeOptStatus").textContent=msg.textContent;return;}
   const button=$("forgeDonate");button.disabled=true;
   try{
     const result=await researchApi("/api/arena/safety-lab/donate",{
@@ -245,7 +287,7 @@ $("forgeDonate").addEventListener("click",async()=>{
     msg.textContent=(result.recorded?"Thank you! Your independently replayed experiments were saved. ":"This identical research session was already donated. ")+
       "Breach examples: "+result.unsafe_trials+". Valid repair examples: "+result.valid_repairs+".";
   }catch(e){msg.textContent=e.message+" Your local game remains playable without donation.";}
-  finally{button.disabled=false;}
+  finally{$("forgeOptStatus").textContent=msg.textContent;button.disabled=false;}
 });
 $("forgeErase").addEventListener("click",async()=>{
   if(!confirm("Delete all your previously donated Safety Forge sessions from the active database?"))return;

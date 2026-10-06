@@ -114,3 +114,15 @@
 .forge-toolbar-actions #forgeShareStatus{width:100%;text-align:right}
 .forge-badges{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px;max-width:440px;font-size:.83rem;line-height:1.6;font-weight:760;color:#286b66}
 @media(max-width:730px){.forge-toolbar-actions{justify-content:flex-start;max-width:100%}.forge-toolbar-actions #forgeShareStatus{text-align:left}}
+
+/* Gameplay coaching and clear after-win next steps. */
+.forge-hero>#forgeShowTutorial{margin:7px 0 1px}
+.forge-coach{margin:0;padding:13px 25px;color:#265a81;background:#ebf4fd;border-bottom:1px solid #d5e6f4;font-size:.92rem;line-height:1.55}
+#forgeGoRepair{margin:12px 0}
+#forgeVictoryNext{margin:12px 0 0}
+.forge-bottom #forgeOptStatus{min-width:100%;margin:0;white-space:normal}
+.forge-research details summary{font-size:.92rem}
+.forge-research{padding:24px;margin-top:20px}
+.forge-research h2{font-size:1.45rem}
+.forge-optin .button{min-height:44px}
+@media(max-width:730px){.forge-coach{padding:12px 15px}.forge-optin{width:100%}}
