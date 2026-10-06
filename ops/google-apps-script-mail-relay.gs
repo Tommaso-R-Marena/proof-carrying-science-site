@@ -13,7 +13,8 @@
  */
 
 const PCS_MAX_CLOCK_SKEW_MS = 5 * 60 * 1000;
-const PCS_NONCE_TTL_SECONDS = 10 * 60;
+const PCS_NONCE_TTL_MS = 10 * 60 * 1000;
+const PCS_NONCE_PREFIX = "PCS_MAIL_NONCE_V1_";
 const PCS_MAX_SUBJECT_CHARS = 200;
 const PCS_MAX_BODY_CHARS = 100000;
 
@@ -91,12 +92,6 @@ function doPost(e) {
       return jsonResponse_({ ok: false, error: "stale_request" });
     }
 
-    const cache = CacheService.getScriptCache();
-    const nonceKey = "pcs-mail-nonce:" + nonce;
-    if (cache.get(nonceKey)) {
-      return jsonResponse_({ ok: false, error: "replay_detected" });
-    }
-
     const canonical = [timestamp, nonce, to, subject, text].join("\n");
     const expected = hex_(Utilities.computeHmacSha256Signature(
       canonical,
@@ -113,7 +108,34 @@ function doPost(e) {
       return jsonResponse_({ ok: false, error: "daily_mail_quota_exhausted" });
     }
 
-    cache.put(nonceKey, "1", PCS_NONCE_TTL_SECONDS);
+    // CacheService is intentionally not used for replay authority: it is best-effort
+    // and may evict early. Serialize nonce consumption with a script-wide lock and
+    // persist each live nonce in Script Properties.
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(5000)) {
+      return jsonResponse_({ ok: false, error: "relay_busy" });
+    }
+    try {
+      const props = PropertiesService.getScriptProperties();
+      const now = Date.now();
+      const all = props.getProperties();
+      Object.keys(all).forEach(function (key) {
+        if (key.indexOf(PCS_NONCE_PREFIX) !== 0) return;
+        const expiresAt = Number(all[key] || 0);
+        if (!Number.isFinite(expiresAt) || expiresAt <= now) props.deleteProperty(key);
+      });
+
+      const nonceKey = PCS_NONCE_PREFIX + nonce;
+      if (props.getProperty(nonceKey)) {
+        return jsonResponse_({ ok: false, error: "replay_detected" });
+      }
+
+      // Consume before send. If MailApp later fails, the request stays consumed:
+      // retries must be newly signed with a fresh nonce.
+      props.setProperty(nonceKey, String(now + PCS_NONCE_TTL_MS));
+    } finally {
+      lock.releaseLock();
+    }
 
     MailApp.sendEmail({
       to: to,
