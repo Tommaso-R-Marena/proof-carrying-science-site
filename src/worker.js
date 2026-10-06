@@ -2663,6 +2663,7 @@ async function adminOverview(request, env) {
     admin:publicUser(admin),
     email_transport:emailTransportConfigured(env),
     email_transport_name:emailTransportName(env),
+    github_transport_configured:githubConfigured(env),
     pending_requests:pending.results||[],
     checkpoints:checkpoints.results||[],
     submissions:submissions.results||[],
@@ -2893,6 +2894,30 @@ async function adminStageSubmission(request,env,admin,submissionId) {
     await env.COMMONS_DB.prepare("UPDATE submissions SET github_stage_state='error',github_stage_error=? WHERE id=?")
       .bind(String(e.message||"Unknown stage error").slice(0,400),submissionId).run();
     throw new ApiError(502,e.message||"GitHub staging failed.","github_stage_failed");
+  }
+}
+
+async function contributorSubmissionChecks(request,env,user,submissionId){
+  await rateLimit(request,env,"contribution-checks",60,60);
+  const row=await env.COMMONS_DB.prepare(
+    `SELECT s.*,r.task_id FROM submissions s
+     JOIN task_requests r ON r.id=s.request_id
+     WHERE s.id=? AND s.user_id=?`
+  ).bind(submissionId,user.id).first();
+  if(!row)throw new ApiError(404,"Submission not found.","submission_not_found");
+  if(!row.github_pr_number){
+    return json({ok:true,state:row.github_stage_state,
+      message:row.github_stage_error||"No GitHub PR has been staged.",verified:false});
+  }
+  try{
+    const files=await linkedSubmissionFiles(env,row.id);
+    const result=await readSubmissionChecks(env,{
+      repo:row.github_repo,branch:row.github_branch,number:row.github_pr_number,
+      taskId:row.task_id,submissionId:row.id,expectedFiles:files
+    });
+    return json({ok:true,...result});
+  }catch(e){
+    throw new ApiError(502,"GitHub verification status is unavailable: "+String(e.message).slice(0,180),"github_check_unavailable");
   }
 }
 
@@ -3337,6 +3362,10 @@ async function handleApi(request, env) {
     await env.COMMONS_DB.prepare("DELETE FROM users WHERE id=?").bind(user.id).run();
     return json({ok:true},200,{"set-cookie":clearSessionCookie()});
   }
+
+  const contributorCheckMatch=path.match(/^\/api\/submissions\/([^/]+)\/checks$/);
+  if(method==="GET" && contributorCheckMatch)
+    return contributorSubmissionChecks(request,env,user,decodeURIComponent(contributorCheckMatch[1]));
 
   let match=path.match(/^\/api\/tasks\/([^/]+)\/request$/);
   if (method==="POST" && match) return startOrRequestTask(request,env,user,decodeURIComponent(match[1]));
