@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Task Marketplace · PCS AI Safety Commons</title>
-<meta name="description" content="Browse bounded AI-safety tasks by difficulty, time, track, and compensation status.">
+<title>Needed Work · PCS Commons</title>
+<meta name="description" content="Browse only the bounded work PCS has explicitly marked as currently needed.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/tasks.html">
 <meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
 </head>
 <body class="commons-page">
-<div class="topbar commons-topbar"><div class="shell"><span>Task marketplace · authenticated work controls · pending applications never reserve tasks</span><a href="governance.html#compensation">Contributor rights</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>Needed work · explicit Founder publication · hidden/draft ideas never appear</span><a href="governance.html#compensation">Contributor rights</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
 <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -16,9 +16,9 @@
 </nav>
 <main>
 <section class="pagehead commons-pagehead">
-<div class="kicker">AI Safety Task Marketplace</div>
-<h1>Choose one piece of work with a clear finish line.</h1>
-<p>Every task has a bounded deliverable, an expected time, a difficulty level, a verification rule, and an explicit compensation status. L0–L1 open work is non-exclusive. For higher-trust tasks, you have two qualification routes: take a newly generated competency evaluation, or submit the task application directly for manual competency review. Auto-grading is screening evidence only; PCS still makes every final approval manually. Pending applications do not reserve anything.</p>
+<div class="kicker">Curated PCS Work</div>
+<h1>Only work PCS actually needs should be here.</h1>
+<p>PCS now defaults to hiding work. A task appears here only when the Founder/Owner has explicitly marked it published + needed. Bounded research, engineering, administrative, operations, outreach, and communications work can all appear here; ongoing responsibilities live under Roles instead. Every listed task still has a concrete deliverable, verification rule, and finish line.</p>
 <div class="qualification-choice-banner compact">
   <article><span>OPTION A</span><strong>Take a variable evaluation</strong><p>Fresh parameterized questions + shuffled choices. Auto-scored, then manually approved.</p></article>
   <article><span>OPTION B</span><strong>Apply directly</strong><p>Explain your competence in the application. PCS targets a response within 1 business day and no later than 2 business days.</p></article>
@@ -42,6 +42,16 @@
         <option value="all">All tasks</option><option value="volunteer">Volunteer only</option><option value="paid">Paid / planned-paid only</option>
       </select>
     </label>
+    <label><span>Work category</span>
+      <select id="taskCategory" class="selectinput">
+        <option value="all">All categories</option>
+        <option value="research">Research</option><option value="engineering">Engineering</option>
+        <option value="security">Security</option><option value="review">Review</option>
+        <option value="operations">Operations / QA</option><option value="administrative">Administrative</option>
+        <option value="marketing">Marketing / communications</option><option value="outreach">Outreach</option>
+        <option value="design">Design</option><option value="documentation">Documentation</option><option value="community">Community</option>
+      </select>
+    </label>
     <label><span>Track</span>
       <select id="taskSkill" class="selectinput">
         <option value="all">All tracks</option><option value="nontechnical">Nontechnical</option><option value="research">Research</option>
@@ -62,7 +72,7 @@
   </aside>
 
   <section class="task-market-results">
-    <div class="task-results-head"><div><div class="kicker">Open + planned work</div><h2 id="taskCount">Tasks</h2></div><a class="button secondary" href="projects.html">See how tasks connect</a></div>
+    <div class="task-results-head"><div><div class="kicker">Published + currently needed</div><h2 id="taskCount">Tasks</h2></div><div class="actions"><a class="button secondary" href="task-graph.html">Dependency graph</a><a class="button secondary" href="roles.html">Ongoing roles</a></div></div>
     <div id="commonsTaskList" class="commons-task-list" aria-live="polite"></div>
   </section>
 </section>
@@ -84,15 +94,15 @@
     <p>Tasks should not be held indefinitely, but volunteer accountability should not become coercion. A missed claim window returns the task to the pool. Repeated abandonment may reduce simultaneous reservations or create a cooldown. “Attempted but blocked” is valuable data and should not be treated like disappearing.</p>
   </div>
   <div class="panel">
-    <div class="kicker">No quantity leaderboard</div>
-    <h2>Do not optimize for points.</h2>
-    <p>Task count is a poor proxy for safety impact. PCS should recognize hard reproductions, falsifications, useful OPEN findings, proof quality, reviewer agreement, and help given to other contributors—not grinding easy tickets.</p>
+    <div class="kicker">Gamification boundary</div>
+    <h2>Leaderboards belong only where the score means something.</h2>
+    <p>Ordinary tasks are not a points grind. PCS can use challenge-specific scoring only when a result is objectively checkable or independently validated—similar in spirit to scientific puzzle systems. Research quality, falsification, and difficult negative findings must never lose to raw task count.</p>
   </div>
 </section>
 
 <section class="commons-callout">
   <div><span class="commons-kicker-dark">CURRENT PILOT</span><h2>Qualification can be demonstrated or reviewed—never self-declared.</h2><p>L0–L1 open tasks can be started immediately and never become exclusive. For L2+ work, contributors may pass a variable auto-scored competency screening or submit the task application directly for manual review. Either way, final approval is manual, targets 1 business day and no later than 2 business days, and only then creates a reservation. Approved reserved work must show progress within 24 hours or it releases automatically.</p></div>
-  <div class="actions"><a class="button primary button-lg" href="contribute.html">Set my profile</a><a class="button ghost button-lg" href="governance.html">Read the rules</a></div>
+  <div class="actions"><a class="button primary button-lg" href="contribute.html">Set my profile</a><a class="button ghost button-lg" href="roles.html">Apply for an ongoing role</a><a class="button ghost button-lg" href="governance.html">Read the rules</a></div>
 </section>
 <dialog id="taskApplicationDialog" class="task-application-dialog">
   <form id="taskApplicationForm" method="dialog">
