@@ -34,7 +34,7 @@
   </div>
   <div class="admin-toolbar">
     <nav class="admin-anchor-nav" aria-label="Admin Center sections">
-      <a href="#task-curation">Published work</a><a href="#arena">Arena review</a><a href="#roles">Role applications</a><a href="#requests">Pending approvals</a><a href="#skills">Competency</a><a href="#submissions">Submissions</a><a href="#users">People & authority</a><a href="#approval-history">Approval history</a><a href="#admin-actions">Admin actions</a><a href="#audit-log">Audit log</a>
+      <a href="#task-curation">Published work</a><a href="#dependency-editor">Dependency graph</a><a href="#arena">Arena review</a><a href="#roles">Role applications</a><a href="#requests">Pending approvals</a><a href="#skills">Competency</a><a href="#submissions">Submissions</a><a href="#users">People & authority</a><a href="#approval-history">Approval history</a><a href="#admin-actions">Admin actions</a><a href="#audit-log">Audit log</a>
     </nav>
     <button class="button secondary" id="adminLogoutButton" type="button">Admin sign out</button>
   </div>
@@ -71,6 +71,49 @@
       </form>
     </details>
     <div id="adminTaskList" class="admin-list"></div>
+  </section>
+
+  <section class="section-tight" id="dependency-editor">
+    <div class="section-heading-row"><div><div class="kicker">Dependency graph editor</div><h2>Make prerequisites explicit enough to audit.</h2></div><p>Edges say what accepted artifact flows downstream; gate groups define ALL / ANY / AT_LEAST(k) unlock logic. Hard-edge cycles are rejected server-side and every graph change is audit-logged.</p></div>
+    <div class="boundary"><strong>Design rule</strong><span>Use a hard dependency only when downstream work is genuinely unsafe or meaningless without the accepted upstream output. Use informative edges for useful context that should not block parallel work.</span></div>
+
+    <div class="admin-graph-editor">
+      <form id="adminDependencyGroupForm" class="admin-graph-form">
+        <div class="panel-eyebrow">Create or update a blocking gate</div>
+        <div class="task-curation-grid">
+          <label><span>Downstream task</span><select class="selectinput" name="task_id" required></select></label>
+          <label><span>Group ID</span><input class="textinput" name="id" required placeholder="INV-006-formalization"></label>
+          <label><span>Mode</span><select class="selectinput" name="mode"><option value="all">ALL</option><option value="any">ANY</option><option value="at_least">AT_LEAST(k)</option></select></label>
+          <label><span>Minimum satisfied</span><input class="textinput" name="min_satisfied" type="number" min="1" max="100" value="1"></label>
+          <label><span>Sort order</span><input class="textinput" name="sort_order" type="number" min="0" max="999" value="0"></label>
+        </div>
+        <label class="field"><span>Gate label</span><input class="textinput" name="label" minlength="5" maxlength="200" required></label>
+        <label class="field"><span>What does this gate mean?</span><textarea class="textinput" name="description" minlength="20" maxlength="1600" rows="3" required></textarea></label>
+        <label class="field"><span>Audited reason for this graph change</span><textarea class="textinput" name="reason" minlength="20" maxlength="2000" rows="2" required></textarea></label>
+        <div class="actions"><button class="button primary" type="submit">Save dependency gate</button></div>
+        <p id="adminDependencyGroupMessage" class="form-message" aria-live="polite"></p>
+      </form>
+
+      <form id="adminDependencyEdgeForm" class="admin-graph-form">
+        <div class="panel-eyebrow">Create or update an edge</div>
+        <div class="task-curation-grid">
+          <label><span>Downstream task</span><select class="selectinput" name="task_id" required></select></label>
+          <label><span>Prerequisite task</span><select class="selectinput" name="depends_on_task_id" required></select></label>
+          <label><span>Type</span><select class="selectinput" name="dependency_type"><option value="hard">Hard / blocking</option><option value="informative">Informative / non-blocking</option></select></label>
+          <label><span>Gate group</span><select class="selectinput" name="group_id"><option value="">No group</option></select></label>
+          <label><span>Criticality 0–100</span><input class="textinput" name="criticality" type="number" min="0" max="100" value="50"></label>
+          <label><span>Required outcome</span><input class="textinput" name="required_outcome" value="completed" maxlength="120"></label>
+        </div>
+        <label class="field"><span>Semantic relation</span><input class="textinput" name="relation" maxlength="120" required placeholder="test_oracle, specification, independent_review_gate…"></label>
+        <label class="field"><span>Artifact contract: what accepted upstream output is consumed?</span><textarea class="textinput" name="artifact_contract" minlength="20" maxlength="3000" rows="3" required></textarea></label>
+        <label class="field"><span>Why does this dependency exist?</span><textarea class="textinput" name="rationale" minlength="20" maxlength="2000" rows="2" required></textarea></label>
+        <label class="field"><span>Audited reason for this graph change</span><textarea class="textinput" name="change_reason" minlength="20" maxlength="2000" rows="2" required></textarea></label>
+        <div class="actions"><button class="button primary" type="submit">Save dependency edge</button></div>
+        <p id="adminDependencyEdgeMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div id="adminDependencyList" class="admin-list"></div>
   </section>
 
   <section class="section-tight" id="arena">
