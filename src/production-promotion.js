@@ -178,7 +178,7 @@ export async function verifyPromotion(env,promotion,files){
   if(main.object?.sha!==promotion.base_sha)throw new Error("Production main advanced since staging; restage on a new baseline.");
   const pr=await remote(env,promotion.repo,"GET",`pulls/${promotion.pr_number}`);
   if(pr.base?.ref!=="main"||pr.head?.ref!==promotion.branch||
-     pr.head?.repo?.full_name!==promotion.repo||pr.draft||pr.merged)
+     pr.head?.repo?.full_name!==promotion.repo||pr.draft||pr.merged||pr.state!=="open")
     throw new Error("Promotion PR identity/state is not eligible for integration.");
   const sha=pr.head?.sha;
   if(!validSha(sha))throw new Error("Unrecognized promotion head SHA.");
@@ -248,6 +248,20 @@ export async function verifyPromotion(env,promotion,files){
       status==="running"?"Production verification is still running.":
       status==="pending"?"No production promotion verification run exists for this commit. Merge prohibited.":
       "Production verification failed or did not execute required steps. Merge prohibited."};
+}
+
+export async function closeSupersededPromotionPr(env,promotion){
+  if(!promotion.pr_number)return {closed:false,reason:"No pull request was created."};
+  if(!TARGETS.has(promotion.repo))throw new Error("Unexpected repository in promotion record.");
+  const pr=await remote(env,promotion.repo,"GET",`pulls/${Number(promotion.pr_number)}`);
+  if(pr.head?.ref!==promotion.branch||pr.head?.repo?.full_name!==promotion.repo||
+     pr.base?.ref!=="main"||pr.merged)
+    throw new Error("Cannot supersede a mismatched or already-merged production PR.");
+  if(pr.state==="closed")return {closed:true,already_closed:true};
+  if(pr.state!=="open")throw new Error("Unexpected GitHub pull request state.");
+  const closed=await remote(env,promotion.repo,"PATCH",`pulls/${Number(promotion.pr_number)}`,{state:"closed"});
+  if(closed.state!=="closed")throw new Error("GitHub did not confirm PR closure.");
+  return {closed:true,already_closed:false};
 }
 
 export async function mergePromotion(env,promotion,files,approvedHeadSha){
