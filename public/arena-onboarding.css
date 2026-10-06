@@ -28,3 +28,6 @@
 .forge-victory-next[hidden],.forge-go-repair[hidden]{display:none}
 @media(max-width:600px){.quest-tutorial,.forge-tutorial{padding:16px}.quest-optin,.forge-optin{align-items:stretch;flex-direction:column}.quest-optin>.button,.forge-optin>.button{width:100%}.quest-tour-head,.forge-tour-head{font-size:.8rem}}
 @media(prefers-reduced-motion:reduce){.arena-switch-track,.arena-switch-track:after{transition:none}}
+
+/* Author-level hidden styles override shared button display rules. */
+#questNext[hidden],#questTryAgain[hidden],#questTutorial[hidden],#forgeTutorial[hidden],#forgeGoRepair[hidden],#forgeVictoryNext[hidden]{display:none!important}
