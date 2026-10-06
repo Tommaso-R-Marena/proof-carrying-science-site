@@ -22,7 +22,7 @@ export function validateContributorFiles(input) {
   return input.map(item => {
     const filename = String(item?.name || "");
     const content = item?.content;
-    if (!FILENAME.test(filename) || filename.includes("..") || filename.startsWith(".")) {
+    if (!FILENAME.test(filename) || filename.toLowerCase()==="manifest.json" || filename.includes("..") || filename.startsWith(".")) {
       throw new Error("Each attachment must have a safe, single filename ending in .lean, .py, .md, .txt, .json, .js, .html, .css or .csv.");
     }
     if (seen.has(filename.toLowerCase())) throw new Error("Duplicate filenames are not allowed.");
