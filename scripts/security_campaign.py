@@ -54,6 +54,7 @@ def static_campaign(c: Campaign) -> None:
     m9 = (MIGRATIONS / "0009_curated_work_and_roles.sql").read_text(encoding="utf-8")
     m10 = (MIGRATIONS / "0010_rich_task_dependency_graph.sql").read_text(encoding="utf-8")
     m11 = (MIGRATIONS / "0011_pcs_arena.sql").read_text(encoding="utf-8")
+    m12 = (MIGRATIONS / "0012_dependency_edge_enrichment.sql").read_text(encoding="utf-8")
     m1 = (MIGRATIONS / "0001_commons_auth.sql").read_text(encoding="utf-8")
 
     c.require("origin guard", worker, [
@@ -165,6 +166,18 @@ def static_campaign(c: Campaign) -> None:
         "artifact_contract",
         "criticality",
         "mode TEXT NOT NULL CHECK(mode IN ('all','any','at_least'))",
+    ])
+    c.require("dependency graph editing fails closed", worker + m12, [
+        "dependencyWouldCycle",
+        "dependency_cycle",
+        "Only the Founder/Owner can change task dependencies.",
+        "Only the Founder/Owner can change task dependency gates.",
+        "informative_group_not_allowed",
+        "dependency_group_not_empty",
+        "adminUpsertDependency",
+        "adminDeleteDependency",
+        "positive_fixture_baseline",
+        "countermodel_for_assumption",
     ])
     c.require("Arena leaderboard is verification-gated", worker + m11, [
         "challenge_entries",
