@@ -1,5 +1,8 @@
 const SESSION_COOKIE = "pcs_commons_session";
 const SESSION_DAYS = 30;
+const ADMIN_SESSION_COOKIE = "pcs_admin_session";
+const ADMIN_SESSION_HOURS = 8;
+const AUDIT_GENESIS = "PCS-AUDIT-GENESIS-v1";
 const PASSWORD_ITERATIONS = 100000; // Workers Web Crypto rejects PBKDF2 iteration counts above 100,000.
 const TERMS_VERSION = "commons-v1";
 
@@ -202,6 +205,12 @@ async function sha256(value) {
   return b64url(await crypto.subtle.digest("SHA-256", bytes));
 }
 
+async function sha256Hex(value) {
+  const bytes = typeof value === "string" ? new TextEncoder().encode(value) : value;
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
+  return [...digest].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 async function derivePassword(password, saltB64, iterations = PASSWORD_ITERATIONS) {
   const key = await crypto.subtle.importKey(
     "raw",
@@ -242,6 +251,14 @@ function sessionCookie(token, maxAge = SESSION_DAYS * 86400) {
 
 function clearSessionCookie() {
   return `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+}
+
+function adminSessionCookie(token, maxAge = ADMIN_SESSION_HOURS * 3600) {
+  return `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`;
+}
+
+function clearAdminSessionCookie() {
+  return `${ADMIN_SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
 }
 
 function requireSameOrigin(request) {
