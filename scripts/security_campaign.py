@@ -50,6 +50,7 @@ def static_campaign(c: Campaign) -> None:
     m4 = (MIGRATIONS / "0004_admin_sessions_immutable_audit.sql").read_text(encoding="utf-8")
     m5 = (MIGRATIONS / "0005_admin_action_evidence.sql").read_text(encoding="utf-8")
     m7 = (MIGRATIONS / "0007_reserved_task_exclusivity.sql").read_text(encoding="utf-8")
+    m8 = (MIGRATIONS / "0008_contributor_concurrency_guards.sql").read_text(encoding="utf-8")
     m1 = (MIGRATIONS / "0001_commons_auth.sql").read_text(encoding="utf-8")
 
     c.require("origin guard", worker, [
@@ -113,6 +114,31 @@ def static_campaign(c: Campaign) -> None:
         "Your verified level no longer meets this task requirement.",
         "Your required verified skill is no longer active for this task.",
         "released_reservations",
+    ])
+    c.require("database contributor concurrency caps", worker + m8, [
+        "idx_task_requests_one_active_per_user_task",
+        "task_requests_pending_cap",
+        "task_requests_reserved_cap",
+        "competency_evaluations_daily_cap",
+        "idx_competency_one_open_per_skill",
+        "PCS pending high-tier application limit",
+        "PCS active reserved task limit",
+        "PCS daily evaluation attempt limit",
+    ])
+    c.require("one-shot evaluation submission", worker, [
+        "evaluation_already_submitted",
+        "WHERE id=? AND user_id=? AND status='open'",
+    ])
+    c.require("verified skill revocation cannot use review API", worker, [
+        "Only a pending skill review can be decided here.",
+        "skill_not_pending",
+        "skill_already_decided",
+        "AND status='pending'",
+    ])
+    c.require("review decisions are one-shot", worker, [
+        "checkpoint_already_decided",
+        "submission_already_decided",
+        "request_already_decided",
     ])
     c.require("immutable audit archive", worker + m4, [
         "audit_archive",
