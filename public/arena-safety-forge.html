@@ -20,7 +20,12 @@
 <section class="forge-game" aria-labelledby="forgeMissionTitle">
  <div class="forge-toolbar">
   <div class="forge-world"><span id="forgeWorldIcon" class="forge-world-icon">🌲</span><div><span class="forge-overline">MISSION CONTROL / SCENARIO <span id="forgeSeed">—</span></span><h2 id="forgeMissionTitle">Loading mission...</h2><p id="forgeMissionStory"></p></div></div>
-  <button id="forgeNew" type="button" class="button secondary">🎲 Generate a new mission</button>
+  <div class="forge-toolbar-actions">
+    <button id="forgeDaily" type="button" class="button secondary">📅 Today's challenge</button>
+    <button id="forgeNew" type="button" class="button secondary">🎲 New mission</button>
+    <button id="forgeShare" type="button" class="button secondary">🔗 Copy challenge link</button>
+    <span id="forgeShareStatus" class="forge-small" role="status" aria-live="polite"></span>
+  </div>
  </div>
  <div class="forge-mission-rule"><strong>🎯 Protect the mission:</strong> <span id="forgeMissionGoal"></span></div>
  <div class="forge-mode-tabs" role="group" aria-label="Experiment stage">
@@ -62,7 +67,7 @@
   </aside>
  </div>
  <div class="forge-bottom">
-   <div class="forge-grade"><div><span class="forge-overline">LAB NOTEBOOK</span><strong id="forgeNotebook">0 recorded experiments</strong><span>Stored only in this page unless you explicitly opt in below</span></div><span class="forge-spark">✦ ✦ ✦</span></div>
+   <div class="forge-grade"><div><span class="forge-overline">LAB NOTEBOOK</span><strong id="forgeNotebook">0 recorded experiments</strong><span>Stored only in this page unless you explicitly opt in below</span></div><span id="forgeAchievements" class="forge-badges" aria-live="polite">🏅 Earn your first safety badge!</span></div>
    <button id="forgeDonationJump" type="button" class="button secondary">🔬 Optional research contribution ↓</button>
  </div>
 </section>
