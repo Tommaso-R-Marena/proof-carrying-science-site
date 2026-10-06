@@ -334,6 +334,9 @@ commons_contracts = {
         'id="adminApprovalHistory"',
         'id="adminActionHistory"',
         'id="adminAuditList"',
+        'id="adminActionDialog"',
+        'id="adminActionFiles"',
+        "Supporting evidence",
         'src="admin.js"',
     ],
 }
@@ -403,6 +406,8 @@ if styles_css.exists():
         errors.append("styles.css: governance badges must size to their content")
     if ".button,.smallbutton,.commons-chip{\n  max-width:100%;" not in styles_text:
         errors.append("styles.css: controls/chips must not overflow their containers")
+    if "/* Audited admin action dialog */" not in styles_text:
+        errors.append("styles.css: audited admin action dialog styles are missing")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
@@ -440,6 +445,11 @@ if admin_js.exists():
         "adminApprovalHistory",
         "adminActionHistory",
         "adminAuditList",
+        "openAdminAction",
+        "uploadActionEvidence",
+        "revokeSkill",
+        "/api/admin/evidence",
+        "/skill/revoke",
         "/decision",
         "/checkpoint",
         "/skill",
@@ -471,6 +481,11 @@ else:
         "appendAuditArchive",
         "verifyAuditArchive",
         "adminAuditFeed",
+        "adminUploadEvidence",
+        "adminDownloadEvidence",
+        "validateEvidenceRefs",
+        "adminRevokeSkill",
+        "ADMIN_EVIDENCE_MAX_FILES",
         "Account created at L0.",
         "task.claim_mode === \"open\"",
         "addBusinessDaysIso",
@@ -513,6 +528,22 @@ else:
     ]:
         if required_text not in competency_text:
             errors.append(f"migrations/0003_competency_evaluations.sql: variable competency contract drift: {required_text}")
+
+admin_evidence_migration = REPO / "migrations" / "0005_admin_action_evidence.sql"
+if not admin_evidence_migration.exists():
+    errors.append("missing immutable admin evidence schema: migrations/0005_admin_action_evidence.sql")
+else:
+    evidence_text = admin_evidence_migration.read_text(encoding="utf-8")
+    for required_text in [
+        "CREATE TABLE IF NOT EXISTS admin_evidence_files",
+        "CREATE TABLE IF NOT EXISTS admin_evidence_chunks",
+        "admin_evidence_files_no_update",
+        "admin_evidence_files_no_delete",
+        "admin_evidence_chunks_no_update",
+        "admin_evidence_chunks_no_delete",
+    ]:
+        if required_text not in evidence_text:
+            errors.append(f"migrations/0005_admin_action_evidence.sql: evidence immutability contract drift: {required_text}")
 
 admin_audit_migration = REPO / "migrations" / "0004_admin_sessions_immutable_audit.sql"
 if not admin_audit_migration.exists():
