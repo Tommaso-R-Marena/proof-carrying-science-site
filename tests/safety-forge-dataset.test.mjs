@@ -19,12 +19,13 @@ test("turns human toy choices into explicit model state/action/reward episodes",
   assert.equal(prepared.real_lean_tactic_traces,false);
   assert.equal(prepared.stats.attack_trajectories,2);
   assert.equal(prepared.stats.repair_proposals,2);
-  assert.equal(prepared.stats.verified_counterexamples,2);
+  assert.equal(prepared.stats.verified_counterexamples,1); // Second attempted deployment is correctly blocked
   assert.equal(prepared.stats.verified_repairs,1);
   const first=prepared.episodes[0].attack_episodes[0].steps[0];
   assert.equal(first.reward,5);
   assert.equal(first.violations[0],"RISK_BUDGET_EXCEEDED");
   assert.ok(first.available_actions.includes("shortcut"));
+  assert.equal(prepared.episodes[0].attack_episodes[1].steps[1].blocked,true);
 });
 test("held-out seed partitions do not put same scenario seed in train and test",()=>{
   const data=prepareSafetyForgeDataset(dataset([makeEntry(7),makeEntry(8),makeEntry(14)]));
