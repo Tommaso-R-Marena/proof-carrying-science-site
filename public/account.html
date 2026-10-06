@@ -81,13 +81,27 @@
 </section>
 
 <section id="accountLoggedIn" hidden>
+  <section class="pcs-action-hub" aria-labelledby="accountNextTitle">
+    <div class="pcs-hub-intro">
+      <div class="kicker">Your PCS workspace</div>
+      <h2 id="accountNextTitle">What would you like to do next?</h2>
+      <p id="accountLevelGuide">Your verified level and skill records determine eligibility for individual tasks; you can always explore the published work.</p>
+    </div>
+    <div class="pcs-quick-grid">
+      <a class="pcs-quick-link" href="tasks.html"><strong>Find eligible tasks →</strong><span>See curated, needed work and the requirements for each task.</span></a>
+      <a class="pcs-quick-link" href="roles.html"><strong>Explore ongoing roles →</strong><span>Apply for operations, communication, outreach, and other responsibilities.</span></a>
+      <a class="pcs-quick-link" href="arena.html"><strong>Try PCS Arena →</strong><span>Explore challenges with independently checked entries and outcomes.</span></a>
+      <a class="pcs-quick-link" href="task-graph.html"><strong>Explore dependencies →</strong><span>See how accepted task artifacts unlock larger assurance goals.</span></a>
+      <a class="pcs-quick-link" href="#competency"><strong>Request skill review →</strong><span>Take a competency evaluation or submit evidence for manual review.</span></a>
+    </div>
+  </section>
   <div class="account-summary-grid">
     <article class="panel account-identity">
       <div class="panel-eyebrow">Verified account state</div>
       <div class="account-level-row"><span id="accountLevel" class="commons-level-badge">L0</span><div><h2 id="accountName">Contributor</h2><p id="accountEmail" class="muted"></p></div></div>
       <div class="account-status-row"><span id="emailVerifyChip" class="commons-chip planned">EMAIL</span><span id="accountRoleChip" class="commons-chip level">CONTRIBUTOR</span></div>
       <p class="tiny">Your PCS level is assigned by the system/admin from reviewed work. You cannot edit it yourself.</p>
-      <div class="actions"><a class="button primary" id="adminDashboardLink" href="admin-login.html" hidden>Founder admin</a><button class="button secondary" id="resendVerification" type="button">Send verification email</button><button class="button secondary" id="logoutButton" type="button">Sign out</button></div>
+      <div class="actions"><a class="button primary" id="adminDashboardLink" href="admin-login.html" hidden>Admin sign in / Center</a><button class="button secondary" id="resendVerification" type="button">Send verification email</button><button class="button secondary" id="logoutButton" type="button">Sign out</button></div>
       <p id="emailStatusMessage" class="form-message" aria-live="polite"></p>
     </article>
     <article class="panel">
