@@ -519,8 +519,23 @@
     await processVerificationLink();
     await load();
     const params=new URLSearchParams(location.search);
-    if(state?.authenticated && params.get("evaluation")==="1"){
-      setTimeout(()=>document.getElementById("competency")?.scrollIntoView({behavior:"smooth",block:"start"}),120);
+    const qualification=params.get("qualification") || (params.get("evaluation")==="1"?"evaluation":"");
+    if(qualification==="evaluation" || qualification==="application"){
+      const skill=requestedSkill();
+      const form=document.getElementById(qualification==="evaluation"?"evaluationStartForm":"skillForm");
+      if(skill && skill!=="nontechnical" && form?.elements.skill)form.elements.skill.value=skill;
+      const focus=()=>{
+        const competency=document.getElementById("competency");
+        const destination=state?.authenticated?form:document.getElementById("loginForm");
+        (destination||competency)?.scrollIntoView({behavior:"smooth",block:"start"});
+        if(state?.authenticated) form?.querySelector("select")?.focus({preventScroll:true});
+      };
+      setTimeout(focus,120);
     }
+    document.querySelectorAll("[data-qualify]").forEach(link=>link.addEventListener("click",()=>{
+      const choice=link.dataset.qualify;
+      const form=document.getElementById(choice==="application"?"skillForm":"evaluationStartForm");
+      if(state?.authenticated) setTimeout(()=>form?.querySelector("select")?.focus({preventScroll:true}),80);
+    }));
   });
 })();
