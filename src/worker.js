@@ -1390,7 +1390,7 @@ async function me(request, env) {
   const [skills, requests, notifications, evaluations, mySubmissions] = await Promise.all([
     env.COMMONS_DB.prepare("SELECT skill,status,evidence,verification_note,requested_at,verified_at,review_due_at,source,evaluation_id FROM skills WHERE user_id=? ORDER BY skill").bind(user.id).all(),
     env.COMMONS_DB.prepare(
-      `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,t.category AS task_category,t.integration_target,t.expected_minutes
+      `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,t.category AS task_category,t.integration_target,t.expected_minutes,t.deliverable,t.verification_rule,t.acceptance_criteria
        FROM task_requests r JOIN tasks t ON t.id=r.task_id
        WHERE r.user_id=? ORDER BY r.requested_at DESC LIMIT 50`
     ).bind(user.id).all(),
@@ -2215,8 +2215,8 @@ async function adminCurateTask(request, env, admin, taskId) {
     `UPDATE tasks SET publication_state=?,need_status=?,category=?,priority=?,why_now=?,published_at=?,retired_at=?,expected_minutes=?,expected_hours=?,integration_target=?,updated_at=? WHERE id=?`
   ).bind(publication,need,category,priority,whyNow,publishedAt,retiredAt,minutesRaw,Math.ceil(minutesRaw/60),integrationTarget,nowIso(),task.id).run();
   await audit(env,admin.id,"task_curated","task",task.id,{
-    from:{publication_state:task.publication_state,need_status:task.need_status,category:task.category,priority:Number(task.priority||50)},
-    to:{publication_state:publication,need_status:need,category,priority},
+    from:{publication_state:task.publication_state,need_status:task.need_status,category:task.category,priority:Number(task.priority||50),integration_target:task.integration_target,expected_minutes:task.expected_minutes},
+    to:{publication_state:publication,need_status:need,category,priority,integration_target:integrationTarget,expected_minutes:minutesRaw},
     rationale:reason,
     why_now:whyNow
   });
@@ -2611,7 +2611,8 @@ async function adminOverview(request, env) {
       `SELECT s.*,r.task_id,t.title,t.calibrates_skill,t.category,t.integration_target,u.display_name,u.email,u.level,
               (SELECT COUNT(*) FROM submission_files f WHERE f.submission_id=s.id) AS file_count
        FROM submissions s JOIN task_requests r ON r.id=s.request_id JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=s.user_id
-       WHERE s.status IN ('submitted','needs_changes') ORDER BY s.submitted_at ASC LIMIT 100`
+       WHERE s.status IN ('submitted','needs_changes') OR (s.status='accepted' AND s.github_stage_state='staged')
+       ORDER BY s.submitted_at ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
       `SELECT sk.*,u.display_name,u.email,u.level,
@@ -2632,7 +2633,7 @@ async function adminOverview(request, env) {
     ).all(),
     env.COMMONS_DB.prepare(
       `SELECT id,title,summary,min_level,claim_mode,required_skill,status,publication_state,category,work_type,
-              need_status,priority,why_now,program_id,program_step,published_at,updated_at
+              need_status,priority,why_now,program_id,program_step,published_at,updated_at,expected_minutes,integration_target
        FROM tasks ORDER BY
          CASE publication_state WHEN 'published' THEN 0 WHEN 'paused' THEN 1 WHEN 'draft' THEN 2 ELSE 3 END,
          priority DESC,id`
@@ -2893,7 +2894,7 @@ async function adminStageSubmission(request,env,admin,submissionId) {
 async function adminSubmissionFiles(request,env,admin,submissionId) {
   const {submission:s,files}=await submissionWithFiles(env,submissionId);
   await audit(env,admin.id,"admin_inspected_submission_files","submission",submissionId,{count:files.length});
-  return json({ok:true,task_id:s.task_id,files},{headers:{"cache-control":"no-store"}});
+  return json({ok:true,task_id:s.task_id,files},200,{"cache-control":"no-store"});
 }
 
 async function adminSubmissionChecks(request,env,admin,submissionId) {
