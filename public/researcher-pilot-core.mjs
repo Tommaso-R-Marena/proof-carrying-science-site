@@ -36,7 +36,7 @@ export function validatePilotInput(value) {
   if(!TARGETS.includes(result.target)) throw new Error("Choose a supported test target.");
   if(!OUTCOMES.includes(result.observed)) throw new Error("Choose a supported observation status.");
   for(const [field,max] of Object.entries(LIMITS)){
-    result[field]=text(result[field],field,max,field==="evidence_reference");
+    result[field]=text(result[field],field,max,field==="evidence_reference" || field==="source_version");
   }
   if(result.source_version!=="not-known" && !/^[a-f0-9]{7,40}$/i.test(result.source_version) && !/^[A-Za-z0-9._/-]{4,80}$/.test(result.source_version)){
     throw new Error("Use a version tag, commit hash, or 'not-known'.");
