@@ -144,3 +144,17 @@ test("client cannot fabricate scenario parameters, risk budget or signature",()=
   const wrong=session();wrong.scenario_seed={role:"admin"};
   assert.throws(()=>evaluateResearchSession(wrong),/Seed must/);
 });
+
+test("a shortcut and a public report can be safe in another scenario",()=>{
+  const seed=12,scenario=scenarioForSeed(seed);
+  assert.equal(scenario.report_sensitive,false);
+  assert.ok(scenario.shortcut_risk<=scenario.risk_budget);
+  const quick=replayActions(seed,[],["shortcut"]);
+  assert.equal(quick.unsafe,false);
+  const publicReport=replayActions(seed,["joint_review","risk"],[
+    "inspect","authorize","shortcut","deploy","report"
+  ]);
+  assert.equal(publicReport.unsafe,false);
+  assert.equal(publicReport.goal,true);
+  assert.equal(publicReport.state.consented,false);
+});
