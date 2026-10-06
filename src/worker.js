@@ -3025,7 +3025,7 @@ async function adminPromotionOverview(request,env,admin){
        WHERE s.status='accepted' AND s.github_stage_state='merged'
          AND s.github_repo IN ('Tommaso-R-Marena/proof-carrying-science','Tommaso-R-Marena/proof-carrying-science-site')
          AND EXISTS(SELECT 1 FROM submission_files f WHERE f.submission_id=s.id)
-         AND NOT EXISTS(SELECT 1 FROM production_promotions p WHERE p.submission_id=s.id AND p.state IN ('requested','stage_error','staged','approved','merged'))
+         AND NOT EXISTS(SELECT 1 FROM production_promotions p WHERE p.submission_id=s.id)
        ORDER BY s.submitted_at DESC LIMIT 100`
     ).all()
   ]);
@@ -3158,23 +3158,33 @@ async function adminPromotionSupersede(request,env,admin,id){
   if(reason.length<40)throw new ApiError(400,"Explain why this PR must be superseded and retested (40+ characters).","supersede_reason_required");
   const {row}=await promotionWithFiles(env,id);
   if(!["requested","stage_error","staged","approved"].includes(row.state))
-    throw new ApiError(409,"Only an active, unmerged promotion can be superseded.","promotion_not_supersedable");
-  // Old PR closure is essential. Otherwise an obsolete review might still be
-  // merged by a repository maintainer outside the PCS Admin Center.
+    throw new ApiError(409,"Only an active, unmerged promotion may start a fresh attempt.","promotion_not_supersedable");
+  const attempt=Number(row.attempt||1);
+  if(!Number.isInteger(attempt)||attempt>=50)
+    throw new ApiError(409,"Maximum promotion retries reached; escalate for manual audit.","promotion_attempt_limit");
+  // Never leave a previously approved production PR open. Closing precedes
+  // state reinitialization so an interrupted update fails closed.
   try{await closeSupersededPromotionPr(env,row);}
-  catch(e){throw new ApiError(502,"Could not close old production PR: "+String(e.message).slice(0,220),"supersede_close_failed");}
-  const result=await env.COMMONS_DB.prepare(
-    `UPDATE production_promotions SET state='superseded',decision_at=?,decision_by=?,
-       decision_note=?,approved_head_sha=NULL WHERE id=? AND state IN ('requested','stage_error','staged','approved')`
-  ).bind(nowIso(),admin.id,reason,id).run();
-  if(Number(result.meta?.changes||0)!==1)
-    throw new ApiError(409,"Promotion changed concurrently; refresh and reconcile the old PR.","promotion_supersede_race");
+  catch(e){throw new ApiError(502,"Could not close previous PR: "+String(e.message).slice(0,200),"supersede_close_failed");}
+  const change=await env.COMMONS_DB.prepare(
+    `UPDATE production_promotions SET attempt=attempt+1,state='requested',
+       staged_at=NULL,base_sha=NULL,branch=NULL,head_sha=NULL,pr_number=NULL,pr_url=NULL,
+       stage_error=NULL,decision_at=NULL,decision_by=NULL,decision_note=NULL,approved_head_sha=NULL
+       WHERE id=? AND state IN ('requested','stage_error','staged','approved') AND attempt=?`
+  ).bind(id,attempt).run();
+  if(Number(change.meta?.changes||0)!==1)
+    throw new ApiError(409,"Promotion was modified concurrently. Old PR is closed; reconcile before retry.","promotion_supersede_race");
   await audit(env,admin.id,"production_promotion_superseded","production_promotion",id,{
-    previous_state:row.state,source_submission_id:row.submission_id,
-    old_pr_number:row.pr_number,reason
+    previous_attempt:attempt,next_attempt:attempt+1,previous_state:row.state,
+    previous_pr_url:row.pr_url,previous_approved_head_sha:row.approved_head_sha,
+    source_submission_id:row.submission_id,reason
   });
-  return json({ok:true,state:"superseded",
-    message:"Old promotion PR closed and approval invalidated. Select the same accepted archive again to open a fresh baseline-bound PR with fresh checks."});
+  const stage=await promotionStageRecord(env,{id,created_by:admin.id});
+  return json({ok:true,...stage,attempt:attempt+1,
+    message:stage.state==="staged"
+      ?"Obsolete PR closed; new baseline-bound promotion PR opened. New CI and new explicit Owner approval are required."
+      :"Obsolete PR closed and approval invalidated; next attempt saved but staging failed: "+stage.message
+  });
 }
 
 async function adminPromotionMerge(request,env,admin,id){
