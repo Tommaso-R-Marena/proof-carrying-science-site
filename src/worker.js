@@ -1,3 +1,4 @@
+import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
 import {gradeOrder,PUZZLE_VERSION,PUZZLE_BY_ID} from "../public/proof-order-core.mjs";
 import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
@@ -1316,34 +1317,37 @@ const APPROVAL_ACTIONS = new Set([
 
 async function adminAuditFeed(request, env) {
   await requireAdmin(request,env);
-  const url = new URL(request.url);
-  const rawLimit = Number(url.searchParams.get("limit") || 100);
-  const limit = Math.min(Math.max(Number.isFinite(rawLimit)?Math.trunc(rawLimit):100,25),200);
-  const before = Number(url.searchParams.get("before_seq") || 0);
-  const kind = String(url.searchParams.get("kind") || "all");
-  const params = [];
-  let where = "1=1";
-  if (before > 0) { where += " AND seq<?"; params.push(before); }
-  if (kind === "admin") where += " AND actor_role IN ('owner','admin')";
-  if (kind === "approvals") {
+  let page;
+  try { page=parseAuditPage(new URL(request.url).searchParams); }
+  catch(error){ throw new ApiError(400,error.message,"invalid_audit_query"); }
+  const params=[];
+  let where="1=1";
+  if(page.before!==null){where+=" AND seq<?";params.push(page.before);}
+  if(page.kind==="admin")where+=" AND actor_role IN ('owner','admin')";
+  if(page.kind==="approvals"){
     const actions=[...APPROVAL_ACTIONS];
-    where += " AND action IN ("+actions.map(()=>"?").join(",")+")";
+    where+=" AND action IN ("+actions.map(()=>"?").join(",")+")";
     params.push(...actions);
   }
-  const result = await env.COMMONS_DB.prepare(
+  if(page.query){
+    const pattern=auditSearchPattern(page.query);
+    const columns=["action","actor_email","actor_name","subject_type","subject_id","detail_json"];
+    where+=" AND ("+columns.map(col=>col+" LIKE ? ESCAPE '\\'").join(" OR ")+")";
+    params.push(...columns.map(()=>pattern));
+  }
+  const result=await env.COMMONS_DB.prepare(
     `SELECT seq,event_id,actor_user_id,actor_email,actor_name,actor_role,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash
      FROM audit_archive WHERE ${where} ORDER BY seq DESC LIMIT ?`
-  ).bind(...params,limit).all();
-  const rows = result.results || [];
+  ).bind(...params,page.limit+1).all();
+  const fetched=result.results||[];
+  const rows=fetched.slice(0,page.limit);
   return json({
-    ok:true,
-    kind,
-    events:rows,
-    next_before:rows.length===limit?Number(rows[rows.length-1].seq):null,
-    integrity:await verifyAuditArchive(env),
+    ok:true,kind:page.kind,events:rows,
+    next_before:fetched.length>page.limit?Number(rows[rows.length-1].seq):null,
+    integrity:page.verify&&page.kind==="all"&&page.before===null
+      ?await verifyAuditArchive(env):null,
   });
 }
-
 
 async function recover(request, env) {
   await rateLimit(request, env, "recover", 5, 60);
