@@ -49,7 +49,20 @@
   function compensationLabel(task){return task.compensation_label||"Volunteer";}
   function paid(task){return task.compensation_type!=="volunteer";}
   function difficulty(task){return META[task.id]?.difficulty||("L"+task.min_level);}
-  function taskMeta(task){return META[task.id]||{project:"PCS Commons",impact:"Public assurance",difficulty:"L"+task.min_level,deliverable:"Deliver the bounded output described by the task.",verification:"PCS reviews the result against the stated acceptance criteria."};}
+  function programLabel(task){
+    if(task.program_id==="claim-invalidation-v1")return "Claim Invalidation v1";
+    return task.program_id||"";
+  }
+  function taskMeta(task){
+    const fallback=META[task.id]||{};
+    return {
+      project:programLabel(task)||fallback.project||"PCS Commons",
+      impact:task.program_id==="claim-invalidation-v1"?"Claim/evidence invalidation semantics":fallback.impact||"Public assurance",
+      difficulty:fallback.difficulty||("L"+task.min_level),
+      deliverable:task.deliverable||fallback.deliverable||"Deliver the bounded output described by the task.",
+      verification:task.verification_rule||fallback.verification||"PCS reviews the result against the stated acceptance criteria."
+    };
+  }
 
   function accountTaskHref(task, eligibility, apply=true){
     const next=new URL("tasks.html",location.origin);
@@ -170,6 +183,7 @@
       return `<button class="button primary" type="button" data-apply-task="${esc(task.id)}">Apply directly · manual review</button><a class="button secondary" href="${esc(evalUrl)}">Take variable evaluation</a>`;
     }
     if(e.can_request)return `<button class="button primary" type="button" data-apply-task="${esc(task.id)}">Apply for PCS approval</button>`;
+    if(e.state==="dependency_required")return `<a class="button secondary" href="claim-invalidation-v1.html">See program prerequisites</a>`;
     if(e.state==="login_required")return `<a class="button primary" href="${esc(accountTaskHref(task,e,true))}">Sign in, then return to this task</a>`;
     return `<a class="button secondary" href="${esc(accountTaskHref(task,e,true))}">See qualification options</a>`;
   }
@@ -178,13 +192,23 @@
     const m=taskMeta(task), e=task.eligibility||{};
     const paidClass=paid(task)?"paid":"volunteer";
     const accessLabel=task.claim_mode==="open"?"OPEN · NON-EXCLUSIVE":task.claim_mode==="approval"?"FOUNDER APPROVAL":"HIGH-TRUST ASSIGNMENT";
-    return `<article class="commons-task-card" data-task-id="${esc(task.id)}" data-level="${task.min_level}" data-comp="${paid(task)?"paid":"volunteer"}" data-skill="${esc(task.required_skill||"nontechnical")}" data-hours="${task.expected_hours}">
-      <div class="task-card-top"><div><span class="commons-chip level">L${task.min_level}</span><span class="commons-chip ${paidClass}">${esc(compensationLabel(task))}</span><span class="commons-chip ${task.claim_mode==="open"?"volunteer":"planned"}">${accessLabel}</span>${task.calibrates_skill?`<span class="commons-chip level">SYNTHETIC ${esc(task.calibrates_skill)} CALIBRATION</span>`:""}</div><code>${esc(task.id)}</code></div>
+    const deps=Array.isArray(task.dependencies)?task.dependencies:[];
+    const program=programLabel(task);
+    const dependencyHtml=deps.length?`
+      <div class="task-dependency-list">
+        <strong>Program dependencies</strong>
+        ${deps.map(dep=>`<span class="${dep.completed?"complete":dep.dependency_type==="hard"?"blocked":"informative"}"><b>${dep.completed?"✓":dep.dependency_type==="hard"?"LOCK":"INFO"}</b> ${esc(dep.depends_on_task_id)} · ${esc(dep.depends_on_title||"prerequisite")}</span>`).join("")}
+      </div>`:"";
+    const sourceHtml=task.source_ref?`<p><strong>Core source:</strong> <code>${esc(task.source_ref)}</code></p>`:"";
+    const criteriaHtml=task.acceptance_criteria?`<p><strong>Acceptance criteria:</strong> ${esc(task.acceptance_criteria)}</p>`:"";
+    return `<article class="commons-task-card ${program?"program-task":""}" data-task-id="${esc(task.id)}" data-level="${task.min_level}" data-comp="${paid(task)?"paid":"volunteer"}" data-skill="${esc(task.required_skill||"nontechnical")}" data-hours="${task.expected_hours}">
+      <div class="task-card-top"><div><span class="commons-chip level">L${task.min_level}</span><span class="commons-chip ${paidClass}">${esc(compensationLabel(task))}</span><span class="commons-chip ${task.claim_mode==="open"?"volunteer":"planned"}">${accessLabel}</span>${program?`<span class="commons-chip program">${esc(program)} · STEP ${esc(task.program_step)}</span>`:""}</div><code>${esc(task.id)}</code></div>
       <h3>${esc(task.title)}</h3><p>${esc(task.summary)}</p>
       <div class="task-meta"><span><b>${task.expected_hours}h</b> expected</span><span><b>${esc(m.difficulty)}</b> difficulty</span><span><b>${esc(task.required_skill||"entry")}</b> skill gate</span><span><b>${esc(m.impact)}</b> impact</span></div>
+      ${dependencyHtml}
       <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.claim_mode!=="open"?"<span>Qualification route: variable auto-scored evaluation or direct manual application. Final approval is always manual. PCS targets a decision within 1 business day and no later than 2 business days. Pending applications never reserve the task.</span>":""}</div>
-      <details class="task-details"><summary>What counts as done?</summary><p><strong>Deliverable:</strong> ${esc(m.deliverable)}</p><p><strong>Verification:</strong> ${esc(m.verification)}</p><p><strong>Project:</strong> ${esc(m.project)}</p></details>
-      <div class="task-actions">${accessButton(task)}<a class="button secondary" href="projects.html?task=${encodeURIComponent(task.id)}">See impact path</a></div>
+      <details class="task-details"><summary>What counts as done?</summary><p><strong>Deliverable:</strong> ${esc(m.deliverable)}</p><p><strong>Verification:</strong> ${esc(m.verification)}</p>${criteriaHtml}${sourceHtml}<p><strong>Project:</strong> ${esc(m.project)}</p></details>
+      <div class="task-actions">${accessButton(task)}${program?`<a class="button secondary" href="claim-invalidation-v1.html#${encodeURIComponent(task.id)}">Open public task packet</a>`:`<a class="button secondary" href="projects.html?task=${encodeURIComponent(task.id)}">See impact path</a>`}</div>
     </article>`;
   }
 
