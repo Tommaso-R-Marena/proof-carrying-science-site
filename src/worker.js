@@ -1,7 +1,7 @@
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
   githubConfigured, createSubmissionPullRequest, readSubmissionChecks,
-  mergeStagedPullRequest
+  mergeStagedPullRequest, githubAccessReport
 } from "./contribution-github.js";
 
 const SESSION_COOKIE = "pcs_commons_session";
@@ -2927,6 +2927,17 @@ async function adminSubmissionFiles(request,env,admin,submissionId) {
   return json({ok:true,task_id:s.task_id,files},200,{"cache-control":"no-store"});
 }
 
+async function adminGithubDiagnostics(request,env,admin){
+  if(!githubConfigured(env)) return json({ok:true,...await githubAccessReport(env)});
+  const report=await githubAccessReport(env);
+  await audit(env,admin.id,"github_connection_diagnostic","integration","github",{
+    result:report.repositories.map(r=>({
+      target:r.target,contents_read:r.contents_read,actions_read:r.actions_read
+    }))
+  });
+  return json({ok:true,...report},200,{"cache-control":"no-store"});
+}
+
 async function adminSubmissionChecks(request,env,admin,submissionId) {
   const {submission:s,files}=await submissionWithFiles(env,submissionId);
   if(!s.github_pr_number) return json({ok:true,state:s.github_stage_state,
@@ -3286,6 +3297,7 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
+    if (method==="GET" && path==="/api/admin/github/diagnostics") return adminGithubDiagnostics(request,env,admin);
     let submissionFlowMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/(stage|checks|files|merge)$/);
     if(submissionFlowMatch){
       const id=decodeURIComponent(submissionFlowMatch[1]), action=submissionFlowMatch[2];
