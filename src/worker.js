@@ -1938,6 +1938,166 @@ async function withdrawRequest(request, env, user, requestId) {
   return json({ok:true,message:"Task released/withdrawn. No penalty is applied for ordinary withdrawal."});
 }
 
+async function listRoles(request, env) {
+  const user=await currentUser(request,env);
+  const roles=await env.COMMONS_DB.prepare(
+    `SELECT * FROM role_openings WHERE publication_state='published' ORDER BY priority DESC,id`
+  ).all();
+  let applications=new Map();
+  if(user){
+    const own=await env.COMMONS_DB.prepare(
+      "SELECT id,role_id,status,requested_at,decided_at,decision_note FROM role_applications WHERE user_id=? ORDER BY requested_at DESC"
+    ).bind(user.id).all();
+    for(const row of own.results||[])if(!applications.has(row.role_id))applications.set(row.role_id,row);
+  }
+  return json({
+    user:user?publicUser(user):null,
+    roles:(roles.results||[]).map(role=>({
+      ...role,
+      eligibility:!user
+        ? {state:"login_required",can_apply:false,reason:"Sign in to apply."}
+        : user.status!=="active"
+          ? {state:"locked",can_apply:false,reason:"Account is not active."}
+          : Number(user.level)<Number(role.min_level)
+            ? {state:"level_required",can_apply:false,reason:`Requires at least L${role.min_level}; your verified level is L${user.level}.`}
+            : {state:"eligible",can_apply:true,reason:"Eligible to submit an application for manual review."},
+      my_application:applications.get(role.id)||null,
+    })),
+  });
+}
+
+async function applyForRole(request, env, user, roleId) {
+  await rateLimit(request,env,"role-application",12,60);
+  const role=await env.COMMONS_DB.prepare(
+    "SELECT * FROM role_openings WHERE id=? AND publication_state='published'"
+  ).bind(roleId).first();
+  if(!role)throw new ApiError(404,"Role opening not found.","role_not_found");
+  if(user.status!=="active")throw new ApiError(403,"Account is not active.","account_inactive");
+  if(Number(user.level)<Number(role.min_level))throw new ApiError(403,`This role requires at least L${role.min_level}.`,"level_required");
+  if(role.required_skill){
+    const skill=await env.COMMONS_DB.prepare(
+      "SELECT 1 AS ok FROM skills WHERE user_id=? AND skill=? AND status='verified'"
+    ).bind(user.id,role.required_skill).first();
+    if(!skill)throw new ApiError(403,`This role requires verified ${role.required_skill}.`,"skill_required");
+  }
+  const existing=await env.COMMONS_DB.prepare(
+    "SELECT id FROM role_applications WHERE role_id=? AND user_id=? AND status='pending'"
+  ).bind(role.id,user.id).first();
+  if(existing)throw new ApiError(409,"You already have a pending application for this role.","role_application_pending");
+  const body=await readBody(request);
+  const note=cleanText(body.note,3000);
+  const experience=cleanText(body.experience,3000);
+  const availability=cleanText(body.availability,1000);
+  if(note.length<120)throw new ApiError(400,"Explain why you want the role and how you would contribute (at least 120 characters).","role_note_required");
+  if(experience.length<80)throw new ApiError(400,"Give relevant experience or equivalent evidence (at least 80 characters).","role_experience_required");
+  if(availability.length<20)throw new ApiError(400,"Describe your expected availability.","role_availability_required");
+  const id=crypto.randomUUID();
+  const now=nowIso();
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO role_applications(id,role_id,user_id,note,experience,availability,status,requested_at)
+     VALUES(?,?,?,?,?,?,'pending',?)`
+  ).bind(id,role.id,user.id,note,experience,availability,now).run();
+  await notify(env,{
+    kind:"role_application_admin",
+    email:env.ADMIN_EMAIL||null,
+    subject:`[PCS] Role application: ${role.title} — ${user.display_name}`,
+    body:[
+      `${user.display_name} <${user.email}> applied for ${role.id} — ${role.title}.`,
+      `Verified level: L${user.level}`,
+      "",
+      "Why / contribution plan:",note,
+      "",
+      "Relevant experience:",experience,
+      "",
+      "Availability:",availability,
+      "",
+      `Admin dashboard: ${new URL(request.url).origin}/admin.html#roles`,
+    ].join("\n")
+  });
+  await notify(env,{
+    userId:user.id,
+    email:user.email_verified?user.email:null,
+    kind:"role_application_received",
+    subject:`PCS received your role application: ${role.title}`,
+    body:`PCS received your application for ${role.title}. This is an ongoing role application, not a task reservation. PCS will review it manually.\n`
+  });
+  await audit(env,user.id,"role_application_created","role_application",id,{role_id:role.id});
+  return json({ok:true,application_id:id,status:"pending",message:"Role application received for manual review."},201);
+}
+
+async function withdrawRoleApplication(request, env, user, applicationId) {
+  const row=await env.COMMONS_DB.prepare(
+    "SELECT * FROM role_applications WHERE id=? AND user_id=?"
+  ).bind(applicationId,user.id).first();
+  if(!row||row.status!=="pending")throw new ApiError(404,"Pending role application not found.","role_application_not_pending");
+  await env.COMMONS_DB.prepare(
+    "UPDATE role_applications SET status='withdrawn',decided_at=? WHERE id=? AND status='pending'"
+  ).bind(nowIso(),row.id).run();
+  await audit(env,user.id,"role_application_withdrawn","role_application",row.id,{role_id:row.role_id});
+  return json({ok:true,status:"withdrawn"});
+}
+
+async function adminRoleDecision(request, env, admin, applicationId) {
+  const body=await readBody(request);
+  const decision=String(body.decision||"");
+  const note=cleanText(body.note,3000);
+  if(!["approve","reject"].includes(decision))throw new ApiError(400,"Decision must be approve or reject.","bad_role_decision");
+  if(note.length<20)throw new ApiError(400,"Give a decision rationale of at least 20 characters.","decision_note_required");
+  const row=await env.COMMONS_DB.prepare(
+    `SELECT a.*,r.title,u.display_name,u.email,u.email_verified
+     FROM role_applications a JOIN role_openings r ON r.id=a.role_id JOIN users u ON u.id=a.user_id
+     WHERE a.id=?`
+  ).bind(applicationId).first();
+  if(!row||row.status!=="pending")throw new ApiError(404,"Pending role application not found.","role_application_not_pending");
+  const status=decision==="approve"?"approved":"rejected";
+  const changed=await env.COMMONS_DB.prepare(
+    "UPDATE role_applications SET status=?,decided_at=?,decided_by=?,decision_note=? WHERE id=? AND status='pending'"
+  ).bind(status,nowIso(),admin.id,note,row.id).run();
+  if(Number(changed?.meta?.changes||0)!==1)throw new ApiError(409,"This role application was already decided.","role_application_already_decided");
+  await notify(env,{
+    userId:row.user_id,
+    email:row.email_verified?row.email:null,
+    kind:"role_application_decision",
+    subject:`PCS role application: ${row.title}`,
+    body:`Your application for ${row.title} was marked ${status}.\n\nDecision note: ${note}\n`
+  });
+  await audit(env,admin.id,"role_application_decided","role_application",row.id,{role_id:row.role_id,status});
+  return json({ok:true,status});
+}
+
+async function adminCurateTask(request, env, admin, taskId) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can publish or retire marketplace work.","owner_required");
+  const task=await env.COMMONS_DB.prepare("SELECT * FROM tasks WHERE id=?").bind(taskId).first();
+  if(!task)throw new ApiError(404,"Task not found.","task_not_found");
+  const body=await readBody(request);
+  const publication=String(body.publication_state||task.publication_state||"draft");
+  const need=String(body.need_status||task.need_status||"needed");
+  const category=String(body.category||task.category||"research");
+  const reason=cleanText(body.reason,2000);
+  const whyNow=cleanText(body.why_now,2000)||task.why_now||"";
+  const priorityRaw=Number(body.priority??task.priority??50);
+  const priority=Math.max(0,Math.min(100,Number.isFinite(priorityRaw)?Math.trunc(priorityRaw):50));
+  const publications=new Set(["draft","published","paused","retired"]);
+  const needs=new Set(["needed","satisfied","retired"]);
+  const categories=new Set(["research","engineering","security","review","operations","administrative","marketing","outreach","design","documentation","community"]);
+  if(!publications.has(publication))throw new ApiError(400,"Invalid publication state.","bad_publication_state");
+  if(!needs.has(need))throw new ApiError(400,"Invalid need status.","bad_need_status");
+  if(!categories.has(category))throw new ApiError(400,"Invalid task category.","bad_task_category");
+  if(reason.length<20)throw new ApiError(400,"Give a curation rationale of at least 20 characters.","curation_reason_required");
+  const publishedAt=publication==="published"?(task.published_at||nowIso()):task.published_at;
+  const retiredAt=publication==="retired"||need==="retired"||need==="satisfied"?nowIso():null;
+  await env.COMMONS_DB.prepare(
+    `UPDATE tasks SET publication_state=?,need_status=?,category=?,priority=?,why_now=?,published_at=?,retired_at=?,updated_at=? WHERE id=?`
+  ).bind(publication,need,category,priority,whyNow,publishedAt,retiredAt,nowIso(),task.id).run();
+  await audit(env,admin.id,"task_curated","task",task.id,{
+    from:{publication_state:task.publication_state,need_status:task.need_status,category:task.category,priority:Number(task.priority||50)},
+    to:{publication_state:publication,need_status:need,category,priority},
+    rationale:reason,
+    why_now:whyNow
+  });
+  return json({ok:true,task_id:task.id,publication_state:publication,need_status:need,category,priority});
+}
+
 async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
