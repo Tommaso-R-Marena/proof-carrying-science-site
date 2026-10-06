@@ -176,7 +176,7 @@ export async function createSubmissionPullRequest(env, {target, taskId, submissi
   return {repo,branch,number:Number(pr.number),url:pr.html_url,head_sha:pr.head?.sha||null};
 }
 
-export async function readSubmissionChecks(env,{repo,branch,number,taskId,submissionId}) {
+export async function readSubmissionChecks(env,{repo,branch,number,taskId,submissionId,expectedFiles=[]}) {
   if (!Object.values(TARGETS).includes(repo)) throw new Error("Unexpected GitHub repository.");
   const pr=await github(env,repo,"GET",`pulls/${number}`);
   if (pr.base?.ref!=="main" || pr.head?.ref!==branch || pr.head?.repo?.full_name!==repo) throw new Error("GitHub pull request branch or target does not match the staged submission.");
@@ -188,6 +188,22 @@ export async function readSubmissionChecks(env,{repo,branch,number,taskId,submis
     throw new Error("PR file scope changed; reject until a reviewer investigates.");
   }
   const head=String(pr.head?.sha||"");
+  // The reviewer must assess the exact submitted bytes, not merely a green
+  // PR that someone with repository write permission could have modified.
+  if(expectedFiles.length){
+    const expectedPaths=new Set(expectedFiles.map(f=>prefix+f.filename));
+    const changedPaths=new Set(files.filter(f=>f.filename!==prefix+"manifest.json").map(f=>f.filename));
+    if(changedPaths.size!==expectedPaths.size||[...changedPaths].some(p=>!expectedPaths.has(p))){
+      throw new Error("Staged PR artifact inventory differs from the contributor's saved submission.");
+    }
+    for(const file of expectedFiles){
+      const actual=await github(env,repo,"GET",`contents/${prefix}${file.filename}?ref=${encodeURIComponent(head)}`);
+      const base64=String(actual.content||"").replace(/\\s/g,"");
+      if(!base64 || base64!==base64Utf8(file.content)){
+        throw new Error("Staged PR bytes no longer match the saved submission: "+file.filename);
+      }
+    }
+  }
   const checks=await github(env,repo,"GET",`commits/${head}/check-runs?per_page=100`);
   const candidates=(checks.check_runs||[]).filter(x=>x.name===CHECK_NAME && x.app?.slug==="github-actions");
   const run=candidates.sort((a,b)=>String(b.started_at||b.created_at||"").localeCompare(String(a.started_at||a.created_at||"")))[0];
