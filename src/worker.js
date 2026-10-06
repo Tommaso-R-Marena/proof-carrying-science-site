@@ -2156,6 +2156,130 @@ async function adminCurateTask(request, env, admin, taskId) {
   return json({ok:true,task_id:task.id,publication_state:publication,need_status:need,category,priority});
 }
 
+async function dependencyWouldCycle(env, taskId, prerequisiteId) {
+  if(taskId===prerequisiteId)return true;
+  const row=await env.COMMONS_DB.prepare(
+    `WITH RECURSIVE prereq(id) AS (
+       SELECT depends_on_task_id FROM task_dependencies WHERE task_id=?
+       UNION
+       SELECT d.depends_on_task_id
+       FROM task_dependencies d JOIN prereq p ON d.task_id=p.id
+     )
+     SELECT 1 AS cycle FROM prereq WHERE id=? LIMIT 1`
+  ).bind(prerequisiteId,taskId).first();
+  return Boolean(row);
+}
+
+async function adminUpsertDependencyGroup(request, env, admin, taskId) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can change task dependency gates.","owner_required");
+  const task=await env.COMMONS_DB.prepare("SELECT id,title FROM tasks WHERE id=?").bind(taskId).first();
+  if(!task)throw new ApiError(404,"Task not found.","task_not_found");
+  const body=await readBody(request);
+  const id=String(body.id||"").trim();
+  const label=cleanText(body.label,200);
+  const mode=String(body.mode||"all");
+  const minSatisfied=Number(body.min_satisfied??1);
+  const description=cleanText(body.description,1600);
+  const sortOrder=Math.max(0,Math.min(999,Math.trunc(Number(body.sort_order??0))));
+  const reason=cleanText(body.reason,2000);
+  if(!/^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$/.test(id))throw new ApiError(400,"Dependency-group ID must be 3–64 safe characters.","bad_dependency_group_id");
+  if(label.length<5)throw new ApiError(400,"Give the dependency group a clear label.","dependency_group_label_required");
+  if(!["all","any","at_least"].includes(mode))throw new ApiError(400,"Dependency-group mode must be all, any, or at_least.","bad_dependency_group_mode");
+  if(!Number.isInteger(minSatisfied)||minSatisfied<1||minSatisfied>100)throw new ApiError(400,"min_satisfied must be an integer from 1 to 100.","bad_dependency_group_threshold");
+  if(description.length<20)throw new ApiError(400,"Describe what this gate means in at least 20 characters.","dependency_group_description_required");
+  if(reason.length<20)throw new ApiError(400,"Give an audited reason for this graph change.","dependency_change_reason_required");
+  const existing=await env.COMMONS_DB.prepare("SELECT * FROM task_dependency_groups WHERE id=?").bind(id).first();
+  if(existing&&existing.task_id!==taskId)throw new ApiError(409,"That dependency-group ID already belongs to another task.","dependency_group_conflict");
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO task_dependency_groups(id,task_id,label,mode,min_satisfied,description,sort_order)
+     VALUES(?,?,?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET
+       label=excluded.label,mode=excluded.mode,min_satisfied=excluded.min_satisfied,
+       description=excluded.description,sort_order=excluded.sort_order`
+  ).bind(id,taskId,label,mode,minSatisfied,description,sortOrder).run();
+  await audit(env,admin.id,existing?"dependency_group_updated":"dependency_group_created","task",taskId,{
+    group_id:id,label,mode,min_satisfied:minSatisfied,description,sort_order:sortOrder,rationale:reason
+  });
+  return json({ok:true,group_id:id,task_id:taskId});
+}
+
+async function adminDeleteDependencyGroup(request, env, admin, taskId, groupId) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can change task dependency gates.","owner_required");
+  const group=await env.COMMONS_DB.prepare("SELECT * FROM task_dependency_groups WHERE id=? AND task_id=?").bind(groupId,taskId).first();
+  if(!group)throw new ApiError(404,"Dependency group not found.","dependency_group_not_found");
+  const body=await readBody(request);
+  const reason=cleanText(body.reason,2000);
+  if(reason.length<20)throw new ApiError(400,"Give an audited reason for removing this gate.","dependency_change_reason_required");
+  const members=await env.COMMONS_DB.prepare("SELECT COUNT(*) AS n FROM task_dependencies WHERE task_id=? AND group_id=?").bind(taskId,groupId).first();
+  if(Number(members?.n||0)>0)throw new ApiError(409,"Move or delete the group's dependency edges before deleting the group.","dependency_group_not_empty");
+  await env.COMMONS_DB.prepare("DELETE FROM task_dependency_groups WHERE id=? AND task_id=?").bind(groupId,taskId).run();
+  await audit(env,admin.id,"dependency_group_deleted","task",taskId,{group_id:groupId,rationale:reason});
+  return json({ok:true});
+}
+
+async function adminUpsertDependency(request, env, admin, taskId) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can change task dependencies.","owner_required");
+  const task=await env.COMMONS_DB.prepare("SELECT id,title FROM tasks WHERE id=?").bind(taskId).first();
+  if(!task)throw new ApiError(404,"Task not found.","task_not_found");
+  const body=await readBody(request);
+  const prerequisiteId=String(body.depends_on_task_id||"").trim();
+  const dependencyType=String(body.dependency_type||"hard");
+  const groupId=String(body.group_id||"").trim()||null;
+  const relation=cleanText(body.relation,120)||"requires";
+  const requiredOutcome=cleanText(body.required_outcome,120)||"completed";
+  const artifactContract=cleanText(body.artifact_contract,3000);
+  const rationale=cleanText(body.rationale,2000);
+  const criticality=Math.max(0,Math.min(100,Math.trunc(Number(body.criticality??50))));
+  const changeReason=cleanText(body.change_reason,2000);
+  if(!["hard","informative"].includes(dependencyType))throw new ApiError(400,"Dependency type must be hard or informative.","bad_dependency_type");
+  if(relation.length<3)throw new ApiError(400,"Give the edge a semantic relation label.","dependency_relation_required");
+  if(artifactContract.length<20)throw new ApiError(400,"Describe the upstream artifact/output this edge consumes.","dependency_artifact_contract_required");
+  if(rationale.length<20)throw new ApiError(400,"Explain why this dependency exists.","dependency_rationale_required");
+  if(changeReason.length<20)throw new ApiError(400,"Give an audited reason for this graph change.","dependency_change_reason_required");
+  const prerequisite=await env.COMMONS_DB.prepare("SELECT id,title FROM tasks WHERE id=?").bind(prerequisiteId).first();
+  if(!prerequisite)throw new ApiError(404,"Prerequisite task not found.","prerequisite_task_not_found");
+  if(await dependencyWouldCycle(env,taskId,prerequisiteId))throw new ApiError(409,"This edge would create a dependency cycle.","dependency_cycle");
+  if(groupId){
+    if(dependencyType!=="hard")throw new ApiError(400,"Only hard dependencies may belong to a blocking gate group.","informative_group_not_allowed");
+    const group=await env.COMMONS_DB.prepare("SELECT 1 AS ok FROM task_dependency_groups WHERE id=? AND task_id=?").bind(groupId,taskId).first();
+    if(!group)throw new ApiError(400,"Selected dependency group does not belong to this task.","dependency_group_mismatch");
+  }
+  const existing=await env.COMMONS_DB.prepare(
+    "SELECT * FROM task_dependencies WHERE task_id=? AND depends_on_task_id=?"
+  ).bind(taskId,prerequisiteId).first();
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO task_dependencies(
+       task_id,depends_on_task_id,dependency_type,rationale,group_id,relation,required_outcome,artifact_contract,criticality
+     ) VALUES(?,?,?,?,?,?,?,?,?)
+     ON CONFLICT(task_id,depends_on_task_id) DO UPDATE SET
+       dependency_type=excluded.dependency_type,rationale=excluded.rationale,group_id=excluded.group_id,
+       relation=excluded.relation,required_outcome=excluded.required_outcome,
+       artifact_contract=excluded.artifact_contract,criticality=excluded.criticality`
+  ).bind(taskId,prerequisiteId,dependencyType,rationale,groupId,relation,requiredOutcome,artifactContract,criticality).run();
+  await audit(env,admin.id,existing?"task_dependency_updated":"task_dependency_created","task",taskId,{
+    depends_on_task_id:prerequisiteId,dependency_type:dependencyType,group_id:groupId,
+    relation,required_outcome:requiredOutcome,artifact_contract:artifactContract,
+    criticality,rationale,change_reason:changeReason
+  });
+  return json({ok:true,task_id:taskId,depends_on_task_id:prerequisiteId});
+}
+
+async function adminDeleteDependency(request, env, admin, taskId, prerequisiteId) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can change task dependencies.","owner_required");
+  const edge=await env.COMMONS_DB.prepare(
+    "SELECT * FROM task_dependencies WHERE task_id=? AND depends_on_task_id=?"
+  ).bind(taskId,prerequisiteId).first();
+  if(!edge)throw new ApiError(404,"Dependency edge not found.","dependency_not_found");
+  const body=await readBody(request);
+  const reason=cleanText(body.reason,2000);
+  if(reason.length<20)throw new ApiError(400,"Give an audited reason for deleting this dependency.","dependency_change_reason_required");
+  await env.COMMONS_DB.prepare(
+    "DELETE FROM task_dependencies WHERE task_id=? AND depends_on_task_id=?"
+  ).bind(taskId,prerequisiteId).run();
+  await audit(env,admin.id,"task_dependency_deleted","task",taskId,{depends_on_task_id:prerequisiteId,rationale:reason});
+  return json({ok:true});
+}
+
 function challengeScore(challengeId, counts) {
   if(challengeId!=="ARENA-INV-001"){
     throw new ApiError(503,"This challenge does not yet have an executable PCS scoring adapter.","challenge_scorer_unavailable");
@@ -2400,7 +2524,7 @@ async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
   await remindPendingReviews(env);
-  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills, curatedTasks, roleApplications, challengeEntries] = await Promise.all([
+  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills, curatedTasks, roleApplications, challengeEntries, dependencyEdges, dependencyGroups] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
               u.display_name,u.email,u.level,u.email_verified,
@@ -2455,6 +2579,16 @@ async function adminOverview(request, env) {
        FROM challenge_entries e JOIN challenges c ON c.id=e.challenge_id JOIN users u ON u.id=e.user_id
        WHERE e.status='pending' ORDER BY e.submitted_at ASC LIMIT 100`
     ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT d.*,target.title AS task_title,source.title AS depends_on_title
+       FROM task_dependencies d
+       JOIN tasks target ON target.id=d.task_id
+       JOIN tasks source ON source.id=d.depends_on_task_id
+       ORDER BY d.task_id,d.criticality DESC,d.depends_on_task_id`
+    ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT * FROM task_dependency_groups ORDER BY task_id,sort_order,id`
+    ).all(),
   ]);
   return json({
     admin:publicUser(admin),
@@ -2469,6 +2603,8 @@ async function adminOverview(request, env) {
     tasks:curatedTasks.results||[],
     role_applications:roleApplications.results||[],
     challenge_entries:challengeEntries.results||[],
+    dependency_edges:dependencyEdges.results||[],
+    dependency_groups:dependencyGroups.results||[],
     policy:{
       response_target:"1 business day",
       hard_sla:"2 business days",
@@ -2937,6 +3073,14 @@ async function handleApi(request, env) {
     if (method==="POST" && path==="/api/admin/tasks") return adminCreateTask(request,env,admin);
     let taskCurationMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/curation$/);
     if (method==="POST" && taskCurationMatch) return adminCurateTask(request,env,admin,decodeURIComponent(taskCurationMatch[1]));
+    let dependencyGroupMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/dependency-groups$/);
+    if (method==="POST" && dependencyGroupMatch) return adminUpsertDependencyGroup(request,env,admin,decodeURIComponent(dependencyGroupMatch[1]));
+    dependencyGroupMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/dependency-groups\/([^/]+)$/);
+    if (method==="DELETE" && dependencyGroupMatch) return adminDeleteDependencyGroup(request,env,admin,decodeURIComponent(dependencyGroupMatch[1]),decodeURIComponent(dependencyGroupMatch[2]));
+    let dependencyMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/dependencies$/);
+    if (method==="POST" && dependencyMatch) return adminUpsertDependency(request,env,admin,decodeURIComponent(dependencyMatch[1]));
+    dependencyMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/dependencies\/([^/]+)$/);
+    if (method==="DELETE" && dependencyMatch) return adminDeleteDependency(request,env,admin,decodeURIComponent(dependencyMatch[1]),decodeURIComponent(dependencyMatch[2]));
     let roleDecisionMatch=path.match(/^\/api\/admin\/roles\/applications\/([^/]+)\/decision$/);
     if (method==="POST" && roleDecisionMatch) return adminRoleDecision(request,env,admin,decodeURIComponent(roleDecisionMatch[1]));
     let challengeDecisionMatch=path.match(/^\/api\/admin\/challenges\/entries\/([^/]+)\/decision$/);
