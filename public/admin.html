@@ -85,6 +85,59 @@
   </section>
 </section>
 
+<dialog id="adminActionDialog" class="admin-action-dialog">
+  <form id="adminActionForm" class="admin-action-form">
+    <div class="admin-action-head">
+      <div><div class="kicker">Audited authority change</div><h2 id="adminActionTitle">Administrative action</h2></div>
+      <button class="dialog-close" id="adminActionClose" type="button" aria-label="Close">×</button>
+    </div>
+    <p id="adminActionDescription" class="muted"></p>
+
+    <div id="adminActionLevelField" class="admin-action-field" hidden>
+      <label for="adminActionLevel">New technical level</label>
+      <select id="adminActionLevel" class="selectinput">
+        <option value="0">L0 · Learner</option>
+        <option value="1">L1</option><option value="2">L2</option><option value="3">L3</option>
+        <option value="4">L4</option><option value="5">L5</option><option value="6">L6 · Research Lead</option>
+      </select>
+      <small>L7 is the unique Founder/Owner governance tier and cannot be assigned.</small>
+    </div>
+
+    <div id="adminActionSkillField" class="admin-action-field" hidden>
+      <span>Verified skill being revoked</span>
+      <strong id="adminActionSkill"></strong>
+    </div>
+
+    <label class="admin-action-field">
+      <span>Justification <b>required</b></span>
+      <textarea id="adminActionNote" class="textinput" minlength="20" maxlength="3000" rows="6" required placeholder="State the evidence-based reason for this change. This explanation is preserved in the immutable audit trail."></textarea>
+      <small>Minimum 20 characters. Be concrete enough that a later reviewer can understand why the action was taken.</small>
+    </label>
+
+    <label id="adminActionOverrideField" class="admin-action-check" hidden>
+      <input id="adminActionOverride" type="checkbox">
+      <span><strong>Founder calibration override</strong><small>Use only when equivalent evidence justifies a promotion that does not satisfy the ordinary automated progression gate.</small></span>
+    </label>
+
+    <div class="admin-evidence-box">
+      <div><strong>Supporting evidence <span>optional</span></strong><small>Files are hashed, stored immutably, and linked from the audit record.</small></div>
+      <label class="admin-file-picker">
+        <input id="adminActionFiles" type="file" multiple accept=".pdf,.txt,.md,.csv,.json,.log,.lean,.py,.png,.jpg,.jpeg,.webp">
+        <span>Attach evidence</span>
+      </label>
+      <p class="tiny">Up to 4 files · 2 MiB each · 6 MiB total · PDF, TXT, MD, CSV, JSON, LOG, LEAN, PY, PNG, JPG/JPEG, WEBP.</p>
+      <div id="adminActionFileList" class="admin-file-list"></div>
+    </div>
+
+    <div id="adminActionWarning" class="admin-action-warning" hidden></div>
+    <p id="adminActionMessage" class="form-message" aria-live="polite"></p>
+
+    <div class="admin-action-buttons">
+      <button class="button secondary" id="adminActionCancel" type="button">Cancel</button>
+      <button class="button primary" id="adminActionConfirm" type="submit">Confirm action</button>
+    </div>
+  </form>
+</dialog>
 
 </main>
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Founder-controlled task authority with auditable contributor progression.</p></div><div class="footercol"><strong>Admin</strong><a href="admin-login.html">Admin sign in</a><a href="admin.html">Admin Center</a><a href="account.html">Contributor account</a></div><div class="footercol"><strong>Rules</strong><a href="governance.html">Governance</a><a href="privacy.html">Privacy</a></div></div></footer>
