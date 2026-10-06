@@ -17,7 +17,10 @@ test("all eleven categories include actual bounded work with review rules",()=>{
  assert.ok(html.includes("Take the evaluation")&&html.includes("Submit an application"));
 });
 test("all L0-L6 levels and all eleven role categories are seeded",()=>{
- for(let level=0;level<=6;level++)assert.ok(new RegExp(",\s*"+level+"\s*,'(?:open|approval|invite)'").test(sql),"L"+level);
+ for(let level=0;level<=6;level++){
+   const mode=level<2?"open":level<4?"approval":"invite";
+   assert.ok(sql.split("\\n").some(row=>row.includes("INSERT OR IGNORE INTO tasks")&&row.includes(","+level+",'"+mode+"'")),"L"+level);
+ }
  assert.equal([...sql.matchAll(/INSERT OR IGNORE INTO role_openings\(/g)].length,13);
  assert.ok(sql.includes("published"));
  assert.ok(sql.includes("Volunteer · no payment promised"));
