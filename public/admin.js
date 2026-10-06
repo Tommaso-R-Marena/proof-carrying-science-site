@@ -301,6 +301,8 @@
       $("#adminSubmissionCount").textContent=String((data.submissions||[]).length);
       $("#adminEmailTransport").textContent=data.email_transport?"configured":"not configured";
       $("#adminEmailTransport").className=data.email_transport?"good-text":"warn-text";
+      $("#adminEmailTransportDetail").textContent=data.email_transport_name==="gmail_apps_script"?"Gmail · Apps Script relay":data.email_transport_name==="resend"?"Resend":"No outbound provider";
+      $("#adminMailTestButton").disabled=!data.email_transport;
       renderRequests(data.pending_requests||[]);
       renderCheckpoints(data.checkpoints||[]);
       renderSkills(data.skill_reviews||[]);
@@ -312,6 +314,19 @@
       if(e.status!==401&&e.status!==403)console.error(e);
     }
   }
+
+  $("#adminMailTestButton")?.addEventListener("click",async()=>{
+    const button=$("#adminMailTestButton");
+    button.disabled=true;
+    const original=button.textContent;
+    button.textContent="Sending…";
+    try{
+      const result=await api("/api/admin/mail/test",{method:"POST"});
+      alert(result.message+" Provider: "+result.provider);
+      await load();
+    }catch(e){alert(e.message);}
+    finally{button.textContent=original;button.disabled=false;}
+  });
 
   $("#adminLogoutButton")?.addEventListener("click",async()=>{
     try{await api("/api/admin/logout",{method:"POST"});}catch(_){}
