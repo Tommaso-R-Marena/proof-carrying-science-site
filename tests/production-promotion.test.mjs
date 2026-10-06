@@ -48,7 +48,7 @@ function simulatedGitHub({outcome="success",missingStep=false,changeMain=false,
     if(p.endsWith("/pulls/10/merge")&&method==="PUT")return reply(200,{merged:true,sha:headSha});
     if(p.endsWith("/pulls/10")&&method==="PATCH")return reply(200,{state:"closed"});
     if(p.endsWith("/pulls/10"))return reply(200,{
-      base:{ref:"main"},head:{ref:`pcs/promote/${id}`,repo:{full_name:repo},sha:headSha},
+      base:{ref:"main"},head:{ref:`pcs/promote/${id}/r1`,repo:{full_name:repo},sha:headSha},
       draft:false,merged:false,state:"open",html_url:"https://github.com/test/pr/10"
     });
     if(p.endsWith("/pulls")&&method==="GET")return reply(200,[]);
@@ -142,7 +142,7 @@ test("source modification, PR scope drift, or stale main invalidates exact-bound
     try{
       const {promo,files}=await input();
       // A previously staged PR would have a separately recorded baseline.
-      Object.assign(promo,{base_sha:baseSha,branch:`pcs/promote/${id}`,pr_number:10});
+      Object.assign(promo,{base_sha:baseSha,branch:`pcs/promote/${id}/r1`,pr_number:10});
       if(options.changedSource||options.changeMain){
         await assert.rejects(()=>verifyPromotion(env,promo,files));
       }else{
