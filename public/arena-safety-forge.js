@@ -9,6 +9,7 @@ const $=id=>document.getElementById(id);
 const actionById=new Map(ACTIONS.map(a=>[a.id,a]));
 let seed=1,mission=null,mode="attack",agent=initialState(),acted=[],ended=false;
 let shield=new Set(),attacks=[],repairs=[],hinted=false,lastCheck=null;
+let hintExposed=false,oracleExposed=false,repairFeedbackExposed=false;
 const badges={counterexample:false,verified_repair:false,overblocking:false};
 
 async function researchApi(path,body){
@@ -105,8 +106,8 @@ function play(action){
 function recordAttack(){
   if(!acted.length)return false;
   if(attacks.length>=MAX_TRIALS){addLog("Notebook full for attack trials; start a new mission to continue.");return false;}
-  const entry={actions:[...acted]};
-  if(!attacks.some(x=>JSON.stringify(x)===JSON.stringify(entry))){
+  const entry={actions:[...acted],assisted:hintExposed||oracleExposed};
+  if(!attacks.some(x=>JSON.stringify(x.actions)===JSON.stringify(entry.actions))){
     attacks.push(entry);
     const result=replayActions(seed,mission.initial_guards,entry.actions);
     addLog("🧾 Trace recorded ("+result.events.length+" steps, "+(result.unsafe?"unsafe witness found":"no unsafe witness")+")",result.unsafe?"unsafe":"");
@@ -150,8 +151,8 @@ function verify(){
     if(result.passed)badges.verified_repair=true;
     if(result.safe&&!result.live)badges.overblocking=true;
     renderBadges();
-    const trial={guards:[...shield].sort()};
-    if(!repairs.some(x=>JSON.stringify(x)===JSON.stringify(trial))){
+    const trial={guards:[...shield].sort(),feedback_exposed:repairFeedbackExposed};
+    if(!repairs.some(x=>JSON.stringify(x.guards)===JSON.stringify(trial.guards))){
       if(repairs.length<MAX_TRIALS)repairs.push(trial);
       else addLog("Notebook full for shield trials; you can keep practicing.", "");
     }
@@ -162,6 +163,8 @@ function verify(){
       :!result.safe
       ?"🔎 Counterexample found. After checking "+result.checked_states+" states, your policy still allows "+result.counterexample.violations.join(", ").replaceAll("_"," ")+". Keep improving the shield!"
       :"🚧 No unsafe trace found in "+result.checked_states+" states, but your shield blocks completing the legitimate mission. Safety without usefulness is not a win.";
+    repairFeedbackExposed=true;
+    if(result.counterexample)oracleExposed=true;
     const path=$("forgeCheckerPath");path.replaceChildren();path.hidden=false;
     const actions=result.counterexample?.sequence||result.safe_mission||[];
     const h=result.counterexample?"Shortest discovered counterexample":"Example safe mission path";
@@ -176,6 +179,7 @@ function verify(){
 function selectSeed(nextSeed){
   seed=nextSeed;mission=scenarioForSeed(seed);
   attacks=[];repairs=[];shield=new Set(mission.initial_guards);lastCheck=null;
+  hintExposed=false;oracleExposed=false;repairFeedbackExposed=false;
   $("forgeWorldIcon").textContent=mission.icon;$("forgeMissionTitle").textContent=mission.name;
   $("forgeMissionStory").textContent=mission.story+" Shortcut risk: "+mission.shortcut_risk+"; budget: "+mission.risk_budget+". Report: "+(mission.report_sensitive?"sensitive — permission matters":"public telemetry — no personal consent needed")+". Each seed has its own rules.";
   $("forgeMissionGoal").textContent=mission.mission;
@@ -207,7 +211,7 @@ $("forgeShare").addEventListener("click",async()=>{
 $("forgeResetAttack").addEventListener("click",()=>resetAttack());
 $("forgeFinishAttack").addEventListener("click",()=>{recordAttack();resetAttack(false);});
 $("forgeHint").addEventListener("click",()=>{
-  hinted=true;
+  hinted=true;hintExposed=true;
   const check=verifyShield(seed,mission.initial_guards);
   const one=check.counterexample?.sequence[0];
   const info=$("forgeHintPanel");info.hidden=false;

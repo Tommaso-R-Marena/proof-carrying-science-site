@@ -22,8 +22,8 @@ export function prepareSafetyForgeDataset(document){
        !Array.isArray(replay.attacks)||!Array.isArray(replay.repairs))throw Error("Missing verified replay.");
     const input={
       scenario_seed:replay.seed,scenario_version:replay.scenario_version,
-      attack_trials:replay.attacks.map(a=>({actions:a.actions})),
-      repair_trials:replay.repairs.map(r=>({guards:r.guards}))
+      attack_trials:replay.attacks.map(a=>({actions:a.actions,assisted:a.assisted})),
+      repair_trials:replay.repairs.map(r=>({guards:r.guards,feedback_exposed:r.feedback_exposed}))
     };
     const independentlyReplayed=evaluateResearchSession(input);
     if(JSON.stringify(independentlyReplayed)!==JSON.stringify(replay)){
@@ -43,11 +43,11 @@ export function prepareSafetyForgeDataset(document){
           reward:actionReward,done:event.violations.length>0||step===attempt.events.length-1
         };
       });
-      return {trial,task:"find_policy_counterexample",found_failure:attempt.detected_unsafe,
+      return {trial,task:"find_policy_counterexample",assisted_by_hint_or_oracle:attempt.assisted,found_failure:attempt.detected_unsafe,
         failure_labels:attempt.violations,terminated_early:attempt.early_stop,steps};
     });
     const repairEpisodes=independentlyReplayed.repairs.map((r,trial)=>({
-      trial,task:"choose_minimal_safe_shield",selected_guards:r.guards,
+      trial,task:"choose_minimal_safe_shield",feedback_exposed_before_proposal:r.feedback_exposed,selected_guards:r.guards,
       available_guards:GUARDS.map(g=>({id:g.id,cost:g.cost})),
       reward:r.passed?r.score:r.safe?-25:-50,
       safe:r.safe,mission_reachable:r.live,verified_within_bound:r.passed,
