@@ -959,8 +959,11 @@ async function publicTaskGraph(env) {
        ORDER BY priority DESC,COALESCE(program_id,''),COALESCE(program_step,999),id`
     ).all(),
     env.COMMONS_DB.prepare(
-      `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.group_id,d.relation,d.required_outcome,
-              d.artifact_contract,d.criticality,d.rationale,source.title AS depends_on_title,
+      `SELECT d.task_id,
+              CASE WHEN source.publication_state='published' THEN d.depends_on_task_id ELSE 'INTERNAL-PREREQUISITE' END AS depends_on_task_id,
+              d.dependency_type,d.group_id,d.relation,d.required_outcome,
+              d.artifact_contract,d.criticality,d.rationale,
+              CASE WHEN source.publication_state='published' THEN source.title ELSE 'Internal prerequisite' END AS depends_on_title,
               source.publication_state AS source_publication_state,source.need_status AS source_need_status,
               CASE WHEN source.need_status='satisfied' OR EXISTS(
                 SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
@@ -2153,11 +2156,242 @@ async function adminCurateTask(request, env, admin, taskId) {
   return json({ok:true,task_id:task.id,publication_state:publication,need_status:need,category,priority});
 }
 
+function challengeScore(counts) {
+  return 10*Number(counts.workflow_nodes||0)
+    + 5*Number(counts.dependency_edges||0)
+    + 5*Number(counts.evidence_items||0)
+    + 5*Number(counts.claims||0);
+}
+
+function challengeCounts(body) {
+  const fields=["workflow_nodes","dependency_edges","evidence_items","claims"];
+  const out={};
+  for(const field of fields){
+    const value=Number(body[field]);
+    if(!Number.isInteger(value)||value<0||value>1000)throw new ApiError(400,"Challenge structure counts must be non-negative integers.","bad_challenge_counts");
+    out[field]=value;
+  }
+  if(out.evidence_items<1||out.claims<2){
+    throw new ApiError(400,"Counterexample Golf requires at least one evidence item and two claims.","challenge_structure_too_small");
+  }
+  return out;
+}
+
+function validHttpsUrl(value) {
+  try {
+    const parsed=new URL(String(value||""));
+    return parsed.protocol==="https:" && parsed.hostname.length>0;
+  } catch { return false; }
+}
+
+async function listChallenges(request, env) {
+  const user=await currentUser(request,env);
+  const challenges=await env.COMMONS_DB.prepare(
+    `SELECT c.*,t.title AS task_title,t.publication_state AS task_publication_state
+     FROM challenges c LEFT JOIN tasks t ON t.id=c.task_id
+     WHERE c.leaderboard_state IN ('pilot','live')
+       AND (c.opens_at IS NULL OR c.opens_at<=?)
+       AND (c.closes_at IS NULL OR c.closes_at>?)
+     ORDER BY CASE c.leaderboard_state WHEN 'live' THEN 0 ELSE 1 END,c.id`
+  ).bind(nowIso(),nowIso()).all();
+
+  const verified=await env.COMMONS_DB.prepare(
+    `SELECT e.id,e.challenge_id,e.user_id,e.leaderboard_alias,e.raw_score,e.summary,e.artifact_url,
+            e.workflow_nodes,e.dependency_edges,e.evidence_items,e.claims,e.verified_at
+     FROM challenge_entries e JOIN challenges c ON c.id=e.challenge_id
+     WHERE e.status='verified' AND c.leaderboard_state IN ('pilot','live')
+     ORDER BY e.challenge_id,e.raw_score ASC,e.verified_at ASC`
+  ).all();
+
+  const bestByChallenge=new Map();
+  for(const row of verified.results||[]){
+    if(!bestByChallenge.has(row.challenge_id))bestByChallenge.set(row.challenge_id,new Map());
+    const byUser=bestByChallenge.get(row.challenge_id);
+    const previous=byUser.get(row.user_id);
+    const challenge=(challenges.results||[]).find(c=>c.id===row.challenge_id);
+    const better=!previous || (challenge?.score_direction==="max" ? Number(row.raw_score)>Number(previous.raw_score) : Number(row.raw_score)<Number(previous.raw_score));
+    if(better)byUser.set(row.user_id,row);
+  }
+
+  let ownByChallenge=new Map();
+  if(user){
+    const own=await env.COMMONS_DB.prepare(
+      `SELECT id,challenge_id,leaderboard_alias,artifact_url,raw_score,status,submitted_at,verified_at,review_note
+       FROM challenge_entries WHERE user_id=? ORDER BY submitted_at DESC`
+    ).bind(user.id).all();
+    for(const row of own.results||[]){
+      if(!ownByChallenge.has(row.challenge_id))ownByChallenge.set(row.challenge_id,[]);
+      ownByChallenge.get(row.challenge_id).push(row);
+    }
+  }
+
+  return json({
+    user:user?publicUser(user):null,
+    challenges:(challenges.results||[]).map(challenge=>{
+      const best=[...(bestByChallenge.get(challenge.id)?.values()||[])].sort((a,b)=>
+        challenge.score_direction==="max"
+          ? Number(b.raw_score)-Number(a.raw_score)
+          : Number(a.raw_score)-Number(b.raw_score)
+      ).slice(0,25).map((row,index)=>({
+        rank:index+1,
+        entry_id:row.id,
+        alias:row.leaderboard_alias,
+        score:Number(row.raw_score),
+        summary:row.summary,
+        artifact_url:row.artifact_url,
+        workflow_nodes:Number(row.workflow_nodes),
+        dependency_edges:Number(row.dependency_edges),
+        evidence_items:Number(row.evidence_items),
+        claims:Number(row.claims),
+        verified_at:row.verified_at,
+      }));
+      const eligibility=!user
+        ? {state:"login_required",can_submit:false,reason:"Sign in to enter this challenge."}
+        : user.status!=="active"
+          ? {state:"locked",can_submit:false,reason:"Account is not active."}
+          : Number(user.level)<Number(challenge.min_level)
+            ? {state:"level_required",can_submit:false,reason:`Requires at least L${challenge.min_level}; your verified level is L${user.level}.`}
+            : {state:"eligible",can_submit:true,reason:"Eligible to submit. Leaderboard placement still requires validity review."};
+      return {...challenge,leaderboard:best,eligibility,my_entries:ownByChallenge.get(challenge.id)||[]};
+    })
+  });
+}
+
+async function submitChallengeEntry(request, env, user, challengeId) {
+  await rateLimit(request,env,"challenge-entry",20,60);
+  const challenge=await env.COMMONS_DB.prepare(
+    `SELECT * FROM challenges WHERE id=? AND leaderboard_state IN ('pilot','live')
+       AND (opens_at IS NULL OR opens_at<=?) AND (closes_at IS NULL OR closes_at>?)`
+  ).bind(challengeId,nowIso(),nowIso()).first();
+  if(!challenge)throw new ApiError(404,"Challenge is not currently open.","challenge_not_open");
+  if(user.status!=="active")throw new ApiError(403,"Account is not active.","account_inactive");
+  if(Number(user.level)<Number(challenge.min_level))throw new ApiError(403,`This challenge requires at least L${challenge.min_level}.`,"level_required");
+
+  const since=addHoursIso(nowIso(),-24);
+  const recent=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM challenge_entries WHERE challenge_id=? AND user_id=? AND submitted_at>=? AND status!='withdrawn'"
+  ).bind(challenge.id,user.id,since).first();
+  if(Number(recent?.n||0)>=Number(challenge.max_entries_per_day||5)){
+    throw new ApiError(429,`You may submit at most ${challenge.max_entries_per_day} entries to this challenge per 24 hours.`,"challenge_entry_limit");
+  }
+
+  const body=await readBody(request);
+  const alias=cleanText(body.leaderboard_alias,32);
+  const artifactUrl=cleanText(body.artifact_url,1000);
+  const summary=cleanText(body.summary,3000);
+  const explanation=cleanText(body.hidden_dependency_explanation,4000);
+  if(!/^[A-Za-z0-9][A-Za-z0-9 _.-]{1,31}$/.test(alias))throw new ApiError(400,"Leaderboard alias must be 2–32 letters/numbers/spaces/dashes/dots/underscores.","bad_leaderboard_alias");
+  if(!validHttpsUrl(artifactUrl))throw new ApiError(400,"Provide a public HTTPS artifact URL that a reviewer can inspect.","bad_artifact_url");
+  if(summary.length<100)throw new ApiError(400,"Summarize the candidate counterexample in at least 100 characters.","challenge_summary_required");
+  if(explanation.length<120)throw new ApiError(400,"Explain the hidden dependency and why the declared graph misses the affected claim in at least 120 characters.","challenge_explanation_required");
+  const counts=challengeCounts(body);
+  const score=challengeScore(counts);
+  const id=crypto.randomUUID(),submittedAt=nowIso();
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO challenge_entries(
+      id,challenge_id,user_id,leaderboard_alias,artifact_url,summary,hidden_dependency_explanation,
+      workflow_nodes,dependency_edges,evidence_items,claims,raw_score,status,submitted_at
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,'pending',?)`
+  ).bind(
+    id,challenge.id,user.id,alias,artifactUrl,summary,explanation,
+    counts.workflow_nodes,counts.dependency_edges,counts.evidence_items,counts.claims,score,submittedAt
+  ).run();
+  await notify(env,{
+    kind:"challenge_entry_admin",
+    email:env.ADMIN_EMAIL||null,
+    subject:`[PCS Arena] Review ${challenge.id}: ${alias} · provisional score ${score}`,
+    body:[
+      `${user.display_name} <${user.email}> submitted a PCS Arena entry.`,
+      `Challenge: ${challenge.id} — ${challenge.title}`,
+      `Alias: ${alias}`,
+      `Provisional score: ${score} (lower is better)`,
+      `Artifact: ${artifactUrl}`,
+      "",
+      "Summary:",summary,
+      "",
+      "Hidden-dependency explanation:",explanation,
+      "",
+      `Admin dashboard: ${new URL(request.url).origin}/admin.html#arena`
+    ].join("\n")
+  });
+  await audit(env,user.id,"challenge_entry_created","challenge_entry",id,{challenge_id:challenge.id,alias,provisional_score:score,counts});
+  return json({
+    ok:true,entry_id:id,status:"pending",provisional_score:score,
+    message:"Arena entry received. The score is provisional until a reviewer validates the counterexample and structure counts."
+  },201);
+}
+
+async function withdrawChallengeEntry(request, env, user, entryId) {
+  const row=await env.COMMONS_DB.prepare(
+    "SELECT * FROM challenge_entries WHERE id=? AND user_id=?"
+  ).bind(entryId,user.id).first();
+  if(!row||row.status!=="pending")throw new ApiError(404,"Pending challenge entry not found.","challenge_entry_not_pending");
+  const changed=await env.COMMONS_DB.prepare(
+    "UPDATE challenge_entries SET status='withdrawn' WHERE id=? AND user_id=? AND status='pending'"
+  ).bind(row.id,user.id).run();
+  if(Number(changed?.meta?.changes||0)!==1)throw new ApiError(409,"Challenge entry was already decided.","challenge_entry_already_decided");
+  await audit(env,user.id,"challenge_entry_withdrawn","challenge_entry",row.id,{challenge_id:row.challenge_id});
+  return json({ok:true,status:"withdrawn"});
+}
+
+async function adminChallengeDecision(request, env, admin, entryId) {
+  const row=await env.COMMONS_DB.prepare(
+    `SELECT e.*,c.title,c.score_direction,u.display_name,u.email,u.email_verified
+     FROM challenge_entries e JOIN challenges c ON c.id=e.challenge_id JOIN users u ON u.id=e.user_id
+     WHERE e.id=?`
+  ).bind(entryId).first();
+  if(!row||row.status!=="pending")throw new ApiError(404,"Pending challenge entry not found.","challenge_entry_not_pending");
+  const body=await readBody(request);
+  const decision=String(body.decision||"");
+  const note=cleanText(body.note,3000);
+  if(!["verify","reject"].includes(decision))throw new ApiError(400,"Decision must be verify or reject.","bad_challenge_decision");
+  if(note.length<20)throw new ApiError(400,"Give a review rationale of at least 20 characters.","decision_note_required");
+
+  let counts={
+    workflow_nodes:Number(row.workflow_nodes),
+    dependency_edges:Number(row.dependency_edges),
+    evidence_items:Number(row.evidence_items),
+    claims:Number(row.claims),
+  };
+  if(decision==="verify"){
+    counts=challengeCounts({
+      workflow_nodes:body.workflow_nodes??row.workflow_nodes,
+      dependency_edges:body.dependency_edges??row.dependency_edges,
+      evidence_items:body.evidence_items??row.evidence_items,
+      claims:body.claims??row.claims,
+    });
+  }
+  const score=challengeScore(counts);
+  const status=decision==="verify"?"verified":"rejected";
+  const verifiedAt=decision==="verify"?nowIso():null;
+  const changed=await env.COMMONS_DB.prepare(
+    `UPDATE challenge_entries SET status=?,workflow_nodes=?,dependency_edges=?,evidence_items=?,claims=?,
+       raw_score=?,verified_at=?,verified_by=?,review_note=? WHERE id=? AND status='pending'`
+  ).bind(
+    status,counts.workflow_nodes,counts.dependency_edges,counts.evidence_items,counts.claims,
+    score,verifiedAt,admin.id,note,row.id
+  ).run();
+  if(Number(changed?.meta?.changes||0)!==1)throw new ApiError(409,"Challenge entry was already decided.","challenge_entry_already_decided");
+  await notify(env,{
+    userId:row.user_id,
+    email:row.email_verified?row.email:null,
+    kind:"challenge_entry_decision",
+    subject:`PCS Arena review: ${row.title}`,
+    body:decision==="verify"
+      ? `Your PCS Arena entry was validated and is now leaderboard-eligible with verified score ${score}.\n\nReview note: ${note}\n`
+      : `Your PCS Arena entry was not validated for the leaderboard.\n\nReview note: ${note}\n`
+  });
+  await audit(env,admin.id,"challenge_entry_decided","challenge_entry",row.id,{
+    challenge_id:row.challenge_id,status,verified_score:decision==="verify"?score:null,counts,rationale:note
+  });
+  return json({ok:true,status,score:decision==="verify"?score:null});
+}
+
 async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
   await remindPendingReviews(env);
-  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills, curatedTasks, roleApplications] = await Promise.all([
+  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills, curatedTasks, roleApplications, challengeEntries] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
               u.display_name,u.email,u.level,u.email_verified,
@@ -2207,6 +2441,11 @@ async function adminOverview(request, env) {
        FROM role_applications a JOIN role_openings r ON r.id=a.role_id JOIN users u ON u.id=a.user_id
        WHERE a.status='pending' ORDER BY a.requested_at ASC LIMIT 100`
     ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT e.*,c.title AS challenge_title,c.scoring_rule,c.score_direction,u.display_name,u.email,u.level
+       FROM challenge_entries e JOIN challenges c ON c.id=e.challenge_id JOIN users u ON u.id=e.user_id
+       WHERE e.status='pending' ORDER BY e.submitted_at ASC LIMIT 100`
+    ).all(),
   ]);
   return json({
     admin:publicUser(admin),
@@ -2220,6 +2459,7 @@ async function adminOverview(request, env) {
     verified_skills:verifiedSkills.results||[],
     tasks:curatedTasks.results||[],
     role_applications:roleApplications.results||[],
+    challenge_entries:challengeEntries.results||[],
     policy:{
       response_target:"1 business day",
       hard_sla:"2 business days",
@@ -2678,6 +2918,7 @@ async function handleApi(request, env) {
   if (method==="GET" && path==="/api/tasks") return listTasks(request,env);
   if (method==="GET" && path==="/api/task-graph") return json({ok:true,...await publicTaskGraph(env)});
   if (method==="GET" && path==="/api/roles") return listRoles(request,env);
+  if (method==="GET" && path==="/api/challenges") return listChallenges(request,env);
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
@@ -2689,6 +2930,8 @@ async function handleApi(request, env) {
     if (method==="POST" && taskCurationMatch) return adminCurateTask(request,env,admin,decodeURIComponent(taskCurationMatch[1]));
     let roleDecisionMatch=path.match(/^\/api\/admin\/roles\/applications\/([^/]+)\/decision$/);
     if (method==="POST" && roleDecisionMatch) return adminRoleDecision(request,env,admin,decodeURIComponent(roleDecisionMatch[1]));
+    let challengeDecisionMatch=path.match(/^\/api\/admin\/challenges\/entries\/([^/]+)\/decision$/);
+    if (method==="POST" && challengeDecisionMatch) return adminChallengeDecision(request,env,admin,decodeURIComponent(challengeDecisionMatch[1]));
     if (method==="POST" && path==="/api/admin/evidence") return adminUploadEvidence(request,env,admin);
     let evidenceMatch=path.match(/^\/api\/admin\/evidence\/([^/]+)$/);
     if (method==="GET" && evidenceMatch) return adminDownloadEvidence(request,env,admin,decodeURIComponent(evidenceMatch[1]));
@@ -2724,6 +2967,10 @@ async function handleApi(request, env) {
   if (method==="POST" && roleMatch) return applyForRole(request,env,user,decodeURIComponent(roleMatch[1]));
   roleMatch=path.match(/^\/api\/roles\/applications\/([^/]+)\/withdraw$/);
   if (method==="POST" && roleMatch) return withdrawRoleApplication(request,env,user,decodeURIComponent(roleMatch[1]));
+  let challengeMatch=path.match(/^\/api\/challenges\/([^/]+)\/submit$/);
+  if (method==="POST" && challengeMatch) return submitChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
+  challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
+  if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   if (method==="POST" && path==="/api/skills/request") return requestSkill(request,env,user);
   if (method==="POST" && path==="/api/evaluations/start") return startCompetencyEvaluation(request,env,user);
   let evaluationMatch=path.match(/^\/api\/evaluations\/([^/]+)\/submit$/);
