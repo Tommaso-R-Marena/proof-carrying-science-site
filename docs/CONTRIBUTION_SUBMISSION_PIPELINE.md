@@ -16,7 +16,7 @@
 - Configure a fine-grained GitHub personal access token limited to **only** `Tommaso-R-Marena/proof-carrying-science` and `Tommaso-R-Marena/proof-carrying-science-site`.
 - Permissions: repository Contents **Read and write**, Pull requests **Read and write**, Checks **Read-only**, Metadata **Read-only**. Short expiration and regular rotation strongly advised.
 - Store it as the Cloudflare Worker secret `PCS_GITHUB_TOKEN` using `npx wrangler secret put PCS_GITHUB_TOKEN` in the website repository root, or the Worker secrets UI. **Never paste it into a website form, GitHub issue, repository file, or ChatGPT conversation.**
-- Run the database migration **before deploying code requiring its schema**: `npx wrangler d1 migrations apply pcs-commons --remote` from the site repository root. The newest migration is `0013_submission_automation_microtasks.sql`.
+- Apply `migrations/0013_submission_automation_microtasks.sql` **before** production code deployment. The existing live D1 schema was manually evolved and has no `d1_migrations` history, so do **not** blindly run all old migrations against it; reconcile migration history first. New empty installations can use Wrangler's normal migrations process. The 0013 SQL is additive and its five task seeds are unpublished drafts.
 - Verify that the contributor PR workflows exist on the default branch of both repositories and that GitHub Actions runners execute the jobs. While the runner allocation issue persists, checks will remain PENDING and merges blocked.
 
 If `PCS_GITHUB_TOKEN` is missing or GitHub rejects a request, the submitted work remains saved in D1, the stage state is **not_configured** or **error**, and the Admin Center offers **Stage / retry GitHub PR**. It never falsely reports a check pass.
