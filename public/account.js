@@ -295,7 +295,7 @@
       if(file.size>20000||file.size===0){setMessage("workSubmissionMessage","Each text file must be between 1 byte and 20 KB.");return;}
       total+=file.size;
       if(total>40000){setMessage("workSubmissionMessage","Files must total at most 40 KB.");return;}
-      if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|html|css|csv)$/.test(file.name)||file.name.includes("..")){
+      if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|mjs|html|css|csv)$/.test(file.name)||file.name.includes("..")){
         setMessage("workSubmissionMessage","Rename attachments using simple safe filenames and supported text extensions.");return;
       }
       attachments.push({name:file.name,content:await file.text()});
