@@ -75,7 +75,7 @@ def run()->int:
         filename=item.get("source_name")
         if (not isinstance(dest,str) or not acceptable(repo,dest)
             or not isinstance(filename,str) or not re.fullmatch(
-                r"[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|html|css|csv)",filename)
+                r"[A-Za-z0-9][A-Za-z0-9._-]{0,78}\.(lean|py|md|txt|json|js|mjs|html|css|csv)",filename)
             or filename in used or dest in expected
             or filename.split(".")[-1]!=dest.split(".")[-1]):
             raise ValueError("Forbidden destination or duplicate source mapping")
