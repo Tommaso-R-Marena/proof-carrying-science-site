@@ -242,23 +242,26 @@
   </section>
 
   <section class="section-tight admin-history-section" id="approval-history">
-    <div class="section-heading-row"><div><div class="kicker">Approval history</div><h2>Every recorded approval and rejection.</h2></div><p>Task decisions, competency decisions, submission reviews, checkpoints, level changes, and governance decisions are preserved in the audit archive.</p></div>
+    <div class="section-heading-row"><div><div class="kicker">Approval history</div><h2>Latest 5 approval decisions.</h2></div><p>Task decisions, competency decisions, submission reviews, checkpoints, level changes, and governance decisions are preserved in the audit archive.</p></div>
     <div id="adminApprovalHistory" class="admin-audit-list"></div>
     <div class="actions"><button class="button secondary" id="loadMoreApprovals" type="button">Load older approvals</button></div>
   </section>
 
   <section class="section-tight admin-history-section" id="admin-actions">
-    <div class="section-heading-row"><div><div class="kicker">Administrative actions</div><h2>Who changed what, and when.</h2></div><p>This view includes actions performed by the Founder/Owner or delegated administrators, with actor identity snapshotted at event time.</p></div>
+    <div class="section-heading-row"><div><div class="kicker">Administrative actions</div><h2>Latest 10 administrative actions.</h2></div><p>This view includes actions performed by the Founder/Owner or delegated administrators, with actor identity snapshotted at event time.</p></div>
     <div id="adminActionHistory" class="admin-audit-list"></div>
-    <div class="actions"><button class="button secondary" id="loadMoreAdminActions" type="button">Load older admin actions</button></div>
+    <div class="actions"><button class="button secondary" id="loadMoreAdminActions" type="button">Load 10 older actions</button><button class="button secondary" id="adminOpenAudit" type="button">Search full audit database ↓</button></div>
   </section>
 
   <section class="section-tight admin-history-section" id="audit-log">
+  <details class="admin-audit-disclosure" id="adminAuditDatabaseDisclosure">
+    <summary><span>Browse complete audit database</span><small>Search all events and load older pages on demand. Every record is kept in D1.</small></summary>
     <div class="section-heading-row"><div><div class="kicker">Immutable audit archive</div><h2>Append-only, hash-chained operational history.</h2></div><p>Application/database rules reject updates and deletions to this archive. Each event commits to the previous event hash. Infrastructure owners could still destroy the underlying database itself, so this is tamper-evident and application-immutable—not physically indestructible.</p></div>
     <div id="auditIntegrityPanel" class="audit-integrity-panel"></div>
-    <div class="admin-audit-controls"><label>Search displayed events <input id="adminAuditSearch" class="textinput" type="search" placeholder="action, actor, subject, detail"></label><button class="button secondary" id="refreshAuditButton" type="button">Refresh + verify</button></div>
+    <div class="admin-audit-controls"><label>Search entire archive <input id="adminAuditSearch" class="textinput" type="search" maxlength="100" placeholder="action, actor, subject, detail"></label><label>Records per page <select class="selectinput" id="adminAuditPageSize"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label><button class="button secondary" id="refreshAuditButton" type="button">Refresh + verify chain</button></div>
     <div id="adminAuditList" class="admin-audit-list"></div>
-    <div class="actions"><button class="button secondary" id="loadMoreAudit" type="button">Load older log entries</button></div>
+    <div class="actions"><button class="button secondary" id="loadMoreAudit" type="button">Load next page of archived events</button></div>
+  </details>
   </section>
 </section>
 
