@@ -588,6 +588,24 @@
     finishAdminAction(result);
   });
 
+  $("#adminCreateTaskForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!currentAdmin?.is_owner){alert("Founder/Owner authority required.");return;}
+    const form=event.currentTarget,fd=new FormData(form),message=$("#adminCreateTaskMessage");
+    const body=Object.fromEntries(fd.entries());
+    body.min_level=Number(body.min_level);
+    body.expected_hours=Number(body.expected_hours);
+    body.priority=Number(body.priority);
+    message.textContent="Creating draft…";message.className="form-message";
+    try{
+      const result=await api("/api/admin/tasks",{method:"POST",body});
+      message.textContent=result.message;message.className="form-message successline";
+      form.reset();
+      form.elements.expected_hours.value="2";form.elements.priority.value="50";form.elements.compensation_label.value="Volunteer";
+      await load();
+    }catch(e){message.textContent=e.message;message.className="form-message validation bad";}
+  });
+
   $("#adminMailTestButton")?.addEventListener("click",async()=>{
     const button=$("#adminMailTestButton");
     button.disabled=true;
