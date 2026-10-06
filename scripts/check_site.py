@@ -76,7 +76,7 @@ for html_path in HTML_FILES:
             errors.append(f"{html_path.name}: missing local reference {ref}")
 
 required = [
-    "index.html", "researcher-pilots.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
+    "index.html", "arena-proof-quest.html", "researcher-pilots.html", "commons.html", "contribute.html", "tasks.html", "roles.html", "task-graph.html", "arena.html", "projects.html", "claim-invalidation-v1.html", "contributors.html", "fund.html", "governance.html", "organizations.html", "research.html", "account.html", "admin-login.html", "admin.html", "guided-submission.html", "claim-review.html", "result-anatomy.html", "project-builder.html", "mvp.html", "validation.html", "trust.html", "architecture.html", "demo.html", "model-lab.html", "intake.html", "contact.html", "privacy.html", "404.html",
     "styles.css", "site.js", "commons.js", "roles.js", "task-graph.js", "arena.js", "account.js", "admin-login.js", "admin.js", "guided-submission.js", "claim-review.js", "result-anatomy.js", "project-builder.js", "mvp.js", "demo.js", "model-lab.js", "intake.js", "contact.js", "pcs-engine.js", "pcs-reference.js",
     "logo-mark.svg", "pcs-v05-reference-package.json", "pcs-v06-golden.pcs.zip",
     "package-inspector.html", "package-inspector.js", "trust-explorer.html", "trust-explorer.js",
@@ -332,6 +332,46 @@ if (ROOT / "researcher-pilot-core.mjs").is_file():
     if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", pilot_code):
         errors.append("researcher pilot core must remain local-only")
 
+
+# Keep Proof Quest practice accessible without an account and prohibit hidden
+# scientific-data transfer or silently accepted underage research donations.
+for proof_name, tokens in {
+    "arena-proof-quest.html": [
+        "Proof Quest", 'id="questCheck"', 'id="questDonate"', 'id="questErase"',
+        'id="questAdult"', 'id="questConsent"', "No account to play",
+        "not a Lean 4 proof", "adults 18+ only",
+    ],
+    "arena-proof-quest.js": [
+        "gradeOrder", "proofQuestApi", 'path.startsWith("/api/")',
+        '"/api/arena/proof-order/attempt"', '"/api/arena/proof-order/erase"',
+        "questAdult", "questConsent", "questDonationMessage",
+    ],
+    "proof-order-core.mjs": [
+        "PUZZLE_VERSION", "gradeOrder", "needs", "mistakes",
+        "not a Lean 4 proof", "PUZZLES",
+    ],
+    "arena-proof-quest.css": ["@media(max-width:860px)", "@media(max-width:560px)"],
+}.items():
+    p = ROOT / proof_name
+    if not p.exists():
+        errors.append(f"Proof Quest missing {proof_name}")
+        continue
+    source = p.read_text(encoding="utf-8")
+    for token in tokens:
+        if token not in source:
+            errors.append(f"Proof Quest {proof_name}: contract drift {token}")
+
+for proof_phrase in [
+    "adult_confirmation!==true", "consent_training!==true",
+    "proof_order_research_attempts", "PUZZLE_VERSION", "gradeOrder(",
+    "if(!isOwner(admin))", "email_verification_required", "eraseProofQuestAttempts",
+]:
+    if proof_phrase not in (REPO / "src" / "worker.js").read_text(encoding="utf-8"):
+        errors.append(f"Proof Quest server authority missing: {proof_phrase}")
+if not (REPO / "migrations" / "0016_proof_quest_adult_consent.sql").is_file():
+    errors.append("Proof Quest migration missing.")
+if not (REPO / "migrations" / "0017_curated_needed_tasks_and_roles.sql").is_file():
+    errors.append("Curated roles/task migration missing.")
 
 commons_contracts = {
     "commons.html": [
@@ -1293,7 +1333,7 @@ if inspector_script.exists():
 # research-preview clients must stay local-only. Review the EXACT API data path.
 NETWORKED_COMMONS_JS = {
     "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
-    "admin-login.js", "arena.js", "site.js",
+    "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js",
 }
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proof Quest · PCS Arena</title>
+<meta name="description" content="Play a beginner-friendly proof-ordering game. Learn why evidence and proof steps need prerequisites, with optional adult-only research-data contribution.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/arena-proof-quest.html">
+<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="arena-proof-quest.css">
+</head><body class="commons-page quest-page">
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · A free proof-order adventure · No account to play</span><a href="arena.html">All Arena challenges</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="arena-proof-quest.html">Proof Quest</a><a href="arena.html">Arena</a><a href="tasks.html">Help PCS</a><a href="account.html">Account</a><a class="button dark" href="research-preview.html">Research preview</a></div></nav>
+<main>
+<section class="quest-hero">
+  <span class="quest-pill">🧩 PROOF QUEST · BEGINNER FRIENDLY</span>
+  <h1>Build a proof, one little step at a time.</h1>
+  <p>Every big idea needs smaller ideas first. Click the cards in an order that makes sense. You can experiment, get hints, and try again. No Lean 4 knowledge required!</p>
+  <div class="quest-stats"><span>✨ <strong id="questSolved">0</strong> puzzles solved this visit</span><span>⭐ <strong id="questStars">0</strong> stars earned</span><span>🧠 No timer. No penalty for trying.</span></div>
+</section>
+<div class="quest-layout">
+  <aside class="quest-sidebar" aria-label="Choose a puzzle">
+    <div class="quest-side-head"><h2>🗺️ Your quest map</h2><p>Pick any level. Start small, grow your reasoning.</p></div>
+    <div id="questPuzzleList" class="quest-puzzle-list"></div>
+    <p class="quest-side-note">These are toy dependency-order exercises. They are inspired by Lean proof planning, but are <strong>not</strong> Lean 4 code or verified proof objects.</p>
+  </aside>
+  <section class="quest-board" aria-labelledby="questTitle">
+    <div class="quest-board-top"><span class="quest-level" id="questLevel">LEVEL 1</span><span class="quest-topic" id="questTopic">Everyday logic</span></div>
+    <h2 id="questTitle">Loading...</h2><p id="questStory"></p>
+    <div class="quest-target">🎯 <strong>Your mission:</strong> <span id="questGoal"></span></div>
+    <div class="quest-board-columns">
+      <div class="quest-card-bank"><h3>🃏 Step cards</h3><p>Choose what can happen next.</p><div id="questAvailable" class="quest-card-list" aria-live="polite"></div></div>
+      <div class="quest-card-trail"><h3>🏗️ Your proof path</h3><p>Steps you placed in order.</p><ol id="questTrail" class="quest-trail-list" aria-live="polite"></ol><div class="quest-drop-hint" id="questEmpty">Your first step goes here!</div></div>
+    </div>
+    <div class="quest-actions">
+      <button class="button secondary" type="button" id="questUndo">↶ Undo step</button>
+      <button class="button secondary" type="button" id="questHint">💡 Hint</button>
+      <button class="button secondary" type="button" id="questRestart">Start over</button>
+      <button class="button primary" type="button" id="questCheck" disabled>Check my proof path →</button>
+    </div>
+    <div id="questHintText" class="quest-hint" hidden aria-live="polite"></div>
+    <div id="questFeedback" class="quest-feedback" hidden role="status" aria-live="polite"></div>
+    <div id="questResearch" class="quest-research">
+      <details id="questResearchDisclosure">
+        <summary>🔬 Optional: help PCS research (adults 18+ only)</summary>
+        <p><strong>Playing is always free and private.</strong> The puzzle does not send your choices to PCS. Adults with a PCS account and verified email may separately choose to donate one completed ordering for research on prerequisite-order planning.</p>
+        <p>The donated record contains the puzzle ID/version, ordered step IDs, hints used, quality score, and timestamp. It is connected privately to your account for withdrawal/deletion, but research exports omit your account ID. This is <em>synthetic ordering data</em>, not valid Lean traces or a promise that a model learned to prove theorems. No data from minors is accepted.</p>
+        <label class="quest-consent"><input type="checkbox" id="questAdult"> I confirm I am 18 or older.</label>
+        <label class="quest-consent"><input type="checkbox" id="questConsent"> I voluntarily consent to PCS storing this one puzzle attempt for internal research and model-development evaluation. I understand I can delete my donated attempts.</label>
+        <button class="button primary" id="questDonate" type="button">Contribute this attempt</button>
+        <button class="button secondary" id="questErase" type="button">Delete all my donated attempts</button>
+        <a class="quest-account-link" href="account.html">Sign in / create an adult account →</a>
+        <p id="questDonationMessage" aria-live="polite"></p>
+      </details>
+    </div>
+  </section>
+</div>
+<section class="quest-why"><div><span class="kicker">What you just practiced</span><h2>Real proof assistants use dependencies too.</h2><p>In Lean 4, some tactics, facts, and lemmas can only be used once earlier goals or premises are established. This game teaches one prerequisite-order idea. A correct game ordering is not a Lean theorem, executable proof, or formal assurance certificate.</p></div><a class="button secondary" href="researcher-pilots.html">Explore independent research pilots →</a></section>
+</main><footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Learn, question, test, and independently verify.</p></div><div class="footercol"><strong>Explore</strong><a href="arena.html">Arena</a><a href="tasks.html">Needed tasks</a><a href="roles.html">Roles</a><a href="trust.html">Trust Center</a></div><div class="footercol"><strong>Privacy</strong><a href="privacy.html">Privacy policy</a><a href="account.html">Your account</a></div></div></footer></div>
+<script src="site.js"></script><script type="module" src="arena-proof-quest.js"></script></body></html>

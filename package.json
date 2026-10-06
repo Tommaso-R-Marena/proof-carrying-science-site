@@ -1,13 +1,15 @@
 {
   "private": true,
   "scripts": {
-    "deploy": "npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && node --check public/researcher-pilot-core.mjs && node --check public/researcher-pilot-ui.js && node --check public/research-preview-engine.mjs && node --check public/research-preview.js && node --check src/production-promotion.js && node --check src/worker.js && node --check public/admin.js && node --check public/account.js && wrangler deploy && node notify-indexnow.mjs",
+    "deploy": "npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:catalog && node --check public/proof-order-core.mjs && node --check public/arena-proof-quest.js && node --check public/researcher-pilot-core.mjs && node --check public/researcher-pilot-ui.js && node --check public/research-preview-engine.mjs && node --check public/research-preview.js && node --check src/production-promotion.js && node --check src/worker.js && node --check public/admin.js && node --check public/account.js && wrangler deploy && node notify-indexnow.mjs",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "test:submissions": "node --test tests/submission-github.test.mjs",
     "test:promotions": "node --test tests/production-promotion.test.mjs",
     "test:preview": "node --test tests/research-preview.test.mjs",
     "verify:release": "python3 scripts/check_site.py && python3 scripts/security_campaign.py --static && python3 scripts/check_free_infrastructure.py",
-    "test:pilots": "node --test tests/researcher-pilot.test.mjs"
+    "test:pilots": "node --test tests/researcher-pilot.test.mjs",
+    "test:quest": "node --test tests/proof-quest.test.mjs",
+    "test:catalog": "node --test tests/task-catalog.test.mjs"
   },
   "devDependencies": {
     "wrangler": "4.144.0"
