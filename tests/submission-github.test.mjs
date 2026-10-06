@@ -62,14 +62,14 @@ function withMockGithub(conclusion){
     if(path.endsWith("/actions/runs")||path.endsWith("/actions/runs/"))return reply(200,{workflow_runs:[]});
     if(path.endsWith("/actions/workflows/pcs-submission.yml/runs")){
       return reply(200,{workflow_runs:conclusion==null?[]:[{
-        id:91,head_sha:sha,event:"pull_request",status:"completed",conclusion,
+        id:91,head_sha:sha,event:"pull_request",status:"completed",conclusion:conclusion==="empty_jobs"?"success":conclusion,
         pull_requests:[{number:42}],created_at:"2026-10-06T00:00:00Z",
         html_url:"https://github.com/example/actions/runs/91"
       }]});
     }
     if(path.endsWith("/actions/runs/91/jobs"))return reply(200,{jobs:[{
-      name:"PCS Submission Verification",status:"completed",conclusion,
-      steps:conclusion==="no_steps"?[]:[{name:"Verify artifacts",status:"completed",conclusion}],
+      name:"PCS Submission Verification",status:"completed",conclusion:conclusion==="empty_jobs"?"success":conclusion,
+      steps:conclusion==="empty_jobs"?[]:[{name:"Verify artifacts",status:"completed",conclusion}],
       html_url:"https://github.com/example/actions/jobs/5"
     }]});
     throw new Error("Unexpected mock request: "+init.method+" "+u.href);
@@ -100,7 +100,7 @@ test("creates a restricted branch/PR and checks exact file bytes",async()=>{
 });
 
 test("missing or failed runner never produces a verified result",async()=>{
-  for(const outcome of [null,"failure","no_steps"]){
+  for(const outcome of [null,"failure","empty_jobs"]){
     const mock=withMockGithub(outcome);
     try{
       const check=await readSubmissionChecks({PCS_GITHUB_TOKEN:"test-only-token"},{
