@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {webcrypto} from "node:crypto";
 import {
   validatePromotionMappings,stagePromotion,verifyPromotion,
-  mergePromotion,promotionManifestPath
+  mergePromotion,promotionManifestPath,closeSupersededPromotionPr
 } from "../src/production-promotion.js";
 import {hashSubmissionText} from "../src/contribution-github.js";
 if(!globalThis.crypto)globalThis.crypto=webcrypto;
@@ -46,9 +46,10 @@ function simulatedGitHub({outcome="success",missingStep=false,changeMain=false,
       ...(otherDiff?[{filename:".github/workflows/malicious.yml",status:"added"}]:[])
     ]);
     if(p.endsWith("/pulls/10/merge")&&method==="PUT")return reply(200,{merged:true,sha:headSha});
+    if(p.endsWith("/pulls/10")&&method==="PATCH")return reply(200,{state:"closed"});
     if(p.endsWith("/pulls/10"))return reply(200,{
       base:{ref:"main"},head:{ref:`pcs/promote/${id}`,repo:{full_name:repo},sha:headSha},
-      draft:false,merged:false,html_url:"https://github.com/test/pr/10"
+      draft:false,merged:false,state:"open",html_url:"https://github.com/test/pr/10"
     });
     if(p.endsWith("/pulls")&&method==="GET")return reply(200,[]);
     if(p.endsWith("/pulls")&&method==="POST")return reply(201,{
@@ -151,4 +152,14 @@ test("source modification, PR scope drift, or stale main invalidates exact-bound
       }
     }finally{mock.restore();}
   }
+});
+
+test("superseding closes a known unmerged promotion PR without touching main",async()=>{
+  const {mock,promo}=await stagedCase();
+  try{
+    const result=await closeSupersededPromotionPr(env,promo);
+    assert.equal(result.closed,true);
+    assert.equal(mock.calls.some(x=>x.method==="PATCH"&&x.path.endsWith("/pulls/10")),true);
+    assert.equal(mock.calls.some(x=>x.path.endsWith("/pulls/10/merge")),false);
+  }finally{mock.restore();}
 });
