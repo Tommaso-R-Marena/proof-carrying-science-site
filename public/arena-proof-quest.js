@@ -34,7 +34,7 @@ function choosePuzzle(id){
   $("questStory").textContent=selected.story;
   $("questGoal").textContent=selected.goal;
   $("questFeedback").hidden=true;$("questHintText").hidden=true;
-  $("questResearch").hidden=true;$("questAdult").checked=false;$("questConsent").checked=false;
+  $("questResearch").hidden=false;$("questAdult").checked=false;$("questConsent").checked=false;
   $("questDonationMessage").textContent="";
   buttonList();render();
 }
@@ -46,7 +46,7 @@ function render(){
     const b=document.createElement("button");b.type="button";b.className="quest-step";
     b.textContent=n.label;b.title="Add "+n.label+" to your proof path";
     b.addEventListener("click",()=>{
-      chosen.push(n.id);last=null;$("questFeedback").hidden=true;$("questResearch").hidden=true;
+      chosen.push(n.id);last=null;$("questFeedback").hidden=true;$("questResearch").hidden=false;
       render();
     });available.appendChild(b);
   }
@@ -60,7 +60,7 @@ function render(){
   $("questCheck").disabled=chosen.length!==selected.nodes.length;
 }
 $("questUndo").addEventListener("click",()=>{
-  chosen.pop();last=null;$("questFeedback").hidden=true;$("questResearch").hidden=true;render();
+  chosen.pop();last=null;$("questFeedback").hidden=true;$("questResearch").hidden=false;render();
 });
 $("questRestart").addEventListener("click",()=>choosePuzzle(selected.id));
 $("questHint").addEventListener("click",()=>{
