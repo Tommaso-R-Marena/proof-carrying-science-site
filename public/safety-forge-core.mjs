@@ -174,6 +174,13 @@ export function evaluateResearchSession(payload){
       checked_states:checked.checked_states,counterexample:checked.counterexample,
       safe_mission:checked.safe_mission};
   });
+  // Distinct, nonempty experiments are essential for research quality; an API
+  // caller must not be able to donate empty/repeated actions as "human search".
+  if(attacks.some(x=>x.actions.length===0))throw Error("Empty action traces cannot be donated.");
+  if(new Set(attacks.map(x=>JSON.stringify(x.actions))).size!==attacks.length)
+    throw Error("Duplicate agent traces are not independent experiments.");
+  if(new Set(repairs.map(x=>JSON.stringify(x.guards))).size!==repairs.length)
+    throw Error("Duplicate shield proposals are not independent experiments.");
   const interesting=attacks.some(x=>x.detected_unsafe)||repairs.some(x=>x.passed);
   return {format:"pcs-safety-forge-replay-v1",seed:scenario.seed,scenario_version:SAFETY_LAB_VERSION,
     world:scenario.id,risk_budget:scenario.risk_budget,shortcut_risk:scenario.shortcut_risk,report_sensitive:scenario.report_sensitive,
