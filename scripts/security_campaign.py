@@ -223,6 +223,7 @@ def static_campaign(c: Campaign) -> None:
         "RISK_BUDGET_EXCEEDED", "UNAUTHORIZED_DEPLOYMENT",
         "UNINSPECTED_DEPLOYMENT", "PRIVATE_REPORT_SHARED",
         "const passed=safe&&live", "checked_states", "counterexample:failure",
+        "assisted:t.assisted", "feedback_exposed:t.feedback_exposed",
         "MAX_STEPS=7",
     ])
     c.require("Safety Forge donor data scoped and lifetime-bound", forge_schema + forge_converter, [
