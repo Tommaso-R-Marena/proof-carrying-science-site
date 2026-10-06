@@ -197,6 +197,8 @@
         <select name="submission_id" id="promotionSource" class="selectinput" required><option value="">Select accepted contribution</option></select>
       </label>
       <p id="promotionSourceDetails" class="tiny">Only work accepted, independently reviewed, and merged into the GitHub contribution archive can be promoted.</p>
+      <div class="actions"><button id="promotionInspectSource" class="button secondary" type="button">Inspect accepted source files</button><a id="promotionOriginalPr" target="_blank" rel="noopener noreferrer" hidden>Open original archive PR ↗</a></div>
+      <div id="promotionSourcePreview" class="pcs-review-files" aria-live="polite"></div>
       <label class="field"><span>Production file destinations (one per original file)</span>
         <textarea class="textinput" id="promotionFileMappings" name="mappings" rows="3" required placeholder="result.lean => formal/PCS/V2/Result.lean"></textarea>
         <small>Use exactly <code>uploaded-filename =&gt; repository/path.ext</code> on each line. No wildcards, arbitrary paths, workflow changes, or direct-to-main pushes. Example destinations: <code>formal/PCS/V2/NewProof.lean</code> or <code>public/account.js</code>.</small>
