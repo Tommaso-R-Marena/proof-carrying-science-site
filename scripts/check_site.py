@@ -395,6 +395,14 @@ if styles_css.exists():
         errors.append("styles.css: contributor recommendation card must not inherit Project Mapper grid layout")
     if ".commons-recommendation-badges{display:flex" not in styles_text:
         errors.append("styles.css: contributor recommendation badges must remain in their own flex row")
+    if "/* Shared layout-safety layer" not in styles_text:
+        errors.append("styles.css: shared layout-safety layer is missing")
+    if ".governance-rules article{\n  grid-template-columns:minmax(72px,max-content) minmax(0,1fr);" not in styles_text:
+        errors.append("styles.css: governance labels must use content-aware columns")
+    if ".governance-rules article>b{\n  width:auto;" not in styles_text:
+        errors.append("styles.css: governance badges must size to their content")
+    if ".button,.smallbutton,.commons-chip{\n  max-width:100%;" not in styles_text:
+        errors.append("styles.css: controls/chips must not overflow their containers")
 
 account_js = ROOT / "account.js"
 if account_js.exists():
