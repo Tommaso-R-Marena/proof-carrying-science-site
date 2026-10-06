@@ -6,6 +6,26 @@ const AUDIT_GENESIS = "PCS-AUDIT-GENESIS-v1";
 const PASSWORD_ITERATIONS = 100000; // Workers Web Crypto rejects PBKDF2 iteration counts above 100,000.
 const TERMS_VERSION = "commons-v1";
 
+const ADMIN_EVIDENCE_MAX_FILES = 4;
+const ADMIN_EVIDENCE_MAX_FILE_BYTES = 2 * 1024 * 1024;
+const ADMIN_EVIDENCE_MAX_TOTAL_BYTES = 6 * 1024 * 1024;
+const ADMIN_EVIDENCE_CHUNK_BYTES = 256 * 1024;
+const ADMIN_EVIDENCE_EXTENSIONS = new Set(["pdf","txt","md","csv","json","log","lean","py","png","jpg","jpeg","webp"]);
+const ADMIN_EVIDENCE_CONTENT_TYPES = {
+  pdf:"application/pdf",
+  txt:"text/plain; charset=utf-8",
+  md:"text/markdown; charset=utf-8",
+  csv:"text/csv; charset=utf-8",
+  json:"application/json; charset=utf-8",
+  log:"text/plain; charset=utf-8",
+  lean:"text/plain; charset=utf-8",
+  py:"text/plain; charset=utf-8",
+  png:"image/png",
+  jpg:"image/jpeg",
+  jpeg:"image/jpeg",
+  webp:"image/webp",
+};
+
 const TRACKS = new Set(["nontechnical","research","python","ml","biology","security","lean","review"]);
 const COMP_PREFS = new Set(["either","volunteer","paid-only"]);
 const SKILLS = new Set(["nontechnical","research","python","ml","biology","security","lean","review"]);
@@ -209,6 +229,173 @@ async function sha256Hex(value) {
   const bytes = typeof value === "string" ? new TextEncoder().encode(value) : value;
   const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
   return [...digest].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function evidenceExtension(name) {
+  const safe = String(name || "").trim();
+  const dot = safe.lastIndexOf(".");
+  return dot > 0 ? safe.slice(dot + 1).toLowerCase() : "";
+}
+
+function evidenceName(name) {
+  return String(name || "evidence")
+    .replace(/[\\/\0\r\n]/g, "_")
+    .trim()
+    .slice(0, 180) || "evidence";
+}
+
+function bytesToBase64(bytes) {
+  let binary = "";
+  const step = 0x8000;
+  for (let i = 0; i < bytes.length; i += step) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + step));
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(value) {
+  const binary = atob(String(value || ""));
+  const out = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
+  return out;
+}
+
+async function validateEvidenceRefs(env, admin, ids) {
+  const unique = [...new Set((Array.isArray(ids) ? ids : []).map(v => String(v || "").trim()).filter(Boolean))];
+  if (unique.length > ADMIN_EVIDENCE_MAX_FILES) throw new ApiError(400,"Too many evidence references.","too_many_evidence_files");
+  if (!unique.length) return [];
+  const placeholders = unique.map(() => "?").join(",");
+  const rows = await env.COMMONS_DB.prepare(
+    `SELECT id,original_name,content_type,extension,size_bytes,sha256_hex,created_at
+     FROM admin_evidence_files
+     WHERE id IN (${placeholders}) AND uploader_user_id=?`
+  ).bind(...unique,admin.id).all();
+  if ((rows.results || []).length !== unique.length) {
+    throw new ApiError(400,"One or more evidence files are missing or were uploaded by a different administrator.","bad_evidence_reference");
+  }
+  const byId = new Map((rows.results || []).map(row => [row.id,row]));
+  return unique.map(id => byId.get(id));
+}
+
+function auditEvidenceSummary(rows) {
+  return (rows || []).map(row => ({
+    id:row.id,
+    name:row.original_name,
+    content_type:row.content_type,
+    size_bytes:Number(row.size_bytes),
+    sha256:row.sha256_hex,
+  }));
+}
+
+async function adminUploadEvidence(request, env, admin) {
+  await rateLimit(request,env,"admin-evidence-upload",30,60);
+  let form;
+  try { form = await request.formData(); }
+  catch { throw new ApiError(400,"Evidence upload must be multipart form data.","bad_evidence_upload"); }
+
+  const purpose = cleanText(form.get("purpose"),100) || "admin_action";
+  const subjectUserId = cleanText(form.get("subject_user_id"),80) || null;
+  const rawFiles = form.getAll("files").filter(value => typeof File !== "undefined" && value instanceof File);
+  if (!rawFiles.length) throw new ApiError(400,"Choose at least one evidence file.","no_evidence_files");
+  if (rawFiles.length > ADMIN_EVIDENCE_MAX_FILES) {
+    throw new ApiError(400,`Attach at most ${ADMIN_EVIDENCE_MAX_FILES} files per action.`,"too_many_evidence_files");
+  }
+
+  let total = 0;
+  for (const file of rawFiles) {
+    if (file.size <= 0) throw new ApiError(400,`${file.name || "A file"} is empty.`,"empty_evidence_file");
+    if (file.size > ADMIN_EVIDENCE_MAX_FILE_BYTES) {
+      throw new ApiError(400,`${file.name || "A file"} exceeds the 2 MiB per-file limit.`,"evidence_file_too_large");
+    }
+    total += file.size;
+  }
+  if (total > ADMIN_EVIDENCE_MAX_TOTAL_BYTES) {
+    throw new ApiError(400,"Evidence files exceed the 6 MiB total limit.","evidence_total_too_large");
+  }
+
+  const uploader = await env.COMMONS_DB.prepare("SELECT email,display_name FROM users WHERE id=?").bind(admin.id).first();
+  const createdAt = nowIso();
+  const stored = [];
+
+  for (const file of rawFiles) {
+    const name = evidenceName(file.name);
+    const ext = evidenceExtension(name);
+    if (!ADMIN_EVIDENCE_EXTENSIONS.has(ext)) {
+      throw new ApiError(400,`${name}: unsupported file type. Allowed: PDF, TXT, MD, CSV, JSON, LOG, LEAN, PY, PNG, JPG/JPEG, WEBP.`,"unsupported_evidence_type");
+    }
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const sha = await sha256Hex(bytes);
+    const id = crypto.randomUUID();
+    const chunkCount = Math.ceil(bytes.length / ADMIN_EVIDENCE_CHUNK_BYTES);
+    const contentType = ADMIN_EVIDENCE_CONTENT_TYPES[ext] || "application/octet-stream";
+    await env.COMMONS_DB.prepare(
+      `INSERT INTO admin_evidence_files(
+        id,uploader_user_id,uploader_email,uploader_name,purpose,subject_user_id,
+        original_name,content_type,extension,size_bytes,sha256_hex,chunk_count,created_at
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    ).bind(
+      id,admin.id,uploader?.email||"",uploader?.display_name||"",purpose,subjectUserId,
+      name,contentType,ext,bytes.length,sha,chunkCount,createdAt
+    ).run();
+    for (let index = 0; index < chunkCount; index++) {
+      const start = index * ADMIN_EVIDENCE_CHUNK_BYTES;
+      const end = Math.min(bytes.length,start + ADMIN_EVIDENCE_CHUNK_BYTES);
+      await env.COMMONS_DB.prepare(
+        "INSERT INTO admin_evidence_chunks(file_id,chunk_index,data_base64) VALUES(?,?,?)"
+      ).bind(id,index,bytesToBase64(bytes.subarray(start,end))).run();
+    }
+    stored.push({id,original_name:name,content_type:contentType,extension:ext,size_bytes:bytes.length,sha256_hex:sha,created_at:createdAt});
+  }
+
+  await audit(env,admin.id,"admin_evidence_uploaded",subjectUserId?"user":"admin_action",subjectUserId||admin.id,{
+    purpose,
+    files:auditEvidenceSummary(stored),
+  });
+  return json({
+    ok:true,
+    files:stored.map(row=>({
+      id:row.id,
+      name:row.original_name,
+      content_type:row.content_type,
+      size_bytes:row.size_bytes,
+      sha256:row.sha256_hex,
+      download_url:`/api/admin/evidence/${encodeURIComponent(row.id)}`,
+    })),
+    limits:{max_files:ADMIN_EVIDENCE_MAX_FILES,max_file_bytes:ADMIN_EVIDENCE_MAX_FILE_BYTES,max_total_bytes:ADMIN_EVIDENCE_MAX_TOTAL_BYTES},
+  },201);
+}
+
+async function adminDownloadEvidence(request, env, admin, fileId) {
+  const file = await env.COMMONS_DB.prepare(
+    `SELECT * FROM admin_evidence_files WHERE id=?`
+  ).bind(fileId).first();
+  if (!file) throw new ApiError(404,"Evidence file not found.","evidence_not_found");
+  const chunks = await env.COMMONS_DB.prepare(
+    "SELECT chunk_index,data_base64 FROM admin_evidence_chunks WHERE file_id=? ORDER BY chunk_index ASC"
+  ).bind(fileId).all();
+  if ((chunks.results || []).length !== Number(file.chunk_count)) {
+    throw new ApiError(500,"Evidence file is incomplete.","evidence_corrupt");
+  }
+  const parts = (chunks.results || []).map(row => base64ToBytes(row.data_base64));
+  const total = parts.reduce((sum,part)=>sum+part.length,0);
+  if (total !== Number(file.size_bytes)) throw new ApiError(500,"Evidence file length does not match its immutable metadata.","evidence_corrupt");
+  const bytes = new Uint8Array(total);
+  let offset=0;
+  for(const part of parts){bytes.set(part,offset);offset+=part.length;}
+  const sha = await sha256Hex(bytes);
+  if (sha !== file.sha256_hex) throw new ApiError(500,"Evidence file hash verification failed.","evidence_corrupt");
+
+  await audit(env,admin.id,"admin_evidence_downloaded","evidence",file.id,{sha256:file.sha256_hex,name:file.original_name});
+  return new Response(bytes,{
+    status:200,
+    headers:{
+      "content-type":file.content_type || "application/octet-stream",
+      "content-length":String(bytes.length),
+      "content-disposition":`attachment; filename*=UTF-8''${encodeURIComponent(file.original_name)}`,
+      "cache-control":"no-store",
+      "x-content-type-options":"nosniff",
+    },
+  });
 }
 
 async function derivePassword(password, saltB64, iterations = PASSWORD_ITERATIONS) {
