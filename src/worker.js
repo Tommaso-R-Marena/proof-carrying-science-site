@@ -687,6 +687,7 @@ async function expireStaleWork(env) {
   }
   await env.COMMONS_DB.prepare("UPDATE competency_evaluations SET status='expired' WHERE status='open' AND expires_at<=?").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE expires_at<=?").bind(now).run();
+  await env.COMMONS_DB.prepare("DELETE FROM admin_sessions WHERE expires_at<=?").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM email_verification_tokens WHERE expires_at<=? OR used_at IS NOT NULL").bind(now).run();
   await env.COMMONS_DB.prepare("DELETE FROM rate_limits WHERE window_start<?").bind(addDaysIso(now, -2)).run();
   return stale.results?.length || 0;
@@ -770,14 +771,14 @@ async function bootstrapAdmin(request, env) {
     ) VALUES(?,?,?,?,?,?,?,6,'admin','active',1,?,?,?,?,?,?,1,?,1)`
   ).bind(id,email,displayName,passwordHash,salt,PASSWORD_ITERATIONS,recoveryHash,now,now,5,"review","either","PCS owner/admin",TERMS_VERSION).run();
   await audit(env, id, "owner_bootstrapped", "user", id, { display_level: 7, technical_level: 6, unique_owner: true });
-  const session = await createSession(env, id);
+  const session = await createAdminSession(env, id);
   const user = await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(id).first();
   return json({
     ok: true,
     user: publicUser(user),
     recovery_code: recoveryCode,
     recovery_warning: "Save this recovery code now. It cannot be recovered later.",
-  }, 201, { "set-cookie": sessionCookie(session) });
+  }, 201, { "set-cookie": adminSessionCookie(session) });
 }
 
 async function login(request, env) {
@@ -815,6 +816,122 @@ async function login(request, env) {
   return json({ ok: true, user: publicUser(fresh) }, 200, { "set-cookie": sessionCookie(session) });
 }
 
+async function adminLogin(request, env) {
+  await rateLimit(request, env, "admin-login", 12, 15);
+  const body = await readBody(request);
+  const email = normalizeEmail(body.email);
+  const password = String(body.password || "");
+  if (!validEmail(email) || !password) throw new ApiError(401, "Invalid administrator email or password.", "bad_admin_login");
+
+  const user = await env.COMMONS_DB.prepare("SELECT * FROM users WHERE email=?").bind(email).first();
+  if (!user || user.role !== "admin") throw new ApiError(401, "Invalid administrator email or password.", "bad_admin_login");
+  if (user.status !== "active") throw new ApiError(403, "Administrator account is not active.", "account_inactive");
+  if (user.locked_until && new Date(user.locked_until) > new Date()) {
+    throw new ApiError(429, "Too many failed attempts. Try again later.", "login_locked");
+  }
+
+  const computed = await derivePassword(password, user.password_salt, Number(user.password_iterations));
+  if (!fixedEqual(computed, user.password_hash)) {
+    const failures = Number(user.failed_login_count || 0) + 1;
+    const lockMinutes = failures >= 8 ? 30 : failures >= 5 ? 5 : 0;
+    const lockedUntil = lockMinutes ? addHoursIso(nowIso(), lockMinutes / 60) : null;
+    await env.COMMONS_DB.prepare(
+      "UPDATE users SET failed_login_count=?,locked_until=?,updated_at=? WHERE id=?"
+    ).bind(failures,lockedUntil,nowIso(),user.id).run();
+    throw new ApiError(401, "Invalid administrator email or password.", "bad_admin_login");
+  }
+
+  await env.COMMONS_DB.prepare(
+    "UPDATE users SET failed_login_count=0,locked_until=NULL,last_login_at=?,updated_at=? WHERE id=?"
+  ).bind(nowIso(),nowIso(),user.id).run();
+  await env.COMMONS_DB.prepare("DELETE FROM admin_sessions WHERE user_id=? AND expires_at<=?").bind(user.id,nowIso()).run();
+  const token = await createAdminSession(env,user.id);
+  await audit(env,user.id,"admin_login","admin_session",user.id,{dedicated_admin_session:true});
+  const fresh = await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(user.id).first();
+  return json({ok:true,user:publicUser(fresh),expires_in_hours:ADMIN_SESSION_HOURS},200,{"set-cookie":adminSessionCookie(token)});
+}
+
+async function adminSessionStatus(request, env) {
+  const user = await currentAdminUser(request,env);
+  return json({authenticated:Boolean(user),user:publicUser(user),session_hours:ADMIN_SESSION_HOURS});
+}
+
+async function adminLogout(request, env) {
+  const user = await currentAdminUser(request,env);
+  if (user) await audit(env,user.id,"admin_logout","admin_session",user.id,{});
+  await deleteAdminSession(request,env);
+  return json({ok:true},200,{"set-cookie":clearAdminSessionCookie()});
+}
+
+async function verifyAuditArchive(env) {
+  const result = await env.COMMONS_DB.prepare(
+    `SELECT seq,event_id,actor_user_id,actor_email,actor_name,actor_role,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash
+     FROM audit_archive ORDER BY seq ASC`
+  ).all();
+  const rows = result.results || [];
+  let prev = AUDIT_GENESIS;
+  for (const row of rows) {
+    if (row.prev_hash !== prev) {
+      return {ok:false,count:rows.length,broken_seq:Number(row.seq),reason:"prev_hash_mismatch",head:rows.at(-1)?.event_hash||null};
+    }
+    const expected = await sha256Hex(auditHashInput({
+      prevHash:row.prev_hash,
+      eventId:row.event_id,
+      actorUserId:row.actor_user_id||"",
+      actorEmail:row.actor_email||"",
+      actorName:row.actor_name||"",
+      actorRole:row.actor_role||"",
+      action:row.action,
+      subjectType:row.subject_type,
+      subjectId:row.subject_id,
+      detailJson:row.detail_json||"{}",
+      createdAt:row.created_at,
+    }));
+    if (expected !== row.event_hash) {
+      return {ok:false,count:rows.length,broken_seq:Number(row.seq),reason:"event_hash_mismatch",head:rows.at(-1)?.event_hash||null};
+    }
+    prev = row.event_hash;
+  }
+  return {ok:true,count:rows.length,broken_seq:null,reason:null,head:rows.at(-1)?.event_hash||null};
+}
+
+const APPROVAL_ACTIONS = new Set([
+  "task_request_approved","task_request_rejected","checkpoint_accepted","checkpoint_released",
+  "submission_reviewed","skill_reviewed","skill_verified_by_task_application",
+  "user_level_changed","user_governance_changed","email_manually_verified"
+]);
+
+async function adminAuditFeed(request, env) {
+  await requireAdmin(request,env);
+  const url = new URL(request.url);
+  const rawLimit = Number(url.searchParams.get("limit") || 100);
+  const limit = Math.min(Math.max(Number.isFinite(rawLimit)?Math.trunc(rawLimit):100,25),200);
+  const before = Number(url.searchParams.get("before_seq") || 0);
+  const kind = String(url.searchParams.get("kind") || "all");
+  const params = [];
+  let where = "1=1";
+  if (before > 0) { where += " AND seq<?"; params.push(before); }
+  if (kind === "admin") where += " AND actor_role IN ('owner','admin')";
+  if (kind === "approvals") {
+    const actions=[...APPROVAL_ACTIONS];
+    where += " AND action IN ("+actions.map(()=>"?").join(",")+")";
+    params.push(...actions);
+  }
+  const result = await env.COMMONS_DB.prepare(
+    `SELECT seq,event_id,actor_user_id,actor_email,actor_name,actor_role,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash
+     FROM audit_archive WHERE ${where} ORDER BY seq DESC LIMIT ?`
+  ).bind(...params,limit).all();
+  const rows = result.results || [];
+  return json({
+    ok:true,
+    kind,
+    events:rows,
+    next_before:rows.length===limit?Number(rows[rows.length-1].seq):null,
+    integrity:await verifyAuditArchive(env),
+  });
+}
+
+
 async function recover(request, env) {
   await rateLimit(request, env, "recover", 5, 60);
   const body = await readBody(request);
@@ -836,6 +953,7 @@ async function recover(request, env) {
     "UPDATE users SET password_hash=?,password_salt=?,password_iterations=?,recovery_hash=?,failed_login_count=0,locked_until=NULL,updated_at=? WHERE id=?"
   ).bind(hash,salt,PASSWORD_ITERATIONS,await sha256(newRecovery),nowIso(),user.id).run();
   await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(user.id).run();
+  await env.COMMONS_DB.prepare("DELETE FROM admin_sessions WHERE user_id=?").bind(user.id).run();
   await audit(env, user.id, "password_recovered", "user", user.id, {});
   return json({ ok: true, recovery_code: newRecovery, message: "Password reset. Save the new recovery code before signing in." });
 }
@@ -1649,6 +1767,7 @@ async function adminSetGovernance(request, env, admin, userId) {
   const authorityRemoved=(user.role==="admin" && requestedRole!=="admin") || (user.status==="active" && requestedStatus!=="active");
   if (authorityRemoved) {
     await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE user_id=?").bind(userId).run();
+    await env.COMMONS_DB.prepare("DELETE FROM admin_sessions WHERE user_id=?").bind(userId).run();
   }
 
   await notify(env,{
