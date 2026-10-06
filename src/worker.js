@@ -3151,9 +3151,21 @@ async function adminPromotionMerge(request,env,admin,id){
   await audit(env,admin.id,"production_promotion_merged","production_promotion",id,{
     repo:row.repo,pr_number:row.pr_number,sha:outcome.sha,approved_head_sha:row.approved_head_sha,reason
   });
-  await notify(env,{kind:"production_promotion_completed",email:env.ADMIN_EMAIL||null,
-    subject:`[PCS] Production promotion completed: ${row.task_id}`,
-    body:`PCS production promotion ${id} was merged into ${row.repo}.\nPR: ${outcome.pr_url}\nCommit: ${outcome.sha}\nRationale: ${reason}\n`});
+  try{
+    await notify(env,{kind:"production_promotion_completed",email:env.ADMIN_EMAIL||null,
+      subject:`[PCS] Production promotion completed: ${row.task_id}`,
+      body:`PCS production promotion ${id} was merged into ${row.repo}.\nPR: ${outcome.pr_url}\nCommit: ${outcome.sha}\nRationale: ${reason}\n`});
+    const recipient=await env.COMMONS_DB.prepare(
+      `SELECT u.id,u.email,u.email_verified FROM users u
+       JOIN submissions s ON s.user_id=u.id WHERE s.id=?`
+    ).bind(row.submission_id).first();
+    if(recipient)await notify(env,{userId:recipient.id,email:recipient.email_verified?recipient.email:null,
+      kind:"production_contribution_promoted",
+      subject:`Your PCS contribution has reached production: ${row.task_id}`,
+      body:`Your accepted PCS contribution has been separately reviewed, tested and promoted into production source.\n\nPull request: ${outcome.pr_url}\nCommit: ${outcome.sha}\n\nA passing verification certifies only the stated tests, not external scientific truth.\n`});
+  }catch(error){
+    console.error("Production promotion notification error (merge already recorded)",String(error?.message||error));
+  }
   return json({ok:true,state:"merged",merge_sha:outcome.sha,pr_url:outcome.pr_url});
 }
 
