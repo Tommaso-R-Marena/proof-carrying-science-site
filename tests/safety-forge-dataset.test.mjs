@@ -63,8 +63,9 @@ test("same server-exported trial gets exactly reproducible labels on every prepa
 
 test("exports whether the player saw an oracle hint or checker feedback before choosing",()=>{
   const x=makeEntry(197);
-  x.replay.attacks[0].assisted=true;
-  assert.throws(()=>prepareSafetyForgeDataset(dataset([x])),/Replay mismatch/);
+  x.replay.attacks[0].assisted="unverifiable_claim";
+  assert.throws(()=>prepareSafetyForgeDataset(dataset([x])),/Invalid attack trial/);
+  // A Boolean assistance flag can be replayed, but its historical truth is self-reported.
   const replay=evaluateResearchSession({
     scenario_seed:197,scenario_version:SAFETY_LAB_VERSION,
     attack_trials:[{actions:["shortcut"],assisted:true},{actions:["safe_route","deploy"],assisted:false}],
