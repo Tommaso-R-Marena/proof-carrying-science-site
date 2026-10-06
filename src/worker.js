@@ -1821,6 +1821,9 @@ async function handleApi(request, env) {
   }
   if (method==="POST" && path==="/api/auth/register") return register(request,env);
   if (method==="POST" && path==="/api/auth/login") return login(request,env);
+  if (method==="POST" && path==="/api/admin/login") return adminLogin(request,env);
+  if (method==="GET" && path==="/api/admin/session") return adminSessionStatus(request,env);
+  if (method==="POST" && path==="/api/admin/logout") return adminLogout(request,env);
   if (method==="POST" && path==="/api/auth/recover") return recover(request,env);
   if (method==="POST" && path==="/api/auth/verify-email") return verifyEmail(request,env);
   if (method==="POST" && path==="/api/admin/bootstrap") return bootstrapAdmin(request,env);
@@ -1830,6 +1833,28 @@ async function handleApi(request, env) {
   }
   if (method==="GET" && path==="/api/me") return me(request,env);
   if (method==="GET" && path==="/api/tasks") return listTasks(request,env);
+
+  if (path.startsWith("/api/admin/")) {
+    const admin=await requireAdmin(request,env);
+    if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
+    if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
+
+    let adminMatch=path.match(/^\/api\/admin\/requests\/([^/]+)\/decision$/);
+    if (method==="POST" && adminMatch) return adminDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/requests\/([^/]+)\/checkpoint$/);
+    if (method==="POST" && adminMatch) return adminCheckpoint(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/decision$/);
+    if (method==="POST" && adminMatch) return adminSubmissionDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/skill$/);
+    if (method==="POST" && adminMatch) return adminSkillDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/level$/);
+    if (method==="POST" && adminMatch) return adminSetLevel(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/governance$/);
+    if (method==="POST" && adminMatch) return adminSetGovernance(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/email-verified$/);
+    if (method==="POST" && adminMatch) return adminVerifyEmail(request,env,admin,decodeURIComponent(adminMatch[1]));
+    throw new ApiError(404,"Admin API endpoint not found.","not_found");
+  }
 
   const user=await requireUser(request,env);
 
@@ -1864,25 +1889,6 @@ async function handleApi(request, env) {
   match=path.match(/^\/api\/requests\/([^/]+)\/withdraw$/);
   if (method==="POST" && match) return withdrawRequest(request,env,user,decodeURIComponent(match[1]));
 
-  if (path.startsWith("/api/admin/")) {
-    if (user.role!=="admin") throw new ApiError(403,"Administrator access required.","admin_required");
-    if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
-
-    match=path.match(/^\/api\/admin\/requests\/([^/]+)\/decision$/);
-    if (method==="POST" && match) return adminDecision(request,env,user,decodeURIComponent(match[1]));
-    match=path.match(/^\/api\/admin\/requests\/([^/]+)\/checkpoint$/);
-    if (method==="POST" && match) return adminCheckpoint(request,env,user,decodeURIComponent(match[1]));
-    match=path.match(/^\/api\/admin\/submissions\/([^/]+)\/decision$/);
-    if (method==="POST" && match) return adminSubmissionDecision(request,env,user,decodeURIComponent(match[1]));
-    match=path.match(/^\/api\/admin\/users\/([^/]+)\/skill$/);
-    if (method==="POST" && match) return adminSkillDecision(request,env,user,decodeURIComponent(match[1]));
-    match=path.match(/^\/api\/admin\/users\/([^/]+)\/level$/);
-    if (method==="POST" && match) return adminSetLevel(request,env,user,decodeURIComponent(match[1]));
-    match=path.match(/^\/api\/admin\/users\/([^/]+)\/governance$/);
-    if (method==="POST" && match) return adminSetGovernance(request,env,user,decodeURIComponent(match[1]));
-    match=path.match(/^\/api\/admin\/users\/([^/]+)\/email-verified$/);
-    if (method==="POST" && match) return adminVerifyEmail(request,env,user,decodeURIComponent(match[1]));
-  }
 
   throw new ApiError(404,"API endpoint not found.","not_found");
 }
