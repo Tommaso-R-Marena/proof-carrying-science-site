@@ -220,6 +220,7 @@
             ${s.github_pr_url&&String(s.github_pr_url).startsWith("https://github.com/Tommaso-R-Marena/")?` · <a href="${esc(s.github_pr_url)}" target="_blank" rel="noopener noreferrer">Open PR ↗</a>`:""}</span>
             ${s.github_pr_number?`<button class="button secondary" data-my-git-checks="${esc(s.id)}" type="button">Refresh CI result</button><span id="myGitStatus-${esc(s.id)}" aria-live="polite"></span>`:""}
             ${s.review_note?`<p><strong>Reviewer feedback:</strong> ${esc(s.review_note)}</p>`:""}
+            ${s.production_promotion_state?`<p><strong>Production promotion:</strong> ${esc(s.production_promotion_state)} ${s.production_promotion_url&&String(s.production_promotion_url).startsWith("https://github.com/Tommaso-R-Marena/")?` · <a href="${esc(s.production_promotion_url)}" target="_blank" rel="noopener noreferrer">View production PR ↗</a>`:""} ${s.production_merge_sha?` · deployed-source commit: <code>${esc(s.production_merge_sha)}</code>`:""}</p>`:""}
           </div>`).join("")}
         ${requestActionButtons(r)}
       </article>`).join("");
