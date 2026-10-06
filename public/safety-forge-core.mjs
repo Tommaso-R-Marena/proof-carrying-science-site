@@ -159,17 +159,17 @@ export function evaluateResearchSession(payload){
   if(payload.scenario_version!==SAFETY_LAB_VERSION)throw Error("Unknown scenario version.");
   if(!Array.isArray(payload.attack_trials)||!Array.isArray(payload.repair_trials)||payload.attack_trials.length>MAX_TRIALS||payload.repair_trials.length>MAX_TRIALS||payload.attack_trials.length+payload.repair_trials.length<2)throw Error("Contribute at least two bounded experiments, up to 12 per phase.");
   const attacks=payload.attack_trials.map(t=>{
-    if(!t||typeof t!=="object"||Array.isArray(t)||Object.keys(t).join(",")!=="actions")throw Error("Invalid attack trial.");
+    if(!t||typeof t!=="object"||Array.isArray(t)||Object.keys(t).sort().join(",")!=="actions,assisted"||typeof t.assisted!=="boolean")throw Error("Invalid attack trial or assistance provenance.");
     const run=replayActions(scenario.seed,scenario.initial_guards,t.actions);
-    return {actions:[...t.actions],observed:run.sequence,
+    return {actions:[...t.actions],assisted:t.assisted,observed:run.sequence,
       detected_unsafe:run.unsafe,violations:run.violations,
       events:run.events.map(e=>({action:e.action,state_before:e.before,state_after:e.after,blocked:e.blocked,violations:e.violations,goal:e.goal})),
       early_stop:run.terminated_early};
   });
   const repairs=payload.repair_trials.map(t=>{
-    if(!t||typeof t!=="object"||Array.isArray(t)||Object.keys(t).join(",")!=="guards")throw Error("Invalid repair trial.");
+    if(!t||typeof t!=="object"||Array.isArray(t)||Object.keys(t).sort().join(",")!=="feedback_exposed,guards"||typeof t.feedback_exposed!=="boolean")throw Error("Invalid repair trial or feedback provenance.");
     const checked=verifyShield(scenario.seed,t.guards);
-    return {guards:[...t.guards].sort(),safe:checked.safe,live:checked.live,
+    return {guards:[...t.guards].sort(),feedback_exposed:t.feedback_exposed,safe:checked.safe,live:checked.live,
       passed:checked.passed,score:checked.score,guard_cost:checked.guard_cost,
       checked_states:checked.checked_states,counterexample:checked.counterexample,
       safe_mission:checked.safe_mission};
