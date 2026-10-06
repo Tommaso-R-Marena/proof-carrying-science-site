@@ -2285,6 +2285,12 @@ async function submitChallengeEntry(request, env, user, challengeId) {
   if(summary.length<100)throw new ApiError(400,"Summarize the candidate counterexample in at least 100 characters.","challenge_summary_required");
   if(explanation.length<120)throw new ApiError(400,"Explain the hidden dependency and why the declared graph misses the affected claim in at least 120 characters.","challenge_explanation_required");
   const counts=challengeCounts(body);
+  const aliasConflict=await env.COMMONS_DB.prepare(
+    `SELECT 1 AS ok FROM challenge_entries
+     WHERE challenge_id=? AND lower(leaderboard_alias)=lower(?) AND user_id!=?
+       AND status IN ('pending','verified') LIMIT 1`
+  ).bind(challenge.id,alias,user.id).first();
+  if(aliasConflict)throw new ApiError(409,"That leaderboard alias is already in use for this challenge.","leaderboard_alias_taken");
   const score=challengeScore(counts);
   const id=crypto.randomUUID(),submittedAt=nowIso();
   await env.COMMONS_DB.prepare(
