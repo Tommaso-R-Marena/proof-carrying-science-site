@@ -22,7 +22,7 @@ const manifestPath=promotionManifestPath(id);
 const maps=[{filename,path:destination}];
 
 function simulatedGitHub({outcome="success",missingStep=false,changeMain=false,
-  changedSource=false,otherDiff=false,modifyProduction=false}={}){
+  changedSource=false,otherDiff=false,modifyProduction=false,attempt=1}={}){
   const previous=globalThis.fetch;
   const headFiles=new Map(),calls=[];
   const mandatory=[
@@ -48,13 +48,13 @@ function simulatedGitHub({outcome="success",missingStep=false,changeMain=false,
     if(p.endsWith("/pulls/10/merge")&&method==="PUT")return reply(200,{merged:true,sha:headSha});
     if(p.endsWith("/pulls/10")&&method==="PATCH")return reply(200,{state:"closed"});
     if(p.endsWith("/pulls/10"))return reply(200,{
-      base:{ref:"main"},head:{ref:`pcs/promote/${id}/r1`,repo:{full_name:repo},sha:headSha},
+      base:{ref:"main"},head:{ref:`pcs/promote/${id}/r${attempt}`,repo:{full_name:repo},sha:headSha},
       draft:false,merged:false,state:"open",html_url:"https://github.com/test/pr/10"
     });
     if(p.endsWith("/pulls")&&method==="GET")return reply(200,[]);
     if(p.endsWith("/pulls")&&method==="POST")return reply(201,{
       number:10,html_url:"https://github.com/test/pr/10",
-      head:{ref:`pcs/promote/${id}/r1`,sha:headSha}
+      head:{ref:`pcs/promote/${id}/r${attempt}`,sha:headSha}
     });
     if(p.includes("/contents/")){
       const path=decodeURIComponent(p.split("/contents/")[1]);
@@ -142,7 +142,7 @@ test("source modification, PR scope drift, or stale main invalidates exact-bound
     try{
       const {promo,files}=await input();
       // A previously staged PR would have a separately recorded baseline.
-      Object.assign(promo,{base_sha:baseSha,branch:`pcs/promote/${id}/r1`,pr_number:10});
+      Object.assign(promo,{base_sha:baseSha,branch:`pcs/promote/${id}/r${attempt}`,pr_number:10});
       if(options.changedSource||options.changeMain){
         await assert.rejects(()=>verifyPromotion(env,promo,files));
       }else{
@@ -161,5 +161,19 @@ test("superseding closes a known unmerged promotion PR without touching main",as
     assert.equal(result.closed,true);
     assert.equal(mock.calls.some(x=>x.method==="PATCH"&&x.path.endsWith("/pulls/10")),true);
     assert.equal(mock.calls.some(x=>x.path.endsWith("/pulls/10/merge")),false);
+  }finally{mock.restore();}
+});
+
+test("a new promotion attempt builds a fresh versioned PR with no inherited approval",async()=>{
+  const mock=simulatedGitHub({attempt:2});
+  try{
+    const {promo,files}=await input();
+    promo.attempt=2;
+    const staged=await stagePromotion(env,promo,files);
+    assert.equal(staged.branch,`pcs/promote/${id}/r2`);
+    Object.assign(promo,{branch:staged.branch,base_sha:staged.base_sha,pr_number:staged.pr_number});
+    const checked=await verifyPromotion(env,promo,files);
+    assert.equal(checked.verified,true);
+    assert.equal(checked.head_sha,headSha);
   }finally{mock.restore();}
 });
