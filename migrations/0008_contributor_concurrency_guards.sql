@@ -44,6 +44,10 @@ BEGIN
   SELECT RAISE(ABORT,'PCS active reserved task limit');
 END;
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_competency_one_open_per_skill
+ON competency_evaluations(user_id,skill)
+WHERE status='open';
+
 CREATE TRIGGER IF NOT EXISTS competency_evaluations_daily_cap
 BEFORE INSERT ON competency_evaluations
 WHEN (
