@@ -53,6 +53,7 @@ jobs:
           node --check public/safety-forge-core.mjs
           node --check public/arena-safety-forge.js
           node --check scripts/prepare_safety_forge_dataset.mjs
+          node --check scripts/benchmark_safety_forge.mjs
           node --check public/project-builder.js
           node --check public/guided-submission.js
           node --check public/result-anatomy.js
@@ -70,6 +71,7 @@ jobs:
           npm run test:catalog
           npm run test:quest:dataset
           npm run test:safety:forge
+          npm run test:safety:benchmark
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign
