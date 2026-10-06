@@ -1712,7 +1712,7 @@ async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
   await remindPendingReviews(env);
-  const [pending, checkpoints, submissions, skillReviews, users] = await Promise.all([
+  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
               u.display_name,u.email,u.level,u.email_verified,
@@ -1746,6 +1746,10 @@ async function adminOverview(request, env) {
       `SELECT id,email,display_name,level,role,status,email_verified,track,availability_hours,created_at,last_login_at,is_owner
        FROM users ORDER BY is_owner DESC,created_at DESC LIMIT 200`
     ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT user_id,skill,verified_at,verified_by,verification_note,source
+       FROM skills WHERE status='verified' ORDER BY user_id,skill`
+    ).all(),
   ]);
   return json({
     admin:publicUser(admin),
@@ -1756,6 +1760,7 @@ async function adminOverview(request, env) {
     submissions:submissions.results||[],
     skill_reviews:skillReviews.results||[],
     users:users.results||[],
+    verified_skills:verifiedSkills.results||[],
     policy:{
       response_target:"1 business day",
       hard_sla:"2 business days",
@@ -1965,11 +1970,67 @@ async function adminSkillDecision(request, env, admin, userId) {
   return json({ok:true,status});
 }
 
+async function adminRevokeSkill(request, env, admin, userId) {
+  if (!isOwner(admin)) throw new ApiError(403,"Only the Founder/Owner may revoke a previously verified skill.","owner_required");
+  const body=await readBody(request);
+  const skill=String(body.skill||"");
+  const note=cleanText(body.note,3000);
+  if (!SKILLS.has(skill) || skill==="nontechnical") throw new ApiError(400,"Choose a verified skill to revoke.","bad_skill");
+  if (note.length<20) throw new ApiError(400,"Give an evidence-based revocation rationale (at least 20 characters).","skill_revocation_note_required");
+  const evidence=await validateEvidenceRefs(env,admin,body.evidence_ids);
+
+  const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
+  if (!user) throw new ApiError(404,"User not found.","user_not_found");
+  protectOwnerTarget(user);
+  const row=await env.COMMONS_DB.prepare("SELECT * FROM skills WHERE user_id=? AND skill=?").bind(userId,skill).first();
+  if (!row || row.status!=="verified") throw new ApiError(409,"That skill is not currently verified.","skill_not_verified");
+
+  const active=await env.COMMONS_DB.prepare(
+    `SELECT r.id,r.task_id,t.title
+     FROM task_requests r JOIN tasks t ON t.id=r.task_id
+     WHERE r.user_id=? AND r.status='approved' AND t.required_skill=?`
+  ).bind(userId,skill).all();
+
+  await env.COMMONS_DB.prepare(
+    `UPDATE skills SET status='rejected',verification_note=?,verified_at=NULL,verified_by=NULL,
+     review_due_at=NULL,source='revoked',evaluation_id=NULL WHERE user_id=? AND skill=?`
+  ).bind("Verified skill revoked: "+note,userId,skill).run();
+
+  const now=nowIso();
+  for(const task of active.results||[]) {
+    await env.COMMONS_DB.prepare(
+      `UPDATE task_requests SET status='expired',reservation_expires_at=?,checkpoint_status='not_required',
+       decision_note=COALESCE(decision_note,'') || ? WHERE id=?`
+    ).bind(now,"\nSkill "+skill+" was revoked by PCS Owner: "+note,task.id).run();
+    await audit(env,admin.id,"reservation_released_after_skill_revocation","task_request",task.id,{
+      task_id:task.task_id,skill,user_id:userId
+    });
+  }
+
+  await notify(env,{
+    userId,
+    email:user.email_verified?user.email:null,
+    kind:"skill_revoked",
+    subject:`PCS verified skill revoked: ${skill}`,
+    body:`Your previously verified PCS skill "${skill}" has been revoked.\n\nReason: ${note}\n\nAny active reserved work that required this exact skill has been released. You may submit new evidence or retake the variable competency evaluation later.\n`
+  });
+  await audit(env,admin.id,"skill_revoked","user",userId,{
+    skill,
+    prior_verified_at:row.verified_at||null,
+    prior_verified_by:row.verified_by||null,
+    rationale:note,
+    evidence:auditEvidenceSummary(evidence),
+    released_tasks:(active.results||[]).map(task=>({request_id:task.id,task_id:task.task_id,title:task.title}))
+  });
+  return json({ok:true,skill,status:"revoked",released_reservations:(active.results||[]).length});
+}
+
 async function adminSetLevel(request, env, admin, userId) {
   const body=await readBody(request);
   const level=Number(body.level);
   const note=cleanText(body.note,2000);
   const override=body.override===true;
+  const evidence=await validateEvidenceRefs(env,admin,body.evidence_ids);
   if (!Number.isInteger(level)||level<0||level>6) throw new ApiError(400,"Technical level must be L0–L6. L7 is the unique Founder/Owner governance tier and cannot be assigned.","bad_level");
   if (note.length<20) throw new ApiError(400,"Give a promotion/demotion rationale (at least 20 characters).","level_note_required");
   const user=await env.COMMONS_DB.prepare("SELECT * FROM users WHERE id=?").bind(userId).first();
@@ -2009,7 +2070,11 @@ async function adminSetLevel(request, env, admin, userId) {
 
   await env.COMMONS_DB.prepare("UPDATE users SET level=?,level_review_note=?,updated_at=? WHERE id=?").bind(level,note,nowIso(),userId).run();
   await notify(env,{userId,email:user.email_verified?user.email:null,kind:"level_changed",subject:`PCS contributor level: L${level}`,body:`Your verified PCS technical level is now L${level}.\n\nReason: ${note}\n\nTechnical level does not grant Founder/Owner governance authority, and task-specific skill/assignment requirements still apply.\n`});
-  await audit(env,admin.id,"user_level_changed","user",userId,{from:currentLevel,to:level,override,owner_actor:isOwner(admin),accepted_total:acceptedTotal,accepted_high_trust:acceptedHighTrust,verified_skills:[...skills]});
+  await audit(env,admin.id,"user_level_changed","user",userId,{
+    from:currentLevel,to:level,override,owner_actor:isOwner(admin),
+    accepted_total:acceptedTotal,accepted_high_trust:acceptedHighTrust,verified_skills:[...skills],
+    rationale:note,evidence:auditEvidenceSummary(evidence)
+  });
   return json({ok:true,level});
 }
 
@@ -2111,6 +2176,9 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
+    if (method==="POST" && path==="/api/admin/evidence") return adminUploadEvidence(request,env,admin);
+    let evidenceMatch=path.match(/^\/api\/admin\/evidence\/([^/]+)$/);
+    if (method==="GET" && evidenceMatch) return adminDownloadEvidence(request,env,admin,decodeURIComponent(evidenceMatch[1]));
 
     let adminMatch=path.match(/^\/api\/admin\/requests\/([^/]+)\/decision$/);
     if (method==="POST" && adminMatch) return adminDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
@@ -2120,6 +2188,8 @@ async function handleApi(request, env) {
     if (method==="POST" && adminMatch) return adminSubmissionDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
     adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/skill$/);
     if (method==="POST" && adminMatch) return adminSkillDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
+    adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/skill\/revoke$/);
+    if (method==="POST" && adminMatch) return adminRevokeSkill(request,env,admin,decodeURIComponent(adminMatch[1]));
     adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/level$/);
     if (method==="POST" && adminMatch) return adminSetLevel(request,env,admin,decodeURIComponent(adminMatch[1]));
     adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/governance$/);
