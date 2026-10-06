@@ -1197,3 +1197,31 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 }
 @media(max-width:980px){.admin-workflow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.pcs-quick-grid{grid-template-columns:1fr}.admin-workflow-grid{grid-template-columns:1fr}.pcs-action-hub{padding:16px}}
+
+
+/* Contribution submission and CI review: readable on small screens. */
+.pcs-work-dialog{border:1px solid #d3dfeb;border-radius:19px;padding:0;background:#fff;color:var(--ink);width:min(780px,calc(100vw - 26px));max-height:90vh;overflow:auto;box-shadow:0 18px 58px rgba(8,29,58,.22)}
+.pcs-work-dialog::backdrop{background:rgba(8,21,39,.62)}
+.pcs-work-dialog form{padding:25px;display:grid;gap:12px}
+.pcs-work-dialog h2{font-size:clamp(23px,3vw,34px);margin:0;line-height:1.18}
+.pcs-work-dialog p,.pcs-work-dialog small{font-size:12px;line-height:1.55}
+.pcs-work-dialog .field{display:grid;gap:6px}
+.pcs-submission-contract{border:1px solid #dce7f0;background:#f8fafc;border-radius:11px;padding:13px;font-size:12px;line-height:1.55;color:#52677f}
+.pcs-submission-contract p{margin:5px 0}
+.pcs-evidence-fields{padding:15px;background:#f6f9fe;border:1px solid #d6e4f0;border-radius:12px}
+.pcs-evidence-fields h3{font-size:18px;margin:0 0 7px}
+.pcs-form-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.pcs-submission-history{display:grid;gap:4px;margin:12px 0;padding:11px;border:1px solid #dbe5ed;border-radius:9px;background:#f8fafc}
+.pcs-submission-history strong{font-size:12px}
+.pcs-submission-history span,.pcs-submission-history p{font-size:11px;line-height:1.5}
+.pcs-review-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:12px 0}
+.pcs-review-steps span{background:#f4f7fc;border-radius:8px;padding:8px;font-size:10px;line-height:1.4;font-weight:750}
+.pcs-review-files{display:grid;gap:8px}
+.pcs-review-files section{min-width:0;max-width:100%;padding:10px;border:1px solid #dce4eb;border-radius:9px}
+.pcs-review-files strong{font-size:10px;overflow-wrap:anywhere}
+.pcs-review-code{max-height:280px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f8fb;padding:12px;border-radius:7px;font-size:11px;line-height:1.45}
+.pcs-git-review{display:grid;gap:7px;margin:13px 0;padding:14px;border:1px solid #bfd4ec;border-radius:11px;background:#f6faff}
+.pcs-git-review strong{font-size:13px}.pcs-git-review p{margin:0;font-size:12px;line-height:1.5}
+.pcs-ci-state{font-size:12px;line-height:1.55;color:#68582f}.pcs-ci-good{color:#136a4c}.pcs-ci-error{color:#a53043}
+@media(max-width:800px){.pcs-review-steps{grid-template-columns:1fr 1fr}.pcs-form-columns{grid-template-columns:1fr}}
+@media(max-width:520px){.pcs-work-dialog form{padding:17px}.pcs-review-steps{grid-template-columns:1fr}}
