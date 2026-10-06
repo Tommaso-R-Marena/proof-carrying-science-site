@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Task Dependency Graph · PCS Commons</title>
+<meta name="description" content="Inspect the explicit PCS task dependency graph, prerequisite logic, and artifact contracts that connect accepted work to downstream work.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/task-graph.html">
+<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+</head><body class="commons-page">
+<div class="topbar commons-topbar"><div class="shell"><span>Task dependency graph · prerequisites describe artifacts and gates, not just arrows</span><a href="tasks.html">Needed work</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="tasks.html">Tasks</a><a href="roles.html">Roles</a><a href="task-graph.html">Dependency graph</a><a href="projects.html">Projects</a></div></nav>
+<main>
+<section class="pagehead commons-pagehead"><div class="kicker">Explicit work graph</div><h1>What unlocks what—and exactly why?</h1><p>A dependency edge in PCS should identify the required upstream output, the semantic relationship, and the gate logic. “A depends on B” is not enough. Groups can require all inputs, any one input, or at least <em>k</em> accepted inputs before downstream work unlocks.</p></section>
+<section class="task-graph-stats" id="taskGraphStats" aria-live="polite"></section>
+<section class="section">
+<div class="task-graph-toolbar panel">
+<label><span>Program / category</span><select id="graphFilter" class="selectinput"><option value="all">Everything currently published</option></select></label>
+<label><span>Show</span><select id="graphState" class="selectinput"><option value="all">All nodes</option><option value="blocked">Blocked only</option><option value="ready">Ready only</option></select></label>
+<a class="button secondary" href="tasks.html">Open marketplace</a>
+</div>
+<div id="taskGraphPrograms" class="task-graph-programs"></div>
+</section>
+<section class="commons-two-col">
+<div class="panel"><div class="kicker">Edge semantics</div><h2>Every edge should say what travels across it.</h2><p>A relation such as <code>test_oracle</code>, <code>specification</code>, <code>independent_review_gate</code>, or <code>informs</code> is paired with an artifact contract describing the accepted output the downstream node consumes.</p></div>
+<div class="panel"><div class="kicker">Unlock logic</div><h2>Prerequisites are logical gates.</h2><p>PCS supports grouped gates such as ALL, ANY, and AT_LEAST(k). Informative edges can shape work without blocking it. This keeps sequencing explicit while still allowing safe parallel work.</p></div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Human-scale work mapped to explicit assurance dependencies.</p></div><div class="footercol"><strong>Work</strong><a href="tasks.html">Needed tasks</a><a href="roles.html">Ongoing roles</a></div><div class="footercol"><strong>Research</strong><a href="projects.html">Projects</a><a href="claim-invalidation-v1.html">Claim Invalidation v1</a></div></div></footer>
+</div><script src="site.js"></script><script src="task-graph.js"></script></body></html>
