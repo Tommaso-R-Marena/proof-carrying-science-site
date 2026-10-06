@@ -60,3 +60,17 @@ test("same server-exported trial gets exactly reproducible labels on every prepa
   const data=dataset([makeEntry(197),makeEntry(198)]);
   assert.deepEqual(prepareSafetyForgeDataset(data),prepareSafetyForgeDataset(data));
 });
+
+test("exports whether the player saw an oracle hint or checker feedback before choosing",()=>{
+  const x=makeEntry(197);
+  x.replay.attacks[0].assisted=true;
+  assert.throws(()=>prepareSafetyForgeDataset(dataset([x])),/Replay mismatch/);
+  const replay=evaluateResearchSession({
+    scenario_seed:197,scenario_version:SAFETY_LAB_VERSION,
+    attack_trials:[{actions:["shortcut"],assisted:true},{actions:["safe_route","deploy"],assisted:false}],
+    repair_trials:[{guards:["risk"],feedback_exposed:false},{guards:["joint_review","redact","risk"],feedback_exposed:true}]
+  });
+  const out=prepareSafetyForgeDataset(dataset([{replay,collected_day:"2026-10-06"}]));
+  assert.equal(out.episodes[0].attack_episodes[0].assisted_by_hint_or_oracle,true);
+  assert.equal(out.episodes[0].repair_episodes[1].feedback_exposed_before_proposal,true);
+});
