@@ -171,3 +171,18 @@ test("rejects duplicate or empty trials that would poison preference data",()=>{
   repeatedRepair.repair_trials=[{guards:["risk","joint_review"],feedback_exposed:false},{guards:["joint_review","risk"],feedback_exposed:true}];
   assert.throws(()=>evaluateResearchSession(repeatedRepair),/Duplicate shield proposals/);
 });
+
+test("records disclosed hint/feedback provenance but does not trust it as a proof",()=>{
+  const x=session();
+  x.attack_trials[0].assisted=true;
+  x.repair_trials[1].feedback_exposed=true;
+  const result=evaluateResearchSession(x);
+  assert.equal(result.attacks[0].assisted,true);
+  assert.equal(result.repairs[1].feedback_exposed,true);
+  assert.equal(result.quality,"FINITE_SYNTHETIC_REPLAY_ONLY");
+  x.attack_trials[0].assisted="false";
+  assert.throws(()=>evaluateResearchSession(x),/Invalid attack trial/);
+  x.attack_trials[0].assisted=false;
+  delete x.repair_trials[1].feedback_exposed;
+  assert.throws(()=>evaluateResearchSession(x),/Invalid repair trial/);
+});
