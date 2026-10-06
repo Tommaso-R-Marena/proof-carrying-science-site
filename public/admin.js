@@ -344,6 +344,157 @@
     all("[data-submission-reject]",target).forEach(b=>b.addEventListener("click",()=>submissionDecision(b.dataset.submissionReject,"reject")));
   }
 
+  let promotionCandidates=[];
+  let promotionPendingDecision=null;
+  function promotionMappings(record){
+    try{return JSON.parse(record.mapping_json||"[]");}catch{return [];}
+  }
+  function promotionNoteAction(id,action){
+    if(!currentAdmin?.is_owner)return;
+    promotionPendingDecision={id,action};
+    const dialog=$("#promotionDecisionDialog");
+    const descriptions={
+      approve:"Approve this exact, freshly tested commit for production. Explain how you evaluated scientific scope, regressions and trust boundaries.",
+      needs_changes:"Request improvements. This existing artifact stays unchanged; the contributor must provide a new accepted, archived submission for a revised promotion.",
+      reject:"Reject the proposed production source change with a concrete rationale.",
+      merge:"Final production integration. The server will recheck the approved SHA, exact archived bytes, PR file inventory, current main baseline and fresh CI."
+    };
+    $("#promotionDecisionTitle").textContent={
+      approve:"Approve production promotion",needs_changes:"Request changes",reject:"Reject promotion",merge:"Merge verified production PR"
+    }[action];
+    $("#promotionDecisionContext").textContent=descriptions[action];
+    $("#promotionDecisionNote").value="";
+    $("#promotionDecisionStatus").textContent="";
+    dialog.showModal();
+  }
+  async function promotionAction(id,action,body=null){
+    const status=$("#promotionStatus-"+id);
+    if(status)status.textContent="Checking "+action+"…";
+    try{
+      const r=await api(`/api/admin/promotions/${encodeURIComponent(id)}/${action}`,{
+        method:action==="checks"?"GET":"POST",...(body?{body}:{})
+      });
+      if(status)status.textContent=action==="checks"
+        ?`${r.status||"blocked"}: ${r.message||"No check output."}`
+        :`${r.state||"updated"}: ${r.message||"Action recorded."}`;
+      if(action!=="checks")await loadPromotions();
+      return true;
+    }catch(e){if(status)status.textContent=e.message;else alert(e.message);return false;}
+  }
+  async function loadPromotions(){
+    const queue=$("#promotionQueue"),status=$("#promotionQueueStatus");
+    if(!queue)return;
+    try{
+      const data=await api("/api/admin/promotions");
+      promotionCandidates=data.candidates||[];
+      const form=$("#promotionCreateForm"),source=$("#promotionSource");
+      form.hidden=!data.can_manage;
+      const selected=source.value;
+      source.replaceChildren(new Option("Select an accepted, archived contribution",""));
+      for(const candidate of promotionCandidates){
+        source.add(new Option(candidate.task_id+" · "+candidate.contributor+" · "+candidate.filenames,candidate.submission_id));
+      }
+      if(promotionCandidates.some(x=>x.submission_id===selected))source.value=selected;
+      const items=data.promotions||[];
+      status.textContent=items.length
+        ?`${items.length} promotion case(s) · ${items.filter(x=>x.state==="staged").length} awaiting new tests/review · ${items.filter(x=>x.state==="approved").length} reviewed but not merged.`
+        :"No production promotions yet. Work is first accepted and archived through the separate submission pipeline.";
+      queue.innerHTML=items.map(p=>{
+        const maps=promotionMappings(p);
+        const repo=p.repo.endsWith("-site")?"Website":"Lean/PCS core";
+        const url=String(p.pr_url||"");
+        const validUrl=url.startsWith("https://github.com/Tommaso-R-Marena/");
+        const stageable=["stage_error","requested"].includes(p.state);
+        const inspectable=["staged","approved"].includes(p.state);
+        return `<article class="admin-card pcs-review-card">
+          <div class="task-card-top"><div>
+            <span class="commons-chip category">${esc(repo)}</span>
+            <span class="commons-chip level">${esc(p.task_id)}</span>
+            <span class="commons-chip ${p.state==="merged"?"volunteer":"planned"}">${esc(p.state)}</span>
+          </div><span class="tiny">${fmt(p.created_at)}</span></div>
+          <h3>Promotion ${esc(p.id.slice(0,8))} · ${esc(p.contributor)}</h3>
+          <p class="tiny">Source contribution: ${esc(p.submission_id)} · accepted archive PR #${esc(p.source_pr_number)}</p>
+          <div class="pcs-submission-contract"><strong>Exact proposed production paths</strong>
+            ${maps.map(x=>`<p><code>${esc(x.filename)}</code> → <code>${esc(x.path)}</code></p>`).join("")}
+          </div>
+          <p>${esc(p.rationale)}</p>
+          ${p.decision_note?`<p><strong>Recorded review:</strong> ${esc(p.decision_note)}</p>`:""}
+          ${p.stage_error?`<p class="pcs-ci-error">${esc(p.stage_error)}</p>`:""}
+          ${validUrl?`<p><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Inspect production PR ↗</a></p>`:""}
+          ${p.approved_head_sha?`<p class="tiny"><strong>Approved exact SHA:</strong> <code>${esc(p.approved_head_sha)}</code></p>`:""}
+          ${p.merge_sha?`<p class="tiny"><strong>Merged commit:</strong> <code>${esc(p.merge_sha)}</code></p>`:""}
+          <p class="pcs-ci-state" id="promotionStatus-${esc(p.id)}" role="status" aria-live="polite">
+            ${inspectable?"CI is not assumed to pass. Check the latest exact-commit receipt.":stageable?"Stage this case before CI can run.":"Promotion decision recorded."}
+          </p>
+          <div class="actions">
+            ${inspectable?`<button type="button" class="button secondary" data-promotion-checks="${esc(p.id)}">Check fresh CI</button>`:""}
+            ${stageable&&data.can_manage?`<button type="button" class="button secondary" data-promotion-stage="${esc(p.id)}">Stage / retry PR</button>`:""}
+            ${p.state==="staged"&&data.can_manage?`<button type="button" class="button primary" data-promotion-approve="${esc(p.id)}">Approve tested change</button>
+              <button type="button" class="button secondary" data-promotion-needs_changes="${esc(p.id)}">Request improvements</button>
+              <button type="button" class="button secondary" data-promotion-reject="${esc(p.id)}">Reject</button>`:""}
+            ${p.state==="approved"&&data.can_manage?`<button type="button" class="button primary" data-promotion-merge="${esc(p.id)}">Integrate into production</button>`:""}
+          </div>
+        </article>`;
+      }).join("")||'<div class="commons-empty"><strong>No promoted source changes yet.</strong><span>Each case must originate in a reviewed GitHub archive and pass new tests.</span></div>';
+      all("[data-promotion-checks]",queue).forEach(button=>button.addEventListener("click",()=>promotionAction(button.dataset.promotionChecks,"checks")));
+      all("[data-promotion-stage]",queue).forEach(button=>button.addEventListener("click",()=>promotionAction(button.dataset.promotionStage,"stage")));
+      for(const action of ["approve","needs_changes","reject","merge"]){
+        all("[data-promotion-"+action+"]",queue).forEach(button=>button.addEventListener("click",()=>promotionNoteAction(button.getAttribute("data-promotion-"+action),action)));
+      }
+    }catch(e){
+      status.textContent="Promotion dashboard unavailable: "+e.message;
+      queue.replaceChildren();
+    }
+  }
+
+  $("#promotionSource")?.addEventListener("change",event=>{
+    const candidate=promotionCandidates.find(x=>x.submission_id===event.currentTarget.value);
+    const names=candidate?.filenames?String(candidate.filenames).split(" | "):[];
+    $("#promotionSourceDetails").textContent=candidate
+      ?`Source: ${candidate.repo}. Reviewed contributor: ${candidate.contributor}. Exact source files: ${names.join(", ")}. Reviewer note: ${candidate.review_note||"Not provided."}`
+      :"Choose a previously accepted and archived submission.";
+    $("#promotionFileMappings").value=names.map(n=>n+" => ").join("\n");
+  });
+  $("#promotionCreateForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(!currentAdmin?.is_owner)return;
+    const form=event.currentTarget,message=$("#promotionCreateMessage");
+    const original=String(form.elements.mappings.value).trim().split("\n").map(x=>x.trim()).filter(Boolean);
+    const mappings=[];
+    for(const row of original){
+      const match=row.match(/^([^=]+)=>\s*(.+)$/);
+      if(!match){message.textContent="Map each uploaded file with: filename => specific/production/path.ext";return;}
+      mappings.push({filename:match[1].trim(),path:match[2].trim()});
+    }
+    const body={submission_id:form.elements.submission_id.value,
+      mappings,rationale:form.elements.rationale.value.trim()};
+    if(!body.submission_id||body.rationale.length<40){message.textContent="Choose an eligible source and provide a detailed rationale.";return;}
+    const button=form.querySelector('[type="submit"]');button.disabled=true;
+    message.textContent="Binding archive bytes, opening an isolated production PR…";
+    try{
+      const result=await api("/api/admin/promotions",{method:"POST",body});
+      message.textContent=result.message||"Promotion recorded.";
+      form.reset();await loadPromotions();
+    }catch(e){message.textContent=e.message;}
+    finally{button.disabled=false;}
+  });
+  $("#refreshPromotions")?.addEventListener("click",loadPromotions);
+  $("#promotionDecisionCancel")?.addEventListener("click",()=>$("#promotionDecisionDialog").close());
+  $("#promotionDecisionForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const {id,action}=promotionPendingDecision||{};
+    const note=$("#promotionDecisionNote").value.trim();
+    if(!id||note.length<40){$("#promotionDecisionStatus").textContent="Write a reason of at least 40 characters.";return;}
+    const btn=$("#promotionDecisionConfirm");btn.disabled=true;
+    $("#promotionDecisionStatus").textContent="Rechecking exact source, current PR and required CI…";
+    const endpoint=action==="merge"?"merge":"decision";
+    const body=action==="merge"?{reason:note}:{decision:action,note};
+    const ok=await promotionAction(id,endpoint,body);
+    btn.disabled=false;
+    if(ok)$("#promotionDecisionDialog").close();
+    else $("#promotionDecisionStatus").textContent="Operation was blocked. Inspect the promotion card for the exact reason.";
+  });
+
   async function governanceChange(user,kind){
     if(!currentAdmin?.is_owner)return alert("Founder/Owner authority required.");
     let body={};
@@ -753,6 +904,7 @@
       renderSkills(data.skill_reviews||[]);
       renderSubmissions(data.submissions||[]);
       renderUsers(data.users||[],data.verified_skills||[]);
+      await loadPromotions();
       await reloadAuditFeeds();
     }catch(e){
       $("#adminDashboard").hidden=true;$("#adminUnavailable").hidden=false;
