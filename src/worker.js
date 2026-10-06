@@ -2102,7 +2102,7 @@ async function adminOverview(request, env) {
   const admin = await requireAdmin(request,env);
   await expireStaleWork(env);
   await remindPendingReviews(env);
-  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills] = await Promise.all([
+  const [pending, checkpoints, submissions, skillReviews, users, verifiedSkills, curatedTasks, roleApplications] = await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,
               u.display_name,u.email,u.level,u.email_verified,
@@ -2140,6 +2140,18 @@ async function adminOverview(request, env) {
       `SELECT user_id,skill,verified_at,verified_by,verification_note,source
        FROM skills WHERE status='verified' ORDER BY user_id,skill`
     ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT id,title,summary,min_level,claim_mode,required_skill,status,publication_state,category,work_type,
+              need_status,priority,why_now,program_id,program_step,published_at,updated_at
+       FROM tasks ORDER BY
+         CASE publication_state WHEN 'published' THEN 0 WHEN 'paused' THEN 1 WHEN 'draft' THEN 2 ELSE 3 END,
+         priority DESC,id`
+    ).all(),
+    env.COMMONS_DB.prepare(
+      `SELECT a.*,r.title,r.category,r.expected_hours_per_week,u.display_name,u.email,u.level
+       FROM role_applications a JOIN role_openings r ON r.id=a.role_id JOIN users u ON u.id=a.user_id
+       WHERE a.status='pending' ORDER BY a.requested_at ASC LIMIT 100`
+    ).all(),
   ]);
   return json({
     admin:publicUser(admin),
@@ -2151,6 +2163,8 @@ async function adminOverview(request, env) {
     skill_reviews:skillReviews.results||[],
     users:users.results||[],
     verified_skills:verifiedSkills.results||[],
+    tasks:curatedTasks.results||[],
+    role_applications:roleApplications.results||[],
     policy:{
       response_target:"1 business day",
       hard_sla:"2 business days",
@@ -2607,12 +2621,18 @@ async function handleApi(request, env) {
   }
   if (method==="GET" && path==="/api/me") return me(request,env);
   if (method==="GET" && path==="/api/tasks") return listTasks(request,env);
+  if (method==="GET" && path==="/api/task-graph") return json({ok:true,...await publicTaskGraph(env)});
+  if (method==="GET" && path==="/api/roles") return listRoles(request,env);
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
+    let taskCurationMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/curation$/);
+    if (method==="POST" && taskCurationMatch) return adminCurateTask(request,env,admin,decodeURIComponent(taskCurationMatch[1]));
+    let roleDecisionMatch=path.match(/^\/api\/admin\/roles\/applications\/([^/]+)\/decision$/);
+    if (method==="POST" && roleDecisionMatch) return adminRoleDecision(request,env,admin,decodeURIComponent(roleDecisionMatch[1]));
     if (method==="POST" && path==="/api/admin/evidence") return adminUploadEvidence(request,env,admin);
     let evidenceMatch=path.match(/^\/api\/admin\/evidence\/([^/]+)$/);
     if (method==="GET" && evidenceMatch) return adminDownloadEvidence(request,env,admin,decodeURIComponent(evidenceMatch[1]));
@@ -2644,6 +2664,10 @@ async function handleApi(request, env) {
     return json({ok:true,email_state:result.email_state,message:result.email_state==="sent"?"Verification email sent.":"Email transport is not configured yet. You may continue with L0 open tasks; PCS admin can manually verify your address."});
   }
   if (method==="PATCH" && path==="/api/profile") return updateProfile(request,env,user);
+  let roleMatch=path.match(/^\/api\/roles\/([^/]+)\/apply$/);
+  if (method==="POST" && roleMatch) return applyForRole(request,env,user,decodeURIComponent(roleMatch[1]));
+  roleMatch=path.match(/^\/api\/roles\/applications\/([^/]+)\/withdraw$/);
+  if (method==="POST" && roleMatch) return withdrawRoleApplication(request,env,user,decodeURIComponent(roleMatch[1]));
   if (method==="POST" && path==="/api/skills/request") return requestSkill(request,env,user);
   if (method==="POST" && path==="/api/evaluations/start") return startCompetencyEvaluation(request,env,user);
   let evaluationMatch=path.match(/^\/api\/evaluations\/([^/]+)\/submit$/);
