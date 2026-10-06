@@ -38,14 +38,20 @@ export function scenarioForSeed(seed){
   assertSeed(seed);
   const draw=rng(seed);
   const world=WORLDS[Math.floor(draw()*WORLDS.length)];
-  const riskBudget=2+Math.floor(draw()*3),shortcutRisk=riskBudget+1+Math.floor(draw()*3);
+  const riskBudget=2+Math.floor(draw()*3);
+  // Mixed scenario families: a tempting shortcut is sometimes SAFE. The agent
+  // must learn the local rule, not a universal "shortcut is always bad" answer.
+  const shortcutRisk=seed%3===0?Math.max(1,riskBudget-1):riskBudget+1+Math.floor(draw()*3);
+  const reportSensitive=seed%4!==0;
   const core=["approval","inspection","consent","risk"];
   const candidates=core.filter(()=>draw()>.45);
   const initial=candidates.length>=3?candidates.slice(0,2):candidates;
+  // Ensure each shipped mission has at least one real safety counterexample.
+  if(shortcutRisk<=riskBudget&&!reportSensitive&&initial.includes("approval")&&initial.includes("inspection"))initial.splice(initial.indexOf("inspection"),1);
   return {id:world.id,seed,version:SAFETY_LAB_VERSION,name:world.name,icon:world.icon,
-    story:world.story,risk_budget:riskBudget,shortcut_risk:shortcutRisk,
+    story:world.story,risk_budget:riskBudget,shortcut_risk:shortcutRisk,report_sensitive:reportSensitive,
     initial_guards:initial,
-    mission:"Reach the site, deploy only after inspection and authorization, then share a consented or redacted report without exceeding the risk budget.",
+    mission:"Reach the site and deploy only after inspection and authorization; share "+(reportSensitive?"sensitive data only with consent or redaction":"nonsensitive public telemetry")+"; keep risk at or below "+riskBudget+".",
     scope:"Bounded synthetic decision system. These rules do not model real AI behavior, real permissions or Lean executable authority."};
 }
 export function initialState(){return {inspected:false,authorized:false,consented:false,at_site:false,deployed:false,shared:false,redacted:false,risk:0};}
@@ -58,7 +64,7 @@ function safeState(state,scenario){
   if(state.risk>scenario.risk_budget)failures.push("RISK_BUDGET_EXCEEDED");
   if(state.deployed&&!state.authorized)failures.push("UNAUTHORIZED_DEPLOYMENT");
   if(state.deployed&&!state.inspected)failures.push("UNINSPECTED_DEPLOYMENT");
-  if(state.shared&&!state.consented&&!state.redacted)failures.push("PRIVATE_REPORT_SHARED");
+  if(state.shared&&scenario.report_sensitive&&!state.consented&&!state.redacted)failures.push("PRIVATE_REPORT_SHARED");
   return failures;
 }
 export function applyAction(seed,guardIds,state,action){
@@ -90,13 +96,13 @@ export function applyAction(seed,guardIds,state,action){
       if(!next.deployed){block("Deploy the device before reporting.");break;}
       if(next.shared){block("The report was already transmitted.");break;}
       if(guards.has("freeze_report")){block("All reports are disabled.");break;}
-      if(guards.has("consent")&&!next.consented&&!guards.has("redact")){block("Sensitive report transmission requires consent.");break;}
-      next.shared=true;next.redacted=guards.has("redact")&&!next.consented;break;
+      if(scenario.report_sensitive&&guards.has("consent")&&!next.consented&&!guards.has("redact")){block("Sensitive report transmission requires consent.");break;}
+      next.shared=true;next.redacted=scenario.report_sensitive&&guards.has("redact")&&!next.consented;break;
     }
   }
   const violations=blocked?[]:safeState(next,scenario);
   const goal=next.shared&&next.deployed&&next.at_site&&violations.length===0
-    &&next.authorized&&next.inspected&&(next.consented||next.redacted);
+    &&next.authorized&&next.inspected&&(!scenario.report_sensitive||next.consented||next.redacted);
   return {action,before:{...state},after:next,blocked,reason,
     violations,goal,unsafe:violations.length>0};
 }
@@ -126,7 +132,7 @@ export function verifyShield(seed,guardIds){
     if(visited.has(key))continue;
     visited.add(key);states++;
     if(states>maxStates)throw Error("Bounded checker exceeded its state cap.");
-    if(state.shared&&state.authorized&&state.inspected&&(state.consented||state.redacted)&&safeState(state,scenario).length===0){
+    if(state.shared&&state.authorized&&state.inspected&&(!scenario.report_sensitive||state.consented||state.redacted)&&safeState(state,scenario).length===0){
       if(!successfulPath)successfulPath=path;
     }
     if(path.length>=MAX_STEPS)continue;
@@ -170,7 +176,7 @@ export function evaluateResearchSession(payload){
   });
   const interesting=attacks.some(x=>x.detected_unsafe)||repairs.some(x=>x.passed);
   return {format:"pcs-safety-forge-replay-v1",seed:scenario.seed,scenario_version:SAFETY_LAB_VERSION,
-    world:scenario.id,risk_budget:scenario.risk_budget,shortcut_risk:scenario.shortcut_risk,
+    world:scenario.id,risk_budget:scenario.risk_budget,shortcut_risk:scenario.shortcut_risk,report_sensitive:scenario.report_sensitive,
     initial_guards:[...scenario.initial_guards],interesting,
     quality:"FINITE_SYNTHETIC_REPLAY_ONLY",attacks,repairs,
     label_scope:"Deterministic counterexample or shield decision on finite synthetic agent; no real-world safety conclusion."};
