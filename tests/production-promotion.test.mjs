@@ -142,7 +142,7 @@ test("source modification, PR scope drift, or stale main invalidates exact-bound
     try{
       const {promo,files}=await input();
       // A previously staged PR would have a separately recorded baseline.
-      Object.assign(promo,{base_sha:baseSha,branch:`pcs/promote/${id}/r${attempt}`,pr_number:10});
+      Object.assign(promo,{base_sha:baseSha,branch:`pcs/promote/${id}/r1`,pr_number:10});
       if(options.changedSource||options.changeMain){
         await assert.rejects(()=>verifyPromotion(env,promo,files));
       }else{
