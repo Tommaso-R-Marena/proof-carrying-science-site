@@ -3541,13 +3541,26 @@ async function eraseProofQuestAttempts(env,user){
   return json({ok:true,deleted:Number(removed.meta?.changes||0),
     message:"Your personally linked Proof Quest research entries have been deleted from the active database; existing deidentified exports or backups may have their own retention."});
 }
-async function exportProofQuestDataset(env,admin){
+async function exportProofQuestDataset(request,env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can export voluntary training examples.","owner_required");
-  const rows=await env.COMMONS_DB.prepare(
-    `SELECT puzzle_id,puzzle_version,ordering_json,hints_used,score,correct_constraints,
+  const cursor=String(new URL(request.url).searchParams.get("after")||"");
+  if(cursor && !/^[0-9a-f-]{36}$/.test(cursor))throw new ApiError(400,"Invalid export cursor.","invalid_research_cursor");
+  let cursorDate=null;
+  if(cursor){
+    const last=await env.COMMONS_DB.prepare("SELECT created_at FROM proof_order_research_attempts WHERE id=?").bind(cursor).first();
+    if(!last)throw new ApiError(400,"Export cursor no longer exists; restart the export.","expired_research_cursor");
+    cursorDate=String(last.created_at);
+  }
+  const where=cursorDate?"WHERE (created_at>? OR (created_at=? AND id>?))":"";
+  const params=cursorDate?[cursorDate,cursorDate,cursor]:[];
+  const result=await env.COMMONS_DB.prepare(
+    `SELECT id,puzzle_id,puzzle_version,ordering_json,hints_used,score,correct_constraints,
       total_constraints,valid_order,created_at
-      FROM proof_order_research_attempts ORDER BY created_at ASC LIMIT 500`
-  ).all();
+      FROM proof_order_research_attempts ${where}
+      ORDER BY created_at ASC,id ASC LIMIT 201`
+  ).bind(...params).all();
+  const fetched=result.results||[];
+  const rows=fetched.slice(0,200);
   return json({
     format:"pcs-proof-order-optin-research-dataset-v1",
     provenance:"Human-entered choices on synthetic deterministic dependency puzzles, opt-in verified adult account only.",
@@ -3556,9 +3569,10 @@ async function exportProofQuestDataset(env,admin){
     limitations:["Self-declared age, not independently identity-verified.",
       "Adversarial or low-quality ordering sequences may be present.",
       "Correct puzzle orders are synthetic dependency constraints, not Lean tactic trajectories.",
-      "Capped to first 500 examples; paginate in a separate audited release before large-scale use."],
-    count:(rows.results||[]).length,
-    examples:(rows.results||[]).map(r=>({
+      "Keep puzzle families separate between training and held-out evaluation to prevent leakage."],
+    count:rows.length,
+    next_cursor:fetched.length>200?rows[rows.length-1].id:null,
+    examples:rows.map(r=>({
       puzzle_id:r.puzzle_id,puzzle_version:r.puzzle_version,
       order:JSON.parse(r.ordering_json),hints_used:Number(r.hints_used),
       score:Number(r.score),constraints_satisfied:Number(r.correct_constraints),
@@ -3714,7 +3728,7 @@ async function handleApi(request, env) {
     const admin=await requireAdmin(request,env);
     if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
-    if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(env,admin);
+    if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
