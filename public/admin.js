@@ -358,10 +358,10 @@
       needs_changes:"Request improvements. This existing artifact stays unchanged; the contributor must provide a new accepted, archived submission for a revised promotion.",
       reject:"Reject the proposed production source change with a concrete rationale.",
       merge:"Final production integration. The server will recheck the approved SHA, exact archived bytes, PR file inventory, current main baseline and fresh CI.",
-      supersede:"Close this obsolete production PR, revoke its old approval, and make the accepted archived source eligible for a new PR against current main. The original promotion remains in the audit archive."
+      supersede:"Close the obsolete PR, invalidate its old approval, and automatically stage the same accepted archive on a new branch and fresh main baseline. Every attempt needs new CI and new Owner approval. Previous attempts remain in the audit log."
     };
     $("#promotionDecisionTitle").textContent={
-      approve:"Approve production promotion",needs_changes:"Request changes",reject:"Reject promotion",merge:"Merge verified production PR",supersede:"Supersede stale promotion PR"
+      approve:"Approve production promotion",needs_changes:"Request changes",reject:"Reject promotion",merge:"Merge verified production PR",supersede:"Restage on fresh main"
     }[action];
     $("#promotionDecisionContext").textContent=descriptions[action];
     $("#promotionDecisionNote").value="";
@@ -435,7 +435,7 @@
               <button type="button" class="button secondary" data-promotion-needs_changes="${esc(p.id)}">Request improvements</button>
               <button type="button" class="button secondary" data-promotion-reject="${esc(p.id)}">Reject</button>`:""}
             ${p.state==="approved"&&data.can_manage?`<button type="button" class="button primary" data-promotion-merge="${esc(p.id)}">Integrate into production</button>`:""}
-            ${["requested","stage_error","staged","approved"].includes(p.state)&&data.can_manage?`<button type="button" class="button secondary" data-promotion-supersede="${esc(p.id)}">Supersede / new baseline</button>`:""}
+            ${["requested","stage_error","staged","approved"].includes(p.state)&&data.can_manage?`<button type="button" class="button secondary" data-promotion-supersede="${esc(p.id)}">Close old PR & restage</button>`:""}
           </div>
         </article>`;
       }).join("")||'<div class="commons-empty"><strong>No promoted source changes yet.</strong><span>Each case must originate in a reviewed GitHub archive and pass new tests.</span></div>';
