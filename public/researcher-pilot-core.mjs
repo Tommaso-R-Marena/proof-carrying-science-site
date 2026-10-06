@@ -89,6 +89,7 @@ export function emailSummary(value) {
     plan.evidence_reference ? "Public, non-sensitive evidence reference: "+plan.evidence_reference : "",
     "",
     "This is a request for independent evaluation, not a statement of PCS verification.",
-    "Please advise on a bounded pilot and any appropriate private handling of further materials."
+    "Please advise on a bounded pilot and any appropriate private handling of further materials.",
+    "I will share only non-sensitive information by email and agree on a separate approved channel for confidential material."
   ].filter((s,i,a)=>!(s===""&&a[i-1]==="")).join("\n");
 }
