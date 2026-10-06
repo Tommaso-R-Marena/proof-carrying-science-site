@@ -63,6 +63,7 @@ jobs:
           npm run test:preview
           npm run test:pilots
           npm run test:quest
+          npm run test:catalog
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Run defensive security campaign
