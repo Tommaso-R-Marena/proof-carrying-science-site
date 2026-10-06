@@ -33,7 +33,8 @@ jobs:
           node --check public/site.js
           node --check public/commons.js
           node --check public/account.js
-          node --check public/admin-login.js\n          node --check public/admin.js
+          node --check public/admin-login.js
+          node --check public/admin.js
           node --check src/worker.js
           node --check public/project-builder.js
           node --check public/guided-submission.js
@@ -44,6 +45,8 @@ jobs:
           node --check public/validation-registry.js
       - name: Validate deployable static site
         run: python scripts/check_site.py
+      - name: Run defensive security campaign
+        run: python scripts/security_campaign.py --static
       - name: Enforce zero-billing Cloudflare posture
         run: python scripts/check_free_infrastructure.py
       - name: Install pinned Wrangler
