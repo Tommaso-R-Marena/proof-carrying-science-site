@@ -36,3 +36,22 @@ test("full integrity verification is not repeated for every pagination click",()
   assert.match(js,/loadAuditFeed\("all",\{verify:true\}\)/);
   assert.match(js,/kind==="approvals"\?"5":kind==="admin"\?"10"/);
 });
+
+test("owner research storage summary has no public dataset or participant identifiers",()=>{
+  const worker=readFileSync(new URL("../src/worker.js",import.meta.url),"utf8");
+  const html=readFileSync(new URL("../public/admin.html",import.meta.url),"utf8");
+  assert.match(worker,/async function adminArenaStorage\(env,admin\)/);
+  assert.match(worker,/if\(!isOwner\(admin\)\)/);
+  assert.match(worker,/\/api\/admin\/arena\/storage/);
+  assert.match(worker,/LENGTH\(CAST\(verified_replay_json AS BLOB\)\)/);
+  assert.match(html,/id="adminResearchStorageRefresh"/);
+});
+test("large Proof Quest exports use cursor paging and never include participant IDs",()=>{
+  const worker=readFileSync(new URL("../src/worker.js",import.meta.url),"utf8");
+  const admin=readFileSync(new URL("../public/admin.js",import.meta.url),"utf8");
+  assert.match(worker,/ORDER BY created_at ASC,id ASC LIMIT 201/);
+  assert.match(worker,/next_cursor:fetched.length>200/);
+  assert.match(admin,/seen\.has\(page\.next_cursor\)/);
+  assert.match(admin,/examples\.push\(\.\.\.page\.examples\)/);
+  assert.doesNotMatch(worker,/Capped to first 500 examples/);
+});
