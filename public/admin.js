@@ -151,22 +151,50 @@
     catch(e){alert(e.message);}
   }
 
-  async function setLevel(userId,current){
-    const raw=prompt(`New verified technical level for this contributor (0–6). Current: L${current}. L7 is reserved for the unique Founder/Owner and cannot be assigned.`);
-    if(raw===null)return;
-    const level=Number(raw);
-    const note=prompt("Give the evidence-based reason for this level change.");
-    if(!note)return;
-    let override=false;
-    try{await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note,override}});}
-    catch(e){
-      const overrideCodes=new Set(["verified_skill_required","l2_work_required","l3_work_required","l4_review_required","l5_specialist_required","l6_override_required"]);
-      if(overrideCodes.has(e.code)&&currentAdmin?.is_owner&&confirm(e.message+"\n\nUse an explicit Founder/Owner override? This is audited and should be used only when the evidence is equivalent to the ordinary gate.")){
-        override=true;
-        await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{method:"POST",body:{level,note:note+" [FOUNDER CALIBRATION OVERRIDE]",override}});
-      } else {alert(e.message);return;}
-    }
-    await load();
+  async function setLevel(userId,current,userName="this contributor"){
+    const result=await openAdminAction({
+      title:"Change technical level",
+      description:`${userName} is currently L${current}. Choose the new verified technical level and record the evidence-based reason.`,
+      confirmLabel:"Save level change",
+      levelField:true,
+      currentLevel:current,
+      allowOverride:Boolean(currentAdmin?.is_owner),
+      warning:"Demotions take effect immediately. Promotions still obey PCS evidence gates unless the Founder/Owner explicitly records an override."
+    });
+    if(!result)return;
+    const level=Number(result.level);
+    if(!Number.isInteger(level)||level<0||level>6){alert("Choose a valid level from L0 through L6.");return;}
+    try{
+      const evidence_ids=await uploadActionEvidence(result.files,"level_change",userId);
+      await api(`/api/admin/users/${encodeURIComponent(userId)}/level`,{
+        method:"POST",
+        body:{level,note:result.note,override:Boolean(result.override),evidence_ids}
+      });
+      await load();
+    }catch(e){alert(e.message);}
+  }
+
+  async function revokeSkill(user,skill){
+    if(!currentAdmin?.is_owner)return alert("Only the Founder/Owner can revoke an already verified skill.");
+    const result=await openAdminAction({
+      title:`Revoke verified skill: ${skill}`,
+      description:`Remove ${skill} verification from ${user.display_name}. The contributor can later submit new evidence or retake the competency evaluation.`,
+      confirmLabel:"Revoke verified skill",
+      skill,
+      warning:"This immediately removes the verified skill. Any active reserved task that requires this exact skill will be released automatically."
+    });
+    if(!result)return;
+    try{
+      const evidence_ids=await uploadActionEvidence(result.files,"skill_revocation",user.id);
+      const response=await api(`/api/admin/users/${encodeURIComponent(user.id)}/skill/revoke`,{
+        method:"POST",
+        body:{skill,note:result.note,evidence_ids}
+      });
+      if(response.released_reservations>0){
+        alert(`Skill revoked. ${response.released_reservations} active reservation(s) requiring this skill were released.`);
+      }
+      await load();
+    }catch(e){alert(e.message);}
   }
 
   async function verifyEmail(userId){
