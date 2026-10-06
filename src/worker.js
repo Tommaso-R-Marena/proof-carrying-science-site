@@ -3008,7 +3008,7 @@ async function adminPromotionOverview(request,env,admin){
   const [promotions,candidates]=await Promise.all([
     env.COMMONS_DB.prepare(
       `SELECT p.id,p.submission_id,p.task_id,p.repo,p.source_pr_number,p.mapping_json,
-       p.rationale,p.state,p.created_at,p.staged_at,p.pr_number,p.pr_url,p.base_sha,
+       p.rationale,p.state,p.attempt,p.created_at,p.staged_at,p.pr_number,p.pr_url,p.base_sha,
        p.head_sha,p.stage_error,p.decision_at,p.decision_note,p.approved_head_sha,p.merged_at,p.merge_sha,
        u.display_name AS contributor
        FROM production_promotions p JOIN submissions s ON s.id=p.submission_id
