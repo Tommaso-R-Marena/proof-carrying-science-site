@@ -2156,7 +2156,10 @@ async function adminCurateTask(request, env, admin, taskId) {
   return json({ok:true,task_id:task.id,publication_state:publication,need_status:need,category,priority});
 }
 
-function challengeScore(counts) {
+function challengeScore(challengeId, counts) {
+  if(challengeId!=="ARENA-INV-001"){
+    throw new ApiError(503,"This challenge does not yet have an executable PCS scoring adapter.","challenge_scorer_unavailable");
+  }
   return 10*Number(counts.workflow_nodes||0)
     + 5*Number(counts.dependency_edges||0)
     + 5*Number(counts.evidence_items||0)
@@ -2291,7 +2294,7 @@ async function submitChallengeEntry(request, env, user, challengeId) {
        AND status IN ('pending','verified') LIMIT 1`
   ).bind(challenge.id,alias,user.id).first();
   if(aliasConflict)throw new ApiError(409,"That leaderboard alias is already in use for this challenge.","leaderboard_alias_taken");
-  const score=challengeScore(counts);
+  const score=challengeScore(challenge.id,counts);
   const id=crypto.randomUUID(),submittedAt=nowIso();
   await env.COMMONS_DB.prepare(
     `INSERT INTO challenge_entries(
@@ -2367,7 +2370,7 @@ async function adminChallengeDecision(request, env, admin, entryId) {
       claims:body.claims??row.claims,
     });
   }
-  const score=challengeScore(counts);
+  const score=challengeScore(challenge.id,counts);
   const status=decision==="verify"?"verified":"rejected";
   const verifiedAt=decision==="verify"?nowIso():null;
   const changed=await env.COMMONS_DB.prepare(
