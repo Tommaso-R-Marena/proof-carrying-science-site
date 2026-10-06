@@ -11,7 +11,7 @@
     "test:quest": "node --test tests/proof-quest.test.mjs",
     "test:catalog": "node --test tests/task-catalog.test.mjs",
     "test:quest:dataset": "node --test tests/proof-quest-dataset.test.mjs",
-    "test:safety:forge": "node --test tests/safety-forge.test.mjs tests/safety-forge-dataset.test.mjs",
+    "test:safety:forge": "node --test tests/safety-forge.test.mjs tests/safety-forge-dataset.test.mjs tests/safety-forge-worker.test.mjs",
     "test:safety:benchmark": "node --test tests/safety-forge-benchmark.test.mjs"
   },
   "devDependencies": {
