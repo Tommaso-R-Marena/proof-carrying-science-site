@@ -1434,7 +1434,9 @@ async function startCompetencyEvaluation(request, env, user) {
   if (verified) throw new ApiError(409, "This skill is already verified.", "skill_already_verified");
 
   if (taskId) {
-    const task = await env.COMMONS_DB.prepare("SELECT id,required_skill FROM tasks WHERE id=? AND status='open'").bind(taskId).first();
+    const task = await env.COMMONS_DB.prepare(
+      "SELECT id,required_skill FROM tasks WHERE id=? AND status='open' AND publication_state='published' AND need_status='needed'"
+    ).bind(taskId).first();
     if (!task) throw new ApiError(404, "Selected task is not open.", "task_not_found");
     if (task.required_skill && task.required_skill !== skill) {
       throw new ApiError(400, "This evaluation does not match the selected task's required skill.", "skill_task_mismatch");
@@ -1663,22 +1665,24 @@ async function listTasks(request, env) {
   await expireStaleWork(env);
   const user = await currentUser(request, env);
   const skillSet = user ? await verifiedSkills(env,user.id) : new Set();
-  const tasks = await env.COMMONS_DB.prepare(
-    "SELECT * FROM tasks WHERE status='open' ORDER BY COALESCE(program_id,''),COALESCE(program_step,999),min_level,id"
-  ).all();
-  const depRows = await env.COMMONS_DB.prepare(
-    `SELECT d.task_id,d.depends_on_task_id,d.dependency_type,d.rationale,t.title AS depends_on_title,
-            CASE WHEN EXISTS(
-              SELECT 1 FROM task_requests r WHERE r.task_id=d.depends_on_task_id AND r.status='completed'
-            ) THEN 1 ELSE 0 END AS completed
-     FROM task_dependencies d JOIN tasks t ON t.id=d.depends_on_task_id
-     ORDER BY d.task_id,d.depends_on_task_id`
-  ).all();
-  const depsByTask=new Map();
-  for(const row of depRows.results||[]){
-    if(!depsByTask.has(row.task_id))depsByTask.set(row.task_id,[]);
-    depsByTask.get(row.task_id).push({...row,completed:Boolean(Number(row.completed))});
+  const graph=await publicTaskGraph(env);
+  const depMap=new Map();
+  const groupMap=new Map();
+  for(const edge of graph.edges){
+    if(!depMap.has(edge.task_id))depMap.set(edge.task_id,[]);
+    depMap.get(edge.task_id).push(edge);
   }
+  for(const group of graph.groups){
+    if(!groupMap.has(group.task_id))groupMap.set(group.task_id,[]);
+    groupMap.get(group.task_id).push(group);
+  }
+
+  const tasks = await env.COMMONS_DB.prepare(
+    `SELECT * FROM tasks
+     WHERE status='open' AND publication_state='published' AND need_status='needed'
+     ORDER BY priority DESC,COALESCE(program_id,''),COALESCE(program_step,999),min_level,id`
+  ).all();
+
   let requestMap = new Map();
   if (user) {
     const own = await env.COMMONS_DB.prepare(
@@ -1686,14 +1690,19 @@ async function listTasks(request, env) {
     ).bind(user.id).all();
     for (const row of own.results || []) if (!requestMap.has(row.task_id)) requestMap.set(row.task_id,row);
   }
+
   return json({
     user: user ? publicUser(user) : null,
     tasks: (tasks.results || []).map(task => {
-      const dependencies=depsByTask.get(task.id)||[];
+      const dependencies=depMap.get(task.id)||[];
+      const dependency_groups=groupMap.get(task.id)||[];
+      const dependency=dependencyState(dependencies,dependency_groups);
       return {
         ...task,
         dependencies,
-        eligibility: eligibilityFor(task,user,skillSet,dependencies),
+        dependency_groups:dependency.groups,
+        dependency_state:dependency,
+        eligibility: eligibilityFor(task,user,skillSet,dependency),
         my_request: requestMap.get(task.id) || null,
       };
     }),
@@ -1703,11 +1712,13 @@ async function listTasks(request, env) {
 async function startOrRequestTask(request, env, user, taskId) {
   await rateLimit(request, env, "task-request", 30, 60);
   const body = await readBody(request);
-  const task = await env.COMMONS_DB.prepare("SELECT * FROM tasks WHERE id=? AND status='open'").bind(taskId).first();
+  const task = await env.COMMONS_DB.prepare(
+    "SELECT * FROM tasks WHERE id=? AND status='open' AND publication_state='published' AND need_status='needed'"
+  ).bind(taskId).first();
   if (!task) throw new ApiError(404,"Task not found or not open.","task_not_found");
   const skills = await verifiedSkills(env,user.id);
-  const dependencies=await taskDependencies(env,task.id);
-  const eligibility = eligibilityFor(task,user,skills,dependencies);
+  const dependencyData=await taskDependencies(env,task.id);
+  const eligibility = eligibilityFor(task,user,skills,dependencyData.state);
   if (!eligibility.can_start && !eligibility.can_request) throw new ApiError(403,eligibility.reason,eligibility.state);
 
   const existing = await env.COMMONS_DB.prepare(
