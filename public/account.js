@@ -266,11 +266,21 @@
     $("#accountName").textContent=user.display_name;
     $("#accountEmail").textContent=user.email;
     $("#accountRoleChip").textContent=user.is_owner ? "FOUNDER / OWNER" : user.role.toUpperCase();
-    $("#adminDashboardLink").hidden=user.role!=="admin";
+    $("#adminDashboardLink").hidden=!(user.role==="admin"||user.is_owner);
     $("#emailVerifyChip").textContent=user.email_verified ? "EMAIL VERIFIED" : "EMAIL UNVERIFIED";
     $("#emailVerifyChip").className="commons-chip "+(user.email_verified?"volunteer":"planned");
     $("#resendVerification").hidden=user.email_verified;
     $("#levelAccessSummary").innerHTML=levelCopy(user.level,Boolean(user.is_owner));
+    const guide=$("#accountLevelGuide");
+    if(guide){
+      const level=Number(user.level)||0;
+      guide.textContent=level<2
+        ? "L"+level+": Begin with open, non-exclusive work. Explore roles and Arena, or request a competency review to qualify for harder tasks."
+        : level<4
+          ? "L"+level+": Explore published tasks you qualify for, including paid work when available. Individual tasks still check your verified skills and eligibility."
+          : "L"+level+": Explore specialist work and review-related opportunities. Reviewer authority is separately approved; your level alone does not grant administrative access.";
+    }
+
     const deleteForm=$("#deleteAccountForm");
     const deletePanel=deleteForm?.closest(".danger-panel");
     if(deleteForm&&deletePanel){
