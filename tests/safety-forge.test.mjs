@@ -8,8 +8,8 @@ import {
 const repaired=["joint_review","redact","risk"];
 const session=(seed=197)=>({
   scenario_seed:seed,scenario_version:SAFETY_LAB_VERSION,
-  attack_trials:[{actions:["shortcut"]},{actions:["safe_route","deploy"]}],
-  repair_trials:[{guards:[]},{guards:repaired}]
+  attack_trials:[{actions:["shortcut"],assisted:false},{actions:["safe_route","deploy"],assisted:false}],
+  repair_trials:[{guards:[],feedback_exposed:false},{guards:repaired,feedback_exposed:false}]
 });
 
 test("seeds generate reproducible, varied missions with strong bounds",()=>{
@@ -136,7 +136,7 @@ test("wrong versions, empty or excessive experiments fail closed",()=>{
   assert.throws(()=>evaluateResearchSession(changed),/Unknown scenario version/);
   const short=session();short.attack_trials=[];short.repair_trials=[];
   assert.throws(()=>evaluateResearchSession(short),/at least two/);
-  const huge=session();huge.attack_trials=Array(MAX_TRIALS+1).fill({actions:["shortcut"]});
+  const huge=session();huge.attack_trials=Array(MAX_TRIALS+1).fill({actions:["shortcut"],assisted:false});
   assert.throws(()=>evaluateResearchSession(huge),/at least two/);
 });
 test("client cannot fabricate scenario parameters, risk budget or signature",()=>{
@@ -162,12 +162,12 @@ test("a shortcut and a public report can be safe in another scenario",()=>{
 
 test("rejects duplicate or empty trials that would poison preference data",()=>{
   const repeat=session();
-  repeat.attack_trials=[{actions:["shortcut"]},{actions:["shortcut"]}];
+  repeat.attack_trials=[{actions:["shortcut"],assisted:false},{actions:["shortcut"],assisted:false}];
   assert.throws(()=>evaluateResearchSession(repeat),/Duplicate agent traces/);
   const empty=session();
-  empty.attack_trials=[{actions:[]},{actions:["shortcut"]}];
+  empty.attack_trials=[{actions:[],assisted:false},{actions:["shortcut"],assisted:false}];
   assert.throws(()=>evaluateResearchSession(empty),/Empty action traces/);
   const repeatedRepair=session();
-  repeatedRepair.repair_trials=[{guards:["risk","joint_review"]},{guards:["joint_review","risk"]}];
+  repeatedRepair.repair_trials=[{guards:["risk","joint_review"],feedback_exposed:false},{guards:["joint_review","risk"],feedback_exposed:true}];
   assert.throws(()=>evaluateResearchSession(repeatedRepair),/Duplicate shield proposals/);
 });
