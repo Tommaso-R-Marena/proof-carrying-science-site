@@ -1,3 +1,9 @@
+import {
+  integrationRepository, validateContributorFiles, hashSubmissionText,
+  githubConfigured, createSubmissionPullRequest, readSubmissionChecks,
+  mergeStagedPullRequest
+} from "./contribution-github.js";
+
 const SESSION_COOKIE = "pcs_commons_session";
 const SESSION_DAYS = 30;
 const ADMIN_SESSION_COOKIE = "pcs_admin_session";
@@ -1381,10 +1387,10 @@ async function verifyEmail(request, env) {
 async function me(request, env) {
   const user = await currentUser(request, env);
   if (!user) return json({ authenticated: false, email_transport: emailTransportConfigured(env) });
-  const [skills, requests, notifications, evaluations] = await Promise.all([
+  const [skills, requests, notifications, evaluations, mySubmissions] = await Promise.all([
     env.COMMONS_DB.prepare("SELECT skill,status,evidence,verification_note,requested_at,verified_at,review_due_at,source,evaluation_id FROM skills WHERE user_id=? ORDER BY skill").bind(user.id).all(),
     env.COMMONS_DB.prepare(
-      `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label
+      `SELECT r.*,t.title,t.min_level,t.claim_mode,t.required_skill,t.compensation_label,t.category AS task_category,t.integration_target,t.expected_minutes
        FROM task_requests r JOIN tasks t ON t.id=r.task_id
        WHERE r.user_id=? ORDER BY r.requested_at DESC LIMIT 50`
     ).bind(user.id).all(),
@@ -1394,12 +1400,16 @@ async function me(request, env) {
     env.COMMONS_DB.prepare(
       "SELECT id,skill,task_id,created_at,expires_at,submitted_at,score,max_score,auto_pass,status FROM competency_evaluations WHERE user_id=? ORDER BY created_at DESC LIMIT 20"
     ).bind(user.id).all(),
+    env.COMMONS_DB.prepare(
+      "SELECT id,request_id,status,review_note,submitted_at,github_stage_state,github_pr_url,github_repo,github_branch,github_pr_number FROM submissions WHERE user_id=? ORDER BY submitted_at DESC LIMIT 50"
+    ).bind(user.id).all(),
   ]);
   return json({
     authenticated: true,
     user: publicUser(user),
     skills: skills.results || [],
     requests: requests.results || [],
+    submissions: mySubmissions.results || [],
     notifications: notifications.results || [],
     evaluations: evaluations.results || [],
     email_transport: emailTransportConfigured(env),
@@ -1871,7 +1881,7 @@ async function submitCheckpoint(request, env, user, requestId) {
 async function submitWork(request, env, user, requestId) {
   const body = await readBody(request);
   const row = await env.COMMONS_DB.prepare(
-    `SELECT r.*,t.title,t.id AS task_id,t.min_level,t.claim_mode,t.required_skill,t.calibrates_skill FROM task_requests r JOIN tasks t ON t.id=r.task_id
+    `SELECT r.*,t.title,t.id AS task_id,t.min_level,t.claim_mode,t.required_skill,t.calibrates_skill,t.category,t.integration_target FROM task_requests r JOIN tasks t ON t.id=r.task_id
      WHERE r.id=? AND r.user_id=?`
   ).bind(requestId,user.id).first();
   if (!row || row.status!=="approved") throw new ApiError(404,"Active approved work record not found.","request_not_active");
@@ -1901,12 +1911,53 @@ async function submitWork(request, env, user, requestId) {
   if (aiUsed && verification.length < 150) throw new ApiError(400,"AI-assisted work must explain how you independently checked the output.","ai_verification_required");
   if (aiUsed && understanding.length < 180) throw new ApiError(400,"AI-assisted work must explain what the output establishes, what it does not establish, and what assumptions remain.","ai_understanding_required");
 
+  let attachmentFiles;
+  try { attachmentFiles=validateContributorFiles(body.files); }
+  catch(e){ throw new ApiError(400,e.message,"invalid_submission_files"); }
+  const route=String(row.integration_target||"none");
+  if(route!=="none"&&!attachmentFiles.length)throw new ApiError(400,"This task requires one or more source/evidence files so PCS can stage a checkable GitHub pull request.","git_artifact_required");
+  if(route==="none"&&attachmentFiles.some(x=>/\.(lean|py|js|html|css)$/.test(x.filename))) {
+    throw new ApiError(400,"This task is not yet configured for GitHub code contributions. Ask the Owner to set its integration target.","github_route_required");
+  }
+  const evidenceKind=String(body.evidence_kind||"none");
+  const outcomeMetric=cleanText(body.outcome_metric,80)||null;
+  const outcomeCount=body.outcome_count==null||body.outcome_count===""?null:Number(body.outcome_count);
+  if(!["none","activity","outcome"].includes(evidenceKind))throw new ApiError(400,"Unknown outreach evidence type.","bad_evidence_kind");
+  if(evidenceKind==="outcome"){
+    if(!["qualified_reply","verified_click","consenting_signup","confirmed_meeting"].includes(outcomeMetric||"")
+       || !Number.isInteger(outcomeCount)||outcomeCount<1||outcomeCount>1000000
+       || !/^https:\/\//.test(artifactUrl))
+      throw new ApiError(400,"Measurable outreach outcomes need a supported metric, a positive count, and a verifiable HTTPS evidence URL.","outcome_evidence_required");
+  }
+  if(["marketing","outreach"].includes(row.category)&&evidenceKind==="none")throw new ApiError(400,"Outreach work must distinguish a verified activity from a measured outcome.","outreach_evidence_required");
+  if(evidenceKind!=="none" && !artifactUrl && !attachmentFiles.length)
+    throw new ApiError(400,"Include an evidence URL or text file so an independent reviewer can verify this contribution.","evidence_required");
+
   const id = crypto.randomUUID();
   await env.COMMONS_DB.prepare(
     `INSERT INTO submissions(
-      id,request_id,user_id,summary,artifact_url,ai_used,ai_tools,verification_note,understanding_note,submitted_at,status
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,'submitted')`
-  ).bind(id,row.id,user.id,summary,artifactUrl||null,aiUsed?1:0,aiTools||null,verification,understanding,nowIso()).run();
+      id,request_id,user_id,summary,artifact_url,ai_used,ai_tools,verification_note,understanding_note,submitted_at,status,
+      github_stage_state,evidence_kind,outcome_metric,outcome_count
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,'submitted',?,?,?,?)`
+  ).bind(id,row.id,user.id,summary,artifactUrl||null,aiUsed?1:0,aiTools||null,verification,understanding,nowIso(),route==='none'?'not_applicable':'pending',evidenceKind,outcomeMetric,outcomeCount).run();
+  for(const file of attachmentFiles){
+    const digest=await hashSubmissionText(file.content);
+    await env.COMMONS_DB.prepare(
+      "INSERT INTO submission_files(submission_id,filename,content,sha256,created_at) VALUES(?,?,?,?,?)"
+    ).bind(id,file.filename,file.content,digest,nowIso()).run();
+  }
+  let stageState=route==="none"?"not_applicable":"pending";
+  if(route!=="none"){
+    try{
+      const staged=await stagePersistedSubmission(env,id);
+      stageState=staged.state;
+    }catch(e){
+      stageState=githubConfigured(env)?"error":"not_configured";
+      await env.COMMONS_DB.prepare(
+        "UPDATE submissions SET github_stage_state=?,github_stage_error=? WHERE id=?"
+      ).bind(stageState,String(e.message||"GitHub staging failed").slice(0,400),id).run();
+    }
+  }
   await env.COMMONS_DB.prepare("UPDATE task_requests SET last_progress_at=? WHERE id=?").bind(nowIso(),row.id).run();
   await notify(env,{
     kind:"submission_admin",
@@ -1929,8 +1980,17 @@ async function submitWork(request, env, user, requestId) {
       `Admin dashboard: ${new URL(request.url).origin}/admin.html#submissions`,
     ].join("\n"),
   });
-  await audit(env,user.id,"submission_created","submission",id,{task_id:row.task_id,ai_used:aiUsed});
-  return json({ok:true,submission_id:id,message:"Submission received for independent review. AI assistance is permitted, but responsibility and verification remain with the contributor."},201);
+  await audit(env,user.id,"submission_created","submission",id,{
+    task_id:row.task_id,ai_used:aiUsed,attachments:attachmentFiles.length,github_stage_state:stageState,
+    evidence_kind:evidenceKind,outcome_metric:outcomeMetric,outcome_count:outcomeCount
+  });
+  return json({ok:true,submission_id:id,github_stage_state:stageState,
+    message:route==="none"
+      ? "Contribution and its evidence have been saved for independent review."
+      : stageState==="staged"
+        ? "GitHub pull request opened. PCS will show the CI result before integration."
+        : "Contribution saved; GitHub staging is pending administrator setup or retry. No passing CI result has been claimed."
+  },201);
 }
 
 async function withdrawRequest(request, env, user, requestId) {
@@ -2083,7 +2143,9 @@ async function adminCreateTask(request, env, admin) {
   const claimMode=String(body.claim_mode||"open");
   const requiredSkill=String(body.required_skill||"").trim()||null;
   const minLevel=Number(body.min_level??0);
-  const expectedHours=Number(body.expected_hours??1);
+  const expectedMinutes=Number(body.expected_minutes??Number(body.expected_hours??1)*60);
+  const expectedHours=Math.max(1,Math.ceil(expectedMinutes/60));
+  const integrationTarget=String(body.integration_target||"none");
   const priority=Math.max(0,Math.min(100,Math.trunc(Number(body.priority??50))));
   const compensationType=String(body.compensation_type||"volunteer");
   const compensationLabel=cleanText(body.compensation_label,120)||"Volunteer";
@@ -2096,7 +2158,8 @@ async function adminCreateTask(request, env, admin) {
   if(!categories.has(category))throw new ApiError(400,"Invalid task category.","bad_task_category");
   if(!["open","approval","invite"].includes(claimMode))throw new ApiError(400,"Invalid claim mode.","bad_claim_mode");
   if(!Number.isInteger(minLevel)||minLevel<0||minLevel>6)throw new ApiError(400,"Minimum level must be L0–L6.","bad_level");
-  if(!Number.isFinite(expectedHours)||expectedHours<1||expectedHours>80)throw new ApiError(400,"Expected hours must be between 1 and 80.","bad_hours");
+  if(!Number.isInteger(expectedMinutes)||expectedMinutes<10||expectedMinutes>4800)throw new ApiError(400,"Expected duration must be between 10 minutes and 80 hours.","bad_duration");
+  if(!["none","core","site"].includes(integrationTarget))throw new ApiError(400,"Invalid GitHub integration target.","bad_integration_target");
   if(requiredSkill&&!SKILLS.has(requiredSkill))throw new ApiError(400,"Required skill is not supported.","bad_skill");
   if(!["volunteer","bounty","review","contract"].includes(compensationType))throw new ApiError(400,"Invalid compensation type.","bad_compensation");
   if(!["open","planned","funded"].includes(fundingStatus))throw new ApiError(400,"Invalid funding status.","bad_funding_status");
@@ -2109,16 +2172,16 @@ async function adminCreateTask(request, env, admin) {
       review_sla_business_days,checkpoint_hours,reservation_hours,max_active_per_user,status,
       compensation_type,compensation_label,funding_status,created_at,updated_at,
       deliverable,verification_rule,acceptance_criteria,publication_state,category,work_type,
-      need_status,priority,why_now,success_metric
-    ) VALUES(?,?,?,?,?,?,NULL,?,2,24,72,1,'open',?,?,?,?,?,?,?,?,'draft',?,'task','needed',?,?,?)`
+      need_status,priority,why_now,success_metric,expected_minutes,integration_target
+    ) VALUES(?,?,?,?,?,?,NULL,?,2,24,72,1,'open',?,?,?,?,?,?,?,?,'draft',?,'task','needed',?,?,?,?,?)`
   ).bind(
     id,title,summary,minLevel,claimMode,requiredSkill,expectedHours,
     compensationType,compensationLabel,fundingStatus,now,now,
-    deliverable,verification,criteria,category,priority,whyNow,successMetric||null
+    deliverable,verification,criteria,category,priority,whyNow,successMetric||null,expectedMinutes,integrationTarget
   ).run();
   await audit(env,admin.id,"task_draft_created","task",id,{
     category,min_level:minLevel,claim_mode:claimMode,required_skill:requiredSkill,
-    expected_hours:expectedHours,priority,why_now:whyNow
+    expected_hours:expectedHours,expected_minutes:expectedMinutes,integration_target:integrationTarget,priority,why_now:whyNow
   });
   return json({ok:true,task_id:id,publication_state:"draft",message:"Draft task created. Review it in Marketplace publication before publishing."},201);
 }
@@ -2133,6 +2196,10 @@ async function adminCurateTask(request, env, admin, taskId) {
   const category=String(body.category||task.category||"research");
   const reason=cleanText(body.reason,2000);
   const whyNow=cleanText(body.why_now,2000)||task.why_now||"";
+  const minutesRaw=Number(body.expected_minutes??task.expected_minutes??Number(task.expected_hours)*60);
+  const integrationTarget=String(body.integration_target||task.integration_target||"none");
+  if(!Number.isInteger(minutesRaw)||minutesRaw<10||minutesRaw>4800)throw new ApiError(400,"Duration must be 10–4800 minutes.","bad_duration");
+  if(!["none","core","site"].includes(integrationTarget))throw new ApiError(400,"Invalid GitHub target.","bad_integration_target");
   const priorityRaw=Number(body.priority??task.priority??50);
   const priority=Math.max(0,Math.min(100,Number.isFinite(priorityRaw)?Math.trunc(priorityRaw):50));
   const publications=new Set(["draft","published","paused","retired"]);
@@ -2145,8 +2212,8 @@ async function adminCurateTask(request, env, admin, taskId) {
   const publishedAt=publication==="published"?(task.published_at||nowIso()):task.published_at;
   const retiredAt=publication==="retired"||need==="retired"||need==="satisfied"?nowIso():null;
   await env.COMMONS_DB.prepare(
-    `UPDATE tasks SET publication_state=?,need_status=?,category=?,priority=?,why_now=?,published_at=?,retired_at=?,updated_at=? WHERE id=?`
-  ).bind(publication,need,category,priority,whyNow,publishedAt,retiredAt,nowIso(),task.id).run();
+    `UPDATE tasks SET publication_state=?,need_status=?,category=?,priority=?,why_now=?,published_at=?,retired_at=?,expected_minutes=?,expected_hours=?,integration_target=?,updated_at=? WHERE id=?`
+  ).bind(publication,need,category,priority,whyNow,publishedAt,retiredAt,minutesRaw,Math.ceil(minutesRaw/60),integrationTarget,nowIso(),task.id).run();
   await audit(env,admin.id,"task_curated","task",task.id,{
     from:{publication_state:task.publication_state,need_status:task.need_status,category:task.category,priority:Number(task.priority||50)},
     to:{publication_state:publication,need_status:need,category,priority},
@@ -2541,7 +2608,8 @@ async function adminOverview(request, env) {
        ORDER BY r.checkpoint_due_at ASC LIMIT 100`
     ).all(),
     env.COMMONS_DB.prepare(
-      `SELECT s.*,r.task_id,t.title,t.calibrates_skill,u.display_name,u.email,u.level
+      `SELECT s.*,r.task_id,t.title,t.calibrates_skill,t.category,t.integration_target,u.display_name,u.email,u.level,
+              (SELECT COUNT(*) FROM submission_files f WHERE f.submission_id=s.id) AS file_count
        FROM submissions s JOIN task_requests r ON r.id=s.request_id JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=s.user_id
        WHERE s.status IN ('submitted','needs_changes') ORDER BY s.submitted_at ASC LIMIT 100`
     ).all(),
@@ -2769,6 +2837,112 @@ async function adminCheckpoint(request, env, admin, requestId) {
   return json({ok:true,status:"approved",reservation_expires_at:expiry});
 }
 
+async function submissionWithFiles(env, submissionId) {
+  const submission=await env.COMMONS_DB.prepare(
+    `SELECT s.*,r.task_id,t.title,t.integration_target,t.category
+     FROM submissions s JOIN task_requests r ON r.id=s.request_id
+     JOIN tasks t ON t.id=r.task_id WHERE s.id=?`
+  ).bind(submissionId).first();
+  if(!submission)throw new ApiError(404,"Submission not found.","submission_not_found");
+  const files=await env.COMMONS_DB.prepare(
+    "SELECT filename,content,sha256 FROM submission_files WHERE submission_id=? ORDER BY filename"
+  ).bind(submissionId).all();
+  return {submission,files:files.results||[]};
+}
+
+async function stagePersistedSubmission(env,submissionId) {
+  const {submission:s,files}=await submissionWithFiles(env,submissionId);
+  const target=String(s.integration_target||"none");
+  if(!integrationRepository(target))throw new ApiError(409,"This task is not configured for GitHub.","no_github_target");
+  if(!files.length)throw new ApiError(409,"Submission has no attachable source files.","no_submission_files");
+  if(s.github_stage_state==="merged")throw new ApiError(409,"This contribution was already merged.","already_merged");
+  const expectedRepo=integrationRepository(target);
+  if(s.github_pr_number && s.github_repo===expectedRepo) {
+    return {state:"staged",repo:s.github_repo,number:s.github_pr_number,url:s.github_pr_url};
+  }
+  const result=await createSubmissionPullRequest(env,{
+    target,taskId:s.task_id,submissionId:s.id,title:s.title,summary:s.summary,
+    files:files.map(f=>({filename:f.filename,content:f.content}))
+  });
+  await env.COMMONS_DB.prepare(
+    `UPDATE submissions SET github_stage_state='staged',github_stage_error=NULL,
+     github_repo=?,github_branch=?,github_pr_number=?,github_pr_url=? WHERE id=?`
+  ).bind(result.repo,result.branch,result.number,result.url,s.id).run();
+  await audit(env,s.user_id,"contribution_github_staged","submission",s.id,{
+    repo:result.repo,pr_number:result.number,branch:result.branch
+  });
+  return {state:"staged",...result};
+}
+
+async function adminStageSubmission(request,env,admin,submissionId) {
+  const {submission:s}=await submissionWithFiles(env,submissionId);
+  if(s.status!=="submitted"&&s.status!=="needs_changes")
+    throw new ApiError(409,"Only active submissions can be staged.","submission_not_active");
+  if(!githubConfigured(env))throw new ApiError(503,"GitHub integration secret PCS_GITHUB_TOKEN is not configured.","github_not_configured");
+  try {
+    const staged=await stagePersistedSubmission(env,submissionId);
+    await audit(env,admin.id,"admin_retried_github_staging","submission",submissionId,{state:staged.state});
+    return json({ok:true,...staged});
+  }catch(e){
+    await env.COMMONS_DB.prepare("UPDATE submissions SET github_stage_state='error',github_stage_error=? WHERE id=?")
+      .bind(String(e.message||"Unknown stage error").slice(0,400),submissionId).run();
+    throw new ApiError(502,e.message||"GitHub staging failed.","github_stage_failed");
+  }
+}
+
+async function adminSubmissionFiles(request,env,admin,submissionId) {
+  const {submission:s,files}=await submissionWithFiles(env,submissionId);
+  await audit(env,admin.id,"admin_inspected_submission_files","submission",submissionId,{count:files.length});
+  return json({ok:true,task_id:s.task_id,files},{headers:{"cache-control":"no-store"}});
+}
+
+async function adminSubmissionChecks(request,env,admin,submissionId) {
+  const {submission:s}=await submissionWithFiles(env,submissionId);
+  if(!s.github_pr_number) return json({ok:true,state:s.github_stage_state,
+    message:s.github_stage_error||"No GitHub PR has been opened.",verified:false});
+  try {
+    const result=await readSubmissionChecks(env,{
+      repo:s.github_repo,branch:s.github_branch,number:s.github_pr_number,
+      taskId:s.task_id,submissionId:s.id
+    });
+    return json({ok:true,...result});
+  }catch(e){
+    throw new ApiError(502,"Could not verify GitHub CI: "+String(e.message).slice(0,220),"github_check_unavailable");
+  }
+}
+
+async function adminMergeSubmission(request,env,admin,submissionId) {
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner may merge staged GitHub contributions.","owner_required");
+  const {submission:s}=await submissionWithFiles(env,submissionId);
+  if(s.status!=="accepted"||s.github_stage_state!=="staged"||!s.github_pr_number)
+    throw new ApiError(409,"Accept the submission after green CI before integrating.","merge_not_ready");
+  const body=await readBody(request);
+  const note=cleanText(body.note,1500);
+  if(note.length<20)throw new ApiError(400,"Give a final integration rationale (at least 20 characters).","merge_note_required");
+  let checked;
+  try{
+    checked=await readSubmissionChecks(env,{
+      repo:s.github_repo,branch:s.github_branch,number:s.github_pr_number,
+      taskId:s.task_id,submissionId:s.id
+    });
+  }catch(e){throw new ApiError(502,"GitHub checks cannot be verified: "+String(e.message).slice(0,180),"github_checks_missing");}
+  if(!checked.verified)throw new ApiError(409,"GitHub CI is not green; merging remains blocked.","github_ci_not_passed");
+  let merged;
+  try{
+    merged=await mergeStagedPullRequest(env,{
+      repo:s.github_repo,branch:s.github_branch,number:s.github_pr_number,
+      taskId:s.task_id,submissionId:s.id
+    },checked.head_sha);
+  }catch(e){throw new ApiError(502,String(e.message).slice(0,220),"github_merge_failed");}
+  await env.COMMONS_DB.prepare(
+    "UPDATE submissions SET github_stage_state='merged',github_stage_error=NULL WHERE id=?"
+  ).bind(s.id).run();
+  await audit(env,admin.id,"submission_github_merged","submission",s.id,{
+    repo:s.github_repo,pr_number:s.github_pr_number,merge_sha:merged.merge_sha,reason:note
+  });
+  return json({ok:true,merged:true,merge_sha:merged.merge_sha,pr_url:merged.pr_url});
+}
+
 async function adminSubmissionDecision(request, env, admin, submissionId) {
   const body=await readBody(request);
   const decision=String(body.decision||"");
@@ -2783,6 +2957,17 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
   if (!row) throw new ApiError(404,"Submission not found.","submission_not_found");
   if (!["submitted","needs_changes"].includes(row.status)) {
     throw new ApiError(409,"This submission already has a final review decision.","submission_already_decided");
+  }
+  if(decision==="accept" && row.github_stage_state!=="not_applicable"){
+    if(row.github_stage_state!=="staged")
+      throw new ApiError(409,"GitHub staging is not ready; retry staging and check CI first.","github_stage_required");
+    let check;
+    try{check=await readSubmissionChecks(env,{
+      repo:row.github_repo,branch:row.github_branch,number:row.github_pr_number,
+      taskId:row.task_id,submissionId:row.id
+    });}
+    catch(e){throw new ApiError(502,"CI verification unavailable: "+String(e.message).slice(0,160),"github_ci_unavailable");}
+    if(!check.verified)throw new ApiError(409,"Required PCS Submission Verification is not green. Ask for improvements or rerun CI.","github_ci_not_passed");
   }
   const status=decision==="accept"?"accepted":decision==="needs_changes"?"needs_changes":"rejected";
   const reviewed=await env.COMMONS_DB.prepare(
@@ -3070,6 +3255,14 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
     if (method==="POST" && path==="/api/admin/mail/test") return adminTestMail(request,env,admin);
+    let submissionFlowMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/(stage|checks|files|merge)$/);
+    if(submissionFlowMatch){
+      const id=decodeURIComponent(submissionFlowMatch[1]), action=submissionFlowMatch[2];
+      if(method==="POST"&&action==="stage")return adminStageSubmission(request,env,admin,id);
+      if(method==="GET"&&action==="checks")return adminSubmissionChecks(request,env,admin,id);
+      if(method==="GET"&&action==="files")return adminSubmissionFiles(request,env,admin,id);
+      if(method==="POST"&&action==="merge")return adminMergeSubmission(request,env,admin,id);
+    }
     if (method==="POST" && path==="/api/admin/tasks") return adminCreateTask(request,env,admin);
     let taskCurationMatch=path.match(/^\/api\/admin\/tasks\/([^/]+)\/curation$/);
     if (method==="POST" && taskCurationMatch) return adminCurateTask(request,env,admin,decodeURIComponent(taskCurationMatch[1]));
