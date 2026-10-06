@@ -2110,7 +2110,7 @@ async function adminCreateTask(request, env, admin) {
       compensation_type,compensation_label,funding_status,created_at,updated_at,
       deliverable,verification_rule,acceptance_criteria,publication_state,category,work_type,
       need_status,priority,why_now,success_metric
-    ) VALUES(?,?,?,?,?,?,NULL,?,2,24,72,1,'open',?,?,?,?,?,?,?,?,?,'draft',?,'task','needed',?,?,?)`
+    ) VALUES(?,?,?,?,?,?,NULL,?,2,24,72,1,'open',?,?,?,?,?,?,?,?,'draft',?,'task','needed',?,?,?)`
   ).bind(
     id,title,summary,minLevel,claimMode,requiredSkill,expectedHours,
     compensationType,compensationLabel,fundingStatus,now,now,
