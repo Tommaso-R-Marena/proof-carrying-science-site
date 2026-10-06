@@ -1901,7 +1901,7 @@ for rel, tokens in {
                                                                "MKT-MICRO-001", "'draft'"],
     ".github/workflows/pcs-submission.yml": ["PCS Submission Verification", "contents: read"],
     "tests/submission-github.test.mjs": ["fail", "verified", "github-actions", "stage"],
-    "docs/CONTRIBUTION_SUBMISSION_PIPELINE.md": ["PCS_GITHUB_TOKEN", "micro", "Github"]
+    "docs/CONTRIBUTION_SUBMISSION_PIPELINE.md": ["PCS_GITHUB_TOKEN", "10 or 30 minute", "Github"]
 }.items():
     p = REPO / rel
     if not p.exists():
