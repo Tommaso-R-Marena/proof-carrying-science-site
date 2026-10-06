@@ -1392,15 +1392,44 @@ async function startCompetencyEvaluation(request, env, user) {
   const id = crypto.randomUUID();
   const createdAt = nowIso();
   const expiresAt = addHoursIso(createdAt, 1);
-  await env.COMMONS_DB.prepare(
-    `INSERT INTO competency_evaluations(
-      id,user_id,skill,task_id,variant_token,challenge_json,answer_key_json,created_at,expires_at,max_score,status
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,'open')`
-  ).bind(
-    id,user.id,skill,taskId,generated.variant_token,
-    JSON.stringify(generated.challenge),JSON.stringify(generated.answer_key),
-    createdAt,expiresAt,generated.max_score
-  ).run();
+  try {
+    await env.COMMONS_DB.prepare(
+      `INSERT INTO competency_evaluations(
+        id,user_id,skill,task_id,variant_token,challenge_json,answer_key_json,created_at,expires_at,max_score,status
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,'open')`
+    ).bind(
+      id,user.id,skill,taskId,generated.variant_token,
+      JSON.stringify(generated.challenge),JSON.stringify(generated.answer_key),
+      createdAt,expiresAt,generated.max_score
+    ).run();
+  } catch (error) {
+    const message=String(error?.message||error||"");
+    if (/PCS daily evaluation attempt limit/i.test(message)) {
+      throw new ApiError(429,"You have reached the 3-attempt daily evaluation limit for this skill. You can still submit a manual application/evidence request now.","evaluation_attempt_limit");
+    }
+    if (/idx_competency_one_open_per_skill|UNIQUE constraint failed: competency_evaluations\.user_id, competency_evaluations\.skill/i.test(message)) {
+      const concurrent=await env.COMMONS_DB.prepare(
+        "SELECT id,challenge_json,expires_at,max_score,task_id FROM competency_evaluations WHERE user_id=? AND skill=? AND status='open' AND expires_at>? ORDER BY created_at DESC LIMIT 1"
+      ).bind(user.id,skill,nowIso()).first();
+      if (concurrent) {
+        return json({
+          ok:true,
+          evaluation:{
+            id:concurrent.id,
+            skill,
+            task_id:concurrent.task_id||taskId,
+            expires_at:concurrent.expires_at,
+            max_score:Number(concurrent.max_score),
+            pass_score:Math.ceil(Number(concurrent.max_score)*0.75),
+            challenge:JSON.parse(concurrent.challenge_json),
+          },
+          reused:true,
+          message:"Continuing your current variable competency evaluation. Final approval is still manual."
+        });
+      }
+    }
+    throw error;
+  }
   await audit(env,user.id,"competency_evaluation_started","competency_evaluation",id,{skill,task_id:taskId,variant_token:generated.variant_token});
   return json({
     ok:true,
@@ -1613,18 +1642,26 @@ async function startOrRequestTask(request, env, user, taskId) {
     ).bind(user.id).first();
     if (Number(activeOpen?.n || 0) >= 2) throw new ApiError(409,"Finish or withdraw one of your two active open tasks before starting another.","open_task_limit");
     const id = crypto.randomUUID();
-    await env.COMMONS_DB.prepare(
-      `INSERT INTO task_requests(
-        id,task_id,user_id,status,application_note,ai_use_plan,verification_plan,requested_at,decision_due_at,
-        decision_at,decision_note,checkpoint_status,last_progress_at
-      ) VALUES(?,?,?,'approved',?,?,?,?,?,?,?,'not_required',?)`
-    ).bind(
-      id,task.id,user.id,
-      cleanText(body.application_note,2000),
-      cleanText(body.ai_use_plan,1500),
-      cleanText(body.verification_plan,2000),
-      now,now,now,"Open non-exclusive task: automatic start.",now
-    ).run();
+    try {
+      await env.COMMONS_DB.prepare(
+        `INSERT INTO task_requests(
+          id,task_id,user_id,status,application_note,ai_use_plan,verification_plan,requested_at,decision_due_at,
+          decision_at,decision_note,checkpoint_status,last_progress_at
+        ) VALUES(?,?,?,'approved',?,?,?,?,?,?,?,'not_required',?)`
+      ).bind(
+        id,task.id,user.id,
+        cleanText(body.application_note,2000),
+        cleanText(body.ai_use_plan,1500),
+        cleanText(body.verification_plan,2000),
+        now,now,now,"Open non-exclusive task: automatic start.",now
+      ).run();
+    } catch (error) {
+      const message=String(error?.message||error||"");
+      if (/idx_task_requests_one_active_per_user_task|UNIQUE constraint failed: task_requests\.task_id, task_requests\.user_id/i.test(message)) {
+        throw new ApiError(409,"You already have an active request/work record for this task.","already_active");
+      }
+      throw error;
+    }
     await audit(env,user.id,"open_task_started","task_request",id,{task_id:task.id});
     return json({
       ok:true,
@@ -1651,11 +1688,22 @@ async function startOrRequestTask(request, env, user, taskId) {
 
   const id = crypto.randomUUID();
   const due = addBusinessDaysIso(now, Number(task.review_sla_business_days || 2));
-  await env.COMMONS_DB.prepare(
-    `INSERT INTO task_requests(
-      id,task_id,user_id,status,application_note,ai_use_plan,verification_plan,requested_at,decision_due_at,checkpoint_status,last_progress_at
-    ) VALUES(?,?,?,'pending',?,?,?,?,?,'pending',?)`
-  ).bind(id,task.id,user.id,application,aiPlan,verificationPlan,now,due,now).run();
+  try {
+    await env.COMMONS_DB.prepare(
+      `INSERT INTO task_requests(
+        id,task_id,user_id,status,application_note,ai_use_plan,verification_plan,requested_at,decision_due_at,checkpoint_status,last_progress_at
+      ) VALUES(?,?,?,'pending',?,?,?,?,?,'pending',?)`
+    ).bind(id,task.id,user.id,application,aiPlan,verificationPlan,now,due,now).run();
+  } catch (error) {
+    const message=String(error?.message||error||"");
+    if (/idx_task_requests_one_active_per_user_task|UNIQUE constraint failed: task_requests\.task_id, task_requests\.user_id/i.test(message)) {
+      throw new ApiError(409,"You already have an active request/work record for this task.","already_active");
+    }
+    if (/PCS pending high-tier application limit/i.test(message)) {
+      throw new ApiError(409,"You may have at most two high-tier applications awaiting review.","pending_limit");
+    }
+    throw error;
+  }
 
   const adminBody = [
     `New PCS task application: ${task.id} — ${task.title}`,
@@ -1948,6 +1996,9 @@ async function adminDecision(request, env, admin, requestId) {
       const message=String(error?.message||error||"");
       if (/UNIQUE constraint failed|idx_task_requests_unique_reservation/i.test(message)) {
         throw new ApiError(409,"This reserved task is already assigned to another contributor.","task_already_reserved");
+      }
+      if (/PCS active reserved task limit/i.test(message)) {
+        throw new ApiError(409,`Applicant already has the maximum ${limit} active reserved task(s) for L${row.level}.`,"active_limit");
       }
       throw error;
     }
