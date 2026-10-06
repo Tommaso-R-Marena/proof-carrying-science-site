@@ -3591,7 +3591,10 @@ async function donateSafetyForgeSession(request,env,user){
     "SELECT COUNT(*) AS n FROM safety_forge_research_sessions WHERE user_id=? AND created_at>=?"
   ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
   if(Number(recent?.n||0)>=10)throw new ApiError(429,"Daily optional research-data limit reached; you can keep playing privately.","safety_forge_daily_limit");
-  const digest=await sha256(JSON.stringify(submitted));
+  // The D1 session_digest column is constrained to 64 lowercase hex characters.
+  // sha256() deliberately returns base64url for cookie/rate-limit tokens (43 chars),
+  // so research receipts MUST use sha256Hex() rather than sha256().
+  const digest=await sha256Hex(JSON.stringify(submitted));
   const result=await env.COMMONS_DB.prepare(
     `INSERT OR IGNORE INTO safety_forge_research_sessions(
        id,user_id,scenario_seed,scenario_version,session_digest,
