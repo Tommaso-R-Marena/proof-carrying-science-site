@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "deploy": "wrangler deploy && node notify-indexnow.mjs",
+    "deploy": "npm run test:submissions && node --check src/worker.js && node --check public/admin.js && node --check public/account.js && wrangler deploy && node notify-indexnow.mjs",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "test:submissions": "node --test tests/submission-github.test.mjs"
   },
