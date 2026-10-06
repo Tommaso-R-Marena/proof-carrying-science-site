@@ -1259,9 +1259,9 @@ for js in ROOT.glob("*.js"):
     if js.name in NETWORKED_COMMONS_JS:
         # All network requests by these reviewed clients must pass a local path
         # named 'path'. GitHub URLs are allowed as navigational links, NOT fetches.
-        if not re.search(r"\\bfetch\\s*\\(\\s*path\\s*,", text):
+        if not re.search(r"\bfetch\s*\(\s*path\s*,", text):
             errors.append(f"{js.name}: reviewed same-origin fetch helper missing")
-        if re.search(r"\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(\\s*(?!path\\b)", text):
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
             errors.append(f"{js.name}: unreviewed network API call or arbitrary fetch target")
         if js.name == "site.js":
             if 'path !== "/api/me"' not in text or 'path !== "/api/admin/session"' not in text:
@@ -1284,11 +1284,11 @@ for js in ROOT.glob("*.js"):
         return "/* validated same-origin static fetch */"
 
     reviewed = re.sub(
-        r"""\\bfetch\\s*\\(\\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\\s*\\)""",
+        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*\)""",
         _strip_static_fetch,
         text,
     )
-    if re.search(r"\\b(fetch|XMLHttpRequest|WebSocket)\\s*\\(", reviewed):
+    if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(", reviewed):
         errors.append(f"{js.name}: network API found; local-only scientific-tool posture requires review")
 
 logo = ROOT / "logo-mark.svg"
