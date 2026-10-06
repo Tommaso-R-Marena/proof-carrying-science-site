@@ -58,3 +58,20 @@ Security and release checks run before each Cloudflare deployment via `npm run v
 ## Research and privacy handling
 
 Consent is opt-in and per uploaded session, not blanket approval from site account registration. The user can erase their active-database rows through `POST /api/arena/safety-lab/erase`; deletion cannot automatically recall prior exports, backups or trained model weights. Consider appropriate ethics review and stronger age-assurance controls before expanding collection or releasing data publicly. **Do not** incentivize children to donate gameplay data or represent users' self-declared age as verified.
+
+## First honest learning benchmark
+
+After an Owner-approved export and independent replay-data preparation, run:
+
+```bash
+node scripts/prepare_safety_forge_dataset.mjs PRIVATE_OWNER_EXPORT.json PREPARED_DATA.json
+node scripts/benchmark_safety_forge.mjs PREPARED_DATA.json BENCHMARK_REPORT.json
+```
+
+The evaluation script does **not** pretend to run a neural model or RL agent. It learns a simple, interpretable, context-conditioned preference ranking from **successful donated shield configurations**, then tests its recommendations on held-out scenario seeds against three explicit comparators:
+
+- the original, intentionally flawed guardrail configuration;
+- a hand-designed robust shield `joint_review + risk + redact`;
+- a separate finite search over all (2^6) combinations of the six targeted guards for minimum feasible valid cost.
+
+It reports safety-and-liveness success, mean shield cost and cost regret relative to the small finite oracle. Crucially, it will **abstain** when there are fewer than five training sessions, three held-out sessions, or three successful training repair examples. Zero consenting participants means no claimed model-training result. The holdout is by *scenario seed*, not by genuinely new agent semantics; it is necessary but insufficient for generalization. This benchmark is a falsifiable local experimental baseline for planning heuristics, not evidence of alignment or formally verified Lean proof search.
