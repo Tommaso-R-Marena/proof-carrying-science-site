@@ -24,9 +24,37 @@ if site_js.exists():
         "navmore",
         "More PCS resources",
         'aria-current", "page"',
+        "pcs-global-nav",
+        "Admin sign in",
+        "Admin Center",
+        "account.html",
+        "roles.html",
+        "arena.html",
+        "task-graph.html",
+        "/api/me",
+        "/api/admin/session",
     ]:
         if required_text not in site_script:
             errors.append(f"site.js: navigation hierarchy drift: {required_text}")
+
+# Navigation discoverability and privilege boundaries must not regress.
+for name, required_tokens in {
+    "account.html": ["pcs-action-hub", "accountNextTitle", "Find eligible tasks", "roles.html", "arena.html", "task-graph.html"],
+    "admin.html": ["admin-workflow-hub", "adminStartTitle", "Open the public experience", 'href="#requests"', 'href="#users"', 'href="#dependency-editor"'],
+    "admin-login.html": ["adminLoginForm", "admin-login-alternative", 'href="account.html"'],
+}.items():
+    page = ROOT / name
+    if page.exists():
+        text_value = page.read_text(encoding="utf-8")
+        for token in required_tokens:
+            if token not in text_value:
+                errors.append(f"{name}: access-path discoverability drift: {token}")
+
+account_script = ROOT / "account.js"
+if account_script.exists():
+    account_text = account_script.read_text(encoding="utf-8")
+    if "Reviewer authority is separately approved" not in account_text:
+        errors.append("account.js: higher-level access guidance lost privilege separation")
 
 for html_path in HTML_FILES:
     text = html_path.read_text(encoding="utf-8")
