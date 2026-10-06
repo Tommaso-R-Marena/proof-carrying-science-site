@@ -223,8 +223,23 @@ export async function verifyPromotion(env,promotion,files){
     const jobs=await remote(env,promotion.repo,"GET",`actions/runs/${run.id}/jobs?per_page=100`);
     const candidates=(jobs.jobs||[]).filter(j=>j.name==="PCS Promotion Verification");
     job=candidates.length===1?candidates[0]:null;
+    const required=promotion.repo.endsWith("-site")?[
+      "Check archive-to-production exact bytes and file scope",
+      "Check PCS site source/links",
+      "Run adversarial site/security campaign",
+      "Check Worker and browser JavaScript syntax",
+      "Run submission and production-promotion integration tests"
+    ]:[
+      "Check exact archive-to-source mapping and PR diff",
+      "Verify repository integrity, file modes and governance",
+      "Run full PCS regression tests",
+      "Run adversarial campaign",
+      "Build Lean 4 authority with project-source hygiene",
+      "Elaborate every promoted Lean source"
+    ];
     if(job?.status==="completed"&&job.conclusion==="success"&&
       Array.isArray(job.steps)&&job.steps.length>0&&
+      required.every(name=>job.steps.some(s=>s.name===name&&s.status==="completed"&&s.conclusion==="success"))&&
       job.steps.every(s=>s.status==="completed"&&["success","skipped"].includes(s.conclusion)))status="passed";
   }
   return {status,verified:status==="passed",head_sha:sha,base_sha:promotion.base_sha,
