@@ -301,6 +301,16 @@
     return JSON.stringify(detail,null,2);
   }
 
+  function auditEvidenceLinks(value){
+    const detail=parseDetail(value);
+    const files=Array.isArray(detail.evidence)?detail.evidence:Array.isArray(detail.files)?detail.files:[];
+    if(!files.length)return "";
+    return `<div class="audit-evidence-links">${files.map(file=>`
+      <a href="/api/admin/evidence/${encodeURIComponent(file.id)}" download>
+        ↧ ${esc(file.name||file.id)} ${file.size_bytes?`· ${formatBytes(file.size_bytes)}`:""}
+      </a>`).join("")}</div>`;
+  }
+
   function auditMatches(event,query){
     if(!query)return true;
     const hay=[
@@ -323,6 +333,7 @@
         <h3>${esc(event.action.replaceAll("_"," "))}</h3>
         <p><strong>${esc(actor)}</strong>${esc(role)} → ${esc(event.subject_type)} · <code>${esc(event.subject_id)}</code></p>
         <details><summary>Recorded detail</summary><pre class="admin-audit-json">${esc(prettyDetail(event.detail_json))}</pre></details>
+        ${auditEvidenceLinks(event.detail_json)}
         <div class="admin-audit-hash"><span>event hash</span><code title="${esc(hash)}">${esc(hash.slice(0,20))}…</code></div>
       </article>`;
   }
@@ -458,6 +469,39 @@
       if(e.status!==401&&e.status!==403)console.error(e);
     }
   }
+
+  $("#adminActionFiles")?.addEventListener("change",event=>{
+    const files=Array.from(event.currentTarget.files||[]);
+    const validation=validateEvidenceFiles(files);
+    if(!validation.ok){
+      adminActionFiles=[];
+      event.currentTarget.value="";
+      renderActionFiles();
+      msg("adminActionMessage",validation.message);
+      return;
+    }
+    adminActionFiles=files;
+    msg("adminActionMessage",files.length?`${files.length} evidence file(s) ready · ${formatBytes(validation.total)} total.`:"",true);
+    renderActionFiles();
+  });
+
+  $("#adminActionClose")?.addEventListener("click",()=>finishAdminAction(null));
+  $("#adminActionCancel")?.addEventListener("click",()=>finishAdminAction(null));
+  $("#adminActionDialog")?.addEventListener("cancel",event=>{event.preventDefault();finishAdminAction(null);});
+  $("#adminActionForm")?.addEventListener("submit",event=>{
+    event.preventDefault();
+    const note=$("#adminActionNote").value.trim();
+    if(note.length<20){msg("adminActionMessage","Give a justification of at least 20 characters.");$("#adminActionNote").focus();return;}
+    const validation=validateEvidenceFiles(adminActionFiles);
+    if(!validation.ok){msg("adminActionMessage",validation.message);return;}
+    const result={
+      note,
+      level:$("#adminActionLevelField").hidden?null:Number($("#adminActionLevel").value),
+      override:!$("#adminActionOverrideField").hidden&&$("#adminActionOverride").checked,
+      files:[...adminActionFiles],
+    };
+    finishAdminAction(result);
+  });
 
   $("#adminMailTestButton")?.addEventListener("click",async()=>{
     const button=$("#adminMailTestButton");
