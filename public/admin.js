@@ -1098,6 +1098,21 @@
   });
   $("#adminAuditPageSize")?.addEventListener("change",()=>loadAuditFeed("all").catch(e=>alert(e.message)));
 
+  $("#adminResearchStorageRefresh")?.addEventListener("click",async()=>{
+    const button=$("#adminResearchStorageRefresh"),status=$("#adminResearchStorageStatus");
+    button.disabled=true;status.textContent="Checking account-linked, consented research entries…";
+    try{
+      const result=await api("/api/admin/arena/storage");
+      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge;
+      if(!pq||!sf)throw Error("Unexpected storage report.");
+      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes));
+      status.textContent="Proof Quest: "+Number(pq.rows).toLocaleString()+
+        " adult opt-in examples · Safety Forge: "+Number(sf.rows).toLocaleString()+
+        " verified synthetic sessions · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
+    }catch(e){status.textContent="Storage check unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
   $("#adminProofQuestExport")?.addEventListener("click",async()=>{
     const button=$("#adminProofQuestExport"),msg=$("#adminProofQuestExportMessage");
     button.disabled=true;msg.textContent="Preparing a deidentified dataset...";
