@@ -149,7 +149,7 @@
     const preferred=eligible.find(t=>(t.required_skill||"nontechnical")===u.track&&Number(t.expected_hours)<=Number(u.availability_hours))||eligible.find(t=>Number(t.expected_hours)<=Number(u.availability_hours))||eligible[0];
     if(!preferred){target.innerHTML='<div class="commons-empty"><strong>No current task matches your verified access.</strong><span>Do an open task at your current level or request skill verification from your account.</span></div>';return;}
     const m=taskMeta(preferred);
-    target.innerHTML=`<div class="commons-recommendation-card"><div class="commons-recommendation-badges"><span class="commons-chip level">L${preferred.min_level}</span><span class="commons-chip ${paid(preferred)?"paid":"volunteer"}">${esc(compensationLabel(preferred))}</span></div><h3>${esc(preferred.title)}</h3><p>${esc(preferred.summary)}</p><div class="task-meta"><span><b>${preferred.expected_hours}h</b> expected</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(preferred.claim_mode)}</b> access</span></div><div class="actions"><a class="button primary" href="tasks.html">Open marketplace</a></div></div>`;
+    target.innerHTML=`<div class="commons-recommendation-card"><div class="commons-recommendation-badges"><span class="commons-chip level">L${preferred.min_level}</span><span class="commons-chip ${paid(preferred)?"paid":"volunteer"}">${esc(compensationLabel(preferred))}</span></div><h3>${esc(preferred.title)}</h3><p>${esc(preferred.summary)}</p><div class="task-meta"><span><b>${taskDuration(preferred)}</b> expected</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(preferred.claim_mode)}</b> access</span></div><div class="actions"><a class="button primary" href="tasks.html">Open marketplace</a></div></div>`;
   }
 
   async function initContributorForm(){
@@ -188,6 +188,10 @@
     return `<a class="button secondary" href="${esc(accountTaskHref(task,e,true))}">See qualification options</a>`;
   }
 
+  function taskDuration(task){
+    const minutes=Number(task.expected_minutes ?? Number(task.expected_hours||1)*60);
+    return minutes<60 ? minutes+" min" : minutes%60===0?minutes/60+"h":Math.floor(minutes/60)+"h "+minutes%60+"m";
+  }
   function taskCard(task){
     const m=taskMeta(task), e=task.eligibility||{};
     const paidClass=paid(task)?"paid":"volunteer";
@@ -204,11 +208,11 @@
       </div>`:"";
     const sourceHtml=task.source_ref?`<p><strong>Core source:</strong> <code>${esc(task.source_ref)}</code></p>`:"";
     const criteriaHtml=task.acceptance_criteria?`<p><strong>Acceptance criteria:</strong> ${esc(task.acceptance_criteria)}</p>`:"";
-    return `<article class="commons-task-card ${program?"program-task":""}" data-task-id="${esc(task.id)}" data-level="${task.min_level}" data-comp="${paid(task)?"paid":"volunteer"}" data-skill="${esc(task.required_skill||"nontechnical")}" data-category="${esc(category)}" data-hours="${task.expected_hours}">
+    return `<article class="commons-task-card ${program?"program-task":""}" data-task-id="${esc(task.id)}" data-level="${task.min_level}" data-comp="${paid(task)?"paid":"volunteer"}" data-skill="${esc(task.required_skill||"nontechnical")}" data-category="${esc(category)}" data-hours="${task.expected_hours}" data-minutes="${task.expected_minutes??Number(task.expected_hours||1)*60}">
       <div class="task-card-top"><div><span class="commons-chip level">L${task.min_level}</span><span class="commons-chip category">${esc(category.replaceAll("_"," "))}</span><span class="commons-chip ${paidClass}">${esc(compensationLabel(task))}</span><span class="commons-chip ${task.claim_mode==="open"?"volunteer":"planned"}">${accessLabel}</span>${program?`<span class="commons-chip program">${esc(program)} · STEP ${esc(task.program_step)}</span>`:""}</div><code>${esc(task.id)}</code></div>
       <h3>${esc(task.title)}</h3><p>${esc(task.summary)}</p>
       ${task.why_now?`<div class="task-why-now"><strong>Why PCS needs this now</strong><span>${esc(task.why_now)}</span></div>`:""}
-      <div class="task-meta"><span><b>${task.expected_hours}h</b> expected</span><span><b>${esc(m.difficulty)}</b> difficulty</span><span><b>${esc(task.required_skill||"entry")}</b> skill gate</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(task.priority??50)}</b> priority</span></div>
+      <div class="task-meta"><span><b>${taskDuration(task)}</b> expected</span><span><b>${esc(m.difficulty)}</b> difficulty</span><span><b>${esc(task.required_skill||"entry")}</b> skill gate</span><span><b>${esc(m.impact)}</b> impact</span><span><b>${esc(task.priority??50)}</b> priority</span></div>
       ${dependencyHtml}
       <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.claim_mode!=="open"?"<span>Qualification route: variable auto-scored evaluation or direct manual application. Final approval is always manual. PCS targets a decision within 1 business day and no later than 2 business days. Pending applications never reserve the task.</span>":""}</div>
       <details class="task-details"><summary>What counts as done?</summary><p><strong>Deliverable:</strong> ${esc(m.deliverable)}</p><p><strong>Verification:</strong> ${esc(m.verification)}</p>${criteriaHtml}${task.success_metric?`<p><strong>Success metric:</strong> ${esc(task.success_metric)}</p>`:""}${sourceHtml}<p><strong>Project:</strong> ${esc(m.project)}</p></details>
@@ -218,8 +222,8 @@
 
   function filterAndRenderTasks(){
     const target=$("#commonsTaskList");if(!target)return;
-    const level=Number($("#taskLevel")?.value??6),comp=$("#taskComp")?.value||"all",skill=$("#taskSkill")?.value||"all",category=$("#taskCategory")?.value||"all",hours=Number($("#taskHours")?.value||99);
-    const shown=snapshot.tasks.filter(t=>Number(t.min_level)<=level&&(comp==="all"||(comp==="paid"?paid(t):!paid(t)))&&(skill==="all"||(t.required_skill||"nontechnical")===skill)&&(category==="all"||(t.category||"research")===category)&&Number(t.expected_hours)<=hours);
+    const level=Number($("#taskLevel")?.value??6),comp=$("#taskComp")?.value||"all",skill=$("#taskSkill")?.value||"all",category=$("#taskCategory")?.value||"all",minutes=Number($("#taskHours")?.value||9999);
+    const shown=snapshot.tasks.filter(t=>Number(t.min_level)<=level&&(comp==="all"||(comp==="paid"?paid(t):!paid(t)))&&(skill==="all"||(t.required_skill||"nontechnical")===skill)&&(category==="all"||(t.category||"research")===category)&&Number(t.expected_minutes??Number(t.expected_hours||1)*60)<=minutes);
     target.innerHTML=shown.map(taskCard).join("")||'<div class="commons-empty"><strong>No currently needed tasks match those filters.</strong><span>Adjust category, level, time, compensation, or track—or check ongoing Roles.</span></div>';
     const count=$("#taskCount");if(count)count.textContent=`${shown.length} currently needed task${shown.length===1?"":"s"} shown`;
     $$("[data-start-task]",target).forEach(btn=>btn.addEventListener("click",()=>startTask(btn.dataset.startTask)));
