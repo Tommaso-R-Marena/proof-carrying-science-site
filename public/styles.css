@@ -1140,3 +1140,18 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .arena-review-counts{margin:12px 0}
 @media(max-width:900px){.arena-principles{grid-template-columns:1fr 1fr}.arena-leaderboard article{grid-template-columns:36px minmax(0,1fr) auto}.arena-leaderboard article>a{grid-column:2/-1}.arena-count-grid,.arena-review-counts{grid-template-columns:1fr 1fr}}
 @media(max-width:580px){.arena-principles{grid-template-columns:1fr}.arena-count-grid,.arena-review-counts{grid-template-columns:1fr}.arena-leaderboard article{grid-template-columns:32px minmax(0,1fr)}.arena-rank-score{text-align:left}.arena-leaderboard article>a{grid-column:1/-1}}
+
+/* Admin dependency graph editor */
+.admin-graph-editor{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.admin-graph-form{padding:18px;border:1px solid var(--line);border-radius:15px;background:#fff}
+.admin-dependency-card{border-left:4px solid #9db8d5}
+.admin-dependency-groups,.admin-dependency-edges{display:grid;gap:8px;margin-top:12px}
+.admin-dependency-groups>strong{font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:#5f7389}
+.admin-dependency-groups>div{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 10px;border:1px solid #dce5ef;border-radius:10px;background:#f8fbff}
+.admin-dependency-groups span,.admin-dependency-groups b,.admin-dependency-groups small{display:block}.admin-dependency-groups b{font-size:9px}.admin-dependency-groups small{font-size:8px;color:var(--muted);margin-top:2px}
+.admin-dependency-edge{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px 12px;align-items:center;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fafbfd}
+.admin-dependency-edge>div{display:flex;gap:7px;align-items:center;flex-wrap:wrap;min-width:0}.admin-dependency-edge code{font-size:8px}.admin-dependency-edge b{font-size:8px;color:#506780}.admin-dependency-edge small{font-size:7.5px;color:#7d8b9b}
+.admin-dependency-edge p{grid-column:1/2;margin:0;font-size:8.5px;line-height:1.45;color:#607187}
+.admin-dependency-edge>.smallbutton{grid-column:2;grid-row:1/3}
+@media(max-width:980px){.admin-graph-editor{grid-template-columns:1fr}}
+@media(max-width:620px){.admin-dependency-edge{grid-template-columns:1fr}.admin-dependency-edge>.smallbutton{grid-column:1;grid-row:auto}.admin-dependency-groups>div{align-items:flex-start;flex-direction:column}}
