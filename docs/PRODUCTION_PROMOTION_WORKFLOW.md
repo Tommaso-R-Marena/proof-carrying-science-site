@@ -39,7 +39,11 @@ production destinations. This is a separate boundary from the original reviewer 
 7. **Audit / evidence:** the promotion record preserves its source submission, mapping,
    reviewer explanation, immutable approved SHA, PR link, final merge SHA and history.
    Requests for changes are terminal for the current case; use a newly accepted archive
-   submission for a revised production proposal.
+   submission for a revised production proposal. If the only problem is that `main`
+   advanced while waiting for CI, the Owner can **Supersede / new baseline**: this
+   closes the old PR, invalidates its previous approval, retains the audited case
+   and permits staging the *same immutable accepted archive* again on fresh `main`.
+   The new case must pass fresh CI and new Owner approval; old receipts never transfer.
 
 ## Existing CI quota situation
 
