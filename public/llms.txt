@@ -20,6 +20,7 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
 ## Primary pages
 - Product overview: /
+- Safety Forge (dynamic, bounded synthetic AI-safety counterexample search and shield repair; not Lean proof verification): /arena-safety-forge.html
 - Proof Quest (educational ordering game; no Lean proof authority; optional adult-only research donation): /arena-proof-quest.html
 - Research preview (bounded local browser calculations; not Lean proofs): /research-preview.html
 - Independent researcher pilots (falsification, local draft and opt-in contact): /researcher-pilots.html
