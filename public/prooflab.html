@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProofLab · Real Lean Theorem Missions · PCS Arena</title>
+<meta name="description" content="Explore real source-pinned PCS Lean theorems through a hands-on, visual proof investigation game. Learn to plan obligations, spot missing assumptions, and challenge claims. No account needed.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/prooflab.html">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="prooflab.css">
+</head><body class="prooflab-page">
+<div class="topbar"><div class="shell"><span>PCS ARENA / PROOFLAB · source-grounded, human-guided reasoning</span><a href="privacy.html">Privacy and research consent ↗</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Arena</a><a href="forge-duel.html">Shield Duel</a><a href="tasks.html">Contribute</a><a class="button dark" href="account.html">Account</a></div></nav>
+<main>
+<section class="pl-hero">
+  <div><span class="pl-overline">THE REAL-THEOREM LAB / SEASON 01</span>
+  <h1>PROOF<span>LAB</span><small>Build better paths to formal assurance.</small></h1>
+  <p>Investigate actual theorem targets from PCS Lean 4. Arrange proof-review obligations, expose missing dependencies, propose an attack, and learn what still needs an independent kernel check.</p>
+  <div class="pl-hero-buttons"><a href="#plGame" class="pl-main-cta">Enter the lab <span>↘</span></a><a href="#plHow" class="pl-ghost-cta">How the science works ↗</a></div>
+  <div class="pl-hero-trust"><span>✓ Free · no login to play</span><span>✓ Real source-pinned theorem targets</span><span>✓ No auto-upload</span></div>
+  </div>
+  <div class="pl-schematic" aria-hidden="true"><div class="pl-schematic-core">THEOREM <small>CLAIM</small></div><div class="pl-schematic-connectors"><span>Premises</span><span>Evidence</span><span>Challenges</span></div><div class="pl-schematic-result">LEAN AUTHORITY <strong>separate check</strong></div></div>
+</section>
+<section class="pl-metrics" aria-label="Benchmark and local progress">
+  <div><strong>40</strong><span>Actual Lean targets indexed</span></div>
+  <div><strong>22</strong><span>Public training missions</span></div>
+  <div><strong>18</strong><span>Private held-out targets</span></div>
+  <div><strong id="plXP">0</strong><span>Local research XP</span></div>
+</section>
+<div class="pl-truth"><span>⚖️ PROOF STATUS</span><p><strong>Important:</strong> these are pre-existing Lean theorem declarations, not open problems you've proved. Here you plan and critique a source-grounded <em>educational</em> graph. A game's “completed” message means its dependency workflow was followed, <strong>not</strong> that Lean ran or scientific safety was proven. The 18 reserved targets are not published to this game.</p></div>
+<section id="plGame" class="pl-game" aria-label="Interactive ProofLab">
+  <div class="pl-lab-header"><div><span class="pl-overline">SELECT YOUR RESEARCH CAMPAIGN</span><h2>Choose a mystery. Find a defensible path.</h2></div>
+   <div class="pl-lab-status"><span id="plFinishedCount">0 / 22 completed</span><button id="plClearLocal" type="button">Clear local XP</button></div>
+  </div>
+  <div class="pl-campaigns" id="plCampaigns" role="group" aria-label="ProofLab research campaign choices"></div>
+  <div class="pl-mission-bar"><label for="plMissionSelect">Current theorem investigation</label>
+   <select id="plMissionSelect" aria-label="Choose a real source-pinned theorem mission"></select>
+   <button type="button" id="plDaily" class="pl-small-btn">📅 Today's challenge</button>
+   <button type="button" id="plShare" class="pl-small-btn">↗ Share challenge</button>
+  </div>
+  <div class="pl-workspace">
+    <aside class="pl-dossier">
+      <div class="pl-pane-title"><span>01 / MISSION DOSSIER</span><span id="plSourceBadge">PINNED</span></div>
+      <div class="pl-dossier-avatar" id="plMissionIcon">🔐</div>
+      <h3 id="plTheoremTitle">Loading theorem...</h3>
+      <p id="plTheoremSummary">The source-bound research question appears here.</p>
+      <div class="pl-evidence-line"><strong>Actual Lean theorem</strong><code id="plTheoremSymbol"></code></div>
+      <div class="pl-evidence-line"><strong>Source location</strong><code id="plSourcePath"></code></div>
+      <div class="pl-evidence-line"><strong>Source revision</strong><code id="plSourceRevision"></code></div>
+      <div class="pl-citation"><span id="plDependencyCount"></span><p>Source-cited theorem names are distinguished from educational steps. The source is in the private PCS core repository.</p></div>
+      <div class="pl-action-hints"><h4>Scientist's toolkit</h4>
+      <button type="button" id="plScout">🕵️ Reveal dependency X-ray <span>−1 hint</span></button>
+      <button type="button" id="plCoach">💡 Highlight a valid next step <span>−1 hint</span></button>
+      <button type="button" id="plUndo">↶ Undo last planning choice</button>
+      <button type="button" id="plRestart">⟳ Restart this mystery</button>
+      </div>
+      <div class="pl-dossier-boundary">No new proof is accepted in this game. An actual Lean build requires the separate pinned core toolchain and trust review.</div>
+    </aside>
+    <section class="pl-board" aria-labelledby="plBoardTitle">
+      <div class="pl-board-top"><div><span>02 / OBLIGATION WORKSHOP</span><h3 id="plBoardTitle">Assemble the investigation</h3><p>Click or drag cards into your plan. Try an action too early to discover what it depends on.</p></div><div class="pl-board-stat"><strong id="plScore">0</strong><small>strategy score</small></div></div>
+      <div class="pl-progress"><div id="plProgressFill"></div></div>
+      <div class="pl-plan-stat"><span id="plCompleted">0 / 0 obligations</span><span id="plCombo">0 in a row</span><span id="plErrorCount">0 blockers found</span></div>
+      <div id="plFeedback" class="pl-feedback" role="status" aria-live="polite">Select any obligation card to begin.</div>
+      <div class="pl-graph-wrap" id="plGraphWrap"><svg id="plGraph" role="img" aria-label="Source-grounded educational proof planning graph" xmlns="http://www.w3.org/2000/svg"></svg><div id="plGraphCover" class="pl-graph-cover"><span>🔎</span><strong>Dependency X-ray is sealed</strong><p>Reveal it to inspect the routes, or navigate by choosing cards yourself.</p></div></div>
+      <div class="pl-move-tray" id="plTray" aria-label="Drop a planning card here to investigate"><span>↧ DROP AN OBLIGATION HERE</span><p>Tap on mobile or drag from your cards</p></div>
+      <h4 class="pl-deck-title">Your available research cards <span id="plDeckCount"></span></h4>
+      <div id="plCards" class="pl-cards"></div>
+      <div class="pl-session-note"><span>RESEARCH LENS</span><p>What guided your next decision? These self-reported tags may support future planning research only if you separately donate this run.</p>
+      <fieldset><legend>My reason for the next move</legend><div id="plReasons" class="pl-reason-options"></div></fieldset>
+      <fieldset><legend>How confident are you?</legend><div class="pl-confidence"><label><input name="plConfidence" type="radio" value="1"> Unsure</label><label><input name="plConfidence" type="radio" value="2" checked> Somewhat</label><label><input name="plConfidence" type="radio" value="3"> Very sure</label></div></fieldset>
+      </div>
+      <div class="pl-transcript"><div class="pl-transcript-head"><strong>📖 Investigator's notebook</strong><span id="plHistorySummary">No moves yet</span></div><ol id="plHistory" aria-label="Your chronological decisions"></ol></div>
+    </section>
+    <aside class="pl-report">
+      <div class="pl-pane-title"><span>03 / ATTACK & REVIEW</span><span>THINK LIKE A SKEPTIC</span></div>
+      <h3>How could this claim be misunderstood?</h3>
+      <p>A real proof has a precise scope. Suggest an attack worth investigating—without confusing a hypothesis with a verified counterexample.</p>
+      <div id="plThreatCards" class="pl-threats" role="group" aria-label="Adversarial review hypothesis"></div>
+      <label class="pl-select-label" for="plThreatConfidence">Your confidence in this hypothesis</label>
+      <select id="plThreatConfidence"><option value="1">Low · exploratory guess</option><option value="2">Medium · plausible concern</option><option value="3">High · strong suspicion</option></select>
+      <div class="pl-report-status" id="plReportStatus">Finish the planning graph and choose an adversarial hypothesis.</div>
+      <button id="plCheck" class="pl-check-btn" type="button">Review my investigation →</button>
+      <section id="plVictory" class="pl-victory" hidden aria-live="polite"><span>CASE REVIEWED / EDUCATIONAL</span><strong id="plVictoryTitle">Your investigation is complete.</strong><p id="plVictoryBody"></p><div id="plVictoryXP"></div><button id="plNext" type="button">Next real theorem →</button></section>
+      <div class="pl-replay"><strong>⏯ Replay my decisions</strong><p>Reproduce each accepted or blocked step from the same fixed graph.</p><div class="pl-replay-buttons"><button id="plReplayPrev" type="button">← Previous</button><button id="plReplayNext" type="button">Next →</button></div><p id="plReplayStage">No steps recorded.</p></div>
+      <div class="pl-report-copy"><h4>Why this matters</h4><p>A future model can learn which prerequisite to inspect, which blocker appeared, and which explanation a person gave. It must not learn to call these educational judgments “Lean proofs.”</p></div>
+    </aside>
+  </div>
+</section>
+<section id="plResearch" class="pl-donation">
+  <div class="pl-donation-left"><span class="pl-overline">RESEARCH / OPTIONAL / PRIVACY FIRST</span><h2>Turn your investigation into <em>training data</em>.</h2>
+  <p>The trace records which obligation you attempted, its actual prerequisite result, your stated reason/confidence, hints and an unverified adversarial hypothesis. The server recomputes every graph decision from the fixed source-indexed training set.</p>
+  <p><strong>Playing does not upload gameplay.</strong> Research donation is for verified-email PCS accounts whose members self-attest 18+ and separately consent. The browser cannot prove a human made each choice or that a reason was genuine.</p>
+  <div class="pl-research-notes"><div>✓ Source-anchored graphs</div><div>✓ Independently recomputed labels</div><div>✓ No raw free text or mouse tracking</div><div>✓ Account deletion supported</div></div>
+  </div>
+  <div class="pl-donation-card"><strong>SHARE THIS ONE INVESTIGATION?</strong>
+   <div class="pl-donation-preview"><span id="plDonateCount">0 decisions recorded</span><span id="plDonateCase">Not started</span></div>
+   <label><input type="checkbox" id="plAdult"> I confirm that I am 18 years of age or older.</label>
+   <label><input type="checkbox" id="plConsent"> I explicitly consent to contributing this bounded planning trace to PCS research. I understand offline exports or trained models may not be fully retractable.</label>
+   <button id="plDonate" type="button" class="pl-donate-btn">Donate my verified educational trace</button>
+   <button id="plErase" type="button" class="pl-delete-btn">Delete my previously donated ProofLab records</button>
+   <p id="plDonateMessage" role="status" aria-live="polite">No gameplay data has been donated.</p>
+   <a href="account.html">Sign in or verify email ↗</a>
+  </div>
+</section>
+<section id="plHow" class="pl-science"><div class="pl-science-heading"><span>RESEARCH PROTOCOL / REALISTIC LIMITS</span><h2>What does a human actually teach a proof-search model?</h2><p>Unlike a multiple-choice quiz, a planning trajectory has choices, failed experiments, prerequisite discoveries and alternative valid paths. We preserve all three without pretending that a single path is the unique optimal proof.</p></div>
+<div class="pl-science-grid">
+ <article><span>01</span><h3>Prioritize</h3><p>Choose the next high-value premise, source fact or cited lemma. Feasible ordering is deterministically checked; usefulness is an empirical question.</p></article>
+ <article><span>02</span><h3>Falsify</h3><p>Suggest a collision, dependency, assumption or boundary attack. A proposal is not a counterexample until independently reproduced.</p></article>
+ <article><span>03</span><h3>Calibrate</h3><p>Recognize unsupported jumps and uncertain explanations. Learn to abstain rather than claim a theorem was proved by clicking.</p></article>
+</div>
+<div class="pl-heldout"><span>🔒 THE BENCHMARK FIREWALL</span><p>22 training tasks are public. Eight validation and ten evaluation theorem targets remain withheld. All originate in one PCS repository, so **cross-project generalization remains untested**. Private validation is needed before claiming research progress.</p></div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a href="index.html" class="brand"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Bring human exploration and independently checked science together.</p></div><div class="footercol"><strong>Play</strong><a href="arena.html">Arena</a><a href="arena-proof-quest.html">Proof Quest</a><a href="forge-duel.html">Shield Duel</a></div><div class="footercol"><strong>Understand</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="experience.html">Start here</a></div></div></footer>
+</div><script src="site.js"></script><script type="module" src="prooflab.js"></script></body></html>
