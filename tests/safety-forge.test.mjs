@@ -123,6 +123,19 @@ test("research replay recomputes independent state/action labels and returns no 
   assert.equal(replay.format,"pcs-safety-forge-replay-v1");
   assert.doesNotMatch(JSON.stringify(replay),/Lean_kernel_passed|PCS_ACCEPT/);
 });
+test("derives replay-checked training targets for search efficiency and iterative repair",()=>{
+  const replay=evaluateResearchSession(session());
+  assert.equal(replay.quality_signals.has_blind_counterexample,true);
+  assert.equal(replay.quality_signals.distinct_repair_trials,2);
+  assert.equal(replay.quality_signals.has_verified_repair,true);
+  assert.equal(replay.training_targets.counterexample_search[0].found_failure,true);
+  assert.equal(replay.training_targets.counterexample_search[0].assistance,"blind");
+  assert.ok(replay.training_targets.counterexample_search[0].shortest_oracle_witness_length>=1);
+  assert.equal(replay.training_targets.repair_trajectory.length,2);
+  assert.deepEqual(replay.training_targets.best_verified_repair.guards,[...repaired].sort());
+  assert.equal(replay.training_targets.best_verified_repair.guard_cost,8);
+});
+
 test("rejects client-provided fake model rewards or altered verifier claims",()=>{
   const payload=session();payload.pcs_accepted=true;
   assert.throws(()=>evaluateResearchSession(payload),/Invalid research session shape/);
