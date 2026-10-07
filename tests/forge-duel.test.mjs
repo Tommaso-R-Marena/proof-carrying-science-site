@@ -48,7 +48,9 @@ test("replay labels reject fabricated provenance, tampered round IDs and duplica
   }
 });
 test("server replay distinguishes factual oracle from human confidence and disagreement",()=>{
-  const b=vote(197,3,"A");
+  const rejectionRound=Array.from({length:DUEL_ROUNDS},(_,i)=>i).find(i=>duelCaseType(197,i)===3);
+  assert.ok(Number.isInteger(rejectionRound));
+  const b=vote(197,rejectionRound,"A");
   const result=evaluateDuelVote(b);
   assert.equal(result.oracle_winner,"neither");
   assert.equal(result.correct,false);
