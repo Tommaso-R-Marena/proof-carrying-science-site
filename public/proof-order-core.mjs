@@ -71,8 +71,127 @@ function validatePuzzle(p) {
 for(const p of PUZZLES)validatePuzzle(p);
 export const PUZZLE_BY_ID=new Map(PUZZLES.map(p=>[p.id,p]));
 
+export const PROCEDURAL_PUZZLE_VERSION="pcs-proof-order-lab-v1";
+const PROCEDURAL_FAMILIES=Object.freeze([
+  {id:"agent-safety",title:"Robot Safety Review",topic:"AI safety dependency lab",goal:"Report what a bounded agent check really supports",story:"A fictional agent produced a trace. Build a defensible review chain; different cases may need different extra evidence.",
+   nodes:[
+     ["claim","Specify the agent's intended mission",[]],
+     ["hazard","List the forbidden actions and risk thresholds",["claim"]],
+     ["state","Describe the agent's possible states",[]],
+     ["source","Record the origin of the action trace",["state"]],
+     ["trace","Collect the bounded agent action sequence",["state"]],
+     ["checker","Select the independent rule checker",["hazard"]],
+     ["replay","Replay the trace against the actual rules",["trace","checker","source"]],
+     ["limits","Record unobserved real-world conditions",["source"]],
+     ["report","Report only the bounded safety finding",["replay","limits"]]
+   ],
+   optional:[
+     ["consent","Confirm research reuse permission",["source"]],
+     ["budget","Recalculate cumulative risk on the trace",["hazard","trace"]],
+     ["receiver","Check the reviewer's acceptance policy",["claim","limits"]]
+   ]},
+  {id:"scientific-model",title:"Experimental Evidence Lab",topic:"Scientific validation",goal:"Explain which computational prediction was supported",story:"Your lab has a model and data. Establish what can be recomputed before accepting a scientific conclusion.",
+   nodes:[
+     ["question","State the exact scientific hypothesis",[]],
+     ["inputs","Inventory the source observation files",[]],
+     ["units","Check measurement units and conversions",["inputs"]],
+     ["model","Specify the declared prediction equation",["question"]],
+     ["predict","Calculate the expected numerical values",["model","units"]],
+     ["compare","Compare predictions against observations",["predict","inputs"]],
+     ["assumptions","List the model's biological assumptions",["question"]],
+     ["report","Report only the tested numerical agreement",["compare","assumptions"]]
+   ],
+   optional:[
+     ["range","Check that sample values are in range",["inputs"]],
+     ["tolerance","Specify the acceptable numeric tolerance",["model"]],
+     ["independent","Recompute results with a second method",["predict","units"]]
+   ]},
+  {id:"package-integrity",title:"Signed Evidence Detective",topic:"Package and signature assurance",goal:"Decide what authenticated, replayable evidence establishes",story:"A package arrives with a signature. A signer can authenticate bytes, but cannot make its claims true by declaration.",
+   nodes:[
+     ["claim","Identify the exact claim being evaluated",[]],
+     ["manifest","Inventory the delivered package members",[]],
+     ["key","Identify the trusted public signing key",[]],
+     ["signature","Verify the signature on exact package bytes",["key","manifest"]],
+     ["checker","Select a registered checker for the claim",["claim"]],
+     ["artifacts","Bind evidence to artifact content hashes",["manifest"]],
+     ["replay","Independently run the evidence checker",["checker","artifacts","signature"]],
+     ["scope","Write down external trust assumptions",["claim"]],
+     ["report","Report the bounded verification result",["replay","scope"]]
+   ],
+   optional:[
+     ["paths","Check archive member names are canonical",["manifest"]],
+     ["environment","Check the claimed environment evidence",["artifacts"]],
+     ["reviewer","Apply the receiver's acceptance policy",["replay","scope"]]
+   ]},
+  {id:"lean-review",title:"Theorem Workshop",topic:"Lean 4 dependency planning",goal:"Show which steps are required to review a theorem",story:"Model the prerequisites of a real theorem-checking workflow. This ordering game itself is not Lean elaboration or a formal proof.",
+   nodes:[
+     ["goal","Write the precise theorem statement",[]],
+     ["assumptions","List the assumptions used by the theorem",["goal"]],
+     ["imports","Import the required Lean definitions",[]],
+     ["lemmas","Find previously verified helper lemmas",["imports"]],
+     ["term","Construct a candidate typed proof term",["assumptions","lemmas"]],
+     ["elaborate","Elaborate and type-check the proof",["term","imports"]],
+     ["kernel","Check the proof with the Lean kernel",["elaborate"]],
+     ["limits","Record what the theorem does not prove",["goal"]],
+     ["report","Report the kernel result and assumptions",["kernel","limits"]]
+   ],
+   optional:[
+     ["toolchain","Pin the exact Lean and Mathlib versions",["imports"]],
+     ["sources","Trace imported theorem dependencies",["lemmas"]],
+     ["review","Review external axioms and trust bounds",["kernel","limits"]]
+   ]}
+]);
+function labRng(seed){
+  let state=seed>>>0;
+  return ()=>{
+    state=(state+0x6d2b79f5)|0;
+    let t=Math.imul(state^(state>>>15),1|state);
+    t^=t+Math.imul(t^(t>>>7),61|t);
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+/** Versioned finite synthetic generator used identically by browser and Worker. */
+export function proceduralPuzzle(seed){
+  if(!Number.isSafeInteger(seed)||seed<1||seed>9999999)throw Error("Invalid procedural puzzle seed.");
+  const random=labRng(seed);
+  const family=PROCEDURAL_FAMILIES[Math.floor(random()*PROCEDURAL_FAMILIES.length)];
+  const variantPool=[...family.optional];
+  for(let i=variantPool.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[variantPool[i],variantPool[j]]=[variantPool[j],variantPool[i]];}
+  const added=variantPool.slice(0,1+Math.floor(random()*3));
+  const nodes=[...family.nodes,...added].map(([id,label,needs])=>({
+    id,label,needs:[...needs],
+    why:"This step requires "+(needs.length?needs.join(" and ").replaceAll("_"," "):"no earlier dependency")+
+      "; the review must establish the prerequisites before relying on the result."
+  }));
+  const finish=nodes.find(n=>n.id==="report");
+  finish.needs.push(...added.map(n=>n[0]));
+  const labels=new Map(nodes.map(n=>[n.id,n.label]));
+  for(const node of nodes){
+    node.why=node.needs.length
+      ?"Before this step, establish: "+node.needs.map(dep=>labels.get(dep)).join("; ")+"."
+      :"This is an independent starting point; no other step must precede it.";
+  }
+  const puzzle={id:"lab-"+seed,seed,family:family.id,level:3,
+    title:family.title+" #"+seed,topic:family.topic,goal:family.goal,story:family.story,
+    nodes,version:PROCEDURAL_PUZZLE_VERSION};
+  return validatePuzzle(puzzle);
+}
+export function getPuzzleById(id){
+  if(typeof id!=="string")return null;
+  const fixed=PUZZLE_BY_ID.get(id);
+  if(fixed)return fixed;
+  if(!/^lab-[1-9][0-9]{0,6}$/.test(id))return null;
+  const seed=Number(id.slice(4));
+  return seed<=9999999?proceduralPuzzle(seed):null;
+}
+export function puzzleVersionFor(id){
+  const p=getPuzzleById(id);
+  return p?(p.version||PUZZLE_VERSION):null;
+}
+
+
 export function gradeOrder(puzzleId,order,hintsUsed=0) {
-  const puzzle=PUZZLE_BY_ID.get(puzzleId);
+  const puzzle=getPuzzleById(puzzleId);
   if(!puzzle)throw Error("Unknown puzzle");
   if(!Array.isArray(order)||order.length!==puzzle.nodes.length||new Set(order).size!==puzzle.nodes.length)throw Error("Select each proof step exactly once.");
   if(order.some(x=>typeof x!=="string"||!puzzle.nodes.some(n=>n.id===x)))throw Error("Unknown step.");
@@ -84,7 +203,7 @@ export function gradeOrder(puzzleId,order,hintsUsed=0) {
   const valid=mistakes.length===0;
   const score=Math.max(0,Math.round(100*correct/Math.max(1,constraints.length))-Math.min(20,hintsUsed*4));
   return {
-    puzzle_id:puzzle.id, puzzle_version:PUZZLE_VERSION,
+    puzzle_id:puzzle.id, puzzle_version:puzzleVersionFor(puzzle.id),
     valid,correct,total:constraints.length,score,hints_used:hintsUsed,
     mistakes:mistakes.map(({before,after})=>({before,after})),
     meaning:"Synthetic prerequisite ordering only: not a Lean 4 proof, certified RL label, or PCS authoritative result."

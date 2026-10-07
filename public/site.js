@@ -59,16 +59,21 @@
       return details;
     };
 
-    addLink(links, "research-preview.html", "Try PCS", "nav-primary-link");
-    addLink(links, "tasks.html", "Find work", "nav-find-work");
+    addLink(links, "experience.html", "Start here", "nav-primary-link");
+    addLink(links, "arena.html", "Play Arena", "nav-find-work");
 
-    addMenu("Contribute", [
+    addMenu("Get involved", [
+      {heading:"LEARN BY PLAYING",links:[
+        ["arena-proof-quest.html","Proof Quest · beginner logic game"],
+        ["arena-safety-forge.html","Safety Forge · build AI-safety shields"],
+        ["arena.html","Arena / community challenges"]
+      ]},
       {heading:"FIND YOUR PLACE",links:[
         ["commons.html","Commons overview"],
         ["contribute.html","Start contributing · L0+"],
         ["tasks.html","Needed tasks"],
         ["roles.html","Ongoing roles"],
-        ["arena.html","PCS Arena challenges"]
+        ["experience.html","New here? Two-minute tour"]
       ]},
       {heading:"SEE THE BIG PICTURE",links:[
         ["task-graph.html","Task dependency graph"],
@@ -76,17 +81,16 @@
         ["contributors.html","Contributors"]
       ]}
     ]);
-    addMenu("Verify", [
-      {heading:"GET STARTED",links:[
-        ["research-preview.html","Research preview · no login"],
+    addMenu("Use PCS", [
+      {heading:"START WITH AN EXAMPLE",links:[
+        ["experience.html","Start here · guided interactive tour"],
+        ["research-preview.html","Editable scientific checks · no login"],
         ["guided-submission.html","Guided submission"],
         ["package-inspector.html","Inspect a PCS package"],
         ["result-anatomy.html","Understand verification results"]
       ]},
-      {heading:"ADVANCED",links:[
+      {heading:"CHECK, REPRODUCE, UNDERSTAND",links:[
         ["claim-review.html","Claim & obligation review"],
-        ["arena-safety-forge.html","Safety Forge · dynamic game"],
-        ["arena-proof-quest.html","Play Proof Quest · free"],
         ["researcher-pilots.html","Independent researcher pilots"],
         ["trust.html","Trust Center"],
         ["validation.html","Validation evidence"],
@@ -116,6 +120,12 @@
       {heading:"MORE PCS RESOURCES",links:secondaryHrefs.slice(7)}
     ], "More PCS resources");
 
+    const quickButton=document.createElement("button");
+    quickButton.type="button";quickButton.className="nav-quickfind";
+    quickButton.setAttribute("aria-label","Find a PCS page");
+    quickButton.textContent="⌕ Find page";
+    quickButton.addEventListener("click",()=>openQuick());
+    links.appendChild(quickButton);
     const account = addLink(links, "account.html", "Account sign in", "nav-account-entry");
     const admin = addLink(links, "admin-login.html", "Admin sign in", "nav-admin-entry");
     accountLinks.push(account);
@@ -127,6 +137,129 @@
       });
     });
   });
+
+  // Browse the actual site map without sending a search query to any server.
+  // An offline-first command palette works on desktop, keyboard and mobile.
+  const siteShortcuts=[
+    ["Start here","experience.html","A two-minute interactive tour","Explore"],
+    ["Safety Forge","arena-safety-forge.html","Build and check toy AI safety shields","Play"],
+    ["Proof Quest","arena-proof-quest.html","Learn prerequisite logic through puzzles","Play"],
+    ["PCS Arena","arena.html","Games and research challenges","Play"],
+    ["Research preview","research-preview.html","Editable local AI and science checks","Try PCS"],
+    ["Guided submission","guided-submission.html?demo=1","Project to evidence, step by step","Try PCS"],
+    ["Package inspector","package-inspector.html","Open and inspect a PCS package","Try PCS"],
+    ["Verification results","result-anatomy.html","Understand every result layer","Try PCS"],
+    ["Project mapper","project-builder.html","Discover candidate claims in your own files","Try PCS"],
+    ["v0.6 verifier","mvp.html","Command-line package verification workflow","Try PCS"],
+    ["Legacy threat lab","demo.html","Frozen v0.5 adversarial parity simulation","Try PCS"],
+    ["Needed tasks","tasks.html","Live, curated volunteer work","Get involved"],
+    ["Contributor roles","roles.html","Longer-term responsibilities","Get involved"],
+    ["Contribute","contribute.html","Join as a new contributor","Get involved"],
+    ["Task dependency map","task-graph.html","Understand task ordering and blockers","Get involved"],
+    ["Commons overview","commons.html","What the community is building","Get involved"],
+    ["Independent pilots","researcher-pilots.html","Pilot studies and claims to reproduce","Research"],
+    ["Trust Center","trust.html","Assumptions and external boundaries","Research"],
+    ["Trust Explorer","trust-explorer.html","Inspect exact trust boundaries","Research"],
+    ["Validation","validation.html","Evidence for published testing claims","Research"],
+    ["Validation registry","validation-registry.html","Find individually documented validation","Research"],
+    ["Architecture","architecture.html","Technical design of PCS","Research"],
+    ["AI safety research","research.html","Projects and research program","Research"],
+    ["Governance","governance.html","How assurance decisions are governed","About"],
+    ["Organizations","organizations.html","How labs can run a pilot","About"],
+    ["Support PCS","fund.html","Funding and public-good contributions","About"],
+    ["Privacy","privacy.html","Gameplay research consent and deletion","About"],
+    ["Contact","contact.html","Get in touch","About"],
+    ["My account","account.html","Dashboard, applications and settings","Account"],
+    ["Admin sign in","admin-login.html","Separate privileged administration","Account"]
+  ];
+  const quick=document.createElement("dialog");quick.id="pcsQuickFind";quick.className="pcs-quick-dialog";
+  quick.setAttribute("aria-labelledby","pcsQuickTitle");
+  const quickHeader=document.createElement("div");quickHeader.className="pcs-quick-header";
+  const quickTitle=document.createElement("h2");quickTitle.id="pcsQuickTitle";quickTitle.textContent="Find your place in PCS";
+  const quickClose=document.createElement("button");quickClose.type="button";quickClose.className="pcs-quick-close";
+  quickClose.setAttribute("aria-label","Close page finder");quickClose.textContent="✕";
+  quickClose.addEventListener("click",()=>quick.close());
+  quickHeader.append(quickTitle,quickClose);
+  const quickSearch=document.createElement("input");quickSearch.type="search";quickSearch.id="pcsQuickInput";
+  quickSearch.placeholder="Search pages, topics, or activities…";
+  quickSearch.setAttribute("aria-label","Search PCS pages");
+  const quickResults=document.createElement("div");quickResults.id="pcsQuickResults";
+  quickResults.className="pcs-quick-results";quickResults.setAttribute("aria-live","polite");
+  const quickHelp=document.createElement("p");quickHelp.className="pcs-quick-help";
+  quickHelp.textContent="Press / or Ctrl/⌘+K anywhere to open. Arrow keys select a page. All results are local site links.";
+  quick.append(quickHeader,quickSearch,quickResults,quickHelp);
+  document.body.appendChild(quick);
+  const renderQuick=()=>{
+    quickResults.replaceChildren();
+    const query=quickSearch.value.trim().toLowerCase();
+    const ranked=siteShortcuts.filter(x=>(x[0]+" "+x[2]+" "+x[3]).toLowerCase().includes(query)).slice(0,18);
+    for(const [title,href,description,group] of ranked){
+      const anchor=document.createElement("a");anchor.href=href;anchor.className="pcs-quick-item";
+      const name=document.createElement("strong");name.textContent=title;
+      const detail=document.createElement("small");detail.textContent=description;
+      const category=document.createElement("span");category.textContent=group;
+      const main=document.createElement("div");main.append(name,detail);anchor.append(main,category);
+      quickResults.appendChild(anchor);
+    }
+    if(!ranked.length){const p=document.createElement("p");p.textContent="No matching pages. Try 'game', 'verify', 'task', or 'trust'.";quickResults.appendChild(p);}
+  };
+  const openQuick=()=>{
+    if(!quick.open){quickSearch.value="";renderQuick();quick.showModal();}
+    quickSearch.focus();
+  };
+  quickSearch.addEventListener("input",renderQuick);
+  quickSearch.addEventListener("keydown",event=>{
+    const links=[...quickResults.querySelectorAll("a")];
+    if(event.key==="ArrowDown"||event.key==="ArrowUp"){
+      event.preventDefault();
+      if(links.length)(event.key==="ArrowDown"?links[0]:links.at(-1)).focus();
+    }else if(event.key==="Enter"&&links.length){event.preventDefault();links[0].click();}
+  });
+  quickResults.addEventListener("keydown",event=>{
+    const links=[...quickResults.querySelectorAll("a")],current=links.indexOf(document.activeElement);
+    if(current<0)return;
+    if(event.key==="ArrowDown"||event.key==="ArrowUp"){
+      event.preventDefault();links[(current+(event.key==="ArrowDown"?1:-1)+links.length)%links.length].focus();
+    }else if(event.key==="Escape"){quick.close();}
+  });
+  quick.addEventListener("click",event=>{if(event.target===quick)quick.close();});
+  document.addEventListener("keydown",event=>{
+    const target=event.target;
+    const typing=target?.isContentEditable||["INPUT","TEXTAREA","SELECT"].includes(target?.tagName);
+    if((event.key==="k"&&(event.metaKey||event.ctrlKey))||(event.key==="/"&&!typing&&!event.altKey&&!event.metaKey&&!event.ctrlKey)){
+      event.preventDefault();openQuick();
+    }
+  });
+
+  // Native, accessible breadcrumbs help readers return to the right collection.
+  const breadcrumbParents={
+    "experience.html":["Start here"],
+    "arena.html":["Play Arena"],"arena-proof-quest.html":["Play Arena","Proof Quest"],
+    "arena-safety-forge.html":["Play Arena","Safety Forge"],
+    "guided-submission.html":["Use PCS","Guided submission"],
+    "research-preview.html":["Use PCS","Research preview"],
+    "result-anatomy.html":["Use PCS","Verification results"],
+    "package-inspector.html":["Use PCS","Package inspector"],
+    "project-builder.html":["Use PCS","Project mapper"],
+    "mvp.html":["Use PCS","v0.6 verifier"],
+    "tasks.html":["Get involved","Needed tasks"],"roles.html":["Get involved","Roles"],
+    "task-graph.html":["Get involved","Task dependencies"],
+    "trust.html":["Research","Trust Center"],"validation.html":["Research","Validation"]
+  };
+  const labels=breadcrumbParents[currentPath],main=document.querySelector("main");
+  if(labels&&main){
+    const crumb=document.createElement("nav");crumb.className="pcs-crumbs";crumb.setAttribute("aria-label","Breadcrumb");
+    const ol=document.createElement("ol");
+    const home=document.createElement("a");home.href="index.html";home.textContent="Home";
+    const first=document.createElement("li");first.appendChild(home);ol.appendChild(first);
+    labels.forEach((label,index)=>{
+      const li=document.createElement("li");
+      if(index===labels.length-1){const span=document.createElement("span");span.setAttribute("aria-current","page");span.textContent=label;li.appendChild(span);}
+      else{const a=document.createElement("a");a.href=label==="Play Arena"?"arena.html":label==="Use PCS"?"experience.html":label==="Get involved"?"commons.html":"research.html";a.textContent=label;li.appendChild(a);}
+      ol.appendChild(li);
+    });
+    crumb.appendChild(ol);main.prepend(crumb);
+  }
 
   // Two independent sessions: an ordinary L0–L6 account is not admin authority.
   // Default links remain usable if the status endpoints are offline.
