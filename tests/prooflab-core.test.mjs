@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {
  PROOFLAB_VERSION,PROOFLAB_MAX_STEPS,allProofLabCases,proofLabCase,
- availablePlanMoves,replayProofLabSteps,evaluateProofLabSession,graphIntegrity
+ availablePlanMoves,proofLabDecisionSet,replayProofLabSteps,evaluateProofLabSession,graphIntegrity
 } from "../public/prooflab-core.mjs";
 import {PROOFLAB_SOURCE_COMMIT,PROOFLAB_WITHHELD} from "../public/prooflab-source-data.mjs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
@@ -11,10 +11,11 @@ const cases=allProofLabCases();
 function solved(c){
  const actions=[],completed=[];
  while(completed.length<c.nodes.length){
-  const possible=availablePlanMoves(c.id,completed);
-  assert.ok(possible.length>0,"DAG must have available node for "+c.id);
-  const next=possible.at(-1);
-  actions.push({node:next,reason:"dependency",confidence:3});completed.push(next);
+  const feasible=new Set(availablePlanMoves(c.id,completed));
+  const choices=proofLabDecisionSet(c.id,completed,actions.length);
+  const next=choices.find(id=>feasible.has(id));
+  assert.ok(next,"Decision set must include a feasible node for "+c.id);
+  actions.push({node:next,reason:"dependency",confidence:3,assisted:false});completed.push(next);
  }
  return actions;
 }
@@ -68,7 +69,10 @@ test("every source-pinned case has a complete, repeatable, independently scored 
 });
 test("blocked attempts are documented as negative learning signal, not proof failure",()=>{
  for(const c of cases){
-  const invalid={node:"review",reason:"intuition",confidence:3},actions=[
+  const firstChoices=proofLabDecisionSet(c.id,[],0);
+  const blocked=firstChoices.find(id=>!availablePlanMoves(c.id,[]).includes(id));
+  assert.ok(blocked,"controlled set should include a plausible blocked choice");
+  const invalid={node:blocked,reason:"intuition",confidence:3,assisted:false},actions=[
    invalid,...solved(c).slice(0,4)
   ];
   const r=replayProofLabSteps(c.id,actions);
@@ -80,31 +84,43 @@ test("blocked attempts are documented as negative learning signal, not proof fai
   assert.equal(verified.challenge.status,"human-selected hypothesis; not empirically verified");
  }
 });
-test("multi-answer prerequisite graph never presents one human ordering as uniquely correct",()=>{
+test("controlled decision sets expose multiple valid choices without leaking the label by position",()=>{
  for(const c of cases){
-  const first=availablePlanMoves(c.id,[]);
-  assert.equal(first.length,1);
-  const after=availablePlanMoves(c.id,["scope"]);
+  const first=proofLabDecisionSet(c.id,[],0);
+  assert.ok(first.includes("scope"));
+  assert.ok(first.length>=2&&first.length<=4);
+  const after=proofLabDecisionSet(c.id,["scope"],1);
+  const feasible=availablePlanMoves(c.id,["scope"]);
+  assert.ok(feasible.every(id=>after.includes(id)),c.id);
   assert.ok(after.includes("premises")&&after.includes("artifact"));
-  const p=solved(c);
-  const alt=[p.find(x=>x.node==="scope"),p.find(x=>x.node==="premises"),
-    p.find(x=>x.node==="artifact"),
-    ...p.filter(x=>!["scope","premises","artifact"].includes(x.node))];
-  const top=replayProofLabSteps(c.id,alt);
-  assert.equal(top.completed,true,c.id);
+  assert.deepEqual(after,proofLabDecisionSet(c.id,["scope"],1),"candidate set must replay deterministically");
+  const result=replayProofLabSteps(c.id,solved(c));
+  assert.equal(result.completed,true,c.id);
+  assert.ok(result.checked_steps.every(step=>step.choice_set.includes(step.node)));
  }
 });
+test("each donated decision preserves the exact candidate set and blind/assisted provenance",()=>{
+ const c=cases[0],actions=solved(c);
+ actions[1]={...actions[1],assisted:true};
+ const out=evaluateProofLabSession(supplied(c,actions));
+ assert.equal(out.training_labels.listwise_supervision.length,actions.length);
+ assert.equal(out.training_labels.blind_decisions,actions.length-1);
+ assert.equal(out.training_labels.assisted_decisions,1);
+ assert.equal(out.training_labels.listwise_supervision[1].assisted,true);
+ assert.ok(out.training_labels.listwise_supervision.every(x=>x.choice_set.includes(x.selected)));
+});
+
 test("malformed actions, unsupported hypotheses, forged labels and abusive repeats are rejected",()=>{
  const c=cases[0],valid=supplied(c);
  const broken=[{...valid,hints_used:13},{...valid,version:"other"},
   {...valid,threat:"I proved alignment"}, {...valid,threat_confidence:0},
-  {...valid,actions:[...valid.actions,{node:"review",reason:"madeup",confidence:3}]},
+  {...valid,actions:[...valid.actions,{node:"review",reason:"madeup",confidence:3,assisted:false}]},
   {...valid,client_verified:true}];
  for(const x of broken)assert.throws(()=>evaluateProofLabSession(x));
  assert.throws(()=>replayProofLabSteps(c.id,new Array(PROOFLAB_MAX_STEPS+1).fill(
-  {node:"scope",reason:"source",confidence:2})));
+  {node:"scope",reason:"source",confidence:2,assisted:false})));
  assert.throws(()=>replayProofLabSteps(c.id,new Array(5).fill(
-  {node:"scope",reason:"source",confidence:2})),/Excessive/);
+  {node:"scope",reason:"source",confidence:2,assisted:false})),/Excessive|outside the deterministic decision set/);
 });
 test("game has no duplicate controls, explicit consent, mobile graph, keyboard-compatible cards",()=>{
  const html=read("public/prooflab.html"),script=read("public/prooflab.js"),style=read("public/prooflab.css");
