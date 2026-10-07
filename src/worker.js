@@ -3757,15 +3757,17 @@ async function exportProofLabDataset(request,env,admin){
     throw new ApiError(400,"Invalid export offset.","invalid_prooflab_export_cursor");
   const offset=Number(raw);
   const r=await env.COMMONS_DB.prepare(
-    "SELECT verified_replay_json FROM prooflab_source_research_sessions ORDER BY created_at,id LIMIT 25 OFFSET ?"
-  ).bind(offset).all();
+    "SELECT verified_replay_json FROM prooflab_source_research_sessions WHERE source_commit=? AND session_version=? ORDER BY created_at,id LIMIT 25 OFFSET ?"
+  ).bind(PROOFLAB_SOURCE_COMMIT,PROOFLAB_VERSION,offset).all();
   const records=r.results||[];
-  return json({ok:true,format:"pcs-prooflab-optin-source-grounded-dataset-v1",
+  return json({ok:true,format:"pcs-prooflab-optin-source-grounded-dataset-v2",
     source_commit:PROOFLAB_SOURCE_COMMIT,
-    task_scope:"22 educational real-source theorem review plans; no Lean proof terms.",
+    session_version:PROOFLAB_VERSION,
+    task_scope:"22 educational real-source theorem investigations with controlled next-step choice sets; no Lean proof terms.",
     excludes:["user_id","email","IP address","names","precise timestamps","digest"],
     limitations:["Client-side vote timing and true human origin cannot be established.",
-      "Prerequisite results are educational graph labels, not Lean theorem checks.",
+      "Candidate sets and prerequisite results are educational graph labels, not Lean theorem checks.",
+      "Human selections are planning attempts/preferences, not claims of global optimality.",
       "18 privately withheld cases do not enter public gameplay or donations.",
       "The data is from one PCS core project; cross-project generalization is untested."],
     entries:records.map(row=>JSON.parse(row.verified_replay_json)),
