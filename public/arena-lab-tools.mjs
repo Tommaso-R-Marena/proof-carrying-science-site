@@ -77,7 +77,7 @@ export function classifyPolicyTrials(trials){
     const result=trial.result;
     if(!result||!Array.isArray(trial.guards)||!Number.isFinite(result.score)||!Number.isFinite(result.guard_cost))
       throw Error("Policy score must be independently verified first.");
-    return {...trial,index,label:result.passed?"Certified in toy world":result.safe?"Mission overblocked":"Unsafe route remains",
+    return {...trial,index,label:result.passed?"Bounded check passed":result.safe?"Mission overblocked":"Unsafe route remains",
       rating:result.passed?3:result.safe?2:1};
   }).sort((a,b)=>b.rating-a.rating||b.result.score-a.result.score||a.result.guard_cost-b.result.guard_cost||a.index-b.index);
   return sorted;
