@@ -105,6 +105,8 @@ test("navigation makes the start tour and both games discoverable without remote
   assert.match(site,/arena-proof-quest\.html/);
   assert.match(site,/event\.metaKey\|\|event\.ctrlKey/);
   assert.match(site,/pcs-quick-results/);
+  assert.match(site,/quickButton\.addEventListener\("click",\(\)=>openQuick\(\)\)/);
+  assert.match(site,/const openQuick=\(\)=>\{/);
   assert.match(site,/pcs-crumbs/);
   assert.doesNotMatch(site,/fetch\([^\n]*siteShortcuts/);
 });
