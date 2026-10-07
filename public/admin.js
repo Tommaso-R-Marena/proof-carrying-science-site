@@ -1103,13 +1103,14 @@
     button.disabled=true;status.textContent="Checking account-linked, consented research entries…";
     try{
       const result=await api("/api/admin/arena/storage");
-      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel;
-      if(!pq||!sf||!duel)throw Error("Unexpected storage report.");
-      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes)+Number(duel.approx_payload_bytes));
+      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel, pl=result.collections?.prooflab;
+      if(!pq||!sf||!duel||!pl)throw Error("Unexpected storage report.");
+      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes)+Number(duel.approx_payload_bytes)+Number(pl.approx_payload_bytes));
       status.textContent="Proof Quest: "+Number(pq.rows).toLocaleString()+
         " adult opt-in examples · Safety Forge: "+Number(sf.rows).toLocaleString()+
         " verified synthetic sessions · Shield Duel: "+Number(duel.rows).toLocaleString()+
-        " consented ballot batches · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
+        " consented ballot batches · ProofLab: "+Number(pl.rows).toLocaleString()+
+        " educational research sessions · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
     }catch(e){status.textContent="Storage check unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
@@ -1201,5 +1202,33 @@
     }catch(err){msg.textContent="Research export unavailable: "+err.message;}
     finally{button.disabled=false;}
   });
+  $("#adminProofLabExport")?.addEventListener("click",async()=>{
+    const button=$("#adminProofLabExport"),status=$("#adminProofLabExportMessage");
+    button.disabled=true;status.textContent="Collecting owner-only, deidentified educational strategy traces…";
+    try{
+      let records=[],offset=0,metadata=null;
+      for(let page=0;page<100;page++){
+        const data=await api("/api/admin/arena/prooflab/dataset?offset="+offset);
+        if(data.format!=="pcs-prooflab-optin-learning-sessions-v1"||!Array.isArray(data.records))
+          throw Error("Unsupported ProofLab dataset schema.");
+        metadata||=data;records.push(...data.records);
+        if(data.next_offset===null)break;
+        if(!Number.isInteger(data.next_offset)||data.next_offset<=offset||page===99)
+          throw Error("Invalid/oversized research page cursor.");
+        offset=data.next_offset;
+      }
+      const payload={format:metadata.format,core_revision:metadata.core_revision,
+        scope:metadata.scope,excluded_fields:metadata.excluded_fields,
+        restrictions:metadata.restrictions,records};
+      const blob=new Blob([JSON.stringify(payload,null,2)+"\n"],{type:"application/json"});
+      const href=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=href;a.download="pcs-prooflab-consented-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(href);
+      status.textContent="Exported "+records.length+" adult opt-in, independently replayed educational sessions. "+
+        "Do not publish participant-identifying information or call game strategies Lean proofs.";
+    }catch(err){status.textContent="ProofLab export unavailable: "+err.message;}
+    finally{button.disabled=false;}
+  });
+
   document.addEventListener("DOMContentLoaded",load);
 })();
