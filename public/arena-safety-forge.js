@@ -2,6 +2,7 @@ import {
   SAFETY_LAB_VERSION,ACTIONS,GUARDS,MAX_STEPS,MAX_TRIALS,
   scenarioForSeed,initialState,applyAction,replayActions,verifyShield
 } from "./safety-forge-core.mjs";
+import {classifyPolicyTrials,traceFrames} from "./arena-lab-tools.mjs";
 
 // All gameplay is local. These are the only two network requests, each
 // triggered by a separate explicit research-data donation or erasure click.
@@ -10,6 +11,7 @@ const actionById=new Map(ACTIONS.map(a=>[a.id,a]));
 let seed=1,mission=null,mode="attack",agent=initialState(),acted=[],ended=false;
 let shield=new Set(),attacks=[],repairs=[],hinted=false,lastCheck=null;
 let hintExposed=false,oracleExposed=false,repairFeedbackExposed=false,tourStep=0;
+let verifiedPolicies=new Map(),traceScene=null,tracePointer=0,checkedGuards=[];
 const tour=[
   ["Find a loophole 🔎","Tap actions to experiment with a fictional bot. Try routes, request permission, and look for a safety failure."],
   ["Build a better shield 🛡️","Choose Repair the shield, then flip protection switches on and off. Cheap fixes are great, but don't stop the real mission."],
@@ -77,8 +79,103 @@ function agentStatus(state=agent){
   if(!mission.initial_guards.length)addText(list,"span","No safety rules enabled yet.");
   for(const g of mission.initial_guards)addText(list,"span",(GUARDS.find(v=>v.id===g)?.icon||"🛡️")+" "+(GUARDS.find(v=>v.id===g)?.label||g));
   $("forgeActionCounter").textContent=acted.length+" / "+MAX_STEPS+" actions";
+  renderRouteMap(state);
   stats();
 }
+// Side-by-side strategy notebook: never infer score from a player's declaration.
+// All comparisons are computed with exactly the same deterministic verifier used
+// for the existing research session and its server-side independent replay.
+function policyKey(ids){return [...ids].sort().join("|");}
+function renderStrategyBoard(){
+  const root=$("forgeStrategyBoard");root.replaceChildren();
+  if(!repairs.length){
+    addText(root,"p","No tested shields yet. Try a guard combination and press Check every possible state.");return;
+  }
+  const ranked=classifyPolicyTrials(repairs.map(trial=>{
+    const key=policyKey(trial.guards);
+    if(!verifiedPolicies.has(key))verifiedPolicies.set(key,verifyShield(seed,trial.guards));
+    return {guards:[...trial.guards],result:verifiedPolicies.get(key)};
+  }));
+  for(const item of ranked.slice(0,8)){
+    const row=addText(root,"div","","forge-strategy-row");
+    row.dataset.rating=String(item.rating);
+    const icon=addText(row,"span",item.result.passed?"🏆":item.result.safe?"🚧":"⚠️","forge-strategy-icon");
+    const copy=addText(row,"div","","forge-strategy-copy");
+    addText(copy,"strong",item.label+" · "+item.result.score+"/100");
+    addText(copy,"small",item.guards.length+" shields · cost "+item.result.guard_cost+" · "+item.result.checked_states+" states inspected");
+    addText(copy,"small",item.guards.map(id=>GUARDS.find(g=>g.id===id)?.label||id).join(" + ")||"No shields");
+    const button=addText(row,"button","Load","forge-strategy-load");
+    button.type="button";button.title="Load this previously verified shield configuration";
+    button.addEventListener("click",()=>{
+      shield=new Set(item.guards);repairFeedbackExposed=true;lastCheck=null;
+      renderGuards();$("forgeCheckerPath").hidden=true;$("forgeVictoryNext").hidden=true;
+      $("forgeVerification").className="forge-verification";
+      $("forgeVerification").textContent="Loaded a prior verified configuration. Run a fresh check before declaring a new result.";
+      addLog("🧩 Restored earlier shield recipe ("+item.result.guard_cost+" cost units).");
+      $("forgeGuardCards").scrollIntoView({behavior:"smooth",block:"nearest"});
+    });
+  }
+}
+function renderRouteMap(state){
+  const root=$("forgeRouteMap");root.replaceChildren();
+  const milestones=[
+    ["🔎","Site inspected",state.inspected],["🗝️","Human approved",state.authorized],
+    ["🛤️","Reached site",state.at_site],["🚀","Device deployed",state.deployed],
+    ["📡","Report shared",state.shared]
+  ];
+  for(const [icon,label,done] of milestones){
+    const el=addText(root,"div","","forge-route-step");
+    el.dataset.done=String(done);
+    addText(el,"span",icon+" "+label);
+    addText(el,"b",done?"✓":"○");
+  }
+}
+function renderTraceScene(){
+  const root=$("forgeTracePlayer"),scene=traceScene;
+  root.hidden=!scene;
+  if(!scene)return;
+  const frame=scene.frames[tracePointer];
+  $("forgeTraceTitle").textContent=scene.title;
+  $("forgeTraceIndex").textContent="Action "+(tracePointer+1)+" of "+scene.frames.length;
+  $("forgeTraceProgress").max=scene.frames.length;
+  $("forgeTraceProgress").value=tracePointer+1;
+  const label=actionById.get(frame.action)?.label||frame.action;
+  $("forgeTraceStage").textContent=(frame.unsafe?"🔴 SAFETY FAILURE":frame.blocked?"🚧 BLOCKED":frame.goal?"🟢 MISSION COMPLETE":"🤖 ACTION EXECUTED")+
+    " — "+label+(frame.reason?" · "+frame.reason:"")+
+    (frame.violations.length?" · "+frame.violations.join(", ").replaceAll("_"," "):"");
+  $("forgeTraceStage").dataset.state=frame.unsafe?"unsafe":frame.blocked?"blocked":frame.goal?"goal":"normal";
+  $("forgeTraceState").textContent="Risk: "+frame.before.risk+" → "+frame.after.risk+
+    " · authorization: "+(frame.after.authorized?"yes":"no")+
+    " · inspection: "+(frame.after.inspected?"yes":"no")+
+    " · consent: "+(frame.after.consented?"yes":"no")+
+    " · redacted: "+(frame.after.redacted?"yes":"no");
+  $("forgeTracePrev").disabled=tracePointer===0;
+  $("forgeTraceNext").disabled=tracePointer>=scene.frames.length-1;
+}
+function startTrace(title,guardList,actions){
+  if(!Array.isArray(actions)||!actions.length)return;
+  const frames=traceFrames(seed,guardList,actions);
+  if(!frames.length)return;
+  traceScene={title,frames};tracePointer=0;renderTraceScene();
+  $("forgeTracePlayer").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function renderTheaterButtons(){
+  $("forgeShowCounterexample").disabled=!lastCheck?.counterexample?.sequence?.length;
+  $("forgeShowSafe").disabled=!lastCheck?.safe_mission?.length;
+  $("forgeShowLastAttack").disabled=!attacks.length;
+}
+$("forgeShowCounterexample").addEventListener("click",()=>{
+  if(lastCheck?.counterexample?.sequence)startTrace("Shortest discovered unsafe route",checkedGuards,lastCheck.counterexample.sequence);
+});
+$("forgeShowSafe").addEventListener("click",()=>{
+  if(lastCheck?.safe_mission)startTrace("A legitimate mission the verified shield still permits",checkedGuards,lastCheck.safe_mission);
+});
+$("forgeShowLastAttack").addEventListener("click",()=>{
+  if(attacks.length)startTrace("My actual recorded attack · existing mission shield",mission.initial_guards,attacks.at(-1).actions);
+});
+$("forgeTracePrev").addEventListener("click",()=>{if(tracePointer>0){tracePointer--;renderTraceScene();}});
+$("forgeTraceNext").addEventListener("click",()=>{if(traceScene&&tracePointer<traceScene.frames.length-1){tracePointer++;renderTraceScene();}});
+
 function showMode(next){
   mode=next;
   $("forgeAttackPanel").hidden=next!=="attack";
@@ -144,7 +241,7 @@ function recordAttack(){
     const result=replayActions(seed,mission.initial_guards,entry.actions);
     addLog("🧾 Trace recorded ("+result.events.length+" steps, "+(result.unsafe?"unsafe witness found":"no unsafe witness")+")",result.unsafe?"unsafe":"");
   }else addLog("This same trace is already in your notebook; no duplicate saved.");
-  stats();return true;
+  stats();renderTheaterButtons();return true;
 }
 function resetAttack(record=true){
   if(record)recordAttack();
@@ -181,7 +278,7 @@ function updateGuardCost(){
 function verify(){
   try{
     const result=verifyShield(seed,[...shield]);
-    lastCheck=result;
+    lastCheck=result;checkedGuards=[...shield];verifiedPolicies.set(policyKey(checkedGuards),result);
     if(result.passed)badges.verified_repair=true;
     if(result.safe&&!result.live)badges.overblocking=true;
     renderBadges();
@@ -212,12 +309,14 @@ function verify(){
     for(const id of actions)addText(ol,"li",actionById.get(id)?.label||id);
     path.appendChild(ol);
     addLog("🔬 Bounded shield check: "+(result.passed?"VALID REPAIR":result.safe?"OVERBLOCKED MISSION":"UNSAFE")+" · "+result.checked_states+" states · score "+result.score,result.passed?"pass":result.safe?"":"unsafe");
-    stats();
+    stats();renderStrategyBoard();renderTheaterButtons();
   }catch(e){$("forgeVerification").textContent=e.message;$("forgeVerification").className="forge-verification failed";}
 }
 function selectSeed(nextSeed){
   seed=nextSeed;mission=scenarioForSeed(seed);
   attacks=[];repairs=[];shield=new Set(mission.initial_guards);lastCheck=null;
+  checkedGuards=[];verifiedPolicies=new Map();traceScene=null;tracePointer=0;
+  $("forgeTracePlayer").hidden=true;
   hintExposed=false;oracleExposed=false;repairFeedbackExposed=false;
   $("forgeWorldIcon").textContent=mission.icon;$("forgeMissionTitle").textContent=mission.name;
   $("forgeMissionStory").textContent=mission.story+" Shortcut risk: "+mission.shortcut_risk+"; budget: "+mission.risk_budget+". Report: "+(mission.report_sensitive?"sensitive — permission matters":"public telemetry — no personal consent needed")+". Each seed has its own rules.";
@@ -229,7 +328,7 @@ function selectSeed(nextSeed){
   $("forgeDonateMessage").textContent="";
   $("forgeEventLog").replaceChildren();
   addLog("🎲 Generated scenario "+seed+". Challenge: find a counterexample, then redesign the shield.");
-  showMode("attack");resetAttack(false);renderGuards();
+  showMode("attack");resetAttack(false);renderGuards();renderStrategyBoard();renderTheaterButtons();
   try{
     const url=new URL(location.href);
     url.searchParams.set("seed",String(seed));
@@ -264,7 +363,8 @@ $("forgeHint").addEventListener("click",()=>{
 $("forgeRestore").addEventListener("click",()=>{
   shield=new Set(mission.initial_guards);renderGuards();lastCheck=null;
   $("forgeVerification").textContent="Original shield restored; run a new bounded check.";
-  $("forgeVerification").className="forge-verification";$("forgeCheckerPath").hidden=true;
+  $("forgeVerification").className="forge-verification";$("forgeCheckerPath").hidden=true;$("forgeVictoryNext").hidden=true;
+  renderTheaterButtons();
 });
 $("forgeVerify").addEventListener("click",verify);
 $("forgeClearLog").addEventListener("click",()=>{$("forgeEventLog").replaceChildren();addLog("Experiment view cleared. Notebook traces remain local for this mission.");});
