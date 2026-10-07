@@ -14,7 +14,7 @@
 <section class="quest-hero">
   <span class="quest-pill">🧩 PROOF QUEST · BEGINNER FRIENDLY</span>
   <h1>Build a proof, one little step at a time.</h1>
-  <p>Pick a card, build your path, and solve bite-size mysteries. Every mission gets a fresh shuffle, and more than one winning path can exist. No coding or time limits!</p>
+  <p>Eight friendly puzzles, an ever-changing set of generated scientific mysteries, an interactive dependency X-ray, and a detective notebook. Experiment freely; there can be several correct orders, and no coding is required.</p>
   <button type="button" id="questShowTutorial" class="button secondary">🎓 How to play · 30 seconds</button>
   <p class="quest-disclaimer"><strong>Important:</strong> This is not a Lean 4 proof and does not run Lean. It teaches the prerequisite-order idea using synthetic puzzles.</p>
   <div class="quest-stats"><span>✨ <strong id="questSolved">0</strong> puzzles solved this visit</span><span>⭐ <strong id="questStars">0</strong> stars earned</span><span>🧠 No timer. No penalty for trying.</span></div>
@@ -32,7 +32,7 @@
 </section>
 <div class="quest-layout">
   <aside class="quest-sidebar" aria-label="Choose a puzzle">
-    <div class="quest-side-head"><h2>🗺️ Your quest map</h2><p>Pick any level. Start small, grow your reasoning.</p></div>
+    <div class="quest-side-head"><h2>🗺️ Your quest map</h2><p>Play the starter quests or generate a fresh research puzzle. Procedural cases are repeatable from their shareable seed.</p></div>
     <div id="questPuzzleList" class="quest-puzzle-list"></div>
     <p class="quest-side-note">These are toy dependency-order exercises. They are inspired by Lean proof planning, but are <strong>not</strong> Lean 4 code or verified proof objects.</p>
   </aside>
@@ -52,8 +52,11 @@
         <button id="questCoach" type="button" class="button secondary" aria-pressed="false">🧠 Coach mode: off</button>
         <button id="questRevealMap" type="button" class="button secondary" aria-expanded="false" aria-controls="questMapPanel">🕸️ X-ray dependency map (hint)</button>
         <button id="questDaily" type="button" class="button secondary">📅 Today's puzzle</button>
+        <button id="questNewLab" type="button" class="button primary">🎲 Generate a new research puzzle</button>
+        <button id="questShareLab" type="button" class="button secondary">🔗 Copy this puzzle link</button>
       </div>
       <p class="quest-tool-note">Coach mode reveals whether a move's prerequisites are ready. X-ray shows all dependencies. These help you learn and are counted as hints if you donate the run.</p>
+      <p id="questChallengeStatus" class="quest-seed-status" role="status" aria-live="polite">Eight hand-crafted puzzles plus seeded, independently replayable laboratory missions.</p>
       <p id="questDecision" class="quest-decision" aria-live="polite">Detective tip: place cards based on what must happen first.</p>
       <div id="questMapPanel" class="quest-map-panel" hidden>
         <div class="quest-map-head"><strong>🔬 The actual prerequisite graph</strong><span id="questMapNarration"></span></div>
