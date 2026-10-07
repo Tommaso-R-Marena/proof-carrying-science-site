@@ -79,7 +79,9 @@ test("multi-answer prerequisite graph never presents one human ordering as uniqu
   const after=availablePlanMoves(c.id,["scope"]);
   assert.ok(after.includes("premises")&&after.includes("artifact"));
   const p=solved(c);
-  const alt=[p[0],p[2],p[1],...p.slice(3)];
+  const alt=[p.find(x=>x.node==="scope"),p.find(x=>x.node==="premises"),
+    p.find(x=>x.node==="artifact"),
+    ...p.filter(x=>!["scope","premises","artifact"].includes(x.node))];
   const top=replayProofLabSteps(c.id,alt);
   assert.equal(top.completed,true,c.id);
  }
