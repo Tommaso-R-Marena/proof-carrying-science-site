@@ -28,7 +28,9 @@ export function dependencyState(puzzle,ordered=[]){
 export function graphLayout(puzzle,order=[]){
   const data=dependencyState(puzzle,order),levels=new Map();
   for(const n of data.nodes){if(!levels.has(n.depth))levels.set(n.depth,[]);levels.get(n.depth).push(n);}
-  const maxDepth=Math.max(...levels.keys()),width=760,rowHeight=116,nodeWidth=148,nodeHeight=72;
+  const maxDepth=Math.max(...levels.keys()),rowHeight=116,nodeWidth=148,nodeHeight=72;
+  const widest=Math.max(...[...levels.values()].map(group=>group.length));
+  const width=Math.max(760,widest*nodeWidth+Math.max(0,widest-1)*20+48);
   const nodes=data.nodes.map(n=>{
     const siblings=levels.get(n.depth);
     const col=siblings.indexOf(n);
