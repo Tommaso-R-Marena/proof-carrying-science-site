@@ -72,6 +72,24 @@ export function repairPuzzle(taskId){
   visible_edges:plan.edges.filter(e=>!(e.from===chosen.from&&e.to===chosen.to)),
   prompt:"A required educational prerequisite edge disappeared. Which earlier stage must point into the highlighted stage?"};
 }
+/** Real lexical identifier occurrences in the original Lean source proof.
+ * This is NOT an extracted semantic or kernel-certified theorem dependency.
+ */
+export function sourceMentionPuzzle(taskId){
+ const task=findTask(taskId);if(!task)fail("Unknown genuine theorem.");
+ if(!task.syntactic_reference_mentions.length)return null;
+ const cited=task.syntactic_reference_mentions;
+ const correct=cited[seedOf(taskId+"source-mention")%cited.length];
+ const alternatives=shuffle(TASKS.filter(t=>t.module===task.module&&t.name!==task.name&&
+   !cited.includes(t.name)).map(x=>x.name),seedOf(taskId+"source-distractors"));
+ const choices=shuffle([correct,...alternatives.slice(0,3)],seedOf(taskId+"source-options"))
+   .map(name=>({id:name,label:name}));
+ if(choices.length<3)fail("Not enough source-grounded helper options.");
+ return{task_id:taskId,choices,answer:correct,
+   prompt:"Which named helper actually occurs in this theorem's pinned Lean source proof?",
+   evidence_kind:"Source identifier occurrence only; neither relevance nor semantic dependency is guaranteed."};
+}
+
 export function scopePuzzle(taskId){
  const t=findTask(taskId);if(!t)fail("Unknown theorem.");
  const statement=t.statement;
@@ -97,7 +115,8 @@ export function evaluateSession(payload){
  const plan=proofPlan(payload.task_id),repair=repairPuzzle(payload.task_id),scope=scopePuzzle(payload.task_id);
  if(!Array.isArray(payload.actions)||payload.actions.length<3||payload.actions.length>MAX_ACTIONS)fail("Session action limit (3–80).");
  const nodes=new Map(plan.nodes.map(n=>[n.id,n]));
- const placed=[],seen=new Set(),steps=[];let invalid=0,hints=0,repairVote=null,scopeVote=null;
+ const sourceMention=sourceMentionPuzzle(payload.task_id);
+ const placed=[],seen=new Set(),steps=[];let invalid=0,hints=0,repairVote=null,scopeVote=null,helperVote=null;
  for(let i=0;i<payload.actions.length;i++){
   const a=payload.actions[i];
   if(!a||typeof a!=="object"||Array.isArray(a)||typeof a.kind!=="string")fail("Bad action.");
@@ -115,6 +134,12 @@ export function evaluateSession(payload){
   }else if(a.kind==="repair"){
     if(!exactKeys(a,["kind","choice"])||repairVote!==null||!repair.choices.some(c=>c.id===a.choice))fail("Invalid repair vote.");
     repairVote=a.choice;steps.push({index:i,kind:"repair",choice:a.choice,correct:a.choice===repair.missing_source});
+  }else if(a.kind==="helper"){
+    if(!exactKeys(a,["kind","choice","confidence"])||!sourceMention||helperVote!==null||
+      !sourceMention.choices.some(x=>x.id===a.choice)||
+      !Number.isInteger(a.confidence)||a.confidence<1||a.confidence>3)fail("Invalid source helper proposal.");
+    helperVote={choice:a.choice,confidence:a.confidence};
+    steps.push({index:i,kind:"helper",choice:a.choice,confidence:a.confidence,correct:a.choice===sourceMention.answer});
   }else if(a.kind==="scope"){
     if(!exactKeys(a,["kind","choice","confidence"])||scopeVote!==null||
       !scope.choices.some(c=>c.id===a.choice)||!Number.isInteger(a.confidence)||a.confidence<1||a.confidence>3)
@@ -133,6 +158,10 @@ export function evaluateSession(payload){
    attempted_actions:steps,placed,planned_stages:plan.nodes.length,complete,invalid_moves:invalid,hints,
    repair:{choice:repairVote,correct:repairCorrect,expected_stage:repair.missing_source},
    interpretation:{choice:scopeVote?.choice||null,confidence:scopeVote?.confidence||null,correct:Boolean(scopeCorrect)},
+   source_reference:{available:Boolean(sourceMention),choice:helperVote?.choice||null,
+      confidence:helperVote?.confidence||null,correct:Boolean(helperVote&&sourceMention&&helperVote.choice===sourceMention.answer),
+      source_mentioned_lemma:sourceMention?.answer||null,
+      evidence_kind:"source_identifier_occurrence_not_certified_lean_dependency"},
    score,game_scaffold_passed:Boolean(complete&&repairCorrect&&scopeCorrect),
    kernel_proof_verified:false,authentic_human_choice_verified:false,
    limitations:[
