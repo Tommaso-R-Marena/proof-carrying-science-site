@@ -43,6 +43,25 @@
     <div class="quest-progress-head"><strong id="questProgressLabel">0 steps placed</strong><span>Tap cards to build your path</span></div>
     <progress id="questProgress" value="0" max="5">0%</progress>
     <p id="questLive" class="quest-live" role="status" aria-live="polite">Choose any card to begin!</p>
+    <section class="quest-detective-lab" aria-labelledby="questDetectiveTitle">
+      <div class="quest-detective-top">
+        <div><span class="quest-micro-label">YOUR INVESTIGATION DESK</span><h3 id="questDetectiveTitle">Explore the logic, not just the order.</h3><p>Build a path first. Turn on detective tools when you want to see why a step works.</p></div>
+        <div class="quest-detective-score"><strong id="questCombo">0</strong><small>Reasoning streak</small></div>
+      </div>
+      <div class="quest-lab-actions">
+        <button id="questCoach" type="button" class="button secondary" aria-pressed="false">🧠 Coach mode: off</button>
+        <button id="questRevealMap" type="button" class="button secondary" aria-expanded="false" aria-controls="questMapPanel">🕸️ X-ray dependency map (hint)</button>
+        <button id="questDaily" type="button" class="button secondary">📅 Today's puzzle</button>
+      </div>
+      <p class="quest-tool-note">Coach mode reveals whether a move's prerequisites are ready. X-ray shows all dependencies. These help you learn and are counted as hints if you donate the run.</p>
+      <p id="questDecision" class="quest-decision" aria-live="polite">Detective tip: place cards based on what must happen first.</p>
+      <div id="questMapPanel" class="quest-map-panel" hidden>
+        <div class="quest-map-head"><strong>🔬 The actual prerequisite graph</strong><span id="questMapNarration"></span></div>
+        <div class="quest-map-scroll"><svg id="questMap" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Prerequisite graph for the selected puzzle" viewBox="0 0 760 330"></svg></div>
+        <p>Arrows run from each required prerequisite to the action it unlocks. Gold = ready, green = completed, slate = waiting. Multiple valid orders may exist.</p>
+      </div>
+      <details class="quest-attempt-diary"><summary>📓 My local attempts <span id="questAttemptCount">0</span></summary><ol id="questHistory"></ol><p>Kept on this page for learning. No research submission occurs unless you separately opt in and click Share.</p></details>
+    </section>
     <div class="quest-board-columns">
       <div class="quest-card-bank"><h3>🃏 Step cards</h3><p>Choose what can happen next.</p><div id="questAvailable" class="quest-card-list" aria-live="polite"></div></div>
       <div class="quest-card-trail"><h3>🏗️ Your proof path</h3><p>Steps you placed in order.</p><ol id="questTrail" class="quest-trail-list" aria-live="polite"></ol><div class="quest-drop-hint" id="questEmpty">Your first step goes here!</div></div>
@@ -53,7 +72,7 @@
       <button class="button secondary" type="button" id="questRestart">Start over</button>
       <button class="button primary" type="button" id="questCheck" disabled>Check my proof path →</button>
     </div>
-    <div class="quest-actions"><button id="questNext" type="button" class="button primary" hidden>Next mission →</button><button id="questTryAgain" type="button" class="button secondary" hidden>🔁 Try again</button></div>
+    <div class="quest-actions"><button id="questNext" type="button" class="button primary" hidden>Next mission →</button><button id="questTryAgain" type="button" class="button secondary" hidden>🔁 Try again</button><button id="questFixOne" type="button" class="button secondary" hidden>🛠️ Fix one dependency (hint)</button></div>
     <div id="questHintText" class="quest-hint" hidden aria-live="polite"></div>
     <div id="questFeedback" class="quest-feedback" hidden role="status" aria-live="polite"></div>
     <div id="questResearch" class="quest-research">
