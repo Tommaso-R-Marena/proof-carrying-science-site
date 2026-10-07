@@ -158,7 +158,7 @@ def static_campaign(c: Campaign) -> None:
     c.require("code tasks expose only curated bounded source excerpts", worker + task_code + task_code_schema, [
         "task_code_packets", "task_code_requests", "readRepositoryTextRange",
         "validateTaskCodeWindow", "outside the approved source-text boundary",
-        "start or receive approval for this task", "outside_curated_code_window",
+        "Start or receive approval for this task", "outside_curated_code_window",
         "Only the Founder/Owner may decide repository excerpt requests",
     ])
     c.require("code expansion requests are explicit and audited", worker + task_code_schema, [
