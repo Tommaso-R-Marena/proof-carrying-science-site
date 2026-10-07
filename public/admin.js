@@ -205,12 +205,21 @@
   }
 
   async function codeRequestDecision(id,decision){
-    const note=prompt(decision==="approved"
-      ?"Why is this additional source range necessary and safe to expose for the active task?"
-      :"Why should this extra code request remain closed?");
-    if(!note||note.trim().length<12)return;
+    const result=await openAdminAction({
+      title:decision==="approved"?"Approve exact code range":"Keep additional code closed",
+      description:decision==="approved"
+        ?"Record why this exact additional source range is necessary for the active task. Approval exposes only the requested file and line range."
+        :"Record why this requested source range is unnecessary, too broad, or unsafe to expose.",
+      confirmLabel:decision==="approved"?"Approve exact range":"Reject request",
+      warning:decision==="approved"
+        ?"This does not grant repository browsing. Only the already requested path and line range becomes visible while the task remains active."
+        :"The contributor keeps the original curated task packet and can submit a narrower request later."
+    });
+    if(!result||result.note.trim().length<12)return;
     try{
-      await api(`/api/admin/code-requests/${encodeURIComponent(id)}/decision`,{method:"POST",body:{decision,note:note.trim()}});
+      await api(`/api/admin/code-requests/${encodeURIComponent(id)}/decision`,{
+        method:"POST",body:{decision,note:result.note.trim()}
+      });
       await load();
     }catch(e){alert(e.message);}
   }
