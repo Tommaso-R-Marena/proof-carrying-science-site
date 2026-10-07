@@ -1,4 +1,4 @@
-import {PUZZLES,PUZZLE_VERSION,gradeOrder} from "./proof-order-core.mjs";
+import {PUZZLES,gradeOrder,getPuzzleById,puzzleVersionFor,proceduralPuzzle} from "./proof-order-core.mjs";
 import {dependencyState,graphLayout,inspectPlacement,repairFirstInversion} from "./arena-lab-tools.mjs";
 
 const $=id=>document.getElementById(id);
@@ -102,8 +102,20 @@ $("questRevealMap").addEventListener("click",()=>{
 });
 $("questDaily").addEventListener("click",()=>{
   const day=Math.floor(Date.now()/86400000);
-  choosePuzzle(PUZZLES[day%PUZZLES.length].id);
-  $("questDecision").textContent="📅 Today's mission selected. The daily challenge is the same puzzle for all visitors; play remains local.";
+  choosePuzzle(proceduralPuzzle(1+(day%9999999)).id);
+  $("questDecision").textContent="📅 Today’s challenge is a seeded scientific puzzle shared by everyone for the UTC day. No progress is uploaded.";
+});
+$("questNewLab").addEventListener("click",()=>{
+  const id=proceduralPuzzle(1+Math.floor(Math.random()*9999999)).id;
+  choosePuzzle(id);
+  $("questDecision").textContent="🎲 Fresh scientific mission generated. The server can reconstruct every dependency from this seed.";
+});
+$("questShareLab").addEventListener("click",async()=>{
+  const status=$("questChallengeStatus");
+  try{
+    await navigator.clipboard.writeText(location.href);
+    status.textContent="🔗 Puzzle link copied. Anyone can replay this exact generated case.";
+  }catch{status.textContent="Copy unavailable. Use the URL in your address bar to share this case.";}
 });
 $("questFixOne").addEventListener("click",()=>{
   if(chosen.length!==selected.nodes.length)return;
@@ -121,17 +133,18 @@ renderDiary();
 
 function buttonList(){
   $("questPuzzleList").replaceChildren();
-  PUZZLES.forEach((p,index)=>{
+  const menuPuzzles=selected.id.startsWith("lab-")?[selected,...PUZZLES]:PUZZLES;
+  menuPuzzles.forEach((p,index)=>{
     const b=document.createElement("button");b.type="button";
     b.className="quest-puzzle-button";b.dataset.active=String(p.id===selected.id);
     const name=document.createElement("strong");name.textContent=(seen.has(p.id)?"✅ ":"🧩 ")+p.title;
-    const kind=document.createElement("span");kind.textContent="Level "+p.level+" · "+p.topic;
+    const kind=document.createElement("span");kind.textContent=p.id.startsWith("lab-")?"🌀 Generated case · "+p.topic:"Level "+p.level+" · "+p.topic;
     b.append(name,kind);b.addEventListener("click",()=>choosePuzzle(p.id));
     $("questPuzzleList").appendChild(b);
   });
 }
 function choosePuzzle(id){
-  selected=PUZZLES.find(p=>p.id===id)||PUZZLES[0];chosen=[];hints=0;last=null;bankOrder=shuffled(selected.nodes.map(n=>n.id));
+  selected=getPuzzleById(id)||PUZZLES[0];chosen=[];hints=0;last=null;bankOrder=shuffled(selected.nodes.map(n=>n.id));
   coachOn=false;mapOn=false;combo=0;
   $("questCoach").setAttribute("aria-pressed","false");$("questCoach").textContent="🧠 Coach mode: off";
   $("questRevealMap").setAttribute("aria-expanded","false");$("questRevealMap").textContent="🕸️ X-ray dependency map (hint)";
@@ -145,6 +158,15 @@ function choosePuzzle(id){
   $("questResearch").hidden=false;$("questAdult").checked=false;$("questConsent").checked=false;
   $("questNext").hidden=true;$("questTryAgain").hidden=true;$("questFixOne").hidden=true;
   $("questDonationMessage").textContent="";
+  $("questChallengeStatus").textContent=selected.id.startsWith("lab-")
+    ?"🧬 Procedural puzzle "+selected.id+" · family "+selected.family+" · server-replayable generator version "+puzzleVersionFor(selected.id)
+    :"📚 Curated beginner mission. Generate a new lab case for extra variety.";
+  try{
+    const url=new URL(location.href);
+    if(selected.id.startsWith("lab-"))url.searchParams.set("puzzle",selected.id);
+    else url.searchParams.delete("puzzle");
+    history.replaceState({},"",url.pathname+url.search+url.hash);
+  }catch{ /* Shareable URL is a noncritical enhancement. */ }
   buttonList();render();
 }
 function render(){
@@ -199,7 +221,7 @@ $("questHint").addEventListener("click",()=>{
 $("questCheck").addEventListener("click",()=>{
   try{
     const result=gradeOrder(selected.id,chosen,hints);
-    last={puzzle_id:selected.id,puzzle_version:PUZZLE_VERSION,order:[...chosen],hints_used:hints};
+    last={puzzle_id:selected.id,puzzle_version:puzzleVersionFor(selected.id),order:[...chosen],hints_used:hints};
     attempts.unshift({title:selected.title,valid:result.valid,score:result.score,correct:result.correct,total:result.total,hints});
     attempts=attempts.slice(0,12);renderDiary();
     const box=$("questFeedback");box.replaceChildren();box.hidden=false;
@@ -236,7 +258,7 @@ $("questCheck").addEventListener("click",()=>{
 });
 $("questNext").addEventListener("click",()=>{
   const index=PUZZLES.findIndex(p=>p.id===selected.id);
-  choosePuzzle(PUZZLES[(index+1)%PUZZLES.length].id);
+  choosePuzzle(selected.id.startsWith("lab-")?proceduralPuzzle(1+Math.floor(Math.random()*9999999)).id:PUZZLES[(index+1)%PUZZLES.length].id);
   $("questAvailable").scrollIntoView({behavior:"smooth",block:"center"});
 });
 $("questTryAgain").addEventListener("click",()=>choosePuzzle(selected.id));
@@ -261,4 +283,5 @@ $("questErase").addEventListener("click",async()=>{
     message.textContent="Your donated puzzle attempts were deleted.";
   }catch(e){message.textContent=e.message;}
 });
-choosePuzzle(PUZZLES[0].id);
+const candidate=new URLSearchParams(location.search).get("puzzle");
+choosePuzzle(candidate&&getPuzzleById(candidate)?candidate:PUZZLES[0].id);
