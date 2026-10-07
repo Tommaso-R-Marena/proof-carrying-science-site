@@ -150,13 +150,22 @@ async function donate(){
   if(!$("duelAdult").checked||!$("duelConsent").checked){status.textContent="Research donation requires both explicit 18+ and consent checkboxes. Gameplay stays private otherwise.";return;}
   const button=$("duelDonate");button.disabled=true;status.textContent="Independently checking the 8 donated decisions…";
   try{
-    const checked=evaluateDuelSession({session_version:DUEL_VERSION,ballots});
-    if(checked.ballots.length!==DUEL_ROUNDS)throw Error("Incomplete game record.");
-    const result=await researchApi("/api/arena/forge-duel/donate",{
-      session_version:DUEL_VERSION,ballots,adult_confirmation:true,consent_training:true
-    });
-    status.textContent=result.recorded?"Thank you! "+result.record_count+" paired human judgments and their independent toy checker labels were stored.":
-      "An identical verified tournament was already donated; no duplicate saved.";
+    // Free Workers allow 10 ms CPU/request. Verify one small batch per request;
+    // one explicit donation click sends up to three separate, fail-closed batches.
+    // If interrupted, only completed batches are committed; users can retry.
+    let recorded=0,duplicates=0;
+    for(let i=0;i<ballots.length;i+=3){
+      const chunk=ballots.slice(i,i+3);
+      const checked=evaluateDuelSession({session_version:DUEL_VERSION,ballots:chunk});
+      if(checked.ballots.length!==chunk.length)throw Error("Incomplete bounded duel batch.");
+      const result=await researchApi("/api/arena/forge-duel/donate",{
+        session_version:DUEL_VERSION,ballots:chunk,adult_confirmation:true,consent_training:true
+      });
+      if(result.recorded)recorded+=result.record_count;
+      else duplicates+=result.record_count;
+    }
+    status.textContent="Verified "+ballots.length+" comparisons. "+recorded+" new decisions stored, "+duplicates+
+      " were already donated. Each 2–3 ballot batch was rechecked independently.";
   }catch(err){status.textContent=err.message+" Your play remains local.";}
   finally{button.disabled=false;}
 }
