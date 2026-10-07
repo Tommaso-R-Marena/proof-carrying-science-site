@@ -1,7 +1,7 @@
 -- Step 2: explicit adult-only proof-planning research traces, not real Lean proofs.
 -- No anonymous play is stored; the server independently recomputes each fixed
 -- graph's prerequisite satisfaction and does not accept client-side results.
-CREATE TABLE IF NOT EXISTS prooflab_research_sessions (
+CREATE TABLE IF NOT EXISTS prooflab_source_research_sessions (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   case_id TEXT NOT NULL CHECK(LENGTH(case_id) BETWEEN 8 AND 96),
@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS prooflab_research_sessions (
   created_at TEXT NOT NULL,
   UNIQUE(user_id, session_digest)
 );
-CREATE INDEX IF NOT EXISTS idx_prooflab_user_created ON prooflab_research_sessions(user_id,created_at);
-CREATE INDEX IF NOT EXISTS idx_prooflab_export_created ON prooflab_research_sessions(created_at,id);
+CREATE INDEX IF NOT EXISTS idx_prooflab_source_user_created ON prooflab_source_research_sessions(user_id,created_at);
+CREATE INDEX IF NOT EXISTS idx_prooflab_source_export_created ON prooflab_source_research_sessions(created_at,id);
