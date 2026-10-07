@@ -9,7 +9,7 @@ import {PROOFLAB_SOURCE_COMMIT,PROOFLAB_WITHHELD} from "../public/prooflab-sourc
 export const PROOFLAB_LEARNING_FORMAT="pcs-prooflab-obligation-choice-dataset-v2";
 export function prepareProofLabDataset(exported){
   if(!exported||typeof exported!=="object"||Array.isArray(exported)||
-     exported.format!=="pcs-prooflab-optin-source-grounded-dataset-v1"||
+     exported.format!=="pcs-prooflab-optin-source-grounded-dataset-v2"||
      exported.source_commit!==PROOFLAB_SOURCE_COMMIT||
      !Array.isArray(exported.entries)||exported.entries.length>500)
     throw Error("Expected bounded owner-exported source-pinned ProofLab dataset.");
