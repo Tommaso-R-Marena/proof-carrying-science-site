@@ -52,14 +52,25 @@ export function inspectPlacement(puzzle,previous,nextId){
 export function repairFirstInversion(puzzle,order,mistakes){
   if(!Array.isArray(order)||!Array.isArray(mistakes))throw Error("Invalid repair attempt.");
   dependencyState(puzzle,order);
-  const next=[...order];
-  const inverted=mistakes.find(m=>next.indexOf(m.before)>next.indexOf(m.after));
-  if(!inverted)return {order:next,changed:false};
-  const source=next.indexOf(inverted.before),target=next.indexOf(inverted.after);
-  const [card]=next.splice(source,1);
-  next.splice(target,0,card);
-  return {order:next,changed:true,from:inverted.before,before:inverted.after};
+  const byId=new Map(puzzle.nodes.map(n=>[n.id,n]));
+  const isAncestor=(from,to)=>byId.get(to).needs.some(dep=>dep===from||isAncestor(from,dep));
+  // Fix the EARLIEST invalid prefix. Each repair permanently extends the valid
+  // prefix, so repeated coaching terminates and cannot oscillate.
+  for(let i=0;i<order.length;i++){
+    const earlier=new Set(order.slice(0,i));
+    const blocked=byId.get(order[i]);
+    if(blocked.needs.every(id=>earlier.has(id)))continue;
+    let candidates=order.slice(i+1).filter(id=>byId.get(id).needs.every(dep=>earlier.has(dep)));
+    const meaningful=candidates.filter(id=>isAncestor(id,blocked.id));
+    if(meaningful.length)candidates=meaningful;
+    if(!candidates.length)throw Error("No valid prerequisite repair exists.");
+    const moved=candidates[0],next=[...order],fromIndex=next.indexOf(moved);
+    next.splice(fromIndex,1);next.splice(i,0,moved);
+    return {order:next,changed:true,from:moved,before:blocked.id};
+  }
+  return {order:[...order],changed:false};
 }
+
 export function classifyPolicyTrials(trials){
   if(!Array.isArray(trials))throw Error("Invalid policy notebook.");
   const sorted=trials.map((trial,index)=>{
