@@ -79,7 +79,7 @@ export function duelFor(seed,round){
     A:{guards:A.guards,cost:A.result.guard_cost},
     B:{guards:B.guards,cost:B.result.guard_cost},
     oracle:{winner,A:A.result,B:B.result},
-    category:type===0?"Find the loophole":type===1?"Prevent overblocking":type===2?"Optimize the working shield":"Reject both unsafe plans"};
+    category:["Counterexample search","Operator safeguards","Budget and liveness","Red-team review"][type]};
 }
 export function evaluateDuelVote(input){
   if(!input||typeof input!=="object"||Array.isArray(input)||
