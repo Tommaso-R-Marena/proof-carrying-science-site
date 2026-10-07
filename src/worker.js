@@ -3616,10 +3616,10 @@ async function donateProofLabSession(request,env,user){
     throw new ApiError(429,"Daily ProofLab research limit reached. Free play remains available.","prooflab_daily_limit");
   const digest=await sha256Hex(JSON.stringify(submitted));
   const result=await env.COMMONS_DB.prepare(
-    \`INSERT OR IGNORE INTO prooflab_research_sessions(
+    `INSERT OR IGNORE INTO prooflab_research_sessions(
       id,user_id,digest,task_id,source_module,task_split,core_revision,session_version,
       submitted_actions_json,verified_replay_json,action_count,game_score,consent_version,created_at
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)\`
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).bind(crypto.randomUUID(),user.id,digest,task.id,task.module,task.split,
     task.source.revision,PROOFLAB_VERSION,JSON.stringify(submitted),
     JSON.stringify(checked),submitted.actions.length,checked.score,PROOFLAB_CONSENT_VERSION,nowIso()).run();
