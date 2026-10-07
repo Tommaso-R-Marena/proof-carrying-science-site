@@ -14,6 +14,48 @@ export function integrationRepository(target) {
   return TARGETS[target] || null;
 }
 
+
+const CODE_EXTENSIONS = new Set(["lean","py","js","mjs","json","md","html","css","txt","sql","csv"]);
+const CODE_PATH = /^[A-Za-z0-9][A-Za-z0-9_./-]{0,239}$/;
+export function validateTaskCodeWindow(path,startLine,endLine){
+  const p=String(path||"");
+  const parts=p.split("/");
+  const ext=(p.split(".").pop()||"").toLowerCase();
+  if(!CODE_PATH.test(p)||p.includes("..")||p.startsWith("/")||parts.some(x=>!x||x.startsWith("."))||
+     !CODE_EXTENSIONS.has(ext)||p.toLowerCase().includes("secret")||p.toLowerCase().includes("credential")||
+     p.toLowerCase().includes("private_key")||p.toLowerCase().includes("private-key"))
+    throw new Error("Task code path is outside the approved source-text boundary.");
+  if(!Number.isInteger(startLine)||!Number.isInteger(endLine)||startLine<1||endLine<startLine||
+     endLine-startLine+1>400) throw new Error("Task code excerpts are limited to 400 lines.");
+  return {path:p,startLine,endLine};
+}
+function decodeBase64Utf8(value){
+  const binary=atob(String(value||"").replace(/\s/g,""));
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+export function sliceTaskCodeText(text,startLine,endLine){
+  if(typeof text!=="string")throw new Error("Repository source must be text.");
+  validateTaskCodeWindow("source.txt",startLine,endLine);
+  const lines=text.replace(/\r\n/g,"\n").split("\n");
+  if(startLine>lines.length)throw new Error("Requested task code starts beyond the current file.");
+  const actualEnd=Math.min(endLine,lines.length);
+  return {content:lines.slice(startLine-1,actualEnd).join("\n"),start_line:startLine,end_line:actualEnd,total_lines:lines.length};
+}
+export async function readRepositoryTextRange(env,{target,path,startLine,endLine,ref="main"}){
+  const repo=integrationRepository(target);
+  if(!repo)throw new Error("This task has no approved repository target.");
+  validateTaskCodeWindow(path,startLine,endLine);
+  if(!/^[A-Za-z0-9][A-Za-z0-9._/-]{0,120}$/.test(String(ref||""))||String(ref).includes(".."))
+    throw new Error("Invalid repository source reference.");
+  const encoded=path.split("/").map(encodeURIComponent).join("/");
+  const file=await github(env,repo,"GET",`contents/${encoded}?ref=${encodeURIComponent(ref)}`);
+  if(file?.type!=="file"||typeof file.content!=="string")throw new Error("Approved task source is not a readable text file.");
+  const sliced=sliceTaskCodeText(decodeBase64Utf8(file.content),startLine,endLine);
+  return {repository:repo,target,path,ref,blob_sha:String(file.sha||""),...sliced};
+}
+
 export function validateContributorFiles(input) {
   if (input == null) return [];
   if (!Array.isArray(input) || input.length > 3) throw new Error("Attach at most three small text files.");
