@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PCS ProofLab · Build the reasoning, challenge the claim</title>
+<meta name="description" content="Investigate 46 genuine PCS Lean theorem statements. Build a proof-planning scaffold, repair a broken dependency and reject unsupported claims. Free, no account required.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/prooflab.html">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="prooflab.css">
+</head><body class="prooflab-page"><div class="topbar"><div class="shell"><span>ProofLab · Source-backed Lean reasoning workshop</span><a href="trust.html">What is actually verified?</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+<div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Arena</a><a href="prooflab.html">ProofLab</a><a href="account.html" class="button dark">Account</a></div></nav>
+<main>
+<section class="lab-hero">
+  <div><span class="lab-eyebrow">EXPERIMENTAL · REAL THEOREM HEADERS · ZERO UPLOAD BY DEFAULT</span>
+    <h1>Build the <em>reasoning</em>.<br>Challenge the <em>claim</em>.</h1>
+    <p>Explore real theorem statements from the PCS Lean codebase. Plan their prerequisites, repair a missing dependency and refuse claims that exceed the theorem's assumptions. Mistakes are valuable clues.</p>
+    <div class="lab-hero-actions"><a class="button primary" href="#labWorkspace">Enter the workshop ↓</a><a class="button secondary" href="forge-duel.html">Play Shield Duel →</a></div>
+    <p class="lab-caveat">These visual blocks are a <strong>pedagogical planning scaffold</strong>—not actual Lean terms, extracted proof-obligation DAGs, or kernel-verified solutions. The original theorem declarations are pinned to PCS core source.</p>
+  </div>
+  <div class="lab-hero-illustration" aria-hidden="true">
+    <div class="lab-mini-head"><span>PROOF / WORKFLOW</span><b>v1</b></div>
+    <div class="lab-mini-stage">01　Source-backed theorem</div>
+    <div class="lab-mini-link">↓</div><div class="lab-mini-stage">02　Assumptions and goals</div>
+    <div class="lab-mini-link">↓</div><div class="lab-mini-stage accent">03　Repair a missing link</div>
+    <div class="lab-mini-link">↓</div><div class="lab-mini-stage">04　Kernel checking remains separate</div>
+  </div>
+</section>
+<div class="lab-facts"><div><strong>61</strong><span>actual Lean declarations in core snapshot</span></div><div><strong>46</strong><span>approved public practice/challenge tasks</span></div><div><strong>15</strong><span>withheld evaluation declarations</span></div><div><strong>0</strong><span>fake Lean proof certificates</span></div></div>
+<section class="lab-workspace" id="labWorkspace" aria-label="Interactive source-backed theorem workshop">
+ <aside class="lab-sidebar">
+  <div class="lab-sidebar-intro"><span class="lab-kicker">MISSION SELECTOR</span><h2>Choose your theorem.</h2><p>Every entry comes from real PCS Lean source. The two evaluation modules are withheld.</p></div>
+  <label class="lab-field" for="labFilter">Skill track<select id="labFilter"><option value="all">All public missions</option><option value="train">Practice · 32</option><option value="challenge">Challenge · 14</option></select></label>
+  <label class="lab-field" for="labFind">Find a theorem<input type="search" id="labFind" placeholder="e.g. unit, collision, package"></label>
+  <div class="lab-module-tags" id="labModules" role="group" aria-label="Filter by source module"></div>
+  <div id="labTaskList" class="lab-task-list" role="list"></div>
+  <div class="lab-side-bottom"><a href="arena-proof-quest.html">New to logic? Start with Proof Quest ↗</a><p>All training and scientific interpretations must remain bounded by the source and verifier.</p></div>
+ </aside>
+ <div class="lab-main">
+  <section class="lab-task-top">
+   <div class="lab-task-breadcrumb"><span id="labDomain">Loading…</span><span id="labDifficulty">—</span></div>
+   <h2 id="labTaskTitle">Choose a theorem</h2>
+   <p id="labTaskContext">Start by selecting a real formal declaration from the mission list.</p>
+   <div class="lab-source-header"><span>ACTUAL LEAN THEOREM HEADER · READ ONLY</span><button id="labCopyStatement" type="button">Copy</button></div>
+   <pre class="lab-statement"><code id="labStatement"></code></pre>
+   <div class="lab-provenance"><span id="labSourceLine"></span><span id="labSourceRevision"></span><span id="labSourceStatus"></span></div>
+  </section>
+  <div class="lab-dashboard">
+   <div><span>Stage</span><strong id="labStageCount">0 / 0</strong></div>
+   <div><span>Attempts</span><strong id="labInvalidCount">0</strong></div>
+   <div><span>Assists</span><strong id="labHintCount">0</strong></div>
+   <div><span>Workshop XP</span><strong id="labScore">0</strong></div>
+  </div>
+  <div class="lab-journey" role="group" aria-label="Three challenges"><button id="labJumpPlan" type="button" class="current">01 · Build</button><button id="labJumpRepair" type="button">02 · Repair</button><button id="labJumpScope" type="button">03 · Critique</button></div>
+  <section id="labPlanSection" class="lab-challenge">
+   <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 01 / STRATEGY PLANNING</span><h3>Build a legitimate path toward a proof.</h3><p>Tap or drag a stage into the solution lane. If prerequisites are not established, the attempt is recorded as a negative example—not a valid step.</p></div></div>
+   <div class="lab-pathbar"><div><strong>YOUR PATH</strong><span id="labPathNarrator" aria-live="polite">No stages placed yet.</span></div><div class="lab-actions"><button id="labUndo" type="button">↶ Undo</button><button id="labShowGraph" type="button" aria-expanded="false">🕸️ X-ray graph (hint)</button></div></div>
+   <div id="labLane" class="lab-lane" aria-label="Ordered proof strategy stages" tabindex="0"><span class="lab-lane-empty">Drop cards here, or tap cards below to build your strategy →</span></div>
+   <div id="labCards" class="lab-cards" aria-label="Available or locked proof strategy blocks"></div>
+   <p id="labPlanFeedback" class="lab-feedback" role="status" aria-live="polite">Inspect the Lean statement, then pick a starting stage.</p>
+   <div id="labGraphBox" class="lab-graph-box" hidden><div class="lab-graph-title"><strong>Dependency X-ray</strong><small>Educational, not parsed from actual Lean proof terms</small></div><div class="lab-graph-scroll"><svg id="labGraph" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Strategy prerequisite diagram"></svg></div></div>
+  </section>
+  <section id="labRepairSection" class="lab-challenge">
+   <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 02 / DEBUG A MISSING EDGE</span><h3>Find the broken dependency.</h3><p id="labRepairPrompt">A simulated proof-planning graph is missing one required link. Identify the stage that should point into the highlighted target.</p></div></div>
+   <div class="lab-missing"><span>INCOMPLETE TARGET</span><strong id="labRepairTarget"></strong></div>
+   <div id="labRepairOptions" class="lab-repair-options" role="group" aria-label="Choose the missing stage"></div>
+   <p class="lab-feedback" id="labRepairFeedback" role="status" aria-live="polite">Select the missing prerequisite. A response is recorded only when you click.</p>
+  </section>
+  <section id="labScopeSection" class="lab-challenge">
+   <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 03 / CRITICAL SCIENTIFIC REASONING</span><h3>What does the theorem <em>actually</em> establish?</h3><p id="labScopeQuestion">Identify the only statement that respects the theorem's scope.</p></div></div>
+   <div id="labScopeOptions" class="lab-scope-options" role="group" aria-label="Choose a justified theorem interpretation"></div>
+   <div class="lab-confidence"><label for="labConfidence">Your confidence</label><select id="labConfidence"><option value="1">Low · I am guessing</option><option value="2">Medium · some evidence</option><option value="3">High · I can defend this</option></select><span>Confidence can be studied separately from correctness.</span></div>
+   <p id="labScopeFeedback" class="lab-feedback" role="status" aria-live="polite">No scientific conclusion is accepted merely because someone selected it.</p>
+  </section>
+  <section class="lab-results">
+   <div><span class="lab-kicker">WORKSHOP REPORT</span><h3>Check your learning path.</h3><p id="labAssessment">Complete the planning, repair and critical interpretation exercises. Nothing here runs Lean.</p></div>
+   <div class="lab-actions"><button id="labCheck" class="button primary" type="button">Evaluate this workshop →</button><button id="labReset" class="button secondary" type="button">↺ Reset mission</button><button id="labNewMission" class="button secondary" type="button">🎲 Next task</button></div>
+   <div id="labResult" class="lab-result-card" hidden aria-live="polite"></div>
+   <details class="lab-diary"><summary>📓 My local attempts <span id="labDiaryCount">0</span></summary><ol id="labDiary"></ol><p>This diary stays in this page's memory. It is not research donation.</p></details>
+  </section>
+ </div>
+</section>
+<section id="labResearch" class="lab-research" aria-labelledby="labResearchTitle">
+ <div><span class="lab-kicker">OPT-IN HUMAN RESEARCH</span><h2 id="labResearchTitle">Make your strategy useful for a future model.</h2><p>A donated session records your ordered decisions, rejected moves, requested hints, simulated missing-link diagnosis, confidence and scoped interpretation. The server independently replays the educational scorer.</p><p><strong>Critical distinction:</strong> these are human-reported planning preferences about genuine theorem statements, not Lean kernel-verified tactics or guaranteed human-authentic data. Adults only for data contribution. We do not collect gameplay by default.</p></div>
+ <div class="lab-research-card"><label><input type="checkbox" id="labAdult"> I confirm that I am at least 18 years old.</label><label><input type="checkbox" id="labConsent"> I consent to donate this bounded session for research on proof-planning heuristics. I understand offline exports and trained weights may not be fully retractable.</label>
+ <div class="lab-actions"><button id="labDonate" type="button" class="button primary">Donate completed reasoning session</button><button id="labErase" type="button" class="button secondary">Erase past ProofLab donations</button><a href="account.html">Sign in / verify email ↗</a></div>
+ <p id="labDonateStatus" role="status" aria-live="polite">No research data has been submitted.</p></div>
+</section>
+<section class="lab-more"><h2>What this prepares PCS to do</h2><div class="lab-more-grid"><article><strong>🧠 Proof-obligation planning</strong><p>Learn which prerequisite is worth exploring and when a path is blocked.</p></article><article><strong>🩹 Failure diagnosis</strong><p>Generate candidate missing-edge repairs, then demand independent verification.</p></article><article><strong>🛡️ Epistemic discipline</strong><p>Recognize conditions, assumptions and unsupported overclaims.</p></article></div><p>Building a high-quality model requires real Lean-checked candidate terms, fresh replay, baseline comparisons and external-project holdouts. This workshop supplies an honest first data collection surface; it does not claim those experiments are already complete.</p></section>
+</main><footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Make each scientific claim precise, checkable and bounded.</p></div><div class="footercol"><strong>Practice</strong><a href="prooflab.html">ProofLab</a><a href="forge-duel.html">Shield Duel</a><a href="arena-proof-quest.html">Proof Quest</a></div><div class="footercol"><strong>Assurance</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="validation.html">Validation</a></div></div></footer>
+</div><script src="site.js"></script><script type="module" src="prooflab.js"></script></body></html>
