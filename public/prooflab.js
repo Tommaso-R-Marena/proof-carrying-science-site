@@ -119,12 +119,15 @@ function graph(r){
 function cards(r){
  const root=$("plCards");root.replaceChildren(),done=new Set(r.completed_node_ids);
  const choiceIds=proofLabDecisionSet(current.id,r.completed_node_ids,actions.length);
- for(const id of choiceIds){
+ for(const [choiceIndex,id] of choiceIds.entries()){
   const n=current.nodes.find(x=>x.id===id);if(!n)continue;
   const b=add(root,"button","","pl-card");b.type="button";
+  b.dataset.option=String.fromCharCode(65+choiceIndex);
   b.dataset.state="choice";b.dataset.coach=String(coach&&r.next_available.includes(n.id));
   b.draggable=true;
-  add(b,"span",ICON[n.kind]||"🔎");
+  const mark=add(b,"span",String.fromCharCode(65+choiceIndex),"pl-choice-mark");
+  mark.setAttribute("aria-hidden","true");
+  add(b,"span",ICON[n.kind]||"🔎","pl-choice-icon");
   const info=add(b,"span","","pl-card-info");
   add(info,"strong",n.label);
   add(info,"small",coach&&r.next_available.includes(n.id)?"COACH: valid next move":"Choose this investigation next");
