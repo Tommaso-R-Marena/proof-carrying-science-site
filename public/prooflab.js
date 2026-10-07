@@ -1,12 +1,12 @@
 import {
   PROOFLAB_VERSION,PROOFLAB_REASONS,PROOFLAB_CAMPAIGNS,PROOFLAB_MAX_STEPS,
-  allProofLabCases,proofLabCase,replayProofLabSteps,evaluateProofLabSession
+  allProofLabCases,proofLabCase,proofLabDecisionSet,replayProofLabSteps,evaluateProofLabSession
 } from "./prooflab-core.mjs";
 const $=id=>document.getElementById(id);
 const CASES=allProofLabCases(),ICON={interpretation:"🔎",premise:"📜",provenance:"🧬","cited-lemma":"🔗",
   "proof-review":"🧠",falsification:"⚔️",uncertainty:"⚠️","external-check":"🔐"};
-const KEY="pcs-prooflab-local-v1";
-let current=CASES[0],campaign="Binding",actions=[],hints=0,graphOpen=false,coach=false,awarded=false,replayIndex=-1,
+const KEY="pcs-prooflab-local-v2";
+let current=CASES[0],campaign="Binding",actions=[],hints=0,graphOpen=false,coach=false,assistanceExposed=false,awarded=false,replayIndex=-1,
   local={xp:0,best:{}};
 try{const v=JSON.parse(localStorage.getItem(KEY)||"null");if(v&&Number.isSafeInteger(v.xp)&&v.xp>=0&&
   v.xp<=200000&&v.best&&typeof v.best==="object"&&!Array.isArray(v.best))local=v;}catch{}
@@ -100,7 +100,7 @@ function graph(r){
  }
  for(const n of current.nodes){
   const {x,y}=pos.get(n.id),complete=done.has(n.id),eligible=ready.has(n.id);
-  const group=svg("g",{role:"button",tabindex:0,cursor:complete?"default":"pointer",
+  const group=svg("g",{role:"img",cursor:"default",
     "aria-label":n.label+"; "+(complete?"done":eligible?"ready":"blocked")});
   const title=svg("title");title.textContent=n.label;group.appendChild(title);
   group.appendChild(svg("rect",{x,y,width:158,height:62,rx:9,
@@ -112,27 +112,29 @@ function graph(r){
   t.textContent=n.label.length>20?n.label.slice(0,19)+"…":n.label;group.appendChild(t);
   const subt=svg("text",{x:x+10,y:y+46,"font-size":10,fill:complete?"#178a65":"#6a819c"});
   subt.textContent=complete?"✓ Investigated":eligible?"Ready to explore":"Prerequisites missing";group.appendChild(subt);
-  group.addEventListener("click",()=>attempt(n.id));
-  group.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();attempt(n.id);}});
   root.appendChild(group);
  }
  $("plGraphCover").hidden=graphOpen;
 }
 function cards(r){
- const root=$("plCards");root.replaceChildren(),done=new Set(r.completed_node_ids),ready=new Set(r.next_available);
- for(const n of current.nodes){
-  const b=add(root,"button","","pl-card");b.type="button";b.disabled=done.has(n.id);
-  b.dataset.state=done.has(n.id)?"done":ready.has(n.id)?"ready":"blocked";
-  b.dataset.coach=String(coach&&ready.has(n.id)&&!done.has(n.id));
-  b.draggable=!done.has(n.id);
-  add(b,"span",ICON[n.kind]||"🔎");
+ const root=$("plCards");root.replaceChildren(),done=new Set(r.completed_node_ids);
+ const choiceIds=proofLabDecisionSet(current.id,r.completed_node_ids,actions.length);
+ for(const [choiceIndex,id] of choiceIds.entries()){
+  const n=current.nodes.find(x=>x.id===id);if(!n)continue;
+  const b=add(root,"button","","pl-card");b.type="button";
+  b.dataset.option=String.fromCharCode(65+choiceIndex);
+  b.dataset.state="choice";b.dataset.coach=String(coach&&r.next_available.includes(n.id));
+  b.draggable=true;
+  const mark=add(b,"span",String.fromCharCode(65+choiceIndex),"pl-choice-mark");
+  mark.setAttribute("aria-hidden","true");
+  add(b,"span",ICON[n.kind]||"🔎","pl-choice-icon");
   const info=add(b,"span","","pl-card-info");
   add(info,"strong",n.label);
-  add(info,"small",done.has(n.id)?"✓ Investigated":ready.has(n.id)?"READY TO INVESTIGATE":"🔒 Needs previous work");
+  add(info,"small",coach&&r.next_available.includes(n.id)?"COACH: valid next move":"Choose this investigation next");
   b.addEventListener("click",()=>attempt(n.id));
   b.addEventListener("dragstart",ev=>{ev.dataTransfer.setData("text/plain",n.id);ev.dataTransfer.effectAllowed="move";});
  }
- $("plDeckCount").textContent="· "+(current.nodes.length-done.size)+" to investigate";
+ $("plDeckCount").textContent="· "+choiceIds.length+" candidate choices · "+(current.nodes.length-done.size)+" obligations remain";
 }
 function history(r){
  const root=$("plHistory");root.replaceChildren();
@@ -140,8 +142,8 @@ function history(r){
   const n=current.nodes.find(x=>x.id===step.node);
   const row=add(root,"li",(step.accepted?"✓ ":"✕ ")+n.label);
   row.dataset.valid=String(step.accepted);
-  add(row,"small",step.accepted?"Success · "+step.reason+" · confidence "+step.confidence+"/3":
-   "Blocked by "+(step.repeated?"already complete":step.missing_prerequisites.join(", ")));
+  add(row,"small",(step.accepted?"Feasible":"Blocked by "+(step.repeated?"already complete":step.missing_prerequisites.join(", ")))+
+   " · "+step.reason+" · confidence "+step.confidence+"/3"+(step.assisted?" · hint-assisted":" · blind choice"));
  }
  $("plHistorySummary").textContent=actions.length+" moves · "+r.rejected+" blocked";
 }
@@ -170,7 +172,7 @@ function render(){
  $("plReportStatus").textContent=r.completed?
   "✓ Educational plan assembled. The proposed attack is still an untested hypothesis.":
   "Investigated "+completed+"/"+current.nodes.length+". Blocked moves are learning signals, not proof failures.";
- $("plDonateCount").textContent=actions.length+" moves · "+r.rejected+" blocked";
+ $("plDonateCount").textContent=actions.length+" controlled choices · "+r.checked_steps.filter(x=>!x.assisted).length+" blind";
  $("plDonateCase").textContent=current.theorem;
  $("plVictory").hidden=!awarded;
  graph(r);cards(r);history(r);replayFrame(r);
@@ -179,11 +181,11 @@ function attempt(id){
  const node=current.nodes.find(n=>n.id===id);
  if(!node||replay().completed_node_ids.includes(id))return;
  if(actions.length>=PROOFLAB_MAX_STEPS){report("26-action limit reached. Undo, review or restart.","error");return;}
- const move={node:id,reason:moveReason(),confidence:moveConfidence()};
+ const move={node:id,reason:moveReason(),confidence:moveConfidence(),assisted:assistanceExposed};
  let checked;
  try{checked=replayProofLabSteps(current.id,[...actions,move]);}
  catch(e){report(e.message,"error");return;}
- actions.push(move);
+ actions.push(move);coach=false;
  const last=checked.checked_steps.at(-1);
  if(last.accepted)report("Good. This planning action has its required prerequisites."+
    (checked.completed?" The educational graph is assembled!":""),"success");
@@ -193,13 +195,13 @@ function attempt(id){
 }
 function load(id){
  const c=proofLabCase(id);if(!c)return;
- current=c;campaign=c.campaign;actions=[];hints=0;graphOpen=false;coach=false;awarded=false;replayIndex=-1;
+ current=c;campaign=c.campaign;actions=[];hints=0;graphOpen=false;coach=false;assistanceExposed=false;awarded=false;replayIndex=-1;
  $("plVictory").hidden=true;$("plAdult").checked=false;$("plConsent").checked=false;
  $("plDonateMessage").textContent="No gameplay data has been donated.";
  try{const u=new URL(location.href);u.searchParams.set("case",c.id);
   history.replaceState({},"",u.pathname+u.search+u.hash);}catch{}
  campaigns();missionOptions();dossier();render();
- report("This real Lean theorem already exists. Investigate its educational review obligations; no kernel runs here.");
+ report("Choose what to investigate next from a small controlled decision set. The real theorem already exists; this game does not run Lean.");
 }
 function finish(){
  if(actions.length<4||!threat()){report("Try four planning moves and choose an attack hypothesis first.","error");return;}
@@ -269,19 +271,20 @@ $("plShare").addEventListener("click",async()=>{
  catch{report("Copy this page's URL to share the challenge.","error");}
 });
 $("plScout").addEventListener("click",()=>{
- if(!graphOpen){graphOpen=true;hints=Math.min(12,hints+1);}
- render();report("Dependency X-ray opened. Source-cited lemma names differ from pedagogical process edges.");
+ if(!graphOpen){graphOpen=true;hints=Math.min(12,hints+1);assistanceExposed=true;}
+ render();report("Dependency X-ray opened. Later choices are now marked hint-assisted in any donated research trace.");
 });
 $("plCoach").addEventListener("click",()=>{
- coach=true;hints=Math.min(12,hints+1);render();
- report("Eligible moves: "+replay().next_available.map(id=>current.nodes.find(n=>n.id===id).label).join("; "),"success");
+ coach=true;assistanceExposed=true;hints=Math.min(12,hints+1);render();
+ const visible=new Set(proofLabDecisionSet(current.id,replay().completed_node_ids,actions.length));
+ report("Coach clue: "+replay().next_available.filter(id=>visible.has(id)).map(id=>current.nodes.find(n=>n.id===id).label).join("; "),"success");
 });
 $("plUndo").addEventListener("click",()=>{
  if(!actions.length)return;actions.pop();awarded=false;replayIndex=actions.length-1;
  render();report("Last local move discarded from any later donated sequence.");
 });
 $("plRestart").addEventListener("click",()=>{
- actions=[];hints=0;graphOpen=false;coach=false;awarded=false;replayIndex=-1;
+ actions=[];hints=0;graphOpen=false;coach=false;assistanceExposed=false;awarded=false;replayIndex=-1;
  render();report("Case restarted. No gameplay was uploaded.");
 });
 $("plCheck").addEventListener("click",finish);
@@ -301,6 +304,8 @@ const tray=$("plTray");
 tray.addEventListener("dragover",e=>{e.preventDefault();tray.classList.add("dragging");});
 tray.addEventListener("dragleave",()=>tray.classList.remove("dragging"));
 tray.addEventListener("drop",e=>{e.preventDefault();tray.classList.remove("dragging");
- const id=e.dataTransfer.getData("text/plain");if(current.nodes.some(n=>n.id===id))attempt(id);});
+ const id=e.dataTransfer.getData("text/plain");
+ const allowed=new Set(proofLabDecisionSet(current.id,replay().completed_node_ids,actions.length));
+ if(allowed.has(id))attempt(id);});
 const first=new URLSearchParams(location.search).get("case");
 load(proofLabCase(first)?first:CASES[0].id);

@@ -14,7 +14,7 @@
 <section class="forge-hero">
  <span class="forge-eyebrow">🧪 PCS ARENA / SAFETY FORGE</span>
  <h1>Break the bot. <em>Build a better shield.</em></h1>
- <p>A curious little AI agent has a mission. You are its safety engineer: experiment with its actions, discover a loophole, and build the smallest guardrail system that catches every dangerous move while letting the real mission succeed. Inspired by hands-on science games like Foldit.</p>
+ <p>A fictional AI agent has a mission and an imperfect safety system. Your job has three parts: <strong>break it</strong> by finding a real simulated failure, <strong>repair it</strong> so every reachable state is safe, then <strong>compress it</strong> into the cheapest shield that still lets the mission succeed. Every move is checked by the same deterministic simulator, so improvement is measurable rather than cosmetic.</p>
  <button id="forgeShowTutorial" type="button" class="button secondary">🎓 How to play · 30 seconds</button>
  <div class="forge-hero-bottom"><span>🎮 Free, no account</span><span>🔁 New worlds and puzzles</span><span>🧠 Real finite-state feedback</span><span>🔒 No gameplay collection by default</span></div>
 </section>
@@ -43,8 +43,9 @@
  <div class="forge-mission-rule"><strong>🎯 Protect the mission:</strong> <span id="forgeMissionGoal"></span></div>
  <p id="forgeCoach" class="forge-coach" aria-live="polite">🔎 Step 1: experiment with the bot. Look for a safety failure.</p>
  <div class="forge-mode-tabs" role="group" aria-label="Experiment stage">
-   <button type="button" id="forgeTabAttack" aria-pressed="true" class="forge-tab active">🔎 1 · Find the flaw</button>
-   <button type="button" id="forgeTabRepair" aria-pressed="false" class="forge-tab">🛠️ 2 · Repair the shield</button>
+   <button type="button" id="forgeTabAttack" aria-pressed="true" class="forge-tab active">🔎 1 · Break it</button>
+   <button type="button" id="forgeTabRepair" aria-pressed="false" class="forge-tab">🛠️ 2 · Repair it</button>
+   <button type="button" id="forgeTabOptimize" aria-pressed="false" class="forge-tab" disabled>🏆 3 · Beat your shield</button>
  </div>
  <div class="forge-lab-layout">
   <aside class="forge-side-card">
@@ -73,10 +74,15 @@
      <div id="forgeGuardCards" class="forge-guard-list" role="group" aria-label="Safety guard switches"></div>
      <div class="forge-actions-bottom"><button id="forgeVerify" type="button" class="button primary">🔬 Check every possible state</button><button id="forgeRestore" type="button" class="button secondary">Restore initial shield</button></div>
      <div id="forgeVerification" class="forge-verification" role="status" aria-live="polite">Run the checker to see if your shield is safe and allows a complete mission.</div>
+     <div class="forge-scoreboard" aria-label="Safety Forge score and research quality">
+       <div><span>Current verified score</span><strong id="forgeLabScore">—</strong></div>
+       <div><span>Best on this challenge</span><strong id="forgePersonalBest">—</strong></div>
+       <div class="forge-quality"><span>Research-quality notebook</span><strong id="forgeQualityGrade">STARTING</strong><small id="forgeQualityText">Find an unassisted breach, then test several distinct repairs.</small></div>
+     </div>
      <button id="forgeVictoryNext" type="button" class="button primary forge-victory-next" hidden>🎲 Play another world →</button>
      <div id="forgeCheckerPath" class="forge-checker-path" hidden></div>
      <div class="forge-investigation">
-       <div class="forge-investigation-title"><span class="forge-overline">REPLAYABLE RESEARCH NOTEBOOK</span><h4>Learn from every attempted shield.</h4><p>Compare verified configurations; a cheap shield that blocks the legitimate mission does not win.</p></div>
+       <div class="forge-investigation-title"><span class="forge-overline">REPLAYABLE RESEARCH NOTEBOOK</span><h4>Turn trial-and-error into a useful search trajectory.</h4><p>The strongest sessions contain a blind counterexample, several genuinely different repairs, and at least one improvement after feedback. That sequence is much more useful for model training than a single final answer.</p></div>
        <div id="forgeStrategyBoard" class="forge-strategy-board" aria-live="polite"><p>Run your first full check to see a comparison.</p></div>
        <div class="forge-theater">
          <div class="forge-theater-top"><div><span class="forge-overline">TRACE THEATER</span><h4>Watch the exact steps that make or break a policy.</h4></div></div>
@@ -120,11 +126,11 @@
 </section>
 <section class="forge-research" id="forgeResearch">
  <div><span class="forge-overline">RESEARCH / ADULT OPT-IN</span><h2>Your experiments could inform future AI-safety research.</h2>
- <p>This game captures the *structure* of a useful learning signal: a decision state, a proposed action or policy edit, and independently replayed feedback. Unlike a fixed quiz, the space includes failures, partial attempts, multiple valid repairs, and entirely new scenario seeds.</p></div>
+ <p>This game stores the structure needed for search-and-repair learning: what you tried, whether you had already seen a hint, what failed, how each shield changed from the previous one, whether the change improved score/cost, and the best verified repair found. The server recomputes those labels from the seed instead of trusting the browser.</p></div>
  <details id="forgeConsentDisclosure">
   <summary>What data is shared? How can I delete it?</summary>
   <p><strong>Practice is local and private by default.</strong> There is no auto-upload of actions, game state, or puzzle outcomes. Donation requires a clearly labeled adult (18+) research switch, a signed-in PCS account with verified email, and a separate submit click. No minors' gameplay is collected for research.</p>
-  <p>With your consent, PCS stores one bounded session's seed, attempted action sequences and policy configurations. The server independently replays each choice and computes the labels; it does not trust your device's score. We also label whether hints or earlier checker feedback were revealed before your choice, so assisted and unassisted examples are not confused. Data remains account-linked for erasure, but Owner-only research exports remove account identifiers and precise times. This dataset can support experiments in synthetic counterexample search and guard selection, <strong>not</strong> teach a model real Lean tactics or certify AI alignment.</p>
+  <p>With your consent, PCS stores one bounded session's seed, attempted action sequences and policy configurations. The server independently replays each choice and computes the labels; it does not trust your device's score. It derives blind-versus-assisted counterexample-search efficiency, sequential repair deltas, cost/score changes, Pareto improvements, and the best verified repair. Data remains account-linked for erasure, but Owner-only research exports remove account identifiers and precise times. This can support experiments in synthetic counterexample search and policy repair, <strong>not</strong> teach a model real Lean tactics or certify AI alignment.</p>
   <input id="forgeConsent" type="checkbox" hidden tabindex="-1" aria-hidden="true">
   <div class="forge-actions-bottom"><button class="button secondary" id="forgeErase" type="button">Delete my donated Safety Forge sessions</button></div>
   <p id="forgeDonateMessage" role="status" aria-live="polite"></p><p><a href="account.html">Sign in or create an adult account →</a> · <a href="privacy.html">Read data handling terms →</a></p>

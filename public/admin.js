@@ -204,6 +204,46 @@
     catch(e){alert(e.message);}
   }
 
+  async function codeRequestDecision(id,decision){
+    const result=await openAdminAction({
+      title:decision==="approved"?"Approve exact code range":"Keep additional code closed",
+      description:decision==="approved"
+        ?"Record why this exact additional source range is necessary for the active task. Approval exposes only the requested file and line range."
+        :"Record why this requested source range is unnecessary, too broad, or unsafe to expose.",
+      confirmLabel:decision==="approved"?"Approve exact range":"Reject request",
+      warning:decision==="approved"
+        ?"This does not grant repository browsing. Only the already requested path and line range becomes visible while the task remains active."
+        :"The contributor keeps the original curated task packet and can submit a narrower request later."
+    });
+    if(!result||result.note.trim().length<12)return;
+    try{
+      await api(`/api/admin/code-requests/${encodeURIComponent(id)}/decision`,{
+        method:"POST",body:{decision,note:result.note.trim()}
+      });
+      await load();
+    }catch(e){alert(e.message);}
+  }
+  function renderCodeRequests(items){
+    const target=$("#adminCodeRequestList");if(!target)return;
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No code-context requests.</strong><span>Contributors are using only their curated task packets.</span></div>';return;}
+    target.innerHTML=items.map(r=>`
+      <article class="admin-card">
+        <div class="task-card-top"><div><span class="commons-chip level">${esc(r.task_id)}</span><span class="commons-chip ${r.status==="pending"?"planned":"volunteer"}">${esc(r.status)}</span></div><span class="tiny">${fmt(r.created_at)}</span></div>
+        <h3>${esc(r.task_title)}</h3>
+        <p><strong>${esc(r.display_name)}</strong> · ${esc(r.email)}</p>
+        <div class="boundary"><strong>Requested source</strong><span><code>${esc(r.requested_path)}</code> · lines ${esc(r.requested_start_line)}–${esc(r.requested_end_line)}</span></div>
+        <details open><summary>Why they need it</summary><p>${esc(r.reason)}</p></details>
+        ${r.decision_note?`<p><strong>Decision note:</strong> ${esc(r.decision_note)}</p>`:""}
+        ${r.status==="pending"?`<div class="actions"><button class="button primary" data-code-approve="${esc(r.id)}">Approve exact range</button><button class="button secondary" data-code-reject="${esc(r.id)}">Reject</button></div>`:""}
+      </article>`).join("");
+    all("[data-code-approve]",target).forEach(b=>b.addEventListener("click",()=>codeRequestDecision(b.dataset.codeApprove,"approved")));
+    all("[data-code-reject]",target).forEach(b=>b.addEventListener("click",()=>codeRequestDecision(b.dataset.codeReject,"rejected")));
+  }
+  async function loadCodeRequests(){
+    const data=await api("/api/admin/code-requests");
+    renderCodeRequests(data.requests||[]);
+  }
+
   function renderRequests(items){
     const target=$("#adminRequestList");
     if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No pending task applications.</strong><span>The queue is clear.</span></div>';return;}
@@ -944,6 +984,7 @@
       renderChallengeEntries(data.challenge_entries||[]);
       renderRoleApplications(data.role_applications||[]);
       renderRequests(data.pending_requests||[]);
+      await loadCodeRequests();
       renderCheckpoints(data.checkpoints||[]);
       renderSkills(data.skill_reviews||[]);
       renderSubmissions(data.submissions||[]);
@@ -1209,7 +1250,7 @@
       let entries=[],offset=0,pages=0,metadata=null;
       while(pages<100){
         const response=await api("/api/admin/arena/prooflab/dataset?offset="+offset);
-        if(response.format!=="pcs-prooflab-optin-source-grounded-dataset-v1"||
+        if(response.format!=="pcs-prooflab-optin-source-grounded-dataset-v2"||
            !Array.isArray(response.entries))throw Error("Unexpected ProofLab export schema.");
         metadata||=response;entries.push(...response.entries);
         if(response.next_offset===null)break;

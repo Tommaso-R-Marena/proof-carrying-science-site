@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {webcrypto} from "node:crypto";
 if(!globalThis.crypto)globalThis.crypto=webcrypto;
 import worker from "../src/worker.js";
-import {PROOFLAB_VERSION,allProofLabCases,availablePlanMoves} from "../public/prooflab-core.mjs";
+import {PROOFLAB_VERSION,allProofLabCases,availablePlanMoves,proofLabDecisionSet} from "../public/prooflab-core.mjs";
 import {PROOFLAB_SOURCE_COMMIT} from "../public/prooflab-source-data.mjs";
 const HOST="https://pcs-prooflab-integration.example";
 const adult={id:"prooflab-test-adult",role:"member",status:"active",email_verified:1,is_owner:0};
@@ -11,8 +11,9 @@ const currentCase=allProofLabCases()[0];
 function actionsFor(c){
  const actions=[],done=[];
  while(done.length<c.nodes.length){
-  const id=availablePlanMoves(c.id,done).at(-1);
-  assert.ok(id);done.push(id);actions.push({node:id,reason:"dependency",confidence:2});
+  const feasible=new Set(availablePlanMoves(c.id,done));
+  const id=proofLabDecisionSet(c.id,done,actions.length).find(x=>feasible.has(x));
+  assert.ok(id);done.push(id);actions.push({node:id,reason:"dependency",confidence:2,assisted:false});
  }
  return actions;
 }
@@ -122,7 +123,7 @@ test("owner-only export excludes all identity and refuses delegated administrato
  req=new Request(HOST+"/api/admin/arena/prooflab/dataset",{headers:{cookie:"pcs_admin_session=owner"}});
  let r=await worker.fetch(req,ctx.env),data=await r.json();
  assert.equal(r.status,200,JSON.stringify(data));
- assert.equal(data.format,"pcs-prooflab-optin-source-grounded-dataset-v1");
+ assert.equal(data.format,"pcs-prooflab-optin-source-grounded-dataset-v2");
  assert.deepEqual(data.entries,[]);
  assert.equal(data.source_commit,PROOFLAB_SOURCE_COMMIT);
  assert.equal(ctx.state.exports,1);

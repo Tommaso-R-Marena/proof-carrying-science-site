@@ -1,51 +1,60 @@
-# ProofLab v1 — source-grounded benchmark and interactive theorem investigation
+# ProofLab v2 — controlled, source-grounded planning research
 
-## What was built (2026-10-06)
+## What ProofLab is
 
-ProofLab is a Foldit-inspired **human proof-planning and critique experiment**, not a new theorem prover. The benchmark's 40 targets are actual pre-existing Lean theorem declarations from PCS core pinned at `cff0b67595abd4862ab0c156b157f262b169eca5`. Private core index files retain source statements, source paths, exact line numbers, Git blob hashes and mentions of previously indexed lemmas in the stored proof bodies. Separate private core source-verification tests check these references. No new mathematical claim is established by playing.
+ProofLab is a Foldit-inspired **human planning experiment around real PCS Lean theorem targets**. It is not a theorem prover and a game win is not a Lean proof. The public benchmark is synchronized to PCS core revision `717c00ea6f362fe059267184273e1a733d59f0ce`.
 
-Of those targets, **22** in Binding, Workflow and PKPDCheck modules are public pedagogical **training** missions. **Eight** checker targets are reserved for **validation**, and **ten** package/frontier targets are reserved for **evaluation**. Their private theorem statements, pedagogical graphs and source identifiers are intentionally omitted from public game modules. This is a **module-level split within ONE PCS repository**, not an independent-project test. The 18 held-out targets must remain private until their evaluation protocol is exhausted.
+The benchmark has 40 existing theorem targets from one PCS repository. Twenty-two targets from Binding, Workflow and PKPDCheck are public training missions. Eight Checkers targets are private validation cases, and ten PackageProofs/Frontier targets are private evaluation cases. This is a module-level split inside one project, so cross-project generalization remains untested.
 
-The public app contains theorem IDs, human-readable non-verbatim summaries, source file SHA and line anchors, but **no private proof bodies**. Source-cited lemma nodes correspond to literal earlier indexed theorem-name references in stored proofs. The other plan nodes (scope, premises, source check, proof review, challenge, limits, independent Lean review) are **educational research-workflow steps** rather than claimed minimal mathematical dependencies.
+Public missions expose source identifiers, file/line/blob provenance, non-verbatim summaries, cited-theorem metadata and a bounded educational investigation graph. They do not expose private proof bodies or withheld challenge graphs.
 
-## Play and independent grading
+## The v2 game loop
 
-The public page `prooflab.html` has three campaigns, an interactive graph, movable cards with click and drag/drop support, a dependency X-ray, coaching, a research notebook for accepted and blocked moves, source citations, adversarial hypothesis choices, a replay theater, a daily case, personal-best XP and shareable links.
+ProofLab v2 no longer treats the whole dependency graph as an unrestricted card dump. At every step, the deterministic game engine constructs a **controlled candidate set of two to four plausible next investigations**. The set contains currently feasible work plus near-frontier choices that may be premature. Candidate order is deterministically shuffled so screen position is not the answer.
 
-The shared pure module `public/prooflab-core.mjs` is imported **unchanged** into both the browser and Worker. It independently reconstructs every eligible action from fixed prerequisites, limits each case to 26 bounded moves, allows multiple valid next moves, labels blocked attempts, and rejects unknown/withheld case IDs or forged claimed results.
+The player chooses one candidate and records a bounded reason/confidence tag. The server independently reconstructs the exact candidate set that should have appeared, the feasible subset under the fixed graph, the selected action and any missing prerequisite. Opening the dependency X-ray or coach marks later choices as **assisted**, so blind planning examples are not silently mixed with hint-assisted examples.
 
-**A completed game is NEVER a Lean proof**: actual source proof-checking requires building the pinned private PCS repo separately with its Lean toolchain. The PCS core authority's P0 unknown-checker hardening remains its own mandatory release gate. A game success cannot close that issue.
+The graph remains available as an explanatory X-ray, but it is not an alternate action surface that bypasses the controlled choice. Unknown or withheld case IDs, malformed actions, oversized sessions and choices outside the deterministic candidate set fail closed.
 
-## Optional 18+ research collection
+**No Lean kernel runs inside the game.** A completed mission means only that the player navigated the source-indexed educational investigation graph.
 
-Everyone may play without creating an account. Local XP and case best scores are stored in that browser's `localStorage` where available, with a user-visible clear button. The Worker receives no player trajectory except after:
+## Optional adult research collection
 
-1. Signed-in PCS user with verified email.
-2. Explicit self-attestation of age 18+.
-3. Separate informed-consent checkbox.
-4. A distinct click to donate an actual bounded case.
+Anyone can play locally. A research session is stored only after a signed-in, verified-email user explicitly confirms age 18+, explicitly consents to training use, and clicks the separate Donate control.
 
-The server independently recomputes the educational graph result. It stores at most fifteen sessions per adult account per rolling day, with per-IP rate limiting and a stable digest for deduplication. D1 migration `0020_prooflab_adult_optin_research.sql` is additive, has a strict schema and account-delete cascade. Participants can explicitly delete active linked data; backups, exports and trained models may need separate handling.
+The Worker independently recomputes the complete v2 replay before storing it. Current donations use `pcs-prooflab-plan-v2`; owner exports filter to that version and the current source revision, preventing older schemas or stale benchmark pins from silently entering a v2 dataset. The database keeps the account link privately for rate limiting, deduplication and erasure; Owner-only export excludes account identifiers, email, IP address and precise timestamps.
 
-The Owner-only paginated dataset export omits direct account identifiers, IP and timestamps. It returns source-anchored decision records, self-reported reason and confidence, bounded hints, independently checked prerequisite labels, and a **human-suggested but unverified** attack category. No raw free text, mouse telemetry, minors' game records or implied opt-in.
+## What one training decision contains
 
-## Data for models, correctly scoped
+The deidentified preparation step emits a listwise planning example with:
 
-`node scripts/prepare_prooflab_dataset.mjs OWNER_EXPORT.json TRAINING_ROWS.json` replays every exported session again, refuses forged outcome labels and unexpected personal fields, and produces next-step training examples.
+- the exact controlled `choice_set` shown at that step;
+- the player's `selected_action` and its position;
+- every `feasible_action_in_set` independently derived from the graph;
+- whether the selected action was feasible;
+- missing prerequisites when it was premature;
+- the action type, stated reason and confidence;
+- whether an explicit hint had already been exposed;
+- the source-pinned case/module and prior completed work.
 
-- **Objective A:** Predict feasible next proof-review step(s) under known dependencies. Ground truth is a **multilabel set**, not the unique next move the human happened to choose.
-- **Objective B:** Learn human selection/search preferences among several valid paths, carefully distinguished from ground truth and filtered for hint exposure.
-- **Objective C:** Predict which obligations will be blocked and why; avoid hallucinating a completed proof.
-- **Objective D:** Explore human-selected counterexample hypotheses. These **must be independently tested** before being treated as adversarial positives.
+This is stronger than an unconstrained click log because the alternatives are explicit and replayable. It also does **not** assume the human choice is uniquely optimal: multiple candidates may be feasible at the same time.
 
-A deterministic graph oracle already solves all public educational dependencies. Thus the experiment must compare learned models with that oracle, graph heuristics and non-human baselines, and ultimately measure performance on **privately held-out problems and independent real research projects**. A model winning at this game alone does not demonstrate Lean proof search, real-world alignment, or scientific discovery. This code does not train a production model automatically.
+`node scripts/prepare_prooflab_dataset.mjs OWNER_EXPORT.json TRAINING_ROWS.json` independently replays every stored session again, checks the controlled candidate/feasible sets, rejects label drift or unexpected personal fields, and writes `pcs-prooflab-obligation-choice-dataset-v2`.
 
-## Quality and privacy release gates
+## Intended model objectives
 
-- Private core benchmark validator checks SHA-1 Git blobs, exact theorem lines/statements, lexical lemma mentions and private holdout isolation. Its test suite must run on the core source.
-- Website `npm run test:prooflab` checks all 22 cases, valid/blocked plans, no test-case leak, independent data replay, worker auth/consent and owner-only export.
-- Site `npm run ci:zero-minutes` includes syntax, static security, all prior game suites, and Wrangler dry-run.
-- Production must install D1 migration 0020 **before** public release of its API; site PR head must have an exact-commit green Cloudflare build.
-- Browser QA should test 375px mobile and desktop navigation, drag/drop and keyboard alternative, graph reveal, partial review, and opt-in gate **without submitting a real production donation**.
+The first useful objectives are bounded and measurable: rank or choose the next investigation among controlled alternatives; identify prerequisite-feasible alternatives; predict why a premature choice will be blocked; and compare blind with hint-assisted planning. Human-selected adversarial hypotheses remain hypotheses until independently tested.
 
-Next phase: obtain permission-cleared, genuinely independent projects/labs; add actual Lean tactic-state or counterexample reproduction tasks; and preregister model-no-human vs model-with-human gameplay ablations under equal verification budgets.
+A deterministic graph oracle can solve these public prerequisite relations, so a learned model must be compared against that oracle and simple heuristics. Meaningful research claims require private held-out evaluation and, later, genuinely independent projects with real proof-state/counterexample tasks.
+
+ProofLab alone does not demonstrate Lean tactic synthesis, AI alignment, or scientific discovery. Its value is a clean, source-grounded human planning dataset and a game interface for repeatedly collecting bounded decision/search behavior.
+
+## Release gates
+
+- PCS core owns the source-pinned benchmark and private holdouts.
+- Site `npm run test:prooflab` checks controlled candidate sets, blocked choices, listwise data preparation, Worker auth/consent and Owner-only export.
+- Site `npm run ci:zero-minutes` includes syntax, static security, the complete game/test suite and Wrangler dry-run.
+- D1 migration `0020_prooflab_adult_optin_research.sql` remains the storage schema; v2 is an application/replay schema upgrade, not a destructive database migration.
+- Production release requires a green exact-head Cloudflare build and normal mobile/desktop smoke testing.
+
+Next research phase: add permission-cleared independent projects, real proof-state or falsification tasks, and preregister model-only versus model-plus-human ablations under equal verification budgets.

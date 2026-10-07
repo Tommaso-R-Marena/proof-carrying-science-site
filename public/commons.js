@@ -209,6 +209,10 @@
       </div>`:"";
     const sourceHtml=task.source_ref?`<p><strong>Core source:</strong> <code>${esc(task.source_ref)}</code></p>`:"";
     const criteriaHtml=task.acceptance_criteria?`<p><strong>Acceptance criteria:</strong> ${esc(task.acceptance_criteria)}</p>`:"";
+    const codeTask=["core","site"].includes(String(task.integration_target||""));
+    const codeAccess=codeTask?(task.my_request?.status==="approved"
+      ?`<button class="button secondary" type="button" data-code-task="${esc(task.id)}">View only the code for this task</button>`
+      :`<span class="task-code-locked">🔒 Relevant code packet unlocks after you start or are approved.</span>`):"";
     return `<article class="commons-task-card ${program?"program-task":""}" data-task-id="${esc(task.id)}" data-level="${task.min_level}" data-comp="${paid(task)?"paid":"volunteer"}" data-skill="${esc(task.required_skill||"nontechnical")}" data-category="${esc(category)}" data-hours="${task.expected_hours}" data-minutes="${task.expected_minutes??Number(task.expected_hours||1)*60}">
       <div class="task-card-top"><div><span class="commons-chip level">L${task.min_level}</span><span class="commons-chip category">${esc(category.replaceAll("_"," "))}</span><span class="commons-chip ${paidClass}">${esc(compensationLabel(task))}</span><span class="commons-chip ${task.claim_mode==="open"?"volunteer":"planned"}">${accessLabel}</span>${program?`<span class="commons-chip program">${esc(program)} · STEP ${esc(task.program_step)}</span>`:""}</div><code>${esc(task.id)}</code></div>
       <h3>${esc(task.title)}</h3><p>${esc(task.summary)}</p>
@@ -218,7 +222,7 @@
       <div class="task-access-state ${e.can_start||e.can_request?"allowed":"locked"}"><strong>${esc(e.reason||"")}</strong>${task.claim_mode!=="open"?"<span>Qualification route: variable auto-scored evaluation or direct manual application. Final approval is always manual. PCS targets a decision within 1 business day and no later than 2 business days. Pending applications never reserve the task.</span>":""}</div>
       <div class="task-required-output"><strong>Exactly what to submit:</strong> <span>${esc(m.deliverable)}</span></div>
       <details class="task-details"><summary>How PCS checks the work · exact acceptance</summary><p><strong>Independent review:</strong> ${esc(m.verification)}</p>${criteriaHtml}${task.success_metric?`<p><strong>Success metric:</strong> ${esc(task.success_metric)}</p>`:""}${sourceHtml}<p><strong>Project:</strong> ${esc(m.project)}</p></details>
-      <div class="task-actions">${accessButton(task)}${program?`<a class="button secondary" href="claim-invalidation-v1.html#${encodeURIComponent(task.id)}">Open public task packet</a>`:`<a class="button secondary" href="task-graph.html?task=${encodeURIComponent(task.id)}">See dependency path</a>`}</div>
+      <div class="task-actions">${accessButton(task)}${codeAccess}${program?`<a class="button secondary" href="claim-invalidation-v1.html#${encodeURIComponent(task.id)}">Open public task packet</a>`:`<a class="button secondary" href="task-graph.html?task=${encodeURIComponent(task.id)}">See dependency path</a>`}</div>
     </article>`;
   }
 
@@ -229,7 +233,8 @@
     target.innerHTML=shown.map(taskCard).join("")||'<div class="commons-empty"><strong>No currently needed tasks match those filters.</strong><span>Adjust category, level, time, compensation, or track—or check ongoing Roles.</span></div>';
     const count=$("#taskCount");if(count)count.textContent=`${shown.length} currently needed task${shown.length===1?"":"s"} shown`;
     $$("[data-start-task]",target).forEach(btn=>btn.addEventListener("click",()=>startTask(btn.dataset.startTask)));
-    $$("[data-apply-task]",target).forEach(btn=>btn.addEventListener("click",()=>openApplication(btn.dataset.applyTask)));
+    $("[data-apply-task]",target).forEach(btn=>btn.addEventListener("click",()=>openApplication(btn.dataset.applyTask)));
+    $("[data-code-task]",target).forEach(btn=>btn.addEventListener("click",()=>openCodeDialog(btn.dataset.codeTask)));
   }
 
   async function startTask(id){
@@ -243,6 +248,74 @@
     const dialog=$("#taskApplicationDialog"),form=$("#taskApplicationForm");if(!dialog||!form)return;
     const task=snapshot.tasks.find(t=>t.id===id);
     form.reset();form.elements.task_id.value=id;$("#taskApplicationTitle").textContent=`Apply for ${id} — ${task?.title||"task"}`;$("#taskApplicationMessage").textContent="";dialog.showModal();
+  }
+
+  let activeCodeTask=null,activeCodePackets=[];
+  function codeExcerptCard(excerpt,kind="Curated excerpt"){
+    const article=document.createElement("article");article.className="task-code-excerpt";
+    if(excerpt.error){const strong=document.createElement("strong");strong.textContent=excerpt.path||"Source excerpt";article.append(strong);
+      const p=document.createElement("p");p.textContent=excerpt.error;article.append(p);return article;}
+    const head=document.createElement("div");head.className="task-code-excerpt-head";
+    const left=document.createElement("div");const badge=document.createElement("span");badge.textContent=kind;
+    const path=document.createElement("strong");path.textContent=excerpt.path+" · lines "+excerpt.start_line+"–"+excerpt.end_line;
+    left.append(badge,path);
+    const hash=document.createElement("code");hash.textContent=(excerpt.blob_sha||"").slice(0,12);
+    head.append(left,hash);article.append(head);
+    if(excerpt.purpose||excerpt.reason){const p=document.createElement("p");p.textContent=excerpt.purpose||("Approved because: "+excerpt.reason);article.append(p);}
+    const pre=document.createElement("pre"),code=document.createElement("code");code.textContent=excerpt.content||"";pre.append(code);article.append(pre);
+    return article;
+  }
+  function syncCodeRange(){
+    const select=$("#taskCodePacketSelect"),packet=activeCodePackets.find(x=>x.packet_id===select?.value);
+    const form=$("#taskCodeRequestForm");if(!form||!packet?.request_window)return;
+    const start=form.elements.start_line,end=form.elements.end_line;
+    start.min=String(packet.request_window.start_line);start.max=String(packet.request_window.end_line);
+    end.min=String(packet.request_window.start_line);end.max=String(packet.request_window.end_line);
+    start.value=String(packet.request_window.start_line);end.value=String(packet.request_window.end_line);
+  }
+  async function openCodeDialog(id){
+    const dialog=$("#taskCodeDialog"),root=$("#taskCodeExcerpts"),message=$("#taskCodeMessage");
+    if(!dialog||!root)return;
+    activeCodeTask=id;activeCodePackets=[];root.replaceChildren();message.textContent="Loading only the approved source excerpts…";
+    dialog.showModal();
+    try{
+      const data=await api(`/api/tasks/${encodeURIComponent(id)}/code-context`);
+      $("#taskCodeTitle").textContent=`${data.task.id} · task code packet`;
+      $("#taskCodeIntro").textContent=data.message;
+      for(const excerpt of data.excerpts||[])root.append(codeExcerptCard(excerpt));
+      if((data.approved_additional_excerpts||[]).length){
+        const h=document.createElement("h3");h.textContent="Approved additional context";root.append(h);
+        for(const excerpt of data.approved_additional_excerpts)root.append(codeExcerptCard(excerpt,"Approved expansion"));
+      }
+      activeCodePackets=(data.excerpts||[]).filter(x=>x.packet_id&&x.request_window&&!x.error);
+      const select=$("#taskCodePacketSelect");select.replaceChildren();
+      for(const packet of activeCodePackets){
+        const option=document.createElement("option");option.value=packet.packet_id;
+        option.textContent=packet.path+" · allowed request window "+packet.request_window.start_line+"–"+packet.request_window.end_line;
+        select.append(option);
+      }
+      $("#taskCodeRequestForm").hidden=!activeCodePackets.length;
+      if(activeCodePackets.length)syncCodeRange();
+      message.textContent=activeCodePackets.length
+        ?"Need adjacent context? Request only the lines you can justify below."
+        :"No expansion window is configured for this packet. Contact the Owner if a different source file is genuinely required.";
+    }catch(err){root.replaceChildren();const p=document.createElement("p");p.textContent=err.message;root.append(p);message.textContent="No private repository browsing was opened.";}
+  }
+  function initCodeDialog(){
+    const dialog=$("#taskCodeDialog"),form=$("#taskCodeRequestForm");if(!dialog||!form)return;
+    $("#closeTaskCode")?.addEventListener("click",()=>dialog.close());
+    $("#taskCodePacketSelect")?.addEventListener("change",syncCodeRange);
+    form.addEventListener("submit",async e=>{
+      e.preventDefault();if(!activeCodeTask)return;
+      const fd=new FormData(form),message=$("#taskCodeMessage");
+      try{
+        const result=await api(`/api/tasks/${encodeURIComponent(activeCodeTask)}/code-context/request`,{method:"POST",body:{
+          packet_id:fd.get("packet_id"),start_line:Number(fd.get("start_line")),
+          end_line:Number(fd.get("end_line")),reason:fd.get("reason")
+        }});
+        message.textContent=result.message;message.className="form-message successline";
+      }catch(err){message.textContent=err.message;message.className="form-message validation bad";}
+    });
   }
 
   function initApplicationDialog(){
@@ -314,7 +387,7 @@
   }
 
   document.addEventListener("DOMContentLoaded",async()=>{
-    renderProjectTaskReturn();initFilters();initApplicationDialog();await initContributorForm();
+    renderProjectTaskReturn();initFilters();initApplicationDialog();initCodeDialog();await initContributorForm();
     try{await refresh();}catch(err){
       const target=$("#commonsTaskList");if(target)target.innerHTML=`<div class="commons-empty"><strong>Account service unavailable.</strong><span>${esc(err.message)}</span></div>`;
       renderLevelTable();

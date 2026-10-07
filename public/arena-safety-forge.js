@@ -12,6 +12,10 @@ let seed=1,mission=null,mode="attack",agent=initialState(),acted=[],ended=false;
 let shield=new Set(),attacks=[],repairs=[],hinted=false,lastCheck=null;
 let hintExposed=false,oracleExposed=false,repairFeedbackExposed=false,tourStep=0;
 let verifiedPolicies=new Map(),traceScene=null,tracePointer=0,checkedGuards=[];
+let localBest={};
+try{localBest=JSON.parse(localStorage.getItem("pcs-safety-forge-best-v1")||"{}")||{};}catch{localBest={};}
+function saveLocalBest(){try{localStorage.setItem("pcs-safety-forge-best-v1",JSON.stringify(localBest));}catch{}}
+
 const tour=[
   ["Find a loophole 🔎","Tap actions to experiment with a fictional bot. Try routes, request permission, and look for a safety failure."],
   ["Build a better shield 🛡️","Choose Repair the shield, then flip protection switches on and off. Cheap fixes are great, but don't stop the real mission."],
@@ -58,9 +62,40 @@ function renderBadges(){
   if(badges.verified_repair)names.push("🛡️ Shield architect");
   $("forgeAchievements").textContent=names.length?names.join(" · "):"🏅 Earn your first safety badge!";
 }
+function researchQuality(){
+  const blindBreaches=attacks.filter(a=>!a.assisted&&replayActions(seed,mission.initial_guards,a.actions).unsafe).length;
+  const passing=repairs.filter(r=>{
+    const key=policyKey(r.guards);
+    const result=verifiedPolicies.get(key)||verifyShield(seed,r.guards);
+    verifiedPolicies.set(key,result);return result.passed;
+  }).length;
+  let improved=0;
+  for(let i=1;i<repairs.length;i++){
+    const prev=verifiedPolicies.get(policyKey(repairs[i-1].guards))||verifyShield(seed,repairs[i-1].guards);
+    const cur=verifiedPolicies.get(policyKey(repairs[i].guards))||verifyShield(seed,repairs[i].guards);
+    if((cur.passed&&!prev.passed)||(cur.passed&&prev.passed&&cur.guard_cost<prev.guard_cost)||cur.score>prev.score)improved++;
+  }
+  const high=blindBreaches>0&&repairs.length>=3&&passing>0;
+  const medium=(blindBreaches>0||passing>0)&&attacks.length>=1&&repairs.length>=2;
+  return {blindBreaches,passing,improved,grade:high?"HIGH VALUE":medium?"USEFUL":"STARTING"};
+}
+function renderResearchQuality(){
+  const q=researchQuality(),grade=$("forgeQualityGrade"),text=$("forgeQualityText");
+  if(!grade||!text)return;
+  grade.textContent=q.grade;
+  grade.dataset.grade=q.grade.toLowerCase().replace(" ","-");
+  const pieces=[
+    (q.blindBreaches?"✓":"○")+" blind breach",
+    (repairs.length>=3?"✓":"○")+" 3 distinct repairs",
+    (q.passing?"✓":"○")+" verified repair",
+    (q.improved?"✓":"○")+" improvement after feedback"
+  ];
+  text.textContent=pieces.join(" · ");
+}
 function stats(){
   $("forgeNotebook").textContent=(attacks.length+repairs.length)+" recorded experiments";
   $("forgeAttemptCounts").textContent=attacks.length+" agent traces · "+repairs.length+" shield trials";
+  renderResearchQuality();
 }
 function agentStatus(state=agent){
   $("forgeRisk").textContent=state.risk+" / "+mission.risk_budget;
@@ -177,13 +212,21 @@ $("forgeTracePrev").addEventListener("click",()=>{if(tracePointer>0){tracePointe
 $("forgeTraceNext").addEventListener("click",()=>{if(traceScene&&tracePointer<traceScene.frames.length-1){tracePointer++;renderTraceScene();}});
 
 function showMode(next){
+  if(next==="optimize"&&!repairs.some(r=>(verifiedPolicies.get(policyKey(r.guards))||verifyShield(seed,r.guards)).passed))return;
   mode=next;
   $("forgeAttackPanel").hidden=next!=="attack";
-  $("forgeRepairPanel").hidden=next!=="repair";
-  for(const [id,active] of [["forgeTabAttack",next==="attack"],["forgeTabRepair",next==="repair"]]){
+  $("forgeRepairPanel").hidden=next==="attack";
+  for(const [id,active] of [["forgeTabAttack",next==="attack"],["forgeTabRepair",next==="repair"],["forgeTabOptimize",next==="optimize"]]){
     $(id).classList.toggle("active",active);$(id).setAttribute("aria-pressed",String(active));
   }
-  if(next==="repair")renderGuards();
+  if(next!=="attack"){
+    $("forgeRepairHeading").textContent=next==="optimize"?"Beat your safe shield: keep safety, cut cost.":"Patch every loophole without killing the mission.";
+    $("forgeVerify").textContent=next==="optimize"?"🏆 Test this optimized shield":"🔬 Check every possible state";
+    $("forgeCoach").textContent=next==="optimize"
+      ?"🏆 Optimization round: remove or replace guards, then prove the cheaper shield still passes every reachable state."
+      :"🛠️ Repair round: build a shield that is both safe and useful.";
+    renderGuards();
+  }
 }
 function renderActionCards(){
   const target=$("forgeActionCards");target.replaceChildren();
@@ -288,8 +331,16 @@ function verify(){
       else addLog("Notebook full for shield trials; you can keep practicing.", "");
     }
     $("forgeVictoryNext").hidden=!result.passed;
+    $("forgeLabScore").textContent=result.score+"/100";
+    const previousBest=Number(localBest[String(seed)]||0);
+    if(result.passed&&result.score>previousBest){localBest[String(seed)]=result.score;saveLocalBest();}
+    $("forgePersonalBest").textContent=localBest[String(seed)]?localBest[String(seed)]+"/100":"—";
+    if(result.passed){
+      $("forgeTabOptimize").disabled=false;
+      $("forgeTabOptimize").textContent="🏆 3 · Beat your shield ✨";
+    }
     $("forgeCoach").textContent=result.passed
-      ?"🏆 Your shield passed! Can you beat your score, or try a new world?"
+      ?"🏆 Your shield passed! Optimization is unlocked: can you remove cost and keep the proof-by-exhaustive-check?"
       :result.safe?"🚧 Safe, but too restrictive. Remove a guard to let the real mission finish."
       :"🔎 A counterexample remains. Study its path, adjust your switches, and check again.";
     const status=$("forgeVerification");
@@ -322,7 +373,10 @@ function selectSeed(nextSeed){
   $("forgeMissionStory").textContent=mission.story+" Shortcut risk: "+mission.shortcut_risk+"; budget: "+mission.risk_budget+". Report: "+(mission.report_sensitive?"sensitive — permission matters":"public telemetry — no personal consent needed")+". Each seed has its own rules.";
   $("forgeMissionGoal").textContent=mission.mission;
   $("forgeSeed").textContent=String(seed);
-  $("forgeTabRepair").textContent="🛠️ 2 · Repair the shield";
+  $("forgeTabRepair").textContent="🛠️ 2 · Repair it";
+  $("forgeTabOptimize").disabled=true;$("forgeTabOptimize").textContent="🏆 3 · Beat your shield";
+  $("forgeLabScore").textContent="—";
+  $("forgePersonalBest").textContent=localBest[String(seed)]?localBest[String(seed)]+"/100":"—";
   $("forgeAdult").checked=false;$("forgeConsent").checked=false;
   $("forgeOptStatus").textContent="";$("forgeVictoryNext").hidden=true;
   $("forgeDonateMessage").textContent="";
@@ -340,6 +394,7 @@ $("forgeGoRepair").addEventListener("click",()=>{recordAttack();showMode("repair
 $("forgeVictoryNext").addEventListener("click",()=>selectSeed(1+Math.floor(Math.random()*9999999)));
 $("forgeTabAttack").addEventListener("click",()=>showMode("attack"));
 $("forgeTabRepair").addEventListener("click",()=>{if(acted.length)recordAttack();showMode("repair");});
+$("forgeTabOptimize").addEventListener("click",()=>showMode("optimize"));
 $("forgeNew").addEventListener("click",()=>selectSeed(1+Math.floor(Math.random()*9999999)));
 $("forgeDaily").addEventListener("click",()=>selectSeed(1+(Math.floor(Date.now()/86400000)%9999999)));
 $("forgeShare").addEventListener("click",async()=>{
@@ -388,7 +443,7 @@ $("forgeDonate").addEventListener("click",async()=>{
   const msg=$("forgeDonateMessage");msg.textContent="";
   if(acted.length)recordAttack();
   if(!$("forgeAdult").checked||!$("forgeConsent").checked){msg.textContent="Turn on research sharing to confirm that you are 18+ and agree to donate this mission. Anyone can play.";$("forgeOptStatus").textContent=msg.textContent;$("forgeAdult").focus();return;}
-  if(attacks.length+repairs.length<2){msg.textContent="Try at least two different experiments first (agent routes or shield checks).";$("forgeOptStatus").textContent=msg.textContent;return;}
+  if(attacks.length<1||repairs.length<2){msg.textContent="For a useful research replay, record at least one agent trace and two different checked shield proposals first.";$("forgeOptStatus").textContent=msg.textContent;return;}
   const button=$("forgeDonate");button.disabled=true;
   try{
     const result=await researchApi("/api/arena/safety-lab/donate",{
@@ -397,7 +452,7 @@ $("forgeDonate").addEventListener("click",async()=>{
       adult_confirmation:true,consent_training:true
     });
     msg.textContent=(result.recorded?"Thank you! Your independently replayed experiments were saved. ":"This identical research session was already donated. ")+
-      "Breach examples: "+result.unsafe_trials+". Valid repair examples: "+result.valid_repairs+".";
+      "Breach examples: "+result.unsafe_trials+". Valid repair examples: "+result.valid_repairs+". Quality: "+researchQuality().grade+".";
   }catch(e){msg.textContent=e.message+" Your local game remains playable without donation.";}
   finally{$("forgeOptStatus").textContent=msg.textContent;button.disabled=false;}
 });

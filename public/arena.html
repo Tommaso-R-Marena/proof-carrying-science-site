@@ -10,53 +10,56 @@
 <div class="shell">
 <nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="tasks.html">Tasks</a><a href="roles.html">Roles</a><a href="task-graph.html">Dependency graph</a><a href="arena.html">Arena</a><a href="account.html">Account</a></div></nav>
 <main>
-<section class="pagehead commons-pagehead">
-<div class="kicker">Experimental scientific challenge layer</div>
-<h1>Compete on a score only when the score is worth optimizing.</h1>
-<p>PCS Arena is intentionally separate from ordinary task progression. There is no global points leaderboard. Each challenge must define its own scientific objective, score direction, validation rule, and authority boundary. A provisional score is never enough by itself: only validated entries appear on a leaderboard.</p>
+<section class="pagehead commons-pagehead arena-plain-head">
+<div class="kicker">PCS ARENA · PLAY SOMETHING THAT PRODUCES USEFUL RESEARCH SIGNAL</div>
+<h1>Play a real search problem—not a disguised quiz.</h1>
+<p>Foldit worked because players were not answering trivia: they were exploring a difficult space and leaving behind solutions researchers could study. PCS Arena follows that principle. Each game has a concrete objective, many possible attempts, an independent checker, and a clear record of what a player tried.</p>
+<div class="arena-plain-rules" aria-label="What makes PCS Arena research useful">
+ <div><strong>1 · Explore</strong><span>There are many possible moves, policies, or investigation paths.</span></div>
+ <div><strong>2 · Get objective feedback</strong><span>The server recomputes the game result instead of trusting a browser score.</span></div>
+ <div><strong>3 · Improve</strong><span>Failed attempts and repairs are kept as part of the search trajectory.</span></div>
+ <div><strong>4 · Donate only if you choose</strong><span>Play is local by default. Research donation is explicit, account-backed, and adult-only.</span></div>
+</div>
 </section>
 
-<div class="arena-game-gateway"><div><strong>🎮 Just here to play?</strong><span>Start with Proof Quest if you're new; advance to Safety Forge to hunt counterexamples and build verified toy shields. Both work without an account.</span></div><div class="actions"><a class="button primary" href="arena-proof-quest.html">🧩 Beginner game →</a><a class="button secondary" href="arena-safety-forge.html">🛡️ Safety engineering game →</a><a class="button secondary" href="forge-duel.html">⚔️ Blind Shield Duel →</a><a class="button primary" href="prooflab.html">🔬 Real-theorem ProofLab →</a><a href="experience.html">Why this matters</a></div></div>
+<section class="section arena-game-select" aria-labelledby="arenaChoose">
+ <div class="section-heading-row"><div><div class="kicker">CHOOSE YOUR GAME</div><h2 id="arenaChoose">Different games teach different model skills.</h2></div><p>Start with Safety Forge if you want the deepest game loop. ProofLab is the strongest source-grounded planning game.</p></div>
+ <div class="arena-research-cards">
+  <article class="arena-research-card featured">
+   <div class="arena-card-top"><span class="arena-game-icon">🛡️</span><span class="arena-value-badge">DEEPEST GAME LOOP</span></div>
+   <h3>Safety Forge</h3><p><strong>Break → repair → optimize.</strong> Find a simulated agent failure, build a shield that survives exhaustive finite-state checking, then beat your own safe design by cutting unnecessary cost.</p>
+   <div class="arena-data-box"><strong>Useful data</strong><span>Blind counterexample searches · failed routes · sequential repair edits · cost/score deltas · Pareto improvements · best verified repair</span></div>
+   <a class="button primary" href="arena-safety-forge.html">Play Safety Forge →</a>
+  </article>
+  <article class="arena-research-card">
+   <div class="arena-card-top"><span class="arena-game-icon">🔬</span><span class="arena-value-badge">SOURCE-GROUNDED</span></div>
+   <h3>ProofLab</h3><p><strong>Choose what to investigate next.</strong> Every round shows a small controlled set of plausible next steps around a real PCS Lean theorem. Wrong turns expose prerequisites; hints are marked separately.</p>
+   <div class="arena-data-box"><strong>Useful data</strong><span>Exact candidate sets · selected next step · feasible alternatives · reasons/confidence · blind vs hint-assisted decisions</span></div>
+   <a class="button primary" href="prooflab.html">Enter ProofLab →</a>
+  </article>
+  <article class="arena-research-card">
+   <div class="arena-card-top"><span class="arena-game-icon">⚔️</span><span class="arena-value-badge">QUICK MATCH</span></div>
+   <h3>Shield Duel</h3><p><strong>Pick between two policies before the reveal.</strong> Make a blind safety judgment, state why, then compare your choice with the deterministic simulator.</p>
+   <div class="arena-data-box"><strong>Useful data</strong><span>Pairwise policy preferences · confidence · reason tags · independently checked outcomes</span></div>
+   <a class="button secondary" href="forge-duel.html">Play Shield Duel →</a>
+  </article>
+  <article class="arena-research-card">
+   <div class="arena-card-top"><span class="arena-game-icon">🧩</span><span class="arena-value-badge">LEARN FIRST</span></div>
+   <h3>Proof Quest</h3><p><strong>Learn prerequisite reasoning.</strong> Build valid orderings, inspect why a step is blocked, and practice the kind of dependency thinking used elsewhere in PCS.</p>
+   <div class="arena-data-box"><strong>Best for</strong><span>Onboarding and prerequisite-order traces. This is the easiest entry point, not the strongest research benchmark.</span></div>
+   <a class="button secondary" href="arena-proof-quest.html">Play Proof Quest →</a>
+  </article>
+ </div>
+</section>
+
+<p class="arena-authority-note"><strong>Leaderboard boundary:</strong> There is no global points leaderboard. Where a challenge has a public leaderboard, only validated entries appear on a leaderboard; gameplay scores never become scientific authority.</p>
 <section class="arena-principles">
-<article><strong>LOCAL SCORE</strong><span>Every leaderboard belongs to one challenge with one stated objective.</span></article>
-<article><strong>VALIDITY FIRST</strong><span>Invalid or unreviewed solutions cannot outrank valid work.</span></article>
-<article><strong>NO LEVEL FARMING</strong><span>Arena rank does not automatically raise contributor level or verified skills.</span></article>
-<article><strong>RESEARCH FEEDBACK</strong><span>Winning entries should produce artifacts researchers can actually inspect or use.</span></article>
+<article><strong>NO FAKE GLOBAL SCORE</strong><span>Every score belongs to one defined problem. Task count never becomes scientific truth.</span></article>
+<article><strong>FAILURES ARE DATA</strong><span>A failed route or overblocking repair can be more informative than a lucky final answer.</span></article>
+<article><strong>CHECKER BEFORE LABEL</strong><span>Research exports recompute labels from the fixed game engine rather than accepting claimed wins.</span></article>
+<article><strong>HELD-OUT EVALUATION</strong><span>Training data is kept separate from private evaluation targets wherever the game supports it.</span></article>
 </section>
 
-<section class="section" aria-label="ProofLab real-source theorem planning game">
- <div class="commons-home-banner" style="background:linear-gradient(120deg,#0b2747,#13546a);color:#fff">
-  <div><div class="kicker" style="color:#b2f4d7">PROOFLAB · REAL PCS LEAN TARGETS</div>
-    <h2>🔬 ProofLab: Build an investigation around an actual theorem.</h2>
-    <p>Explore 22 source-pinned training mysteries drawn from a private 40-target Lean benchmark. Move obligation cards, discover real cited lemmas, construct a review strategy, and propose falsification tests. Scores never pretend to be Lean kernel proofs; validation/test theorems stay private.</p>
-  </div><a class="button primary" href="prooflab.html">Enter ProofLab →</a>
- </div>
-</section>
-<section class="section" aria-label="Shield Duel blind policy tournament">
- <div class="commons-home-banner" style="background:linear-gradient(118deg,#15294e,#2a559b);color:#fff">
-  <div><div class="kicker" style="color:#a2f4d5">NEW · 8 ROUND AI-SAFETY TOURNAMENT</div>
-    <h2>⚔️ Shield Duel: Pick the safe plan before you see the answer.</h2>
-    <p>Compete in blind policy matchups, defend your reasoning, build an XP streak, and reveal independently checked counterexamples. Your decision, confidence, and reason can become structured preference data—but only if you explicitly opt in as an adult.</p>
-  </div><a class="button primary" href="forge-duel.html">Play Shield Duel →</a>
- </div>
-</section>
-<section class="section" aria-label="Safety Forge dynamic AI-safety simulation">
- <div class="commons-home-banner">
-  <div><div class="kicker">NEW · INTERACTIVE AI SAFETY RESEARCH GAME</div>
-   <h2>🧪 Safety Forge: break the bot, build a better shield.</h2>
-   <p>Dynamic rescue, research and delivery missions. Try agent actions to discover real <em>simulated</em> counterexamples, then design a minimal policy repair that survives exhaustive finite-state checks without blocking a safe mission. Repeatable experiments for everyone; only optional research donation is 18+.</p>
-  </div><a class="button primary" href="arena-safety-forge.html">Play Safety Forge →</a>
- </div>
-</section>
-<section class="section quest-entry-promo" aria-label="Proof Quest beginner game">
-  <div class="commons-home-banner">
-    <div><div class="kicker">NEW · FREE · NO ACCOUNT TO PLAY</div>
-      <h2>🧩 Proof Quest: build the proof path!</h2>
-      <p>Choose cards in a logical order, earn stars, discover multiple valid solutions, and learn why the next step needs its prerequisites. Eight curated beginner missions plus shareable, procedurally generated scientific investigations, a prerequisite X-ray and a guided repair workshop. Anyone can play; only optional research donation is for consenting verified adults 18+. Children's play is not collected.</p>
-    </div>
-    <a class="button primary" href="arena-proof-quest.html">Play Proof Quest →</a>
-  </div>
-</section>
 <div id="arenaAccountBanner" class="commons-policy-note"><strong>Account:</strong><span>Checking challenge eligibility…</span></div>
 <section class="section">
 <div class="section-heading-row"><div><div class="kicker">Open pilot challenges</div><h2 id="arenaCount">Arena</h2></div><p>The first challenge is deliberately narrow so we can validate the scoring and review model before adding more.</p></div>

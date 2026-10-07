@@ -10,7 +10,7 @@ import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
   githubConfigured, createSubmissionPullRequest, readSubmissionChecks,
-  mergeStagedPullRequest, githubAccessReport
+  mergeStagedPullRequest, githubAccessReport, readRepositoryTextRange
 } from "./contribution-github.js";
 
 const SESSION_COOKIE = "pcs_commons_session";
@@ -1739,6 +1739,123 @@ async function listTasks(request, env) {
       };
     }),
   });
+}
+
+
+async function activeTaskCodeWork(env,user,taskId){
+  const task=await env.COMMONS_DB.prepare(
+    "SELECT id,title,integration_target FROM tasks WHERE id=? AND status='open' AND publication_state='published' AND need_status='needed'"
+  ).bind(taskId).first();
+  if(!task)throw new ApiError(404,"Task not found or no longer open.","task_not_found");
+  if(!["core","site"].includes(String(task.integration_target||"")))
+    throw new ApiError(404,"This task does not require a repository code packet.","no_code_packet");
+  const work=await env.COMMONS_DB.prepare(
+    "SELECT id,status,reservation_expires_at FROM task_requests WHERE task_id=? AND user_id=? AND status='approved' AND (reservation_expires_at IS NULL OR reservation_expires_at>?) ORDER BY requested_at DESC LIMIT 1"
+  ).bind(taskId,user.id,nowIso()).first();
+  if(!work)throw new ApiError(403,"Start or receive approval for this task before viewing its private code packet.","task_code_not_active");
+  return {task,work};
+}
+
+async function taskCodeContext(env,user,taskId){
+  const {task,work}=await activeTaskCodeWork(env,user,taskId);
+  if(!githubConfigured(env))throw new ApiError(503,"Repository excerpt service is temporarily unavailable.","github_not_configured");
+  const packetRows=await env.COMMONS_DB.prepare(
+    "SELECT * FROM task_code_packets WHERE task_id=? AND active=1 ORDER BY sort_order,id"
+  ).bind(taskId).all();
+  const approved=await env.COMMONS_DB.prepare(
+    "SELECT id,packet_id,repo_target,requested_path,requested_start_line,requested_end_line,reason,decision_note,decided_at FROM task_code_requests WHERE task_id=? AND user_id=? AND task_request_id=? AND status='approved' ORDER BY decided_at,id"
+  ).bind(taskId,user.id,work.id).all();
+  const base=[];
+  for(const row of packetRows.results||[]){
+    try{
+      const excerpt=await readRepositoryTextRange(env,{
+        target:row.repo_target,path:row.path,startLine:Number(row.start_line),endLine:Number(row.end_line),ref:"main"
+      });
+      base.push({...excerpt,packet_id:row.id,purpose:row.purpose,
+        request_window:{start_line:Number(row.allowed_start_line),end_line:Number(row.allowed_end_line)}});
+    }catch(error){
+      base.push({packet_id:row.id,path:row.path,purpose:row.purpose,error:"Excerpt unavailable: "+String(error.message||error).slice(0,180)});
+    }
+  }
+  const extras=[];
+  for(const row of approved.results||[]){
+    try{
+      const excerpt=await readRepositoryTextRange(env,{
+        target:row.repo_target,path:row.requested_path,
+        startLine:Number(row.requested_start_line),endLine:Number(row.requested_end_line),ref:"main"
+      });
+      extras.push({...excerpt,request_id:row.id,reason:row.reason,decision_note:row.decision_note||""});
+    }catch(error){
+      extras.push({request_id:row.id,path:row.requested_path,error:"Approved excerpt unavailable: "+String(error.message||error).slice(0,180)});
+    }
+  }
+  return json({ok:true,task:{id:task.id,title:task.title},least_privilege:true,
+    message:"Only the curated code needed for this task is shown. Request a larger excerpt only when you can explain why it is necessary.",
+    excerpts:base,approved_additional_excerpts:extras});
+}
+
+async function requestTaskCodeContext(request,env,user,taskId){
+  await rateLimit(request,env,"task-code-request",12,60);
+  const {task,work}=await activeTaskCodeWork(env,user,taskId);
+  const body=await readBody(request);
+  const packetId=cleanText(body.packet_id,80);
+  const startLine=Number(body.start_line),endLine=Number(body.end_line);
+  const reason=cleanText(body.reason,1200);
+  if(!Number.isInteger(startLine)||!Number.isInteger(endLine)||startLine<1||endLine<startLine||endLine-startLine+1>300)
+    throw new ApiError(400,"Request a specific range of at most 300 lines.","invalid_code_range");
+  if(reason.length<40)throw new ApiError(400,"Explain in at least 40 characters why the extra code is needed for this task.","code_reason_required");
+  const packet=await env.COMMONS_DB.prepare(
+    "SELECT * FROM task_code_packets WHERE id=? AND task_id=? AND active=1"
+  ).bind(packetId,taskId).first();
+  if(!packet)throw new ApiError(404,"Code packet not found.","code_packet_not_found");
+  if(startLine<Number(packet.allowed_start_line)||endLine>Number(packet.allowed_end_line))
+    throw new ApiError(400,`For this task, requests for ${packet.path} must stay inside lines ${packet.allowed_start_line}–${packet.allowed_end_line}. Ask the Owner to curate a different source file if needed.`,"outside_curated_code_window");
+  const existing=await env.COMMONS_DB.prepare(
+    "SELECT id,status FROM task_code_requests WHERE task_id=? AND user_id=? AND task_request_id=? AND packet_id=? AND requested_start_line=? AND requested_end_line=? AND status IN ('pending','approved') LIMIT 1"
+  ).bind(taskId,user.id,work.id,packetId,startLine,endLine).first();
+  if(existing)return json({ok:true,request_id:existing.id,status:existing.status,message:"That exact code request already exists."});
+  const id=crypto.randomUUID(),now=nowIso();
+  await env.COMMONS_DB.prepare(
+    `INSERT INTO task_code_requests(id,task_id,user_id,task_request_id,packet_id,repo_target,requested_path,
+      requested_start_line,requested_end_line,reason,status,created_at)
+     VALUES(?,?,?,?,?,?,?,?,?,?,'pending',?)`
+  ).bind(id,taskId,user.id,work.id,packet.id,packet.repo_target,packet.path,startLine,endLine,reason,now).run();
+  await audit(env,user.id,"task_code_context_requested","task_code_request",id,
+    {task_id:taskId,packet_id:packet.id,path:packet.path,start_line:startLine,end_line:endLine});
+  await notify(env,{kind:"task_code_request_admin",email:env.ADMIN_EMAIL||null,
+    subject:`[PCS] Code-context request: ${taskId}`,
+    body:`${user.display_name} requested lines ${startLine}–${endLine} of ${packet.path} for ${taskId}.\n\nReason:\n${reason}\n\nReview in the PCS admin dashboard.`});
+  return json({ok:true,request_id:id,status:"pending",
+    message:"Request sent for Owner review. The rest of the repository remains hidden by default."},201);
+}
+
+async function adminCodeRequests(env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner may review repository excerpt requests.","owner_required");
+  const rows=await env.COMMONS_DB.prepare(
+    `SELECT r.*,u.display_name,u.email,t.title AS task_title
+       FROM task_code_requests r JOIN users u ON u.id=r.user_id JOIN tasks t ON t.id=r.task_id
+       ORDER BY CASE r.status WHEN 'pending' THEN 0 ELSE 1 END,r.created_at DESC LIMIT 100`
+  ).all();
+  return json({ok:true,requests:rows.results||[]});
+}
+async function adminCodeRequestDecision(request,env,admin,id){
+  if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner may decide repository excerpt requests.","owner_required");
+  const body=await readBody(request),decision=String(body.decision||"");
+  if(!["approved","rejected"].includes(decision))throw new ApiError(400,"Decision must be approved or rejected.","invalid_decision");
+  const note=cleanText(body.note,1800);
+  if(note.length<12)throw new ApiError(400,"Add a short review note.","decision_note_required");
+  const row=await env.COMMONS_DB.prepare("SELECT * FROM task_code_requests WHERE id=?").bind(id).first();
+  if(!row)throw new ApiError(404,"Code request not found.","code_request_not_found");
+  if(row.status!=="pending")throw new ApiError(409,"This code request has already been decided.","already_decided");
+  const now=nowIso();
+  await env.COMMONS_DB.prepare(
+    "UPDATE task_code_requests SET status=?,decision_note=?,decided_at=? WHERE id=? AND status='pending'"
+  ).bind(decision,note,now,id).run();
+  await audit(env,admin.id,"task_code_context_decided","task_code_request",id,{decision,note});
+  await notify(env,{userId:row.user_id,kind:"task_code_request_decided",
+    subject:`PCS code-context request ${decision}`,
+    body:`Your request for ${row.requested_path} lines ${row.requested_start_line}–${row.requested_end_line} was ${decision}.\n\nReview note: ${note}\n`});
+  return json({ok:true,status:decision,decided_at:now});
 }
 
 async function startOrRequestTask(request, env, user, taskId) {
@@ -3588,7 +3705,7 @@ async function exportProofQuestDataset(request,env,admin){
 }
 
 // ProofLab donations are opt-in adult educational planning data, not proofs.
-const PROOFLAB_CONSENT="pcs-prooflab-adult-optin-v1";
+const PROOFLAB_CONSENT="pcs-prooflab-adult-optin-v2";
 async function donateProofLabSession(request,env,user){
   await rateLimit(request,env,"prooflab-donation",18,60);
   if(!Number(user.email_verified))
@@ -3640,15 +3757,17 @@ async function exportProofLabDataset(request,env,admin){
     throw new ApiError(400,"Invalid export offset.","invalid_prooflab_export_cursor");
   const offset=Number(raw);
   const r=await env.COMMONS_DB.prepare(
-    "SELECT verified_replay_json FROM prooflab_source_research_sessions ORDER BY created_at,id LIMIT 25 OFFSET ?"
-  ).bind(offset).all();
+    "SELECT verified_replay_json FROM prooflab_source_research_sessions WHERE source_commit=? AND session_version=? ORDER BY created_at,id LIMIT 25 OFFSET ?"
+  ).bind(PROOFLAB_SOURCE_COMMIT,PROOFLAB_VERSION,offset).all();
   const records=r.results||[];
-  return json({ok:true,format:"pcs-prooflab-optin-source-grounded-dataset-v1",
+  return json({ok:true,format:"pcs-prooflab-optin-source-grounded-dataset-v2",
     source_commit:PROOFLAB_SOURCE_COMMIT,
-    task_scope:"22 educational real-source theorem review plans; no Lean proof terms.",
+    session_version:PROOFLAB_VERSION,
+    task_scope:"22 educational real-source theorem investigations with controlled next-step choice sets; no Lean proof terms.",
     excludes:["user_id","email","IP address","names","precise timestamps","digest"],
     limitations:["Client-side vote timing and true human origin cannot be established.",
-      "Prerequisite results are educational graph labels, not Lean theorem checks.",
+      "Candidate sets and prerequisite results are educational graph labels, not Lean theorem checks.",
+      "Human selections are planning attempts/preferences, not claims of global optimality.",
       "18 privately withheld cases do not enter public gameplay or donations.",
       "The data is from one PCS core project; cross-project generalization is untested."],
     entries:records.map(row=>JSON.parse(row.verified_replay_json)),
@@ -3735,6 +3854,10 @@ async function donateSafetyForgeSession(request,env,user){
     attack_trials:body.attack_trials,
     repair_trials:body.repair_trials
   };
+  if(!Array.isArray(submitted.attack_trials)||submitted.attack_trials.length<1||
+     !Array.isArray(submitted.repair_trials)||submitted.repair_trials.length<2){
+    throw new ApiError(400,"Research donation needs at least one agent trace and two distinct checked shield proposals; keep playing locally until the notebook contains a real search trajectory.","insufficient_safety_forge_trajectory");
+  }
   let replay;
   try{replay=evaluateResearchSession(submitted);}
   catch(error){throw new ApiError(400,error.message||"Invalid bounded simulation session.","safety_forge_replay_rejected");}
@@ -3759,6 +3882,9 @@ async function donateSafetyForgeSession(request,env,user){
   const recorded=Number(result.meta?.changes||0)>0;
   return json({ok:true,recorded,unsafe_trials:replay.attacks.filter(x=>x.detected_unsafe).length,
     valid_repairs:replay.repairs.filter(x=>x.passed).length,
+    research_grade:replay.quality_signals.research_grade,
+    blind_counterexamples:replay.quality_signals.blind_counterexamples,
+    pareto_improvements:replay.quality_signals.pareto_improvements,
     message:recorded?"Your independently replayed synthetic trials were recorded.":"Identical research session already contributed."});
 }
 async function eraseSafetyForgeSessions(env,user){
@@ -3931,6 +4057,9 @@ async function handleApi(request, env) {
     if (method==="POST" && adminMatch) return adminSetGovernance(request,env,admin,decodeURIComponent(adminMatch[1]));
     adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/email-verified$/);
     if (method==="POST" && adminMatch) return adminVerifyEmail(request,env,admin,decodeURIComponent(adminMatch[1]));
+    if (method==="GET" && path==="/api/admin/code-requests") return adminCodeRequests(env,admin);
+    adminMatch=path.match(/^\/api\/admin\/code-requests\/([^/]+)\/decision$/);
+    if (method==="POST" && adminMatch) return adminCodeRequestDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
     throw new ApiError(404,"Admin API endpoint not found.","not_found");
   }
 
@@ -3977,7 +4106,12 @@ async function handleApi(request, env) {
   if(method==="GET" && contributorCheckMatch)
     return contributorSubmissionChecks(request,env,user,decodeURIComponent(contributorCheckMatch[1]));
 
-  let match=path.match(/^\/api\/tasks\/([^/]+)\/request$/);
+  let match=path.match(/^\/api\/tasks\/([^/]+)\/code-context$/);
+  if (method==="GET" && match) return taskCodeContext(env,user,decodeURIComponent(match[1]));
+  match=path.match(/^\/api\/tasks\/([^/]+)\/code-context\/request$/);
+  if (method==="POST" && match) return requestTaskCodeContext(request,env,user,decodeURIComponent(match[1]));
+
+  match=path.match(/^\/api\/tasks\/([^/]+)\/request$/);
   if (method==="POST" && match) return startOrRequestTask(request,env,user,decodeURIComponent(match[1]));
 
   match=path.match(/^\/api\/requests\/([^/]+)\/checkpoint$/);

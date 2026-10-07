@@ -1,6 +1,6 @@
 # Proof-Carrying Science
 
-Proof-Carrying Science (PCS) is an AI-safety-first, domain-general assurance system for consequential computation. It packages an exact typed claim with exact artifacts, assumptions, replay evidence, cryptographic bindings, machine-checked assurance, and reviewer-owned acceptance policy. The PCS AI Safety Commons adds a public-good contributor model for bounded, verifiable safety work.
+Proof-Carrying Science (PCS) helps people show why an important computational claim should be trusted instead of merely reporting a PASS. In plain English: PCS keeps a specific claim tied to the exact files, assumptions, and checks behind it; lets another reviewer rerun the checks that are actually replayable; and clearly separates what passed from what is still unknown. It does not turn weak evidence into truth or provide a magic “safe” label. Its first public-good focus is AI safety, while the underlying assurance architecture is domain-general.
 
 Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
@@ -20,8 +20,9 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 
 ## Primary pages
 - Product overview: /
-- Safety Forge (dynamic, bounded synthetic AI-safety counterexample search and shield repair; not Lean proof verification): /arena-safety-forge.html
-- Proof Quest (educational ordering game; no Lean proof authority; optional adult-only research donation): /arena-proof-quest.html
+- Safety Forge (break → repair → optimize a bounded synthetic agent shield; opt-in replays yield counterexample-search and sequential repair data; not Lean proof verification): /arena-safety-forge.html
+- ProofLab v2 (controlled next-investigation choices around real source-pinned PCS Lean theorem targets; server-reconstructed candidate/feasibility labels; no Lean kernel execution in the game): /prooflab.html
+- Proof Quest (beginner educational prerequisite-ordering game; no Lean proof authority; optional adult-only research donation): /arena-proof-quest.html
 - Research preview (bounded local browser calculations; not Lean proofs): /research-preview.html
 - Independent researcher pilots (falsification, local draft and opt-in contact): /researcher-pilots.html
 - Guided Submission: /guided-submission.html

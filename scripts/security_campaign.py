@@ -153,6 +153,20 @@ def static_campaign(c: Campaign) -> None:
         "adminCreateTask",
         "publication_state:\"draft\"",
     ])
+    task_code = (REPO / "src" / "contribution-github.js").read_text(encoding="utf-8")
+    task_code_schema = (MIGRATIONS / "0021_task_code_packets.sql").read_text(encoding="utf-8")
+    c.require("code tasks expose only curated bounded source excerpts", worker + task_code + task_code_schema, [
+        "task_code_packets", "task_code_requests", "readRepositoryTextRange",
+        "validateTaskCodeWindow", "outside the approved source-text boundary",
+        "Start or receive approval for this task", "reservation_expires_at>?",
+        "outside_curated_code_window",
+        "Only the Founder/Owner may decide repository excerpt requests",
+    ])
+    c.require("code expansion requests are explicit and audited", worker + task_code_schema, [
+        "task_code_context_requested", "task_code_context_decided",
+        "requested_start_line", "requested_end_line", "decision_note",
+        "status IN ('pending','approved')",
+    ])
     c.require("ongoing roles cannot masquerade as task authority", worker + m9, [
         "role_openings",
         "role_applications",

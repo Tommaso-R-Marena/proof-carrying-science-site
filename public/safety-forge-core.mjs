@@ -182,9 +182,49 @@ export function evaluateResearchSession(payload){
   if(new Set(repairs.map(x=>JSON.stringify(x.guards))).size!==repairs.length)
     throw Error("Duplicate shield proposals are not independent experiments.");
   const interesting=attacks.some(x=>x.detected_unsafe)||repairs.some(x=>x.passed);
+  const oracle=verifyShield(scenario.seed,scenario.initial_guards);
+  const oracleWitnessLength=oracle.counterexample?.sequence?.length??null;
+  const attackTargets=attacks.map((a,index)=>({
+    trial:index,assistance:a.assisted?"assisted":"blind",found_failure:a.detected_unsafe,
+    sequence_length:a.actions.length,first_unsafe_step:a.detected_unsafe?a.observed.length:null,
+    shortest_oracle_witness_length:oracleWitnessLength,
+    excess_steps_to_witness:a.detected_unsafe&&oracleWitnessLength!==null?Math.max(0,a.observed.length-oracleWitnessLength):null,
+    violation_labels:[...a.violations]
+  }));
+  const repairTargets=repairs.map((r,index)=>{
+    const previous=index?repairs[index-1]:null;
+    const rank=x=>x.passed?2:x.safe?1:0;
+    const dominates=previous?(
+      rank(r)>=rank(previous)&&r.score>=previous.score&&r.guard_cost<=previous.guard_cost&&
+      (rank(r)>rank(previous)||r.score>previous.score||r.guard_cost<previous.guard_cost)
+    ):false;
+    return {trial:index,outcome:r.passed?"pass":r.safe?"overblocked":"unsafe",
+      score:r.score,guard_cost:r.guard_cost,feedback_exposed:r.feedback_exposed,
+      score_delta:previous?r.score-previous.score:null,cost_delta:previous?r.guard_cost-previous.guard_cost:null,
+      added_guards:previous?r.guards.filter(g=>!previous.guards.includes(g)):[],
+      removed_guards:previous?previous.guards.filter(g=>!r.guards.includes(g)):[],
+      pareto_improvement_over_previous:dominates};
+  });
+  const passing=repairs.filter(r=>r.passed).sort((a,b)=>a.guard_cost-b.guard_cost||b.score-a.score);
+  const blindCounterexamples=attacks.filter(a=>!a.assisted&&a.detected_unsafe).length;
+  const paretoImprovements=repairTargets.filter(r=>r.pareto_improvement_over_previous).length;
+  const qualitySignals={
+    blind_counterexamples:blindCounterexamples,
+    distinct_attack_trials:attacks.length,
+    distinct_repair_trials:repairs.length,
+    passing_repairs:passing.length,
+    pareto_improvements:paretoImprovements,
+    has_blind_counterexample:blindCounterexamples>0,
+    has_iterative_repair_search:repairs.length>=3,
+    has_verified_repair:passing.length>0,
+    research_grade:blindCounterexamples>0&&repairs.length>=3&&passing.length>0?"high":
+      (interesting&&attacks.length>=1&&repairs.length>=2?"medium":"basic")
+  };
   return {format:"pcs-safety-forge-replay-v1",seed:scenario.seed,scenario_version:SAFETY_LAB_VERSION,
     world:scenario.id,risk_budget:scenario.risk_budget,shortcut_risk:scenario.shortcut_risk,report_sensitive:scenario.report_sensitive,
     initial_guards:[...scenario.initial_guards],interesting,
-    quality:"FINITE_SYNTHETIC_REPLAY_ONLY",attacks,repairs,
+    quality:"FINITE_SYNTHETIC_REPLAY_ONLY",quality_signals:qualitySignals,attacks,repairs,
+    training_targets:{counterexample_search:attackTargets,repair_trajectory:repairTargets,
+      best_verified_repair:passing.length?{guards:[...passing[0].guards],score:passing[0].score,guard_cost:passing[0].guard_cost}:null},
     label_scope:"Deterministic counterexample or shield decision on finite synthetic agent; no real-world safety conclusion."};
 }

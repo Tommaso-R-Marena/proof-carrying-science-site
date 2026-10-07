@@ -6,10 +6,10 @@ import {PROOFLAB_VERSION,allProofLabCases,evaluateProofLabSession,availablePlanM
   from "../public/prooflab-core.mjs";
 import {PROOFLAB_SOURCE_COMMIT,PROOFLAB_WITHHELD} from "../public/prooflab-source-data.mjs";
 
-export const PROOFLAB_LEARNING_FORMAT="pcs-prooflab-obligation-trajectory-dataset-v1";
+export const PROOFLAB_LEARNING_FORMAT="pcs-prooflab-obligation-choice-dataset-v2";
 export function prepareProofLabDataset(exported){
   if(!exported||typeof exported!=="object"||Array.isArray(exported)||
-     exported.format!=="pcs-prooflab-optin-source-grounded-dataset-v1"||
+     exported.format!=="pcs-prooflab-optin-source-grounded-dataset-v2"||
      exported.source_commit!==PROOFLAB_SOURCE_COMMIT||
      !Array.isArray(exported.entries)||exported.entries.length>500)
     throw Error("Expected bounded owner-exported source-pinned ProofLab dataset.");
@@ -49,17 +49,27 @@ export function prepareProofLabDataset(exported){
       const eligible=available.includes(candidate);
       if(eligible!==step.accepted)throw Error("Stored action feasibility inconsistent with prerequisites.");
       if(step.accepted){completed.push(step.node);feasible++;}else blocked++;
+      const controlledSet=Array.isArray(step.choice_set)?step.choice_set:[];
+      if(!controlledSet.includes(candidate)||!Array.isArray(step.feasible_choices))
+        throw Error("Stored controlled decision set is missing or inconsistent.");
+      const feasibleInSet=available.filter(id=>controlledSet.includes(id));
+      if(JSON.stringify(feasibleInSet.slice().sort())!==JSON.stringify(step.feasible_choices.slice().sort()))
+        throw Error("Stored listwise feasibility labels disagree with source-indexed graph replay.");
       rows.push({
         case_id:record.case_id,source_commit:PROOFLAB_SOURCE_COMMIT,
         source_module:record.campaign,
         problem_group:group,split:"training",index:step.index,
         completed_before:completed.slice(0,step.accepted?-1:completed.length),
-        candidate_action:candidate,all_eligible_actions:available,
-        prerequisite_feasible:step.accepted,
+        choice_set:controlledSet,
+        selected_action:candidate,
+        selected_position:controlledSet.indexOf(candidate),
+        feasible_actions_in_set:feasibleInSet,
+        selected_feasible:step.accepted,
         missing_prerequisites:step.missing_prerequisites,
         action_kind:step.kind,
         self_reported_reason:step.reason,
         self_reported_confidence:step.confidence,
+        assisted_by_explicit_hint:Boolean(step.assisted),
         assisted_hint_count:record.hints_used,
         human_threat_hypothesis:record.challenge.threat,
         human_threat_status:"unverified hypothesis",
@@ -75,9 +85,10 @@ export function prepareProofLabDataset(exported){
     quality:{eligible_actions:feasible,blocked_actions:blocked,
       duplicate_human_trajectories:[...duplicateCounts.values()].filter(n=>n>1).length},
     training_contract:{
-      label:"Verified pedagogical DAG prerequisite feasibility, not Lean kernel semantics.",
-      ground_truth:"Independent deterministic plan replay by fixed source-indexed game engine.",
-      human_reason:"Self-reported only; not independently true or demonstrably made before hints.",
+      label:"Controlled listwise next-investigation choices with independently replayed prerequisite feasibility; not Lean kernel semantics.",
+      ground_truth:"The server deterministically reconstructs the exact candidate set and feasible subset from the fixed source-indexed graph.",
+      human_choice:"The selected candidate is a volunteered planning preference/attempt, not proof that it was globally optimal.",
+      human_reason:"Self-reported only; not independently true. Explicit hint exposure is carried per decision.",
       split:"Only 22 public training problems; the 18 private heldout tasks are in the core benchmark.",
       generalization_warning:"All 40 theorem targets derive from ONE PCS codebase. Cross-project evidence is absent.",
       duplicate_policy:"Each duplicated trajectory is identified, not automatically multiplied into independent evidence."
