@@ -3701,12 +3701,15 @@ async function eraseSafetyForgeSessions(env,user){
 async function adminArenaStorage(env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can inspect research-data storage summaries.","owner_required");
   // No participant-level identifiers or raw gameplay are returned.
-  const [quest,forge]=await Promise.all([
+  const [quest,forge,duel]=await Promise.all([
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(ordering_json AS BLOB))),0) AS payload_bytes FROM proof_order_research_attempts"
     ).first(),
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(submitted_choices_json AS BLOB))+LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM safety_forge_research_sessions"
+    ).first(),
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM forge_duel_research_sessions"
     ).first(),
   ]);
   return json({
@@ -3715,7 +3718,8 @@ async function adminArenaStorage(env,admin){
     databases:{commons:"pcs-commons"},
     collections:{
       proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
-      safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)}
+      safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)},
+      forge_duel:{rows:Number(duel?.records||0),approx_payload_bytes:Number(duel?.payload_bytes||0)}
     },
     caveat:"Approximate JSON payload bytes, excluding SQLite indexes, metadata, users and audit records; inspect Cloudflare D1 for authoritative capacity and usage."
   });
