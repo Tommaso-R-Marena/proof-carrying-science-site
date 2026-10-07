@@ -122,7 +122,7 @@ test("owner-only export excludes all identity and refuses delegated administrato
  req=new Request(HOST+"/api/admin/arena/prooflab/dataset",{headers:{cookie:"pcs_admin_session=owner"}});
  let r=await worker.fetch(req,ctx.env),data=await r.json();
  assert.equal(r.status,200,JSON.stringify(data));
- assert.equal(data.format,"pcs-prooflab-optin-source-grounded-dataset-v1");
+ assert.equal(data.format,"pcs-prooflab-optin-source-grounded-dataset-v2");
  assert.deepEqual(data.entries,[]);
  assert.equal(data.source_commit,PROOFLAB_SOURCE_COMMIT);
  assert.equal(ctx.state.exports,1);
