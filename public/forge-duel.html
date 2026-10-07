@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shield Duel · PCS Arena</title>
+<meta name="description" content="Outsmart simulated AI-safety failures: pick safer policies in blind duels, reveal real counterexamples, build your expertise. Free to play, no login.">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="forge-duel.css"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"></head>
+<body class="duel-page">
+<div class="topbar"><div class="shell"><span>PCS Arena · A new way to learn safety engineering</span><a href="privacy.html">Research privacy</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Arena</a><a href="arena-safety-forge.html">Safety Forge</a><a href="tasks.html">Get involved</a><a href="account.html" class="button dark">Account</a></div></nav>
+<main>
+<section class="duel-hero">
+ <div><span class="duel-eyebrow">⚔️ ARENA / HUMAN + CHECKER COLLABORATION</span>
+ <h1>SHIELD <em>DUEL</em></h1><p>Two competing AI-safety plans. One mission. Who keeps people safe <strong>without stopping the robot from doing its job?</strong></p>
+ <div class="duel-hero-actions"><a class="button secondary" href="arena-safety-forge.html">Build your own shields ↗</a><a href="experience.html">New? Learn PCS first ↗</a></div>
+ </div>
+ <div class="duel-hero-logo" aria-hidden="true"><div class="duel-glow">VS</div><span>CHOOSE · DEFEND · REVEAL · LEARN</span></div>
+</section>
+<section class="duel-intro" aria-label="How to play">
+ <div><b>1 <span>INSPECT</span></b><p>Study two plausible safety configurations.</p></div>
+ <div><b>2 <span>COMMIT</span></b><p>Pick A, B, or neither. Name your reasoning and confidence.</p></div>
+ <div><b>3 <span>REVEAL</span></b><p>See the exact machine-checked outcome, gain stars, and try again.</p></div>
+</section>
+<section class="duel-game" aria-label="Interactive policy duel">
+ <header class="duel-toolbar"><div><strong id="duelWorld">Loading mission…</strong><span id="duelRound">Round 1 of 8</span></div>
+ <div class="duel-stat"><b id="duelScore">0</b><small>score</small></div><div class="duel-stat"><b id="duelStreak">0</b><small>streak</small></div><div class="duel-stat"><b id="duelAccuracy">—</b><small>calibration</small></div>
+ </header>
+ <div class="duel-progress" role="progressbar" id="duelProgress" aria-label="Rounds completed" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div id="duelProgressFill"></div></div>
+ <section class="duel-mission"><div><span class="duel-micro">THE MISSION</span><h2 id="duelMissionTitle">A real decision under uncertainty.</h2><p id="duelMission">A robot needs to carry out its task while respecting its rules.</p></div><div class="duel-risk" id="duelRisk">RISK ≤ ?</div></section>
+ <p id="duelCaseLabel" class="duel-case-label"></p>
+ <div class="duel-matchup">
+  <article class="duel-policy" id="duelCardA"><div class="duel-policy-top"><span class="duel-policy-letter">A</span><div><small>CONTENDER</small><h3>Shield Alpha</h3></div><span class="duel-policy-cost" id="duelCostA"></span></div><div class="duel-policy-guards" id="duelGuardsA"></div><div class="duel-policy-evidence" id="duelEvidenceA" hidden></div><button id="duelPickA" type="button" class="duel-pick">Choose Alpha <span>→</span></button></article>
+  <div class="duel-versus" aria-hidden="true">VS</div>
+  <article class="duel-policy" id="duelCardB"><div class="duel-policy-top"><span class="duel-policy-letter">B</span><div><small>CONTENDER</small><h3>Shield Bravo</h3></div><span class="duel-policy-cost" id="duelCostB"></span></div><div class="duel-policy-guards" id="duelGuardsB"></div><div class="duel-policy-evidence" id="duelEvidenceB" hidden></div><button id="duelPickB" type="button" class="duel-pick">Choose Bravo <span>→</span></button></article>
+ </div>
+ <section class="duel-judgment" aria-label="Why are you making your choice?">
+   <h3>🎯 Your call, detective.</h3><p>What matters most? Choose one reason and confidence level. Your selection is made before the answer is revealed.</p>
+   <fieldset><legend>My main reason</legend><div id="duelReasons" class="duel-reasons"></div></fieldset>
+   <fieldset><legend>How confident are you?</legend><div class="duel-confidence"><label><input type="radio" name="duelConfidence" value="1" checked> Unsure</label><label><input type="radio" name="duelConfidence" value="2"> Somewhat sure</label><label><input type="radio" name="duelConfidence" value="3"> Very sure</label></div></fieldset>
+   <button id="duelPickNeither" class="duel-neither" type="button">🚨 Neither! Both plans might be flawed.</button>
+ </section>
+ <section id="duelReveal" class="duel-reveal" aria-live="polite" hidden>
+  <div class="duel-reveal-top"><span id="duelResultIcon">🏆</span><div><strong id="duelResultTitle">Good call!</strong><p id="duelResultBody"></p></div><span id="duelEarned"></span></div>
+  <div id="duelExplain" class="duel-explain"></div>
+  <div class="duel-actions"><button id="duelNext" type="button" class="duel-next">Next showdown →</button><a href="arena-safety-forge.html">Design your own shield ↗</a></div>
+ </section>
+ <section id="duelFinish" class="duel-finish" hidden><span>🏆 TOURNAMENT COMPLETE</span><h2 id="duelFinishTitle">Mission accomplished!</h2><p id="duelFinishDescription"></p><div class="duel-actions"><button id="duelAgain" class="duel-next" type="button">🎲 New tournament</button><button id="duelDaily" class="duel-secondary" type="button">📅 Today's tournament</button><button id="duelShare" class="duel-secondary" type="button">🔗 Share seed</button></div></section>
+</section>
+<section class="duel-research" id="duelResearch"><div class="duel-research-heading"><span>🧬 RESEARCH / STRICTLY OPTIONAL</span><h2>Turn careful gameplay into a research experiment.</h2><p>Choices alone are not verified scientific insights. For a future preference-ranking model, the useful record is the *pair of policies you saw, what you preferred before the reveal, why, how sure you felt,* and the independent verifier's decision.</p></div>
+<div class="duel-data-card"><div class="duel-stat-line"><span id="duelTrialCount">0 of 8</span><strong>local duels completed</strong></div>
+ <p>Play without sharing. Research donation is separate, requires a PCS account with verified email, and is limited to self-attested adults 18+. No automatic uploads, no raw text, no public identities, and no child research collection.</p>
+ <label class="duel-consent"><input type="checkbox" id="duelAdult"><span>I confirm that I am at least 18 years old.</span></label>
+ <label class="duel-consent"><input type="checkbox" id="duelConsent"><span>I explicitly consent to donating these synthetic policy choices, reason tags and confidence ratings for research. I understand exported data or trained models may not be fully retractable.</span></label>
+ <div class="duel-actions"><button id="duelDonate" type="button" class="duel-next">Donate my completed tournament</button><button id="duelErase" type="button" class="duel-secondary">Delete previously donated duel data</button><a href="account.html">Sign in or create an account ↗</a></div>
+ <p id="duelDonateMessage" role="status" aria-live="polite"></p></div>
+</section>
+<section class="duel-beyond"><h2>What could a model learn from this?</h2><div class="duel-beyond-grid"><article><strong>⚖️ Rank candidate safeguards</strong><p>Learn which policy edits are promising before expensive formal checks.</p></article><article><strong>🧠 Understand human uncertainty</strong><p>Study confidence and reason labels separately from the deterministic ground truth.</p></article><article><strong>🧯 Find counterexamples</strong><p>Use violated rule categories to train synthetic failure-diagnosis hypotheses.</p></article></div>
+<p class="duel-disclaimer">Crucial limitation: the solver could already determine these bounded labels. Human play might help learn *search heuristics and preferences*, but will not by itself discover new Lean proofs or improve real-world AI alignment. Genuine value requires blind held-out benchmarks and comparisons against this deterministic baseline.</p></section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a href="index.html" class="brand"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Every safety verdict needs a defensible scope.</p></div><div class="footercol"><strong>Learn</strong><a href="experience.html">PCS tour</a><a href="arena-safety-forge.html">Safety Forge</a><a href="arena-proof-quest.html">Proof Quest</a></div><div class="footercol"><strong>Privacy</strong><a href="privacy.html">Data policy</a><a href="account.html">Your data and account</a></div></div></footer>
+</div><script src="site.js"></script><script type="module" src="forge-duel.js"></script></body></html>
