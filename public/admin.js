@@ -204,6 +204,37 @@
     catch(e){alert(e.message);}
   }
 
+  async function codeRequestDecision(id,decision){
+    const note=prompt(decision==="approved"
+      ?"Why is this additional source range necessary and safe to expose for the active task?"
+      :"Why should this extra code request remain closed?");
+    if(!note||note.trim().length<12)return;
+    try{
+      await api(`/api/admin/code-requests/${encodeURIComponent(id)}/decision`,{method:"POST",body:{decision,note:note.trim()}});
+      await load();
+    }catch(e){alert(e.message);}
+  }
+  function renderCodeRequests(items){
+    const target=$("#adminCodeRequestList");if(!target)return;
+    if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No code-context requests.</strong><span>Contributors are using only their curated task packets.</span></div>';return;}
+    target.innerHTML=items.map(r=>`
+      <article class="admin-card">
+        <div class="task-card-top"><div><span class="commons-chip level">${esc(r.task_id)}</span><span class="commons-chip ${r.status==="pending"?"planned":"volunteer"}">${esc(r.status)}</span></div><span class="tiny">${fmt(r.created_at)}</span></div>
+        <h3>${esc(r.task_title)}</h3>
+        <p><strong>${esc(r.display_name)}</strong> · ${esc(r.email)}</p>
+        <div class="boundary"><strong>Requested source</strong><span><code>${esc(r.requested_path)}</code> · lines ${esc(r.requested_start_line)}–${esc(r.requested_end_line)}</span></div>
+        <details open><summary>Why they need it</summary><p>${esc(r.reason)}</p></details>
+        ${r.decision_note?`<p><strong>Decision note:</strong> ${esc(r.decision_note)}</p>`:""}
+        ${r.status==="pending"?`<div class="actions"><button class="button primary" data-code-approve="${esc(r.id)}">Approve exact range</button><button class="button secondary" data-code-reject="${esc(r.id)}">Reject</button></div>`:""}
+      </article>`).join("");
+    all("[data-code-approve]",target).forEach(b=>b.addEventListener("click",()=>codeRequestDecision(b.dataset.codeApprove,"approved")));
+    all("[data-code-reject]",target).forEach(b=>b.addEventListener("click",()=>codeRequestDecision(b.dataset.codeReject,"rejected")));
+  }
+  async function loadCodeRequests(){
+    const data=await api("/api/admin/code-requests");
+    renderCodeRequests(data.requests||[]);
+  }
+
   function renderRequests(items){
     const target=$("#adminRequestList");
     if(!items.length){target.innerHTML='<div class="commons-empty"><strong>No pending task applications.</strong><span>The queue is clear.</span></div>';return;}
@@ -944,6 +975,7 @@
       renderChallengeEntries(data.challenge_entries||[]);
       renderRoleApplications(data.role_applications||[]);
       renderRequests(data.pending_requests||[]);
+      await loadCodeRequests();
       renderCheckpoints(data.checkpoints||[]);
       renderSkills(data.skill_reviews||[]);
       renderSubmissions(data.submissions||[]);
