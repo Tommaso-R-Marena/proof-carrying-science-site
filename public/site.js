@@ -67,6 +67,7 @@
         ["arena-proof-quest.html","Proof Quest · beginner logic game"],
         ["arena-safety-forge.html","Safety Forge · build AI-safety shields"],
         ["forge-duel.html","Shield Duel · blind policy tournament"],
+        ["prooflab.html","ProofLab · real Lean theorem reasoning game"],
         ["arena.html","Arena / community challenges"]
       ]},
       {heading:"FIND YOUR PLACE",links:[
@@ -145,6 +146,7 @@
     ["Start here","experience.html","A two-minute interactive tour","Explore"],
     ["Safety Forge","arena-safety-forge.html","Build and check toy AI safety shields","Play"],
     ["Shield Duel","forge-duel.html","Blind AI policy decisions, human reason tags and checked outcomes","Play"],
+    ["ProofLab","prooflab.html","Plan real Lean theorem goals, diagnose missing dependencies and evaluate claim scope","Play"],
     ["Proof Quest","arena-proof-quest.html","Learn prerequisite logic through puzzles","Play"],
     ["PCS Arena","arena.html","Games and research challenges","Play"],
     ["Research preview","research-preview.html","Editable local AI and science checks","Try PCS"],
@@ -237,7 +239,7 @@
   const breadcrumbParents={
     "experience.html":["Start here"],
     "arena.html":["Play Arena"],"arena-proof-quest.html":["Play Arena","Proof Quest"],
-    "arena-safety-forge.html":["Play Arena","Safety Forge"],
+    "arena-safety-forge.html":["Play Arena","Safety Forge"],"prooflab.html":["Play Arena","ProofLab"],
     "guided-submission.html":["Use PCS","Guided submission"],
     "research-preview.html":["Use PCS","Research preview"],
     "result-anatomy.html":["Use PCS","Verification results"],
