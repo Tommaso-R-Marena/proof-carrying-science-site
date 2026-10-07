@@ -26,6 +26,7 @@
 </div>
 <div class="commons-policy-note"><strong>Newcomer path:</strong><span>Start at L0. There are practical tasks in all 11 categories, including documentation, operations, accessibility, community, and outreach. Every published task names its exact output and review rule. <a href="arena-safety-forge.html">Safety Forge</a> is a free way to practice first.</span></div>
 <div class="commons-policy-note"><strong>Important:</strong><span><b>“Proposed” means not yet funded.</b> Do not begin a paid/planned-paid task expecting compensation until PCS confirms funding and terms in writing.</span></div>
+<div class="commons-policy-note"><strong>Code tasks use least-privilege source access:</strong><span>If a task requires code, PCS shows only the exact GitHub excerpts needed for that task after you start or are approved. You can request a larger excerpt with a reason; the rest of the private repository is not exposed by default.</span></div>
 </section>
 
 <div id="taskAccountBanner" class="commons-policy-note"><strong>Account:</strong><span>Checking your verified PCS level and task access…</span></div>
@@ -109,6 +110,26 @@
   <div><span class="commons-kicker-dark">CURRENT PILOT</span><h2>Qualification can be demonstrated or reviewed—never self-declared.</h2><p>L0–L1 open tasks can be started immediately and never become exclusive. For L2+ work, contributors may pass a variable auto-scored competency screening or submit the task application directly for manual review. Either way, final approval is manual, targets 1 business day and no later than 2 business days, and only then creates a reservation. Approved reserved work must show progress within 24 hours or it releases automatically.</p></div>
   <div class="actions"><a class="button primary button-lg" href="contribute.html">Set my profile</a><a class="button ghost button-lg" href="roles.html">Apply for an ongoing role</a><a class="button ghost button-lg" href="governance.html">Read the rules</a></div>
 </section>
+<dialog id="taskCodeDialog" class="task-application-dialog task-code-dialog" aria-labelledby="taskCodeTitle">
+  <div class="task-code-shell">
+    <div class="panel-eyebrow">Task-scoped source access</div>
+    <h2 id="taskCodeTitle">Relevant code only</h2>
+    <p id="taskCodeIntro">PCS loads only the curated GitHub lines needed for your active task. Each excerpt shows its repository path, line range, and current blob hash.</p>
+    <div id="taskCodeExcerpts" class="task-code-excerpts" aria-live="polite"></div>
+    <form id="taskCodeRequestForm" class="task-code-request-form">
+      <h3>Need a little more context?</h3>
+      <p>Request a bounded expansion around one approved excerpt. Explain why the extra lines are necessary; arbitrary repository browsing is not available.</p>
+      <label class="field"><span>Excerpt</span><select class="selectinput" name="packet_id" id="taskCodePacketSelect" required></select></label>
+      <div class="task-code-range">
+        <label class="field"><span>Start line</span><input class="textinput" name="start_line" type="number" min="1" required></label>
+        <label class="field"><span>End line</span><input class="textinput" name="end_line" type="number" min="1" required></label>
+      </div>
+      <label class="field"><span>Why do you need these additional lines?</span><textarea class="textinput" name="reason" minlength="40" maxlength="1200" rows="3" required placeholder="For example: the helper called by the shown function is defined immediately below, and I need its contract to write the negative test correctly."></textarea></label>
+      <div class="actions"><button class="button primary" type="submit">Request additional excerpt</button><button class="button secondary" type="button" id="closeTaskCode">Close</button></div>
+      <p id="taskCodeMessage" class="form-message" aria-live="polite"></p>
+    </form>
+  </div>
+</dialog>
 <dialog id="taskApplicationDialog" class="task-application-dialog">
   <form id="taskApplicationForm" method="dialog">
     <div class="panel-eyebrow">High-trust task application</div>
