@@ -28,11 +28,11 @@ function fixture({user=adult,admin=null,changes=1,cap=0}={}){
    if(sql.includes("rate_limits"))return{count:1};
    if(sql.includes("FROM sessions s JOIN users u"))return user;
    if(sql.includes("FROM admin_sessions s JOIN users u"))return admin;
-   if(sql.includes("SELECT COUNT(*) AS n FROM prooflab_research_sessions"))return{n:cap};
+   if(sql.includes("SELECT COUNT(*) AS n FROM prooflab_source_research_sessions"))return{n:cap};
    throw Error("Unexpected first query "+sql);
   },
   async run(){
-   if(sql.includes("INSERT OR IGNORE INTO prooflab_research_sessions")){
+   if(sql.includes("INSERT OR IGNORE INTO prooflab_source_research_sessions")){
     state.insertions++;
     assert.equal(args.length,14);
     assert.equal(args[1],adult.id);
@@ -46,14 +46,14 @@ function fixture({user=adult,admin=null,changes=1,cap=0}={}){
     state.hashes.push(args[4]);state.lastPlan=JSON.parse(args[7]);
     return{meta:{changes}};
    }
-   if(sql.includes("DELETE FROM prooflab_research_sessions WHERE user_id=?")){
+   if(sql.includes("DELETE FROM prooflab_source_research_sessions WHERE user_id=?")){
     assert.equal(args[0],adult.id);state.deletes++;return{meta:{changes:2}};
    }
    if(sql.includes("UPDATE admin_sessions SET last_seen_at"))return{meta:{changes:1}};
    throw Error("Unexpected run query "+sql);
   },
   async all(){
-   if(sql.includes("SELECT verified_replay_json FROM prooflab_research_sessions")){
+   if(sql.includes("SELECT verified_replay_json FROM prooflab_source_research_sessions")){
     state.exports++;return{results:[]};
    }
    throw Error("Unexpected all query "+sql);
