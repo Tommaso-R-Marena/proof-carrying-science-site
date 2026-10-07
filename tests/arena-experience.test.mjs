@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import {PUZZLES,gradeOrder,proceduralPuzzle,getPuzzleById,puzzleVersionFor,PROCEDURAL_PUZZLE_VERSION} from "../public/proof-order-core.mjs";
 import {prepareDataset} from "../scripts/prepare_proof_quest_dataset.mjs";
+import {graphLayout} from "../public/arena-lab-tools.mjs";
 import {evaluateTrace,evaluateModel,examples} from "../public/research-preview-engine.mjs";
 const read=path=>readFileSync(new URL("../"+path,import.meta.url),"utf8");
 test("procedural puzzle worlds are deterministic, acyclic, meaningfully diverse and bounded",()=>{
@@ -13,6 +14,8 @@ test("procedural puzzle worlds are deterministic, acyclic, meaningfully diverse 
     assert.equal(a.id,"lab-"+seed);
     assert.ok(a.nodes.length>=8&&a.nodes.length<=12);
     assert.ok(a.nodes.every(n=>n.label.length>15&&n.why.length>20));
+    const picture=graphLayout(a);
+    assert.ok(picture.nodes.every(n=>n.x>=0&&n.x+picture.nodeWidth<=picture.width),"All graph cards visible for seed "+seed);
     const solved=[],seen=new Set();
     while(solved.length<a.nodes.length){
       const ready=a.nodes.find(n=>!seen.has(n.id)&&n.needs.every(dep=>seen.has(dep)));
