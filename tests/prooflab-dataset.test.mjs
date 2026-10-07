@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {allProofLabCases,PROOFLAB_VERSION,availablePlanMoves,evaluateProofLabSession}
+import {allProofLabCases,PROOFLAB_VERSION,availablePlanMoves,proofLabDecisionSet,evaluateProofLabSession}
  from "../public/prooflab-core.mjs";
 import {PROOFLAB_SOURCE_COMMIT} from "../public/prooflab-source-data.mjs";
 import {PROOFLAB_LEARNING_FORMAT,prepareProofLabDataset}
@@ -8,15 +8,19 @@ import {PROOFLAB_LEARNING_FORMAT,prepareProofLabDataset}
 const cases=allProofLabCases();
 function session(c,withBad=false){
  let done=[],actions=[];
- if(withBad)actions.push({node:"review",reason:"intuition",confidence:2});
+ if(withBad){
+  const blocked=proofLabDecisionSet(c.id,done,0).find(id=>!availablePlanMoves(c.id,done).includes(id));
+  actions.push({node:blocked,reason:"intuition",confidence:2,assisted:false});
+ }
  while(done.length<c.nodes.length){
-  const next=availablePlanMoves(c.id,done).at(-1);
-  actions.push({node:next,reason:"dependency",confidence:2});done.push(next);
+  const feasible=new Set(availablePlanMoves(c.id,done));
+  const next=proofLabDecisionSet(c.id,done,actions.length).find(id=>feasible.has(id));
+  actions.push({node:next,reason:"dependency",confidence:2,assisted:false});done.push(next);
  }
  return evaluateProofLabSession({case_id:c.id,version:PROOFLAB_VERSION,actions,hints_used:0,
   threat:c.threats[0],threat_confidence:1});
 }
-function exported(entries){return{format:"pcs-prooflab-optin-source-grounded-dataset-v1",
+function exported(entries){return{format:"pcs-prooflab-optin-source-grounded-dataset-v2",
  source_commit:PROOFLAB_SOURCE_COMMIT,entries};}
 test("owner export preparation independently replays all 22 genuine-source training missions",()=>{
  const dataset=prepareProofLabDataset(exported(cases.map(c=>session(c,true))));
@@ -29,14 +33,17 @@ test("owner export preparation independently replays all 22 genuine-source train
  assert.ok(dataset.rows.every(r=>r.split==="training"&&r.source_commit===PROOFLAB_SOURCE_COMMIT));
  assert.ok(dataset.rows.every(r=>!Object.hasOwn(r,"email")&&!Object.hasOwn(r,"user_id")));
 });
-test("next-action label is multivalued; earlier accepted steps are not uniquely optimal",()=>{
+test("controlled candidate sets preserve listwise human choices and all feasible alternatives",()=>{
  const c=cases[0],data=prepareProofLabDataset(exported([session(c)]));
- const x=data.rows.find(row=>row.candidate_action==="artifact");
- assert.ok(x.all_eligible_actions.includes("artifact"));
- assert.ok(x.all_eligible_actions.includes("premises"));
- assert.equal(x.prerequisite_feasible,true);
- const current=data.rows.find(row=>row.candidate_action==="review");
- assert.ok(current.all_eligible_actions.includes("review"));
+ assert.ok(data.rows.every(row=>row.choice_set.includes(row.selected_action)));
+ assert.ok(data.rows.every(row=>Array.isArray(row.feasible_actions_in_set)));
+ const branching=data.rows.find(row=>row.completed_before.includes("scope")&&
+   row.feasible_actions_in_set.includes("artifact")&&row.feasible_actions_in_set.includes("premises"));
+ assert.ok(branching,"expected a real two-way feasible decision after scope");
+ assert.equal(branching.selected_feasible,true);
+ assert.ok(Number.isInteger(branching.selected_position));
+ assert.equal(branching.assisted_by_explicit_hint,false);
+ assert.match(data.training_contract.label,/Controlled listwise/);
 });
 test("tampered checker labels and hidden benchmark examples fail closed",()=>{
  let input=exported([session(cases[0])]);
