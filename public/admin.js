@@ -1103,13 +1103,14 @@
     button.disabled=true;status.textContent="Checking account-linked, consented research entries…";
     try{
       const result=await api("/api/admin/arena/storage");
-      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel;
-      if(!pq||!sf||!duel)throw Error("Unexpected storage report.");
-      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes)+Number(duel.approx_payload_bytes));
+      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel, pl=result.collections?.prooflab;
+      if(!pq||!sf||!duel||!pl)throw Error("Unexpected storage report.");
+      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes)+Number(duel.approx_payload_bytes)+Number(pl.approx_payload_bytes));
       status.textContent="Proof Quest: "+Number(pq.rows).toLocaleString()+
         " adult opt-in examples · Safety Forge: "+Number(sf.rows).toLocaleString()+
         " verified synthetic sessions · Shield Duel: "+Number(duel.rows).toLocaleString()+
-        " consented ballot batches · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
+        " consented ballot batches · ProofLab: "+Number(pl.rows).toLocaleString()+
+        " source-grounded adult research traces · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
     }catch(e){status.textContent="Storage check unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
@@ -1199,6 +1200,33 @@
       document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
       msg.textContent="Exported "+entries.length+" synthetic ballot batches. Do not publish participant data without consent review.";
     }catch(err){msg.textContent="Research export unavailable: "+err.message;}
+    finally{button.disabled=false;}
+  });
+  $("#adminProofLabExport")?.addEventListener("click",async()=>{
+    const button=$("#adminProofLabExport"),status=$("#adminProofLabExportMessage");
+    button.disabled=true;status.textContent="Reading consented ProofLab training traces…";
+    try{
+      let entries=[],offset=0,pages=0,metadata=null;
+      while(pages<100){
+        const response=await api("/api/admin/arena/prooflab/dataset?offset="+offset);
+        if(response.format!=="pcs-prooflab-optin-source-grounded-dataset-v1"||
+           !Array.isArray(response.entries))throw Error("Unexpected ProofLab export schema.");
+        metadata||=response;entries.push(...response.entries);
+        if(response.next_offset===null)break;
+        if(!Number.isInteger(response.next_offset)||response.next_offset<=offset)
+          throw Error("Invalid export cursor.");
+        offset=response.next_offset;pages++;
+      }
+      if(pages>=100)throw Error("Export exceeded 2,500 bounded sessions.");
+      const exportObject={format:metadata.format,source_commit:metadata.source_commit,
+        task_scope:metadata.task_scope,excludes:metadata.excludes,
+        limitations:metadata.limitations,entries};
+      const blob=new Blob([JSON.stringify(exportObject,null,2)+"\n"],{type:"application/json"});
+      const link=URL.createObjectURL(blob),a=document.createElement("a");a.href=link;
+      a.download="pcs-prooflab-adult-optin-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(link);
+      status.textContent="Exported "+entries.length+" training graph sessions. No held-out Lean benchmark tasks included.";
+    }catch(e){status.textContent="ProofLab export unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
   document.addEventListener("DOMContentLoaded",load);
