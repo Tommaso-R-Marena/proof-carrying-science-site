@@ -14,16 +14,23 @@ export const DUEL_REASONS=Object.freeze([
   {id:"cost",label:"Use the fewest safeguards"},
   {id:"uncertain",label:"I am not sure"}
 ]);
-const POOL=Object.freeze([
-  [],["approval","inspection","consent","risk"],
-  ["joint_review","redact","risk"],["approval","inspection","redact","risk"],
-  ["joint_review","consent","risk"],["joint_review","redact"],
-  ["joint_review","risk"],["approval","inspection","redact"],
-  ["approval","inspection","consent"],["freeze_deploy","risk"],
-  ["freeze_routes","joint_review","redact"],["freeze_report","approval","inspection","risk"],
-  ["joint_review","redact","consent","risk"],["approval","inspection","consent","risk","redact"],
-  ["freeze_deploy","approval","inspection","consent","risk"],
-  ["consent","risk"],["inspection","redact","risk"],["approval","redact","risk"]
+// Curated policy archetypes are independently checked in every round, but no
+// full-pool search executes on the 10ms Workers Free request CPU allowance.
+const VALID=Object.freeze([
+  ["joint_review","redact","risk"],
+  ["approval","inspection","consent","risk"],
+  ["approval","inspection","redact","risk"],
+  ["joint_review","consent","risk"],
+  ["joint_review","redact","consent","risk"],
+  ["approval","inspection","consent","risk","redact"]
+]);
+const UNSAFE=Object.freeze([
+  [],["inspection","redact","risk"],["approval","redact","risk"],["consent","risk"]
+]);
+const OVERBLOCK=Object.freeze([
+  ["joint_review","redact","risk","freeze_routes"],
+  ["joint_review","redact","risk","freeze_deploy"],
+  ["joint_review","redact","risk","freeze_report"]
 ]);
 function randomFor(seed,round){
   let s=(Math.imul(seed,2654435761) ^ Math.imul(round+1,2246822519))>>>0;
@@ -45,34 +52,23 @@ function compare(a,b){
 export function duelFor(seed,round){
   assertInputs(seed,round);
   const draw=randomFor(seed,round),scenario=scenarioForSeed(seed);
-  // Independent exhaustive scores are calculated before selecting balanced pairs.
-  // Dynamic seed-dependent groups help avoid a fixed "pick the bigger shield" trick.
-  const classified=POOL.map(p=>policyResult(seed,p));
-  const pass=classified.filter(x=>x.result.passed);
-  const unsafe=classified.filter(x=>!x.result.safe);
-  const overblock=classified.filter(x=>x.result.safe&&!x.result.live);
-  const prefer=(xs,fallback)=>xs.length?xs:fallback;
+  const pick=arr=>arr[Math.floor(draw()*arr.length)];
   const type=round%4;
   let left,right;
-  if(type===0){left=pass[Math.floor(draw()*pass.length)];right=prefer(unsafe,classified)[Math.floor(draw()*prefer(unsafe,classified).length)];}
-  else if(type===1){left=pass[Math.floor(draw()*pass.length)];const pool=prefer(overblock,unsafe);right=pool[Math.floor(draw()*pool.length)];}
+  if(type===0){left=pick(VALID);right=pick(UNSAFE);}
+  else if(type===1){left=pick(VALID);right=pick(OVERBLOCK);}
   else if(type===2){
-    const pairs=pass.flatMap(a=>pass.filter(b=>b.result.guard_cost!==a.result.guard_cost&&b!==a).map(b=>[a,b]));
-    if(pairs.length)[left,right]=pairs[Math.floor(draw()*pairs.length)];
-    else {left=pass[0];right=unsafe[0];}
+    left=pick(VALID);
+    const cost=x=>x.reduce((sum,id)=>sum+GUARDS.find(g=>g.id===id).cost,0);
+    right=pick(VALID.filter(p=>cost(p)!==cost(left)));
   }else{
-    const invalid=classified.filter(x=>!x.result.passed);
-    if(invalid.length>1){left=invalid[Math.floor(draw()*invalid.length)];right=invalid[Math.floor(draw()*invalid.length)];}
-    else {left=pass[0];right=unsafe[0];}
+    left=pick(UNSAFE);
+    right=pick(UNSAFE.filter(p=>p!==left));
   }
-  if(!left||!right)throw Error("The deterministic duel generator has no valid pair.");
-  // Ensure candidates are distinct; avoid rounds that are meaningless to compare.
-  if(left===right||left.guards.join("|")===right.guards.join("|")){
-    right=classified.find(x=>x!==left&&x.guards.join("|")!==left.guards.join("|"));
-  }
-  const flip=draw()>.5,[A,B]=flip?[right,left]:[left,right];
-  const oracle=compare(A,B);
-  const winner=oracle==="tie"?"either":oracle;
+  if(!left||!right||left===right)throw Error("Empty or repeated policy duel.");
+  const flip=draw()>.5;
+  const [A,B]=flip?[policyResult(seed,right),policyResult(seed,left)]:[policyResult(seed,left),policyResult(seed,right)];
+  const winner=compare(A,B)==="tie"?"either":compare(A,B);
   return {id:"duel-"+seed+"-"+round,version:DUEL_VERSION,scenario_seed:seed,round,
     scenario:{id:scenario.id,name:scenario.name,icon:scenario.icon,mission:scenario.mission,
       risk_budget:scenario.risk_budget,shortcut_risk:scenario.shortcut_risk,report_sensitive:scenario.report_sensitive},
