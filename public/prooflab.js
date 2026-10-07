@@ -219,6 +219,9 @@ function finish(){
  $("plVictory").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 async function post(path,data){
+ if(typeof path!=="string"||!path.startsWith("/api/")||
+    !new Set(["/api/arena/prooflab/donate","/api/arena/prooflab/erase"]).has(path))
+  throw Error("Unreviewed ProofLab research API path.");
  const response=await fetch(path,{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
   body:JSON.stringify(data)});
  const json=await response.json().catch(()=>({message:"Invalid server response"}));

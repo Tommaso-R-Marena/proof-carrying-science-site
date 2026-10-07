@@ -22,6 +22,14 @@ function supplied(c,actions=solved(c)){return{
  case_id:c.id,version:PROOFLAB_VERSION,actions,hints_used:0,
  threat:c.threats[0],threat_confidence:2
 };}
+test("ProofLab research network access is restricted to explicit reviewed API endpoints",()=>{
+ const js=read("public/prooflab.js"),policy=read("scripts/check_site.py");
+ assert.match(js,/path\.startsWith\("\/api\/"\)/);
+ assert.match(js,/Unreviewed ProofLab research API path/);
+ assert.match(js,/\/api\/arena\/prooflab\/donate/);
+ assert.match(js,/\/api\/arena\/prooflab\/erase/);
+ assert.match(policy,/"prooflab\.js"/);
+});
 test("22 playable real-source training theorems, 18 wholly private holdouts",()=>{
  assert.equal(cases.length,22);assert.equal(PROOFLAB_WITHHELD.validation,8);
  assert.equal(PROOFLAB_WITHHELD.evaluation,10);assert.ok(graphIntegrity());

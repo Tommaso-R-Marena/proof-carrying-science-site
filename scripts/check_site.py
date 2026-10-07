@@ -1390,7 +1390,7 @@ if inspector_script.exists():
 NETWORKED_COMMONS_JS = {
     "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
     "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js", "arena-safety-forge.js",
-    "forge-duel.js",
+    "forge-duel.js", "prooflab.js",
 }
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
