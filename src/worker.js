@@ -4048,6 +4048,9 @@ async function handleApi(request, env) {
     if (method==="POST" && adminMatch) return adminSetGovernance(request,env,admin,decodeURIComponent(adminMatch[1]));
     adminMatch=path.match(/^\/api\/admin\/users\/([^/]+)\/email-verified$/);
     if (method==="POST" && adminMatch) return adminVerifyEmail(request,env,admin,decodeURIComponent(adminMatch[1]));
+    if (method==="GET" && path==="/api/admin/code-requests") return adminCodeRequests(env,admin);
+    adminMatch=path.match(/^\/api\/admin\/code-requests\/([^/]+)\/decision$/);
+    if (method==="POST" && adminMatch) return adminCodeRequestDecision(request,env,admin,decodeURIComponent(adminMatch[1]));
     throw new ApiError(404,"Admin API endpoint not found.","not_found");
   }
 
@@ -4094,7 +4097,12 @@ async function handleApi(request, env) {
   if(method==="GET" && contributorCheckMatch)
     return contributorSubmissionChecks(request,env,user,decodeURIComponent(contributorCheckMatch[1]));
 
-  let match=path.match(/^\/api\/tasks\/([^/]+)\/request$/);
+  let match=path.match(/^\/api\/tasks\/([^/]+)\/code-context$/);
+  if (method==="GET" && match) return taskCodeContext(env,user,decodeURIComponent(match[1]));
+  match=path.match(/^\/api\/tasks\/([^/]+)\/code-context\/request$/);
+  if (method==="POST" && match) return requestTaskCodeContext(request,env,user,decodeURIComponent(match[1]));
+
+  match=path.match(/^\/api\/tasks\/([^/]+)\/request$/);
   if (method==="POST" && match) return startOrRequestTask(request,env,user,decodeURIComponent(match[1]));
 
   match=path.match(/^\/api\/requests\/([^/]+)\/checkpoint$/);
