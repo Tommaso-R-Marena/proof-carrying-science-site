@@ -3854,6 +3854,10 @@ async function donateSafetyForgeSession(request,env,user){
     attack_trials:body.attack_trials,
     repair_trials:body.repair_trials
   };
+  if(!Array.isArray(submitted.attack_trials)||submitted.attack_trials.length<1||
+     !Array.isArray(submitted.repair_trials)||submitted.repair_trials.length<2){
+    throw new ApiError(400,"Research donation needs at least one agent trace and two distinct checked shield proposals; keep playing locally until the notebook contains a real search trajectory.","insufficient_safety_forge_trajectory");
+  }
   let replay;
   try{replay=evaluateResearchSession(submitted);}
   catch(error){throw new ApiError(400,error.message||"Invalid bounded simulation session.","safety_forge_replay_rejected");}
