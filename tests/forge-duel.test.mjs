@@ -61,7 +61,7 @@ test("owner export converter rechecks the exact simulator labels and holds out a
   assert.ok(prep.rows.every(x=>!Object.hasOwn(x,"user_id")&&!Object.hasOwn(x,"email")));
   assert.ok(prep.evaluation_holdout_world==="space");
   const poisoned=structuredClone(data);
-  poisoned.entries[0].ballots[0].oracle_winner="B";
+  poisoned.entries[0].ballots[0].oracle_winner=poisoned.entries[0].ballots[0].oracle_winner==="A"?"B":"A";
   assert.throws(()=>prepareForgeDuelDataset(poisoned),/Disagreement/);
   const exposed=structuredClone(data);exposed.entries[0].email="participant@example.com";
   assert.throws(()=>prepareForgeDuelDataset(exposed),/identity fields/);
