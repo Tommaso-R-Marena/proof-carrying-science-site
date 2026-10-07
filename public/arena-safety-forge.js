@@ -399,5 +399,15 @@ $("forgeErase").addEventListener("click",async()=>{
   }catch(e){msg.textContent=e.message;}
 });
 const qs=new URLSearchParams(location.search),fromUrl=Number(qs.get("seed"));
+const importedGuardIds=qs.has("guards")?qs.get("guards").split(",").filter(Boolean):[];
 selectSeed(Number.isSafeInteger(fromUrl)&&fromUrl>=1&&fromUrl<=9999999?fromUrl:1+Math.floor(Math.random()*9999999));
+if(qs.has("guards")&&importedGuardIds.length<=GUARDS.length&&
+   new Set(importedGuardIds).size===importedGuardIds.length&&
+   importedGuardIds.every(id=>GUARDS.some(g=>g.id===id))){
+  shield=new Set(importedGuardIds);
+  repairFeedbackExposed=true;
+  showMode("repair");renderGuards();
+  $("forgeVerification").textContent="Remixed Shield Duel recipe loaded. Its result is NOT yet verified here—run the full checker.";
+  addLog("🧪 Imported a duel recipe for this exact mission seed. Modify, test and improve it.");
+}
 renderBadges();
