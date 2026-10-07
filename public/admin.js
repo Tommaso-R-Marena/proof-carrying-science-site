@@ -1174,5 +1174,31 @@
     finally{button.disabled=false;}
   });
 
+  $("#adminForgeDuelExport")?.addEventListener("click",async()=>{
+    const button=$("#adminForgeDuelExport"),msg=$("#adminForgeDuelExportMessage");
+    button.disabled=true;msg.textContent="Exporting independently replayed consented policy decisions…";
+    try{
+      let entries=[],offset=0,pages=0,metadata=null;
+      while(pages<100){
+        const data=await api("/api/admin/arena/forge-duel/dataset?offset="+offset);
+        if(data.format!=="pcs-forge-duel-optin-research-dataset-v1"||!Array.isArray(data.entries))
+          throw Error("Unexpected duel dataset schema.");
+        metadata||=data;entries.push(...data.entries);
+        if(data.next_offset===null)break;
+        if(!Number.isInteger(data.next_offset)||data.next_offset<=offset)
+          throw Error("Invalid page cursor.");
+        offset=data.next_offset;pages++;
+      }
+      if(pages>=100)throw Error("Export exceeds 2,500 sessions. Obtain a reviewed bounded batch.");
+      const dataset={format:metadata.format,scope:metadata.scope,excludes:metadata.excludes,
+        limitations:metadata.limitations,entries};
+      const blob=new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"});
+      const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;
+      a.download="pcs-forge-duel-adult-optin-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+      msg.textContent="Exported "+entries.length+" synthetic ballot batches. Do not publish participant data without consent review.";
+    }catch(err){msg.textContent="Research export unavailable: "+err.message;}
+    finally{button.disabled=false;}
+  });
   document.addEventListener("DOMContentLoaded",load);
 })();
