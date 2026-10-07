@@ -85,7 +85,9 @@ export function prepareSafetyForgeDataset(document){
       data_origin:"opt_in_adult_contributor_synthetic_gameplay_unverified_human_origin",
       verification:"independent_local_replay_of_server_validated_finite_state_simulator",
       attack_episodes:attackEpisodes,repair_episodes:repairEpisodes,
-      repair_preference_pairs:repairPreferencePairs
+      repair_preference_pairs:repairPreferencePairs,
+      research_quality:{...independentlyReplayed.quality_signals},
+      replay_derived_training_targets:structuredClone(independentlyReplayed.training_targets)
     });
     seeds.add(replay.seed);
   }
@@ -95,7 +97,7 @@ export function prepareSafetyForgeDataset(document){
     collection:"Self-attested 18+ voluntary submissions with verified PCS account email.",
     privacy:"All account IDs, names, emails, network addresses and timestamps are discarded.",
     split_rule:"scenario_seed % 7 == 0 is evaluation; never split one seed across training and evaluation.",
-    label_semantics:"Finite synthetic state/action transitions, bounded checker reward and within-scenario verifier-derived repair preference pairs.",
+    label_semantics:"Finite synthetic state/action transitions, blind-vs-assisted counterexample-search efficiency, bounded checker rewards, sequential repair deltas, and within-scenario verifier-derived repair preference pairs.",
     caution:[
       "These are simulated lab decisions, not real-world AI or Lean proofs.",
       "The simulator's policy spec is an explicit assumption and may not match any deployed system.",
@@ -112,7 +114,10 @@ export function prepareSafetyForgeDataset(document){
       repair_proposals:episodes.reduce((n,x)=>n+x.repair_episodes.length,0),
       verifier_derived_repair_preference_pairs:episodes.reduce((n,x)=>n+x.repair_preference_pairs.length,0),
       verified_counterexamples:episodes.reduce((n,x)=>n+x.attack_episodes.filter(y=>y.found_failure).length,0),
-      verified_repairs:episodes.reduce((n,x)=>n+x.repair_episodes.filter(y=>y.verified_within_bound).length,0)},
+      blind_verified_counterexamples:episodes.reduce((n,x)=>n+x.attack_episodes.filter(y=>y.found_failure&&!y.assisted_by_hint_or_oracle).length,0),
+      verified_repairs:episodes.reduce((n,x)=>n+x.repair_episodes.filter(y=>y.verified_within_bound).length,0),
+      high_quality_sessions:episodes.filter(x=>x.research_quality.research_grade==="high").length,
+      iterative_repair_sessions:episodes.filter(x=>x.research_quality.has_iterative_repair_search).length},
     episodes
   };
 }
