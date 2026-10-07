@@ -1312,3 +1312,22 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .arena-game-gateway .actions{margin:0;align-items:center}
 @media(max-width:1050px){.pcs-frontdoor{align-items:stretch;flex-direction:column}.pcs-frontdoor>div:first-child{max-width:none}.arena-game-gateway{align-items:stretch;flex-direction:column}}
 @media(max-width:680px){.pcs-frontdoor-grid{grid-template-columns:1fr}.pcs-frontdoor{padding:19px}.pcs-preview-tour-link{align-items:stretch;flex-direction:column}.arena-game-gateway .actions{display:grid}.arena-game-gateway .actions .button{width:100%}}
+
+
+/* Task-scoped private source access: code is deliberately shown as bounded excerpts, never a repo browser. */
+.task-code-locked{display:inline-flex;align-items:center;padding:9px 11px;border:1px solid #d9e2ec;border-radius:9px;background:#f7f9fc;color:#617086;font-size:.78rem;line-height:1.35}
+.task-code-dialog{width:min(1060px,calc(100vw - 28px));max-height:92vh}
+.task-code-shell{padding:24px;max-height:88vh;overflow:auto}
+.task-code-excerpts{display:grid;gap:15px;margin:18px 0}
+.task-code-excerpt{border:1px solid #d4e0ec;border-radius:12px;background:#fff;overflow:hidden}
+.task-code-excerpt-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:13px 15px;background:#f4f8fc;border-bottom:1px solid #dce6ef}
+.task-code-excerpt-head>div{display:grid;gap:4px;min-width:0}
+.task-code-excerpt-head span{font-size:.7rem;font-weight:850;letter-spacing:.06em;color:#3970a3;text-transform:uppercase}
+.task-code-excerpt-head strong{overflow-wrap:anywhere;font-size:.88rem;color:#183e63}
+.task-code-excerpt-head code{font-size:.72rem;color:#66788b}
+.task-code-excerpt>p{padding:0 15px;color:#52667d;font-size:.84rem;line-height:1.55}
+.task-code-excerpt pre{margin:0;max-height:430px;overflow:auto;padding:16px;background:#0d1725;color:#e9f1fb;font-size:.78rem;line-height:1.55;tab-size:2}
+.task-code-excerpt pre code{white-space:pre}
+.task-code-request-form{margin-top:22px;padding-top:20px;border-top:1px solid #d8e1ea}
+.task-code-range{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:650px){.task-code-shell{padding:15px}.task-code-range{grid-template-columns:1fr}.task-code-excerpt-head{flex-direction:column}.task-code-excerpt pre{font-size:.72rem}}
