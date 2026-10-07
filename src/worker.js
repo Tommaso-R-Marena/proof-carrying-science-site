@@ -3876,6 +3876,9 @@ async function donateSafetyForgeSession(request,env,user){
   const recorded=Number(result.meta?.changes||0)>0;
   return json({ok:true,recorded,unsafe_trials:replay.attacks.filter(x=>x.detected_unsafe).length,
     valid_repairs:replay.repairs.filter(x=>x.passed).length,
+    research_grade:replay.quality_signals.research_grade,
+    blind_counterexamples:replay.quality_signals.blind_counterexamples,
+    pareto_improvements:replay.quality_signals.pareto_improvements,
     message:recorded?"Your independently replayed synthetic trials were recorded.":"Identical research session already contributed."});
 }
 async function eraseSafetyForgeSessions(env,user){
