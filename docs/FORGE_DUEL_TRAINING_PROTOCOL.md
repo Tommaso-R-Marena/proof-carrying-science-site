@@ -31,3 +31,11 @@ The converter independently replays every ballot, rejects unexpected identity fi
 **Limitations:** The browser cannot prove the choice was made before the answer was inspected. Data may be scripted or automated; age is self-attested. Deletion cannot automatically retract offline exports or trained model weights. Nothing here guarantees a real-world or Lean-kernel verified outcome.
 
 Foldit motivation: players explored both configuration space and strategy/recipe space (Cooper et al., Nature 2010, https://www.nature.com/articles/nature09304 ; Khatib et al., PNAS 2011, https://pmc.ncbi.nlm.nih.gov/articles/PMC3223433/). PCS should eventually let experts contribute **audited search recipes** for real proof tasks, not only static candidate comparisons.
+
+## Runnable modeling baseline
+
+After preparing the deidentified pairwise dataset, fit a reproducible CPU-only three-class policy ranker:
+
+    node scripts/fit_forge_duel_ranker.mjs DEIDENTIFIED_DATASET.json BASELINE_WEIGHTS.json
+
+The model uses policy and scenario features, and predicts "A", "B", or "neither" without taking the oracle verdict as input. It recomputes the lunar/space held-out scenario family before fitting, and reports training accuracy, untouched-world accuracy, human agreement, random choice, and the 100% deterministic verifier baseline. This is a **baseline, not a high-quality trained safety model**. With no donated examples across train and held-out worlds, it correctly refuses to fit.
