@@ -332,6 +332,7 @@ function selectSeed(nextSeed){
   try{
     const url=new URL(location.href);
     url.searchParams.set("seed",String(seed));
+    url.searchParams.delete("guards"); // A new mission must not inherit an old remixed policy.
     history.replaceState({},"",url.pathname+url.search+url.hash);
   }catch{ /* Browser URL decoration is optional. */ }
 }
