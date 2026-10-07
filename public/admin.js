@@ -1241,7 +1241,7 @@
       let entries=[],offset=0,pages=0,metadata=null;
       while(pages<100){
         const response=await api("/api/admin/arena/prooflab/dataset?offset="+offset);
-        if(response.format!=="pcs-prooflab-optin-source-grounded-dataset-v1"||
+        if(response.format!=="pcs-prooflab-optin-source-grounded-dataset-v2"||
            !Array.isArray(response.entries))throw Error("Unexpected ProofLab export schema.");
         metadata||=response;entries.push(...response.entries);
         if(response.next_offset===null)break;
