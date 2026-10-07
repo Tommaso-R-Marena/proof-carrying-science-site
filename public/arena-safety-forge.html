@@ -52,6 +52,7 @@
     <div class="forge-risk-track"><div id="forgeRiskFill"></div></div>
     <div id="forgeStateBadges" class="forge-state-badges" aria-live="polite"></div>
     <div class="forge-mini"><strong>Current shield</strong><div id="forgeCurrentGuards"></div></div>
+    <div class="forge-mini"><strong>🗺️ Mission progress</strong><div id="forgeRouteMap" class="forge-route-map" role="list" aria-label="Mission milestones"></div><p class="forge-small">A successful robot must complete the task and preserve every safety condition.</p></div>
     <div class="forge-mini"><strong>Experiment counter</strong><span id="forgeAttemptCounts">No trials yet</span></div>
   </aside>
   <div class="forge-main">
@@ -66,12 +67,32 @@
    </section>
    <section id="forgeRepairPanel" aria-labelledby="forgeRepairHeading" hidden>
      <div class="forge-step-head"><div><span class="forge-overline">MISSION TWO / BLUE TEAM</span><h3 id="forgeRepairHeading">Patch the loopholes. Keep the mission alive.</h3></div><span id="forgeGuardCost" class="forge-counter">Shield cost: 0</span></div>
-     <p>Toggle safety shields and run a complete bounded check. A crude “block everything” shield fails because the bot must still complete its legitimate mission. Strong, inexpensive fixes score best.</p>
+     <p>Think like a safety engineer: change a few rules, check every reachable state, then compare your trade-offs against previous designs. A crude “block everything” shield fails because the robot still needs to complete its mission.</p>
      <div id="forgeGuardCards" class="forge-guard-list" role="group" aria-label="Safety guard switches"></div>
      <div class="forge-actions-bottom"><button id="forgeVerify" type="button" class="button primary">🔬 Check every possible state</button><button id="forgeRestore" type="button" class="button secondary">Restore initial shield</button></div>
      <div id="forgeVerification" class="forge-verification" role="status" aria-live="polite">Run the checker to see if your shield is safe and allows a complete mission.</div>
      <button id="forgeVictoryNext" type="button" class="button primary forge-victory-next" hidden>🎲 Play another world →</button>
      <div id="forgeCheckerPath" class="forge-checker-path" hidden></div>
+     <div class="forge-investigation">
+       <div class="forge-investigation-title"><span class="forge-overline">REPLAYABLE RESEARCH NOTEBOOK</span><h4>Learn from every attempted shield.</h4><p>Compare verified configurations; a cheap shield that blocks the legitimate mission does not win.</p></div>
+       <div id="forgeStrategyBoard" class="forge-strategy-board" aria-live="polite"><p>Run your first full check to see a comparison.</p></div>
+       <div class="forge-theater">
+         <div class="forge-theater-top"><div><span class="forge-overline">TRACE THEATER</span><h4>Watch the exact steps that make or break a policy.</h4></div></div>
+         <div class="forge-theater-buttons">
+           <button id="forgeShowCounterexample" type="button" class="button secondary" disabled>🔴 Replay a counterexample</button>
+           <button id="forgeShowSafe" type="button" class="button secondary" disabled>🟢 Replay a valid mission</button>
+           <button id="forgeShowLastAttack" type="button" class="button secondary" disabled>🎬 Replay my last attack</button>
+         </div>
+         <div id="forgeTracePlayer" class="forge-trace-player" hidden>
+           <div class="forge-trace-head"><strong id="forgeTraceTitle">Replaying...</strong><span id="forgeTraceIndex"></span></div>
+           <progress id="forgeTraceProgress" max="1" value="0"></progress>
+           <div id="forgeTraceStage" class="forge-trace-stage" aria-live="polite"></div>
+           <div id="forgeTraceState" class="forge-trace-state"></div>
+           <div class="forge-theater-buttons"><button id="forgeTracePrev" type="button" class="button secondary">← Previous</button><button id="forgeTraceNext" type="button" class="button primary">Next step →</button></div>
+         </div>
+         <p class="forge-theater-note">Every replay comes from the real bounded simulation engine. This is not a Lean theorem or evidence of safety outside the fictional world.</p>
+       </div>
+     </div>
    </section>
   </div>
   <aside class="forge-log">
