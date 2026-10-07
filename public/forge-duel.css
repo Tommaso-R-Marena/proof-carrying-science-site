@@ -61,6 +61,7 @@
 .duel-policy-evidence{font-size:.78rem;line-height:1.5;display:grid;gap:7px;border-top:1px solid #c6d8e6;padding-top:12px}
 .duel-policy-evidence[hidden]{display:none}
 .duel-policy-evidence p{margin:0;color:#3e617d;overflow-wrap:anywhere}
+.duel-remix{font-size:.77rem;font-weight:850;color:#1a6d96;display:inline-block;margin-top:7px}
 .duel-failure{font-weight:800;color:#a63e3b!important}
 .duel-witness{font-family:ui-monospace,monospace;font-size:.72rem}
 .duel-judgment{margin:21px clamp(15px,3vw,30px);padding:23px;background:#f3f7fe;border:1px solid #d9e4f4;border-radius:15px}
