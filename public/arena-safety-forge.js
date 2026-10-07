@@ -350,6 +350,17 @@ $("forgeShare").addEventListener("click",async()=>{
     output.textContent="Challenge link copied. Anyone can replay the same seed.";
   }catch(e){output.textContent="Copy unavailable; copy the page URL to share this seed.";}
 });
+$("forgeShareRecipe").addEventListener("click",async()=>{
+  const output=$("forgeShareStatus");
+  try{
+    if(!navigator.clipboard?.writeText)throw Error("Clipboard unavailable.");
+    const url=new URL("arena-safety-forge.html",location.href);
+    url.searchParams.set("seed",String(seed));
+    url.searchParams.set("guards",[...shield].sort().join(","));
+    await navigator.clipboard.writeText(url.href);
+    output.textContent="Your exact editable guard recipe was copied. Others can remix it and run the checker—sharing is not verification.";
+  }catch(error){output.textContent="Unable to copy; try again or share the challenge URL.";}
+});
 $("forgeResetAttack").addEventListener("click",()=>resetAttack());
 $("forgeFinishAttack").addEventListener("click",()=>{recordAttack();resetAttack(false);});
 $("forgeHint").addEventListener("click",()=>{
