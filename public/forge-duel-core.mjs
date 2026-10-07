@@ -40,6 +40,16 @@ function assertInputs(seed,round){
   if(!Number.isSafeInteger(seed)||seed<1||seed>9999999)throw Error("Invalid mission seed.");
   if(!Number.isSafeInteger(round)||round<0||round>=DUEL_ROUNDS)throw Error("Invalid duel round.");
 }
+export function duelCaseType(seed,round){
+  assertInputs(seed,round);
+  const draw=randomFor(seed,0x31415926);
+  const schedule=[0,0,1,1,2,2,3,3];
+  for(let i=schedule.length-1;i>0;i--){
+    const j=Math.floor(draw()*(i+1));
+    [schedule[i],schedule[j]]=[schedule[j],schedule[i]];
+  }
+  return schedule[round];
+}
 function policyResult(seed,ids){return {guards:[...ids],result:verifyShield(seed,ids)};}
 function compare(a,b){
   if(a.result.passed!==b.result.passed)return a.result.passed?"A":"B";
@@ -53,7 +63,7 @@ export function duelFor(seed,round){
   assertInputs(seed,round);
   const draw=randomFor(seed,round),scenario=scenarioForSeed(seed);
   const pick=arr=>arr[Math.floor(draw()*arr.length)];
-  const type=round%4;
+  const type=duelCaseType(seed,round);
   let left,right;
   if(type===0){left=pick(VALID);right=pick(UNSAFE);}
   else if(type===1){left=pick(VALID);right=pick(OVERBLOCK);}
@@ -75,7 +85,7 @@ export function duelFor(seed,round){
     A:{guards:A.guards,cost:A.result.guard_cost},
     B:{guards:B.guards,cost:B.result.guard_cost},
     oracle:{winner,A:A.result,B:B.result},
-    category:["Counterexample search","Operator safeguards","Budget and liveness","Red-team review"][type]};
+    challenge_type:type,category:scenario.name+" · Shield engineering decision"};
 }
 export function evaluateDuelVote(input){
   if(!input||typeof input!=="object"||Array.isArray(input)||
@@ -89,7 +99,7 @@ export function evaluateDuelVote(input){
   const correct=winner==="either"?(choice==="A"||choice==="B"):choice===winner;
   return {seed,round,version,scenario_family:duel.scenario.id,category:duel.category,
     policy_A:duel.A.guards,policy_B:duel.B.guards,choice,reason,confidence,
-    correct,oracle_winner:winner,
+    correct,oracle_winner:winner,challenge_type:duel.challenge_type,
     oracle:{A:{safe:duel.oracle.A.safe,live:duel.oracle.A.live,passed:duel.oracle.A.passed,
        score:duel.oracle.A.score,cost:duel.oracle.A.guard_cost,checked_states:duel.oracle.A.checked_states,
        violations:duel.oracle.A.counterexample?.violations||[]},

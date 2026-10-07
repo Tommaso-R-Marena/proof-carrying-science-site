@@ -8,7 +8,7 @@ It is NOT a Lean proof-search dataset, a guarantee of real human input, or evide
 
 ## Game
 
-Eight rounds; two visible guard configurations; pick A, B or neither before revealing the finite-state checker outcomes. The checker requires both safety and mission completion; if both valid, lower cost wins. Four styles recur: unsafe vs safe, overblocked vs safe, two valid policies with differing costs, and two invalid policies. After a choice, the game displays concrete violating traces or valid mission paths, local XP, accuracy and a streak.
+Eight rounds; two visible guard configurations; pick A, B or neither before revealing the finite-state checker outcomes. The checker requires both safety and mission completion; if both valid, lower cost wins. Four styles occur twice each in a deterministic seed-shuffled order (not predictably by round): unsafe vs safe, overblocked vs safe, two valid policies with differing costs, and two invalid policies. The visible category never reveals the outcome type. After a choice, the game displays concrete violating traces or valid mission paths, local XP, accuracy and a streak.
 
 Research donation is NOT automatic. The user must independently attest age 18+, opt in, and explicitly click Donate on a verified PCS account. No free text or reaction-time fingerprint is collected. Adults can erase their linked active rows; Owner-only exports omit identity, IP, precise times and digest.
 

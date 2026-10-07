@@ -1,29 +1,34 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
-import {DUEL_VERSION,DUEL_ROUNDS,DUEL_REASONS,duelFor,evaluateDuelVote,evaluateDuelSession} from "../public/forge-duel-core.mjs";
+import {DUEL_VERSION,DUEL_ROUNDS,DUEL_REASONS,duelCaseType,duelFor,evaluateDuelVote,evaluateDuelSession} from "../public/forge-duel-core.mjs";
 import {prepareForgeDuelDataset} from "../scripts/prepare_forge_duel_dataset.mjs";
 const vote=(seed,round,choice=duelFor(seed,round).oracle.winner)=>({seed,round,version:DUEL_VERSION,choice,reason:"risk",confidence:3});
 test("1,000 deterministic blind policy pairings cover four verified decision types",()=>{
   const families=new Set(),outcomes=new Set();
   for(let seed=1;seed<=125;seed++){
+    const types=[];
     for(let round=0;round<DUEL_ROUNDS;round++){
+      const type=duelCaseType(seed,round);types.push(type);
       const duel=duelFor(seed,round);
       assert.deepEqual(duel,duelFor(seed,round));
       assert.notDeepEqual(duel.A.guards,duel.B.guards);
       assert.equal(duel.oracle.A.scenario_seed,seed);
       assert.equal(duel.oracle.B.scenario_seed,seed);
       const winner=duel.oracle.winner;
-      if(round%4===0||round%4===1)assert.ok(winner==="A"||winner==="B");
-      if(round%4===2){
+      if(type===0||type===1)assert.ok(winner==="A"||winner==="B");
+      if(type===2){
         assert.ok(duel.oracle.A.passed&&duel.oracle.B.passed);
         assert.notEqual(duel.A.cost,duel.B.cost);
         assert.ok(winner==="A"||winner==="B");
       }
-      if(round%4===3)assert.equal(winner,"neither");
+      if(type===3)assert.equal(winner,"neither");
+      assert.equal(duel.challenge_type,type);
+      assert.doesNotMatch(duel.category,/reject both|unsafe|counterexample|liveness/i);
       assert.equal(evaluateDuelVote(vote(seed,round)).correct,true);
       families.add(duel.scenario.id);outcomes.add(winner);
     }
+    assert.deepEqual([...types].sort(),[0,0,1,1,2,2,3,3]);
   }
   assert.equal(families.size,4);
   assert.deepEqual([...outcomes].sort(),["A","B","neither"]);
