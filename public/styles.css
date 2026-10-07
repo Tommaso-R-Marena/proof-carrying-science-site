@@ -1297,7 +1297,7 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 .pcs-frontdoor>div>span{font-size:.7rem;font-weight:850;letter-spacing:.1em;color:#29768a}
 .pcs-frontdoor h2{font:750 clamp(1.2rem,2.4vw,1.7rem)/1.25 var(--display);margin:8px 0}
 .pcs-frontdoor p{color:#52718a;line-height:1.5;margin:0;font-size:.84rem}
-.pcs-frontdoor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;flex:1}
+.pcs-frontdoor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;flex:1}
 .pcs-frontdoor-grid a{padding:16px;border:1px solid #cbdde9;border-radius:13px;background:white;display:grid;gap:8px;text-decoration:none;color:#204e75;min-height:98px}
 .pcs-frontdoor-grid a:hover,.pcs-frontdoor-grid a:focus-visible{border-color:#5a98cc;box-shadow:0 5px 18px #213b6b1f;outline:none}
 .pcs-frontdoor-grid strong{font-size:.9rem;line-height:1.35}
