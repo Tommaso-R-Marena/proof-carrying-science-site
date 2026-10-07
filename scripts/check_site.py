@@ -20,11 +20,12 @@ site_js = ROOT / "site.js"
 if site_js.exists():
     site_script = site_js.read_text(encoding="utf-8")
     for required_text in [
-        "secondaryHrefs",
-        "navmore",
-        "More PCS resources",
         'aria-current", "page"',
         "pcs-global-nav",
+        "What PCS does",
+        "Try PCS",
+        "Play & help",
+        "Trust & research",
         "Admin sign in",
         "Admin Center",
         "account.html",
@@ -230,16 +231,18 @@ index_page = ROOT / "index.html"
 if index_page.exists():
     index_text = index_page.read_text(encoding="utf-8")
     for required_text in [
-        "Don’t just claim something is safe. Show what can actually be verified.",
+        "PCS helps you show <em>why</em> a result should be trusted—not just say “trust me.”",
         "Crowdsource the work. Never the truth.",
-        "Contribute to AI safety",
         "L2 opens general paid-task eligibility",
         "L4 is the review-authority threshold",
-        "Project + scientific question",
-        "Exact files + exact checks",
-        "Replayed evidence + explicit decision",
-        "independent replay, not a recorded PASS",
-        "acceptance stays with the reviewer",
+        "Say exactly what you claim",
+        "Attach the exact evidence",
+        "Let someone else verify it",
+        "not a magic “safe” button",
+        "does make evidence easier to inspect and replay",
+        "tamper-evident lab notebook for important computational claims",
+        "What exact claim are you making?",
+        "What exact evidence supports it?",
         "Start from your role",
         "What are you here to do?",
         "I have a computation or result to submit.",
@@ -249,8 +252,10 @@ if index_page.exists():
         'href="package-inspector.html#inspectorDrop"',
         "Start Guided Submission",
         "producer and reviewer are intentionally separate trust roles",
-        "Core PR verification is currently pending; no claim of fresh CI",
+        "Fresh integrated CI passed",
         'href="research-preview.html"',
+        'href="arena.html"',
+        'href="tasks.html"',
     ]:
         if required_text not in index_text:
             errors.append(f"index.html: role-entry/usability drift: {required_text}")
