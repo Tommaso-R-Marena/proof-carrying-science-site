@@ -72,9 +72,15 @@ test("blocked attempts are documented as negative learning signal, not proof fai
   const firstChoices=proofLabDecisionSet(c.id,[],0);
   const blocked=firstChoices.find(id=>!availablePlanMoves(c.id,[]).includes(id));
   assert.ok(blocked,"controlled set should include a plausible blocked choice");
-  const invalid={node:blocked,reason:"intuition",confidence:3,assisted:false},actions=[
-   invalid,...solved(c).slice(0,4)
-  ];
+  const actions=[{node:blocked,reason:"intuition",confidence:3,assisted:false}];
+  const completed=[];
+  while(actions.length<5){
+   const feasible=new Set(availablePlanMoves(c.id,completed));
+   const next=proofLabDecisionSet(c.id,completed,actions.length).find(id=>feasible.has(id));
+   assert.ok(next,"post-block candidate set must still offer a feasible continuation");
+   actions.push({node:next,reason:"dependency",confidence:3,assisted:false});
+   completed.push(next);
+  }
   const r=replayProofLabSteps(c.id,actions);
   assert.equal(r.checked_steps[0].accepted,false);
   assert.ok(r.checked_steps[0].missing_prerequisites.length>0);
