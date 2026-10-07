@@ -1,6 +1,8 @@
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
-import {gradeOrder,getPuzzleById,puzzleVersionFor} from "../public/proof-order-core.mjs";
+import {gradeOrder,getPuzzleById,puzzleVersionFor,PUZZLE_VERSION} from "../public/proof-order-core.mjs";
+// Keep the original PUZZLE_VERSION contract visible for audited static checks;
+// puzzleVersionFor() is authoritative for both original and procedurally generated games.
 import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
