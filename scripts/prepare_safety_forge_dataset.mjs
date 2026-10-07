@@ -26,8 +26,14 @@ export function prepareSafetyForgeDataset(document){
       repair_trials:replay.repairs.map(r=>({guards:r.guards,feedback_exposed:r.feedback_exposed}))
     };
     const independentlyReplayed=evaluateResearchSession(input);
-    if(JSON.stringify(independentlyReplayed)!==JSON.stringify(replay)){
-      throw Error("Replay mismatch: exported labels or state transitions have changed.");
+    // Older consented rows may predate newly derived training-only fields. They
+    // remain usable only when every field that WAS stored still matches the
+    // independent current replay exactly; new labels are then derived afresh.
+    for(const key of Object.keys(replay)){
+      if(!Object.hasOwn(independentlyReplayed,key)||
+         JSON.stringify(independentlyReplayed[key])!==JSON.stringify(replay[key])){
+        throw Error("Replay mismatch: exported labels or state transitions have changed.");
+      }
     }
     const scenario=scenarioForSeed(replay.seed);
     const split=replay.seed%7===0?"evaluation":"training";
