@@ -5,7 +5,7 @@ import {
 const $=id=>document.getElementById(id);
 const CASES=allProofLabCases(),ICON={interpretation:"🔎",premise:"📜",provenance:"🧬","cited-lemma":"🔗",
   "proof-review":"🧠",falsification:"⚔️",uncertainty:"⚠️","external-check":"🔐"};
-const KEY="pcs-prooflab-local-v1";
+const KEY="pcs-prooflab-local-v2";
 let current=CASES[0],campaign="Binding",actions=[],hints=0,graphOpen=false,coach=false,assistanceExposed=false,awarded=false,replayIndex=-1,
   local={xp:0,best:{}};
 try{const v=JSON.parse(localStorage.getItem(KEY)||"null");if(v&&Number.isSafeInteger(v.xp)&&v.xp>=0&&
