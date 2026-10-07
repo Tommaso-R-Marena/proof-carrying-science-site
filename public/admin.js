@@ -1103,12 +1103,13 @@
     button.disabled=true;status.textContent="Checking account-linked, consented research entries…";
     try{
       const result=await api("/api/admin/arena/storage");
-      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge;
-      if(!pq||!sf)throw Error("Unexpected storage report.");
-      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes));
+      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel;
+      if(!pq||!sf||!duel)throw Error("Unexpected storage report.");
+      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes)+Number(duel.approx_payload_bytes));
       status.textContent="Proof Quest: "+Number(pq.rows).toLocaleString()+
         " adult opt-in examples · Safety Forge: "+Number(sf.rows).toLocaleString()+
-        " verified synthetic sessions · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
+        " verified synthetic sessions · Shield Duel: "+Number(duel.rows).toLocaleString()+
+        " consented ballot batches · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
     }catch(e){status.textContent="Storage check unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
@@ -1174,5 +1175,31 @@
     finally{button.disabled=false;}
   });
 
+  $("#adminForgeDuelExport")?.addEventListener("click",async()=>{
+    const button=$("#adminForgeDuelExport"),msg=$("#adminForgeDuelExportMessage");
+    button.disabled=true;msg.textContent="Exporting independently replayed consented policy decisions…";
+    try{
+      let entries=[],offset=0,pages=0,metadata=null;
+      while(pages<100){
+        const data=await api("/api/admin/arena/forge-duel/dataset?offset="+offset);
+        if(data.format!=="pcs-forge-duel-optin-research-dataset-v1"||!Array.isArray(data.entries))
+          throw Error("Unexpected duel dataset schema.");
+        metadata||=data;entries.push(...data.entries);
+        if(data.next_offset===null)break;
+        if(!Number.isInteger(data.next_offset)||data.next_offset<=offset)
+          throw Error("Invalid page cursor.");
+        offset=data.next_offset;pages++;
+      }
+      if(pages>=100)throw Error("Export exceeds 2,500 sessions. Obtain a reviewed bounded batch.");
+      const dataset={format:metadata.format,scope:metadata.scope,excludes:metadata.excludes,
+        limitations:metadata.limitations,entries};
+      const blob=new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"});
+      const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;
+      a.download="pcs-forge-duel-adult-optin-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+      msg.textContent="Exported "+entries.length+" synthetic ballot batches. Do not publish participant data without consent review.";
+    }catch(err){msg.textContent="Research export unavailable: "+err.message;}
+    finally{button.disabled=false;}
+  });
   document.addEventListener("DOMContentLoaded",load);
 })();

@@ -332,6 +332,7 @@ function selectSeed(nextSeed){
   try{
     const url=new URL(location.href);
     url.searchParams.set("seed",String(seed));
+    url.searchParams.delete("guards"); // A new mission must not inherit an old remixed policy.
     history.replaceState({},"",url.pathname+url.search+url.hash);
   }catch{ /* Browser URL decoration is optional. */ }
 }
@@ -348,6 +349,17 @@ $("forgeShare").addEventListener("click",async()=>{
     await navigator.clipboard.writeText(location.href);
     output.textContent="Challenge link copied. Anyone can replay the same seed.";
   }catch(e){output.textContent="Copy unavailable; copy the page URL to share this seed.";}
+});
+$("forgeShareRecipe").addEventListener("click",async()=>{
+  const output=$("forgeShareStatus");
+  try{
+    if(!navigator.clipboard?.writeText)throw Error("Clipboard unavailable.");
+    const url=new URL("arena-safety-forge.html",location.href);
+    url.searchParams.set("seed",String(seed));
+    url.searchParams.set("guards",[...shield].sort().join(","));
+    await navigator.clipboard.writeText(url.href);
+    output.textContent="Your exact editable guard recipe was copied. Others can remix it and run the checker—sharing is not verification.";
+  }catch(error){output.textContent="Unable to copy; try again or share the challenge URL.";}
 });
 $("forgeResetAttack").addEventListener("click",()=>resetAttack());
 $("forgeFinishAttack").addEventListener("click",()=>{recordAttack();resetAttack(false);});
@@ -398,5 +410,15 @@ $("forgeErase").addEventListener("click",async()=>{
   }catch(e){msg.textContent=e.message;}
 });
 const qs=new URLSearchParams(location.search),fromUrl=Number(qs.get("seed"));
+const importedGuardIds=qs.has("guards")?qs.get("guards").split(",").filter(Boolean):[];
 selectSeed(Number.isSafeInteger(fromUrl)&&fromUrl>=1&&fromUrl<=9999999?fromUrl:1+Math.floor(Math.random()*9999999));
+if(qs.has("guards")&&importedGuardIds.length<=GUARDS.length&&
+   new Set(importedGuardIds).size===importedGuardIds.length&&
+   importedGuardIds.every(id=>GUARDS.some(g=>g.id===id))){
+  shield=new Set(importedGuardIds);
+  repairFeedbackExposed=true;
+  showMode("repair");renderGuards();
+  $("forgeVerification").textContent="Remixed Shield Duel recipe loaded. Its result is NOT yet verified here—run the full checker.";
+  addLog("🧪 Imported a duel recipe for this exact mission seed. Modify, test and improve it.");
+}
 renderBadges();

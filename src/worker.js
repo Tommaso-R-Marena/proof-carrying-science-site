@@ -1,5 +1,6 @@
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
+import {DUEL_VERSION,evaluateDuelSession} from "../public/forge-duel-core.mjs";
 import {gradeOrder,getPuzzleById,puzzleVersionFor,PUZZLE_VERSION} from "../public/proof-order-core.mjs";
 // Keep the original PUZZLE_VERSION contract visible for audited static checks;
 // puzzleVersionFor() is authoritative for both original and procedurally generated games.
@@ -3584,6 +3585,66 @@ async function exportProofQuestDataset(request,env,admin){
   });
 }
 
+// Forge Duel captures deliberately volunteered human policy comparison labels.
+// The server regenerates both policies and all simulated verdicts from the seed;
+// it NEVER accepts a user's claimed winning policy, reward or checker result.
+const FORGE_DUEL_CONSENT="pcs-forge-duel-adult-optin-v1";
+async function donateForgeDuelSession(request,env,user){
+  await rateLimit(request,env,"forge-duel-donation",32,60);
+  if(!Number(user.email_verified))throw new ApiError(403,"Verify your account email before contributing duel research data.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+     Object.keys(body).sort().join(",")!=="adult_confirmation,ballots,consent_training,session_version")
+    throw new ApiError(400,"Invalid Forge Duel research submission fields.","invalid_duel_payload");
+  if(body.adult_confirmation!==true||body.consent_training!==true)
+    throw new ApiError(403,"Only consenting adults 18+ may donate research examples. Anyone may play locally.","adult_consent_required");
+  const submitted={session_version:body.session_version,ballots:body.ballots};
+  let verified;
+  try{verified=evaluateDuelSession(submitted);}
+  catch(error){throw new ApiError(400,error.message||"Invalid bounded duel session.","duel_replay_rejected");}
+  const recent=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM forge_duel_research_sessions WHERE user_id=? AND created_at>=?"
+  ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
+  if(Number(recent?.n||0)>=24)throw new ApiError(429,"Daily research donation limit reached. You may keep playing privately.","duel_daily_limit");
+  const digest=await sha256Hex(JSON.stringify(submitted));
+  const result=await env.COMMONS_DB.prepare(
+    `INSERT OR IGNORE INTO forge_duel_research_sessions(
+       id,user_id,session_digest,session_version,submitted_ballots_json,verified_replay_json,
+       ballot_count,correct_count,consent_version,created_at
+     ) VALUES(?,?,?,?,?,?,?,?,?,?)`
+  ).bind(crypto.randomUUID(),user.id,digest,DUEL_VERSION,
+    JSON.stringify(submitted),JSON.stringify(verified),verified.ballots.length,
+    verified.correct,FORGE_DUEL_CONSENT,nowIso()).run();
+  const recorded=Number(result.meta?.changes||0)>0;
+  return json({ok:true,recorded,record_count:verified.ballots.length,
+    correct_count:verified.correct,message:recorded?"Verified toy comparison data stored.":"Identical session already donated."});
+}
+async function eraseForgeDuelSessions(env,user){
+  const result=await env.COMMONS_DB.prepare(
+    "DELETE FROM forge_duel_research_sessions WHERE user_id=?"
+  ).bind(user.id).run();
+  return json({ok:true,deleted:Number(result.meta?.changes||0),
+    message:"Active duel research rows deleted. Historical exports, backups and trained weights may require separate handling."});
+}
+async function exportForgeDuelSessions(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Owner approval is required for research dataset export.","owner_required");
+  const raw=new URL(request.url).searchParams.get("offset")||"0";
+  if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid bounded export offset.","invalid_duel_export_offset");
+  const offset=Number(raw);
+  const response=await env.COMMONS_DB.prepare(
+    `SELECT verified_replay_json FROM forge_duel_research_sessions ORDER BY created_at,id LIMIT 25 OFFSET ?`
+  ).bind(offset).all();
+  const rows=response.results||[];
+  return json({ok:true,format:"pcs-forge-duel-optin-research-dataset-v1",
+    scope:"Synthetic finite policy comparison; user-reported pre-reveal reason/confidence.",
+    excludes:["user_id","email","name","IP address","exact timestamps","session_digest"],
+    limitations:["Client-submitted choices cannot prove that the player was human or committed before reveal.",
+      "Simulator labels are independently recomputable and available without human volunteers.",
+      "Train on distinct scenario families and compare with the exact oracle baseline before reporting gains."],
+    entries:rows.map(row=>JSON.parse(row.verified_replay_json)),
+    next_offset:rows.length===25?offset+25:null});
+}
+
 // Safety Forge records only explicit adult opt-in bounded simulation sessions.
 // Anonymous play is local; client-supplied results/labels are never trusted.
 const SAFETY_FORGE_CONSENT="pcs-safety-forge-adult-optin-v1";
@@ -3640,12 +3701,15 @@ async function eraseSafetyForgeSessions(env,user){
 async function adminArenaStorage(env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can inspect research-data storage summaries.","owner_required");
   // No participant-level identifiers or raw gameplay are returned.
-  const [quest,forge]=await Promise.all([
+  const [quest,forge,duel]=await Promise.all([
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(ordering_json AS BLOB))),0) AS payload_bytes FROM proof_order_research_attempts"
     ).first(),
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(submitted_choices_json AS BLOB))+LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM safety_forge_research_sessions"
+    ).first(),
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM forge_duel_research_sessions"
     ).first(),
   ]);
   return json({
@@ -3654,7 +3718,8 @@ async function adminArenaStorage(env,admin){
     databases:{commons:"pcs-commons"},
     collections:{
       proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
-      safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)}
+      safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)},
+      forge_duel:{rows:Number(duel?.records||0),approx_payload_bytes:Number(duel?.payload_bytes||0)}
     },
     caveat:"Approximate JSON payload bytes, excluding SQLite indexes, metadata, users and audit records; inspect Cloudflare D1 for authoritative capacity and usage."
   });
@@ -3730,6 +3795,7 @@ async function handleApi(request, env) {
     const admin=await requireAdmin(request,env);
     if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
+    if (method==="GET" && path==="/api/admin/arena/forge-duel/dataset") return exportForgeDuelSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
@@ -3809,6 +3875,8 @@ async function handleApi(request, env) {
   if (method==="POST" && challengeMatch) return submitChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
   if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
+  if (method==="POST" && path==="/api/arena/forge-duel/donate") return donateForgeDuelSession(request,env,user);
+  if (method==="POST" && path==="/api/arena/forge-duel/erase") return eraseForgeDuelSessions(env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/donate") return donateSafetyForgeSession(request,env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/erase") return eraseSafetyForgeSessions(env,user);
   if (method==="POST" && path==="/api/arena/proof-order/attempt") return donateProofQuestAttempt(request,env,user);
