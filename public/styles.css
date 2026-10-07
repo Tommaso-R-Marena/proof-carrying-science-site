@@ -1290,3 +1290,25 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
  .pcs-global-nav .navmore-menu{min-width:0;width:100%}
 }
 @media(max-width:520px){.pcs-quick-dialog{padding:15px}.pcs-quick-item{align-items:flex-start}.pcs-quick-item>span{font-size:.63rem}.pcs-crumbs ol{font-size:.71rem}}
+
+/* Four clear paths into the product, visible even if the site script is blocked. */
+.pcs-frontdoor{display:flex;gap:22px;justify-content:space-between;align-items:center;margin:24px 0 36px;border:1px solid #cdddde;border-radius:20px;padding:22px 25px;background:linear-gradient(110deg,#f1faf9,#eef4ff)}
+.pcs-frontdoor>div:first-child{max-width:350px}
+.pcs-frontdoor>div>span{font-size:.7rem;font-weight:850;letter-spacing:.1em;color:#29768a}
+.pcs-frontdoor h2{font:750 clamp(1.2rem,2.4vw,1.7rem)/1.25 var(--display);margin:8px 0}
+.pcs-frontdoor p{color:#52718a;line-height:1.5;margin:0;font-size:.84rem}
+.pcs-frontdoor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;flex:1}
+.pcs-frontdoor-grid a{padding:16px;border:1px solid #cbdde9;border-radius:13px;background:white;display:grid;gap:8px;text-decoration:none;color:#204e75;min-height:98px}
+.pcs-frontdoor-grid a:hover,.pcs-frontdoor-grid a:focus-visible{border-color:#5a98cc;box-shadow:0 5px 18px #213b6b1f;outline:none}
+.pcs-frontdoor-grid strong{font-size:.9rem;line-height:1.35}
+.pcs-frontdoor-grid small{font-size:.75rem;color:#60778d;line-height:1.5}
+.pcs-preview-tour-link{margin:23px 0;border:1px solid #c7dff1;background:linear-gradient(120deg,#eaf5ff,#ebfbf5);border-radius:15px;display:flex;gap:16px;justify-content:space-between;align-items:center;padding:18px 23px}
+.pcs-preview-tour-link strong{font-size:1.05rem;color:#194a76}
+.pcs-preview-tour-link p{margin:4px 0;color:#54718b;font-size:.87rem}
+.arena-game-gateway{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 25px;border:1px solid #cbdce9;border-radius:17px;background:linear-gradient(125deg,#f2f9ff,#f1faf5);margin:16px 0 20px}
+.arena-game-gateway>div:first-child{display:grid;gap:7px;max-width:570px}
+.arena-game-gateway strong{font-size:1.05rem}
+.arena-game-gateway span{font-size:.88rem;line-height:1.6;color:#557086}
+.arena-game-gateway .actions{margin:0;align-items:center}
+@media(max-width:1050px){.pcs-frontdoor{align-items:stretch;flex-direction:column}.pcs-frontdoor>div:first-child{max-width:none}.arena-game-gateway{align-items:stretch;flex-direction:column}}
+@media(max-width:680px){.pcs-frontdoor-grid{grid-template-columns:1fr}.pcs-frontdoor{padding:19px}.pcs-preview-tour-link{align-items:stretch;flex-direction:column}.arena-game-gateway .actions{display:grid}.arena-game-gateway .actions .button{width:100%}}
