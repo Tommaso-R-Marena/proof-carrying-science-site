@@ -3705,7 +3705,7 @@ async function exportProofQuestDataset(request,env,admin){
 }
 
 // ProofLab donations are opt-in adult educational planning data, not proofs.
-const PROOFLAB_CONSENT="pcs-prooflab-adult-optin-v1";
+const PROOFLAB_CONSENT="pcs-prooflab-adult-optin-v2";
 async function donateProofLabSession(request,env,user){
   await rateLimit(request,env,"prooflab-donation",18,60);
   if(!Number(user.email_verified))
