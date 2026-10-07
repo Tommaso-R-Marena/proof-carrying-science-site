@@ -69,7 +69,7 @@ test("all 46 complete educational histories replay independently and never mint 
   assert.equal(graded.hints,0);
   assert.equal(graded.kernel_proof_verified,false);
   assert.equal(graded.score,100);
-  assert.equal(graded.source_revision,undefined);
+  assert.equal(graded.source_revision,CORE_SOURCE_COMMIT);
   assert.deepEqual(graded,evaluateSession(attempt));
  }
 });
