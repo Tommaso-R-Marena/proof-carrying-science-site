@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "deploy": "npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:arena:onboarding && npm run test:arena:experience && npm run test:arena:duel && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && node --check scripts/benchmark_safety_forge.mjs && node --check public/safety-forge-core.mjs && node --check public/arena-safety-forge.js && node --check scripts/prepare_safety_forge_dataset.mjs && node --check scripts/prepare_proof_quest_dataset.mjs && node --check public/proof-order-core.mjs && node --check public/arena-proof-quest.js && node --check public/researcher-pilot-core.mjs && node --check public/researcher-pilot-ui.js && node --check public/research-preview-engine.mjs && node --check public/research-preview.js && node --check src/production-promotion.js && node --check src/worker.js && node --check public/admin.js && node --check public/account.js && wrangler deploy && node notify-indexnow.mjs",
+    "deploy": "npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:arena:onboarding && npm run test:arena:experience && npm run test:arena:duel && npm run test:account-ui && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && node --check scripts/benchmark_safety_forge.mjs && node --check public/safety-forge-core.mjs && node --check public/arena-safety-forge.js && node --check scripts/prepare_safety_forge_dataset.mjs && node --check scripts/prepare_proof_quest_dataset.mjs && node --check public/proof-order-core.mjs && node --check public/arena-proof-quest.js && node --check public/researcher-pilot-core.mjs && node --check public/researcher-pilot-ui.js && node --check public/research-preview-engine.mjs && node --check public/research-preview.js && node --check src/production-promotion.js && node --check src/worker.js && node --check public/admin.js && node --check public/account.js && wrangler deploy && node notify-indexnow.mjs",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "test:submissions": "node --test tests/submission-github.test.mjs",
     "test:promotions": "node --test tests/production-promotion.test.mjs",
@@ -14,11 +14,12 @@
     "test:safety:forge": "node --test tests/safety-forge.test.mjs tests/safety-forge-dataset.test.mjs tests/safety-forge-worker.test.mjs",
     "test:safety:benchmark": "node --test tests/safety-forge-benchmark.test.mjs",
     "ci:syntax": "find public src scripts tests -type f \\( -name '*.js' -o -name '*.mjs' \\) -print0 | xargs -0 -r -n1 node --check",
-    "ci:zero-minutes": "npm run ci:syntax && npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:arena:onboarding && npm run test:arena:experience && npm run test:arena:duel && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run deploy:dry-run",
+    "ci:zero-minutes": "npm run ci:syntax && npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:arena:onboarding && npm run test:arena:experience && npm run test:arena:duel && npm run test:account-ui && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run deploy:dry-run",
     "test:arena:onboarding": "node --test tests/arena-onboarding.test.mjs",
     "test:admin:audit": "node --test tests/admin-audit-pagination.test.mjs",
     "test:arena:experience": "node --test tests/arena-experience.test.mjs tests/arena-lab-tools.test.mjs",
-    "test:arena:duel": "node --test tests/forge-duel.test.mjs tests/forge-duel-worker.test.mjs tests/forge-duel-model.test.mjs"
+    "test:arena:duel": "node --test tests/forge-duel.test.mjs tests/forge-duel-worker.test.mjs tests/forge-duel-model.test.mjs",
+    "test:account-ui": "node --test tests/account-ui.test.mjs"
   },
   "devDependencies": {
     "wrangler": "4.147.0"
