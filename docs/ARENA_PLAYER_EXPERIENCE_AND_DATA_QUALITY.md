@@ -2,9 +2,17 @@
 
 ## Two games, different scientific uses
 
-**Proof Quest** is an approachable prerequisite-ordering game. Cards are shuffled on each start so their initial visible order does not disclose a solution; undo, hints, repair explanations, stars, and next-mission progression teach the reasoning task. Consented exports are still only ordered step IDs, hint counts, and server-graded outcomes on **eight fixed synthetic puzzles**. They can be used for a narrowly defined next-step dependency planning benchmark, **not** as Lean proof-state/tactic supervision or evidence of real-world alignment. All valid topological orders can be accepted; score isn't a proof.
+**Proof Quest** is an approachable prerequisite-ordering game. Cards are shuffled on each start so their initial visible order does not disclose a solution; undo, hints, repair explanations, stars, and next-mission progression teach the reasoning task. Consented exports contain ordered step IDs, hint counts, and server-graded outcomes on **eight fixed synthetic puzzles plus versioned deterministic procedural puzzles** from four predefined families. Every generated `lab-N` case is regenerated from the seed by the Worker; clients cannot donate arbitrary graphs or scores. The generated package-integrity family is held out as an entire family during training/evaluation partitioning. These are finite curated templates, not independent human-authored theorem goals, and even thousands of seeds do not imply broad generalization. They can be used for a narrowly defined next-step dependency planning benchmark, **not** as Lean proof-state/tactic supervision or evidence of real-world alignment. All valid topological orders can be accepted; score isn't a proof.
 
 **Safety Forge** is a replayable finite-state red-team and shield-repair simulator. All local trials (including failures) have independently computable action-state transitions. Completed runs are added to a *local-only* notebook automatically; consenting signed-in adults can choose to donate an entire bounded session. The Worker rebuilds every trace and candidate repair using pinned scenario semantics. The offline converter produces: (1) counterexample-search state/action/outcome trajectories, (2) per-candidate shield reward labels, and (3) pairwise policy preferences **derived from the verifier** between different rewards in the same scenario. Pairwise rows aren't additional independent human examples.
+
+## New interactive investigative tools
+
+Proof Quest has a DAG X-ray rendered locally as SVG, a context-sensitive coach, a one-step prerequisite repair, a session-only attempt diary, sharable seeded challenges and a UTC daily challenge. Opening the graph or coach marks the run assisted through the existing bounded `hints_used` count; this is not perfect behavioral provenance and should not be treated as proof of genuine independent reasoning.
+
+Safety Forge has a live mission milestone display, a reproducible trace theater and a ranked, server-replay-compatible shield notebook. Rankings are based on actual finite-state evaluations, not player-reported labels. Restoring a tested shield marks subsequent trials as feedback-exposed; blind and assisted strategies should not be conflated.
+
+**No automatic research upload** is added by these interfaces; all local previews and diaries vanish when the page is reloaded. Neither game's simulation checks implement the production Lean verifier. The public first-visit interactive tour runs real local arithmetic but deliberately states that it is not a PCS certificate or real-world safety verdict.
 
 ## Consent and accessibility
 

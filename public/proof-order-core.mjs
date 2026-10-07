@@ -165,6 +165,12 @@ export function proceduralPuzzle(seed){
   }));
   const finish=nodes.find(n=>n.id==="report");
   finish.needs.push(...added.map(n=>n[0]));
+  const labels=new Map(nodes.map(n=>[n.id,n.label]));
+  for(const node of nodes){
+    node.why=node.needs.length
+      ?"Before this step, establish: "+node.needs.map(dep=>labels.get(dep)).join("; ")+"."
+      :"This is an independent starting point; no other step must precede it.";
+  }
   const puzzle={id:"lab-"+seed,seed,family:family.id,level:3,
     title:family.title+" #"+seed,topic:family.topic,goal:family.goal,story:family.story,
     nodes,version:PROCEDURAL_PUZZLE_VERSION};

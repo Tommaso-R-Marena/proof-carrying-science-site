@@ -84,3 +84,5 @@ button.quest-step:hover{border-color:#286ab7;transform:translateY(-1px)}
 .quest-attempt-diary li{line-height:1.45;color:#3b5675}
 .quest-attempt-diary>p{font-size:.78rem;color:#64748b}
 @media(max-width:550px){.quest-detective-top{align-items:start}.quest-detective-score{min-width:68px}.quest-lab-actions{display:grid;grid-template-columns:1fr}.quest-map-head{align-items:start;flex-direction:column}}
+
+.quest-seed-status{margin:12px 0 0;color:#42628b;font-size:.83rem;line-height:1.55}
