@@ -1750,8 +1750,8 @@ async function activeTaskCodeWork(env,user,taskId){
   if(!["core","site"].includes(String(task.integration_target||"")))
     throw new ApiError(404,"This task does not require a repository code packet.","no_code_packet");
   const work=await env.COMMONS_DB.prepare(
-    "SELECT id,status FROM task_requests WHERE task_id=? AND user_id=? AND status='approved' ORDER BY requested_at DESC LIMIT 1"
-  ).bind(taskId,user.id).first();
+    "SELECT id,status,reservation_expires_at FROM task_requests WHERE task_id=? AND user_id=? AND status='approved' AND (reservation_expires_at IS NULL OR reservation_expires_at>?) ORDER BY requested_at DESC LIMIT 1"
+  ).bind(taskId,user.id,nowIso()).first();
   if(!work)throw new ApiError(403,"Start or receive approval for this task before viewing its private code packet.","task_code_not_active");
   return {task,work};
 }
