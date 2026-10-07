@@ -71,6 +71,11 @@ function explainPolicy(id,oracle){
     addText(el,"p","Failure class: "+oracle.counterexample.violations.map(x=>x.replaceAll("_"," ").toLowerCase()).join("; "),"duel-failure");
     addText(el,"p","Witness trace: "+oracle.counterexample.sequence.join(" → "),"duel-witness");
   }else if(oracle.safe_mission) addText(el,"p","A valid route: "+oracle.safe_mission.join(" → "),"duel-witness");
+  const remix=document.createElement("a");
+  remix.className="duel-remix";remix.textContent="🧪 Remix this guard recipe in Safety Forge →";
+  const url=new URL("arena-safety-forge.html",location.href);
+  url.searchParams.set("seed",String(seed));url.searchParams.set("guards",duel[id].guards.join(","));
+  remix.href=url.pathname+url.search;el.appendChild(remix);
 }
 function reveal(choice){
   if(chosen!==null)return;
