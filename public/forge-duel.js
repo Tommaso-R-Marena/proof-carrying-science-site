@@ -157,11 +157,13 @@ async function donate(){
   if(ballots.length!==DUEL_ROUNDS){status.textContent="Finish all 8 decisions before sharing the research record.";return;}
   if(!$("duelAdult").checked||!$("duelConsent").checked){status.textContent="Research donation requires both explicit 18+ and consent checkboxes. Gameplay stays private otherwise.";return;}
   const button=$("duelDonate");button.disabled=true;status.textContent="Independently checking the 8 donated decisions…";
+  // Keep the partial-commit count outside try/catch, because each batch is its
+  // own D1 transaction and earlier batches remain stored after a later failure.
+  let recorded=0,duplicates=0;
   try{
     // Free Workers allow 10 ms CPU/request. Verify one small batch per request;
     // one explicit donation click sends four two-vote, fail-closed batches.
     // If interrupted, only completed batches are committed; users can retry.
-    let recorded=0,duplicates=0;
     for(let i=0;i<ballots.length;i+=2){
       const chunk=ballots.slice(i,i+2);
       const checked=evaluateDuelSession({session_version:DUEL_VERSION,ballots:chunk});
@@ -174,8 +176,15 @@ async function donate(){
     }
     status.textContent="Verified "+ballots.length+" comparisons. "+recorded+" new decisions stored, "+duplicates+
       " were already donated. Each two-ballot batch was rechecked independently.";
-  }catch(err){status.textContent=err.message+" Your play remains local.";}
-  finally{button.disabled=false;}
+  }catch(err){
+    const received=recorded+duplicates;
+    status.textContent=(received
+      ?received+" decisions were confirmed by PCS ("+recorded+" newly saved, "+duplicates+" duplicates). "+
+       "Later batches may not have completed. Retry to finish, or use Delete to erase active donations. "
+      :"No batch was confirmed by PCS. The server may have received a request whose reply was lost; "+
+       "retry to check for an existing record, or use Delete to erase active donations. ")+
+      "Error: "+err.message;
+  }finally{button.disabled=false;}
 }
 async function erase(){
   if(!confirm("Delete all previously donated Forge Duel votes from the active PCS research database?"))return;
