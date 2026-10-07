@@ -1,6 +1,6 @@
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
-import {gradeOrder,PUZZLE_VERSION,PUZZLE_BY_ID} from "../public/proof-order-core.mjs";
+import {gradeOrder,getPuzzleById,puzzleVersionFor} from "../public/proof-order-core.mjs";
 import {validatePromotionMappings,stagePromotion,verifyPromotion,mergePromotion,closeSupersededPromotionPr} from "./production-promotion.js";
 import {
   integrationRepository, validateContributorFiles, hashSubmissionText,
@@ -3510,7 +3510,7 @@ async function donateProofQuestAttempt(request,env,user){
   if(body.adult_confirmation!==true || body.consent_training!==true){
     throw new ApiError(403,"Research donation is for consenting adults 18+ only. Practice is always available.","adult_consent_required");
   }
-  if(body.puzzle_version!==PUZZLE_VERSION || typeof body.puzzle_id!=="string" || !PUZZLE_BY_ID.has(body.puzzle_id)){
+  if(typeof body.puzzle_id!=="string" || !getPuzzleById(body.puzzle_id) || body.puzzle_version!==puzzleVersionFor(body.puzzle_id)){
     throw new ApiError(400,"Unknown or outdated puzzle version.","unsupported_puzzle");
   }
   let grade;
