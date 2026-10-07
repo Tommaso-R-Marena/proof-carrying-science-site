@@ -44,4 +44,16 @@ test("baseline must not train on evaluation examples or malformed input",()=>{
   assert.throws(()=>fitBaseline(unsupported),/holdout/);
   assert.throws(()=>fitBaseline({format:"fake",rows:[]}),/independently prepared/);
   assert.throws(()=>fitBaseline(data,{epochs:100000}),/bounded/);
+  const fakeResult=structuredClone(data);
+  const first=fakeResult.rows[0];
+  first.oracle_winner=first.oracle_winner==="A"?"B":"A";
+  assert.throws(()=>fitBaseline(fakeResult),/independent finite-state oracle/);
+  const fakePolicy=structuredClone(data);
+  fakePolicy.rows[0].policy_A=["freeze_deploy"];
+  assert.throws(()=>fitBaseline(fakePolicy),/independent finite-state oracle/);
+  const duplicate=structuredClone(data);
+  duplicate.rows.push(structuredClone(duplicate.rows[0]));
+  const one=fitBaseline(data,{epochs:4}),two=fitBaseline(duplicate,{epochs:4});
+  assert.equal(one.training_cases,two.training_cases);
+  assert.deepEqual(one.weights,two.weights);
 });

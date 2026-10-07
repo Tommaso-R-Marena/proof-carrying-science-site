@@ -5,6 +5,7 @@ import {readFileSync,writeFileSync} from "node:fs";
 import {fileURLToPath} from "node:url";
 import {GUARDS,scenarioForSeed} from "../public/safety-forge-core.mjs";
 import {LEARNING_FORMAT} from "./prepare_forge_duel_dataset.mjs";
+import {DUEL_VERSION,evaluateDuelVote} from "../public/forge-duel-core.mjs";
 export const RANKER_FORMAT="pcs-forge-duel-linear-ranker-baseline-v1";
 const CLASSES=["A","B","neither"];
 const guardIds=GUARDS.map(g=>g.id);
@@ -56,9 +57,29 @@ export function fitBaseline(document,{epochs=60,rate=0.035}={}){
     const world=scenarioForSeed(row.seed).id,expected=world==="space"?"evaluation":"training";
     if(row.world!==world||row.split!==expected)
       throw Error("Scenario-family holdout was altered or mislabeled.");
+    // Recheck the exact scenario and BOTH policy outcomes at the final fit
+    // boundary. An arbitrary JSON file must never inject fake oracle labels.
+    let truth;
+    try {
+      truth=evaluateDuelVote({seed:row.seed,round:row.round,version:DUEL_VERSION,
+        choice:row.human_choice,reason:row.reason,confidence:row.confidence});
+    }catch(error){throw Error("Invalid learning row: "+error.message);}
+    const expectedEligibility=expected==="training"&&truth.correct&&
+      truth.reason!=="uncertain"&&truth.confidence>=2;
+    if(row.group!==row.seed+"/"+row.round||
+       JSON.stringify(row.policy_A)!==JSON.stringify(truth.policy_A)||
+       JSON.stringify(row.policy_B)!==JSON.stringify(truth.policy_B)||
+       JSON.stringify(row.oracle)!==JSON.stringify(truth.oracle)||
+       row.oracle_winner!==truth.oracle_winner||
+       row.human_agreed_with_oracle!==truth.correct||
+       row.eligible_for_synthetic_preference_training!==expectedEligibility)
+      throw Error("Learning row disagrees with the independent finite-state oracle.");
   }
-  const train=document.rows.filter(r=>r.split==="training"),
-    evaluation=document.rows.filter(r=>r.split==="evaluation");
+  // Duplicate human votes remain meaningful for human-agreement metrics,
+  // but must not upweight the same deterministic toy oracle training case.
+  const unique=records=>[...new Map(records.map(row=>[row.group,row])).values()];
+  const train=unique(document.rows.filter(r=>r.split==="training")),
+    evaluation=unique(document.rows.filter(r=>r.split==="evaluation"));
   if(!train.length||!evaluation.length)throw Error("Need separate train and full-world-held-out evaluation rows.");
   const width=featuresFor(train[0]).length;
   const weights=CLASSES.map(()=>Array(width).fill(0));
@@ -74,8 +95,10 @@ export function fitBaseline(document,{epochs=60,rate=0.035}={}){
       }
     }
   }
-  const humanTrain=train.filter(x=>x.human_agreed_with_oracle).length/train.length;
-  const humanEval=evaluation.filter(x=>x.human_agreed_with_oracle).length/evaluation.length;
+  const originalTrain=document.rows.filter(x=>x.split==="training");
+  const originalEval=document.rows.filter(x=>x.split==="evaluation");
+  const humanTrain=originalTrain.filter(x=>x.human_agreed_with_oracle).length/originalTrain.length;
+  const humanEval=originalEval.filter(x=>x.human_agreed_with_oracle).length/originalEval.length;
   return {format:RANKER_FORMAT,epochs,training_cases:train.length,evaluation_cases:evaluation.length,
     feature_count:width,classes:CLASSES,weights,
     metrics:{model_train_accuracy:accuracy(weights,train),model_heldout_world_accuracy:accuracy(weights,evaluation),
