@@ -3590,7 +3590,7 @@ async function exportProofQuestDataset(request,env,admin){
 // it NEVER accepts a user's claimed winning policy, reward or checker result.
 const FORGE_DUEL_CONSENT="pcs-forge-duel-adult-optin-v1";
 async function donateForgeDuelSession(request,env,user){
-  await rateLimit(request,env,"forge-duel-donation",8,60);
+  await rateLimit(request,env,"forge-duel-donation",32,60);
   if(!Number(user.email_verified))throw new ApiError(403,"Verify your account email before contributing duel research data.","email_verification_required");
   const body=await readBody(request);
   if(!body||typeof body!=="object"||Array.isArray(body)||
@@ -3605,7 +3605,7 @@ async function donateForgeDuelSession(request,env,user){
   const recent=await env.COMMONS_DB.prepare(
     "SELECT COUNT(*) AS n FROM forge_duel_research_sessions WHERE user_id=? AND created_at>=?"
   ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
-  if(Number(recent?.n||0)>=5)throw new ApiError(429,"Daily research donation limit reached. You may keep playing privately.","duel_daily_limit");
+  if(Number(recent?.n||0)>=24)throw new ApiError(429,"Daily research donation limit reached. You may keep playing privately.","duel_daily_limit");
   const digest=await sha256Hex(JSON.stringify(submitted));
   const result=await env.COMMONS_DB.prepare(
     `INSERT OR IGNORE INTO forge_duel_research_sessions(

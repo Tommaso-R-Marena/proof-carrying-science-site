@@ -12,7 +12,7 @@ Eight rounds; two visible guard configurations; pick A, B or neither before reve
 
 Research donation is NOT automatic. The user must independently attest age 18+, opt in, and explicitly click Donate on a verified PCS account. No free text or reaction-time fingerprint is collected. Adults can erase their linked active rows; Owner-only exports omit identity, IP, precise times and digest.
 
-The backend independently regenerates seed + round, recomputes both policy outcomes, validates choices/confidence/reason, and deduplicates. To respect Cloudflare Free's **10 ms CPU per request**, the one explicit donation click transmits up to three bounded batches of 3, 3, and 2 ballots; retries are idempotent. Migration 0019 creates only an additive D1 table with ON DELETE CASCADE. Apply it before enabling the production route.
+The backend independently regenerates seed + round, recomputes both policy outcomes, validates choices/confidence/reason, and deduplicates. To respect Cloudflare Free's **10 ms CPU per request**, the one explicit donation click transmits four bounded batches of two ballots each; retries are idempotent. Migration 0019 creates only an additive D1 table with ON DELETE CASCADE. Apply it before enabling the production route.
 
 ## Trainable outputs
 

@@ -77,6 +77,8 @@ test("public page has usable reasons, choices, opt-in buttons and no passive tel
   assert.equal(ids.length,new Set(ids).size);
   for(const m of js.matchAll(/\$\("([^"]+)"\)/g))assert.ok(ids.includes(m[1]),"Unbound UI ID: "+m[1]);
   assert.match(js,/await researchApi\("\/api\/arena\/forge-duel\/donate"/);
+  assert.match(js,/for\(let i=0;i<ballots\.length;i\+=2\)/);
+  assert.match(js,/ballots\.slice\(i,i\+2\)/);
   assert.match(js,/if\(!\$\("duelAdult"\)\.checked\|\|!\$\("duelConsent"\)\.checked\)/);
   assert.match(w,/evaluateDuelSession\(submitted\)/);
   assert.match(w,/forge_duel_research_sessions WHERE user_id=\?/);

@@ -159,11 +159,11 @@ async function donate(){
   const button=$("duelDonate");button.disabled=true;status.textContent="Independently checking the 8 donated decisions…";
   try{
     // Free Workers allow 10 ms CPU/request. Verify one small batch per request;
-    // one explicit donation click sends up to three separate, fail-closed batches.
+    // one explicit donation click sends four two-vote, fail-closed batches.
     // If interrupted, only completed batches are committed; users can retry.
     let recorded=0,duplicates=0;
-    for(let i=0;i<ballots.length;i+=3){
-      const chunk=ballots.slice(i,i+3);
+    for(let i=0;i<ballots.length;i+=2){
+      const chunk=ballots.slice(i,i+2);
       const checked=evaluateDuelSession({session_version:DUEL_VERSION,ballots:chunk});
       if(checked.ballots.length!==chunk.length)throw Error("Incomplete bounded duel batch.");
       const result=await researchApi("/api/arena/forge-duel/donate",{
@@ -173,7 +173,7 @@ async function donate(){
       else duplicates+=result.record_count;
     }
     status.textContent="Verified "+ballots.length+" comparisons. "+recorded+" new decisions stored, "+duplicates+
-      " were already donated. Each 2–3 ballot batch was rechecked independently.";
+      " were already donated. Each two-ballot batch was rechecked independently.";
   }catch(err){status.textContent=err.message+" Your play remains local.";}
   finally{button.disabled=false;}
 }
