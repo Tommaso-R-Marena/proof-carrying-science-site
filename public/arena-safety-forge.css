@@ -161,3 +161,14 @@
 .forge-trace-state{font-size:.78rem;color:#536e87;line-height:1.65;margin-top:12px}
 .forge-theater-note{font-size:.74rem!important;line-height:1.6!important;color:#5c7188!important;margin-top:11px}
 @media(max-width:600px){.forge-strategy-row{flex-wrap:wrap}.forge-strategy-load{margin-left:auto}.forge-theater-buttons{display:grid;grid-template-columns:1fr}.forge-trace-head{align-items:start;flex-direction:column}}
+
+.forge-tab:disabled{opacity:.45;cursor:not-allowed;background:#eef2f7}
+.forge-scoreboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) minmax(240px,1.4fr);gap:10px;margin:12px 0 4px}
+.forge-scoreboard>div{display:grid;gap:4px;padding:12px 14px;border:1px solid #d3e0ec;border-radius:11px;background:#f8fbff}
+.forge-scoreboard span{font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#65788d}
+.forge-scoreboard strong{font-size:1.2rem;color:#184e7c}
+.forge-scoreboard small{font-size:.75rem;line-height:1.5;color:#546b83}
+.forge-quality strong[data-grade="high-value"]{color:#087f69}
+.forge-quality strong[data-grade="useful"]{color:#9a6b10}
+@media(max-width:730px){.forge-scoreboard{grid-template-columns:1fr 1fr}.forge-scoreboard .forge-quality{grid-column:1/-1}}
+@media(max-width:480px){.forge-scoreboard{grid-template-columns:1fr}.forge-scoreboard .forge-quality{grid-column:auto}}
