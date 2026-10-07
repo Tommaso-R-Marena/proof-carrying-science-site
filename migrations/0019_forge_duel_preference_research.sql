@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS forge_duel_research_sessions (
   session_version TEXT NOT NULL CHECK(session_version='pcs-forge-duel-v1'),
   submitted_ballots_json TEXT NOT NULL,
   verified_replay_json TEXT NOT NULL,
-  ballot_count INTEGER NOT NULL CHECK(ballot_count BETWEEN 3 AND 8),
+  ballot_count INTEGER NOT NULL CHECK(ballot_count BETWEEN 2 AND 3),
   correct_count INTEGER NOT NULL CHECK(correct_count BETWEEN 0 AND ballot_count),
   consent_version TEXT NOT NULL CHECK(consent_version='pcs-forge-duel-adult-optin-v1'),
   created_at TEXT NOT NULL,
