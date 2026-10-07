@@ -18,7 +18,7 @@
     "test:arena:onboarding": "node --test tests/arena-onboarding.test.mjs",
     "test:admin:audit": "node --test tests/admin-audit-pagination.test.mjs",
     "test:arena:experience": "node --test tests/arena-experience.test.mjs tests/arena-lab-tools.test.mjs",
-    "test:arena:duel": "node --test tests/forge-duel.test.mjs tests/forge-duel-worker.test.mjs"
+    "test:arena:duel": "node --test tests/forge-duel.test.mjs tests/forge-duel-worker.test.mjs tests/forge-duel-model.test.mjs"
   },
   "devDependencies": {
     "wrangler": "4.147.0"
