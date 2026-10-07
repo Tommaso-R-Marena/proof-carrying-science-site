@@ -124,7 +124,7 @@
     quickButton.type="button";quickButton.className="nav-quickfind";
     quickButton.setAttribute("aria-label","Find a PCS page");
     quickButton.textContent="⌕ Find page";
-    quickButton.addEventListener("click",()=>document.getElementById("pcsQuickFind")?.showModal());
+    quickButton.addEventListener("click",()=>openQuick());
     links.appendChild(quickButton);
     const account = addLink(links, "account.html", "Account sign in", "nav-account-entry");
     const admin = addLink(links, "admin-login.html", "Admin sign in", "nav-admin-entry");
