@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Start Here · Explore Proof-Carrying Science</title>
+<meta name="description" content="Explore a clear interactive PCS walkthrough: break a synthetic AI safety claim, inspect the evidence, and understand exactly what formal assurance does and does not establish. Free, local, no account.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/experience.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="experience.css">
+</head><body class="experience-page">
+<div class="topbar"><div class="shell"><span>PCS · Explore in two minutes · No account · No uploads</span><a href="privacy.html">How PCS handles data</a></div></div>
+<div class="shell">
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Play Arena</a><a href="guided-submission.html">Guided submission</a><a href="trust.html">Trust Center</a><a class="button dark" href="account.html">Account</a></div></nav>
+<main>
+<section class="xp-hero">
+  <div class="xp-hero-content"><span class="xp-eyebrow"><span class="xp-dot"></span> INTERACTIVE / HANDS ON / FREE</span>
+    <h1>What if a claim of <em>“safe”</em> had to survive an actual test?</h1>
+    <p>In PCS, a recorded PASS is not enough. Try a tiny example, deliberately break it, and learn how evidence, independent replay, formal logic, and reviewer judgment fit together.</p>
+    <div class="xp-actions"><a class="button primary" href="#xpLab">Start the interactive lab ↓</a><a class="button secondary" href="arena-safety-forge.html">Play the full Safety Forge game →</a></div>
+    <div class="xp-hero-trust"><span>✓ No sign-in</span><span>✓ No project upload</span><span>✓ Genuine input-dependent calculations</span></div>
+    <small class="xp-honesty">This is an educational JavaScript demonstration. It is not the executable Lean authority, a signed PCS certificate, or evidence of deployed-AI safety.</small>
+  </div>
+  <div class="xp-hero-visual" aria-hidden="true">
+    <div class="xp-terminal-top"><i></i><i></i><i></i><span>pcs / assurance story</span></div>
+    <div class="xp-terminal-line"><b>01</b><span>claim</span><strong>agent obeys policy</strong></div>
+    <div class="xp-terminal-line"><b>02</b><span>evidence</span><strong>observed action trace</strong></div>
+    <div class="xp-terminal-line"><b>03</b><span>replay</span><strong>recompute the result</strong></div>
+    <div class="xp-terminal-line"><b>04</b><span>authority</span><strong>requires a real proof/checker</strong></div>
+    <div class="xp-terminal-verdict">NO UNEXPLAINED PASS <span>↗</span></div>
+  </div>
+</section>
+<section class="xp-steps" aria-label="Three parts of the tour">
+ <a href="#xpLab"><span>01</span><strong>Test a claim</strong><small>Change a real input</small></a>
+ <a href="#xpLayers"><span>02</span><strong>Inspect the boundary</strong><small>See what was not proved</small></a>
+ <a href="#xpPaths"><span>03</span><strong>Choose your path</strong><small>Play, verify, contribute</small></a>
+</section>
+<section id="xpLab" class="xp-section" aria-labelledby="xpLabTitle">
+ <div class="xp-section-heading"><div><span class="xp-kicker">01 / THE INTERACTIVE LAB</span><h2 id="xpLabTitle">Change one thing. Watch the conclusion change.</h2><p>Try a toy AI-agent policy check or a synthetic scientific calculation. You control the inputs. Nothing is uploaded or executed on the PCS server.</p></div><span class="xp-status-pill">LIVE / IN THIS BROWSER</span></div>
+ <div class="xp-workbench">
+  <div class="xp-controls">
+   <div class="xp-control-head"><span>CHOOSE A CLAIM</span><div class="xp-segments" role="group" aria-label="Example type"><button type="button" id="xpTabTrace" class="active" aria-pressed="true">🤖 AI-agent trace</button><button type="button" id="xpTabModel" aria-pressed="false">🧪 Scientific model</button></div></div>
+   <div id="xpTraceControls">
+    <h3>Claim: “This recorded agent trace obeys its rules.”</h3>
+    <p>The fictional agent must never take action <strong>#7</strong> and must keep total declared risk at <strong>4 or less</strong>.</p>
+    <label class="xp-control-field" for="xpRisk">Risk added by the final step <output id="xpRiskValue" for="xpRisk">2</output><input id="xpRisk" type="range" min="0" max="8" step="1" value="2"></label>
+    <label class="xp-control-field" for="xpAction">Which action is taken last?<select id="xpAction"><option value="2">Action #2 · allowed</option><option value="7">Action #7 · forbidden</option></select></label>
+    <p class="xp-control-note">The first step has risk 1. Moving the final slider above 3 breaches the total-risk limit; action #7 is prohibited regardless of risk.</p>
+   </div>
+   <div id="xpModelControls" hidden>
+    <h3>Claim: “These predictions match a declared model.”</h3>
+    <p>A simple model predicts drug concentration. Change one supplied number and compare it with a tolerance of <strong>0.05 mg/L</strong>.</p>
+    <label class="xp-control-field" for="xpDeviation">Error added to one observation <output id="xpDeviationValue" for="xpDeviation">0.00 mg/L</output><input id="xpDeviation" type="range" min="0" max="30" step="1" value="0"></label>
+    <p class="xp-control-note">A passing calculation is not evidence that the model correctly represents real people or physical reality.</p>
+   </div>
+   <div class="xp-actions"><button id="xpRun" type="button" class="button primary">▶ Run the check →</button><button id="xpMakeFail" type="button" class="button secondary">⚡ Show a failing case</button><button id="xpReset" type="button" class="button secondary">↶ Reset</button></div>
+  </div>
+  <div class="xp-result-panel">
+   <div class="xp-result-label"><span>LOCAL EVALUATION</span><span id="xpRunCount">Not yet run</span></div>
+   <div id="xpVerdict" class="xp-verdict" data-result="pending"><span id="xpVerdictSymbol">?</span><div><strong id="xpVerdictTitle">Ready when you are.</strong><p id="xpVerdictExplain">Run an example to inspect its result and the exact calculation behind it.</p></div></div>
+   <div class="xp-evidence"><strong>What the evaluator actually inspected</strong><ol id="xpEvents"><li>Select Run the check to begin.</li></ol></div>
+   <div class="xp-results-foot"><span id="xpCheckLabel">Not a signed certificate or Lean proof.</span><button id="xpCopy" class="xp-copy" type="button" disabled>Copy explanation</button></div>
+  </div>
+ </div>
+</section>
+<section id="xpLayers" class="xp-section" aria-labelledby="xpLayersTitle">
+ <div class="xp-section-heading"><div><span class="xp-kicker">02 / THE ASSURANCE LADDER</span><h2 id="xpLayersTitle">What did we establish—and what is still open?</h2><p>Every check needs a clear scope. These layers are deliberately separate so that a simulation result can never masquerade as a proof of real-world safety.</p></div></div>
+ <div class="xp-ladder">
+  <article><span class="xp-ladder-no">1</span><div><span>IN THE BROWSER</span><h3>Check the supplied numbers and actions</h3><p id="xpLayerCheck">The result will depend on the example you run above.</p></div><strong id="xpLayerStatus" class="xp-layer-flag">NOT RUN</strong></article>
+  <article><span class="xp-ladder-no">2</span><div><span>REAL PCS PACKAGE VERIFICATION</span><h3>Bind exact evidence and independently replay it</h3><p>PCS's separate v0.6 verifier checks exact packaged artifacts, signed bindings, and supported replay contracts. This browser lab does not execute those production checks.</p></div><strong class="xp-layer-flag neutral">NOT TESTED HERE</strong></article>
+  <article><span class="xp-ladder-no">3</span><div><span>LEAN AND EXPLICIT ASSUMPTIONS</span><h3>Ask what formal reasoning actually certifies</h3><p>A genuine Lean-checked assurance result is about specified predicates and trusted boundaries—not a blanket declaration that an AI system or scientific theory is true.</p></div><strong class="xp-layer-flag neutral">SEPARATE AUTHORITY</strong></article>
+  <article><span class="xp-ladder-no">4</span><div><span>HUMAN DECISION</span><h3>Let a reviewer decide whether the evidence suffices</h3><p>Reproducing a computational result and accepting it for a real decision are different actions. Unsupported claims remain OPEN or rejected.</p></div><strong class="xp-layer-flag neutral">REVIEW NEEDED</strong></article>
+ </div>
+ <details class="xp-limits"><summary>What does PCS <em>not</em> claim here?</summary><p id="xpBoundary">This demo does not verify source-code execution, a trusted sensor, signed data, Lean 4 proof objects, the scientific adequacy of a model, or real-world agent behavior.</p></details>
+</section>
+<section id="xpPaths" class="xp-section xp-paths" aria-labelledby="xpPathsTitle">
+ <div class="xp-section-heading"><div><span class="xp-kicker">03 / YOUR NEXT MOVE</span><h2 id="xpPathsTitle">Pick your route into PCS.</h2><p>Whether you are new to logic or already run an AI-safety lab, there is a clear place to start.</p></div></div>
+ <div class="xp-path-grid">
+  <article><span class="xp-path-icon">🎮</span><h3>I want to play and learn</h3><p>Find surprising counterexamples in fictional robots, design better shields, and solve proof-order mysteries. No account required.</p><a href="arena-safety-forge.html" class="button primary">Play Safety Forge →</a><a href="arena-proof-quest.html">Try beginner Proof Quest ↗</a></article>
+  <article><span class="xp-path-icon">🔬</span><h3>I have scientific work</h3><p>Explore typed claims, evidence requirements, and how to prepare a reviewable project without uploading your files here.</p><a href="guided-submission.html?demo=1" class="button primary">Try a guided submission →</a><a href="package-inspector.html">Inspect package structure ↗</a></article>
+  <article><span class="xp-path-icon">🛡️</span><h3>I want to scrutinize PCS</h3><p>Trace the distinction between supported evidence, formal assumptions, external trust, and open problems. Challenge the actual boundaries.</p><a href="trust-explorer.html" class="button primary">Explore the trust boundary →</a><a href="validation.html">Review validation evidence ↗</a></article>
+ </div>
+ <div class="xp-last-cta"><div><strong>Want to help build the system itself?</strong><p>Browse concrete needed tasks, from community outreach to Lean verification. Responsibility and authority are earned through review.</p></div><a class="button secondary" href="tasks.html">Find work that matters →</a></div>
+</section>
+</main><footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Make claims checkable, keep boundaries visible.</p></div><div class="footercol"><strong>Try</strong><a href="arena.html">Arena</a><a href="guided-submission.html">Guided submission</a><a href="research-preview.html">Editable JSON lab</a></div><div class="footercol"><strong>Trust</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="index.html">Home</a></div></div></footer>
+</div><script src="site.js"></script><script type="module" src="experience.js"></script></body></html>
