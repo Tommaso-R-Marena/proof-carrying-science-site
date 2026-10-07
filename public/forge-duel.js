@@ -73,7 +73,7 @@ function explainPolicy(id,oracle){
   }else if(oracle.safe_mission) addText(el,"p","A valid route: "+oracle.safe_mission.join(" → "),"duel-witness");
   const remix=document.createElement("a");
   remix.className="duel-remix";remix.textContent="🧪 Remix this guard recipe in Safety Forge →";
-  const url=new URL("arena-safety-forge.html",location.href);
+  const url=new URL("arena-safety-forge.html",document.baseURI);
   url.searchParams.set("seed",String(seed));url.searchParams.set("guards",duel[id].guards.join(","));
   remix.href=url.pathname+url.search;el.appendChild(remix);
 }
