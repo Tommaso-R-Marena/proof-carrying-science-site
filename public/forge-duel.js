@@ -144,6 +144,9 @@ async function copySeed(){
   catch{$("duelDonateMessage").textContent="Copy the URL to share this tournament seed.";}
 }
 async function researchApi(path,body){
+  if(typeof path!=="string"||!path.startsWith("/api/")||
+     !["/api/arena/forge-duel/donate","/api/arena/forge-duel/erase"].includes(path))
+    throw Error("Only reviewed same-origin Duel research actions are permitted.");
   const resp=await fetch(path,{method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",body:JSON.stringify(body)});
   const data=await resp.json().catch(()=>({message:"The PCS API did not return JSON."}));
   if(!resp.ok||!data.ok)throw Error(data.message||data.error||"Research API request failed.");
