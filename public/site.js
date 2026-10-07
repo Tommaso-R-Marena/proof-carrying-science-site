@@ -59,68 +59,55 @@
       return details;
     };
 
-    addLink(links, "experience.html", "Start here", "nav-primary-link");
-    addLink(links, "arena.html", "Play Arena", "nav-find-work");
-
-    addMenu("Get involved", [
-      {heading:"LEARN BY PLAYING",links:[
-        ["arena-proof-quest.html","Proof Quest · beginner logic game"],
-        ["prooflab.html","ProofLab · real Lean theorem investigations"],
-        ["arena-safety-forge.html","Safety Forge · build AI-safety shields"],
-        ["forge-duel.html","Shield Duel · blind policy tournament"],
-        ["arena.html","Arena / community challenges"]
+    addLink(links, "experience.html", "What PCS does", "nav-primary-link");
+    addMenu("Try PCS", [
+      {heading:"SEE IT IN ACTION",links:[
+        ["experience.html","Two-minute plain-English tour"],
+        ["research-preview.html","Run a small check"],
+        ["package-inspector.html","Inspect a PCS evidence package"],
+        ["guided-submission.html?demo=1","Walk through a submission"]
       ]},
-      {heading:"FIND YOUR PLACE",links:[
-        ["commons.html","Commons overview"],
-        ["contribute.html","Start contributing · L0+"],
-        ["tasks.html","Needed tasks"],
-        ["roles.html","Ongoing roles"],
-        ["experience.html","New here? Two-minute tour"]
-      ]},
-      {heading:"SEE THE BIG PICTURE",links:[
-        ["task-graph.html","Task dependency graph"],
-        ["projects.html","Assurance projects"],
-        ["contributors.html","Contributors"]
+      {heading:"FOR RESEARCHERS",links:[
+        ["result-anatomy.html","Understand a verification result"],
+        ["researcher-pilots.html","Plan an independent pilot"],
+        ["project-builder.html","Advanced project mapper"]
       ]}
     ]);
-    addMenu("Use PCS", [
-      {heading:"START WITH AN EXAMPLE",links:[
-        ["experience.html","Start here · guided interactive tour"],
-        ["research-preview.html","Editable scientific checks · no login"],
-        ["guided-submission.html","Guided submission"],
-        ["package-inspector.html","Inspect a PCS package"],
-        ["result-anatomy.html","Understand verification results"]
+    addMenu("Play & help", [
+      {heading:"PLAY — NO BACKGROUND REQUIRED",links:[
+        ["arena.html","PCS Arena · choose a game"],
+        ["arena-safety-forge.html","Safety Forge · break and repair a toy agent"],
+        ["prooflab.html","ProofLab · plan how to check real theorems"],
+        ["forge-duel.html","Shield Duel · quick policy tournament"],
+        ["arena-proof-quest.html","Proof Quest · beginner prerequisite puzzles"]
       ]},
-      {heading:"CHECK, REPRODUCE, UNDERSTAND",links:[
-        ["claim-review.html","Claim & obligation review"],
-        ["researcher-pilots.html","Independent researcher pilots"],
+      {heading:"DO REAL WORK",links:[
+        ["tasks.html","Needed tasks"],
+        ["contribute.html","How to contribute"],
+        ["roles.html","Ongoing roles"],
+        ["task-graph.html","Task dependency map"]
+      ]}
+    ]);
+    addMenu("Trust & research", [
+      {heading:"WHAT PCS CAN AND CANNOT CLAIM",links:[
         ["trust.html","Trust Center"],
         ["validation.html","Validation evidence"],
-        ["project-builder.html","Advanced Project Mapper"],
+        ["trust-explorer.html","Interactive trust explorer"],
+        ["result-anatomy.html","Read a result correctly"]
+      ]},
+      {heading:"TECHNICAL DETAILS",links:[
+        ["architecture.html","Architecture"],
+        ["research.html","Research program"],
         ["mvp.html","v0.6 verifier"],
-        ["demo.html","Live verifier"],
-        ["trust-explorer.html","Trust explorer"]
+        ["governance.html","Governance"]
+      ]},
+      {heading:"ABOUT",links:[
+        ["organizations.html","For organizations"],
+        ["fund.html","Funding and support"],
+        ["privacy.html","Privacy"],
+        ["contact.html","Contact"]
       ]}
-    ]);
-    // Additional pathways are collected in one place, not scattered across every header.
-    const secondaryHrefs = [
-      ["index.html#product","Product overview"],
-      ["architecture.html","Architecture"],
-      ["research.html","Research"],
-      ["organizations.html","For organizations"],
-      ["governance.html","Governance"],
-      ["fund.html","Funding and support"],
-      ["model-lab.html","Model Lab"],
-      ["intake.html","Pilot intake"],
-      ["validation-registry.html","Validation registry"],
-      ["contact.html","Contact"],
-      ["privacy.html","Privacy"]
-    ];
-    addMenu("About", [
-      {heading:"PCS & RESEARCH",links:secondaryHrefs.slice(0,3)},
-      {heading:"PARTICIPATION",links:secondaryHrefs.slice(3,7)},
-      {heading:"MORE PCS RESOURCES",links:secondaryHrefs.slice(7)}
-    ], "More PCS resources");
+    ], "Trust, research, and organization information");
 
     const quickButton=document.createElement("button");
     quickButton.type="button";quickButton.className="nav-quickfind";
