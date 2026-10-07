@@ -103,7 +103,7 @@ export function evaluateDuelSession(input){
      Object.keys(input).sort().join(",")!=="ballots,session_version")
     throw Error("Invalid duel submission.");
   if(input.session_version!==DUEL_VERSION||!Array.isArray(input.ballots)||
-     input.ballots.length<3||input.ballots.length>DUEL_ROUNDS)throw Error("Contribute 3 to 8 unique duels.");
+     input.ballots.length<2||input.ballots.length>3)throw Error("Contribute 2 to 3 unique duels per bounded batch.");
   const seen=new Set(),labels=input.ballots.map(b=>{
     const out=evaluateDuelVote(b),key=out.seed+"/"+out.round;
     if(seen.has(key))throw Error("Duplicate duel rounds are not valid training evidence.");
