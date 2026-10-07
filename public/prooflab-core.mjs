@@ -1,4 +1,4 @@
-// PCS ProofLab v1: a deterministic *pedagogical* evidence-planning engine.
+// PCS ProofLab v2: a deterministic *pedagogical* evidence-planning engine.
 // This is not Lean elaboration, model-checked safety, or a source-code proof.
 import {PROOFLAB_CASES,PROOFLAB_SOURCE_COMMIT,PROOFLAB_WITHHELD} from "./prooflab-source-data.mjs";
 
@@ -47,8 +47,9 @@ export function proofLabDecisionSet(caseId,completed=[],stepIndex=0){
     return am-bm||a.needs.length-b.needs.length||a.id.localeCompare(b.id);
   });
   // Controlled candidate sets turn a broad DAG into a repeated planning decision:
-  // always include the actually feasible frontier, plus plausible near-frontier
-  // distractors. The deterministic shuffle prevents position from being a label.
+  // include up to three members of the actually feasible frontier, plus plausible
+  // near-frontier distractors. The deterministic shuffle prevents position from
+  // becoming a label; later rounds rotate remaining feasible work into view.
   let pool=[...feasible.slice(0,3),...blocked.slice(0,Math.max(0,4-Math.min(3,feasible.length)))];
   if(!pool.length)return [];
   const seed=[...caseId].reduce((n,ch)=>(Math.imul(n,33)+ch.charCodeAt(0))>>>0,5381) ^
