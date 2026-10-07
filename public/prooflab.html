@@ -51,7 +51,7 @@
    <div><span>Assists</span><strong id="labHintCount">0</strong></div>
    <div><span>Workshop XP</span><strong id="labScore">0</strong></div>
   </div>
-  <div class="lab-journey" role="group" aria-label="Three challenges"><button id="labJumpPlan" type="button" class="current">01 · Build</button><button id="labJumpRepair" type="button">02 · Repair</button><button id="labJumpScope" type="button">03 · Critique</button></div>
+  <div class="lab-journey" role="group" aria-label="Three challenges"><button id="labJumpPlan" type="button" class="current">01 · Build</button><button id="labJumpRepair" type="button">02 · Repair</button><button id="labJumpHelper" type="button">03 · Helpers</button><button id="labJumpScope" type="button">04 · Critique</button></div>
   <section id="labPlanSection" class="lab-challenge">
    <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 01 / STRATEGY PLANNING</span><h3>Build a legitimate path toward a proof.</h3><p>Tap or drag a stage into the solution lane. If prerequisites are not established, the attempt is recorded as a negative example—not a valid step.</p></div></div>
    <div class="lab-pathbar"><div><strong>YOUR PATH</strong><span id="labPathNarrator" aria-live="polite">No stages placed yet.</span></div><div class="lab-actions"><button id="labUndo" type="button">↶ Undo</button><button id="labShowGraph" type="button" aria-expanded="false">🕸️ X-ray graph (hint)</button></div></div>
@@ -66,8 +66,17 @@
    <div id="labRepairOptions" class="lab-repair-options" role="group" aria-label="Choose the missing stage"></div>
    <p class="lab-feedback" id="labRepairFeedback" role="status" aria-live="polite">Select the missing prerequisite. A response is recorded only when you click.</p>
   </section>
-  <section id="labScopeSection" class="lab-challenge">
-   <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 03 / CRITICAL SCIENTIFIC REASONING</span><h3>What does the theorem <em>actually</em> establish?</h3><p id="labScopeQuestion">Identify the only statement that respects the theorem's scope.</p></div></div>
+  <section id="labHelperSection" class="lab-challenge" hidden>
+  <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 03 / SOURCE-GROUNDED HELPER HUNT</span>
+  <h3>Which lemma did this real Lean proof actually mention?</h3>
+  <p id="labHelperPrompt">The source theorem cites a helper by identifier. Try to predict it from the statement and theorem family, then inspect the source-derived answer. This is a lexical source label—not an extracted semantic proof dependency.</p></div></div>
+  <div id="labHelperOptions" class="lab-scope-options" role="group" aria-label="Choose source-mentioned Lean lemma"></div>
+  <div class="lab-confidence"><label for="labHelperConfidence">Your confidence</label><select id="labHelperConfidence"><option value="1">Low · tentative</option><option value="2">Medium · plausible helper</option><option value="3">High · strong source hypothesis</option></select></div>
+  <button id="labCommitHelper" type="button" class="button primary">Commit my helper hypothesis →</button>
+  <p id="labHelperFeedback" class="lab-feedback" role="status" aria-live="polite">A source-mentioned name is not automatically a mathematically necessary dependency.</p>
+</section>
+<section id="labScopeSection" class="lab-challenge">
+   <div class="lab-challenge-heading"><div><span class="lab-kicker">CHALLENGE 04 / CRITICAL SCIENTIFIC REASONING</span><h3>What does the theorem <em>actually</em> establish?</h3><p id="labScopeQuestion">Identify the only statement that respects the theorem's scope.</p></div></div>
    <div id="labScopeOptions" class="lab-scope-options" role="group" aria-label="Choose a justified theorem interpretation"></div>
    <div class="lab-confidence"><label for="labConfidence">Your confidence</label><select id="labConfidence"><option value="1">Low · I am guessing</option><option value="2">Medium · some evidence</option><option value="3">High · I can defend this</option></select><span>Confidence can be studied separately from correctness.</span></div>
    <button id="labCommitScope" type="button" class="button primary">Commit my interpretation →</button>
