@@ -130,7 +130,7 @@ test("owner-only export excludes all identity and refuses delegated administrato
  assert.equal((await worker.fetch(req,ctx.env)).status,403);
 });
 test("self-service deletion removes only the account's linked active plan records",async()=>{
- const ctx=fixture(),r=await call(ctx,"/api/arena/prooflab/erase",{});
+ let ctx=fixture();const r=await call(ctx,"/api/arena/prooflab/erase",{});
  assert.equal(r.code,200);assert.equal(r.body.deleted,2);
  assert.equal(ctx.state.deletes,1);
  ctx=fixture({user:null});
