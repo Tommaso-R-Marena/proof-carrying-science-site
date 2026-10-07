@@ -55,3 +55,32 @@ button.quest-step:hover{border-color:#286ab7;transform:translateY(-1px)}
 .quest-why p{max-width:730px;line-height:1.7;color:#576a84}
 @media(max-width:860px){.quest-layout{grid-template-columns:1fr}.quest-puzzle-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.quest-page .shell{width:calc(100% - 24px)}.quest-hero{padding-top:30px}.quest-board-columns,.quest-puzzle-list{grid-template-columns:1fr}.quest-actions{flex-direction:column}.quest-actions button{width:100%}.quest-why{flex-direction:column;align-items:stretch}.quest-why>a{align-self:flex-start}}
+
+/* The detective bench exposes the exact puzzle dependency graph on demand.
+   No dependencies or graph interpretations are sent to the server automatically. */
+.quest-detective-lab{margin:20px 0 7px;padding:19px;border-radius:17px;background:linear-gradient(135deg,#eff6ff 0%,#fbf3ff 100%);border:1px solid #cadaed}
+.quest-detective-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.quest-detective-top h3{font-size:1.18rem;margin:5px 0}
+.quest-detective-top p{font-size:.91rem;color:#566b87;line-height:1.6;margin:0}
+.quest-micro-label{font-weight:800;letter-spacing:.08em;color:#4265ac;font-size:.73rem}
+.quest-detective-score{display:grid;place-items:center;min-width:85px;border-radius:14px;background:#203b75;color:white;padding:10px 13px}
+.quest-detective-score strong{font-size:1.8rem;line-height:1.1}
+.quest-detective-score small{font-size:.7rem;color:#e3edff;text-align:center}
+.quest-lab-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}
+.quest-lab-actions button{font-size:.86rem;min-height:42px}
+.quest-lab-actions button[aria-pressed="true"],.quest-lab-actions button[aria-expanded="true"]{background:#254c9b;color:white;border-color:#254c9b}
+.quest-tool-note{font-size:.78rem!important;color:#63748e!important;line-height:1.5;margin:11px 0}
+.quest-decision{padding:12px 14px;border-left:4px solid #457ac6;background:#fff;border-radius:8px;font-size:.86rem;line-height:1.5;color:#37506e}
+.quest-map-panel{margin:15px 0;padding:15px;border-radius:13px;background:#fff;border:1px solid #cfdcee}
+.quest-map-panel[hidden]{display:none}
+.quest-map-head{display:flex;gap:9px;align-items:center;justify-content:space-between;font-size:.82rem}
+.quest-map-head span{color:#587392;font-size:.76rem}
+.quest-map-scroll{overflow:auto;margin:12px 0;background:repeating-linear-gradient(0deg,#f5f8fe 0,#f5f8fe 23px,#e8effa 24px);border-radius:12px}
+.quest-map-scroll svg{width:100%;min-width:500px;height:auto;display:block}
+.quest-map-panel>p{font-size:.75rem;line-height:1.6;color:#65768d;margin:8px 0 0}
+.quest-attempt-diary{margin-top:14px;background:#fff;border:1px solid #d6e1ee;border-radius:12px;padding:12px 15px;font-size:.86rem}
+.quest-attempt-diary summary{font-weight:750;cursor:pointer;color:#244e7a}
+.quest-attempt-diary ol{display:grid;gap:8px;padding-left:22px}
+.quest-attempt-diary li{line-height:1.45;color:#3b5675}
+.quest-attempt-diary>p{font-size:.78rem;color:#64748b}
+@media(max-width:550px){.quest-detective-top{align-items:start}.quest-detective-score{min-width:68px}.quest-lab-actions{display:grid;grid-template-columns:1fr}.quest-map-head{align-items:start;flex-direction:column}}
