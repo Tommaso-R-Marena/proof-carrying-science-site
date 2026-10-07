@@ -1,0 +1,122 @@
+// Forge Duel: human pre-reveal policy ranking with independently reproducible
+// finite-state labels. This is NOT Lean proof search, alignment, or an authenticity
+// guarantee: the browser source exposes the deterministic checker by design.
+import {GUARDS,SAFETY_LAB_VERSION,scenarioForSeed,verifyShield} from "./safety-forge-core.mjs";
+export const DUEL_VERSION="pcs-forge-duel-v1";
+export const DUEL_ROUNDS=8;
+export const DUEL_CHOICES=Object.freeze(["A","B","neither"]);
+export const DUEL_REASONS=Object.freeze([
+  {id:"authorization",label:"Human authorization"},
+  {id:"inspection",label:"Inspections matter"},
+  {id:"privacy",label:"Privacy and consent"},
+  {id:"risk",label:"Risk budget"},
+  {id:"mission",label:"Keep the mission possible"},
+  {id:"cost",label:"Use the fewest safeguards"},
+  {id:"uncertain",label:"I am not sure"}
+]);
+const POOL=Object.freeze([
+  [],["approval","inspection","consent","risk"],
+  ["joint_review","redact","risk"],["approval","inspection","redact","risk"],
+  ["joint_review","consent","risk"],["joint_review","redact"],
+  ["joint_review","risk"],["approval","inspection","redact"],
+  ["approval","inspection","consent"],["freeze_deploy","risk"],
+  ["freeze_routes","joint_review","redact"],["freeze_report","approval","inspection","risk"],
+  ["joint_review","redact","consent","risk"],["approval","inspection","consent","risk","redact"],
+  ["freeze_deploy","approval","inspection","consent","risk"],
+  ["consent","risk"],["inspection","redact","risk"],["approval","redact","risk"]
+]);
+function randomFor(seed,round){
+  let s=(Math.imul(seed,2654435761) ^ Math.imul(round+1,2246822519))>>>0;
+  return ()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return(s>>>0)/4294967296;};
+}
+function assertInputs(seed,round){
+  if(!Number.isSafeInteger(seed)||seed<1||seed>9999999)throw Error("Invalid mission seed.");
+  if(!Number.isSafeInteger(round)||round<0||round>=DUEL_ROUNDS)throw Error("Invalid duel round.");
+}
+function policyResult(seed,ids){return {guards:[...ids],result:verifyShield(seed,ids)};}
+function compare(a,b){
+  if(a.result.passed!==b.result.passed)return a.result.passed?"A":"B";
+  if(a.result.passed&&b.result.passed){
+    if(a.result.guard_cost!==b.result.guard_cost)return a.result.guard_cost<b.result.guard_cost?"A":"B";
+    return "tie";
+  }
+  return "neither"; // Both are invalid; never train a false-positive as a winner.
+}
+export function duelFor(seed,round){
+  assertInputs(seed,round);
+  const draw=randomFor(seed,round),scenario=scenarioForSeed(seed);
+  // Independent exhaustive scores are calculated before selecting balanced pairs.
+  // Dynamic seed-dependent groups help avoid a fixed "pick the bigger shield" trick.
+  const classified=POOL.map(p=>policyResult(seed,p));
+  const pass=classified.filter(x=>x.result.passed);
+  const unsafe=classified.filter(x=>!x.result.safe);
+  const overblock=classified.filter(x=>x.result.safe&&!x.result.live);
+  const prefer=(xs,fallback)=>xs.length?xs:fallback;
+  const type=round%4;
+  let left,right;
+  if(type===0){left=pass[Math.floor(draw()*pass.length)];right=prefer(unsafe,classified)[Math.floor(draw()*prefer(unsafe,classified).length)];}
+  else if(type===1){left=pass[Math.floor(draw()*pass.length)];const pool=prefer(overblock,unsafe);right=pool[Math.floor(draw()*pool.length)];}
+  else if(type===2){
+    const pairs=pass.flatMap(a=>pass.filter(b=>b.result.guard_cost!==a.result.guard_cost&&b!==a).map(b=>[a,b]));
+    if(pairs.length)[left,right]=pairs[Math.floor(draw()*pairs.length)];
+    else {left=pass[0];right=unsafe[0];}
+  }else{
+    const invalid=classified.filter(x=>!x.result.passed);
+    if(invalid.length>1){left=invalid[Math.floor(draw()*invalid.length)];right=invalid[Math.floor(draw()*invalid.length)];}
+    else {left=pass[0];right=unsafe[0];}
+  }
+  if(!left||!right)throw Error("The deterministic duel generator has no valid pair.");
+  // Ensure candidates are distinct; avoid rounds that are meaningless to compare.
+  if(left===right||left.guards.join("|")===right.guards.join("|")){
+    right=classified.find(x=>x!==left&&x.guards.join("|")!==left.guards.join("|"));
+  }
+  const flip=draw()>.5,[A,B]=flip?[right,left]:[left,right];
+  const oracle=compare(A,B);
+  const winner=oracle==="tie"?"either":oracle;
+  return {id:"duel-"+seed+"-"+round,version:DUEL_VERSION,scenario_seed:seed,round,
+    scenario:{id:scenario.id,name:scenario.name,icon:scenario.icon,mission:scenario.mission,
+      risk_budget:scenario.risk_budget,shortcut_risk:scenario.shortcut_risk,report_sensitive:scenario.report_sensitive},
+    A:{guards:A.guards,cost:A.result.guard_cost},
+    B:{guards:B.guards,cost:B.result.guard_cost},
+    oracle:{winner,A:A.result,B:B.result},
+    category:type===0?"Find the loophole":type===1?"Prevent overblocking":type===2?"Optimize the working shield":"Reject both unsafe plans"};
+}
+export function evaluateDuelVote(input){
+  if(!input||typeof input!=="object"||Array.isArray(input)||
+    Object.keys(input).sort().join(",")!=="choice,confidence,reason,round,seed,version")
+    throw Error("Invalid duel ballot shape.");
+  const {seed,round,version,choice,reason,confidence}=input;
+  if(version!==DUEL_VERSION||!DUEL_CHOICES.includes(choice)||
+     !DUEL_REASONS.some(r=>r.id===reason)||!Number.isInteger(confidence)||confidence<1||confidence>3)
+    throw Error("Invalid duel ballot values.");
+  const duel=duelFor(seed,round),winner=duel.oracle.winner;
+  const correct=winner==="either"?(choice==="A"||choice==="B"):choice===winner;
+  return {seed,round,version,scenario_family:duel.scenario.id,category:duel.category,
+    policy_A:duel.A.guards,policy_B:duel.B.guards,choice,reason,confidence,
+    correct,oracle_winner:winner,
+    oracle:{A:{safe:duel.oracle.A.safe,live:duel.oracle.A.live,passed:duel.oracle.A.passed,
+       score:duel.oracle.A.score,cost:duel.oracle.A.guard_cost,checked_states:duel.oracle.A.checked_states,
+       violations:duel.oracle.A.counterexample?.violations||[]},
+      B:{safe:duel.oracle.B.safe,live:duel.oracle.B.live,passed:duel.oracle.B.passed,
+       score:duel.oracle.B.score,cost:duel.oracle.B.guard_cost,checked_states:duel.oracle.B.checked_states,
+       violations:duel.oracle.B.counterexample?.violations||[]}},
+    provenance:"User-reported blind choice; authenticity, age and pre-reveal timing cannot be established from client JSON."};
+}
+export function evaluateDuelSession(input){
+  if(!input||typeof input!=="object"||Array.isArray(input)||
+     Object.keys(input).sort().join(",")!=="ballots,session_version")
+    throw Error("Invalid duel submission.");
+  if(input.session_version!==DUEL_VERSION||!Array.isArray(input.ballots)||
+     input.ballots.length<3||input.ballots.length>DUEL_ROUNDS)throw Error("Contribute 3 to 8 unique duels.");
+  const seen=new Set(),labels=input.ballots.map(b=>{
+    const out=evaluateDuelVote(b),key=out.seed+"/"+out.round;
+    if(seen.has(key))throw Error("Duplicate duel rounds are not valid training evidence.");
+    seen.add(key);return out;
+  });
+  return {version:DUEL_VERSION,ballots:labels,correct:labels.filter(b=>b.correct).length,
+    uncertain:labels.filter(b=>b.reason==="uncertain").length,
+    limitations:["Synthetic oracle; ground truth is the finite-state simulator, not human preference.",
+      "Client-reported choices cannot prove the timing of choice relative to reveal.",
+      "Filter by scenario family; do not mix duplicate rounds across train and evaluation.",
+      "No Lean tactic, real agent observation or external safety guarantee is provided."]};
+}
