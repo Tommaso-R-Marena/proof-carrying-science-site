@@ -50,6 +50,13 @@ export function fitBaseline(document,{epochs=60,rate=0.035}={}){
     throw Error("Provide an independently prepared Forge Duel learning dataset with rows.");
   if(!Number.isInteger(epochs)||epochs<1||epochs>500||!Number.isFinite(rate)||rate<=0||rate>1)
     throw Error("Invalid bounded training hyperparameters.");
+  // Trust no caller-supplied split: recompute the holdout family from the
+  // independent immutable scenario generator before a gradient update.
+  for(const row of document.rows){
+    const world=scenarioForSeed(row.seed).id,expected=world==="space"?"evaluation":"training";
+    if(row.world!==world||row.split!==expected)
+      throw Error("Scenario-family holdout was altered or mislabeled.");
+  }
   const train=document.rows.filter(r=>r.split==="training"),
     evaluation=document.rows.filter(r=>r.split==="evaluation");
   if(!train.length||!evaluation.length)throw Error("Need separate train and full-world-held-out evaluation rows.");
