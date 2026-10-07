@@ -1,6 +1,7 @@
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
 import {DUEL_VERSION,evaluateDuelSession} from "../public/forge-duel-core.mjs";
+import {PROOFLAB_VERSION,evaluateSession as evaluateProofLabSession,findTask as findProofLabTask} from "../public/prooflab-core.mjs";
 import {gradeOrder,getPuzzleById,puzzleVersionFor,PUZZLE_VERSION} from "../public/proof-order-core.mjs";
 // Keep the original PUZZLE_VERSION contract visible for audited static checks;
 // puzzleVersionFor() is authoritative for both original and procedurally generated games.
@@ -3585,6 +3586,74 @@ async function exportProofQuestDataset(request,env,admin){
   });
 }
 
+// Opt-in workshop research. Real Lean theorem headers are source-pinned, but
+// scores below attest ONLY an educational graph and scope-reasoning scaffold.
+// No browser-generated scores, proofs, verifier labels or task graphs are trusted.
+const PROOFLAB_CONSENT_VERSION="pcs-prooflab-adult-research-v1";
+async function donateProofLabSession(request,env,user){
+  await rateLimit(request,env,"prooflab-donation",14,60);
+  if(!Number(user.email_verified))throw new ApiError(403,
+    "Verify your account email before donating ProofLab research.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+     Object.keys(body).sort().join(",")!=="actions,adult_confirmation,consent_training,task_id,version")
+    throw new ApiError(400,"Unexpected ProofLab donation payload.","invalid_prooflab_payload");
+  if(body.adult_confirmation!==true||body.consent_training!==true)
+    throw new ApiError(403,"Explicit informed research consent and age 18+ confirmation required.","adult_consent_required");
+  const task=findProofLabTask(body.task_id);
+  if(!task||task.split==="evaluation")
+    throw new ApiError(400,"Unapproved or withheld theorem task.","unknown_prooflab_task");
+  const submitted={version:body.version,task_id:body.task_id,actions:body.actions};
+  let checked;
+  try{checked=evaluateProofLabSession(submitted);}
+  catch(error){throw new ApiError(400,error.message||"Independent strategy replay rejected.","prooflab_replay_rejected");}
+  if(submitted.actions.length<6||checked.repair.choice===null||checked.interpretation.choice===null)
+    throw new ApiError(400,"Complete both reflection challenges and at least six decisions before donation.","incomplete_prooflab_session");
+  const recent=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM prooflab_research_sessions WHERE user_id=? AND created_at>=?"
+  ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
+  if(Number(recent?.n||0)>=12)
+    throw new ApiError(429,"Daily ProofLab research limit reached. Free play remains available.","prooflab_daily_limit");
+  const digest=await sha256Hex(JSON.stringify(submitted));
+  const result=await env.COMMONS_DB.prepare(
+    \`INSERT OR IGNORE INTO prooflab_research_sessions(
+      id,user_id,digest,task_id,source_module,task_split,core_revision,session_version,
+      submitted_actions_json,verified_replay_json,action_count,game_score,consent_version,created_at
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)\`
+  ).bind(crypto.randomUUID(),user.id,digest,task.id,task.module,task.split,
+    task.source.revision,PROOFLAB_VERSION,JSON.stringify(submitted),
+    JSON.stringify(checked),submitted.actions.length,checked.score,PROOFLAB_CONSENT_VERSION,nowIso()).run();
+  const recorded=Number(result.meta?.changes||0)>0;
+  return json({ok:true,recorded,score:checked.score,game_scaffold_passed:checked.game_scaffold_passed,
+    kernel_proof_verified:false,message:recorded?"Consented educational data stored.":"Duplicate learning session already stored."});
+}
+async function eraseProofLabSessions(env,user){
+  const result=await env.COMMONS_DB.prepare(
+    "DELETE FROM prooflab_research_sessions WHERE user_id=?"
+  ).bind(user.id).run();
+  return json({ok:true,deleted:Number(result.meta?.changes||0),
+    message:"Active ProofLab research rows removed. Exports, backups or model weights may have separate retention."});
+}
+async function exportProofLabDataset(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Only Founder/Owner may export research sessions.","owner_required");
+  const raw=new URL(request.url).searchParams.get("offset")||"0";
+  if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))
+    throw new ApiError(400,"Invalid research export offset.","invalid_export_offset");
+  const offset=Number(raw);
+  const response=await env.COMMONS_DB.prepare(
+    "SELECT verified_replay_json FROM prooflab_research_sessions ORDER BY created_at,id LIMIT 25 OFFSET ?"
+  ).bind(offset).all();
+  const records=(response.results||[]).map(row=>JSON.parse(row.verified_replay_json));
+  return json({ok:true,format:"pcs-prooflab-optin-learning-sessions-v1",
+    core_revision:"cff0b67595abd4862ab0c156b157f262b169eca5",
+    scope:"Source-backed Lean theorem statements with separately generated educational strategy-planning graphs.",
+    excluded_fields:["user_id","name","email","IP address","timestamp","digest"],
+    restrictions:["No Lean proof was generated or kernel verified.",
+      "Game scaffold dependencies are not authoritative Lean proof dependencies.",
+      "Human choice timing and authenticity are unverified. Public challenges are not held-out evaluation."],
+    records,next_offset:records.length===25?offset+25:null});
+}
+
 // Forge Duel captures deliberately volunteered human policy comparison labels.
 // The server regenerates both policies and all simulated verdicts from the seed;
 // it NEVER accepts a user's claimed winning policy, reward or checker result.
@@ -3701,7 +3770,7 @@ async function eraseSafetyForgeSessions(env,user){
 async function adminArenaStorage(env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can inspect research-data storage summaries.","owner_required");
   // No participant-level identifiers or raw gameplay are returned.
-  const [quest,forge,duel]=await Promise.all([
+  const [quest,forge,duel,prooflab]=await Promise.all([
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(ordering_json AS BLOB))),0) AS payload_bytes FROM proof_order_research_attempts"
     ).first(),
@@ -3711,6 +3780,9 @@ async function adminArenaStorage(env,admin){
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM forge_duel_research_sessions"
     ).first(),
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM prooflab_research_sessions"
+    ).first(),
   ]);
   return json({
     ok:true,storage:"Cloudflare D1",
@@ -3719,7 +3791,8 @@ async function adminArenaStorage(env,admin){
     collections:{
       proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
       safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)},
-      forge_duel:{rows:Number(duel?.records||0),approx_payload_bytes:Number(duel?.payload_bytes||0)}
+      forge_duel:{rows:Number(duel?.records||0),approx_payload_bytes:Number(duel?.payload_bytes||0)},
+      prooflab:{rows:Number(prooflab?.records||0),approx_payload_bytes:Number(prooflab?.payload_bytes||0)}
     },
     caveat:"Approximate JSON payload bytes, excluding SQLite indexes, metadata, users and audit records; inspect Cloudflare D1 for authoritative capacity and usage."
   });
@@ -3796,6 +3869,7 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/forge-duel/dataset") return exportForgeDuelSessions(request,env,admin);
+    if (method==="GET" && path==="/api/admin/arena/prooflab/dataset") return exportProofLabDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
@@ -3875,6 +3949,8 @@ async function handleApi(request, env) {
   if (method==="POST" && challengeMatch) return submitChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
   if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
+  if (method==="POST" && path==="/api/arena/prooflab/donate") return donateProofLabSession(request,env,user);
+  if (method==="POST" && path==="/api/arena/prooflab/erase") return eraseProofLabSessions(env,user);
   if (method==="POST" && path==="/api/arena/forge-duel/donate") return donateForgeDuelSession(request,env,user);
   if (method==="POST" && path==="/api/arena/forge-duel/erase") return eraseForgeDuelSessions(env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/donate") return donateSafetyForgeSession(request,env,user);
