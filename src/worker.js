@@ -3606,13 +3606,13 @@ async function donateProofLabSession(request,env,user){
   try{replay=evaluateProofLabSession(input);}
   catch(e){throw new ApiError(400,e.message||"Invalid planning trace.","prooflab_replay_rejected");}
   const recent=await env.COMMONS_DB.prepare(
-    "SELECT COUNT(*) AS n FROM prooflab_research_sessions WHERE user_id=? AND created_at>=?"
+    "SELECT COUNT(*) AS n FROM prooflab_source_research_sessions WHERE user_id=? AND created_at>=?"
   ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
   if(Number(recent?.n||0)>=15)
     throw new ApiError(429,"Daily research quota reached; private play remains available.","prooflab_daily_limit");
   const digest=await sha256Hex(JSON.stringify(input));
   const result=await env.COMMONS_DB.prepare(
-    "INSERT OR IGNORE INTO prooflab_research_sessions "+
+    "INSERT OR IGNORE INTO prooflab_source_research_sessions "+
     "(id,user_id,case_id,source_commit,session_digest,session_version,"+
     "submitted_plan_json,verified_replay_json,action_count,accepted_count,"+
     "rejected_count,completed,consent_version,created_at) "+
@@ -3628,7 +3628,7 @@ async function donateProofLabSession(request,env,user){
 }
 async function eraseProofLabSessions(env,user){
   const result=await env.COMMONS_DB.prepare(
-    "DELETE FROM prooflab_research_sessions WHERE user_id=?"
+    "DELETE FROM prooflab_source_research_sessions WHERE user_id=?"
   ).bind(user.id).run();
   return json({ok:true,deleted:Number(result.meta?.changes||0),
     message:"Active ProofLab rows removed. Offline exports may require separate action."});
@@ -3640,7 +3640,7 @@ async function exportProofLabDataset(request,env,admin){
     throw new ApiError(400,"Invalid export offset.","invalid_prooflab_export_cursor");
   const offset=Number(raw);
   const r=await env.COMMONS_DB.prepare(
-    "SELECT verified_replay_json FROM prooflab_research_sessions ORDER BY created_at,id LIMIT 25 OFFSET ?"
+    "SELECT verified_replay_json FROM prooflab_source_research_sessions ORDER BY created_at,id LIMIT 25 OFFSET ?"
   ).bind(offset).all();
   const records=r.results||[];
   return json({ok:true,format:"pcs-prooflab-optin-source-grounded-dataset-v1",
@@ -3782,7 +3782,7 @@ async function adminArenaStorage(env,admin){
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM forge_duel_research_sessions"
     ).first(),
     env.COMMONS_DB.prepare(
-      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM prooflab_research_sessions"
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM prooflab_source_research_sessions"
     ).first(),
   ]);
   return json({
