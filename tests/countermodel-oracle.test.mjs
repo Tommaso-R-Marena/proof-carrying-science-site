@@ -29,7 +29,7 @@ function worldFromMask(n,mask,relation){
 for(const mission of COUNTERMODEL_MISSIONS){
  test('exhaustive independent finite oracle cross-check: '+mission.id,()=>{
   let independentlyMinimal=null,examples=0;
-  for(let n=1;n<=2;n++){
+  for(let n=1;n<=3;n++){
    const bits=2*n+(mission.kind==='relation'?n*n:0);
    for(let mask=0;mask<2**bits;mask++){
     const w=worldFromMask(n,mask,mission.kind==='relation');
