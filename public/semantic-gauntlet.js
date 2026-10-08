@@ -1,6 +1,7 @@
 import {GAUNTLET_VERSION,GAUNTLET_TASKS,gauntletVerdict,finiteOracle} from './semantic-gauntlet-core.mjs';
 const el=id=>document.getElementById(id);
-let current=GAUNTLET_TASKS[0],world,history=[],correct=0,attempted=0,lastOutcome=null;
+let current=GAUNTLET_TASKS[0],world,history=[],lastOutcome=null;
+const attemptedTaskIds=new Set(),correctTaskIds=new Set();
 const makeWorld=(n=1)=>({n,unary:Object.fromEntries(current.symbols.unary.map(x=>[x,Array(n).fill(false)])),
  binary:Object.fromEntries(current.symbols.binary.map(x=>[x,Array.from({length:n},()=>Array(n).fill(false))]))});
 const text=(id,value)=>{el(id).textContent=String(value);};
@@ -42,9 +43,10 @@ function setTask(id){current=GAUNTLET_TASKS.find(x=>x.id===id);world=makeWorld()
  status('Construct a world, then ask whether it distinguishes the two formulas.');renderWorld();}
 function guess(decision){const oracle=finiteOracle(current),actual=gauntletVerdict(current,world);
  const isCountermodel=decision==='COUNTERMODEL';const yes=isCountermodel?actual.countermodel:oracle.equivalent_within_bound;
- attempted++;if(yes)correct++;text('sgSolved',attempted);text('sgCorrect',correct);
+ attemptedTaskIds.add(current.id);if(yes)correctTaskIds.add(current.id);
+ text('sgSolved',attemptedTaskIds.size);text('sgCorrect',correctTaskIds.size);
  const details={type:decision,world:structuredClone(world),result:yes,
-   finite_checker_truth:{selected:actual.source,proposed:actual.candidate},hints_revealed:lastOutcome==='hint'};
+   finite_checker_truth:{selected:actual.source,proposed:actual.candidate},hints_revealed:history.some(x=>x.id===current.id&&x.action==='hint')};
  log('verification_request',details);lastOutcome=yes?'correct':'incorrect';
  if(yes){status(isCountermodel?
   'Verified countermodel: the original and proposed claims differ in your exact finite world. '+
@@ -55,7 +57,7 @@ function guess(decision){const oracle=finiteOracle(current),actual=gauntletVerdi
   'Incorrect equivalence claim: the checker found a smaller or equal finite world where the meanings differ.', 'incorrect');}
 function download(){const data={format:'pcs-semantic-gauntlet-local-practice-v1',version:GAUNTLET_VERSION,
   limitations:['Local self-reported history, not verified human provenance','Finite simulation; not Lean proof'],
-  attempted,correct,actions:history};const dataUrl=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}));
+  attempted:attemptedTaskIds.size,correct:correctTaskIds.size,actions:history};const dataUrl=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'}));
  const anchor=document.createElement('a');anchor.href=dataUrl;anchor.download='pcs-semantic-gauntlet-local.json';
  document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(dataUrl),2000);}
 el('sgFilter').addEventListener('change',renderSelect);
