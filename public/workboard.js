@@ -12,14 +12,14 @@ function status(s){$("boardStatus").textContent=s;}
 function stages(req,sub){
  const requestDone=["approved","completed"].includes(req.status);
  const submitted=Boolean(sub);
- const cicheck=Boolean(sub?.github_stage_state&&["staged","merged"].includes(sub.github_stage_state));
+ const cicheck=false; // A staged PR is NOT proof of a successful exact-head CI job.
  const reviewed=Boolean(sub&&["accepted","rejected","needs_changes"].includes(sub.status));
  const archived=Boolean(sub?.github_stage_state==="merged");
  const production=Boolean(sub?.production_promotion_state==="merged");
  return [
   ["Task assigned",requestDone,req.status==="pending"?"Waiting for qualification/approval":req.status],
   ["Work submitted",submitted,submitted?"Submission received":"Submit the accepted task in Account"],
-  ["GitHub / PCS checks",cicheck,sub?.github_stage_state||"Not yet staged / no code integration"],
+  ["Independent CI checks",cicheck,sub?.github_stage_state==="merged"?"Archived after previously checked CI; view the receipt below":(sub?.github_stage_state==="staged"?"Staged is NOT passed. Click Check CI status for live verification.":sub?.github_stage_state||"No code verification required / no PR yet")],
   ["Human review",reviewed,sub?.status||"Not yet submitted"],
   ["Evidence archived",archived,archived?"Staging PR merged":"Archival merge is separate from production"],
   ["Production promotion",production,sub?.production_promotion_state||"Not requested / not applicable"]
@@ -35,7 +35,7 @@ async function checkSubmission(id,msg,button){
  try{
   const r=await api("/api/submissions/"+encodeURIComponent(id)+"/checks");
   const j=await r.json();if(!r.ok)throw Error(j.message||"Checks unavailable");
-  msg.textContent=j.verified?"Required staged contribution check verified for pinned head.":
+  msg.textContent=j.verified?"Required staged contribution check verified for pinned head "+String(j.head_sha||"").slice(0,12)+".":
    "Not verified yet: "+(j.message||j.state||"pending / missing CI");
  }catch(e){msg.textContent=e.message;}finally{button.disabled=false;}
 }
