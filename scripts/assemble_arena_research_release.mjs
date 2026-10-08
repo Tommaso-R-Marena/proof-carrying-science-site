@@ -49,7 +49,8 @@ export function buildArenaRelease(sources){
       external_human_provenance_verified:false,
       downstream_lean_proof_validity:'NOT_ESTABLISHED',
       deterministic_replay_only:true}};
-  const sha=digest(formatted);
+  // Match the EXACT bytes written to disk, including pretty formatting and final newline.
+  const sha=createHash('sha256').update(JSON.stringify(formatted,null,2)+'\n').digest('hex');
   datasets[game]=formatted;
   artifacts.push({game,filename:game+'.deidentified.json',sha256:sha,records,training_rows:trainCount,
     evaluation_rows:evalCount,checker_scope:processed.label_semantics||processed.labels||
@@ -58,8 +59,9 @@ export function buildArenaRelease(sources){
  artifacts.sort((a,b)=>a.game.localeCompare(b.game));
  return {manifest:{format:ARENA_RELEASE_FORMAT,authority:'NONE',source:'owner-exported consented research events',
   includes_real_human_data:'POSSIBLE_AFTER_OWNER_EXPORT_AND_REVIEW',
+  privacy_status:'AUTOMATED_SCREENING_ONLY_MANUAL_PRIVACY_REVIEW_REQUIRED',
   consent_status:'SELF_ATTESTED_18_PLUS_NOT_IDENTITY_VERIFIED',
-  quality_gates:['independent server/offline deterministic replay','PII key/value rejection',
+  quality_gates:['independent server/offline deterministic replay','limited PII key/value screening',
     'per-game semantic version commitments','game-specific heldout splits'],
   NOT_PROVED:['independent human identity','Lean/kernel proof correctness','general real-world safety',
     'no prior train/test contamination','offline export withdrawal'],
