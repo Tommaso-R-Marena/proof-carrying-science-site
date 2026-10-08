@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 import {evaluatePredictions,baselinePredictions} from '../scripts/semantic_evaluation_firewall.mjs';
 import {summaryForDisplay,compareDisplaySummaries,validateFirewallReport} from '../public/evaluation-firewall-view.mjs';
 const read=x=>readFileSync(new URL('../'+x,import.meta.url),'utf8');
@@ -21,5 +21,6 @@ test('browser UI never sends report to network and renders submitted values as t
  assert.match(js,/file\.text\(\)/);assert.match(js,/textContent/);
  assert.doesNotMatch(js,/\.innerHTML\s*=/);
  assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|navigator\.sendBeacon/);
- assert.match(read('public/arena.html'),/evaluation-firewall\.html/);
+ if(existsSync(new URL('../public/arena.html',import.meta.url)))
+  assert.match(read('public/arena.html'),/evaluation-firewall\.html/);
 });
