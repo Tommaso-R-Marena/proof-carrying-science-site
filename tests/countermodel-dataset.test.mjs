@@ -44,3 +44,14 @@ test('learning action cannot expose hint before the hint was requested',()=>{
  assert.equal(d[0].next_state.hint_used,true);
  assert.equal(d[1].state.hint_used_before_action,true);
 });
+
+
+test('dataset is bound to exact checked symbolic mission ruleset',async()=>{
+ const {COUNTERMODEL_RULESET_SHA256}=await import('../scripts/prepare_countermodel_dataset.mjs');
+ const result=prepareCountermodelDataset(fixture());
+ assert.match(COUNTERMODEL_RULESET_SHA256,/^[0-9a-f]{64}$/);
+ assert.equal(result.ruleset_sha256,COUNTERMODEL_RULESET_SHA256);
+ assert.equal(result.episodes[0].ruleset_sha256,COUNTERMODEL_RULESET_SHA256);
+ assert.equal(COUNTERMODEL_RULESET_SHA256,'d3b02eb4eb39976fd3179a44ef1b6bffd17a8f4a271b1bd7cddb97eb71276df2',
+  'mission definitions changed: review formulas, bump version and dataset provenance before accepting new donations');
+});
