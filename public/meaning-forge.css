@@ -1,0 +1,51 @@
+.meaning-page { --meaning-ink:#19334a; --meaning-blue:#174c79; --meaning-edge:#b8ccdc; }
+.meaning-page main {padding-bottom:4rem}
+.meaning-hero{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(250px,0.8fr);gap:2rem;align-items:center;padding:3.2rem 0 2rem}
+.meaning-hero h1{font-size:clamp(2.4rem,5vw,4.3rem);line-height:1.07;letter-spacing:-.04em;margin:.6rem 0 1rem}
+.meaning-hero p{max-width:72ch;font-size:1.06rem;line-height:1.7}
+.meaning-hero-aside{background:#eaf2f9;border:1px solid #c5d8e8;border-radius:20px;padding:1.6rem;color:var(--meaning-ink)}
+.meaning-hero-aside strong{font-size:1.16rem}
+.meaning-hero-aside small{display:block;line-height:1.6}
+.meaning-steps{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.5rem}
+.meaning-steps span{background:#e9f1f8;color:#24506f;border-radius:30px;padding:.42rem .85rem;font-size:.84rem;font-weight:700}
+.meaning-setup{margin:0 0 1.2rem;padding:1.25rem !important}
+.meaning-setup-fields{display:flex;gap:.8rem;align-items:end;flex-wrap:wrap}
+.meaning-setup-fields label{display:flex;flex-direction:column;gap:.4rem;flex:1 1 180px;font-size:.88rem;font-weight:700}
+.meaning-setup-fields button{min-height:44px}
+.meaning-stats{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;padding-top:1rem;margin-top:1rem;border-top:1px solid var(--meaning-edge);color:#4e6171;font-size:.92rem}
+.meaning-stats strong{color:#1a466e}
+.meaning-workspace{display:grid;grid-template-columns:minmax(0,.93fr) minmax(0,1.07fr);gap:1.1rem;align-items:start}
+.meaning-workspace .panel{padding:1.65rem;min-width:0}
+.meaning-section-label{color:#406079;font-size:.74rem;letter-spacing:.075em;font-weight:800;margin-bottom:.7rem}
+.meaning-target h2,.meaning-workbench h2,.meaning-bottom h2{font-size:1.32rem;margin:.2rem 0 1rem}
+.meaning-statement{font-size:1.25rem;line-height:1.6;letter-spacing:-.014em;color:var(--meaning-ink);overflow-wrap:anywhere}
+.meaning-statement.lean{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.03rem;white-space:pre-wrap}
+.meaning-dictionary{margin:1.25rem 0;display:grid;gap:.55rem}
+.meaning-dictionary span{display:block;border-left:3px solid #2770a2;padding:.3rem .75rem;background:#f2f7fb;border-radius:0 7px 7px 0;font-size:.9rem;overflow-wrap:anywhere}
+.meaning-small{font-size:.85rem;line-height:1.6;color:#566779}
+.meaning-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+.meaning-controls label{display:flex;flex-direction:column;gap:.4rem;font-weight:700;font-size:.87rem;min-width:0}
+.meaning-controls select{width:100%;max-width:100%;min-width:0}
+.meaning-preview{background:#122737;color:#d8f1ff;border-radius:14px;padding:1.2rem;margin:1.3rem 0}
+.meaning-preview .meaning-section-label{color:#9abbd7}
+.meaning-preview code{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1rem;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
+.meaning-actions{display:flex;gap:.7rem;flex-wrap:wrap}
+.meaning-feedback{line-height:1.6;min-height:1.5rem;margin:.8rem 0 0;color:#33516c}
+.meaning-feedback.good{color:#0c654b}.meaning-feedback.warn{color:#9b3e19}
+.meaning-bottom{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem;margin:1.2rem 0}
+.meaning-bottom .panel{padding:1.65rem}
+.meaning-history{max-height:310px;overflow:auto;padding-left:1.3rem;margin:1.1rem 0 1.6rem}
+.meaning-history li{margin-bottom:.85rem;line-height:1.55;font-size:.94rem}
+.meaning-bottom label:not(.meaning-consent){display:block;font-weight:700;margin:.85rem 0 .35rem;font-size:.9rem}
+.meaning-bottom textarea{width:100%;resize:vertical}
+.meaning-consent{display:flex;align-items:flex-start;gap:.65rem;margin:1rem 0;line-height:1.45;font-size:.9rem}
+.meaning-consent input{margin-top:.2rem;width:18px;height:18px;flex-shrink:0}
+.meaning-limitations{padding:1.6rem;margin-top:1.2rem}
+.meaning-limitations p{line-height:1.75}
+@media(max-width:800px){
+ .meaning-hero,.meaning-workspace,.meaning-bottom{grid-template-columns:minmax(0,1fr)}
+ .meaning-hero{padding:2rem 0 1.3rem;gap:1rem}
+ .meaning-hero-aside{padding:1rem}
+}
+@media(max-width:420px){.meaning-controls{grid-template-columns:1fr}.meaning-workspace .panel,.meaning-bottom .panel{padding:1.15rem}.meaning-setup-fields button{width:100%}}
+@media(prefers-reduced-motion:reduce){.meaning-page *{scroll-behavior:auto!important;transition:none!important}}
