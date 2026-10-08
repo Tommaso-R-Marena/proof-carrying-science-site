@@ -15,6 +15,8 @@ test('task collection is deterministic, bounded and split by semantic family',()
  assert.ok(train.size>=10&&evaluation.size>=6);
  for(const f of train)assert.equal(evaluation.has(f),false);
  assert.match(TASKS_SHA256,/^[0-9a-f]{64}$/);
+ assert.equal(TASKS_SHA256,'c67a6cdf9bfaad68a7a2743a5162f60eaf4f438b6bfce3c9453c166e875fd810',
+  'Semantic task definitions changed: review formula semantics and version before accepting results');
 });
 test('every task is actually enumerated and has a trusted bounded label',()=>{
  let eq=0,non=0;
