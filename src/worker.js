@@ -4255,6 +4255,14 @@ async function handleApi(request, env) {
       accounts:true,
       email_transport:emailTransportConfigured(env),
       request_sla:"1–2 business days",
+      verifier_modes:{
+        countermodel_lab:{version:COUNTERMODEL_VERSION,mode:"EXHAUSTIVE_BOUNDED_FIRST_ORDER",server_replay:true,lean_kernel_checked:false},
+        safety_forge:{version:SAFETY_LAB_VERSION,mode:"FINITE_SYNTHETIC_REPLAY",server_replay:true,lean_kernel_checked:false},
+        prooflab:{version:PROOFLAB_VERSION,mode:"SOURCE_INDEXED_DEPENDENCY_GRAPH",server_replay:true,lean_kernel_checked:false},
+        meaning_forge:{version:MEANING_VERSION,mode:"STRUCTURAL_SEMANTIC_GRAMMAR",server_replay:true,lean_kernel_checked:false},
+        pcs_authoritative_lean:"SEPARATE_CORE_CI_AND_EXECUTABLE_AUTHORITY_REQUIRED",
+        research_donation:"EXPLICIT_ADULT_OPT_IN_ONLY"
+      },
       task_policy:{
         L0_L1:"open, non-exclusive tasks; no founder approval needed",
         L2_L3:"verified level + either verified skill or manual competency review + founder approval; pending requests do not reserve work",
