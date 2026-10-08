@@ -24,9 +24,10 @@ export function prepareCountermodelDataset(doc){
    first_counterexample_at_step:verified.steps.find(x=>x.received_checker_response&&x.counterexample)?.index??null,
    minimum_domain_size:verified.minimum_domain_size,final_domain_size:verified.final_world.n,
    score:verified.score,assisted_by_hint:verified.hints>0,checks:verified.checks,
-   steps:verified.steps.map(x=>({state:{domain_size:x.domain_size,source_true:x.source_true,proposal_true:x.proposal_true,
-     counterexample:x.counterexample},action:x.action,reward:x.reward,checker_feedback_exposed:x.checker_feedback_exposed,
-     received_checker_response:x.received_checker_response,hint_used_before_action:x.assisted}))});
+   steps:verified.steps.map(x=>({state:{world:x.world,checker_feedback_exposed:x.checker_feedback_exposed,
+     hint_used_before_action:x.assisted},action:x.action,reward:x.reward,
+     checker_labels:{source_true:x.source_true,proposal_true:x.proposal_true,counterexample:x.counterexample,
+       label_exposed_to_player:x.received_checker_response},received_checker_response:x.received_checker_response}))});
  }
  return {format:COUNTERMODEL_DATASET,authority:'NONE',data_origin:'consented game choices with deterministic finite-model server replay',
   labels:'recomputed bounded first-order semantics; NOT Lean tactic trajectories',privacy:'no user IDs, emails, IPs, timestamps or notes',
