@@ -61,3 +61,11 @@ test('self-service deletion never acts on another account',async()=>{
  const ctx=fakeEnv();const r=await hit(ctx,'/api/arena/countermodel/erase',{});assert.equal(r.status,200);assert.equal(ctx.state.deletes,1);
  const anon=fakeEnv({user:null});assert.equal((await hit(anon,'/api/arena/countermodel/erase',{}, {cookie:''})).status,401);assert.equal(anon.state.deletes,0);
 });
+
+test('same logical action sequence has same digest regardless of JSON key ordering',async()=>{
+ const original=fakeEnv(),permuted=fakeEnv();
+ const a=valid();const b={consent_training:true,session:{actions:[{i:0,type:'toggle',p:'P'},{type:'check'}],mission_id:'implication-flip',version:COUNTERMODEL_VERSION},adult_confirmation:true};
+ assert.equal((await hit(original,'/api/arena/countermodel/donate',a)).status,200);
+ assert.equal((await hit(permuted,'/api/arena/countermodel/donate',b)).status,200);
+ assert.equal(original.state.sha,permuted.state.sha);
+});
