@@ -31,7 +31,7 @@ Output paths must not already exist. `evaluate` reruns deterministic model train
 
 ## Measured public finite-logic results
 
-**Task construction:** six preselected *evaluation* semantic operator families, three symbol-renamed variants per family, giving 18 public two-edit problems. Every task begins at a candidate not equivalent within the finite bound; every valid one-step edit is independently checked and fails, proving that **within the fixed edit grammar** these require two edits. Successful plans are checked by the finite evaluator. This is not a proof about arbitrary formulas, proof search or unbounded mathematics.
+**Task construction:** six deliberately *post-selected* evaluation semantic operator families, three symbol-renamed variants per family, giving 18 public two-edit problems. Every task begins at a candidate not equivalent within the finite bound; every valid one-step edit is independently checked and fails, proving that **within the fixed edit grammar** these require two edits. Successful plans are checked by the finite evaluator. The challenge recipes were selected after inspecting how the finite checker and policies perform, so this is exploratory evaluation with selection bias, not a statistically valid independent test. This is not a proof about arbitrary formulas, proof search or unbounded mathematics.
 
 **Resource budget:** 55 full finite-checker calls including the original initial check, 16 pending-state beam, at most 120 proposed edits per expanded formula, at most two edits, seed 23.
 
@@ -51,7 +51,8 @@ Different symbol-renamed variants of one family are correlated, so the effective
 ## Trust and security
 
 - Failed/accepted labels are recomputed only by the finite checker; ranking scores never certify results.
-- Strict JSON and exact schemas; reject duplicate JSON keys, unknown task IDs, invalid typed formulas, missing signatures, incorrect request budgets, forged results, unknown models, and stale/recomputed report mismatches.
+- Strict CLI JSON and exact schemas; reject duplicate JSON keys, unknown task IDs, invalid typed formulas, incorrect request budgets, forged results, unknown models, and stale/recomputed report mismatches.
+- This prototype does not issue or validate signature receipts; no signature authority is claimed.
 - The model's SHA-256 digest is provenance of bytes, **not** evidence of machine correctness. The CLI re-trains against the training-family source and compares the exact weights before evaluation.
 - Browser demo is deliberately a read-only, locally running research illustration. It does not issue formal Lean receipts or upload user trajectories.
 - Full production website CI, Cloudflare deployment, and exact browser/mobile smoke have to pass separately. Do not merge or deploy merely because isolated Node tests pass.
