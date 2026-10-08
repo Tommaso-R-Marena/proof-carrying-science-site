@@ -23,7 +23,7 @@
     "test:prooflab": "node --test tests/prooflab-core.test.mjs tests/prooflab-dataset.test.mjs tests/prooflab-worker.test.mjs",
     "test:task-code": "node --test tests/task-code-context.test.mjs",
     "test:meaning-forge": "node --test tests/meaning-forge.test.mjs",
-    "test:countermodel": "node --test tests/countermodel-core.test.mjs tests/countermodel-dataset.test.mjs tests/countermodel-worker.test.mjs tests/countermodel-lean-runner.test.mjs",
+    "test:countermodel": "node --test tests/countermodel-core.test.mjs tests/countermodel-dataset.test.mjs tests/countermodel-worker.test.mjs tests/countermodel-lean-runner.test.mjs && python3 scripts/test_countermodel_migration.py",
     "verify:countermodel:lean": "node scripts/verify_countermodel_lean.mjs"
   },
   "devDependencies": {
