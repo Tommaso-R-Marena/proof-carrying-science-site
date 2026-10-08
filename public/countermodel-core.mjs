@@ -77,6 +77,7 @@ export function replayCountermodelSession(input){
  let w=initialWorld(),checks=0,hints=0,firstSuccess=null,feedbackSeen=false;const steps=[];let edits=0;
  for(let k=0;k<input.actions.length;k++){
   const a=input.actions[k];if(!a||typeof a!=='object'||Array.isArray(a)||typeof a.type!=='string')throw Error('Invalid move');
+  const stateBefore=structuredClone(w),feedbackBefore=feedbackSeen,hintsBefore=hints;
   const keys=Object.keys(a).sort().join(',');const before=countermodelVerdict(m.id,w);
   let reward=0,kind='edit';
   if(a.type==='add'&&keys==='type'){if(w.n>=MAX_ENTITIES)throw Error('Maximum agents reached');const old=w;w=initialWorld(old.n+1);w.P=old.P.concat(false);w.Q=old.Q.concat(false);for(let i=0;i<old.n;i++)for(let j=0;j<old.n;j++)w.R[i][j]=old.R[i][j];edits++;}
@@ -87,19 +88,19 @@ export function replayCountermodelSession(input){
    if(!Number.isInteger(a.i)||!Number.isInteger(a.j)||a.i<0||a.j<0||a.i>=w.n||a.j>=w.n)throw Error('Invalid relation toggle');w.R[a.i][a.j]=!w.R[a.i][a.j];edits++;
   }else if(a.type==='hint'&&keys==='type'){if(hints>=3)throw Error('Maximum hints reached');hints++;feedbackSeen=true;kind='hint';}
   else if(a.type==='check'&&keys==='type'){
-    checks++;kind='check';const verdict=countermodelVerdict(m.id,w);reward=verdict.counterexample?10:-1;
+    checks++;kind='check';const verdict=countermodelVerdict(m.id,w);
+    reward=verdict.counterexample?(firstSuccess===null?10:-2):-1;
     if(verdict.counterexample&&firstSuccess===null)firstSuccess=k;
     feedbackSeen=true;
   }else throw Error('Unknown or unavailable action');
   const after=countermodelVerdict(m.id,w);
-  steps.push({index:k,action:{...a},world:structuredClone(w),domain_size:w.n,source_true:after.left,proposal_true:after.right,
-   counterexample:after.counterexample,checker_feedback_exposed:feedbackSeen,
-   received_checker_response:kind==='check',assisted:hints>0,reward});
+  steps.push({index:k,action:{...a},state_before:stateBefore,world:structuredClone(w),domain_size:w.n,source_true:after.left,proposal_true:after.right,
+   counterexample:after.counterexample,checker_feedback_before_action:feedbackBefore,checker_feedback_exposed:feedbackSeen,
+   received_checker_response:kind==='check',assisted_before_action:hintsBefore>0,assisted:hints>0,reward});
  }
  if(checks<1)throw Error('At least one independent check is required');
  const v=countermodelVerdict(m.id,w),solved=firstSuccess!==null;
  const minimum=findMinimalCountermodel(m.id)?.n??null;
- const finalSuccess=steps.at(-1).type==='check'; // actual checks are identified by received_checker_response below
  const lastCheck=[...steps].reverse().find(x=>x.received_checker_response);
  const finalVerified=Boolean(lastCheck?.counterexample)&&lastCheck.index===steps.length-1;
  const score=finalVerified?Math.max(1,120-20*(w.n-minimum)-2*hints-Math.max(0,checks-1)*2-Math.floor(edits/5)):0;
