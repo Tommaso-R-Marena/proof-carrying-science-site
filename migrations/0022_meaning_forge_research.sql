@@ -29,5 +29,5 @@ CREATE TABLE IF NOT EXISTS meaning_forge_explanation_reviews (
   reviewed_at TEXT NOT NULL,
   PRIMARY KEY(session_id,reviewer_user_id),
   FOREIGN KEY(session_id) REFERENCES meaning_forge_sessions(id) ON DELETE CASCADE,
-  FOREIGN KEY(reviewer_user_id) REFERENCES users(id) ON DELETE RESTRICT
+  FOREIGN KEY(reviewer_user_id) REFERENCES users(id) ON DELETE CASCADE
 );
