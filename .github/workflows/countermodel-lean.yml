@@ -1,0 +1,64 @@
+name: PCS Countermodel Lean 4.28 Kernel Gate
+
+on:
+  pull_request:
+    paths:
+      - 'public/countermodel-core.mjs'
+      - 'scripts/verify_countermodel_lean.mjs'
+      - 'tests/countermodel-*.test.mjs'
+      - 'migrations/0024_countermodel_lab.sql'
+      - 'scripts/test_countermodel_migration.py'
+      - '.github/workflows/countermodel-lean.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pcs-countermodel-lean-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lean-kernel:
+    name: countermodel-lean-kernel
+    # An explicitly provisioned, isolated trusted runner is required; never
+    # treat this skipped job as proof checking or a release approval.
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: [self-hosted, linux, x64, pcs-ci]
+    timeout-minutes: 25
+    steps:
+      - name: Read-only exact candidate checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Confirm exact tested SHA and pinned Lean 4.28 toolchain
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node --version
+          lean --version
+      - name: Independent logic oracle and structural negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/countermodel-core.test.mjs tests/countermodel-oracle.test.mjs tests/countermodel-dataset.test.mjs tests/countermodel-lean-runner.test.mjs
+          python3 scripts/test_countermodel_migration.py
+      - name: Check every generated witness with actual Lean 4.28
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify_countermodel_lean.mjs | tee countermodel-lean-results.log
+          test "$(grep -c '^LEAN_KERNEL_VERIFIED' countermodel-lean-results.log)" -eq 7
+          echo "COUNTERMODEL_LEAN_EXACT_SHA_PASS=$(git rev-parse HEAD)"
+      - name: Retain formal test log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: countermodel-lean-${{ github.run_id }}-${{ github.run_attempt }}
+          path: countermodel-lean-results.log
+          if-no-files-found: ignore
+          retention-days: 14
