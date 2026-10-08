@@ -25,7 +25,9 @@ test('source-derived two-edit challenge set is deterministic and all 18 are genu
  for(const e of a.examples){
   assert.ok(finiteRepairCheck(e.id,e.mutated_candidate).countermodel);
   assert.equal(e.initial_finite_countermodel.n>=1,true);
-  for(const move of listRepairMoves(e.id,e.mutated_candidate,240))
+  const allMoves=listRepairMoves(e.id,e.mutated_candidate,600);
+  assert.ok(allMoves.length<240,'one-step grammar not truncated: '+e.id);
+  for(const move of allMoves)
    assert.equal(finiteRepairCheck(e.id,move.formula).equivalent_within_bound,false,
     'not genuinely a two-edit challenge: '+e.id);
  }
