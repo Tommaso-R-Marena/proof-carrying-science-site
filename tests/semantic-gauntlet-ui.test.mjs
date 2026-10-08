@@ -10,6 +10,8 @@ test('playable finite-model page has accessible controls and honest scope',()=>{
  assert.match(js,/gauntletVerdict\(current,world\)/);
  assert.match(js,/finiteOracle\(current\)/);
  assert.match(js,/URL\.createObjectURL/);
+ assert.match(js,/attemptedTaskIds\.add\(current\.id\)/);
+ assert.match(js,/correctTaskIds\.add\(current\.id\)/);
  assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|navigator\.sendBeacon/);
 });
 test('Arena links to the 60-case benchmark without promising Lean',()=>{
