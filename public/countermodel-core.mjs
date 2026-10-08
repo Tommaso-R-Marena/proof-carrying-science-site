@@ -92,7 +92,7 @@ export function replayCountermodelSession(input){
     feedbackSeen=true;
   }else throw Error('Unknown or unavailable action');
   const after=countermodelVerdict(m.id,w);
-  steps.push({index:k,action:{...a},domain_size:w.n,source_true:after.left,proposal_true:after.right,
+  steps.push({index:k,action:{...a},world:structuredClone(w),domain_size:w.n,source_true:after.left,proposal_true:after.right,
    counterexample:after.counterexample,checker_feedback_exposed:feedbackSeen,
    received_checker_response:kind==='check',assisted:hints>0,reward});
  }
