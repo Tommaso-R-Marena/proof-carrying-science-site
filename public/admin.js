@@ -357,6 +357,8 @@
         </p>
         <div class="actions"><button class="button secondary" data-inspect-files="${esc(s.id)}">Inspect source/evidence files</button></div>
         <div id="pcsFiles-${esc(s.id)}" class="pcs-review-files"></div>
+        <div class="actions"><button class="button secondary" data-peer-reviews="${esc(s.id)}">Inspect independent L5/L6 reviews</button></div>
+        <div id="pcsPeer-${esc(s.id)}" class="pcs-review-files" aria-live="polite"></div>
         <details><summary>Independent verification</summary><p>${esc(s.verification_note)}</p></details>
         <details><summary>Scope and remaining assumptions</summary><p>${esc(s.understanding_note)}</p></details>
         ${s.ai_used?`<details><summary>AI disclosure</summary><p>${esc(s.ai_tools||"AI used; tool not stated")}</p></details>`:""}
@@ -377,6 +379,23 @@
       </article>`;
     }).join("");
     all("[data-inspect-files]",target).forEach(b=>b.addEventListener("click",()=>inspectSubmissionFiles(b.dataset.inspectFiles)));
+    all("[data-peer-reviews]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const id=button.dataset.peerReviews;
+      const parent=document.getElementById("pcsPeer-"+id);
+      button.disabled=true;parent.textContent="Reading audited technical recommendations…";
+      try{
+        const data=await api("/api/admin/submissions/"+encodeURIComponent(id)+"/peer-reviews");
+        if(!data.reviews?.length){parent.textContent="No qualified peer reviews recorded yet. Owner decisions require independent judgment and explicit rationale.";return;}
+        parent.innerHTML=data.reviews.map(r=>
+          '<article class="panel"><strong>'+esc(r.display_name)+" · L"+esc(r.is_owner?7:r.level)+
+          " · "+esc(r.decision)+'</strong><p>'+esc(r.rationale)+'</p><small>CI pinned: '+
+          esc(r.ci_verified?String(r.ci_head_sha||"").slice(0,12):"not verified")+
+          " · "+esc(fmt(r.created_at))+"</small></article>"
+        ).join("");
+      }catch(e){parent.textContent="Could not read peer reviews: "+e.message;}
+      finally{button.disabled=false;}
+    }));
+
     all("[data-git-stage]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitStage,"stage")));
     all("[data-git-checks]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitChecks,"checks")));
     all("[data-git-merge]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitMerge,"merge")));
