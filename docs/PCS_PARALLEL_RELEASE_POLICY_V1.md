@@ -32,3 +32,13 @@ node scripts/assemble_arena_research_release.mjs --out-dir private-output \
 8. Promote release only on a reviewer-approved, authenticated exact SHA. Keep CF website token segregated from untrusted public core CI.
 
 **Current status:** This branch is a DRAFT demonstration + tooling implementation, not a production release. GitHub's required checks on the predecessor website branch were previously SKIPPED. No claim of production readiness is made.
+
+## New authenticated online release check
+
+scripts/verify_live_release_checks.mjs fetches current check runs from GitHub's official authenticated API for the explicit full commit SHA. It requires the same three completed-success checks as the offline policy: site-check, site-contract, and countermodel-lean-kernel. The new workflow .github/workflows/pcs-release-readiness.yml uses a trusted self-hosted runner, immutable checkout, pinned setup actions, explicit Wrangler install, full npm ci:zero-minutes tests and the authenticated check API. It performs a readiness review only; **it does not deploy**.
+
+This workflow deliberately SKIPS if PCS_SELF_HOSTED_CI_ENABLED is not true. An unavailable runner, missing check, or skipped Lean job blocks the release. GitHub required-branch-status policy and independent codeowner review still must be configured outside this source PR. Raw copied check JSON cannot authorize production changes.
+
+## Privacy and exact bytes
+
+The research-data assembler's SHA-256 is computed from the exact pretty-printed UTF-8 bytes written to each output file, including its final newline, not from a differently serialized object. Generated datasets are PRIVATE, automated-screening-only candidates requiring manual privacy review. A successful parser does not establish comprehensive anonymization, permission to train, or withdrawal of previously exported data. The source-specific replay checkers remain distinct from actual Lean.
