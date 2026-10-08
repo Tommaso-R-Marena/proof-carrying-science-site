@@ -1270,5 +1270,35 @@
     }catch(e){status.textContent="ProofLab export unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
+
+  $("#adminMeaningExport")?.addEventListener("click",async()=>{
+    const button=$("#adminMeaningExport"),status=$("#adminMeaningExportMessage");
+    button.disabled=true;status.textContent="Exporting replayed semantic candidates and reviewed explanation labels…";
+    try{
+      let all=[],offset=0,pages=0,meta=null;
+      while(pages<100){
+        const result=await api("/api/admin/arena/meaning/dataset?offset="+offset);
+        if(result.format!=="pcs-meaning-forge-consented-reviewed-v1"||
+           !Array.isArray(result.entries))throw Error("Unexpected semantic data schema.");
+        meta||=result;all.push(...result.entries);
+        if(result.next_offset===null)break;
+        if(!Number.isInteger(result.next_offset)||result.next_offset<=offset)
+          throw Error("Invalid research export cursor.");
+        offset=result.next_offset;pages++;
+      }
+      if(pages>=100)throw Error("Export page safety limit reached.");
+      const out={format:meta.format,version:meta.version,
+        scope:meta.scope,exclusions:meta.exclusions,limitations:meta.limitations,entries:all};
+      const blob=new Blob([JSON.stringify(out,null,2)+"\n"],{type:"application/json"});
+      const u=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=u;a.download="pcs-meaning-forge-replay-reviewed-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);
+      const approved=all.filter(x=>x.free_text_training_eligible).length;
+      status.textContent="Exported "+all.length+" consented structural traces; "+
+        approved+" human explanation(s) have two independent faithful review labels. "+
+        "Treat the rest as structured-game data only, not text ground truth.";
+    }catch(error){status.textContent="Meaning Forge export unavailable: "+error.message;}
+    finally{button.disabled=false;}
+  });
   document.addEventListener("DOMContentLoaded",load);
 })();
