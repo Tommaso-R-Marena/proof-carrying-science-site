@@ -33,7 +33,7 @@ export function prepareCountermodelDataset(doc){
  }
  return {format:COUNTERMODEL_DATASET,authority:'NONE',data_origin:'consented game choices with deterministic finite-model server replay',
   labels:'recomputed bounded first-order semantics; NOT Lean tactic trajectories',privacy:'no user IDs, emails, IPs, timestamps or notes',
-  train_eval_policy:'Held-out mission IDs and quantifier/binding families; avoid prompt/template overlap before claiming generalization',
+  train_eval_policy:'Held-out mission IDs only; shared syntax can leak, so this split does NOT establish compositional generalization',
   stats:{episodes:episodes.length,training:episodes.filter(e=>e.split==='training').length,evaluation:episodes.filter(e=>e.split==='evaluation').length,
    assisted:episodes.filter(e=>e.assisted_by_hint).length},episodes};
 }
