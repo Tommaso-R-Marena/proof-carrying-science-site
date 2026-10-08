@@ -77,7 +77,7 @@ def static_campaign(c: Campaign) -> None:
     ])
     c.check(
         "admin APIs gated before contributor session",
-        worker.index('if (path.startsWith("/api/admin/"))') < worker.index("const user=await requireUser(request,env);"),
+        worker[worker.index("async function handleApi("):].index('if (path.startsWith("/api/admin/"))') < worker[worker.index("async function handleApi("):].index("const user=await requireUser(request,env);"),
         "admin router executes before contributor-session router",
     )
     c.require("owner invariants", worker + m1, [

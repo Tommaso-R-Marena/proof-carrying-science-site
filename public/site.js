@@ -76,6 +76,7 @@
     addMenu("Play & help", [
       {heading:"PLAY — NO BACKGROUND REQUIRED",links:[
         ["arena.html","PCS Arena · choose a game"],
+        ["meaning-forge.html","Meaning Forge · English ↔ Lean interpretation"],
         ["arena-safety-forge.html","Safety Forge · break and repair a toy agent"],
         ["prooflab.html","ProofLab · plan how to check real theorems"],
         ["forge-duel.html","Shield Duel · quick policy tournament"],
@@ -83,6 +84,8 @@
       ]},
       {heading:"DO REAL WORK",links:[
         ["tasks.html","Needed tasks"],
+        ["workboard.html","My work pipeline · track a submission"],
+        ["reviewer-desk.html","Reviewer Desk · qualified semantic review"],
         ["contribute.html","How to contribute"],
         ["roles.html","Ongoing roles"],
         ["task-graph.html","Task dependency map"]
@@ -136,6 +139,7 @@
     ["Proof Quest","arena-proof-quest.html","Learn prerequisite logic through puzzles","Play"],
     ["ProofLab","prooflab.html","40 indexed Lean targets, 22 source-grounded playable missions","Play"],
     ["PCS Arena","arena.html","Games and research challenges","Play"],
+    ["Meaning Forge","meaning-forge.html","Repair English/Lean quantifiers, negation and logical structure","Play"],
     ["Research preview","research-preview.html","Editable local AI and science checks","Try PCS"],
     ["Guided submission","guided-submission.html?demo=1","Project to evidence, step by step","Try PCS"],
     ["Package inspector","package-inspector.html","Open and inspect a PCS package","Try PCS"],
@@ -144,6 +148,8 @@
     ["v0.6 verifier","mvp.html","Command-line package verification workflow","Try PCS"],
     ["Legacy threat lab","demo.html","Frozen v0.5 adversarial parity simulation","Try PCS"],
     ["Needed tasks","tasks.html","Live, curated volunteer work","Get involved"],
+    ["My work pipeline","workboard.html","Track assignments, checks, review and promotion","Get involved"],
+    ["Reviewer Desk","reviewer-desk.html","L5/L6 independent research annotation review","Get involved"],
     ["Contributor roles","roles.html","Longer-term responsibilities","Get involved"],
     ["Contribute","contribute.html","Join as a new contributor","Get involved"],
     ["Task dependency map","task-graph.html","Understand task ordering and blockers","Get involved"],

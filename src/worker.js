@@ -1,3 +1,4 @@
+import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
 import {DUEL_VERSION,evaluateDuelSession} from "../public/forge-duel-core.mjs";
@@ -3359,7 +3360,7 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
   if (!["accept","needs_changes","reject"].includes(decision)) throw new ApiError(400,"Invalid submission decision.","bad_submission_decision");
   if (note.length<20) throw new ApiError(400,"Give a review rationale (at least 20 characters).","review_note_required");
   const row=await env.COMMONS_DB.prepare(
-    `SELECT s.*,r.task_id,r.id AS task_request_id,t.title,t.min_level,t.calibrates_skill,u.email,u.email_verified,u.display_name,u.level
+    `SELECT s.*,r.task_id,r.id AS task_request_id,t.title,t.min_level,t.calibrates_skill,t.integration_target,u.email,u.email_verified,u.display_name,u.level
      FROM submissions s JOIN task_requests r ON r.id=s.request_id JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=s.user_id
      WHERE s.id=?`
   ).bind(submissionId).first();
@@ -3377,6 +3378,15 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
     });}
     catch(e){throw new ApiError(502,"CI verification unavailable: "+String(e.message).slice(0,160),"github_ci_unavailable");}
     if(!check.verified)throw new ApiError(409,"Required PCS Submission Verification is not green. Ask for improvements or rerun CI.","github_ci_not_passed");
+    if(!isOwner(admin)){
+      const peer=await env.COMMONS_DB.prepare(
+        "SELECT COUNT(*) AS n FROM submission_peer_reviews WHERE submission_id=? "+
+        "AND decision='recommend_accept' AND ci_verified=1 AND ci_head_sha=?"
+      ).bind(row.id,check.head_sha).first();
+      if(Number(peer?.n||0)<1)
+        throw new ApiError(409,"A qualified L5/L6 independent positive review of this CI head is required before delegated admin acceptance.","qualified_peer_review_required");
+    }
+
   }
   const status=decision==="accept"?"accepted":decision==="needs_changes"?"needs_changes":"rejected";
   const reviewed=await env.COMMONS_DB.prepare(
@@ -3774,6 +3784,213 @@ async function exportProofLabDataset(request,env,admin){
     next_offset:records.length===25?offset+25:null});
 }
 
+
+
+// Qualified technical reviewer path: recommendation only, NOT production authority.
+async function reviewerSubmissionQueue(request,env,reviewer){
+ await rateLimit(request,env,"reviewer-submissions",40,60);
+ const rows=await env.COMMONS_DB.prepare(
+  "SELECT s.id,s.user_id,s.status,s.summary,s.verification_note,s.understanding_note,"+
+  "s.github_stage_state,s.github_pr_url,s.github_pr_number,s.submitted_at,r.task_id,"+
+  "t.title,t.acceptance_criteria,t.verification_rule,t.integration_target "+
+  "FROM submissions s JOIN task_requests r ON r.id=s.request_id "+
+  "JOIN tasks t ON t.id=r.task_id "+
+  "WHERE s.status IN ('submitted','needs_changes') AND s.user_id<>? "+
+  "AND NOT EXISTS (SELECT 1 FROM submission_peer_reviews p "+
+  "WHERE p.submission_id=s.id AND p.reviewer_user_id=?) "+
+  "ORDER BY s.submitted_at ASC LIMIT 30"
+ ).bind(reviewer.id,reviewer.id).all();
+ return json({ok:true,scope:"Independent technical recommendations; final acceptance and merging remain governance decisions.",
+   entries:(rows.results||[]).map(({user_id,...publicRow})=>publicRow)},200,{"cache-control":"no-store"});
+}
+async function reviewerSubmissionFiles(request,env,reviewer,id){
+ await rateLimit(request,env,"reviewer-files",40,60);
+ const row=await env.COMMONS_DB.prepare(
+  "SELECT s.id,s.user_id,s.status,r.task_id FROM submissions s "+
+  "JOIN task_requests r ON r.id=s.request_id WHERE s.id=?"
+ ).bind(id).first();
+ if(!row)throw new ApiError(404,"Submission not found.","submission_missing");
+ if(row.user_id===reviewer.id)throw new ApiError(403,"Cannot review your own work.","self_review_forbidden");
+ if(!["submitted","needs_changes"].includes(row.status))throw new ApiError(409,"Submission no longer active.","submission_inactive");
+ const files=await linkedSubmissionFiles(env,id);
+ await audit(env,reviewer.id,"qualified_reviewer_inspected_files","submission",id,{count:files.length});
+ return json({ok:true,task_id:row.task_id,files},200,{"cache-control":"no-store"});
+}
+async function reviewerSubmissionVote(request,env,reviewer,id){
+ await rateLimit(request,env,"reviewer-votes",24,60);
+ const body=await readBody(request),decision=String(body?.decision||"");
+ const rationale=cleanText(body?.rationale,2500);
+ if(!["recommend_accept","request_changes","recommend_reject"].includes(decision)||rationale.length<40)
+  throw new ApiError(400,"Choose an opinion and give a concrete 40+ character review rationale.","bad_review_vote");
+ const row=await env.COMMONS_DB.prepare(
+  "SELECT s.*,r.task_id,t.integration_target FROM submissions s "+
+  "JOIN task_requests r ON r.id=s.request_id JOIN tasks t ON t.id=r.task_id WHERE s.id=?"
+ ).bind(id).first();
+ if(!row)throw new ApiError(404,"Submission not found.","submission_missing");
+ if(row.user_id===reviewer.id)throw new ApiError(403,"Cannot review your own work.","self_review_forbidden");
+ if(!["submitted","needs_changes"].includes(row.status))throw new ApiError(409,"Submission no longer open for reviews.","review_inactive");
+ let checked={verified:false,head_sha:null};
+ if(decision==="recommend_accept"&&["core","site"].includes(row.integration_target)){
+  const files=await linkedSubmissionFiles(env,row.id);
+  if(row.github_stage_state!=="staged"||!row.github_pr_number)
+   throw new ApiError(409,"Code artifacts must first be staged for exact-commit CI.","peer_ci_missing");
+  try{checked=await readSubmissionChecks(env,{
+    repo:row.github_repo,branch:row.github_branch,number:row.github_pr_number,
+    taskId:row.task_id,submissionId:row.id,expectedFiles:files
+  });}
+  catch(e){throw new ApiError(502,"CI cannot be independently verified: "+String(e.message).slice(0,180),"peer_ci_error");}
+  if(!checked.verified)throw new ApiError(409,"Cannot recommend acceptance without passed exact-head CI.","peer_ci_not_passed");
+ }
+ const inserted=await env.COMMONS_DB.prepare(
+  "INSERT OR IGNORE INTO submission_peer_reviews "+
+  "(submission_id,reviewer_user_id,decision,rationale,ci_head_sha,ci_verified,created_at) "+
+  "VALUES(?,?,?,?,?,?,?)"
+ ).bind(id,reviewer.id,decision,rationale,checked.head_sha,checked.verified?1:0,nowIso()).run();
+ if(!Number(inserted.meta?.changes||0))throw new ApiError(409,"Your prior review is immutable.","duplicate_peer_review");
+ await audit(env,reviewer.id,"qualified_submission_peer_review","submission",id,{
+  decision,ci_head_sha:checked.head_sha,ci_verified:checked.verified
+ });
+ return json({ok:true,recorded:true,review_role:"recommendation_only",ci_verified:checked.verified});
+}
+async function adminPeerSubmissionReviews(env,admin,id){
+ const s=await env.COMMONS_DB.prepare("SELECT id FROM submissions WHERE id=?").bind(id).first();
+ if(!s)throw new ApiError(404,"Submission not found.","submission_missing");
+ const r=await env.COMMONS_DB.prepare(
+ "SELECT p.decision,p.rationale,p.ci_head_sha,p.ci_verified,p.created_at,"+
+ "u.display_name,u.level,u.is_owner FROM submission_peer_reviews p "+
+ "JOIN users u ON u.id=p.reviewer_user_id WHERE p.submission_id=? ORDER BY p.created_at"
+ ).bind(id).all();
+ await audit(env,admin.id,"admin_viewed_peer_submission_reviews","submission",id,{});
+ return json({ok:true,reviews:r.results||[]},200,{"cache-control":"no-store"});
+}
+
+// PCS Meaning Forge: player-proposed interpretations are untrusted; replay fixes labels.
+const MEANING_CONSENT="pcs-meaning-forge-adult-optin-v1";
+async function meaningDonate(request,env,user){
+  await rateLimit(request,env,"meaning-forge-donate",16,60);
+  if(!Number(user.email_verified))
+    throw new ApiError(403,"Verify your PCS email before donating research.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+     Object.keys(body).sort().join(",")!=="adult_confirmation,consent_training,session"||
+     body.adult_confirmation!==true||body.consent_training!==true)
+    throw new ApiError(400,"Explicit 18+ consent and a valid session are required.","meaning_consent_required");
+  let verified;
+  try{verified=replaySession(body.session);}
+  catch(error){throw new ApiError(400,String(error.message||"Invalid semantics").slice(0,200),"meaning_replay_rejected");}
+  const since=new Date(Date.now()-86400000).toISOString();
+  const n=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM meaning_forge_sessions WHERE user_id=? AND created_at>=?"
+  ).bind(user.id,since).first();
+  if(Number(n?.n||0)>=16)throw new ApiError(429,"Daily donation limit reached. Local play remains available.","meaning_quota");
+  const digest=await sha256Hex(JSON.stringify(body.session));
+  const row=await env.COMMONS_DB.prepare(
+    "INSERT OR IGNORE INTO meaning_forge_sessions "+
+    "(id,user_id,mission_id,mode,replay_digest,protocol_version,verified_replay_json,"+
+    "structurally_correct,consent_version,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)"
+  ).bind(crypto.randomUUID(),user.id,verified.mission_id,verified.mode,digest,MEANING_VERSION,
+    JSON.stringify(verified),verified.structural_correct?1:0,MEANING_CONSENT,nowIso()).run();
+  return json({ok:true,recorded:Number(row.meta?.changes||0)>0,
+    structural_correct:verified.structural_correct,
+    semantic_roundtrip:verified.semantic_roundtrip,
+    score:verified.score,
+    scope:"Server-replayed bounded structural translation; not Lean kernel verification or free-text semantic proof."});
+}
+async function meaningErase(env,user){
+  const x=await env.COMMONS_DB.prepare(
+    "DELETE FROM meaning_forge_sessions WHERE user_id=?"
+  ).bind(user.id).run();
+  await audit(env,user.id,"meaning_forge_research_erased","research","meaning-forge",{
+    removed:Number(x.meta?.changes||0)
+  });
+  return json({ok:true,deleted:Number(x.meta?.changes||0)});
+}
+async function meaningStorage(env){
+ const row=await env.COMMONS_DB.prepare(
+   "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(verified_replay_json)),0) AS bytes FROM meaning_forge_sessions"
+ ).first();
+ return {records:Number(row?.records||0),approx_payload_bytes:Number(row?.bytes||0)};
+}
+async function meaningExport(request,env,admin){
+ if(!isOwner(admin))throw new ApiError(403,"Owner authority required for research export.","owner_required");
+ const raw=new URL(request.url).searchParams.get("offset")||"0";
+ if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid export offset.","bad_cursor");
+ const offset=Number(raw);
+ const r=await env.COMMONS_DB.prepare(
+  "SELECT s.verified_replay_json,"+
+  " (SELECT COUNT(*) FROM meaning_forge_explanation_reviews r WHERE r.session_id=s.id AND r.label='faithful') AS faithful,"+
+  " (SELECT COUNT(*) FROM meaning_forge_explanation_reviews r WHERE r.session_id=s.id AND r.label<>'faithful') AS other"+
+  " FROM meaning_forge_sessions s WHERE s.protocol_version=? ORDER BY s.created_at,s.id LIMIT 25 OFFSET ?"
+ ).bind(MEANING_VERSION,offset).all();
+ const rows=r.results||[];
+ const entries=rows.map(r=>{
+   const v=JSON.parse(r.verified_replay_json),accepted=Number(r.faithful)>=2&&Number(r.other)===0;
+   return {...v,explanation:accepted?v.explanation:null,
+    explanation_label:accepted?"independently_reviewed_faithful":"not_approved_for_training",
+    independent_faithful_reviews:Number(r.faithful||0),conflicting_reviews:Number(r.other||0),
+    free_text_training_eligible:accepted};
+ });
+ return json({ok:true,format:"pcs-meaning-forge-consented-reviewed-v1",version:MEANING_VERSION,
+  scope:"Bounded one-variable Lean proposition grammar; no arbitrary Lean parsing and no Lean kernel execution.",
+  exclusions:["user_id","email","IP address","name","precise timestamp","unreviewed free text"],
+  limitations:["Generated oracle is a PCS-curated synthetic educational target, not a human-language truth proof.",
+   "Structured correctness is replay-checked by PCS game code, not yet Lean verified.",
+   "Written explanations become model-training eligible only after two independent faithful reviews with no conflicts.",
+   "Consent is adult self-attested and cannot independently establish participant identity.",
+   "Offline exports may need independent deletion handling if consent is withdrawn."],
+  entries,next_offset:rows.length===25?offset+25:null},200,{"cache-control":"no-store"});
+}
+async function requireMeaningReviewer(request,env){
+ const user=await requireUser(request,env);
+ if(isOwner(user))return user;
+ if(!Number(user.email_verified)||Number(user.level)<5)
+  throw new ApiError(403,"Verified L5/L6 reviewer level required.","reviewer_level_required");
+ const skill=await env.COMMONS_DB.prepare(
+   "SELECT status FROM skills WHERE user_id=? AND skill='review'"
+ ).bind(user.id).first();
+ if(skill?.status!=="verified")
+  throw new ApiError(403,"Your review competency must be independently verified.","reviewer_skill_required");
+ return user;
+}
+async function meaningReviewQueue(env,user){
+ const rows=await env.COMMONS_DB.prepare(
+   "SELECT s.id,s.mission_id,s.mode,s.verified_replay_json,s.structurally_correct "+
+   "FROM meaning_forge_sessions s WHERE s.user_id<>? AND NOT EXISTS"+
+   " (SELECT 1 FROM meaning_forge_explanation_reviews r WHERE r.session_id=s.id AND r.reviewer_user_id=?)"+
+   " ORDER BY s.created_at ASC LIMIT 25"
+ ).bind(user.id,user.id).all();
+ return json({ok:true,scope:"Review human prose independently; no model-generated grade.",
+  entries:(rows.results||[]).map(row=>{
+   const r=JSON.parse(row.verified_replay_json);
+   return {id:row.id,mission_id:row.mission_id,mode:row.mode,
+     given:r.given,oracle:r.oracle,final_ir:r.final_ir,structural_correct:Boolean(row.structurally_correct),
+     explanation:r.explanation,notes:"Evaluate whether the prose faithfully describes FINAL_IR, not only the target."};
+  })});
+}
+async function meaningReview(request,env,user,id){
+ await rateLimit(request,env,"meaning-review",30,60);
+ if(!/^[0-9a-f-]{36}$/i.test(id))
+  throw new ApiError(400,"Invalid review item.","bad_review_id");
+ const body=await readBody(request);
+ const label=String(body?.label||""),rationale=cleanText(body?.rationale,1500);
+ if(!["faithful","unfaithful","ambiguous","unsupported"].includes(label)||rationale.length<20)
+  throw new ApiError(400,"Choose a review label and explain it in 20+ characters.","bad_review");
+ const subject=await env.COMMONS_DB.prepare(
+   "SELECT user_id FROM meaning_forge_sessions WHERE id=?"
+ ).bind(id).first();
+ if(!subject)throw new ApiError(404,"Research annotation not found.","review_not_found");
+ if(subject.user_id===user.id)
+  throw new ApiError(403,"You cannot review your own contribution.","self_review_forbidden");
+ const wrote=await env.COMMONS_DB.prepare(
+   "INSERT OR IGNORE INTO meaning_forge_explanation_reviews"+
+   "(session_id,reviewer_user_id,label,rationale,reviewed_at) VALUES(?,?,?,?,?)"
+ ).bind(id,user.id,label,rationale,nowIso()).run();
+ if(!Number(wrote.meta?.changes||0))
+  throw new ApiError(409,"Your existing review is immutable; request a separate correction.","review_already_recorded");
+ await audit(env,user.id,"meaning_explanation_reviewed","meaning_forge_session",id,{label});
+ return json({ok:true,recorded:true,scope:"Human judgment receipt; does not establish Lean/kernel validity."});
+}
+
 // Forge Duel captures deliberately volunteered human policy comparison labels.
 // The server regenerates both policies and all simulated verdicts from the seed;
 // it NEVER accepts a user's claimed winning policy, reward or checker result.
@@ -3916,6 +4133,7 @@ async function adminArenaStorage(env,admin){
     source_of_truth:"Verified, consented adult research submissions only; anonymous gameplay is not collected.",
     databases:{commons:"pcs-commons"},
     collections:{
+      meaning_forge:await meaningStorage(env),
       proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
       safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)},
       forge_duel:{rows:Number(duel?.records||0),approx_payload_bytes:Number(duel?.payload_bytes||0)},
@@ -3990,6 +4208,7 @@ async function handleApi(request, env) {
   if (method==="GET" && path==="/api/task-graph") return json({ok:true,...await publicTaskGraph(env)});
   if (method==="GET" && path==="/api/roles") return listRoles(request,env);
   if (method==="GET" && path==="/api/challenges") return listChallenges(request,env);
+  if (method==="GET" && path==="/api/arena/meaning/missions") return json({ok:true,version:MEANING_VERSION,missions:MISSIONS.map(publicMission)});
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
@@ -3997,6 +4216,9 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/forge-duel/dataset") return exportForgeDuelSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/prooflab/dataset") return exportProofLabDataset(request,env,admin);
+    if (method==="GET" && path==="/api/admin/arena/meaning/dataset") return meaningExport(request,env,admin);
+    const peerListingMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/peer-reviews$/);
+    if(method==="GET"&&peerListingMatch)return adminPeerSubmissionReviews(env,admin,decodeURIComponent(peerListingMatch[1]));
     if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/overview") return adminOverview(request,env);
     if (method==="GET" && path==="/api/admin/audit") return adminAuditFeed(request,env);
@@ -4079,6 +4301,8 @@ async function handleApi(request, env) {
   if (method==="POST" && challengeMatch) return submitChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
   if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
+  if (method==="POST" && path==="/api/arena/meaning/donate") return meaningDonate(request,env,user);
+  if (method==="POST" && path==="/api/arena/meaning/erase") return meaningErase(env,user);
   if (method==="POST" && path==="/api/arena/prooflab/donate") return donateProofLabSession(request,env,user);
   if (method==="POST" && path==="/api/arena/prooflab/erase") return eraseProofLabSessions(env,user);
   if (method==="POST" && path==="/api/arena/forge-duel/donate") return donateForgeDuelSession(request,env,user);
@@ -4102,6 +4326,16 @@ async function handleApi(request, env) {
     return json({ok:true},200,{"set-cookie":clearSessionCookie()});
   }
 
+  if (method==="GET" && path==="/api/reviewer/submissions/queue") return reviewerSubmissionQueue(request,env,await requireMeaningReviewer(request,env));
+  let peerReviewMatch=path.match(/^\/api\/reviewer\/submissions\/([^/]+)\/(files|decision)$/);
+  if(peerReviewMatch){
+    const reviewer=await requireMeaningReviewer(request,env),id=decodeURIComponent(peerReviewMatch[1]);
+    if(method==="GET"&&peerReviewMatch[2]==="files")return reviewerSubmissionFiles(request,env,reviewer,id);
+    if(method==="POST"&&peerReviewMatch[2]==="decision")return reviewerSubmissionVote(request,env,reviewer,id);
+  }
+  if (method==="GET" && path==="/api/reviewer/meaning/queue") return meaningReviewQueue(env,await requireMeaningReviewer(request,env));
+  let meaningReviewMatch=path.match(/^\/api\/reviewer\/meaning\/([^/]+)\/review$/);
+  if (method==="POST" && meaningReviewMatch) return meaningReview(request,env,await requireMeaningReviewer(request,env),decodeURIComponent(meaningReviewMatch[1]));
   const contributorCheckMatch=path.match(/^\/api\/submissions\/([^/]+)\/checks$/);
   if(method==="GET" && contributorCheckMatch)
     return contributorSubmissionChecks(request,env,user,decodeURIComponent(contributorCheckMatch[1]));

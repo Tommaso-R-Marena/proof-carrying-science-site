@@ -357,6 +357,8 @@
         </p>
         <div class="actions"><button class="button secondary" data-inspect-files="${esc(s.id)}">Inspect source/evidence files</button></div>
         <div id="pcsFiles-${esc(s.id)}" class="pcs-review-files"></div>
+        <div class="actions"><button class="button secondary" data-peer-reviews="${esc(s.id)}">Inspect independent L5/L6 reviews</button></div>
+        <div id="pcsPeer-${esc(s.id)}" class="pcs-review-files" aria-live="polite"></div>
         <details><summary>Independent verification</summary><p>${esc(s.verification_note)}</p></details>
         <details><summary>Scope and remaining assumptions</summary><p>${esc(s.understanding_note)}</p></details>
         ${s.ai_used?`<details><summary>AI disclosure</summary><p>${esc(s.ai_tools||"AI used; tool not stated")}</p></details>`:""}
@@ -377,6 +379,23 @@
       </article>`;
     }).join("");
     all("[data-inspect-files]",target).forEach(b=>b.addEventListener("click",()=>inspectSubmissionFiles(b.dataset.inspectFiles)));
+    all("[data-peer-reviews]",target).forEach(button=>button.addEventListener("click",async()=>{
+      const id=button.dataset.peerReviews;
+      const parent=document.getElementById("pcsPeer-"+id);
+      button.disabled=true;parent.textContent="Reading audited technical recommendations…";
+      try{
+        const data=await api("/api/admin/submissions/"+encodeURIComponent(id)+"/peer-reviews");
+        if(!data.reviews?.length){parent.textContent="No qualified peer reviews recorded yet. Owner decisions require independent judgment and explicit rationale.";return;}
+        parent.innerHTML=data.reviews.map(r=>
+          '<article class="panel"><strong>'+esc(r.display_name)+" · L"+esc(r.is_owner?7:r.level)+
+          " · "+esc(r.decision)+'</strong><p>'+esc(r.rationale)+'</p><small>CI pinned: '+
+          esc(r.ci_verified?String(r.ci_head_sha||"").slice(0,12):"not verified")+
+          " · "+esc(fmt(r.created_at))+"</small></article>"
+        ).join("");
+      }catch(e){parent.textContent="Could not read peer reviews: "+e.message;}
+      finally{button.disabled=false;}
+    }));
+
     all("[data-git-stage]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitStage,"stage")));
     all("[data-git-checks]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitChecks,"checks")));
     all("[data-git-merge]",target).forEach(b=>b.addEventListener("click",()=>githubSubmissionAction(b.dataset.gitMerge,"merge")));
@@ -1268,6 +1287,36 @@
       document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(link);
       status.textContent="Exported "+entries.length+" training graph sessions. No held-out Lean benchmark tasks included.";
     }catch(e){status.textContent="ProofLab export unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
+  $("#adminMeaningExport")?.addEventListener("click",async()=>{
+    const button=$("#adminMeaningExport"),status=$("#adminMeaningExportMessage");
+    button.disabled=true;status.textContent="Exporting replayed semantic candidates and reviewed explanation labels…";
+    try{
+      let all=[],offset=0,pages=0,meta=null;
+      while(pages<100){
+        const result=await api("/api/admin/arena/meaning/dataset?offset="+offset);
+        if(result.format!=="pcs-meaning-forge-consented-reviewed-v1"||
+           !Array.isArray(result.entries))throw Error("Unexpected semantic data schema.");
+        meta||=result;all.push(...result.entries);
+        if(result.next_offset===null)break;
+        if(!Number.isInteger(result.next_offset)||result.next_offset<=offset)
+          throw Error("Invalid research export cursor.");
+        offset=result.next_offset;pages++;
+      }
+      if(pages>=100)throw Error("Export page safety limit reached.");
+      const out={format:meta.format,version:meta.version,
+        scope:meta.scope,exclusions:meta.exclusions,limitations:meta.limitations,entries:all};
+      const blob=new Blob([JSON.stringify(out,null,2)+"\n"],{type:"application/json"});
+      const u=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=u;a.download="pcs-meaning-forge-replay-reviewed-"+new Date().toISOString().slice(0,10)+".json";
+      document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);
+      const approved=all.filter(x=>x.free_text_training_eligible).length;
+      status.textContent="Exported "+all.length+" consented structural traces; "+
+        approved+" human explanation(s) have two independent faithful review labels. "+
+        "Treat the rest as structured-game data only, not text ground truth.";
+    }catch(error){status.textContent="Meaning Forge export unavailable: "+error.message;}
     finally{button.disabled=false;}
   });
   document.addEventListener("DOMContentLoaded",load);
