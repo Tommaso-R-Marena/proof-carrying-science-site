@@ -32,7 +32,7 @@ $('cmSessionExport').addEventListener('click',()=>{
  const record={format:'pcs-countermodel-local-trace-v1',
   scope:'unverified player-recorded action trace; replay on PCS Worker required',
   version:COUNTERMODEL_VERSION,mission_id:current.id,actions:history};
- const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)+'\\n'],{type:'application/json'}));
+ const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)+'\n'],{type:'application/json'}));
  const link=document.createElement('a');link.href=url;link.download='pcs-countermodel-'+current.id+'-local.json';
  document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
  message('Downloaded your private search notebook. It is not a PCS scientific or Lean certificate.');
