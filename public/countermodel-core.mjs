@@ -110,3 +110,39 @@ export function replayCountermodelSession(input){
   steps,checks,hints,edits,solved,final_verified:finalVerified,score,
   training_use:'replay-checked finite-model search choices only; model suggestions and human independence unverified'};
 }
+
+// Export a concrete Lean 4 proof obligation, never a forged success certificate.
+// The generated source must be compiled and kernel-checked on an independent Lean host.
+function leanFormula(node){
+ switch(node.op){
+ case 'pred':return `${node.p} ${node.x}`;
+ case 'rel':return `R ${node.x} ${node.y}`;
+ case 'not':return `(¬ ${leanFormula(node.f)})`;
+ case 'and':return `(${leanFormula(node.a)} ∧ ${leanFormula(node.b)})`;
+ case 'or':return `(${leanFormula(node.a)} ∨ ${leanFormula(node.b)})`;
+ case 'imp':return `(${leanFormula(node.a)} → ${leanFormula(node.b)})`;
+ case 'forall':return `(∀ ${node.x} : Agent, ${leanFormula(node.f)})`;
+ case 'exists':return `(∃ ${node.x} : Agent, ${leanFormula(node.f)})`;
+ default:throw Error('Unsupported Lean formula');
+ }
+}
+export function exportLeanCountermodel(missionId,world){
+ const mission=countermodelMission(missionId);if(!mission)throw Error('Unknown mission');validateWorld(world);
+ const result=countermodelVerdict(missionId,world);if(!result.counterexample)throw Error('Only actual checked countermodels can be exported');
+ const disjunction=(terms)=>terms.length?terms.map(t=>`(${t})`).join(' ∨ '):'False';
+ const pred=(p)=>`def ${p} (x : Agent) : Prop := ${disjunction(world[p].flatMap((v,i)=>v?[`x = (${i} : Agent)`]:[]))}`;
+ const r=[];for(let i=0;i<world.n;i++)for(let j=0;j<world.n;j++)if(world.R[i][j])r.push(`(x = (${i} : Agent) ∧ y = (${j} : Agent))`);
+ const text=[
+  '-- PCS Arena Countermodel Lab · deterministic generated Lean source',
+  '-- Run: lean thisfile.lean   (using PCS pinned leanprover/lean4:v4.28.0)',
+  '-- This is not a signed PCS authority receipt, nor a proof about a real deployed agent.',
+  'namespace PCSArenaCountermodel',
+  `abbrev Agent := Fin ${world.n}`,
+  pred('P'),pred('Q'),`def R (x y : Agent) : Prop := ${disjunction(r)}`,
+  `theorem exhibited_meaning_difference : ¬ (${leanFormula(mission.a)} ↔ ${leanFormula(mission.b)}) := by`,
+  '  decide',
+  'end PCSArenaCountermodel',''
+ ].join('\n');
+ return {file_name:`PCS_Countermodel_${mission.id.replace(/[^a-z0-9-]/g,'_')}.lean`,
+  lean_source:text,verified_finite_model:true,lean_kernel_checked:false,pcs_authoritative:false};
+}
