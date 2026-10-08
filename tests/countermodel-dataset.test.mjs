@@ -11,7 +11,7 @@ test('deduplicates identical episodes and is reproducible',()=>{const d=fixture(
 test('training state includes concrete world but hides oracle checker labels until check',()=>{
  const prepared=prepareCountermodelDataset(fixture());
  const [before,after]=prepared.episodes[0].steps;
- assert.deepEqual(before.state.world.P,[true]);
+ assert.deepEqual(before.state.world.P,[false]);assert.deepEqual(before.next_state.world.P,[true]);
  assert.equal(before.checker_labels.source_true,false);
  assert.equal(before.checker_labels.label_exposed_to_player,false);
  assert.equal(after.checker_labels.label_exposed_to_player,true);
@@ -25,4 +25,22 @@ test('training episodes carry the exact symbolic semantics needed to learn a cou
  assert.match(e.semantic_input.original_lean,/∀/);
  assert.match(e.semantic_input.proposed_lean,/∀/);
  assert.equal(e.authority,'FINITE_MODEL_CHECKER_ONLY');
+});
+
+
+test('RL state is pre-action; checker feedback cannot leak before its check',()=>{
+ const s={version:COUNTERMODEL_VERSION,mission_id:'implication-flip',actions:[{type:'toggle',p:'P',i:0},{type:'check'},{type:'check'}]};
+ const out=prepareCountermodelDataset(fixture(s));const [toggle,first,repeat]=out.episodes[0].steps;
+ assert.equal(toggle.state.world.P[0],false);assert.equal(toggle.next_state.world.P[0],true);
+ assert.equal(toggle.state.checker_feedback_exposed,false);
+ assert.equal(first.state.checker_feedback_exposed,false);assert.equal(first.next_state.checker_feedback_exposed,true);
+ assert.equal(first.reward,10);assert.equal(repeat.state.checker_feedback_exposed,true);
+ assert.ok(repeat.reward<=0,'no infinite rewards from repeated successful checks');
+});
+test('learning action cannot expose hint before the hint was requested',()=>{
+ const s={version:COUNTERMODEL_VERSION,mission_id:'implication-flip',actions:[{type:'hint'},{type:'toggle',p:'P',i:0},{type:'check'}]};
+ const d=prepareCountermodelDataset(fixture(s)).episodes[0].steps;
+ assert.equal(d[0].state.hint_used_before_action,false);
+ assert.equal(d[0].next_state.hint_used,true);
+ assert.equal(d[1].state.hint_used_before_action,true);
 });
