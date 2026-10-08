@@ -17,9 +17,26 @@ function draw(){const v=countermodelVerdict(current.id,world);$('cmTier').textCo
  if(current.kind==='unary'){
   for(let i=0;i<world.n;i++){const c=document.createElement('div');c.className='cm-agent';const h=document.createElement('h3');h.textContent=`Agent ${i+1}`;c.append(h);const actions=document.createElement('div');actions.className='cm-toggles';for(const p of ['P','Q']){const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(world[p][i]));b.textContent=`${world[p][i]?'●':'○'} ${p}(Agent ${i+1})`;b.addEventListener('click',()=>move({type:'toggle',p,i}));actions.append(b);}c.append(actions);dst.append(c);}
  }else{const c=document.createElement('div');c.className='cm-rel';const t=document.createElement('table');const header=document.createElement('tr');header.append(document.createElement('th'));for(let j=0;j<world.n;j++){const th=document.createElement('th');th.textContent=`To ${j+1}`;header.append(th);}t.append(header);for(let i=0;i<world.n;i++){const tr=document.createElement('tr');const th=document.createElement('th');th.textContent=`From ${i+1}`;tr.append(th);for(let j=0;j<world.n;j++){const td=document.createElement('td');const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(world.R[i][j]));b.textContent=world.R[i][j]?'● Yes':'○ No';b.setAttribute('aria-label',`R Agent ${i+1} to Agent ${j+1}`);b.addEventListener('click',()=>move({type:'toggle_relation',i,j}));td.append(b);tr.append(td);}t.append(tr);}c.append(t);dst.append(c);}
+ const traj=$('cmTrajectory');traj.replaceChildren();
+ for(const step of history.map((action,index)=>({action,index}))){
+  const li=document.createElement('li');li.textContent=(step.index+1)+'. '+step.action.type+
+    (step.action.p?' '+step.action.p:'')+
+    (Number.isInteger(step.action.i)?' agent '+(step.action.i+1):'')+
+    (step.action.type==='check'?' — checker feedback requested':'');
+  traj.append(li);
+ }
  $('cmChecks').textContent=history.filter(a=>a.type==='check').length;$('cmEdits').textContent=history.filter(a=>!['check','hint'].includes(a.type)).length;$('cmHints').textContent=history.filter(a=>a.type==='hint').length;$('cmScore').textContent=localBest[current.id]||'—';
  $('cmDonate').disabled=!(Boolean(checked?.final_verified)&&$('cmAdult').checked&&$('cmConsent').checked);$('cmLeanExport').disabled=!Boolean(checked?.final_verified);
 }
+$('cmSessionExport').addEventListener('click',()=>{
+ const record={format:'pcs-countermodel-local-trace-v1',
+  scope:'unverified player-recorded action trace; replay on PCS Worker required',
+  version:COUNTERMODEL_VERSION,mission_id:current.id,actions:history};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)+'\\n'],{type:'application/json'}));
+ const link=document.createElement('a');link.href=url;link.download='pcs-countermodel-'+current.id+'-local.json';
+ document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+ message('Downloaded your private search notebook. It is not a PCS scientific or Lean certificate.');
+});
 function choose(id){const m=COUNTERMODEL_MISSIONS.find(x=>x.id===id);if(!m)return;current=m;history=[];world=initialWorld();checked=null;message('Build a world where the statements disagree, then run the checker.');renderMissions();draw();}
 function move(action){if(history.length>=120){message('This notebook is full. Restart for a fresh trajectory.','miss');return;}
  const proposed=[...history,action];try{
