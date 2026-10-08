@@ -1,5 +1,7 @@
 # Private website integration campaign — 2026-10-08
 
+Current visibility and authorization: see PUBLIC_INTEGRATION_2026-10-08.md. The private-state report below is historical.
+
 The fresh release branch integrates the functionality of PRs #82–#88 and the audit preparation in #89. Public verification-source links from #81 remain blocked until actual core publication and separate website rights clearance. The original PRs remain open drafts pending protected merge. See the core repository's RELEASE_CAMPAIGN_PR_DISPOSITIONS.md for exact heads.
 
 The integrated games and research tooling retain Proof Quest, Safety Forge, Shield Duel, ProofLab, Meaning Forge, Countermodel Lab, Semantic Gauntlet, evaluation firewall, Semantic Repair Lab, Model Foundry and Multi-Step Repair Planner. The compiler bridge and research scores never grant arbitrary scientific authority. The public synthetic repair/model holdouts are explicitly disclosed as public and cannot establish independent external generalization.

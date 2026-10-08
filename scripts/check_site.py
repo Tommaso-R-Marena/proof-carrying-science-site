@@ -61,11 +61,18 @@ for html_path in HTML_FILES:
     text = html_path.read_text(encoding="utf-8")
     if "<html" not in text.lower() or "<title>" not in text.lower():
         errors.append(f"{html_path.name}: missing html/title structure")
-    for ref in ASSET_RE.findall(text):
+    for asset_match in ASSET_RE.finditer(text):
+        ref = asset_match.group(1)
         parsed = urlparse(ref)
         if parsed.scheme in IGNORE_SCHEMES:
             continue
         if parsed.scheme in {"http", "https"}:
+            # Owner-reviewed public source navigation, with no remote asset load.
+            tag_prefix = text[text.rfind("<", 0, asset_match.start()):asset_match.start()]
+            if (ref == "https://github.com/Tommaso-R-Marena/proof-carrying-science"
+                    and re.match(r"<a\s", tag_prefix, re.IGNORECASE)
+                    and asset_match.group(0).lower().startswith("href=")):
+                continue
             if parsed.scheme != "https" or parsed.netloc != PRODUCTION_HOST:
                 errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
                 continue
