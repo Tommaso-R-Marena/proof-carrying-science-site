@@ -4,6 +4,10 @@ function external(url){
  try{const x=new URL(url);return x.protocol==="https:"&&x.hostname==="github.com"?x.href:null;}catch{return null;}
 }
 function link(text,href,cls="button secondary"){const a=node("a",text,cls);a.href=href;return a;}
+function api(path){
+ if(typeof path!=="string"||!path.startsWith("/api/"))throw Error("Same-origin PCS API path required.");
+ return fetch(path,{credentials:"same-origin"});
+}
 function status(s){$("boardStatus").textContent=s;}
 function stages(req,sub){
  const requestDone=["approved","completed"].includes(req.status);
@@ -29,7 +33,7 @@ function badge(label,okay,detail){
 async function checkSubmission(id,msg,button){
  button.disabled=true;msg.textContent="Checking pinned GitHub PR and required verification…";
  try{
-  const r=await fetch("/api/submissions/"+encodeURIComponent(id)+"/checks",{credentials:"same-origin"});
+  const r=await api("/api/submissions/"+encodeURIComponent(id)+"/checks");
   const j=await r.json();if(!r.ok)throw Error(j.message||"Checks unavailable");
   msg.textContent=j.verified?"Required staged contribution check verified for pinned head.":
    "Not verified yet: "+(j.message||j.state||"pending / missing CI");
@@ -65,7 +69,7 @@ function renderWork(req,subs){
 async function refresh(){
  const button=$("boardRefresh");button.disabled=true;status("Reading your private PCS work records…");
  try{
-  const response=await fetch("/api/me",{credentials:"same-origin"});
+  const response=await api("/api/me");
   if(!response.ok)throw Error("PCS account status unavailable.");
   const me=await response.json();
   const root=$("boardItems");root.replaceChildren();
