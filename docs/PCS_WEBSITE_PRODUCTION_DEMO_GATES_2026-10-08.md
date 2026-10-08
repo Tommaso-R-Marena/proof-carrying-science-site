@@ -36,3 +36,13 @@ Training data must carry original structured formulas, proposed meaning, exact b
 Hold out entirely new logical templates/source definitions and real proof projects for final evaluation; **the v1 held-out mission-ID partition does not establish compositional generalization**. Never treat synthetic fixtures as human trajectories. Human independence cannot be inferred from reproducible replay. Report false accepts explicitly.
 
 This ledger is an implementation/verification task list, not a claim that the entire website has been made production-ready.
+
+## 2026-10-08 independent-data-integrity hardening
+
+- The replay now records **pre-action** world, prior hint/checker exposure, action, reward and post-action state separately. Earlier output mislabeled a post-action observation as the model's state; that information leak is corrected before the first production release.
+- Repeated successful `check` actions no longer return another positive reward. A first successful counterexample check receives +10; subsequent successful checks receive a nonpositive reward. This prevents trivial reward-farming trajectories from contaminating an RL dataset.
+- `tests/countermodel-oracle.test.mjs` exhaustively tests the semantic checker against **independently written truth-table formulas** for every supported valuation of 1, 2 and 3 agents across all seven missions. A shared interpreter can no longer certify itself by comparing to its own replay.
+- `scripts/test_countermodel_migration.py` tests the real `0024_countermodel_lab.sql` schema in an isolated SQLite database: invalid counts/digest/statuses, missing users and duplicate sessions reject; account deletion cascades.
+- `tests/countermodel-lean-runner.test.mjs` tests missing/wrong Lean versions fail closed. `.github/workflows/countermodel-lean.yml` adds a separate read-only exact-SHA Lean 4.28 verification job for all seven generated Lean files **only when a trusted isolated self-hosted PCS CI runner is explicitly enabled**. Until then its `skipped` outcome must never be interpreted as successful Lean verification.
+- Locally, **37** game/oracle/dataset/Lean-runner tests passed. SQLite schema test passed. Actual Lean 4.28 verification returned `LEAN_TOOLCHAIN_NOT_VERIFIED` (binary unavailable), which is the correct fail-closed result. Authenticated Worker suite and full website test matrix have **not** been run from a complete checked-out source tree in this environment.
+- To release, additionally verify a real full `npm run ci:zero-minutes` PASS, correct Cloudflare preview, production D1 migration/backup, a verified positive Lean result for the exact tested commit, and UI/auth/consent/deletion smoke results. Do not merge while those remain unverified.
