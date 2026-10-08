@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Multi-Step Repair Lab · PCS Arena</title>
+<meta name="description" content="Explore checker-verified, multi-edit semantic repairs with a real learned ranking model and transparent deterministic baselines.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="semantic-multistep-lab.css">
+</head>
+<body class="commons-page">
+<div class="topbar"><div class="shell"><span>PCS Arena · Learned proposals, independently checked finite results</span><a href="arena.html">← All games</a></div></div>
+<div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="arena.html">Arena</a><a href="semantic-repair-lab.html">Repair Lab</a><a href="repair-model-lab.html">Model Foundry</a><a href="account.html">Account</a></div></nav>
+<main class="ms-shell">
+<header><div class="kicker">PCS MODEL FOUNDRY · MULTI-STEP RESEARCH</div>
+<h1>Can a learned model plan <em>two edits ahead?</em></h1>
+<p>Test an actual trained ranking policy against source-guided and unlearned baselines. Each proposed edit is rechecked against every supported finite interpretation. A good model score is never itself a proof.</p>
+<div class="ms-labels"><span>18 public two-edit challenges</span><span>Six held-out formula families</span><span>Exact finite checks</span><span>No automatic upload</span></div>
+</header>
+<div class="ms-layout"><section class="ms-panel ms-input" aria-label="Experiment controls">
+<h2>Set up an experiment</h2>
+<label for="msTask">Challenge</label><select id="msTask"></select>
+<p class="ms-description" id="msDescription">Choose a problem to inspect.</p>
+<label for="msMode">Search strategy</label>
+<select id="msMode"><option value="learned">Learned model (best first)</option><option value="hybrid">Learned + symbolic heuristic</option><option value="source_guided">Symbolic source-guided (nonlearned)</option><option value="original">Original move order</option><option value="seeded_random">Seeded random</option></select>
+<div class="ms-controls"><div><label for="msBudget">Full checker call limit</label><input id="msBudget" type="number" min="1" max="240" step="1" value="55"></div>
+<div><label for="msBeam">Pending beam width</label><input id="msBeam" type="number" min="1" max="48" step="1" value="16"></div></div>
+<button type="button" class="button primary" id="msRun">Search for a repair</button>
+<button type="button" class="button secondary" id="msSave" disabled>Export local experiment JSON</button>
+<p class="ms-small">The browser runs the model and a bounded finite checker locally; no sign-in or network service is used after the static assets load. Outputs are not Lean receipts.</p>
+</section>
+<section class="ms-panel" aria-label="Experiment result">
+<h2>Candidate and evidence</h2>
+<div class="ms-code"><strong>Selected structured source</strong><pre id="msSource">—</pre></div>
+<div class="ms-code"><strong>Initially faulty translation</strong><pre id="msCandidate">—</pre></div>
+<div class="ms-result" role="status" aria-live="polite" id="msStatus">Ready to run a checker-bounded search.</div>
+<div class="ms-metrics" aria-label="Experiment metrics"><div><strong id="msChecks">—</strong><span>Full finite checks</span></div><div><strong id="msProposals">—</strong><span>Generated proposals</span></div><div><strong id="msEdits">—</strong><span>Edits in repair</span></div></div>
+<div class="ms-code"><strong>Proposed repaired formula</strong><pre id="msRepair">Not checked</pre></div>
+<details><summary>See sampled attempts and failure evidence</summary><ol id="msAttempts"></ol></details>
+</section></div>
+<section class="ms-panel ms-disclosure"><h2>What this experiment does—and does not—establish</h2>
+<p>The repaired formula agrees with its selected structured source in all finite models within the challenge’s declared domain bound. That does <strong>not</strong> prove unrestricted first-order equivalence, match the intent of arbitrary human English, or certify any deployed AI system. These tasks are public and synthetic, so results are neither blind evaluation nor real-world generalization.</p>
+<p><strong>Critical baseline:</strong> the structured source itself is available. Simply copying that AST can pass this toy checker in one new check. We measure whether a model can navigate edits, not whether it solved a difficult natural-language formalization problem.</p>
+<p><a href="semantic-gauntlet.html">Try Semantic Gauntlet</a> · <a href="evaluation-firewall.html">Evaluation Firewall</a> · <a href="semantic-repair-lab.html">Manual Repair Lab</a></p>
+</section>
+<footer><p>PCS Multi-Step Repair Lab · Finite research prototype · Not a kernel-backed certificate. <a href="trust.html">Trust Center</a></p></footer>
+</main></div><script type="module" src="semantic-multistep-lab.js"></script>
+</body></html>
