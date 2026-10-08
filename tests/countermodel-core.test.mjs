@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {COUNTERMODEL_VERSION,COUNTERMODEL_MISSIONS,initialWorld,countermodelVerdict,findMinimalCountermodel,replayCountermodelSession} from '../public/countermodel-core.mjs';
+import {COUNTERMODEL_VERSION,COUNTERMODEL_MISSIONS,initialWorld,countermodelVerdict,findMinimalCountermodel,replayCountermodelSession,exportLeanCountermodel} from '../public/countermodel-core.mjs';
 for(const m of COUNTERMODEL_MISSIONS){
  test(`finite semantics has actual minimal countermodel: ${m.id}`,()=>{
   const witness=findMinimalCountermodel(m.id);assert.ok(witness);
@@ -31,4 +31,19 @@ test('tampering or malformed data cannot cause silent accept',()=>{
 test('hint assistance is recorded; cannot create PCS/Lean authority',()=>{
  const s={version:COUNTERMODEL_VERSION,mission_id:'implication-flip',actions:[{type:'hint'},{type:'toggle',p:'P',i:0},{type:'check'}]};
  const v=replayCountermodelSession(s);assert.equal(v.hints,1);assert.equal(v.steps[1].assisted,true);assert.equal(v.pcs_authoritative,false);
+});
+
+for(const mission of COUNTERMODEL_MISSIONS){
+ test(`generate concrete Lean 4 obligation for independently verified witness: ${mission.id}`,()=>{
+  const w=findMinimalCountermodel(mission.id).w;const exported=exportLeanCountermodel(mission.id,w);
+  assert.match(exported.lean_source,/theorem exhibited_meaning_difference : ¬ /);
+  assert.match(exported.lean_source,/\n  decide\n/);
+  assert.ok(exported.lean_source.includes(`Fin ${w.n}`));
+  assert.equal(exported.lean_kernel_checked,false);
+  assert.equal(exported.pcs_authoritative,false);
+  assert.doesNotMatch(exported.lean_source,/sorry|admit|unsafe|axiom /);
+ });
+}
+test('never export an invalid world as a claimed Lean countermodel',()=>{
+ assert.throws(()=>exportLeanCountermodel('implication-flip',initialWorld(1)),/Only actual/);
 });
