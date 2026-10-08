@@ -1,3 +1,4 @@
+import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
 import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
@@ -4051,6 +4052,76 @@ async function exportForgeDuelSessions(request,env,admin){
     next_offset:rows.length===25?offset+25:null});
 }
 
+
+// Countermodel Lab: genuine deterministic finite first-order semantics, not Lean.
+const COUNTERMODEL_CONSENT="pcs-countermodel-adult-optin-v1";
+async function donateCountermodelSession(request,env,user){
+  await rateLimit(request,env,"countermodel-donation",10,60);
+  if(!Number(user.email_verified))throw new ApiError(403,"Verify your account email before opting in.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+     Object.keys(body).sort().join(",")!=="adult_confirmation,consent_training,session"){
+    throw new ApiError(400,"Use only the documented countermodel donation fields.","invalid_countermodel_payload");
+  }
+  if(body.adult_confirmation!==true||body.consent_training!==true){
+    throw new ApiError(403,"Only explicitly consenting adults 18+ may donate research trajectories.","adult_consent_required");
+  }
+  let replay;
+  try{replay=replayCountermodelSession(body.session);}
+  catch(e){throw new ApiError(400,"Countermodel finite replay rejected: "+String(e.message||"invalid").slice(0,100),"invalid_countermodel_trajectory");}
+  if(!replay.final_verified||replay.edits<1)
+    throw new ApiError(400,"Complete a counterexample with a final check and at least one actual edit.","incomplete_countermodel_session");
+  const recent=await env.COMMONS_DB.prepare(
+    "SELECT COUNT(*) AS n FROM countermodel_research_sessions WHERE user_id=? AND created_at>=?"
+  ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
+  if(Number(recent?.n||0)>=8)throw new ApiError(429,"Daily optional research-data limit reached. Keep playing locally.","countermodel_daily_limit");
+  // Normalize property order through independently replayed typed actions.
+  // JSON insertion order is not an identity: identical player choices must dedupe.
+  const session={
+    version:COUNTERMODEL_VERSION,
+    mission_id:replay.mission_id,
+    actions:replay.steps.map(step=>{
+      const a=step.action;
+      if(a.type==="toggle")return {type:"toggle",p:a.p,i:a.i};
+      if(a.type==="toggle_relation")return {type:"toggle_relation",i:a.i,j:a.j};
+      return {type:a.type};
+    })
+  };
+  const digest=await sha256Hex(JSON.stringify(session));
+  const out=await env.COMMONS_DB.prepare(
+    "INSERT OR IGNORE INTO countermodel_research_sessions (id,user_id,mission_id,game_version,session_digest,session_json,replay_json,actions_count,checked_count,found_countermodel,consent_version,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
+  ).bind(crypto.randomUUID(),user.id,session.mission_id,COUNTERMODEL_VERSION,digest,
+    JSON.stringify(session),JSON.stringify(replay),session.actions.length,replay.checks,
+    replay.final_verified?1:0,COUNTERMODEL_CONSENT,nowIso()).run();
+  return json({ok:true,recorded:Number(out.meta?.changes||0)>0,
+    score:replay.score,minimum_domain_size:replay.minimum_domain_size,
+    checked_by:"finite first-order model replay",lean_kernel_checked:false,
+    message:"Research example is mechanically replayed, not a Lean proof."});
+}
+async function eraseCountermodelSessions(env,user){
+  const out=await env.COMMONS_DB.prepare("DELETE FROM countermodel_research_sessions WHERE user_id=?").bind(user.id).run();
+  return json({ok:true,deleted:Number(out.meta?.changes||0),
+    caveat:"Active rows removed; previous offline exports and backups may have separate retention."});
+}
+async function exportCountermodelSessions(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Owner authority required for optional research data.","owner_required");
+  const raw=new URL(request.url).searchParams.get("offset")||"0";
+  if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid bounded offset.","bad_research_offset");
+  const rows=await env.COMMONS_DB.prepare(
+    "SELECT session_json,replay_json FROM countermodel_research_sessions ORDER BY created_at,id LIMIT 21 OFFSET ?"
+  ).bind(Number(raw)).all();
+  const entries=(rows.results||[]).slice(0,20).map(row=>({
+    session:JSON.parse(row.session_json),replay:JSON.parse(row.replay_json)
+  }));
+  return json({format:"pcs-countermodel-adult-optin-dataset-v1",
+    checker:"Independently replayed finite first-order semantics over 1–3 agents",
+    privacy:"Excludes account IDs, email addresses, IP addresses and timestamps.",
+    limitations:["Not a Lean/kernel proof or a deployed-world guarantee.",
+      "Consent/age are self-attested; the replay cannot prove human provenance.",
+      "Previously exported records cannot be automatically recalled after withdrawal."],
+    entries,next_offset:(rows.results||[]).length>20?Number(raw)+20:null});
+}
+
 // Safety Forge records only explicit adult opt-in bounded simulation sessions.
 // Anonymous play is local; client-supplied results/labels are never trusted.
 const SAFETY_FORGE_CONSENT="pcs-safety-forge-adult-optin-v1";
@@ -4114,7 +4185,7 @@ async function eraseSafetyForgeSessions(env,user){
 async function adminArenaStorage(env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Only the Founder/Owner can inspect research-data storage summaries.","owner_required");
   // No participant-level identifiers or raw gameplay are returned.
-  const [quest,forge,duel,prooflab]=await Promise.all([
+  const [quest,forge,duel,prooflab,countermodel]=await Promise.all([
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(ordering_json AS BLOB))),0) AS payload_bytes FROM proof_order_research_attempts"
     ).first(),
@@ -4127,6 +4198,9 @@ async function adminArenaStorage(env,admin){
     env.COMMONS_DB.prepare(
       "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(verified_replay_json AS BLOB))),0) AS payload_bytes FROM prooflab_source_research_sessions"
     ).first(),
+    env.COMMONS_DB.prepare(
+      "SELECT COUNT(*) AS records, COALESCE(SUM(LENGTH(CAST(session_json AS BLOB))+LENGTH(CAST(replay_json AS BLOB))),0) AS payload_bytes FROM countermodel_research_sessions"
+    ).first(),
   ]);
   return json({
     ok:true,storage:"Cloudflare D1",
@@ -4136,6 +4210,7 @@ async function adminArenaStorage(env,admin){
       meaning_forge:await meaningStorage(env),
       proof_quest:{rows:Number(quest?.records||0),approx_payload_bytes:Number(quest?.payload_bytes||0)},
       safety_forge:{rows:Number(forge?.records||0),approx_payload_bytes:Number(forge?.payload_bytes||0)},
+      countermodel_lab:{rows:Number(countermodel?.records||0),approx_payload_bytes:Number(countermodel?.payload_bytes||0)},
       forge_duel:{rows:Number(duel?.records||0),approx_payload_bytes:Number(duel?.payload_bytes||0)},
       prooflab:{rows:Number(prooflab?.records||0),approx_payload_bytes:Number(prooflab?.payload_bytes||0)}
     },
@@ -4180,6 +4255,14 @@ async function handleApi(request, env) {
       accounts:true,
       email_transport:emailTransportConfigured(env),
       request_sla:"1–2 business days",
+      verifier_modes:{
+        countermodel_lab:{version:COUNTERMODEL_VERSION,mode:"EXHAUSTIVE_BOUNDED_FIRST_ORDER",server_replay:true,lean_kernel_checked:false},
+        safety_forge:{version:SAFETY_LAB_VERSION,mode:"FINITE_SYNTHETIC_REPLAY",server_replay:true,lean_kernel_checked:false},
+        prooflab:{version:PROOFLAB_VERSION,mode:"SOURCE_INDEXED_DEPENDENCY_GRAPH",server_replay:true,lean_kernel_checked:false},
+        meaning_forge:{version:MEANING_VERSION,mode:"STRUCTURAL_SEMANTIC_GRAMMAR",server_replay:true,lean_kernel_checked:false},
+        pcs_authoritative_lean:"SEPARATE_CORE_CI_AND_EXECUTABLE_AUTHORITY_REQUIRED",
+        research_donation:"EXPLICIT_ADULT_OPT_IN_ONLY"
+      },
       task_policy:{
         L0_L1:"open, non-exclusive tasks; no founder approval needed",
         L2_L3:"verified level + either verified skill or manual competency review + founder approval; pending requests do not reserve work",
@@ -4209,11 +4292,13 @@ async function handleApi(request, env) {
   if (method==="GET" && path==="/api/roles") return listRoles(request,env);
   if (method==="GET" && path==="/api/challenges") return listChallenges(request,env);
   if (method==="GET" && path==="/api/arena/meaning/missions") return json({ok:true,version:MEANING_VERSION,missions:MISSIONS.map(publicMission)});
+  if (method==="GET" && path==="/api/arena/countermodel/missions") return json({ok:true,version:COUNTERMODEL_VERSION,missions:publicCountermodelMissions(),checker:"FINITE_MODEL_ONLY",lean_kernel_checked:false});
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
     if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
+    if (method==="GET" && path==="/api/admin/arena/countermodel/dataset") return exportCountermodelSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/forge-duel/dataset") return exportForgeDuelSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/prooflab/dataset") return exportProofLabDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/meaning/dataset") return meaningExport(request,env,admin);
@@ -4308,6 +4393,8 @@ async function handleApi(request, env) {
   if (method==="POST" && path==="/api/arena/forge-duel/donate") return donateForgeDuelSession(request,env,user);
   if (method==="POST" && path==="/api/arena/forge-duel/erase") return eraseForgeDuelSessions(env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/donate") return donateSafetyForgeSession(request,env,user);
+  if (method==="POST" && path==="/api/arena/countermodel/donate") return donateCountermodelSession(request,env,user);
+  if (method==="POST" && path==="/api/arena/countermodel/erase") return eraseCountermodelSessions(env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/erase") return eraseSafetyForgeSessions(env,user);
   if (method==="POST" && path==="/api/arena/proof-order/attempt") return donateProofQuestAttempt(request,env,user);
   if (method==="POST" && path==="/api/arena/proof-order/erase") return eraseProofQuestAttempts(env,user);
