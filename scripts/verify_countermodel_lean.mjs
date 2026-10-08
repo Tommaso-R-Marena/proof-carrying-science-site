@@ -6,6 +6,15 @@ import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {COUNTERMODEL_MISSIONS,findMinimalCountermodel,exportLeanCountermodel} from '../public/countermodel-core.mjs';
 const emitOnly=process.argv.includes('--emit-only');
+const leanBinary=process.env.PCS_LEAN_BIN||'lean';
+if(!emitOnly){
+ const version=spawnSync(leanBinary,['--version'],{encoding:'utf8',timeout:15000,maxBuffer:2048});
+ const text=version.stdout||'';
+ if(version.error||version.status!==0||!/Lean \(version 4\.28\.0(?:,|\))/.test(text)){
+  console.error('LEAN_TOOLCHAIN_NOT_VERIFIED: expected pinned Lean 4.28.0, got '+(version.error?.message||text.trim()||'unavailable'));
+  process.exit(2);
+ }
+}
 const work=mkdtempSync(join(tmpdir(),'pcs-countermodel-lean-'));
 let failures=0;
 try{
@@ -14,8 +23,7 @@ try{
   const path=join(work,artifact.file_name);
   writeFileSync(path,artifact.lean_source,'utf8');
   if(emitOnly){console.log('GENERATED_NO_KERNEL_VERDICT',path);continue;}
-  const runner=process.env.PCS_LEAN_BIN||'lean';
-  const result=spawnSync(runner,[path],{encoding:'utf8',timeout:120000,maxBuffer:2*1024*1024});
+  const result=spawnSync(leanBinary,[path],{encoding:'utf8',timeout:120000,maxBuffer:2*1024*1024});
   if(result.error||result.status!==0){failures++;console.error('LEAN_REJECTED',mission.id,result.error?.message||result.stderr||String(result.status));}
   else console.log('LEAN_KERNEL_VERIFIED',mission.id);
  }
