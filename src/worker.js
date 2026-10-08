@@ -4060,9 +4060,11 @@ async function donateCountermodelSession(request,env,user){
   if(!Number(user.email_verified))throw new ApiError(403,"Verify your account email before opting in.","email_verification_required");
   const body=await readBody(request);
   if(!body||typeof body!=="object"||Array.isArray(body)||
-     Object.keys(body).sort().join(",")!=="adult_confirmation,consent_training,session"||
-     body.adult_confirmation!==true||body.consent_training!==true){
-    throw new ApiError(403,"Explicit adult research consent and a bounded session are required.","invalid_countermodel_consent");
+     Object.keys(body).sort().join(",")!=="adult_confirmation,consent_training,session"){
+    throw new ApiError(400,"Use only the documented countermodel donation fields.","invalid_countermodel_payload");
+  }
+  if(body.adult_confirmation!==true||body.consent_training!==true){
+    throw new ApiError(403,"Only explicitly consenting adults 18+ may donate research trajectories.","adult_consent_required");
   }
   let replay;
   try{replay=replayCountermodelSession(body.session);}
