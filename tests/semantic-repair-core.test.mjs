@@ -123,3 +123,18 @@ test('every accepted repair remains consistent with independent oracle on all su
  }
  assert.ok(found>=8,'Expected substantive repair coverage');
 });
+
+test('two-step semantic repair requires two independently checked primitive edits',()=>{
+ const task=getGauntletTask('implication-reversal-1');
+ const candidate=copy(task.candidate);candidate.op='exists';
+ const one=analyzeSemanticRepair(repairRequestForTask(task.id,{candidate,max_edits:1,max_candidates:600}));
+ assert.equal(one.search_status,'NO_REPAIR_IN_ENUMERATED_EDITS');
+ const two=analyzeSemanticRepair(repairRequestForTask(task.id,{candidate,max_edits:2,max_candidates:600}));
+ assert.equal(two.search_status,'BOUNDED_REPAIR_FOUND');
+ assert.equal(two.minimum_edits_found,2);
+ assert.ok(two.repairs.some(r=>r.steps.length===2));
+ for(const repair of two.repairs){
+  assert.equal(repair.check.equivalent_within_bound,true);
+  assert.ok(allWorlds(task).every(w=>reference(task.source,w)===reference(repair.candidate,w)));
+ }
+});
