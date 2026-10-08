@@ -25,7 +25,7 @@
     "test:meaning-forge": "node --test tests/meaning-forge.test.mjs",
     "test:countermodel": "node --test tests/countermodel-core.test.mjs tests/countermodel-dataset.test.mjs tests/countermodel-oracle.test.mjs tests/countermodel-worker.test.mjs tests/countermodel-lean-runner.test.mjs && python3 scripts/test_countermodel_migration.py",
     "verify:countermodel:lean": "node scripts/verify_countermodel_lean.mjs",
-    "test:pcs-integration": "node --test tests/semantic-audit.test.mjs tests/arena-research-release.test.mjs tests/website-review-gate.test.mjs",
+    "test:pcs-integration": "node --test tests/semantic-audit.test.mjs tests/arena-research-release.test.mjs tests/website-review-gate.test.mjs && node --test tests/website-live-release.test.mjs",
     "verify:release-evidence": "node --test tests/arena-research-release.test.mjs"
   },
   "devDependencies": {

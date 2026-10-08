@@ -1,0 +1,28 @@
+name: PCS release readiness - authenticated exact SHA
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  checks: read
+jobs:
+  review-gate:
+    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' }}
+    runs-on: [self-hosted, linux, x64, pcs-ci]
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Confirm exact checked SHA
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Full static, Worker and Arena security checks plus Wrangler dry-run
+        run: npm run ci:zero-minutes
+      - name: Verify required checks using authenticated GitHub API
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PCS_RELEASE_SHA: ${{ github.sha }}
+        run: node scripts/verify_live_release_checks.mjs
