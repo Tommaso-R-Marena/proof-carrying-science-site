@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evaluation Firewall · PCS Research</title>
+<meta name="description" content="Inspect reported model evaluation results on PCS finite semantic benchmark without uploading research files.">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+<style>
+.fw-shell{max-width:1040px;margin:32px auto 76px;padding:0 20px}.fw-shell h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.14}
+.fw-card{border:1px solid #d5e0da;background:#fff;color:#18342c;border-radius:15px;padding:22px;margin:18px 0}
+.fw-inputs,.fw-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.fw-result{min-width:0;border:1px solid #d7e0df;border-radius:12px;padding:18px;background:white;overflow-wrap:anywhere}
+.fw-inputs label{display:flex;flex-direction:column;gap:8px}.fw-inputs input{max-width:100%;font:inherit}.fw-metrics{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:8px}.fw-metrics dt{font-weight:500}.fw-metrics dd{margin:0;font-variant-numeric:tabular-nums;font-weight:700}
+.fw-shell pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:16px;border-radius:12px;background:#eaf0ed}.fw-shell code{overflow-wrap:anywhere}
+@media(max-width:740px){.fw-inputs,.fw-results{grid-template-columns:1fr}}
+</style></head><body class="commons-page">
+<div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="arena.html">Arena</a><a href="semantic-gauntlet.html">Semantic Gauntlet</a><a href="research.html">Research</a><a href="account.html">Account</a></div></nav></div>
+<main class="fw-shell"><div class="kicker">PCS RESEARCH · REPRODUCIBLE MODEL EVALUATION</div>
+<h1>Evaluate what a model actually knows.</h1>
+<p>Run the bounded finite-logic scorer on your own computer, then inspect its report here. The 240 challenges test whether predictions remain consistent under semantic-preserving transformations.</p>
+<section class="fw-card"><h2>Load results privately</h2><p>These files stay in this browser session: this feature does not upload them. Displayed metrics are <strong>unverified local report claims</strong> until the official evaluator recomputes the raw predictions.</p>
+<div class="fw-inputs"><label>First report (JSON)<input type="file" id="fwInputA" accept=".json,application/json"></label><label>Second report, optional<input type="file" id="fwInputB" accept=".json,application/json"></label></div>
+<p id="fwStatus" role="status" aria-live="polite">No reports selected.</p></section>
+<div id="fwResults" class="fw-results" aria-live="polite"></div>
+<section class="fw-card"><h2>Reproduce the checks locally</h2>
+<p>From a checked-out PCS website source branch, use Node 22:</p>
+<pre><code>node scripts/semantic_evaluation_firewall.mjs pack pack.json
+node scripts/semantic_evaluation_firewall.mjs baseline everything_equivalent baseline.json
+node scripts/semantic_evaluation_firewall.mjs evaluate pack.json baseline.json report.json
+node scripts/semantic_evaluation_firewall.mjs baseline finite_oracle oracle.json
+node scripts/semantic_evaluation_firewall.mjs evaluate pack.json oracle.json oracle-report.json
+node scripts/semantic_evaluation_firewall.mjs compare oracle-report.json report.json comparison.json</code></pre>
+<p><strong>Evidence scope:</strong> This is public source-derived synthetic evaluation, not a blind holdout, human-derived evaluation set, unrestricted first-order theorem proving, Lean kernel evidence, or real-world AI safety verification.</p>
+<p><a href="semantic-gauntlet.html">Play the logic benchmark →</a> · <a href="arena.html">Browse all research games →</a></p></section>
+</main><script type="module" src="evaluation-firewall.js"></script></body></html>
