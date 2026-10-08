@@ -102,6 +102,7 @@ function check(){
  }catch(e){say("meaningFeedback","Replay failed: "+e.message,"warn");}
 }
 async function call(path,body){
+ if(typeof path!=="string"||!path.startsWith("/api/"))throw Error("Same-origin PCS API path required.");
  const init={method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"}};
  if(body!==undefined)init.body=JSON.stringify(body);
  const response=await fetch(path,init);
