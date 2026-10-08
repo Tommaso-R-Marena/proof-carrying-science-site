@@ -7,7 +7,7 @@ test('reject unsupported and identity-bearing exports',()=>{
  assert.throws(()=>buildArenaRelease({}),/At least one/);
  assert.throws(()=>buildArenaRelease({unknown:{}}),/Unknown/);
  assert.throws(()=>buildArenaRelease({proof_quest:{format:'pcs-proof-order-optin-research-dataset-v1',
-  examples:[{email:'private@example.org'}]}),/personal identifiers|recomputed|Unknown|Unexpected/);
+  examples:[{email:'private@example.org'}]}}),/personal identifiers|recomputed|Unknown|Unexpected/);
 });
 test('empty explicitly consented owner export results never invented participants',()=>{
  const a=buildArenaRelease({countermodel:{format:'pcs-countermodel-adult-optin-dataset-v1',entries:[]},
