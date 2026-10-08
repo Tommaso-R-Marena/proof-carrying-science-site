@@ -20,6 +20,8 @@ test('source-derived benchmark has exact 240 cases / 20 families, pinned source 
  assert.equal(PACK.base_task_set_sha256,TASKS_SHA256);
  assert.deepEqual(PACK,buildEvaluationPack());
  assert.match(PACK.pack_sha256,/^[a-f0-9]{64}$/);
+ assert.match(PACK.firewall_source_sha256,/^[a-f0-9]{64}$/);
+ assert.match(PACK.finite_engine_source_sha256,/^[a-f0-9]{64}$/);
  assert.equal(Object.isFrozen(PACK.cases[0].source),true);
  assert.throws(()=>{PACK.cases[0].source.op='wrong';},TypeError);
  const ids=PACK.cases.map(x=>x.id);assert.equal(new Set(ids).size,ids.length);
@@ -46,6 +48,8 @@ test('oracle is ceiling, simple all-equivalent baseline is not a learned model',
  assert.equal(s.evaluation.accuracy_all,1/3);
  assert.ok(s.evaluation.false_equivalence_claims>0);
  assert.equal(r.authority,'BOUNDED_FINITE_MODEL_REPLAY_ONLY');
+ assert.equal(r.firewall_source_sha256,PACK.firewall_source_sha256);
+ assert.equal(r.finite_engine_source_sha256,PACK.finite_engine_source_sha256);
  assert.equal(r.lean_kernel_checked,false);assert.equal(r.blind_evaluation,false);
  assert.equal(r.invariance.consistency_rate,1);
 });

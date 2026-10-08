@@ -11,6 +11,8 @@ import {TASKS_SHA256} from './semantic_gauntlet_benchmark.mjs';
 export const FIREWALL_VERSION='pcs-semantic-evaluation-firewall-v1';
 export const TRANSFORMS=Object.freeze(['identity','rename_symbols','alpha_rename','swap_sides']);
 const hash = x=>createHash('sha256').update(x).digest('hex');
+export const FIREWALL_SOURCE_SHA256=hash(readFileSync(fileURLToPath(import.meta.url)));
+export const FINITE_ENGINE_SOURCE_SHA256=hash(readFileSync(fileURLToPath(new URL('../public/semantic-gauntlet-core.mjs',import.meta.url))));
 const own=(x,k)=>Object.prototype.hasOwnProperty.call(x,k);
 const check=(v,msg)=>{if(!v)throw Error(msg);};
 const stable=x=>JSON.stringify(x); // deterministic generated-object source matching
@@ -77,7 +79,8 @@ function mapped(task,transform){
 export function buildEvaluationPack(){
  const cases=GAUNTLET_TASKS.flatMap(task=>TRANSFORMS.map(transform=>mapped(task,transform)));
  const core={format:FIREWALL_VERSION,visibility:'PUBLIC_SOURCE_DERIVED_NOT_BLIND',
-    base_task_set_sha256:TASKS_SHA256,oracle_scope:'bounded finite first-order models (not Lean or unbounded equivalence)',
+    base_task_set_sha256:TASKS_SHA256,firewall_source_sha256:FIREWALL_SOURCE_SHA256,
+    finite_engine_source_sha256:FINITE_ENGINE_SOURCE_SHA256,oracle_scope:'bounded finite first-order models (not Lean or unbounded equivalence)',
     transformation_policy:'identity, bijective predicate renaming, capture-free alpha-renaming, source/target swap',
     cases};
  return {...core,pack_sha256:hash(stable(core))};
@@ -149,6 +152,7 @@ export function evaluatePredictions(predictions,pack=PACK){
  });
  return {format:'pcs-semantic-evaluation-report-v1',pack_sha256:pack.pack_sha256,
    predictions_sha256:hash(canonicalJson(canonicalPredictions)),predictions:canonicalPredictions,
+   firewall_source_sha256:FIREWALL_SOURCE_SHA256,finite_engine_source_sha256:FINITE_ENGINE_SOURCE_SHA256,
    authority:'BOUNDED_FINITE_MODEL_REPLAY_ONLY',lean_kernel_checked:false,
    blind_evaluation:false,source_data_type:'public_source_derived_synthetic',
    limitations:['Public evaluation is not blind; formulas and checker are known',

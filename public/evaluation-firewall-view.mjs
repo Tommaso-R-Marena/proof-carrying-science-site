@@ -14,7 +14,7 @@ function group(m){
 }
 export function validateFirewallReport(data){
  if(!data||typeof data!=='object'||Array.isArray(data)||data.format!==REPORT_FORMAT)fail('unsupported format');
- if(!hex(data.pack_sha256)||!hex(data.predictions_sha256))fail('missing exact commitments');
+ if(!hex(data.pack_sha256)||!hex(data.predictions_sha256)||!hex(data.firewall_source_sha256)||!hex(data.finite_engine_source_sha256))fail('missing exact commitments');
  if(data.authority!=='BOUNDED_FINITE_MODEL_REPLAY_ONLY'||data.lean_kernel_checked!==false||
     data.blind_evaluation!==false||data.source_data_type!=='public_source_derived_synthetic')
     fail('unsupported assurance scope');
