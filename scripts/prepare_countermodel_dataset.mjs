@@ -26,8 +26,9 @@ export function prepareCountermodelDataset(doc){
    first_counterexample_at_step:verified.steps.find(x=>x.received_checker_response&&x.counterexample)?.index??null,
    minimum_domain_size:verified.minimum_domain_size,final_domain_size:verified.final_world.n,
    score:verified.score,assisted_by_hint:verified.hints>0,checks:verified.checks,
-   steps:verified.steps.map(x=>({state:{world:x.world,checker_feedback_exposed:x.checker_feedback_exposed,
-     hint_used_before_action:x.assisted},action:x.action,reward:x.reward,
+   steps:verified.steps.map(x=>({state:{world:x.state_before,checker_feedback_exposed:x.checker_feedback_before_action,
+     hint_used_before_action:x.assisted_before_action},action:x.action,reward:x.reward,
+     next_state:{world:x.world,checker_feedback_exposed:x.checker_feedback_exposed,hint_used:x.assisted},
      checker_labels:{source_true:x.source_true,proposal_true:x.proposal_true,counterexample:x.counterexample,
        label_exposed_to_player:x.received_checker_response},received_checker_response:x.received_checker_response}))});
  }
