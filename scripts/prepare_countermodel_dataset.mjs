@@ -1,9 +1,13 @@
 // Offline owner-exported, privacy-reduced, deterministic research episodes.
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
-import {replayCountermodelSession,COUNTERMODEL_VERSION,countermodelMission} from '../public/countermodel-core.mjs';
+import {replayCountermodelSession,COUNTERMODEL_VERSION,countermodelMission,COUNTERMODEL_MISSIONS} from '../public/countermodel-core.mjs';
 export const COUNTERMODEL_DATASET='pcs-countermodel-trajectory-dataset-v1';
 const HELD_OUT=new Set(['quantifier-switch','quantifier-scope','variable-capture']);
+export const COUNTERMODEL_RULESET_SHA256=createHash('sha256').update(JSON.stringify(
+ COUNTERMODEL_MISSIONS.map(({id,kind,left,right,a,b})=>({id,kind,left,right,a,b}))
+)).digest('hex');
 export function prepareCountermodelDataset(doc){
  if(!doc||typeof doc!=='object'||Array.isArray(doc)||doc.format!=='pcs-countermodel-adult-optin-dataset-v1'||!Array.isArray(doc.entries)||doc.entries.length>200)throw Error('Invalid owner research export');
  if(Object.keys(doc).some(k=>!['format','entries','next_offset','privacy','limitations','checker'].includes(k)))throw Error('Unexpected export metadata');
@@ -19,7 +23,7 @@ export function prepareCountermodelDataset(doc){
   if(seen.has(key))continue;
   seen.add(key);
   const mission=countermodelMission(input.mission_id);
-  episodes.push({case_id:input.mission_id,version:COUNTERMODEL_VERSION,split:HELD_OUT.has(input.mission_id)?'evaluation':'training',
+  episodes.push({case_id:input.mission_id,version:COUNTERMODEL_VERSION,ruleset_sha256:COUNTERMODEL_RULESET_SHA256,split:HELD_OUT.has(input.mission_id)?'evaluation':'training',
    semantic_skill:mission.skill,semantic_input:{sort:'Agent',original_ast:mission.a,proposed_ast:mission.b,
      original_lean:mission.left,proposed_lean:mission.right,signature:{P:'Agent -> Prop',Q:'Agent -> Prop',R:'Agent -> Agent -> Prop'}},
    authority:'FINITE_MODEL_CHECKER_ONLY',source_proof_validity:'NOT_EVALUATED',
@@ -32,7 +36,7 @@ export function prepareCountermodelDataset(doc){
      checker_labels:{source_true:x.source_true,proposal_true:x.proposal_true,counterexample:x.counterexample,
        label_exposed_to_player:x.received_checker_response},received_checker_response:x.received_checker_response}))});
  }
- return {format:COUNTERMODEL_DATASET,authority:'NONE',data_origin:'consented game choices with deterministic finite-model server replay',
+ return {format:COUNTERMODEL_DATASET,authority:'NONE',ruleset_sha256:COUNTERMODEL_RULESET_SHA256,data_origin:'consented game choices with deterministic finite-model server replay',
   labels:'recomputed bounded first-order semantics; NOT Lean tactic trajectories',privacy:'no user IDs, emails, IPs, timestamps or notes',
   train_eval_policy:'Held-out mission IDs only; shared syntax can leak, so this split does NOT establish compositional generalization',
   stats:{episodes:episodes.length,training:episodes.filter(e=>e.split==='training').length,evaluation:episodes.filter(e=>e.split==='evaluation').length,
