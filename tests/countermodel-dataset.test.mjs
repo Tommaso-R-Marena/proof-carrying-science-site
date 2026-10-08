@@ -17,3 +17,12 @@ test('training state includes concrete world but hides oracle checker labels unt
  assert.equal(after.checker_labels.label_exposed_to_player,true);
  assert.equal(before.reward,0);assert.equal(after.reward,10);
 });
+
+test('training episodes carry the exact symbolic semantics needed to learn a countermodel search policy',()=>{
+ const e=prepareCountermodelDataset(fixture()).episodes[0];
+ assert.equal(e.semantic_input.original_ast.op,'forall');
+ assert.equal(e.semantic_input.proposed_ast.op,'forall');
+ assert.match(e.semantic_input.original_lean,/∀/);
+ assert.match(e.semantic_input.proposed_lean,/∀/);
+ assert.equal(e.authority,'FINITE_MODEL_CHECKER_ONLY');
+});
