@@ -18,8 +18,10 @@ export function prepareCountermodelDataset(doc){
   const key=JSON.stringify(input);
   if(seen.has(key))continue;
   seen.add(key);
+  const mission=countermodelMission(input.mission_id);
   episodes.push({case_id:input.mission_id,version:COUNTERMODEL_VERSION,split:HELD_OUT.has(input.mission_id)?'evaluation':'training',
-   semantic_skill:countermodelMission(input.mission_id).skill,
+   semantic_skill:mission.skill,semantic_input:{sort:'Agent',original_ast:mission.a,proposed_ast:mission.b,
+     original_lean:mission.left,proposed_lean:mission.right,signature:{P:'Agent -> Prop',Q:'Agent -> Prop',R:'Agent -> Agent -> Prop'}},
    authority:'FINITE_MODEL_CHECKER_ONLY',source_proof_validity:'NOT_EVALUATED',
    first_counterexample_at_step:verified.steps.find(x=>x.received_checker_response&&x.counterexample)?.index??null,
    minimum_domain_size:verified.minimum_domain_size,final_domain_size:verified.final_world.n,
