@@ -1,5 +1,6 @@
 const $=id=>document.getElementById(id);
 async function api(path,opts={}){
+ if(typeof path!=="string"||!path.startsWith("/api/"))throw Error("Same-origin PCS API path required.");
  const r=await fetch(path,{credentials:"same-origin",...opts});
  const body=await r.json().catch(()=>({message:"Server response unavailable."}));
  if(!r.ok)throw Error(body.message||"Request rejected.");return body;
