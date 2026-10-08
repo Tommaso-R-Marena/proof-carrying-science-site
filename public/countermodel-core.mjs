@@ -131,15 +131,16 @@ export function exportLeanCountermodel(missionId,world){
  const mission=countermodelMission(missionId);if(!mission)throw Error('Unknown mission');validateWorld(world);
  const result=countermodelVerdict(missionId,world);if(!result.counterexample)throw Error('Only actual checked countermodels can be exported');
  const disjunction=(terms)=>terms.length?terms.map(t=>`(${t})`).join(' ∨ '):'False';
- const pred=(p)=>`def ${p} (x : Agent) : Prop := ${disjunction(world[p].flatMap((v,i)=>v?[`x = (${i} : Agent)`]:[]))}`;
+ const pred=(p)=>`abbrev ${p} (x : Agent) : Prop := ${disjunction(world[p].flatMap((v,i)=>v?[`x = (${i} : Agent)`]:[]))}`;
  const r=[];for(let i=0;i<world.n;i++)for(let j=0;j<world.n;j++)if(world.R[i][j])r.push(`(x = (${i} : Agent) ∧ y = (${j} : Agent))`);
  const text=[
   '-- PCS Arena Countermodel Lab · deterministic generated Lean source',
   '-- Run: lean thisfile.lean   (using PCS pinned leanprover/lean4:v4.28.0)',
   '-- This is not a signed PCS authority receipt, nor a proof about a real deployed agent.',
+  'import Std',
   'namespace PCSArenaCountermodel',
   `abbrev Agent := Fin ${world.n}`,
-  pred('P'),pred('Q'),`def R (x y : Agent) : Prop := ${disjunction(r)}`,
+  pred('P'),pred('Q'),`abbrev R (x y : Agent) : Prop := ${disjunction(r)}`,
   `theorem exhibited_meaning_difference : ¬ (${leanFormula(mission.a)} ↔ ${leanFormula(mission.b)}) := by`,
   '  decide',
   'end PCSArenaCountermodel',''

@@ -23,7 +23,7 @@ jobs:
     name: countermodel-lean-kernel
     # An explicitly provisioned, isolated trusted runner is required; never
     # treat this skipped job as proof checking or a release approval.
-    if: ${{ vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    if: ${{ github.event.repository.private == true && github.ref_protected == true && github.event_name != 'pull_request' && vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: [self-hosted, linux, x64, pcs-ci]
     timeout-minutes: 25
     steps:

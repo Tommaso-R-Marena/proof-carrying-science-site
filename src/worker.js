@@ -722,7 +722,7 @@ function mailRelayConfigured(env) {
 }
 
 function resendConfigured(env) {
-  return emailTransportConfigured(env);
+  return Boolean(env.RESEND_API_KEY && env.MAIL_FROM);
 }
 
 function emailTransportConfigured(env) {

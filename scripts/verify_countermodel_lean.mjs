@@ -24,7 +24,7 @@ try{
   writeFileSync(path,artifact.lean_source,'utf8');
   if(emitOnly){console.log('GENERATED_NO_KERNEL_VERDICT',path);continue;}
   const result=spawnSync(leanBinary,[path],{encoding:'utf8',timeout:120000,maxBuffer:2*1024*1024});
-  if(result.error||result.status!==0){failures++;console.error('LEAN_REJECTED',mission.id,result.error?.message||result.stderr||String(result.status));}
+  if(result.error||result.status!==0){failures++;console.error('LEAN_REJECTED',mission.id,result.error?.message||result.stdout||result.stderr||String(result.status));}
   else console.log('LEAN_KERNEL_VERIFIED',mission.id);
  }
 }finally{if(!emitOnly)rmSync(work,{recursive:true,force:true});}

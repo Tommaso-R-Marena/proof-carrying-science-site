@@ -117,7 +117,7 @@ function graph(r){
  $("plGraphCover").hidden=graphOpen;
 }
 function cards(r){
- const root=$("plCards");root.replaceChildren(),done=new Set(r.completed_node_ids);
+ const root=$("plCards"),done=new Set(r.completed_node_ids);root.replaceChildren();
  const choiceIds=proofLabDecisionSet(current.id,r.completed_node_ids,actions.length);
  for(const [choiceIndex,id] of choiceIds.entries()){
   const n=current.nodes.find(x=>x.id===id);if(!n)continue;
