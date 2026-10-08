@@ -4075,7 +4075,18 @@ async function donateCountermodelSession(request,env,user){
     "SELECT COUNT(*) AS n FROM countermodel_research_sessions WHERE user_id=? AND created_at>=?"
   ).bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
   if(Number(recent?.n||0)>=8)throw new ApiError(429,"Daily optional research-data limit reached. Keep playing locally.","countermodel_daily_limit");
-  const session=body.session;
+  // Normalize property order through independently replayed typed actions.
+  // JSON insertion order is not an identity: identical player choices must dedupe.
+  const session={
+    version:COUNTERMODEL_VERSION,
+    mission_id:replay.mission_id,
+    actions:replay.steps.map(step=>{
+      const a=step.action;
+      if(a.type==="toggle")return {type:"toggle",p:a.p,i:a.i};
+      if(a.type==="toggle_relation")return {type:"toggle_relation",i:a.i,j:a.j};
+      return {type:a.type};
+    })
+  };
   const digest=await sha256Hex(JSON.stringify(session));
   const out=await env.COMMONS_DB.prepare(
     "INSERT OR IGNORE INTO countermodel_research_sessions (id,user_id,mission_id,game_version,session_digest,session_json,replay_json,actions_count,checked_count,found_countermodel,consent_version,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)"
