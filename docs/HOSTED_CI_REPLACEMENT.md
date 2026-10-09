@@ -13,6 +13,13 @@ gate. Daily/manual `live-health.yml` now runs read-only production checks from
 public main, including the live demo and Omega workspace. No CI job receives
 Cloudflare deployment credentials.
 
+The layout gate retains all ten geometric cases and drives the local probe with
+the existing pinned Playwright dependency, blocking third-party requests. Its
+loaded mobile package case exposed a 670px document in a 390px viewport. The
+member inventory now scrolls inside a focusable region without widening the
+page; the real case passes at 390px. Health checks cover 21 endpoints, and the
+stale Arena text assertion is replaced with the current page title.
+
 Archive and promotion workflows in both repositories previously could never
 run: they listened for pull requests while requiring a non-PR private-runner
 event. They now run on disposable `ubuntu-24.04` runners for public owner

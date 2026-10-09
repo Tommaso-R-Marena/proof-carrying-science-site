@@ -30,7 +30,7 @@ jobs:
         run: python scripts/check_contribution_bundle.py
       - name: Check submitted JavaScript syntax without running untrusted scripts
         run: |
-          find contributions/pcs-submissions -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
+          find contributions/pcs-submissions -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -r -n1 node --check
       - name: Check submitted Python syntax without running untrusted scripts
         run: |
           find contributions/pcs-submissions -type f -name '*.py' -print0 | xargs -0 -r -n1 python -m py_compile
