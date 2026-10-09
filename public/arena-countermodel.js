@@ -26,8 +26,15 @@ function draw(){const v=countermodelVerdict(current.id,world);$('cmTier').textCo
   traj.append(li);
  }
  $('cmChecks').textContent=history.filter(a=>a.type==='check').length;$('cmEdits').textContent=history.filter(a=>!['check','hint'].includes(a.type)).length;$('cmHints').textContent=history.filter(a=>a.type==='hint').length;$('cmScore').textContent=localBest[current.id]||'—';
- $('cmDonate').disabled=!(Boolean(checked?.final_verified)&&$('cmAdult').checked&&$('cmConsent').checked);$('cmLeanExport').disabled=!Boolean(checked?.final_verified);
+ $('cmDonate').disabled=!(Boolean(checked?.final_verified)&&$('cmAdult').checked&&$('cmConsent').checked);$('cmLeanExport').disabled=!Boolean(checked?.final_verified);$('cmWitnessExport').disabled=!Boolean(checked?.final_verified);
 }
+$('cmWitnessExport').addEventListener('click',()=>{
+ if(!checked?.final_verified)return;
+ const doc={format:'pcs-countermodel-witness-v1',version:COUNTERMODEL_VERSION,mission_id:current.id,world:checked.final_world};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(doc,null,2)+'\n'],{type:'application/json'}));
+ const a=document.createElement('a');a.href=url;a.download='pcs-countermodel-witness.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ message('Downloaded the concrete witness. Check independently with pcs countermodel-check-v1; no PCS authority or Lean verdict is claimed.');
+});
 $('cmSessionExport').addEventListener('click',()=>{
  const record={format:'pcs-countermodel-local-trace-v1',
   scope:'unverified player-recorded action trace; replay on PCS Worker required',
@@ -63,4 +70,5 @@ for(const id of ['cmAdult','cmConsent'])$(id).addEventListener('change',draw);
 async function request(path,payload){if(path !== "/api/arena/countermodel/donate" && path !== "/api/arena/countermodel/erase")throw Error('Unreviewed research endpoint');const response=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload)});let data={};try{data=await response.json();}catch{}if(!response.ok)throw Error(data.message||data.error||'Request failed');return data;}
 $('cmDonate').addEventListener('click',async()=>{const out=$('cmDonateStatus');if(!checked?.final_verified||!$('cmAdult').checked||!$('cmConsent').checked)return;const btn=$('cmDonate');btn.disabled=true;out.textContent='Replaying on the PCS server…';try{const data=await request('/api/arena/countermodel/donate',{adult_confirmation:true,consent_training:true,session:{version:COUNTERMODEL_VERSION,mission_id:current.id,actions:history}});out.textContent=data.recorded?'Verified research session donated. Thank you.':'This exact session was already recorded.';}catch(e){out.textContent=`Not uploaded: ${e.message}. You can keep playing privately.`;}draw();});
 $('cmErase').addEventListener('click',async()=>{if(!window.confirm('Delete all your stored Countermodel Lab sessions from PCS active storage? This cannot recall previous offline exports.'))return;const out=$('cmDonateStatus');try{const data=await request('/api/arena/countermodel/erase',{});out.textContent=`Deleted ${data.deleted} stored sessions from the active PCS database.`;}catch(e){out.textContent=`Deletion request failed: ${e.message}`;}});
-choose(COUNTERMODEL_MISSIONS[(Math.floor(Date.now()/86400000)%COUNTERMODEL_MISSIONS.length)].id);
+const requestedMission=new URLSearchParams(location.search).get('mission');
+choose(COUNTERMODEL_MISSIONS.find(m=>m.id===requestedMission)?.id||COUNTERMODEL_MISSIONS[(Math.floor(Date.now()/86400000)%COUNTERMODEL_MISSIONS.length)].id);

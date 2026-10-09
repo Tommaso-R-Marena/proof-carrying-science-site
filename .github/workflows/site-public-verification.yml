@@ -33,6 +33,15 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run ci:zero-minutes
           npm audit --audit-level=high
+      - name: Check out pinned independent PCS witness checker
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Tommaso-R-Marena/proof-carrying-science
+          ref: b2c880b53c45938ad7b3642ec7fa834d64c665aa
+          path: .ci-components/pcs
+          persist-credentials: false
+      - name: Cross-check game semantics with the independent Python core
+        run: node scripts/verify_countermodel_python.mjs --core .ci-components/pcs | tee countermodel-python-results.log
       - name: Independently check all seven Lean countermodels
         run: |
           set -euo pipefail
@@ -69,12 +78,15 @@ jobs:
               raise SystemExit('isolated Worker did not become ready')
           PY
           npm run test:browser
+          PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/site-state" PCS_RESEARCH_OUTPUT="$PWD/browser-research-results.json" npm run test:browser:research
           python scripts/security_campaign.py --static --base-url http://127.0.0.1:8788
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: ${{ always() }}
         with:
           name: public-site-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
+            countermodel-python-results.log
             countermodel-lean-results.log
             browser-results.json
+            browser-research-results.json
           retention-days: 14

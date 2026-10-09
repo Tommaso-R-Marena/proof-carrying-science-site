@@ -1163,15 +1163,31 @@
     button.disabled=true;status.textContent="Checking account-linked, consented research entries…";
     try{
       const result=await api("/api/admin/arena/storage");
-      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel, pl=result.collections?.prooflab;
-      if(!pq||!sf||!duel||!pl)throw Error("Unexpected storage report.");
-      const size=(Number(pq.approx_payload_bytes)+Number(sf.approx_payload_bytes)+Number(duel.approx_payload_bytes)+Number(pl.approx_payload_bytes));
+      const pq=result.collections?.proof_quest, sf=result.collections?.safety_forge, duel=result.collections?.forge_duel, pl=result.collections?.prooflab, cm=result.collections?.countermodel_lab, mf=result.collections?.meaning_forge;
+      if(!pq||!sf||!duel||!pl||!cm||!mf)throw Error("Unexpected storage report.");
+      const size=[pq,sf,duel,pl,cm,mf].reduce((sum,item)=>sum+Number(item.approx_payload_bytes||0),0);
       status.textContent="Proof Quest: "+Number(pq.rows).toLocaleString()+
         " adult opt-in examples · Safety Forge: "+Number(sf.rows).toLocaleString()+
         " verified synthetic sessions · Shield Duel: "+Number(duel.rows).toLocaleString()+
         " consented ballot batches · ProofLab: "+Number(pl.rows).toLocaleString()+
-        " source-grounded adult research traces · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
+        " source-grounded adult research traces · Countermodel Lab: "+Number(cm.rows).toLocaleString()+
+        " replayed finite searches · Meaning Forge: "+Number(mf.records).toLocaleString()+
+        " semantic sessions · approx. "+(size/1024).toFixed(1)+" KiB in gameplay JSON (excluding database overhead).";
     }catch(e){status.textContent="Storage check unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
+  $("#adminCountermodelExport")?.addEventListener("click",async()=>{
+    const button=$("#adminCountermodelExport"),status=$("#adminCountermodelExportMessage");
+    button.disabled=true;status.textContent="Rechecking consented Countermodel research pages…";
+    try{
+      const {collectCountermodelExport}=await import("./countermodel-research-export.mjs");
+      const dataset=await collectCountermodelExport(offset=>api("/api/admin/arena/countermodel/dataset?offset="+offset));
+      const url=URL.createObjectURL(new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"}));
+      const link=document.createElement("a");link.href=url;link.download="pcs-countermodel-adult-optin.json";
+      document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      status.textContent="Exported "+dataset.entries.length+" replay-checked trajectories. Use the offline preparation/training scripts; keep evaluation families and hints separate.";
+    }catch(e){status.textContent="Countermodel export unavailable: "+e.message;}
     finally{button.disabled=false;}
   });
 
