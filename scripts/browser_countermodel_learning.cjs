@@ -29,11 +29,16 @@ let browser;
   await page.getByRole('button',{name:/Cause & Consequence/}).click();await page.locator('#cmCoach').click();
   if(await page.locator('#cmHints').innerText()!=='1'||!await page.locator('#cmCoachApply').isEnabled())throw Error('Model suggestion did not mark assistance');
   await page.locator('#cmCoachApply').click();await page.locator('#cmCheck').click();await page.locator('#cmCheck').click();await page.locator('#cmNotebookSave').click();
+  const assistedDownload=page.waitForEvent('download');await page.locator('#cmSessionExport').click();const assistedFile=await assistedDownload;
+  fs.writeFileSync(output+'.trace-assisted-'+viewport.width+'.json',fs.readFileSync(await assistedFile.path()));
+  const leanDownload=page.waitForEvent('download');await page.locator('#cmLeanExport').click();const leanFile=await leanDownload;
+  fs.writeFileSync(output+'.witness-'+viewport.width+'.lean',fs.readFileSync(await leanFile.path()));
   await page.locator('#cmTrain').click();await page.locator('#cmLearningStatus').filter({hasText:'Fitted 486 coefficients'}).waitFor();
   if(!(await page.locator('#cmLearningStatus').innerText()).includes('from 2 choices in 1'))throw Error('Model-assisted choices contaminated fitting');
   // A hint after success must invalidate donation until another final check.
   await page.locator('#cmAdult').check();await page.locator('#cmConsent').check();if(!await page.locator('#cmDonate').isEnabled())throw Error('Checked opt-in controls did not enable donation');
   await page.locator('#cmHint').click();if(await page.locator('#cmDonate').isEnabled())throw Error('Stale success survived a hint');
+  if(await page.locator('#cmLeanExport').isEnabled())throw Error('Stale final check remained exportable as a Lean witness');
   const tampered=structuredClone(model);tampered.weights[0][0]+=.5;
   await page.locator('#cmModelFile').setInputFiles({name:'tampered.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(tampered))});
   await page.locator('#cmLearningStatus').filter({hasText:'Model rejected'}).waitFor();if(await page.locator('#cmCoach').isEnabled()||await page.locator('#cmModelDownload').isEnabled())throw Error('Rejected artifact left a usable model');

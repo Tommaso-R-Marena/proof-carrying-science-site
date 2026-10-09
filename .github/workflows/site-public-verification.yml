@@ -95,6 +95,8 @@ jobs:
           PY
           npm run test:browser
           PCS_LEARNING_OUTPUT="$PWD/browser-learning-results.json" npm run test:browser:learning
+          source scripts/activate_lean_428.sh
+          node scripts/verify_learning_downloads.mjs --core .ci-components/pcs --input browser-learning-results.json | tee learning-download-results.log
           PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/site-state" PCS_RESEARCH_OUTPUT="$PWD/browser-research-results.json" npm run test:browser:research
           python scripts/security_campaign.py --static --base-url http://127.0.0.1:8788
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -111,5 +113,7 @@ jobs:
             browser-learning-results.json
             browser-learning-results.json.model-*.json
             browser-learning-results.json.trace-*.json
+            browser-learning-results.json.witness-*.lean
+            learning-download-results.log
             omega-python-results.log
           retention-days: 14
