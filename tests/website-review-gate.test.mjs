@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {verifyReviewGate,REQUIRED} from '../scripts/verify_website_review_gate.mjs';
 const sha='a'.repeat(40);
 const fixture=()=>({head_sha:sha,check_runs:REQUIRED.map(name=>({name,head_sha:sha,status:'completed',conclusion:'success'}))});
-test('three authentic-looking completed checks satisfy offline evidence structure',()=>{
+test('four completed checks satisfy offline evidence structure without authenticating a snapshot',()=>{
  assert.equal(verifyReviewGate(fixture(),sha).policy_met,true);
 });
 for(const state of ['skipped','neutral','failure','cancelled','timed_out',null]){

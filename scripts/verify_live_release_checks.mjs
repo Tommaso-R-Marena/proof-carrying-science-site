@@ -19,6 +19,7 @@ export async function verifyLiveChecks({repository,sha,token,request=fetch,requi
   if(!Array.isArray(data.check_runs))throw Error('Malformed authenticated GitHub response');
   for(const row of data.check_runs){
    if(row.head_sha!==sha)throw Error('Check result applies to another commit');
+   if(required.includes(row.name)&&(row.app?.id!==15368||row.app?.slug!=='github-actions'))throw Error('Required result is not from the trusted GitHub Actions app');
    runs.push(row);
   }
   if(data.check_runs.length<100)break;

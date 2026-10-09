@@ -6,12 +6,13 @@ permissions:
   checks: read
 jobs:
   review-gate:
-    if: ${{ github.event.repository.private == true && github.ref_protected == true && github.event_name != 'pull_request' && vars.PCS_SELF_HOSTED_CI_ENABLED == 'true' }}
-    runs-on: [self-hosted, linux, x64, pcs-ci]
+    if: ${{ github.event.repository.private == false && github.repository == 'Tommaso-R-Marena/proof-carrying-science-site' && github.ref == 'refs/heads/main' && github.ref_protected == true }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 50
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Confirm exact checked SHA
         shell: bash

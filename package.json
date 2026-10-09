@@ -34,9 +34,10 @@
     "test:multistep-repair": "node --test tests/multistep-planner.test.mjs tests/multistep-cli.test.mjs tests/multistep-ui.test.mjs",
     "test:email": "node --test tests/email-configuration.test.mjs",
     "test:browser": "node scripts/browser_release_check.cjs",
-    "test:live-demo": "node --test tests/live-demo-worker.test.mjs tests/countermodel-research-export.test.mjs tests/countermodel-search-policy.test.mjs",
+    "test:live-demo": "node --test tests/live-demo-worker.test.mjs tests/countermodel-research-export.test.mjs tests/countermodel-search-policy.test.mjs tests/countermodel-learning.test.mjs",
     "test:browser:research": "node scripts/browser_research_check.cjs",
-    "test:omega": "node --test tests/omega-core.test.mjs"
+    "test:omega": "node --test tests/omega-core.test.mjs",
+    "test:browser:learning": "node scripts/browser_countermodel_learning.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

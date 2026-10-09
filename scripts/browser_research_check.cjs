@@ -58,9 +58,21 @@ async function cleanup(){
  if(dataset.stats.training!==1||dataset.stats.evaluation!==1||model.training.examples!==2||evaluation.examples!==3)throw Error('Training/evaluation firewall failed on actual stored data');
  report.dataset_stats=dataset.stats;report.fitted_model_training=model.training;report.held_out_evaluation=evaluation;
  report.model_digest_sha256=model.model_digest_sha256;
+ // Actually load the owner-export model into the game and donate assisted play.
+ await page.goto(base+'/arena-countermodel.html?mission=implication-flip',{waitUntil:'networkidle'});
+ await page.locator('#cmModelFile').setInputFiles({name:'owner-model.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(model))});
+ await page.locator('#cmLearningStatus').filter({hasText:'Loaded a format- and integrity-checked'}).waitFor();
+ await page.locator('#cmCoach').click();await page.locator('#cmCoachApply').click();await page.locator('#cmCheck').click();
+ if((await donate(200)).recorded!==true)throw Error('Model-assisted real session was not stored');
+ const withAssistance=await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json();
+ if(withAssistance.entries.length!==3||withAssistance.entries.filter(e=>e.replay.hints===1).length!==1)throw Error('Server assistance replay was not preserved');
+ const refitted=trainCountermodelSearchPolicy(withAssistance),reevaluated=evaluateCountermodelSearchPolicy(refitted,withAssistance);
+ if(JSON.stringify(refitted)!==JSON.stringify(model)||JSON.stringify(reevaluated)!==JSON.stringify(evaluation))throw Error('Assisted choices contaminated owner fitting or held-out evaluation');
+ report.imported_model_assistance_replayed_and_excluded=true;
+
  await page.goto(base+'/arena-countermodel.html?mission=implication-flip',{waitUntil:'networkidle'});page.once('dialog',dialog=>dialog.accept());
  const erase=page.waitForResponse(r=>r.url().endsWith('/api/arena/countermodel/erase'));await page.locator('#cmErase').click();const erased=await (await erase).json();
- if(erased.deleted!==2)throw Error('Self-service deletion failed');
+ if(erased.deleted!==3)throw Error('Self-service deletion failed');
  const empty=await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json();if(empty.entries.length!==0)throw Error('Withdrawn rows remained exportable');
  report.self_service_deletion_and_empty_export=true;
  fixture(`UPDATE users SET role='contributor',is_owner=0 WHERE id='${userId}' AND email='${email}'`);
