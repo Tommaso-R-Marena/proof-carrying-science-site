@@ -21,6 +21,7 @@ let syntheticContext;
    if(path==='/prooflab.html')await page.locator('#plCards button').first().click();
    if(path==='/omega-workspace.html'){
     await page.locator('#omegaStatus').filter({hasText:'Mapped 1 explicit claim'}).waitFor();
+    await page.locator('#omegaStrategy').selectOption('structural');
     await page.locator('#omegaRun').click();
     await page.locator('#omegaResult').filter({hasText:'Boolean equivalence checked'}).waitFor();
     const episodeDownload=page.waitForEvent('download');await page.locator('#omegaEpisode').click();

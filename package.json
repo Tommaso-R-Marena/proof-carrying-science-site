@@ -23,7 +23,7 @@
     "test:prooflab": "node --test tests/prooflab-core.test.mjs tests/prooflab-dataset.test.mjs tests/prooflab-worker.test.mjs",
     "test:task-code": "node --test tests/task-code-context.test.mjs",
     "test:meaning-forge": "node --test tests/meaning-forge.test.mjs",
-    "test:countermodel": "node --test tests/countermodel-core.test.mjs tests/countermodel-dataset.test.mjs tests/countermodel-oracle.test.mjs tests/countermodel-worker.test.mjs tests/countermodel-lean-runner.test.mjs && python3 scripts/test_countermodel_migration.py",
+    "test:countermodel": "node --test tests/countermodel-expedition.test.mjs tests/countermodel-core.test.mjs tests/countermodel-dataset.test.mjs tests/countermodel-oracle.test.mjs tests/countermodel-worker.test.mjs tests/countermodel-lean-runner.test.mjs && python3 scripts/test_countermodel_migration.py",
     "verify:countermodel:lean": "node scripts/verify_countermodel_lean.mjs",
     "test:pcs-integration": "node --test tests/semantic-audit.test.mjs tests/arena-research-release.test.mjs tests/website-review-gate.test.mjs && node --test tests/website-live-release.test.mjs",
     "verify:release-evidence": "node --test tests/arena-research-release.test.mjs",
@@ -36,8 +36,9 @@
     "test:browser": "node scripts/browser_release_check.cjs",
     "test:live-demo": "node --test tests/live-demo-worker.test.mjs tests/countermodel-research-export.test.mjs tests/countermodel-search-policy.test.mjs tests/countermodel-learning.test.mjs",
     "test:browser:research": "node scripts/browser_research_check.cjs",
-    "test:omega": "node --test tests/omega-core.test.mjs",
-    "test:browser:learning": "node scripts/browser_countermodel_learning.cjs"
+    "test:omega": "node --test tests/omega-core.test.mjs tests/omega-adaptive.test.mjs",
+    "test:browser:learning": "node scripts/browser_countermodel_learning.cjs",
+    "test:browser:layout": "node scripts/browser_layout_check.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

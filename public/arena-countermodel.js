@@ -2,10 +2,29 @@ import {COUNTERMODEL_VERSION,COUNTERMODEL_MISSIONS,publicCountermodelMissions,in
 import {normalizeSearchSession,fitLocalSearchModel,validateSearchModelJSON,evaluateSearchSessions,EVALUATION_MISSIONS} from './countermodel-learning.mjs';
 import {rankSearchActions} from './countermodel-search-policy.mjs';
 import {shaText} from './omega-core.mjs';
+import {expedition,mastery,dailyMission,explainWorld} from './countermodel-expedition.mjs';
 const $=id=>document.getElementById(id);
 let current=COUNTERMODEL_MISSIONS[0],history=[],world=initialWorld(),checked=null,localBest={};
 let notebooks=[],coachModel=null,pendingCoach=null,guided=false,learningBusy=false,modelRevision=0,implementationPromise;
 const LEARNING_SOURCE_ASSETS=new Set(['arena-countermodel.js','countermodel-learning.mjs','countermodel-search-policy.mjs']);
+const completedSessions=[];
+function session(){return {version:COUNTERMODEL_VERSION,mission_id:current.id,actions:structuredClone(history)};}
+function renderExpedition(){
+ const progress=expedition(completedSessions);
+ $('cmProgress').textContent=`${progress.completed} / 7 missions discovered · ${progress.mastery} / 21 mastery goals. Progress stays in this tab.`;
+ $('cmProgressBar').value=progress.completed;
+ $('cmNext').disabled=!progress.next;
+ const goals=$('cmGoals');goals.replaceChildren();
+ let result=null;try{result=mastery(session());}catch{}
+ for(const [key,title] of [['minimal','Smallest possible world'],['independent','No hints or model assistance'],['precise','At most two checker requests, unassisted']]){
+  const li=document.createElement('li');li.textContent=(result?.[key]?'✓ ':'○ ')+title;goals.append(li);
+ }
+ const explanation=$('cmExplanation');explanation.replaceChildren();
+ if(!checked||history.at(-1)?.type!=='check'){explanation.append('Request a check to inspect the truth of your current world.');return;}
+ const evidence=explainWorld(current.id,world);
+ function branch(node){const li=document.createElement('li');li.textContent=`${node.value?'TRUE':'FALSE'} · ${node.label}`;if(node.children.length){const ul=document.createElement('ul');for(const child of node.children)ul.append(branch(child));li.append(ul);}return li;}
+ for(const [name,tree] of [['Original meaning',evidence.left],['Proposed translation',evidence.right]]){const h=document.createElement('h3');h.textContent=name;const ul=document.createElement('ul');ul.append(branch(tree));explanation.append(h,ul);}
+}
 try{localBest=JSON.parse(localStorage.getItem('pcs-countermodel-best-v1')||'{}')||{};}catch{}
 function renderMissions(){const dest=$('cmMissions');dest.replaceChildren();for(const m of publicCountermodelMissions()){
  const b=document.createElement('button');b.type='button';b.className='cm-mission';b.setAttribute('aria-pressed',String(current.id===m.id));
@@ -33,6 +52,7 @@ function draw(){const v=countermodelVerdict(current.id,world);$('cmTier').textCo
  $('cmChecks').textContent=history.filter(a=>a.type==='check').length;$('cmEdits').textContent=history.filter(a=>!['check','hint'].includes(a.type)).length;$('cmHints').textContent=history.filter(a=>a.type==='hint').length;$('cmScore').textContent=localBest[current.id]||'—';
  $('cmDonate').disabled=!(Boolean(checked?.final_verified)&&checked.edits>=1&&$('cmAdult').checked&&$('cmConsent').checked);$('cmLeanExport').disabled=!Boolean(checked?.final_verified);$('cmWitnessExport').disabled=!Boolean(checked?.final_verified);
  renderLearning();
+ renderExpedition();
  if(guided)$('cmGuideStatus').textContent=checked?.final_verified?'You made a real counterexample: P is true and Q is false, so P → Q is false while Q → P is true. Restart before an unassisted attempt.':world.n===1&&world.P[0]&&!world.Q[0]?'Now click “Check my world” and compare both truth values.':'For this walkthrough keep one agent, turn P on and leave Q off. P → Q says that if P holds, Q must hold. Your clicks create the witness.';
 }
 $('cmWitnessExport').addEventListener('click',()=>{
@@ -61,7 +81,7 @@ function move(action){if(history.length>=120){message('This notebook is full. Re
   else if(action.type==='toggle_relation')world.R[action.i][action.j]=!world.R[action.i][action.j];
   history=proposed;checked=null;draw();
  }catch{message('That move is outside the supported finite game.','miss');}}
-$('cmCheck').addEventListener('click',()=>{pendingCoach=null;if(history.length>=120){message('Notebook full—restart to check a new experiment.','miss');return;}const v=countermodelVerdict(current.id,world);history.push({type:'check'});checked=scoreNow();if(!checked){message('The finite checker rejected this attempt.','miss');return;}if(v.counterexample){const min=findMinimalCountermodel(current.id);const value=checked.score;if(value>(localBest[current.id]||0)){localBest[current.id]=value;try{localStorage.setItem('pcs-countermodel-best-v1',JSON.stringify(localBest));}catch{}}message(`Counterexample found! Original is ${v.left}, proposal is ${v.right}. Minimum domain size is ${min.n}; your score is ${value}. ${world.n===min.n?'You found a smallest possible world.':'Try removing agents to improve your solution.'}`,'win');}else message('Not yet: both statements have the same truth value here. Change the world and test again.','miss');draw();renderMissions();});
+$('cmCheck').addEventListener('click',()=>{pendingCoach=null;if(history.length>=120){message('Notebook full—restart to check a new experiment.','miss');return;}const v=countermodelVerdict(current.id,world);history.push({type:'check'});checked=scoreNow();if(!checked){message('The finite checker rejected this attempt.','miss');return;}if(v.counterexample){if(completedSessions.length<200)completedSessions.push(session());const min=findMinimalCountermodel(current.id);const value=checked.score;if(value>(localBest[current.id]||0)){localBest[current.id]=value;try{localStorage.setItem('pcs-countermodel-best-v1',JSON.stringify(localBest));}catch{}}message(`Counterexample found! Original is ${v.left}, proposal is ${v.right}. Minimum domain size is ${min.n}; your score is ${value}. ${world.n===min.n?'You found a smallest possible world.':'Try removing agents to improve your solution.'}`,'win');}else message('Not yet: both statements have the same truth value here. Change the world and test again.','miss');draw();renderMissions();});
 $('cmHint').addEventListener('click',()=>{pendingCoach=null;if(history.length>=120||history.filter(a=>a.type==='hint').length>=3){message('Hint budget used. Try experimenting.','miss');return;}history.push({type:'hint'});checked=scoreNow();let msg='Try asking what changes between the two sentences. Which one requires more?';if(current.kind==='relation')msg='Try two agents. A relation can hold for each agent with a different partner, without one universal partner.';if(history.filter(a=>a.type==='hint').length===2)msg=`Hint: the smallest possible countermodel needs ${findMinimalCountermodel(current.id).n} agent(s).`;message(msg);draw();});
 $('cmLeanExport').addEventListener('click',()=>{
  if(!checked?.final_verified)return;
@@ -151,5 +171,7 @@ $('cmCoach').addEventListener('click',()=>{
  draw();
 });
 $('cmCoachApply').addEventListener('click',()=>{if(!pendingCoach)return;const action=pendingCoach.action;pendingCoach=null;if(action.type==='check')$('cmCheck').click();else move(action);});
+$('cmNext').addEventListener('click',()=>{const next=expedition(completedSessions).next;if(next){choose(next);$('cmTitle').scrollIntoView({behavior:'smooth',block:'start'});}});
+$('cmDaily').addEventListener('click',()=>{const date=new Date().toISOString().slice(0,10);choose(dailyMission(date));$('cmDailyStatus').textContent=`${date} UTC challenge: ${current.name}. Earn all three mastery goals: minimal world, no help, at most two checks.`;$('cmTitle').scrollIntoView({behavior:'smooth',block:'start'});});
 const requestedMission=new URLSearchParams(location.search).get('mission');
 choose(COUNTERMODEL_MISSIONS.find(m=>m.id===requestedMission)?.id||COUNTERMODEL_MISSIONS[(Math.floor(Date.now()/86400000)%COUNTERMODEL_MISSIONS.length)].id);

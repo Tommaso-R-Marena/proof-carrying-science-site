@@ -44,6 +44,21 @@ export function graphLayout(puzzle,order=[]){
   });
   return {nodes,edges,width,height:Math.max(240,(maxDepth+1)*rowHeight+25),nodeWidth,nodeHeight};
 }
+
+// Unit-duration dependency scheduling: stages contain simultaneously ready
+// cards. This analyzes the declared DAG, not real research execution durations.
+export function dependencySchedule(puzzle){
+  const state=dependencyState(puzzle),stages=[];
+  for(const node of state.nodes){(stages[node.depth]??=[]).push(node.id);}
+  const byId=new Map(puzzle.nodes.map(n=>[n.id,n])),depths=new Map(state.nodes.map(n=>[n.id,n.depth]));
+  let tip=state.nodes.reduce((a,b)=>b.depth>a.depth?b:a),criticalPath=[tip.id];
+  while(byId.get(tip.id).needs.length){
+    const id=byId.get(tip.id).needs.reduce((a,b)=>depths.get(b)>depths.get(a)?b:a);
+    criticalPath.unshift(id);tip=state.nodes.find(n=>n.id===id);
+  }
+  return {stages,criticalPath,minimumStages:stages.length,
+    parallelSavings:state.total-stages.length,scope:"Declared prerequisites, unit-duration cards, unlimited parallel workers"};
+}
 export function inspectPlacement(puzzle,previous,nextId){
   const data=dependencyState(puzzle,previous);
   const card=data.nodes.find(n=>n.id===nextId);

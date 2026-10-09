@@ -1,8 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {PUZZLES,gradeOrder} from "../public/proof-order-core.mjs";
+import {PUZZLES,gradeOrder,proceduralPuzzle} from "../public/proof-order-core.mjs";
 import {verifyShield,scenarioForSeed} from "../public/safety-forge-core.mjs";
-import {dependencyState,graphLayout,inspectPlacement,repairFirstInversion,classifyPolicyTrials,traceFrames} from "../public/arena-lab-tools.mjs";
+import {dependencyState,graphLayout,inspectPlacement,repairFirstInversion,classifyPolicyTrials,traceFrames,dependencySchedule} from "../public/arena-lab-tools.mjs";
+test("parallel stages satisfy every actual dependency and their critical chain is a lower bound",()=>{
+ for(const p of [...PUZZLES,...Array.from({length:100},(_,i)=>proceduralPuzzle(i+1))]){
+  const plan=dependencySchedule(p),positions=new Map(plan.stages.flatMap((s,i)=>s.map(id=>[id,i])));
+  assert.equal(gradeOrder(p.id,plan.stages.flat()).valid,true);
+  assert.equal(plan.criticalPath.length,plan.minimumStages);
+  for(const n of p.nodes)for(const dep of n.needs)assert.ok(positions.get(dep)<positions.get(n.id));
+  for(let i=1;i<plan.criticalPath.length;i++)assert.ok(p.nodes.find(n=>n.id===plan.criticalPath[i]).needs.includes(plan.criticalPath[i-1]));
+ }
+});
 test("every puzzle has a total, acyclic, inspectable graph without mutating the source",()=>{
   for(const puzzle of PUZZLES){
     const snapshot=JSON.stringify(puzzle);

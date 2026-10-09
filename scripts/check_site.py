@@ -1413,7 +1413,8 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
     # allowlist. Project text and actions never enter a request body or URL.
     if js.name == "omega-workspace.js":
         expected = ["omega/project-v1.json", "omega/de-morgan-v1.json", "omega/bag-v1.json",
-                    "omega/graph-v1.json", "omega/bandit-v1.json", "omega/run.json", "omega/evaluation.json"]
+                    "omega/graph-v1.json", "omega/bandit-v1.json", "omega/run.json", "omega/evaluation.json",
+                    "omega/nonlinear-v2.json", "omega/adaptive-summary-v2.json"]
         declaration = "const STATIC_OMEGA_ASSETS=new Set([" + ",".join(repr(p) for p in expected) + "]);"
         if declaration not in text or "if(!STATIC_OMEGA_ASSETS.has(path))throw Error" not in text:
             errors.append("omega-workspace.js: exact static research asset guard missing")
