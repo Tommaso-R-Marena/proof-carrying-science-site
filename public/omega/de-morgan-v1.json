@@ -1,0 +1,103 @@
+{
+  "format": "pcs-omega-project-v1",
+  "source": {
+    "name": "logic-review.md",
+    "revision": "1",
+    "license": "Apache-2.0",
+    "text": "Either a protocol is unavailable or its authorization is absent precisely when they are not both present."
+  },
+  "claims": [
+    {
+      "id": "de-morgan",
+      "statement": "Either a protocol is unavailable or its authorization is absent precisely when they are not both present.",
+      "source_lines": [
+        1,
+        1
+      ],
+      "scope": "Public generated De Morgan held-out example; arbitrary Boolean terms have no established physical meaning.",
+      "assumptions": [
+        "Each symbol is an explicitly selected Boolean predicate.",
+        "This is a known public generated family, not a blind evaluation problem."
+      ],
+      "depends_on": [],
+      "task": {
+        "variables": [
+          "P",
+          "Q",
+          "R",
+          "S"
+        ],
+        "source": {
+          "op": "not",
+          "body": {
+            "op": "and",
+            "left": {
+              "op": "not",
+              "body": {
+                "op": "atom",
+                "symbol": "R",
+                "args": []
+              }
+            },
+            "right": {
+              "op": "and",
+              "left": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              },
+              "right": {
+                "op": "and",
+                "left": {
+                  "op": "atom",
+                  "symbol": "S",
+                  "args": []
+                },
+                "right": {
+                  "op": "atom",
+                  "symbol": "P",
+                  "args": []
+                }
+              }
+            }
+          }
+        },
+        "candidate": {
+          "op": "or",
+          "left": {
+            "op": "not",
+            "body": {
+              "op": "not",
+              "body": {
+                "op": "atom",
+                "symbol": "R",
+                "args": []
+              }
+            }
+          },
+          "right": {
+            "op": "and",
+            "left": {
+              "op": "atom",
+              "symbol": "Q",
+              "args": []
+            },
+            "right": {
+              "op": "and",
+              "left": {
+                "op": "atom",
+                "symbol": "S",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

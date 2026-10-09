@@ -1,0 +1,382 @@
+{
+  "format": "pcs-omega-intake-v1",
+  "project_sha256": "e7a1bd3ecec384bc5cf3fd726689fd95403945ad10e5e80433d208018cb22ab6",
+  "source_sha256": "b4f098ea86b2cf0d72b0f4ec1332d8340ecb8c9f28d3286d0ce1ca768bdb7976",
+  "source_metadata_sha256": "9b03fba87272ad94d3602a416ae930eebb45fec4a15c708cadd48709ec6f6527",
+  "claim_ir": {
+    "format": "pcs-claim-ir-v1",
+    "claims": [
+      {
+        "claim_id": "release",
+        "proposal_id": "release",
+        "statement": "Release is permitted only with review and tests.",
+        "kind": "formal",
+        "predicate": {
+          "format": "pcs-omega-interpretation-v1",
+          "task": {
+            "variables": [
+              "P",
+              "Q"
+            ],
+            "source": {
+              "op": "and",
+              "left": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              }
+            },
+            "candidate": {
+              "op": "or",
+              "left": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              }
+            }
+          },
+          "scope": "P means review completed; Q means tests passed. Boolean release eligibility is P AND Q. Whether review and tests actually suffice requires external evidence.",
+          "receipt_sha256": "a624ae65bc1eb53527ce8753f7d3186e393d534dbccee4d119e21de4e59856e8"
+        },
+        "closure_state": "BLOCKED",
+        "candidate_status": "EXPERIMENTAL_BOOLEAN_CHECKED",
+        "selected": false,
+        "formalizable": false,
+        "decomposition": {
+          "parent_claim_id": null,
+          "relation": "root",
+          "depends_on_claim_ids": [],
+          "depth": 0
+        },
+        "authority": {
+          "children_can_set_parent_authority": false,
+          "composition_semantics_certified": false,
+          "human_review_required_for_uncertified_composition": true
+        }
+      }
+    ],
+    "relations": [],
+    "roots": [
+      "release"
+    ],
+    "summary": {
+      "claims": 1,
+      "decomposed_claims": 1,
+      "decomposition_roots": 1,
+      "decomposition_relations": 0,
+      "dependency_relations": 0,
+      "max_decomposition_depth": 0
+    },
+    "claim_ir_sha256": "e9d98ff19f682b6f85494d0fbbef22b4ddcbade8a6c086b76f91e8ea359f03a9"
+  },
+  "obligation_graph": {
+    "format": "pcs-proof-obligation-graph-v1",
+    "claim_ir_sha256": "e9d98ff19f682b6f85494d0fbbef22b4ddcbade8a6c086b76f91e8ea359f03a9",
+    "roots": [
+      "proposal:release"
+    ],
+    "nodes": [
+      {
+        "id": "artifact:omega-source",
+        "type": "artifact",
+        "status": "BOUND_TO_INVENTORY",
+        "artifact_id": "omega-source",
+        "path": "protocol.md",
+        "sha256": "b4f098ea86b2cf0d72b0f4ec1332d8340ecb8c9f28d3286d0ce1ca768bdb7976",
+        "size": 48,
+        "media_type": "text/plain"
+      },
+      {
+        "id": "assumption:release-a0",
+        "type": "assumption",
+        "status": "REQUIRES_REVIEW",
+        "assumption_id": "release-a0",
+        "statement": "Review and tests are assessed independently."
+      },
+      {
+        "id": "check:release",
+        "type": "typed_check",
+        "status": "PROPOSED",
+        "check_id": "release",
+        "check_type": "omega_exhaustive_bool_experimental",
+        "predicate": {
+          "format": "pcs-omega-interpretation-v1",
+          "task": {
+            "variables": [
+              "P",
+              "Q"
+            ],
+            "source": {
+              "op": "and",
+              "left": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              }
+            },
+            "candidate": {
+              "op": "or",
+              "left": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              }
+            }
+          },
+          "scope": "P means review completed; Q means tests passed. Boolean release eligibility is P AND Q. Whether review and tests actually suffice requires external evidence.",
+          "receipt_sha256": "a624ae65bc1eb53527ce8753f7d3186e393d534dbccee4d119e21de4e59856e8"
+        }
+      },
+      {
+        "id": "claim:release",
+        "type": "typed_claim",
+        "status": "BLOCKED",
+        "claim_id": "release",
+        "kind": "formal",
+        "statement": "Release is permitted only with review and tests.",
+        "predicate": {
+          "format": "pcs-omega-interpretation-v1",
+          "task": {
+            "variables": [
+              "P",
+              "Q"
+            ],
+            "source": {
+              "op": "and",
+              "left": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              }
+            },
+            "candidate": {
+              "op": "or",
+              "left": {
+                "op": "atom",
+                "symbol": "P",
+                "args": []
+              },
+              "right": {
+                "op": "atom",
+                "symbol": "Q",
+                "args": []
+              }
+            }
+          },
+          "scope": "P means review completed; Q means tests passed. Boolean release eligibility is P AND Q. Whether review and tests actually suffice requires external evidence.",
+          "receipt_sha256": "a624ae65bc1eb53527ce8753f7d3186e393d534dbccee4d119e21de4e59856e8"
+        },
+        "decomposition": {
+          "parent_claim_id": null,
+          "relation": "root",
+          "depends_on_claim_ids": [],
+          "depth": 0
+        }
+      },
+      {
+        "id": "obligation:O_release_036143603280",
+        "type": "obligation",
+        "status": "OPEN_BLOCKING",
+        "obligation_id": "O_release_036143603280",
+        "proposal_id": "release",
+        "kind": "OMEGA_MEANING_MISMATCH",
+        "blocking": true,
+        "message": "The candidate differs from the selected interpretation under a checked Boolean valuation.",
+        "details": {
+          "counterexample": {
+            "assignment": {
+              "P": false,
+              "Q": true
+            },
+            "source_true": false,
+            "candidate_true": true
+          }
+        },
+        "repair": null
+      },
+      {
+        "id": "obligation:O_release_64f25e3230cd",
+        "type": "obligation",
+        "status": "OPEN_BLOCKING",
+        "obligation_id": "O_release_64f25e3230cd",
+        "proposal_id": "release",
+        "kind": "OMEGA_INTENT_GROUNDING",
+        "blocking": true,
+        "message": "Boolean interpretation does not establish scientific intent or external observations.",
+        "details": null,
+        "repair": null
+      },
+      {
+        "id": "obligation:O_release_ef719e612e11",
+        "type": "obligation",
+        "status": "OPEN_BLOCKING",
+        "obligation_id": "O_release_ef719e612e11",
+        "proposal_id": "release",
+        "kind": "OMEGA_REGISTERED_AUTHORITY",
+        "blocking": true,
+        "message": "Experimental exhaustive checking is not a registered PCS scientific verifier.",
+        "details": null,
+        "repair": null
+      },
+      {
+        "id": "proposal:release",
+        "type": "proposal",
+        "status": "BLOCKED",
+        "proposal_id": "release",
+        "candidate_status": "EXPERIMENTAL_BOOLEAN_CHECKED",
+        "selected": false,
+        "formalizable": false,
+        "confidence": null,
+        "source": {
+          "name": "protocol.md",
+          "revision": "1",
+          "license": "Apache-2.0",
+          "text": null,
+          "source_sha256": "b4f098ea86b2cf0d72b0f4ec1332d8340ecb8c9f28d3286d0ce1ca768bdb7976",
+          "source_lines": [
+            1,
+            1
+          ]
+        },
+        "finding": "Release is permitted only with review and tests."
+      }
+    ],
+    "edges": [
+      {
+        "from": "assumption:release-a0",
+        "to": "claim:release",
+        "relation": "assumption_for",
+        "blocking": false
+      },
+      {
+        "from": "check:release",
+        "to": "claim:release",
+        "relation": "defines_predicate_for",
+        "blocking": false
+      },
+      {
+        "from": "proposal:release",
+        "to": "artifact:omega-source",
+        "relation": "references_artifact",
+        "blocking": false
+      },
+      {
+        "from": "proposal:release",
+        "to": "check:release",
+        "relation": "proposes_check",
+        "blocking": false
+      },
+      {
+        "from": "proposal:release",
+        "to": "claim:release",
+        "relation": "interprets_as_claim",
+        "blocking": false
+      },
+      {
+        "from": "proposal:release",
+        "to": "obligation:O_release_036143603280",
+        "relation": "has_blocking_obligation",
+        "blocking": true
+      },
+      {
+        "from": "proposal:release",
+        "to": "obligation:O_release_64f25e3230cd",
+        "relation": "has_blocking_obligation",
+        "blocking": true
+      },
+      {
+        "from": "proposal:release",
+        "to": "obligation:O_release_ef719e612e11",
+        "relation": "has_blocking_obligation",
+        "blocking": true
+      }
+    ],
+    "repair_queue": [],
+    "summary": {
+      "nodes": 8,
+      "edges": 8,
+      "blocking_obligations": 3,
+      "repair_actions": 0,
+      "node_type_counts": {
+        "artifact": 1,
+        "assumption": 1,
+        "typed_check": 1,
+        "typed_claim": 1,
+        "obligation": 3,
+        "proposal": 1
+      },
+      "closure_state_counts": {
+        "BLOCKED": 1
+      }
+    },
+    "graph_sha256": "105c0656e6ca28f2ca48d62fbb241dc1820132fc647432bf293bdf3861b23780"
+  },
+  "receipts": {
+    "release": {
+      "format": "pcs-omega-check-v1",
+      "checker": "pcs-omega-exhaustive-bool/1",
+      "task_sha256": "de3eea420fc3e1e57040c7c0a044de30ed97366eb4a43c919117a3db3525bb34",
+      "source_sha256": "12864a32e1cfd0ed6ef44bb1f0c80a36254a85dc7e4d8287c614eb720e56ff4c",
+      "candidate_sha256": "f94bb019705927fa2a453600b5cdd10a6e2ef0af230fde9d30a718552f4c0870",
+      "assignments_checked": 4,
+      "truth_pairs": [
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          true
+        ],
+        [
+          false,
+          true
+        ],
+        [
+          true,
+          true
+        ]
+      ],
+      "equivalent": false,
+      "counterexample": {
+        "assignment": {
+          "P": false,
+          "Q": true
+        },
+        "source_true": false,
+        "candidate_true": true
+      },
+      "scope": "All valuations of the explicitly declared Boolean symbols",
+      "pcs_authority": false,
+      "lean_kernel_checked": false
+    }
+  },
+  "experimental": true,
+  "pcs_authority": false,
+  "grounding": "Explicit source ranges and selected Boolean interpretations; no automatic scientific or natural-language understanding"
+}

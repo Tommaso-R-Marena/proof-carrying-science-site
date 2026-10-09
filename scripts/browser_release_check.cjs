@@ -15,10 +15,33 @@ let syntheticContext;
   const context=await browser.newContext({viewport});
   await context.route('**/*',r=>new URL(r.request().url()).origin===new URL(base).origin?r.continue():r.abort());
   const page=await context.newPage();
-  for(const path of ['/','/live-demo.html','/research-preview.html','/arena.html','/arena-countermodel.html','/semantic-gauntlet.html','/semantic-repair-lab.html','/repair-model-lab.html','/semantic-multistep-lab.html','/account.html','/arena-proof-quest.html','/arena-safety-forge.html','/forge-duel.html','/prooflab.html','/meaning-forge.html']){
+  for(const path of ['/','/omega-workspace.html','/live-demo.html','/research-preview.html','/arena.html','/arena-countermodel.html','/semantic-gauntlet.html','/semantic-repair-lab.html','/repair-model-lab.html','/semantic-multistep-lab.html','/account.html','/arena-proof-quest.html','/arena-safety-forge.html','/forge-duel.html','/prooflab.html','/meaning-forge.html']){
    const exceptions=[]; const onError=e=>exceptions.push(e.message);page.on('pageerror',onError);
    const response=await page.goto(base+path,{waitUntil:'networkidle'});
    if(path==='/prooflab.html')await page.locator('#plCards button').first().click();
+   if(path==='/omega-workspace.html'){
+    await page.locator('#omegaStatus').filter({hasText:'Mapped 1 explicit claim'}).waitFor();
+    await page.locator('#omegaRun').click();
+    await page.locator('#omegaResult').filter({hasText:'Boolean equivalence checked'}).waitFor();
+    const episodeDownload=page.waitForEvent('download');await page.locator('#omegaEpisode').click();
+    const episodeFile=await episodeDownload,episode=JSON.parse(fs.readFileSync(await episodeFile.path(),'utf8'));
+    fs.writeFileSync(output+'.omega-'+viewport.width+'.json',JSON.stringify(episode,null,2)+'\n');
+    if(episode.format!=='pcs-omega-search-v1'||!episode.solution||episode.pcs_authority!==false)throw Error('Omega trajectory download failed');
+    const proofDownload=page.waitForEvent('download');await page.locator('#omegaLean').click();
+    const proofFile=await proofDownload,omegaProof=fs.readFileSync(await proofFile.path(),'utf8');if(!omegaProof.includes('#print axioms omega_equivalence'))throw Error('Omega Lean template download failed');
+    fs.writeFileSync(output+'.omega-'+viewport.width+'.lean',omegaProof);
+    await page.locator('#omegaCompare').click();
+    await page.locator('#omegaComparisons tbody tr').nth(4).waitFor();
+    if(!(await page.locator('#omegaDetails').innerText()).includes('Scientific closure: BLOCKED'))throw Error('Omega experiment promoted scientific authority');
+    await page.locator('#omegaGraph g[role=button]').filter({hasText:'release'}).click();
+    if(!(await page.locator('#omegaEpisode').isEnabled()))throw Error('Inspecting the selected claim discarded its checked trajectory');
+    await page.locator('#omegaGraph g[role=button]').filter({hasText:'Interpretation grounding'}).click();
+    if(!(await page.locator('#omegaDetails').innerText()).includes('grounding obligation'))throw Error('Omega graph obligation inspection failed');
+    await page.locator('#omegaInput').fill('{"format":"unsupported"}');
+    if(await page.locator('#omegaEpisode').isEnabled())throw Error('Omega stale evidence remained downloadable');
+    await page.locator('#omegaLoad').click();
+    await page.locator('#omegaStatus').filter({hasText:'Input rejected'}).waitFor();
+   }
    if(path==='/live-demo.html'){
     if(await page.locator('#ldWitness').isEnabled())throw Error('Witness enabled before a counterexample');
     await page.locator('#ldAttack').click();

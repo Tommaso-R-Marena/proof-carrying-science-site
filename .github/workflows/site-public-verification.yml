@@ -37,11 +37,15 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: b2c880b53c45938ad7b3642ec7fa834d64c665aa
+          ref: dbf81c5e586400d0bb226782b741cc5e6e28e588
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
         run: node scripts/verify_countermodel_python.mjs --core .ci-components/pcs | tee countermodel-python-results.log
+      - name: Independent Omega Boolean, graph-feature and learned-search parity
+        run: |
+          set -euo pipefail
+          node scripts/verify_omega_python.mjs --core .ci-components/pcs | tee omega-python-results.log
       - name: Independently check all seven Lean countermodels
         run: |
           set -euo pipefail
@@ -88,5 +92,7 @@ jobs:
             countermodel-python-results.log
             countermodel-lean-results.log
             browser-results.json
+            browser-results.json.omega-*
             browser-research-results.json
+            omega-python-results.log
           retention-days: 14
