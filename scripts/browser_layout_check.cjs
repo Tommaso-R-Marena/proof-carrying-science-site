@@ -12,6 +12,10 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   for(const file of fs.readdirSync(path.join(__dirname,'../public')).filter(f=>f.endsWith('.html'))){
    const errors=[];const listener=e=>errors.push(e.message);page.on('pageerror',listener);
    const response=await page.goto(base+'/'+file,{waitUntil:'load'});await page.waitForTimeout(100);
+   if(file==='tasks.html'&&new URL(base).port==='8788'){
+    await page.locator('#commonsTaskList .commons-task-card').first().waitFor();
+    if((await page.locator('#commonsTaskList').innerText()).includes('Account service unavailable'))throw Error('Live task rendering failed');
+   }
    const metrics=await page.evaluate(()=>{
     const clashes=[];const rect=e=>e.getBoundingClientRect();
     for(const parent of document.querySelectorAll('main *,header *,footer *')){
@@ -23,9 +27,11 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
       const a=rect(kids[i]),b=rect(kids[j]);if(Math.min(a.right,b.right)-Math.max(a.left,b.left)>3&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>3)clashes.push({parent:parent.id||parent.className,a:kids[i].id||kids[i].className||kids[i].tagName,b:kids[j].id||kids[j].className||kids[j].tagName});
      }
     }
-    return {scrollWidth:document.documentElement.scrollWidth,clashes};
+    const escapes=[...document.querySelectorAll('main *')].filter(e=>rect(e).width&&rect(e).right>innerWidth+2&&!e.closest('svg')).slice(0,10).map(e=>({tag:e.tagName,id:e.id,cls:e.className,text:e.textContent.slice(0,80)}));
+    return {scrollWidth:document.documentElement.scrollWidth,clashes,escapes};
    });
    rows.push({file,width,status:response.status(),...metrics,errors});page.off('pageerror',listener);
+   if(process.env.PCS_LAYOUT_OUTPUT&&(metrics.scrollWidth>width+2||metrics.clashes.length||errors.length)){fs.mkdirSync(process.env.PCS_LAYOUT_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`failed-${width}-${file}.png`),fullPage:true});}
   }
   // Actual game board, checked explanation, mission advancement and mobile menu.
   await page.goto(base+'/arena-countermodel.html?mission=implication-flip');
