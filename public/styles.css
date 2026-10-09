@@ -1372,6 +1372,8 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 @media(max-width:500px){.arena-plain-rules{grid-template-columns:1fr}.arena-research-card{padding:18px}}
 
 @media(max-width:580px){
+  .commons-policy-note{flex-direction:column;align-items:stretch}
+  .commons-policy-note strong{flex:0 1 auto;max-width:100%;overflow-wrap:anywhere}
   .task-results-head,.task-card-top{flex-direction:column;align-items:stretch}
   .task-results-head .actions{margin-top:0}
   .task-filter-panel select{width:100%}
