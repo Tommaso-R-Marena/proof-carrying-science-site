@@ -233,8 +233,8 @@
     target.innerHTML=shown.map(taskCard).join("")||'<div class="commons-empty"><strong>No currently needed tasks match those filters.</strong><span>Adjust category, level, time, compensation, or track—or check ongoing Roles.</span></div>';
     const count=$("#taskCount");if(count)count.textContent=`${shown.length} currently needed task${shown.length===1?"":"s"} shown`;
     $$("[data-start-task]",target).forEach(btn=>btn.addEventListener("click",()=>startTask(btn.dataset.startTask)));
-    $("[data-apply-task]",target).forEach(btn=>btn.addEventListener("click",()=>openApplication(btn.dataset.applyTask)));
-    $("[data-code-task]",target).forEach(btn=>btn.addEventListener("click",()=>openCodeDialog(btn.dataset.codeTask)));
+    $$("[data-apply-task]",target).forEach(btn=>btn.addEventListener("click",()=>openApplication(btn.dataset.applyTask)));
+    $$("[data-code-task]",target).forEach(btn=>btn.addEventListener("click",()=>openCodeDialog(btn.dataset.codeTask)));
   }
 
   async function startTask(id){

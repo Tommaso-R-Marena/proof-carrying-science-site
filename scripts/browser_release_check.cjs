@@ -21,6 +21,7 @@ let syntheticContext;
    if(path==='/prooflab.html')await page.locator('#plCards button').first().click();
    if(path==='/omega-workspace.html'){
     await page.locator('#omegaStatus').filter({hasText:'Mapped 1 explicit claim'}).waitFor();
+    await page.locator('#omegaStrategy').selectOption('structural');
     await page.locator('#omegaRun').click();
     await page.locator('#omegaResult').filter({hasText:'Boolean equivalence checked'}).waitFor();
     const episodeDownload=page.waitForEvent('download');await page.locator('#omegaEpisode').click();
@@ -94,6 +95,21 @@ let syntheticContext;
  const after=(await (await context.request.get(base+'/api/me')).json()).user;
  if(after.level!==0||after.role!=='contributor'||after.is_owner)throw Error('Crafted profile granted authority');
  summary.crafted_profile_cannot_escalate=true;
+ // The marketplace must render actual server data and bind every task button.
+ // This caught a querySelector/forEach bug that erased populated task cards.
+ await page.goto(base+'/tasks.html',{waitUntil:'networkidle'});
+ await page.locator('#commonsTaskList .commons-task-card').first().waitFor();
+ if((await page.locator('#commonsTaskList').innerText()).includes('Account service unavailable'))throw Error('Populated marketplace rendering failed');
+ const published=await (await context.request.get(base+'/api/tasks')).json();
+ const eligible=published.tasks.filter(t=>t.eligibility?.can_start&&t.compensation_type==='volunteer').slice(0,2);
+ if(eligible.length!==2)throw Error('Expected two actual eligible volunteer tasks in isolated migrations');
+ for(const task of eligible){
+  const started=page.waitForResponse(r=>r.url().endsWith('/api/tasks/'+encodeURIComponent(task.id)+'/request'));
+  await page.locator(`[data-start-task="${task.id}"]`).click();
+  const response=await started;if(!response.ok())throw Error('Actual task start rejected: '+response.status());
+  await page.locator(`[data-task-id="${task.id}"]`).getByText('Active work record',{exact:true}).waitFor();
+ }
+ summary.real_volunteer_task_starts=eligible.length;
  const deleteResponse=await context.request.post(base+'/api/account/delete',{headers:{Origin:base},data:{password,confirmation:'DELETE'}});
  if(deleteResponse.status()!==200)throw Error('Synthetic account cleanup failed: '+deleteResponse.status());
  summary.synthetic_account_deleted=true;

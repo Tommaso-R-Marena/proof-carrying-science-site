@@ -1,5 +1,5 @@
 import {PUZZLES,gradeOrder,getPuzzleById,puzzleVersionFor,proceduralPuzzle} from "./proof-order-core.mjs";
-import {dependencyState,graphLayout,inspectPlacement,repairFirstInversion} from "./arena-lab-tools.mjs";
+import {dependencyState,graphLayout,inspectPlacement,repairFirstInversion,dependencySchedule} from "./arena-lab-tools.mjs";
 
 const $=id=>document.getElementById(id);
 let selected=PUZZLES[0],chosen=[],hints=0,seen=new Set(),stars=0,last=null,bankOrder=[],tourStep=0;
@@ -130,6 +130,14 @@ $("questFixOne").addEventListener("click",()=>{
   render();
 });
 renderDiary();
+$("questSchedule").addEventListener("click",()=>{
+ useLearningAid();last=null;
+ const plan=dependencySchedule(selected),byId=new Map(selected.nodes.map(n=>[n.id,n.label])),box=$("questScheduleReport");box.replaceChildren();box.hidden=false;
+ const p=document.createElement("p");p.textContent=`${selected.nodes.length} cards can run in ${plan.minimumStages} parallel stages if each card takes one time unit and workers are unlimited. ${plan.parallelSavings} stages saved compared with doing everything sequentially.`;box.append(p);
+ const path=document.createElement("p");path.textContent="Bottleneck chain: "+plan.criticalPath.map(id=>byId.get(id)).join(" → ");box.append(path);
+ const list=document.createElement("ol");for(const stage of plan.stages){const li=document.createElement("li");li.textContent=stage.map(id=>byId.get(id)).join(" + ");list.append(li);}box.append(list);
+ const note=document.createElement("p");note.textContent="This tool reveals dependencies and counts as a hint. Check your path again before donating; it is an analysis of this generated graph, not a Lean proof or a measured scientific workflow runtime.";box.append(note);render();
+});
 
 function buttonList(){
   $("questPuzzleList").replaceChildren();
@@ -145,6 +153,7 @@ function buttonList(){
 }
 function choosePuzzle(id){
   selected=getPuzzleById(id)||PUZZLES[0];chosen=[];hints=0;last=null;bankOrder=shuffled(selected.nodes.map(n=>n.id));
+  $("questScheduleReport").hidden=true;
   coachOn=false;mapOn=false;combo=0;
   $("questCoach").setAttribute("aria-pressed","false");$("questCoach").textContent="🧠 Coach mode: off";
   $("questRevealMap").setAttribute("aria-expanded","false");$("questRevealMap").textContent="🕸️ X-ray dependency map (hint)";
