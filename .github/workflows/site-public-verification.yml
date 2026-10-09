@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: 2b1ed438bd0d102e0b45673219f34cf4e2eec7f3
+          ref: f9eca30b51e58a8e7565ea34033d557341053fae
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
@@ -64,6 +64,15 @@ jobs:
           source scripts/activate_lean_428.sh
           node scripts/verify_countermodel_lean.mjs | tee countermodel-lean-results.log
           test "$(grep -c '^LEAN_KERNEL_VERIFIED' countermodel-lean-results.log)" -eq 7
+      - name: Build and exhaustively compare the proved general finite evaluator
+        run: |
+          set -euo pipefail
+          source scripts/activate_lean_428.sh
+          python3 .ci-components/pcs/scripts/generate_countermodel_missions.py
+          python3 .ci-components/pcs/scripts/audit_lean_source.py .ci-components/pcs/formal/PCSCountermodel.lean .ci-components/pcs/formal/PCSCountermodel .ci-components/pcs/formal/PCSCountermodelReplay.lean
+          (cd .ci-components/pcs/formal && lake build PCSCountermodel pcs-countermodel-replay)
+          python3 .ci-components/pcs/scripts/verify_countermodel_formal.py | tee countermodel-formal-python-results.log
+          node scripts/verify_countermodel_formal.mjs --core .ci-components/pcs | tee countermodel-formal-javascript-results.log
       - name: Isolated real-browser account, authority and mobile checks
         run: |
           set -euo pipefail
@@ -107,6 +116,8 @@ jobs:
             countermodel-python-results.log
             countermodel-replay-results.log
             countermodel-lean-results.log
+            countermodel-formal-python-results.log
+            countermodel-formal-javascript-results.log
             browser-results.json
             browser-results.json.omega-*
             browser-research-results.json

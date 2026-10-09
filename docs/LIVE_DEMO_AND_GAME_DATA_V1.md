@@ -4,6 +4,18 @@ The live demo at `live-demo.html` uses the real Countermodel Lab evaluator to ex
 
 The core command `pcs countermodel-check-v1 witness.json` independently evaluates the exact pinned mission semantics in Python. Website CI compares 2,028 worlds across implementations and compiles all seven generated Lean counterexamples using Lean 4.28. A live browser result is not a fresh Lean kernel execution or signed PCS certificate. Core and website source are public; a real external scientific pilot and production signing service are separate work.
 
+The PCS `PCSCountermodel` library now proves general finite evaluator correctness,
+named-variable lowering, enumeration coverage and bounded search soundness/minimality.
+All seven shipped mission pairs have exact lowering, concrete disagreements and
+minimum search sizes checked by the kernel. The required website release gate builds
+the pinned PCS library, audits its 48 principal/mission theorem dependencies, checks
+a false-equivalence rejection control, and compares the actual compiled Lean evaluator
+with Python and JavaScript on all 231,224 Boolean worlds with domain sizes 1–3.
+JSON decoding and general runtime refinement remain unproved; these finite runtime
+comparisons are tests. The browser/Worker assessment retains its existing authority
+boundary. See the core's [proof scope and reproduction commands](https://github.com/Tommaso-R-Marena/proof-carrying-science/blob/main/formal/PCSCountermodel/README.md)
+and [Aristotle decoder follow-up](https://github.com/Tommaso-R-Marena/proof-carrying-science/blob/main/docs/ARISTOTLE_COUNTERMODEL_JSON_REQUEST.md).
+
 ## Consented gameplay to an actual fitted model
 
 1. Play Countermodel Lab locally. Donation is optional, requires an email-verified account, adult self-attestation and explicit consent. The Worker recomputes every trajectory and label, deduplicates exact normalized choices, and stores consent/account linkage privately for deletion.
