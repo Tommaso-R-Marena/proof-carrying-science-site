@@ -1,0 +1,19 @@
+# Live demo and reproducible game-data pipeline
+
+The live demo at `live-demo.html` uses the real Countermodel Lab evaluator to expose a reversed tool-permission implication. Users change actual Boolean facts, inspect all four one-call worlds, explicitly request stateless Worker replay, and download a concrete JSON witness or Lean source. Changing a world invalidates replay status and witness eligibility immediately; stale asynchronous responses cannot certify a newer input. No demo research row is stored. Normal infrastructure request logging is a separate boundary.
+
+The core command `pcs countermodel-check-v1 witness.json` independently evaluates the exact pinned mission semantics in Python. Website CI compares 2,028 worlds across implementations and compiles all seven generated Lean counterexamples using Lean 4.28. A live browser result is not a fresh Lean kernel execution or signed PCS certificate. Core and website source are public; a real external scientific pilot and production signing service are separate work.
+
+## Consented gameplay to an actual fitted model
+
+1. Play Countermodel Lab locally. Donation is optional, requires an email-verified account, adult self-attestation and explicit consent. The Worker recomputes every trajectory and label, deduplicates exact normalized choices, and stores consent/account linkage privately for deletion.
+2. The Owner dashboard now exports Countermodel sessions through the existing private API. The browser replays every row, rejects identifying fields, and caps this reviewed batch at 200 sessions. Keep exports private and separately handle withdrawals from offline exports/backups. Offset pagination is not a transaction snapshot: do not collect while records are changing.
+3. Prepare transitions: `node scripts/prepare_countermodel_dataset.mjs owner-export.json transitions.json`. This recomputes pre-action states and labels and binds the symbolic ruleset; training observations do not contain oracle outcomes.
+4. Fit an actual search policy: `node scripts/train_countermodel_search_policy.mjs owner-export.json model.json evaluation.json`. The trainer replays the **original owner export** again, excludes hint-assisted episodes, and uses only training-family action choices to fit a deterministic masked softmax classifier. Held-out mission families never affect model weights, training digests or fitting metadata. It refuses empty training data.
+5. The evaluation report measures held-out **agreement with recorded choices**, including a training-action-prior baseline and expected uniform-random agreement. This does not measure solver success, scientific accuracy, novel proofs or real-world safety. Zero held-out rows produce no accuracy claim. No model is automatically deployed or promoted to authority.
+
+The model records ruleset, trainer, feature-source and training-row hashes and keeps participant identifiers out of its training records. Replay establishes finite labels, not authentic human behavior or externally attested consent. Public missions are tiny and reusable, so held-out families are an internal check, not a private research benchmark. The separately published semantic-repair model remains trained on generated tasks; this change does not relabel it as trained on human donations.
+
+## Verification
+
+The required website gate now includes real browser/Worker/D1 tests using a disposable synthetic fixture account: unverified-email denial, a verified insert, duplicate rejection, private Owner UI export, replay/preparation/fitting, held-out isolation, self-service deletion and removal from subsequent exports. Email verification and Owner assignment are local fixtures; outbound email, production credentials and real participant data are not exercised. The same gate runs the desktop/mobile demo, server replay, witness/Lean downloads, actual-byte request-size rejection, the full site suite, and pinned core/Lean checks.

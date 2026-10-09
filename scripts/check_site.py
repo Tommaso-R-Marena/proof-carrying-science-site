@@ -310,7 +310,8 @@ for pilot_file, required_tokens in {
         "Independent Researcher Pilots", "Falsification", "NOT PCS-VERIFIED",
         'id="pilotDraftForm"', 'id="pilotDraftResult"',
         'src="researcher-pilot-ui.js"', 'href="research-preview.html"',
-        "The formal core repository remains private",
+        "PCS core, website and CertiForge source are public",
+        "a genuinely external scientific pilot and live production signing service remain separate validation steps",
     ],
     "researcher-pilot-core.mjs": [
         "pcs-independent-pilot-draft-v1", "signed:false",
@@ -1403,7 +1404,7 @@ NETWORKED_COMMONS_JS = {
     "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
     "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js", "arena-safety-forge.js",
     "forge-duel.js", "prooflab.js",
-    "meaning-forge.js", "reviewer-desk.js", "workboard.js", "arena-countermodel.js",
+    "meaning-forge.js", "reviewer-desk.js", "workboard.js", "arena-countermodel.js", "live-demo.js",
 }
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
@@ -1418,6 +1419,9 @@ for js in ROOT.glob("*.js"):
         if js.name == "site.js":
             if 'path !== "/api/me"' not in text or 'path !== "/api/admin/session"' not in text:
                 errors.append("site.js: reviewed session endpoint allowlist missing")
+        elif js.name == "live-demo.js":
+            if 'path !== "/api/demo/countermodel/replay"' not in text or "credentials:'omit'" not in text:
+                errors.append("live-demo.js: exact stateless endpoint and anonymous replay guard missing")
         elif js.name == "arena-countermodel.js":
             if 'path !== "/api/arena/countermodel/donate" && path !== "/api/arena/countermodel/erase"' not in text:
                 errors.append("arena-countermodel.js: exact consented donation/deletion endpoint guard missing")

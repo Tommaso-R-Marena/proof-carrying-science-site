@@ -15,10 +15,28 @@ let syntheticContext;
   const context=await browser.newContext({viewport});
   await context.route('**/*',r=>new URL(r.request().url()).origin===new URL(base).origin?r.continue():r.abort());
   const page=await context.newPage();
-  for(const path of ['/','/arena.html','/arena-countermodel.html','/semantic-gauntlet.html','/semantic-repair-lab.html','/repair-model-lab.html','/semantic-multistep-lab.html','/account.html','/arena-proof-quest.html','/arena-safety-forge.html','/forge-duel.html','/prooflab.html','/meaning-forge.html']){
+  for(const path of ['/','/live-demo.html','/research-preview.html','/arena.html','/arena-countermodel.html','/semantic-gauntlet.html','/semantic-repair-lab.html','/repair-model-lab.html','/semantic-multistep-lab.html','/account.html','/arena-proof-quest.html','/arena-safety-forge.html','/forge-duel.html','/prooflab.html','/meaning-forge.html']){
    const exceptions=[]; const onError=e=>exceptions.push(e.message);page.on('pageerror',onError);
    const response=await page.goto(base+path,{waitUntil:'networkidle'});
    if(path==='/prooflab.html')await page.locator('#plCards button').first().click();
+   if(path==='/live-demo.html'){
+    if(await page.locator('#ldWitness').isEnabled())throw Error('Witness enabled before a counterexample');
+    await page.locator('#ldAttack').click();
+    await page.locator('#ldVerdict').filter({hasText:'COUNTEREXAMPLE FOUND'}).waitFor();
+    if(!(await page.locator('#ldOriginal').innerText()).startsWith('FALSE')||!(await page.locator('#ldProposal').innerText()).startsWith('TRUE'))throw Error('Reversed implication did not expose the permission gap');
+    const server=page.waitForResponse(r=>r.url().endsWith('/api/demo/countermodel/replay'));
+    await page.locator('#ldServer').click();const replay=await (await server).json();
+    if(!replay.replay?.final_verified||replay.research_recorded!==false)throw Error('Stateless server replay failed');
+    await page.locator('#ldServerStatus').filter({hasText:'Counterexample confirmed'}).waitFor();
+    const downloaded=page.waitForEvent('download');await page.locator('#ldWitness').click();
+    const file=await downloaded;const witness=JSON.parse(fs.readFileSync(await file.path(),'utf8'));
+    if(witness.format!=='pcs-countermodel-witness-v1'||witness.world.P[0]!==true||witness.world.Q[0]!==false)throw Error('Browser witness download does not match the checked world');
+    const leanDownload=page.waitForEvent('download');await page.locator('#ldLean').click();
+    const leanFile=await leanDownload;const lean=fs.readFileSync(await leanFile.path(),'utf8');
+    if(!lean.includes('theorem exhibited_meaning_difference')||!lean.includes('  decide'))throw Error('Lean proof download missing real obligation');
+    await page.locator('#ldAuthorized').click();
+    if(await page.locator('#ldWitness').isEnabled())throw Error('Stale witness remained enabled after world changed');
+   }
    const metrics=await page.evaluate(()=>({width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,title:document.title}));
    const row={path,viewport,status:response.status(),...metrics,exceptions};rows.push(row);
    page.off('pageerror',onError);
