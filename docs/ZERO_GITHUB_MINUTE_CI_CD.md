@@ -4,9 +4,13 @@
 The historical zero-minute policy below is superseded by
 [HOSTED_CI_REPLACEMENT.md](HOSTED_CI_REPLACEMENT.md). Public hosted Actions now run
 the complete required gate, archive/promotion verification and production health
-checks. Cloudflare remains the production host; its redundant Builds integrations
-require a separately verified provider disconnection. `ci:zero-minutes` remains
-the existing command name for compatibility and runs genuine tests.
+checks. Cloudflare remains the production host. The owner reports disconnecting
+the two redundant core Builds integrations; keep the website Git connection for
+automatic deployment from protected `main`, with preview and PR builds disabled.
+Provider readback of those settings awaits a user-owned Builds API token.
+`ci:zero-minutes` remains the existing command name for compatibility and runs
+genuine tests. The historical instructions below are not the current public
+repository configuration.
 
 ## Historical private-repository policy
 
