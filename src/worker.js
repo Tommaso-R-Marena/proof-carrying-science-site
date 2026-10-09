@@ -513,10 +513,25 @@ function requireSameOrigin(request) {
 async function readBody(request) {
   const length = Number(request.headers.get("content-length") || 0);
   if (length > 64000) throw new ApiError(413, "Request body is too large.", "body_too_large");
+  // Content-Length is optional and untrusted. Bound the actual streamed bytes.
+  const reader=request.body?.getReader();
+  if(!reader)throw new ApiError(400,"Expected JSON request body.","bad_json");
   try {
-    return await request.json();
-  } catch {
+    const chunks=[];let size=0;
+    while(true){
+      const {value,done}=await reader.read();if(done)break;
+      size+=value.byteLength;
+      if(size>64000){await reader.cancel();throw new ApiError(413,"Request body is too large.","body_too_large");}
+      chunks.push(value);
+    }
+    const bytes=new Uint8Array(size);let offset=0;
+    for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+    return JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(bytes));
+  } catch(error) {
+    if(error instanceof ApiError)throw error;
     throw new ApiError(400, "Expected JSON request body.", "bad_json");
+  } finally {
+    reader.releaseLock();
   }
 }
 
@@ -4248,6 +4263,19 @@ async function handleApi(request, env) {
   const url=new URL(request.url);
   const path=url.pathname;
   const method=request.method;
+
+  // Explicit, stateless demo replay. No account, research table or client labels.
+  // Same implementation as practice; independent Python checking is a separate CLI.
+  if(method==="POST" && path==="/api/demo/countermodel/replay"){
+    const body=await readBody(request);
+    let replay;
+    try{replay=replayCountermodelSession(body);}
+    catch(e){throw new ApiError(400,"Finite replay rejected: "+String(e.message||"invalid").slice(0,100),"invalid_demo_trajectory");}
+    return json({ok:true,replay,research_recorded:false,
+      witness:{format:"pcs-countermodel-witness-v1",version:COUNTERMODEL_VERSION,
+        mission_id:replay.mission_id,world:replay.final_world},
+      authority:"FINITE_MODEL_ONLY",implementation:"same JavaScript evaluator as browser; separate execution"});
+  }
 
   if (method==="GET" && path==="/api/system/status") {
     return json({
