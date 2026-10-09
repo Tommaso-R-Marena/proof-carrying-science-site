@@ -310,7 +310,8 @@ for pilot_file, required_tokens in {
         "Independent Researcher Pilots", "Falsification", "NOT PCS-VERIFIED",
         'id="pilotDraftForm"', 'id="pilotDraftResult"',
         'src="researcher-pilot-ui.js"', 'href="research-preview.html"',
-        "The formal core repository remains private",
+        "PCS core, website and CertiForge source are public",
+        "a genuinely external scientific pilot and live production signing service remain separate validation steps",
     ],
     "researcher-pilot-core.mjs": [
         "pcs-independent-pilot-draft-v1", "signed:false",
