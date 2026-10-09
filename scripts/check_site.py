@@ -61,11 +61,18 @@ for html_path in HTML_FILES:
     text = html_path.read_text(encoding="utf-8")
     if "<html" not in text.lower() or "<title>" not in text.lower():
         errors.append(f"{html_path.name}: missing html/title structure")
-    for ref in ASSET_RE.findall(text):
+    for asset_match in ASSET_RE.finditer(text):
+        ref = asset_match.group(1)
         parsed = urlparse(ref)
         if parsed.scheme in IGNORE_SCHEMES:
             continue
         if parsed.scheme in {"http", "https"}:
+            # Owner-reviewed public source navigation, with no remote asset load.
+            tag_prefix = text[text.rfind("<", 0, asset_match.start()):asset_match.start()]
+            if (ref == "https://github.com/Tommaso-R-Marena/proof-carrying-science"
+                    and re.match(r"<a\s", tag_prefix, re.IGNORECASE)
+                    and asset_match.group(0).lower().startswith("href=")):
+                continue
             if parsed.scheme != "https" or parsed.netloc != PRODUCTION_HOST:
                 errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
                 continue
@@ -1299,7 +1306,7 @@ if layout_gate.exists():
     for required_text in [
         "Validate responsive UI layout",
         "python scripts/check_ui_layout.py",
-        "actions/upload-artifact@v4",
+        "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
         "pcs-ui-layout-failures",
     ]:
         if required_text not in layout_workflow:
@@ -1396,7 +1403,7 @@ NETWORKED_COMMONS_JS = {
     "commons.js", "account.js", "admin.js", "roles.js", "task-graph.js",
     "admin-login.js", "arena.js", "site.js", "arena-proof-quest.js", "arena-safety-forge.js",
     "forge-duel.js", "prooflab.js",
-    "meaning-forge.js", "reviewer-desk.js", "workboard.js",
+    "meaning-forge.js", "reviewer-desk.js", "workboard.js", "arena-countermodel.js",
 }
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
@@ -1411,6 +1418,9 @@ for js in ROOT.glob("*.js"):
         if js.name == "site.js":
             if 'path !== "/api/me"' not in text or 'path !== "/api/admin/session"' not in text:
                 errors.append("site.js: reviewed session endpoint allowlist missing")
+        elif js.name == "arena-countermodel.js":
+            if 'path !== "/api/arena/countermodel/donate" && path !== "/api/arena/countermodel/erase"' not in text:
+                errors.append("arena-countermodel.js: exact consented donation/deletion endpoint guard missing")
         elif 'path.startsWith("/api/")' not in text:
             errors.append(f"{js.name}: runtime same-origin /api/ route guard missing")
         continue
@@ -1429,7 +1439,7 @@ for js in ROOT.glob("*.js"):
         return "/* validated same-origin static fetch */"
 
     reviewed = re.sub(
-        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*\)""",
+        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*(?:,\s*\{\s*cache\s*:\s*["']no-store["']\s*\}\s*)?\)""",
         _strip_static_fetch,
         text,
     )

@@ -1,0 +1,112 @@
+{
+  "format": "pcs-semantic-curated-fixture-preview-v1",
+  "source": "Aristotle Semantic Translation Contract v1, 2026-10-08",
+  "fixture_index_sha256": "c018b02325adc6c0bc28c5ef9dad07e822be47b8429debc94564ada11c80d8fd",
+  "full_archive_case_count": 36,
+  "preview_case_count": 13,
+  "independently_executed_in_browser": false,
+  "kernel_result_in_browser": "NOT_RUN",
+  "warning": "Expected results recorded in Aristotle-generated v1 fixture index. They are not live Lean verdicts.",
+  "cases": [
+    {
+      "id": "pos_safety",
+      "expected_verdict": "ACCEPTED",
+      "failure_codes": [],
+      "description": "Bounded agent-safety interpretation and scoped formal claim"
+    },
+    {
+      "id": "pos_liveness",
+      "expected_verdict": "ACCEPTED",
+      "failure_codes": [],
+      "description": "Registered liveness relation and structured interpretation"
+    },
+    {
+      "id": "pos_arith",
+      "expected_verdict": "ACCEPTED",
+      "failure_codes": [],
+      "description": "Typed arithmetic example"
+    },
+    {
+      "id": "neg_forall_to_exists",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "QUANTIFIER_MISMATCH"
+      ],
+      "description": "Universal changed to existential"
+    },
+    {
+      "id": "neg_quantifier_order",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "QUANTIFIER_MISMATCH"
+      ],
+      "description": "Swapped quantifier scopes"
+    },
+    {
+      "id": "neg_negation_dropped",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "NEGATION_MISMATCH",
+        "POLARITY_MISMATCH"
+      ],
+      "description": "Unsafe predicate lost negation"
+    },
+    {
+      "id": "neg_implication_reversed",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "POLARITY_MISMATCH"
+      ],
+      "description": "Premise and conclusion swapped"
+    },
+    {
+      "id": "neg_assumption_dropped",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "ASSUMPTION_DROPPED"
+      ],
+      "description": "An assumption vanished"
+    },
+    {
+      "id": "neg_variable_capture",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "BINDING_MISMATCH",
+        "BINDER_SHADOWING"
+      ],
+      "description": "Variable binder identity changed"
+    },
+    {
+      "id": "neg_wrong_symbol_identity",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "INCORRECT_SYMBOL_IDENTITY"
+      ],
+      "description": "A similarly shaped predicate has the wrong identity"
+    },
+    {
+      "id": "neg_forged_proof_receipt",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "PROOF_NOT_VERIFIED"
+      ],
+      "description": "Untrusted proof receipt forgery"
+    },
+    {
+      "id": "neg_unresolved_ambiguity",
+      "expected_verdict": "NEEDS_CLARIFICATION",
+      "failure_codes": [
+        "AMBIGUOUS_SCOPE"
+      ],
+      "description": "Interpretation of source text unresolved"
+    },
+    {
+      "id": "neg_roundtrip_explanation_mismatch",
+      "expected_verdict": "REJECTED",
+      "failure_codes": [
+        "ROUNDTRIP_MISMATCH"
+      ],
+      "description": "Explanation differs from the selected meaning"
+    }
+  ]
+}

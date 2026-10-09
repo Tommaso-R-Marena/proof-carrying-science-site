@@ -1,0 +1,22 @@
+.ms-shell{max-width:1200px;margin:40px auto 64px;padding:0 16px;overflow-wrap:anywhere}
+.ms-shell h1{font-size:clamp(2.1rem,5vw,4rem);line-height:1.1;max-width:860px;margin:12px 0}
+.ms-shell header>p{font-size:1.08rem;max-width:860px;line-height:1.65}
+.ms-shell em{font-style:normal;color:#1c7690}.ms-labels{display:flex;flex-wrap:wrap;gap:10px;margin:19px 0 27px}
+.ms-labels span{background:#eaf4f4;color:#23526a;border:1px solid #bdd8df;border-radius:22px;padding:6px 12px;font-size:.87rem}
+.ms-layout{display:grid;grid-template-columns:minmax(270px,.88fr) minmax(0,1.42fr);gap:18px;align-items:start}
+.ms-panel{border:1px solid #cddcde;background:#fff;border-radius:16px;padding:clamp(15px,2vw,26px);min-width:0;box-shadow:0 2px 10px #162f3812;margin-bottom:17px}
+.ms-panel h2{font-size:1.35rem;margin:0 0 18px}.ms-panel label{display:block;font-weight:650;margin:15px 0 6px}
+.ms-panel select,.ms-panel input{font:inherit;background:white;color:#162f38;border:1px solid #879ea8;border-radius:9px;min-height:45px;padding:8px 10px;max-width:100%;width:100%}
+.ms-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ms-panel button{margin:15px 10px 0 0;min-height:44px}
+.ms-small,.ms-description{font-size:.89rem;color:#486069;line-height:1.65}
+.ms-code{background:#eef4f5;border:1px solid #dae4e7;border-radius:10px;margin:12px 0;padding:14px}
+.ms-code strong{font-size:.88rem}.ms-code pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font-size:.83rem;line-height:1.6;margin:10px 0 0;font-family:ui-monospace,Consolas,monospace}
+.ms-result{border-left:4px solid #297b92;padding:11px 14px;background:#f0f8fa;line-height:1.6;margin:20px 0}
+.ms-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.ms-metrics div{background:#f1f7f7;border-radius:11px;padding:13px;display:flex;flex-direction:column;gap:7px}
+.ms-metrics strong{font-size:1.55rem}.ms-metrics span{font-size:.76rem;color:#4e636e}
+#msAttempts{padding-left:22px;max-height:340px;overflow-y:auto}#msAttempts li{line-height:1.5;margin:8px 0}
+.ms-disclosure p{line-height:1.7;max-width:980px}.ms-shell footer{color:#4e636e;font-size:.84rem}
+@media(max-width:780px){.ms-shell{margin-top:24px}.ms-layout{grid-template-columns:1fr}.ms-controls{grid-template-columns:1fr 1fr}.ms-shell h1{font-size:2.3rem}}
+@media(max-width:420px){.ms-controls{grid-template-columns:1fr}.ms-labels span{font-size:.77rem}.ms-panel{padding:15px}}

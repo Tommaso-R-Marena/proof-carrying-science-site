@@ -1,0 +1,947 @@
+{
+  "format": "pcs-multistep-repair-challenges-v1",
+  "source_version": "pcs-semantic-gauntlet-v1",
+  "repair_version": "pcs-semantic-repair-lab-v1",
+  "all_public": true,
+  "blind_evaluation": false,
+  "training_labels_used": false,
+  "evaluation_family_count": 6,
+  "examples": [
+    {
+      "id": "implication-reversal-1",
+      "family": "implication-reversal",
+      "split": "evaluation",
+      "semantic_skill": "implication direction",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "f4e1f2028f6f1a0034302de12739ee60f010c8ce7bc65e2062f30dec56b186fa",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            false
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "implication-reversal-2",
+      "family": "implication-reversal",
+      "split": "evaluation",
+      "semantic_skill": "implication direction",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "S",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "P",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "e07ce45f9354fe642e7fffa61779398e46555fad81d85bded48ce9c858cdc90e",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "P": [
+            false
+          ],
+          "S": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "implication-reversal-3",
+      "family": "implication-reversal",
+      "split": "evaluation",
+      "semantic_skill": "implication direction",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "6a99a89cf88b51227d0edcb38a0e0b6143bd17032d605d04c2f100bcd01e7c01",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            false
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "disjunction-commutation-1",
+      "family": "disjunction-commutation",
+      "split": "evaluation",
+      "semantic_skill": "commutative disjunction",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "875058dca4994c4c8830bf8dd077d8fb5c0b2687ff5a19ea533946324e234c44",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            true
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "disjunction-commutation-2",
+      "family": "disjunction-commutation",
+      "split": "evaluation",
+      "semantic_skill": "commutative disjunction",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "S",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "P",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "ae60ef85684286681ffd0a35ddd90565354e64a1924f831c0742faab54af356e",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "P": [
+            true
+          ],
+          "S": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "disjunction-commutation-3",
+      "family": "disjunction-commutation",
+      "split": "evaluation",
+      "semantic_skill": "commutative disjunction",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "0eb89b6b2bc852e2a77e58d1acf090333c4bdc9476600a41d3a306ff663f9ffd",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            true
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "relational-quantifier-scope-1",
+      "family": "relational-quantifier-scope",
+      "split": "evaluation",
+      "semantic_skill": "relational scope",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "forall",
+          "x": "y",
+          "f": {
+            "op": "rel",
+            "name": "R",
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "candidate_sha256": "a4a96564b1b2c321ffcc8eeceeda9b5ca33ceec1a5d7d3e8d3925e7f6fdae623",
+      "initial_finite_countermodel": {
+        "n": 2,
+        "unary": {},
+        "binary": {
+          "R": [
+            [
+              true,
+              true
+            ],
+            [
+              false,
+              false
+            ]
+          ]
+        }
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "relational-quantifier-scope-2",
+      "family": "relational-quantifier-scope",
+      "split": "evaluation",
+      "semantic_skill": "relational scope",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "forall",
+          "x": "y",
+          "f": {
+            "op": "rel",
+            "name": "U",
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "candidate_sha256": "b1917737168b03b1bd067932f6bbf0d8d051afd927fe761a24d4f3e37d24d844",
+      "initial_finite_countermodel": {
+        "n": 2,
+        "unary": {},
+        "binary": {
+          "U": [
+            [
+              true,
+              true
+            ],
+            [
+              false,
+              false
+            ]
+          ]
+        }
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "relational-quantifier-scope-3",
+      "family": "relational-quantifier-scope",
+      "split": "evaluation",
+      "semantic_skill": "relational scope",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "forall",
+          "x": "y",
+          "f": {
+            "op": "rel",
+            "name": "R",
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "candidate_sha256": "f98b722b789a2f5bfe5e5e97fe484273c61cf98958e7c121e1653715095ff1f8",
+      "initial_finite_countermodel": {
+        "n": 2,
+        "unary": {},
+        "binary": {
+          "R": [
+            [
+              true,
+              true
+            ],
+            [
+              false,
+              false
+            ]
+          ]
+        }
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "diagonal-variable-capture-1",
+      "family": "diagonal-variable-capture",
+      "split": "evaluation",
+      "semantic_skill": "variable capture",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "forall",
+          "x": "y",
+          "f": {
+            "op": "rel",
+            "name": "R",
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "candidate_sha256": "1aedc4e44ff870897145466e1e90db6961dc06bc36201779dfc06f4e4b4ef095",
+      "initial_finite_countermodel": {
+        "n": 2,
+        "unary": {},
+        "binary": {
+          "R": [
+            [
+              true,
+              true
+            ],
+            [
+              false,
+              false
+            ]
+          ]
+        }
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "diagonal-variable-capture-2",
+      "family": "diagonal-variable-capture",
+      "split": "evaluation",
+      "semantic_skill": "variable capture",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "forall",
+          "x": "y",
+          "f": {
+            "op": "rel",
+            "name": "U",
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "candidate_sha256": "db8d8d6594bcb7b719d242dc6f0e30dad504be21ec1d3375d85c9e3f042880f0",
+      "initial_finite_countermodel": {
+        "n": 2,
+        "unary": {},
+        "binary": {
+          "U": [
+            [
+              true,
+              true
+            ],
+            [
+              false,
+              false
+            ]
+          ]
+        }
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "diagonal-variable-capture-3",
+      "family": "diagonal-variable-capture",
+      "split": "evaluation",
+      "semantic_skill": "variable capture",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "forall",
+          "x": "y",
+          "f": {
+            "op": "rel",
+            "name": "R",
+            "x": "x",
+            "y": "y"
+          }
+        }
+      },
+      "candidate_sha256": "3477e240dc0b248562c8eb428e60ad9e9c31c1dc8315bbda5c84b6461e3bc07e",
+      "initial_finite_countermodel": {
+        "n": 2,
+        "unary": {},
+        "binary": {
+          "R": [
+            [
+              true,
+              true
+            ],
+            [
+              false,
+              false
+            ]
+          ]
+        }
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "assumption-loss-1",
+      "family": "assumption-loss",
+      "split": "evaluation",
+      "semantic_skill": "assumption erasure",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "and",
+        "a": {
+          "op": "exists",
+          "x": "x",
+          "f": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        },
+        "b": {
+          "op": "forall",
+          "x": "x",
+          "f": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "fc4a627786d2673343a99220cab50fe01b7c8cfca0f622bae217a4be7daefb3a",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            false
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "replace_connective",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "a"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "assumption-loss-2",
+      "family": "assumption-loss",
+      "split": "evaluation",
+      "semantic_skill": "assumption erasure",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "and",
+        "a": {
+          "op": "exists",
+          "x": "x",
+          "f": {
+            "op": "pred",
+            "name": "S",
+            "x": "x"
+          }
+        },
+        "b": {
+          "op": "forall",
+          "x": "x",
+          "f": {
+            "op": "pred",
+            "name": "P",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "148eca14f79e7a09011f058f115cefa4333804ca9a640e3617130c1f3d935173",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "P": [
+            false
+          ],
+          "S": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "replace_connective",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "a"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "assumption-loss-3",
+      "family": "assumption-loss",
+      "split": "evaluation",
+      "semantic_skill": "assumption erasure",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "and",
+        "a": {
+          "op": "exists",
+          "x": "x",
+          "f": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        },
+        "b": {
+          "op": "forall",
+          "x": "x",
+          "f": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "2941c540fefd48d692189c6b5d6e2feb6dd2fabf00400134bec2593e12ffa485",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            false
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "replace_connective",
+          "path": []
+        },
+        {
+          "operation": "flip_quantifier",
+          "path": [
+            "a"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "exists-distributes-or-1",
+      "family": "exists-distributes-or",
+      "split": "evaluation",
+      "semantic_skill": "distribution laws",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "d515458f86c2f9c6f5b31ab0ab849c6011fe3aec9d35ada955c0800395c70add",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            true
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "exists-distributes-or-2",
+      "family": "exists-distributes-or",
+      "split": "evaluation",
+      "semantic_skill": "distribution laws",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "S",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "P",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "2d32beb01cb45714b98e11bc27c3b2ba3fab6a59faad71a4b5cbdd8cf435427d",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "P": [
+            true
+          ],
+          "S": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    },
+    {
+      "id": "exists-distributes-or-3",
+      "family": "exists-distributes-or",
+      "split": "evaluation",
+      "semantic_skill": "distribution laws",
+      "source_version": "pcs-semantic-gauntlet-v1",
+      "mutated_candidate": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "and",
+          "a": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "candidate_sha256": "74cdabf9fde51d1491cb9f2f0272efa7eb65c72f61a2ab02f6611c2269f60231",
+      "initial_finite_countermodel": {
+        "n": 1,
+        "unary": {
+          "Q": [
+            true
+          ],
+          "T": [
+            false
+          ]
+        },
+        "binary": {}
+      },
+      "generated_using": "TWO_VERIFIABLE_TYPED_AST_EDITS_FROM_SOURCE",
+      "exact_two_step_source_path": [
+        {
+          "operation": "flip_quantifier",
+          "path": []
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ]
+        }
+      ],
+      "assurance": "FINITE_ENUMERATION_ONLY"
+    }
+  ]
+}
