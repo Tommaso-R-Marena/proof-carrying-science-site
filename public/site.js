@@ -62,6 +62,7 @@
     addLink(links, "experience.html", "What PCS does", "nav-primary-link");
     addMenu("Try PCS", [
       {heading:"SEE IT IN ACTION",links:[
+        ["live-demo.html","Break a claim · live checks and evidence"],
         ["experience.html","Two-minute plain-English tour"],
         ["research-preview.html","Run a small check"],
         ["package-inspector.html","Inspect a PCS evidence package"],
@@ -134,6 +135,7 @@
   // An offline-first command palette works on desktop, keyboard and mobile.
   const siteShortcuts=[
     ["Start here","experience.html","A two-minute interactive tour","Explore"],
+    ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
     ["Safety Forge","arena-safety-forge.html","Build and check toy AI safety shields","Play"],
     ["Shield Duel","forge-duel.html","Blind AI policy decisions, human reason tags and checked outcomes","Play"],
     ["Proof Quest","arena-proof-quest.html","Learn prerequisite logic through puzzles","Play"],
