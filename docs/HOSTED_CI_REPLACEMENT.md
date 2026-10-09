@@ -37,16 +37,29 @@ to check valid archives/promotions, tampering, unmapped files, archive removal,
 ordinary source changes and missing/invalid metadata.
 
 Cloudflare continues hosting the production Worker/assets and D1 database.
-Cloudflare **Builds** can be disconnected once these required GitHub checks pass.
-Disconnect only the Git build integrations for `pcs-core-ci-only`,
-`pcs-core-ci-gate`, and `proof-carrying-science-site`; preserve the website Worker,
-all bindings and database. The separate protected deployment remains an explicit
-operation after CI and preserves dashboard variables with `wrangler deploy
---keep-vars`. No automatic production migration is introduced.
+The owner reports disconnecting the redundant `pcs-core-ci-only` and
+`pcs-core-ci-gate` Git build integrations. Keep the website's
+`proof-carrying-science-site` Git connection active for automatic production
+deployment. The intended website policy is protected `main` only, with preview
+and pull-request builds disabled; provider readback is still needed to verify
+that policy. Its configured build command is `npm run ci:zero-minutes`, deploy
+command is `npx wrangler deploy`, and root is `/`. GitHub Actions remains the
+required verification gate before changes reach protected `main`.
+
+Do not disconnect the website Git connection unless a replacement automatic
+deployment has been implemented and verified. Preserve the Worker, all bindings
+and database. An explicit deployment after CI uses `wrangler deploy --keep-vars`
+to preserve dashboard variables. No automatic production migration is introduced.
 
 Provider retirement must be read back or otherwise independently observed.
-Changing repository YAML does not disconnect Cloudflare. At preparation time
-the existing deployment token authenticated Worker operations but Builds
-administration returned 401/12006, so disconnection was not yet verified.
+Changing repository YAML does not disconnect Cloudflare. The existing
+account-owned deployment token authenticates Worker operations but Builds
+administration returns 401/12006. Cloudflare's Builds documentation currently
+requires a user-owned token. A separate secure environment binding,
+`CLOUDFLARE_BUILDS_API_TOKEN`, is reserved for that credential; its value must
+never be committed or pasted into chat. The owner has deferred adding it, so
+Builds logs, core disconnection readback, website branch isolation and the latest
+website build failure remain unverified. Successful protected CI and explicit
+deployment do not establish that Cloudflare Builds passed.
 Historical failed Cloudflare check runs are retained as history; do not rewrite
 their conclusions to create artificial green evidence.
