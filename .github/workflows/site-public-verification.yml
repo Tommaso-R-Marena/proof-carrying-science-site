@@ -45,11 +45,15 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: dbf81c5e586400d0bb226782b741cc5e6e28e588
+          ref: a68b5c85a2d5fbb7521df670adc99ad4fbae0f66
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
         run: node scripts/verify_countermodel_python.mjs --core .ci-components/pcs | tee countermodel-python-results.log
+      - name: Independently replay complete player trajectories and assistance
+        run: |
+          set -euo pipefail
+          node scripts/verify_countermodel_replay_python.mjs --core .ci-components/pcs | tee countermodel-replay-results.log
       - name: Independent Omega Boolean, graph-feature and learned-search parity
         run: |
           set -euo pipefail
@@ -90,6 +94,7 @@ jobs:
               raise SystemExit('isolated Worker did not become ready')
           PY
           npm run test:browser
+          PCS_LEARNING_OUTPUT="$PWD/browser-learning-results.json" npm run test:browser:learning
           PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/site-state" PCS_RESEARCH_OUTPUT="$PWD/browser-research-results.json" npm run test:browser:research
           python scripts/security_campaign.py --static --base-url http://127.0.0.1:8788
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -98,9 +103,13 @@ jobs:
           name: public-site-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             countermodel-python-results.log
+            countermodel-replay-results.log
             countermodel-lean-results.log
             browser-results.json
             browser-results.json.omega-*
             browser-research-results.json
+            browser-learning-results.json
+            browser-learning-results.json.model-*.json
+            browser-learning-results.json.trace-*.json
             omega-python-results.log
           retention-days: 14

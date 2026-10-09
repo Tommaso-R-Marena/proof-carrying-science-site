@@ -1406,7 +1406,7 @@ NETWORKED_COMMONS_JS = {
     "forge-duel.js", "prooflab.js",
     "meaning-forge.js", "reviewer-desk.js", "workboard.js", "arena-countermodel.js", "live-demo.js",
 }
-for js in ROOT.glob("*.js"):
+for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
     text = js.read_text(encoding="utf-8")
 
     # Reviewed Omega downloads are a closed anonymous GET-only static asset
@@ -1442,6 +1442,15 @@ for js in ROOT.glob("*.js"):
         elif js.name == "arena-countermodel.js":
             if 'path !== "/api/arena/countermodel/donate" && path !== "/api/arena/countermodel/erase"' not in text:
                 errors.append("arena-countermodel.js: exact consented donation/deletion endpoint guard missing")
+            expected = ["arena-countermodel.js", "countermodel-learning.mjs", "countermodel-search-policy.mjs"]
+            declaration = "const LEARNING_SOURCE_ASSETS=new Set([" + ",".join(repr(p) for p in expected) + "]);"
+            if declaration not in text or "if(!LEARNING_SOURCE_ASSETS.has(path))throw Error" not in text:
+                errors.append("arena-countermodel.js: exact static learning source allowlist missing")
+            if "fetch(path,{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(10000)})" not in text:
+                errors.append("arena-countermodel.js: anonymous bounded nonredirecting learning source GET changed")
+            for asset in expected:
+                if not (ROOT / asset).is_file():
+                    errors.append(f"arena-countermodel.js: missing reviewed learning source {asset}")
         elif 'path.startsWith("/api/")' not in text:
             errors.append(f"{js.name}: runtime same-origin /api/ route guard missing")
         continue
