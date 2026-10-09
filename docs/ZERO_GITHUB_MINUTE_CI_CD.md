@@ -1,4 +1,14 @@
-# Zero-GitHub-hosted-minute CI/CD for the private PCS website
+# Public hosted CI policy
+
+
+The historical zero-minute policy below is superseded by
+[HOSTED_CI_REPLACEMENT.md](HOSTED_CI_REPLACEMENT.md). Public hosted Actions now run
+the complete required gate, archive/promotion verification and production health
+checks. Cloudflare remains the production host; its redundant Builds integrations
+require a separately verified provider disconnection. `ci:zero-minutes` remains
+the existing command name for compatibility and runs genuine tests.
+
+## Historical private-repository policy
 
 ## The production path
 

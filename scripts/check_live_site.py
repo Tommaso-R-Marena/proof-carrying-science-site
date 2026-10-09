@@ -14,13 +14,17 @@ TIMEOUT = 15
 
 CHECKS = [
     ("/", "text/html", "Proof-Carrying Science"),
+    ("/live-demo.html", "text/html", "ldWitness"),
+    ("/omega-workspace.html", "text/html", "Omega Research Workspace"),
+    ("/omega-core.mjs", "javascript", "verifyEpisode"),
+    ("/omega/REPORT.md", "text/", "Omega"),
     ("/guided-submission.html?demo=1", "text/html", "Try PCS"),
     ("/package-inspector.html", "text/html", "Proof-Carrying Science"),
     ("/account.html", "text/html", "Your level is earned here"),
     ("/tasks.html", "text/html", "Only work PCS actually needs should be here."),
     ("/roles.html", "text/html", "Some useful work is a responsibility, not a ticket."),
     ("/task-graph.html", "text/html", "What unlocks what—and exactly why?"),
-    ("/arena.html", "text/html", "Compete on a score only when the score is worth optimizing."),
+    ("/arena.html", "text/html", "PCS Arena · Scientific Challenges"),
     ("/api/system/status", "application/json", '"request_sla":"1–2 business days"'),
     ("/api/tasks", "application/json", '"tasks"'),
     ("/api/roles", "application/json", '"roles"'),
