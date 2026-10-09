@@ -39,7 +39,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = '${{ github.sha }}'
           npm ci --ignore-scripts --no-audit --no-fund
-          npm run ci:zero-minutes
+          bash scripts/cloudflare_build.sh
           npm audit --audit-level=high
       - name: Check out pinned independent PCS witness checker
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
