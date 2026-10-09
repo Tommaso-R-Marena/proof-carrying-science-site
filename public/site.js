@@ -69,6 +69,7 @@
         ["guided-submission.html?demo=1","Walk through a submission"]
       ]},
       {heading:"FOR RESEARCHERS",links:[
+        ["omega-workspace.html","Omega · inspect claims and learned search"],
         ["result-anatomy.html","Understand a verification result"],
         ["researcher-pilots.html","Plan an independent pilot"],
         ["project-builder.html","Advanced project mapper"]
@@ -147,6 +148,7 @@
     ["Package inspector","package-inspector.html","Open and inspect a PCS package","Try PCS"],
     ["Verification results","result-anatomy.html","Understand every result layer","Try PCS"],
     ["Project mapper","project-builder.html","Discover candidate claims in your own files","Try PCS"],
+    ["Omega workspace","omega-workspace.html","Trace claims, compare actual models and replay checked repairs","Try PCS"],
     ["v0.6 verifier","mvp.html","Command-line package verification workflow","Try PCS"],
     ["Legacy threat lab","demo.html","Frozen v0.5 adversarial parity simulation","Try PCS"],
     ["Needed tasks","tasks.html","Live, curated volunteer work","Get involved"],

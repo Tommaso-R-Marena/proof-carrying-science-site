@@ -1409,6 +1409,23 @@ NETWORKED_COMMONS_JS = {
 for js in ROOT.glob("*.js"):
     text = js.read_text(encoding="utf-8")
 
+    # Reviewed Omega downloads are a closed anonymous GET-only static asset
+    # allowlist. Project text and actions never enter a request body or URL.
+    if js.name == "omega-workspace.js":
+        expected = ["omega/project-v1.json", "omega/de-morgan-v1.json", "omega/bag-v1.json",
+                    "omega/graph-v1.json", "omega/bandit-v1.json", "omega/run.json", "omega/evaluation.json"]
+        declaration = "const STATIC_OMEGA_ASSETS=new Set([" + ",".join(repr(p) for p in expected) + "]);"
+        if declaration not in text or "if(!STATIC_OMEGA_ASSETS.has(path))throw Error" not in text:
+            errors.append("omega-workspace.js: exact static research asset guard missing")
+        if "fetch(path,{credentials:'omit',signal:AbortSignal.timeout(12000)})" not in text:
+            errors.append("omega-workspace.js: anonymous bounded static GET helper changed")
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
+            errors.append("omega-workspace.js: unreviewed network primitive")
+        for asset in expected:
+            if not (ROOT / asset).is_file():
+                errors.append(f"omega-workspace.js: missing reviewed static asset {asset}")
+        continue
+
     if js.name in NETWORKED_COMMONS_JS:
         # All network requests by these reviewed clients must pass a local path
         # named 'path'. GitHub URLs are allowed as navigational links, NOT fetches.

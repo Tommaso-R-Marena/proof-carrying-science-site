@@ -19,6 +19,7 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 - Distributed assurance research model: /research.html
 
 ## Primary pages
+- Omega research workspace (local source-bound Boolean claim graphs, actual CPU-trained repair models, independent replay and Lean-source downloads; scientific grounding and authority remain open): /omega-workspace.html
 - Product overview: /
 - Safety Forge (break → repair → optimize a bounded synthetic agent shield; opt-in replays yield counterexample-search and sequential repair data; not Lean proof verification): /arena-safety-forge.html
 - ProofLab v2 (controlled next-investigation choices around real source-pinned PCS Lean theorem targets; server-reconstructed candidate/feasibility labels; no Lean kernel execution in the game): /prooflab.html
