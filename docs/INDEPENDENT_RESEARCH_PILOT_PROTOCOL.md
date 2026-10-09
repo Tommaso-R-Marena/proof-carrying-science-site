@@ -4,7 +4,7 @@ Status: **usable local-first intake kit, public research-preview scope only; not
 
 ## Goal
 
-Recruit independent scientists and AI-safety researchers to independently reproduce, falsify, or assess trust boundaries in bounded PCS claims. This is a *research validation* program, not an endorsement campaign, bug bounty with implied payment, or evidence that the complete private core has been independently audited.
+Recruit independent scientists and AI-safety researchers to independently reproduce, falsify, or assess trust boundaries in bounded PCS claims. This is a *research validation* program, not an endorsement campaign, bug bounty with implied payment, or evidence that the complete public core has been independently audited.
 
 ## Current external-user workflow
 

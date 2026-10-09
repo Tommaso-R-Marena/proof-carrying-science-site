@@ -51,7 +51,7 @@ ProofLab alone does not demonstrate Lean tactic synthesis, AI alignment, or scie
 
 ## Release gates
 
-- PCS core owns the source-pinned benchmark and private holdouts.
+- PCS core owns the source-pinned benchmark and module holdouts. The core is now public: these are internal evaluation splits, not confidential or blind external benchmarks. Legacy dataset fields named private_holdout_counts describe exclusion from the gameplay projection, not current source confidentiality.
 - Site `npm run test:prooflab` checks controlled candidate sets, blocked choices, listwise data preparation, Worker auth/consent and Owner-only export.
 - Site `npm run ci:zero-minutes` includes syntax, static security, the complete game/test suite and Wrangler dry-run.
 - D1 migration `0020_prooflab_adult_optin_research.sql` remains the storage schema; v2 is an application/replay schema upgrade, not a destructive database migration.
