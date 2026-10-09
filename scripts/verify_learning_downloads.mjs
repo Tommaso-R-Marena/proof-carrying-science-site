@@ -7,7 +7,8 @@ const directory=mkdtempSync(join(tmpdir(),'pcs-learning-proofs-')),results=[];
 for(const width of [1440,375]){
  for(const kind of ['trace','trace-assisted']){
   const file=resolve(input+`.${kind}-${width}.json`),raw=readFileSync(file);
-  const run=spawnSync(process.env.PCS_PYTHON||'python',['-m','pcs.cli','countermodel-replay-v1',file],{cwd:core,encoding:'utf8',timeout:30000,maxBuffer:1024*1024});
+  const code="import json,sys\nfrom pcs.countermodel_v1 import check_countermodel_session_file\nr=check_countermodel_session_file(sys.argv[1])\nprint(json.dumps(r))\nsys.exit(0 if r['final_verified'] else 1)\n";
+  const run=spawnSync(process.env.PCS_PYTHON||'python',['-c',code,file],{cwd:core,encoding:'utf8',timeout:30000,maxBuffer:1024*1024});
   if(run.error||run.status!==0)throw Error('Actual notebook failed independent PCS replay: '+(run.error?.message||run.stderr));
   const replay=JSON.parse(run.stdout);if(!replay.final_verified||replay.pcs_authoritative!==false||replay.lean_kernel_checked!==false||
    (kind==='trace-assisted'?replay.hints!==1:replay.hints!==0))throw Error('Actual notebook assistance/verdict mismatch');

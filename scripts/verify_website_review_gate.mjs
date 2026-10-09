@@ -1,7 +1,7 @@
 // Offline evidence policy only; a JSON file is not an independently authenticated GitHub attestation.
 import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-export const REQUIRED=['site-check','site-contract','countermodel-lean-kernel'];
+export const REQUIRED=['site-check','site-contract','countermodel-lean-kernel','site-full-gate'];
 export function verifyReviewGate(checks,commitSha,required=REQUIRED){
  if(typeof commitSha!=='string'||!/^[a-f0-9]{40}$/.test(commitSha))
   throw Error('Explicit full Git commit SHA is required');

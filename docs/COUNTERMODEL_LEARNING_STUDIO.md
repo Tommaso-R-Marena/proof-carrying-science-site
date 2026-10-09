@@ -61,6 +61,16 @@ that the server preserved assistance and the resulting owner model/evaluation
 are unchanged. These scripted fixture choices are validation data, not real
 participant research data or evidence of population-scale learning.
 
+The standalone `countermodel-lean-kernel` now actually runs on public disposable
+hosted runners for every main PR and main push, preserving the check name that
+the release consumer requires. Manual readiness review runs only on protected
+public main, with read-only GitHub permissions and no deployment credentials.
+The authenticated consumer requires all four completed checks (`site-check`,
+`site-contract`, `countermodel-lean-kernel`, `site-full-gate`) from the genuine
+GitHub Actions app on the exact SHA. Foreign same-name green checks, missing
+app identity, skipped checks and an omitted full gate fail closed. Readiness
+review does not deploy or establish formal checker correctness.
+
 The model imitates bounded recorded choices; it is not an optimal search policy.
 Tiny public missions and syntax overlap limit the held-out comparison. Finite
 checking does not prove natural-language grounding, every domain size, real AI

@@ -1,3 +1,14 @@
+# Current public hosted policy — 2026-10-09
+
+The historical runner instructions below are superseded. The authenticated
+release consumer now requires `site-check`, `site-contract`,
+`countermodel-lean-kernel` and `site-full-gate`, all completed successfully on the
+exact SHA by the GitHub Actions app (ID 15368). The standalone Lean check executes
+on disposable public hosted runners for every main PR/push. Manual readiness
+executes on protected public main only with read-only permissions and no
+production secrets. It does not deploy. An offline JSON snapshot remains an
+unauthenticated precheck; skipped or foreign-app checks cannot release it.
+
 # PCS research-data and website release evidence policy
 
 ## What is implemented

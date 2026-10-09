@@ -49,6 +49,8 @@ let browser;
    model_sha256:model.model_digest_sha256,guided_and_model_assistance_excluded:true,tampered_model_rejected:true,uploads:mutations,exceptions});
   await page.screenshot({path:output+'.'+viewport.width+'.png',fullPage:true});
   await page.locator('#cmNotebookClear').click();if(await page.locator('#cmCoach').isEnabled()||!(await page.locator('#cmNotebookCount').innerText()).startsWith('0 '))throw Error('Private collection/model clear failed');
+  await page.getByRole('button',{name:/The Missing Premise/}).click();await page.locator('#cmCheck').click();
+  if(!await page.locator('#cmLeanExport').isEnabled()||await page.locator('#cmDonate').isEnabled())throw Error('A valid zero-edit witness became an eligible research donation');
   await context.close();
  }
  const report={format:'pcs-countermodel-learning-real-browser-v1',data_origin:'scripted validation choices in an isolated real Worker; no participant data',rows};

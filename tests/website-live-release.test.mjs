@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {verifyLiveChecks} from '../scripts/verify_live_release_checks.mjs';
 const sha='a'.repeat(40),repository='Example/PCS';
-const ok=()=>({check_runs:['site-check','site-contract','countermodel-lean-kernel'].map(name=>({
- name,head_sha:sha,status:'completed',conclusion:'success'
+const ok=()=>({check_runs:['site-check','site-contract','countermodel-lean-kernel','site-full-gate'].map(name=>({
+ name,head_sha:sha,status:'completed',conclusion:'success',app:{id:15368,slug:'github-actions'}
 }))});
 const fetcher=data=>async(url,options)=>{assert.match(url,/\/commits\/a{40}\/check-runs/);
  assert.match(options.headers.Authorization,/^Bearer /);return {ok:true,status:200,json:async()=>data};};
@@ -24,4 +24,14 @@ test('wrong SHA, missing token, API errors and missing results reject',async()=>
  await assert.rejects(verifyLiveChecks({repository,sha,token:'fixture',request:fetcher(wrong)}),/another commit/);
  await assert.rejects(verifyLiveChecks({repository,sha,token:'fixture',request:async()=>({ok:false,status:403})}),/unavailable/);
  await assert.rejects(verifyLiveChecks({repository,sha,token:'fixture',request:fetcher({check_runs:[]})}),/missing/);
+});
+test('same-name green checks from another app or missing authenticated app identity reject',async()=>{
+ for(const app of [undefined,{id:85455,slug:'cloudflare-workers-and-pages'},{id:15368,slug:'untrusted-app'}]){
+  const source=ok();source.check_runs[0].app=app;
+  await assert.rejects(verifyLiveChecks({repository,sha,token:'fixture',request:fetcher(source)}),/trusted GitHub Actions app/);
+ }
+});
+test('a missing full protected gate never satisfies release policy',async()=>{
+ const source=ok();source.check_runs.pop();
+ await assert.rejects(verifyLiveChecks({repository,sha,token:'fixture',request:fetcher(source)}),/missing/);
 });
