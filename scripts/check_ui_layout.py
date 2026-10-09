@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Browser-level responsive layout regression checks for the PCS public site.
 
-This gate uses the Chrome/Chromium already present on GitHub's ubuntu-latest
-runner. It serves public/ locally, injects a CI-only layout probe into HTML
+This gate uses the runner's Chrome/Chromium with the pinned Playwright driver.
+It serves public/ locally, injects a CI-only layout probe into HTML
 responses, exercises important dynamic states, and fails on viewport overflow,
 clipped primary controls, or overlapping high-level UI regions.
 
@@ -232,33 +232,16 @@ def find_browser() -> str:
             return found
     raise RuntimeError("Chrome/Chromium not found. Set PCS_CHROME or install a browser on the CI runner.")
 
-def chrome_args(browser: str, width: int, height: int, url: str, *, dump: bool, screenshot: Path | None = None) -> list[str]:
-    args = [
-        browser,
-        "--headless=new",
-        "--no-sandbox",
-        "--disable-gpu",
-        "--disable-dev-shm-usage",
-        "--disable-background-networking",
-        "--disable-default-apps",
-        "--disable-extensions",
-        "--disable-sync",
-        "--metrics-recording-only",
-        "--no-first-run",
-        f"--window-size={width},{height}",
-        "--virtual-time-budget=5500",
-    ]
-    if dump:
-        args.append("--dump-dom")
+def browser_args(browser: str, width: int, height: int, url: str, *, screenshot: Path | None = None) -> list[str]:
+    args = ["node", str(ROOT / "scripts" / "layout_browser.cjs"), browser, url, str(width), str(height)]
     if screenshot is not None:
-        args.append(f"--screenshot={screenshot}")
-    args.append(url)
+        args.append(str(screenshot))
     return args
 
 def run_case(browser: str, name: str, path: str, width: int, height: int) -> tuple[bool, dict | None, str]:
     url = f"http://127.0.0.1:{PORT}{path}"
     proc = subprocess.run(
-        chrome_args(browser, width, height, url, dump=True),
+        browser_args(browser, width, height, url),
         cwd=ROOT,
         text=True,
         stdout=subprocess.PIPE,
@@ -266,6 +249,8 @@ def run_case(browser: str, name: str, path: str, width: int, height: int) -> tup
         timeout=30,
     )
     dom = proc.stdout
+    if proc.returncode != 0:
+        return False, None, f"layout browser failed (exit {proc.returncode})\n{proc.stderr[-1600:]}"
     match = re.search(r'<pre id="pcs-layout-report">(?P<data>.*?)</pre>', dom, flags=re.S)
     if not match:
         return False, None, f"layout probe missing (chrome exit {proc.returncode})\n{proc.stderr[-1600:]}"
@@ -283,7 +268,7 @@ def capture_failure(browser: str, name: str, path: str, width: int, height: int)
     target = ARTIFACTS / f"{name}.png"
     url = f"http://127.0.0.1:{PORT}{path}"
     subprocess.run(
-        chrome_args(browser, width, height, url, dump=False, screenshot=target),
+        browser_args(browser, width, height, url, screenshot=target),
         cwd=ROOT,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
