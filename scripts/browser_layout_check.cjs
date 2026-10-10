@@ -62,6 +62,10 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2))throw Error('Active workspace overflow');
   if(process.env.PCS_LAYOUT_OUTPUT)await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`workspace-${width}.png`),fullPage:true});
   await page.goto(base+'/reasoning-lab.html');
+  if(await page.locator('.navlinks a[href="reasoning-lab.html"]').count()!==1)throw Error('Workbench missing from live navigation');
+  await page.keyboard.press('/');await page.locator('#pcsQuickInput').fill('Assumption');
+  if(await page.locator('#pcsQuickResults a[href="reasoning-lab.html"]').count()!==1)throw Error('Workbench missing from page finder');
+  await page.keyboard.press('Escape');
   await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'A real disagreement exists'}).waitFor();
   await page.getByRole('checkbox',{name:'A is true',exact:true}).check();if(!(await page.locator('#reasoningWorldResult').innerText()).includes('Both meanings agree in this world'))throw Error('Actual world toggles did not evaluate');
   await page.locator('#reasoningCandidate').fill('A AND B');if(await page.locator('#reasoningDownload').isEnabled())throw Error('Changed conditional input retained stale evidence');
