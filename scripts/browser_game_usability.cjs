@@ -15,9 +15,11 @@ const pages=['arena-countermodel','arena-proof-quest','arena-safety-forge','proo
    const page=await context.newPage();
    for(const name of pages){
     assert.equal((await page.goto(`${base}/${name}.html`)).status(),200);
+    await page.locator('#gameGuideStart').waitFor();
     if(await page.locator('#gameGuideQuickPlay').count()){
      await page.locator('#gameGuideQuickPlay').click();
      assert.equal(await page.locator('.game-guide-target').count(),1);
+     if(name==='intervention-lab')assert.equal(await page.locator('[data-role=proposal]').first().evaluate(el=>el===document.activeElement),true);
     }
     await page.locator('#gameGuideStart').click();
     for(let step=0;step<3;step++){
@@ -32,7 +34,7 @@ const pages=['arena-countermodel','arena-proof-quest','arena-safety-forge','proo
     assert.equal(await page.locator('.game-guide-target').count(),0);
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2);
     assert.equal(overflow,false,'guide overflow '+name+' '+width);
-    rows.push({game:name,width,three_steps:true,escape_closes:true});
+    rows.push({game:name,path:new URL(page.url()).pathname,width,three_steps:true,escape_closes:true});
    }
    await page.goto(base+'/arena-countermodel.html');
    if(process.env.PCS_USABILITY_OUTPUT)await page.screenshot({path:process.env.PCS_USABILITY_OUTPUT+`.start-${width}.png`});

@@ -10,11 +10,12 @@ export const GAME_GUIDES = {
  'semantic-repair-lab.html': ['Semantic Repair','Fix a translation by making small changes to its formula.','Tap an available formula edit. Undo lets you explore another route.','Check the candidate to find a disagreement or a bounded match. Automatic search is optional assistance.','#srMoves','#srCheck','#srVerdict'],
  'semantic-multistep-lab.html': ['Multi-Step Repair','Explore how several small edits can repair a Boolean formula.','Choose a task and search mode. Set the checking budget before running the planner.','Run the actual search, then inspect its attempts, repair and work counts. An exhausted budget does not establish impossibility.','#msTask','#msRun','#msStatus'],
  'repair-model-lab.html': ['Learned Repair','See how a fitted model ranks possible formula repairs.','Choose a case. Compare the source with the proposed translation.','Run the policy and inspect the checked attempts. Ranking suggests what to try; the checker evaluates each result.','#pmCase','#pmRun','#pmStatus'],
- 'intervention-lab.html': ['Intervention Planner','Reach the target with the cheapest allowed changes.','In Your plan, turn facts on or off. Each change has a cost; a locked fact must stay at its baseline value.','Score your proposal to see whether it works and how far its cost is from the minimum. Solve the minimum when you want to inspect optimal routes.','#planVariables','#planScore','#planProposal']
+ 'intervention-lab.html': ['Intervention Planner','Reach the target with the cheapest allowed changes.','In Your plan, turn facts on or off. Each change has a cost; a locked fact must stay at its baseline value.','First solve the minimum to enable scoring. Then score your proposal to see whether it works and how far its cost is from the minimum.','#planVariables [data-role=proposal]','#planSolve','#planProposal']
 };
 
 export function mountGameGuide(doc = document) {
- const config=GAME_GUIDES[location.pathname.split('/').pop()];
+ const slug=location.pathname.split('/').filter(Boolean).at(-1)||'';
+ const config=GAME_GUIDES[slug.endsWith('.html')?slug:slug+'.html'];
  const main=doc.querySelector('main');
  if(!config||!main||doc.getElementById('gameGuide'))return;
  const [name,goal,move,check,moveTarget,checkTarget,resultTarget]=config;
