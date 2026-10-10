@@ -30,8 +30,8 @@ export function inverseWorldEdit(action,before){
 export function renderRelationMap(doc,root,world,onToggle){
  validateWorld(world);root.replaceChildren();
  const ns='http://www.w3.org/2000/svg';
- const svg=doc.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 360 330');svg.setAttribute('role','group');svg.setAttribute('aria-label','Relationships: choose an arrow to toggle it');root.append(svg);
- const points=world.n===1?[[180,150]]:world.n===2?[[80,150],[280,150]]:[[80,95],[280,95],[180,265]];
+ const svg=doc.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 360 350');svg.setAttribute('role','group');svg.setAttribute('aria-label','Relationships: choose an arrow to toggle it');root.append(svg);
+ const points=world.n===1?[[180,150]]:world.n===2?[[80,150],[280,150]]:[[80,95],[280,95],[180,295]];
  const create=(tag,attrs,parent=svg,text)=>{const el=doc.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,String(v));if(text)el.textContent=text;parent.append(el);return el;};
  const defs=create('defs',{});const marker=create('marker',{id:'cmRelationArrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto'},defs);create('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'context-stroke'},marker);
  for(let i=0;i<world.n;i++)for(let j=0;j<world.n;j++){
