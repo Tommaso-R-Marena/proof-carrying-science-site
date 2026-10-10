@@ -60,6 +60,7 @@ async function cleanup(){
  report.model_digest_sha256=model.model_digest_sha256;
  // Actually load the owner-export model into the game and donate assisted play.
  await page.goto(base+'/arena-countermodel.html?mission=implication-flip',{waitUntil:'networkidle'});
+ await page.locator('#cmLearningDetails > summary').click();
  await page.locator('#cmModelFile').setInputFiles({name:'owner-model.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(model))});
  await page.locator('#cmLearningStatus').filter({hasText:'Loaded a format- and integrity-checked'}).waitFor();
  await page.locator('#cmCoach').click();await page.locator('#cmCoachApply').click();await page.locator('#cmCheck').click();

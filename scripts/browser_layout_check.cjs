@@ -35,7 +35,7 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   }
   // Actual game board, checked explanation, mission advancement and mobile menu.
   await page.goto(base+'/arena-countermodel.html?mission=implication-flip');
-  await page.getByRole('button',{name:'○ P(Agent 1)',exact:true}).click();await page.locator('#cmCheck').click();
+  await page.getByRole('button',{name:'Agent 1: has a key, off',exact:true}).click();await page.locator('#cmCheck').click();
   if(!(await page.locator('#cmGoals').innerText()).includes('✓ Smallest'))throw Error('Real mastery goal failed');
   await page.locator('.cm-explanation summary').click();if(!(await page.locator('#cmExplanation').innerText()).includes('FALSE'))throw Error('Explanation missing real checker result');
   await page.locator('#cmNext').click();if((await page.locator('#cmTitle').innerText())!=='The One-Example Trap')throw Error('Campaign did not advance');

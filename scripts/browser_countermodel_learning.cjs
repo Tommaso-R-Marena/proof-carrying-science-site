@@ -16,6 +16,7 @@ let browser;
   await page.locator('#cmGuideStart').click();await page.locator('#cmWorld button').first().click();await page.locator('#cmCheck').click();
   await page.locator('#cmGuideStatus').filter({hasText:'You made a real counterexample'}).waitFor();
   if(await page.locator('#cmHints').innerText()!=='1')throw Error('Walkthrough assistance missing');
+  await page.locator('#cmLearningDetails > summary').click();
   await page.locator('#cmNotebookSave').click();if(await page.locator('#cmTrain').isEnabled())throw Error('Assisted walkthrough enabled fitting');
   await page.locator('#cmRestart').click();await page.locator('#cmWorld button').first().click();await page.locator('#cmCheck').click();await page.locator('#cmNotebookSave').click();
   await page.getByRole('button',{name:/The One-Example Trap/}).click();await page.locator('#cmAdd').click();await page.locator('#cmWorld button').first().click();await page.locator('#cmCheck').click();await page.locator('#cmNotebookSave').click();

@@ -17,7 +17,7 @@
     "ci:zero-minutes": "npm run test:email && npm run ci:syntax && npm run test:email && npm run verify:release && npm run test:submissions && npm run test:task-code && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:arena:onboarding && npm run test:arena:experience && npm run test:arena:duel && npm run test:countermodel && npm run test:meaning-forge && npm run test:prooflab && npm run test:account-ui && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run test:semantic-gauntlet && npm run test:evaluation-firewall && npm run test:semantic-repair && npm run deploy:dry-run && npm run test:pcs-integration && npm run test:learned-repair && npm run test:multistep-repair && npm run test:live-demo && npm run test:omega && npm run test:conditional && npm run test:intervention",
     "test:arena:onboarding": "node --test tests/arena-onboarding.test.mjs",
     "test:admin:audit": "node --test tests/admin-audit-pagination.test.mjs",
-    "test:arena:experience": "node --test tests/arena-experience.test.mjs tests/arena-lab-tools.test.mjs",
+    "test:arena:experience": "node --test tests/arena-experience.test.mjs tests/arena-lab-tools.test.mjs tests/countermodel-visual.test.mjs",
     "test:arena:duel": "node --test tests/forge-duel.test.mjs tests/forge-duel-worker.test.mjs tests/forge-duel-model.test.mjs",
     "test:account-ui": "node --test tests/account-ui.test.mjs",
     "test:prooflab": "node --test tests/prooflab-core.test.mjs tests/prooflab-dataset.test.mjs tests/prooflab-worker.test.mjs",
@@ -38,6 +38,7 @@
     "test:browser:research": "node scripts/browser_research_check.cjs",
     "test:omega": "node --test tests/omega-core.test.mjs tests/omega-adaptive.test.mjs",
     "test:browser:learning": "node scripts/browser_countermodel_learning.cjs",
+    "test:browser:usability": "node scripts/browser_game_usability.cjs",
     "test:browser:layout": "node scripts/browser_layout_check.cjs",
     "test:conditional": "node --test tests/conditional-reasoning.test.mjs",
     "test:intervention": "node --test tests/intervention.test.mjs"

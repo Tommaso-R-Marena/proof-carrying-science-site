@@ -108,6 +108,7 @@ jobs:
               raise SystemExit('isolated Worker did not become ready')
           PY
           npm run test:browser
+          PCS_USABILITY_OUTPUT="$PWD/browser-usability-results.json" npm run test:browser:usability
           PCS_LAYOUT_OUTPUT="$PWD/browser-layout-results" npm run test:browser:layout
           PYTHONPATH="$PWD/.ci-components/pcs" python - <<'PYREPLAY'
           import json, pathlib
@@ -124,6 +125,15 @@ jobs:
               assert path.stat().st_size <= 1048576
               assert verify_plan(json.loads(path.read_text())) == 'optimal_plan'
               print(path.name, 'independently verified optimal plan')
+          from pcs.countermodel_v1 import replay_countermodel_session
+          traces = sorted(pathlib.Path('.').glob('browser-usability-results.json.trace-*.json'))
+          assert len(traces) == 4
+          for path in traces:
+              trace = json.loads(path.read_text())
+              replay = replay_countermodel_session({key: trace[key] for key in ['version', 'mission_id', 'actions']})
+              assert replay['final_verified'] and replay['final_world']['n'] == 2
+              assert replay['final_world']['R'][1][1]
+              print(path.name, 'independently replayed undo and relationship edits')
           PYREPLAY
           PCS_LEARNING_OUTPUT="$PWD/browser-learning-results.json" npm run test:browser:learning
           source scripts/activate_lean_428.sh
@@ -141,6 +151,7 @@ jobs:
             countermodel-formal-python-results.log
             countermodel-formal-javascript-results.log
             browser-results.json
+            browser-usability-results.json*
             browser-layout-results/
             conditional-python-parity-results.json
             intervention-python-parity-results.json
