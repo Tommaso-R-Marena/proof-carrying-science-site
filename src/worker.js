@@ -1,5 +1,5 @@
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
-import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement} from "./lean-research.js";
+import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
 import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
@@ -4265,6 +4265,9 @@ async function handleApi(request, env) {
   const path=url.pathname;
   const method=request.method;
 
+  if(method==="GET" && path==="/api/lean-research/status"){
+    return json({status:env.PCS_LEAN_GITHUB_TOKEN?"configured":"unavailable",core_sha:LEAN_CORE_SHA,pcs_authority:false});
+  }
   if(method==="POST" && path==="/api/lean-research/submit"){
     const body=await readBody(request);
     try{validatePublicStatement(body);}catch(error){throw new ApiError(400,String(error.message),"invalid_public_lean_statement");}

@@ -22,8 +22,9 @@ export async function verifyTicket(env,value,now=Date.now()){
   return p;
 }
 async function github(env,path,options={},transport=fetch){
-  if(!env.PCS_GITHUB_TOKEN||(path!==''&&!/^\/[A-Za-z0-9_./?=&%-]+$/.test(path)))fail('GitHub proof dispatch is unavailable');
-  const response=await transport('https://api.github.com/repos/'+REPO+path,{...options,redirect:'manual',headers:{'Authorization':'Bearer '+env.PCS_GITHUB_TOKEN,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'PCS-Lean-Research/1.0',...(options.body?{'Content-Type':'application/json'}:{})}});
+  const credential=env.PCS_LEAN_GITHUB_TOKEN||env.PCS_GITHUB_TOKEN;
+  if(!credential||(path!==''&&!/^\/[A-Za-z0-9_./?=&%-]+$/.test(path)))fail('GitHub proof dispatch is unavailable');
+  const response=await transport('https://api.github.com/repos/'+REPO+path,{...options,redirect:'manual',headers:{'Authorization':'Bearer '+credential,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'PCS-Lean-Research/1.0',...(options.body?{'Content-Type':'application/json'}:{})}});
   return response;
 }
 async function object(response){if(!response.ok)fail('GitHub checker operation unavailable ('+response.status+')');return response.json();}
