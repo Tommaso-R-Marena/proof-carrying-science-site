@@ -59,6 +59,7 @@ const pages=['arena-countermodel','arena-proof-quest','arena-safety-forge','proo
    await page.locator('#cmRemove').click();await page.locator('#cmUndo').click();
    assert.equal(await edge(1,1).getAttribute('aria-pressed'),'true');
    assert.equal(await page.getByRole('button',{name:'R Agent 2 to Agent 2',exact:true}).getAttribute('aria-pressed'),'true');
+   const cell=page.getByRole('button',{name:'R Agent 2 to Agent 2',exact:true});await cell.focus();await page.keyboard.press('Space');assert.equal(await cell.evaluate(el=>el===document.activeElement),true,'table keyboard focus survives render');await page.keyboard.press('Space');
    await page.locator('#cmCheck').click();
    pending=page.waitForEvent('download');await page.locator('#cmSessionExport').click();download=await pending;
    trace=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
