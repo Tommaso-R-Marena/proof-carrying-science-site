@@ -1430,13 +1430,15 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
 
     if js.name == "lean-learning-lab.mjs":
         # Reviewed local backend only. Production CSP stays unchanged; the
-        # deployed page cannot submit statements to a remote Lean service.
+        # Direct interactive Lean is loopback-only; reviewed same-origin public
+        # requests dispatch the pinned job with explicit publication consent.
         for guard in ["location.protocol === 'http:'", "location.port === '8766'",
                       "['127.0.0.1', 'localhost'].includes(location.hostname)",
                       "new Set(['health','models','formalize','explain','solve','session','step'])",
                       "if(!local)", "if(!LOCAL_ROUTES.has(route))", "const path='/api/'+route",
                       "fetch(path,{credentials:'omit'", "redirect:'error'",
                       "['/api/lean-research/submit','/api/lean-research/result'].includes(path)",
+                      "const path='/api/lean-research/status'",
                       "if(publicBusy||!$('publicConsent').checked)return", "public_consent:true,license:'CC0-1.0'"]:
             if guard not in text:
                 errors.append(f"{js.name}: local checker boundary missing: {guard}")
