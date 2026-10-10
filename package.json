@@ -42,7 +42,7 @@
     "test:browser:layout": "node scripts/browser_layout_check.cjs",
     "test:conditional": "node --test tests/conditional-reasoning.test.mjs",
     "test:intervention": "node --test tests/intervention.test.mjs",
-    "test:lean-research": "node --test tests/lean-research.test.mjs"
+    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

@@ -1,0 +1,19 @@
+{
+  "format": "pcs-live-lean-verification-v1",
+  "request_id": "557e055881524b3196c276a696475152",
+  "core_sha": "e0c4f7b3af37f1ae42eb5f4cbee8937f9dc93604",
+  "original_statement": "For all propositions R and S, if (R and S) then ((S and R) and S).",
+  "independent_authored_meaning_match": true,
+  "fresh_lean_kernel_checks": 2,
+  "learned_actions": 8,
+  "baseline_actions": 8,
+  "axioms": [],
+  "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+  "proof_sha256": "7d14a2f7203414b22793af760c4b4f451a55d406e0b7087dd0625ab85179e8ab",
+  "automatic_training_authorization": false,
+  "pcs_authority": false,
+  "financial_spend": 0,
+  "run_url": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38059342869",
+  "hosted_result_retrieval_initial_failure": "Cloudflare rejects fetch redirect:error; manual redirect and non-2xx rejection fix is independently runtime-tested.",
+  "evidence_scope": "Real website dispatch, successful native GitHub job and independent fresh Lean replay; final deployed result retrieval is checked separately."
+}

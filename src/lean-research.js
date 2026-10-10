@@ -71,6 +71,8 @@ export async function poll(env,value,transport=fetch,now=Date.now()){
   if(jobs.jobs.length!==1||!Number.isSafeInteger(jobs.jobs[0].id)||jobs.jobs[0].id<1||jobs.jobs[0].name!=='public-lean'||jobs.jobs[0].conclusion!=='success')fail('Unexpected checker job provenance');
   const download=await github(env,'/actions/jobs/'+jobs.jobs[0].id+'/logs',{},transport);
   let logs;
-  if(download.status===302){const location=download.headers.get('location');const target=new URL(location);if(target.protocol!=='https:'||target.port||target.username||target.password||!(target.hostname.endsWith('.blob.core.windows.net')||target.hostname.endsWith('.actions.githubusercontent.com')))fail('Unapproved log download destination');logs=await boundedText(await transport(target.href,{redirect:'error',credentials:'omit'}),4000000);}else logs=await boundedText(download,4000000);
+  // Workers supports manual redirects. boundedText rejects every non-2xx reply,
+  // so a second redirect cannot be followed or carry GitHub authorization.
+  if(download.status===302){const location=download.headers.get('location');const target=new URL(location);if(target.protocol!=='https:'||target.port||target.username||target.password||!(target.hostname.endsWith('.blob.core.windows.net')||target.hostname.endsWith('.actions.githubusercontent.com')))fail('Unapproved log download destination');logs=await boundedText(await transport(target.href,{redirect:'manual',credentials:'omit'}),4000000);}else logs=await boundedText(download,4000000);
   return {status:'completed',run_url:url,evidence:parseResult(logs,payload),pcs_authority:false};
 }
