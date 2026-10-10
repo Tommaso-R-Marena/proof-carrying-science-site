@@ -226,6 +226,7 @@
     }else if(event.key==="Escape"){quick.close();}
   });
   quick.addEventListener("click",event=>{if(event.target===quick)quick.close();});
+  quick.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();quick.close();}});
   document.addEventListener("keydown",event=>{
     const target=event.target;
     const typing=target?.isContentEditable||["INPUT","TEXTAREA","SELECT"].includes(target?.tagName);

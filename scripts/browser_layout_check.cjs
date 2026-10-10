@@ -66,6 +66,7 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   await page.keyboard.press('/');await page.locator('#pcsQuickInput').fill('Assumption');
   if(await page.locator('#pcsQuickResults a[href="reasoning-lab.html"]').count()!==1)throw Error('Workbench missing from page finder');
   await page.keyboard.press('Escape');
+  await page.locator('#pcsQuickFind').waitFor({state:'hidden'});
   await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'A real disagreement exists'}).waitFor();
   await page.getByRole('checkbox',{name:'A is true',exact:true}).check();if(!(await page.locator('#reasoningWorldResult').innerText()).includes('Both meanings agree in this world'))throw Error('Actual world toggles did not evaluate');
   await page.locator('#reasoningCandidate').fill('A AND B');if(await page.locator('#reasoningDownload').isEnabled())throw Error('Changed conditional input retained stale evidence');
