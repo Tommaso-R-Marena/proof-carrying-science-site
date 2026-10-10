@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: ced4691145e3e19415b98d3afd4e77f920e5a259
+          ref: 283c00172ca3244cf9fed811625de78d1cc01b9b
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
@@ -59,6 +59,8 @@ jobs:
           set -euo pipefail
           node scripts/verify_omega_python.mjs --core .ci-components/pcs | tee omega-python-results.log
           node scripts/verify_adaptive_python.mjs --core .ci-components/pcs | tee omega-adaptive-python-results.log
+      - name: Independent assumption-aware diagrams, conflicts and work limits
+        run: node scripts/verify_conditional_python.mjs --core .ci-components/pcs | tee conditional-python-parity-results.json
       - name: Independently check all seven Lean countermodels
         run: |
           set -euo pipefail
@@ -105,6 +107,15 @@ jobs:
           PY
           npm run test:browser
           PCS_LAYOUT_OUTPUT="$PWD/browser-layout-results" npm run test:browser:layout
+          PYTHONPATH="$PWD/.ci-components/pcs" python - <<'PYREPLAY'
+          import json, pathlib
+          from pcs.experimental.conditional import verify
+          receipts = sorted(pathlib.Path('browser-layout-results').glob('conditional-*.json'))
+          assert len(receipts) == 6
+          for path in receipts:
+              assert path.stat().st_size <= 262144
+              print(path.name, verify(json.loads(path.read_text())))
+          PYREPLAY
           PCS_LEARNING_OUTPUT="$PWD/browser-learning-results.json" npm run test:browser:learning
           source scripts/activate_lean_428.sh
           node scripts/verify_learning_downloads.mjs --core .ci-components/pcs --input browser-learning-results.json | tee learning-download-results.log
@@ -122,6 +133,7 @@ jobs:
             countermodel-formal-javascript-results.log
             browser-results.json
             browser-layout-results/
+            conditional-python-parity-results.json
             omega-adaptive-python-results.log
             browser-results.json.omega-*
             browser-research-results.json

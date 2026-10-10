@@ -61,6 +61,41 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   await page.getByText('Inspect every true / false combination',{exact:true}).click();if(await page.locator('#omegaTruthTable tbody tr').count()<4)throw Error('Actual truth table not rendered');
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2))throw Error('Active workspace overflow');
   if(process.env.PCS_LAYOUT_OUTPUT)await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`workspace-${width}.png`),fullPage:true});
+  await page.goto(base+'/reasoning-lab.html');
+  if(await page.locator('.navlinks a[href="reasoning-lab.html"]').count()!==1)throw Error('Workbench missing from live navigation');
+  await page.keyboard.press('/');await page.locator('#pcsQuickInput').fill('Assumption');
+  if(await page.locator('#pcsQuickResults a[href="reasoning-lab.html"]').count()!==1)throw Error('Workbench missing from page finder');
+  await page.keyboard.press('Escape');
+  await page.locator('#pcsQuickFind').waitFor({state:'hidden'});
+  await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'A real disagreement exists'}).waitFor();
+  await page.getByRole('checkbox',{name:'A is true',exact:true}).check();if(!(await page.locator('#reasoningWorldResult').innerText()).includes('Both meanings agree in this world'))throw Error('Actual world toggles did not evaluate');
+  await page.locator('#reasoningCandidate').fill('A AND B');if(await page.locator('#reasoningDownload').isEnabled())throw Error('Changed conditional input retained stale evidence');
+  await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'Every allowed world agrees'}).waitFor();
+  await page.getByRole('button',{name:'Follow an implication',exact:true}).click();await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'Every allowed world agrees'}).waitFor();
+  await page.getByRole('button',{name:'Find conflicting assumptions',exact:true}).click();await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'Your assumptions conflict'}).waitFor();
+  if(await page.locator('#reasoningConflict li').count()!==2)throw Error('Actual minimal conflict missing');
+  await page.getByRole('button',{name:'Explore 24 variables',exact:true}).click();await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'Every allowed world agrees'}).waitFor();
+  if(await page.locator('#reasoningWorld input').count()!==24)throw Error('24-variable explorer missing');
+  const pendingConditional=page.waitForEvent('download');await page.locator('#reasoningDownload').click();const conditional=await pendingConditional;const receipt=JSON.parse(fs.readFileSync(await conditional.path(),'utf8'));
+  if(receipt.format!=='pcs-conditional-boolean-receipt-v1'||receipt.original_task.variables.length!==24||receipt.pcs_authority!==false||receipt.lean_kernel_checked!==false)throw Error('Conditional export scope invalid');
+  if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,`conditional-${width}.json`),JSON.stringify(receipt,null,2));
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2))throw Error('Active conditional workbench overflow');
+  if(process.env.PCS_LAYOUT_OUTPUT)await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`conditional-${width}.png`),fullPage:true});
+  if(width===320){
+   const pairs=Array.from({length:9},(_,i)=>{let a='A'+String(i).padStart(2,'0'),b='B'+String(i).padStart(2,'0');if(i<6){a='(NOT NOT '+a+')';b='(NOT NOT '+b+')';}return `((${a} -> ${b}) AND (${b} -> ${a}))`;});
+   await page.locator('#reasoningSource').fill(pairs.join(' AND '));await page.locator('#reasoningCandidate').fill('TRUE');
+   await page.locator('#reasoningAssumptions').fill(Array(8).fill(Array(25).fill('(LONG_SYMBOL_NAME OR NOT LONG_SYMBOL_NAME)').join(' AND ')).join('\n'));
+   await page.locator('#reasoningCheck').click();await page.locator('#reasoningResult').filter({hasText:'A real disagreement exists'}).waitFor();
+   let pending=page.waitForEvent('download');await page.locator('#reasoningDownload').click();let downloaded=await pending;let bytes=fs.readFileSync(await downloaded.path());
+   if(bytes.length>262144||JSON.stringify(JSON.parse(bytes),null,2).length<=262144)throw Error('Large valid export lost bounded CLI replayability');
+   if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,'conditional-large.json'),bytes);
+   const dense=Array.from({length:10},(_,i)=>{const a='A'+String(i).padStart(2,'0'),b='B'+String(i).padStart(2,'0');return `((${a} -> ${b}) AND (${b} -> ${a}))`;}).join(' AND ');
+   await page.locator('#reasoningSource').fill(dense);await page.locator('#reasoningAssumptions').fill('');await page.locator('#reasoningCheck').click();
+   await page.locator('#reasoningResult').filter({hasText:'The reasoning limit was reached'}).waitFor();if(await page.locator('#reasoningWorld input').count())throw Error('Resource limit retained a witness');
+   pending=page.waitForEvent('download');await page.locator('#reasoningDownload').click();downloaded=await pending;bytes=fs.readFileSync(await downloaded.path());
+   if(JSON.parse(bytes).decision!=='resource_limit')throw Error('Work limit export did not fail closed');
+   if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,'conditional-resource.json'),bytes);
+  }
   await context.close();
  }
  const failures=rows.filter(r=>r.status!==200||r.scrollWidth>r.width+2||r.clashes.length||r.errors.length);

@@ -25,7 +25,7 @@ async function install(raw){
 }
 function showDetails(claim,kind='claim'){
  if(!claim)return;const box=$('omegaDetails');box.replaceChildren(element('h3',claim.id+' / '+kind),element('p',claim.statement),element('p','Scope: '+claim.scope),element('p',`Source: ${project.source.name}, lines ${claim.source_lines.join('–')}. Dependencies: ${claim.depends_on.join(', ')||'none declared'}.`));
- const list=element('ul');for(const a of claim.assumptions)list.append(element('li',a));if(claim.assumptions.length)box.append(element('strong','Declared assumptions'),list);
+ const list=element('ul');for(const a of claim.assumptions)list.append(element('li',a));if(claim.assumptions.length)box.append(element('strong','Assumption notes · not used as logical premises'),list);
  const r=receipts[claim.id];box.append(element('p',r.equivalent?'Selected Boolean interpretations are equivalent across all declared valuations.':'Meaning mismatch. Counterexample: '+JSON.stringify(r.counterexample)));
  if(episodes[claim.id]?.solution)box.append(element('p','A repaired candidate was checked; the original project interpretation is preserved. Download the checked task to inspect it.'));
  box.append(element('p','Scientific closure: BLOCKED. Interpretation grounding and registered authority are unresolved. The declared dependency graph may omit external assumptions.'));

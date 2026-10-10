@@ -70,6 +70,7 @@
       ]},
       {heading:"FOR RESEARCHERS",links:[
         ["omega-workspace.html","Omega · inspect claims and learned search"],
+        ["reasoning-lab.html","Assumption Workbench · explore what follows"],
         ["result-anatomy.html","Understand a verification result"],
         ["researcher-pilots.html","Plan an independent pilot"],
         ["project-builder.html","Advanced project mapper"]
@@ -149,6 +150,7 @@
     ["Verification results","result-anatomy.html","Understand every result layer","Try PCS"],
     ["Project mapper","project-builder.html","Discover candidate claims in your own files","Try PCS"],
     ["Omega workspace","omega-workspace.html","Trace claims, compare actual models and replay checked repairs","Try PCS"],
+    ["Assumption Workbench","reasoning-lab.html","Check logical premises, explore counterexamples and find conflicting assumptions","Try PCS"],
     ["v0.6 verifier","mvp.html","Command-line package verification workflow","Try PCS"],
     ["Legacy threat lab","demo.html","Frozen v0.5 adversarial parity simulation","Try PCS"],
     ["Needed tasks","tasks.html","Live, curated volunteer work","Get involved"],
@@ -224,6 +226,7 @@
     }else if(event.key==="Escape"){quick.close();}
   });
   quick.addEventListener("click",event=>{if(event.target===quick)quick.close();});
+  quick.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();quick.close();}});
   document.addEventListener("keydown",event=>{
     const target=event.target;
     const typing=target?.isContentEditable||["INPUT","TEXTAREA","SELECT"].includes(target?.tagName);
