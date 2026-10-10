@@ -1,0 +1,18 @@
+{
+  "format": "pcs-omega-dd-public-evidence-v1",
+  "aristotle_run": "b9577162-8244-44ff-83ca-dc7efe9d95a4",
+  "archive_sha256": "5bbe5fdcae4acad3d7bbe48de26559e89bc2eae2c0681a23526e2cedf4ea95a6",
+  "independently_audited_general_theorems": 214,
+  "release_gate_theorems": 226,
+  "heavy_control_module_status": "resource blocked; full CI attempt cancelled without control completion",
+  "finite_runtime_comparisons": 91,
+  "independent_exhaustive_oracle_cases": 74,
+  "runtime_disagreements": 0,
+  "implementation_refinement_proved": false,
+  "pcs_authority": false,
+  "source_integration_pr": "https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/99",
+  "source_candidate": "f21f2e2cad94fbcea790f3f8a104280f64b74f03",
+  "source_integration_merged": false,
+  "full_release_verification_passed": false,
+  "full_ci_run_id": 38069883455
+}

@@ -34,6 +34,11 @@ The planner resolves declared positive-cost Boolean objectives using an ordered-
 
 The 24-variable tied-pair case has 4,096 optimal complete assignments of cost 12. The deliberately simple all-true proposal costs 24, giving a real optimality gap of 12. Weighted pairs have one optimal assignment; locked pairs forbid the otherwise preferred choices. This is not a learned-model accuracy experiment. Existing neural weights and scope are unchanged.
 
-Lean 4.28 kernel-checked 12 selected minimum/count propositions with an empty axiom inventory and rejected a false minimum. General diagram compilation, Bellman optimality/count/explanation correctness and Python/JavaScript refinement are outstanding; the single consolidated Aristotle prompt requests them. All receipts retain false scientific-authority and Lean-kernel flags.
+Lean 4.28 kernel-checked 12 selected minimum/count propositions with an empty axiom inventory and rejected a false minimum. At that initial benchmark, general reference-model compilation and Bellman proofs were outstanding. The completed package below now supplies those reference theorems; implementation refinement remains open. All receipts retain false scientific-authority and Lean-kernel flags.
 
 Direct witness guards recheck the original target, premises, locks and objective before returning a plan. Two corrupted internal result controls are rejected even under `python -O`. This does not prove global minimum/count correctness.
+
+
+## Completed Aristotle reference package
+
+Run `b9577162-8244-44ff-83ca-dc7efe9d95a4` supplies typed Lean 4.28 models with general BDD compilation/checking, conditional-conflict and positive-cost Bellman/reconstruction/replay theorems. See the [independent integration report](aristotle-omega-dd-integration-REPORT.md) and [returned theorem-to-contract map](aristotle-omega-dd-reference-REPORT.md). Finite native Lean/Python/JavaScript receipts agree on 91 tasks, including exact work and optimization cells. This is regression evidence; Python/JavaScript refinement, input decoding, hashing/authentication/browser behavior and scientific grounding remain open. Existing per-result scientific-authority and browser Lean-kernel flags remain false. Historical measurements above retain their original evidence scope.

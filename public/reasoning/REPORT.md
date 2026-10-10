@@ -37,3 +37,8 @@ python scripts/verify_conditional_lean.py NEW_DIRECTORY
 `check` exits 0 for equivalence under satisfiable premises, 1 for a counterexample, 2 for inconsistent premises, 3 for a resource limit and 4 for malformed input or a file error. `verify` exits 0 when the recorded outcome is faithful, including faithful counterexample/limit outcomes; it does not convert that outcome into equivalence. Output files/directories must be new. Input files are bounded to 256 KiB and duplicate JSON fields are rejected. The text parser supports AND, OR, NOT, right-associative implication `->`, TRUE, FALSE and parentheses; it never executes submitted code.
 
 The website's Assumption Workbench offers text entry, concrete conflict explanations, actual world toggles and independently replayable downloads. An edited input invalidates old evidence. Inputs stay local and clear on reload. No paid service, production migration or fabricated contribution is involved.
+
+
+## Completed Aristotle reference package
+
+Run `b9577162-8244-44ff-83ca-dc7efe9d95a4` supplies typed Lean 4.28 models with general BDD compilation/checking, conditional-conflict and positive-cost Bellman/reconstruction/replay theorems. See the [independent integration report](aristotle-omega-dd-integration-REPORT.md) and [returned theorem-to-contract map](aristotle-omega-dd-reference-REPORT.md). Finite native Lean/Python/JavaScript receipts agree on 91 tasks, including exact work and optimization cells. This is regression evidence; Python/JavaScript refinement, input decoding, hashing/authentication/browser behavior and scientific grounding remain open. Existing per-result scientific-authority and browser Lean-kernel flags remain false. Historical measurements above retain their original evidence scope.
