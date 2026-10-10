@@ -1,0 +1,143 @@
+{
+  "format": "pcs-prover-proof-v1",
+  "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+  "statement": "\u2200 (U : Prop) (V : Prop), ((U \u2227 V) \u2192 (U \u2227 (U \u2227 V)))",
+  "actions": [
+    {
+      "kind": "intro",
+      "argument": "h0"
+    },
+    {
+      "kind": "intro",
+      "argument": "h1"
+    },
+    {
+      "kind": "intro",
+      "argument": "h2"
+    },
+    {
+      "kind": "constructor",
+      "argument": null
+    },
+    {
+      "kind": "exact",
+      "argument": "h2.1"
+    },
+    {
+      "kind": "exact",
+      "argument": "h2"
+    }
+  ],
+  "proof": "  intro h0\n  intro h1\n  intro h2\n  constructor\n  exact h2.1\n  exact h2",
+  "kernel": {
+    "axioms": [],
+    "expression": {
+      "children": [
+        {
+          "children": [],
+          "kind": "sort",
+          "value": "0"
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "kind": "sort",
+              "value": "0"
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "kind": "constant",
+                          "value": "And:[]"
+                        },
+                        {
+                          "children": [],
+                          "kind": "bound",
+                          "value": "1"
+                        }
+                      ],
+                      "kind": "application",
+                      "value": ""
+                    },
+                    {
+                      "children": [],
+                      "kind": "bound",
+                      "value": "0"
+                    }
+                  ],
+                  "kind": "application",
+                  "value": ""
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "children": [],
+                          "kind": "constant",
+                          "value": "And:[]"
+                        },
+                        {
+                          "children": [],
+                          "kind": "bound",
+                          "value": "2"
+                        }
+                      ],
+                      "kind": "application",
+                      "value": ""
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [],
+                              "kind": "constant",
+                              "value": "And:[]"
+                            },
+                            {
+                              "children": [],
+                              "kind": "bound",
+                              "value": "2"
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        },
+                        {
+                          "children": [],
+                          "kind": "bound",
+                          "value": "1"
+                        }
+                      ],
+                      "kind": "application",
+                      "value": ""
+                    }
+                  ],
+                  "kind": "application",
+                  "value": ""
+                }
+              ],
+              "kind": "forall",
+              "value": "a._@._internal._hyg.0"
+            }
+          ],
+          "kind": "forall",
+          "value": "V"
+        }
+      ],
+      "kind": "forall",
+      "value": "U"
+    },
+    "format": "pcs-lean-kernel-v1"
+  },
+  "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+  "adapter_sha256": "08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c",
+  "pcs_scientific_authority": false
+}

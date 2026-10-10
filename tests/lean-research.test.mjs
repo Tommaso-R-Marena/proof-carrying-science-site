@@ -1,0 +1,35 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {CORE_SHA,dispatch,poll,parseResult,verifyTicket,validatePublicStatement} from '../src/lean-research.js';
+const env={PCS_GITHUB_TOKEN:'test-only-protocol-token',RATE_LIMIT_SALT:'test-only-ticket-secret'};
+const body={statement:'For all propositions U and V, if (U and V) then (U and (U and V)).',interpretation:null,public_consent:true,license:'CC0-1.0'};
+const repository={private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'};
+const response=(value,status=200,headers={})=>new Response(value===null?null:JSON.stringify(value),{status,headers});
+async function queued(now=1000000,override={}){const calls=[];const transport=async(url,options)=>{calls.push({url,options});if(url.endsWith('/commits/main'))return response({sha:CORE_SHA,...override.commit});if(url.endsWith('/dispatches'))return response(null,204);return response({...repository,...override.repo});};return {...await dispatch(env,body,transport,now),calls};}
+const receipt=JSON.parse(readFileSync(new URL('./fixtures/lean-proof-receipt-v1.json',import.meta.url)));
+function record(p){return {format:'pcs-public-lean-result-v1',request_id:p.request_id,core_sha:p.core_sha,source_sha256:p.source_sha256,result:{status:'verified',pcs_authority:false,search:{receipt:structuredClone(receipt)}},baseline:{status:'unknown',pcs_authority:false}};}
+const marker=r=>'2026-10-10T00:00:00Z PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(r)).toString('base64')+'\n';
+test('explicit public authorization and closed mathematical payload',()=>{validatePublicStatement(body);for(const changed of [{public_consent:false},{license:'private'},{statement:'theorem evil : False := by sorry'},{statement:'For all propositions P, P. bearer-token: secret'},{interpretation:16},{statement:body.statement,extra:'reward'}])assert.throws(()=>validatePublicStatement({...body,...changed}));});
+test('only pinned public main, safe environment input, signed expiring ticket',async()=>{const q=await queued();assert.equal(q.calls.length,3);const submitted=JSON.parse(q.calls[2].options.body);assert.equal(submitted.ref,'main');assert.equal(submitted.inputs.statement,body.statement);assert.equal(q.calls[2].options.redirect,'manual');const p=await verifyTicket(env,q.ticket,1000000);assert.equal(p.core_sha,CORE_SHA);await assert.rejects(verifyTicket(env,q.ticket,5000000),/Expired/);await assert.rejects(verifyTicket({...env,RATE_LIMIT_SALT:'other'},q.ticket,1000000),/Forged/);await assert.rejects(queued(1000000,{repo:{private:true}}),/public/);await assert.rejects(queued(1000000,{commit:{sha:'0'.repeat(40)}}),/approved/);});
+test('actual receipt format, source binding, duplicate markers and forbidden axioms',async()=>{const q=await queued();const p=await verifyTicket(env,q.ticket,1000000);const r=record(p);assert.equal(parseResult(marker(r),p).result.status,'verified');assert.throws(()=>parseResult(marker(r)+marker(r),p),/duplicate/);for(const mutate of [r=>r.source_sha256='0'.repeat(64),r=>r.core_sha='0'.repeat(40),r=>r.result.pcs_authority=true,r=>r.result.search.receipt.kernel.axioms.push('evil'),r=>r.result.search.receipt.proof=' ',r=>r.baseline={status:'verified',pcs_authority:false,search:{receipt:{}}}]){const changed=structuredClone(r);mutate(changed);assert.throws(()=>parseResult(marker(changed),p));}});
+test('completed job provenance and redirected logs never carry GitHub credentials',async()=>{const q=await queued();const p=await verifyTicket(env,q.ticket,1000000);let logOptions;
+ const run={id:123,display_title:'PCS public Lean '+p.request_id,head_sha:CORE_SHA,head_branch:'main',event:'workflow_dispatch',path:'.github/workflows/pcs-lean-public.yml',repository,status:'completed',conclusion:'success'};
+ const transport=async(url,options)=>{if(url.includes('/workflows/')&&url.includes('/runs?'))return response({workflow_runs:[run]});if(url.endsWith('/123/jobs'))return response({jobs:[{id:456,name:'public-lean',conclusion:'success'}]});if(url.endsWith('/456/logs'))return response(null,302,{location:'https://test.blob.core.windows.net/proof/log'});logOptions=options;return new Response(marker(record(p)));};
+ const result=await poll(env,q.ticket,transport,1000000);assert.equal(result.status,'completed');assert.equal(logOptions.credentials,'omit');assert.equal(logOptions.headers,undefined);assert.equal(logOptions.redirect,'error');run.head_branch='untrusted';await assert.rejects(poll(env,q.ticket,transport,1000000),/Unapproved/);run.head_branch='main';const unsafe=async(url,options)=>url.endsWith('/456/logs')?response(null,302,{location:'https://evil.example/log'}):transport(url,options);await assert.rejects(poll(env,q.ticket,unsafe,1000000),/destination/);
+});
+test('bounded logs and missing final evidence remain unresolved',async()=>{const q=await queued();const p=await verifyTicket(env,q.ticket,1000000);assert.throws(()=>parseResult('Search claims success, without a real result',p),/Missing/);assert.throws(()=>parseResult('PCS_LEAN_RESULT_V1:'+Buffer.alloc(1000001).toString('base64')+'\n',p),/bound/);const forged=record(p);forged.baseline.pcs_authority=true;assert.throws(()=>parseResult(marker(forged),p),/authority/);const result=await poll(env,q.ticket,async()=>response({workflow_runs:[]}),1000000);assert.equal(result.status,'queued');assert.equal(result.pcs_authority,false);});
+
+const worker=(await import('../src/worker.js')).default;
+function quotaEnv(count) {
+  const state={calls:0};
+  const db={prepare(sql) {
+    assert.match(sql,/INSERT INTO rate_limits/);
+    return {bind() {return {async first() {state.calls++;return {count};}};}};
+  }};
+  return {state,env:{RATE_LIMIT_SALT:'test-only-route-salt',COMMONS_DB:db}};
+}
+const origin='https://proof-carrying-science-site.marenatommaso.workers.dev';
+const submitRequest=(payload,requestOrigin=origin)=>new Request(origin+'/api/lean-research/submit',{method:'POST',headers:{origin:requestOrigin,'content-type':'application/json','CF-Connecting-IP':'192.0.2.1'},body:JSON.stringify(payload)});
+test('real Worker rejects origin and absent consent before any quota or provider operation',async()=>{const q=quotaEnv(1);assert.equal((await worker.fetch(submitRequest(body,'https://hostile.example'),q.env)).status,403);assert.equal((await worker.fetch(submitRequest({...body,public_consent:false}),q.env)).status,400);assert.equal(q.state.calls,0);});
+test('real Worker quota denial prevents dispatch and missing provider access fails closed',async()=>{let q=quotaEnv(3);assert.equal((await worker.fetch(submitRequest(body),q.env)).status,429);assert.equal(q.state.calls,1);q=quotaEnv(1);const result=await worker.fetch(submitRequest(body),q.env);assert.equal(result.status,503);assert.equal(q.state.calls,2);assert.equal((await result.json()).error,'lean_checker_unavailable');});
