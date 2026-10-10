@@ -96,6 +96,27 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
    if(JSON.parse(bytes).decision!=='resource_limit')throw Error('Work limit export did not fail closed');
    if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,'conditional-resource.json'),bytes);
   }
+  await page.goto(base+'/intervention-lab.html');
+  await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'Minimum change cost: 1.'}).waitFor();
+  if(!(await page.locator('#planResult').innerText()).includes('Mandatory in every optimal plan: B'))throw Error('Weighted necessity missing');
+  await page.getByRole('checkbox',{name:'A · Your plan true',exact:true}).check();await page.getByRole('checkbox',{name:'B · Your plan true',exact:true}).check();
+  await page.locator('#planScore').click();await page.locator('#planProposal').filter({hasText:'Cost above the minimum: 3.'}).waitFor();
+  await page.getByRole('checkbox',{name:'A · Your plan true',exact:true}).uncheck();await page.locator('#planScore').click();await page.locator('#planProposal').filter({hasText:'You found an optimal plan.'}).waitFor();
+  await page.getByRole('spinbutton',{name:'A · Change cost',exact:true}).fill('1');if(await page.locator('#planDownload').isEnabled())throw Error('Changed cost retained stale planner receipt');
+  await page.getByRole('button',{name:'Two equally good routes',exact:true}).click();await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'Optimal assignments: 2.'}).waitFor();
+  if(!(await page.locator('#planResult').innerText()).includes('No individual change is mandatory'))throw Error('Tie explanation false');
+  await page.getByRole('button',{name:'A locked route',exact:true}).click();await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'Minimum change cost: 3.'}).waitFor();
+  await page.getByRole('checkbox',{name:'A · Keep fixed',exact:true}).check();await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'No feasible plan'}).waitFor();
+  await page.locator('#planTarget').fill('A');await page.locator('#planAssumptions').fill('A\nNOT A');await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'Your assumptions conflict'}).waitFor();
+  await page.getByRole('button',{name:'Respect a dependency',exact:true}).click();await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'Minimum change cost: 4.'}).waitFor();
+  await page.getByRole('button',{name:'4,096 optimal plans',exact:true}).click();await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'Optimal assignments: 4,096.'}).waitFor();
+  if(await page.locator('#planVariables .plan-variable').count()!==24)throw Error('Planner did not instantiate 24 controls');
+  const pendingPlan=page.waitForEvent('download');await page.locator('#planDownload').click();const downloadPlan=await pendingPlan,planBytes=fs.readFileSync(await downloadPlan.path()),planReceipt=JSON.parse(planBytes);
+  if(planReceipt.minimum_cost!==12||planReceipt.optimal_count!==4096||planReceipt.pcs_authority!==false||planReceipt.lean_kernel_checked!==false||planBytes.length>1048576)throw Error('Planner download invalid');
+  if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,`intervention-${width}.json`),planBytes);
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2))throw Error('Active planner overflow');
+  if(process.env.PCS_LAYOUT_OUTPUT)await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`intervention-${width}.png`),fullPage:true});
+  if(width===320){await page.locator('#planTarget').fill(Array.from({length:12},(_,i)=>`((A${i} -> Z${i}) AND (Z${i} -> A${i}))`).join(' AND '));await page.locator('#planSolve').click();await page.locator('#planResult').filter({hasText:'The computation limit was reached'}).waitFor();if(!(await page.locator('#planResult').innerText()).includes('No minimum'))throw Error('Planner budget claimed optimum');}
   await context.close();
  }
  const failures=rows.filter(r=>r.status!==200||r.scrollWidth>r.width+2||r.clashes.length||r.errors.length);

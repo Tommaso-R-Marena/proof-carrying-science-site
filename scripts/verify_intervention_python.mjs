@@ -1,0 +1,11 @@
+// Full independent receipt/proposal parity across all actual analytical controls.
+import fs from 'node:fs';import path from 'node:path';import {spawnSync} from 'node:child_process';
+import {canonical} from '../public/omega-core.mjs';
+import {planIntervention,verifyIntervention,auditInterventionProposal} from '../public/intervention-core.mjs';
+const args=process.argv.slice(2),core=args[args.indexOf('--core')+1];if(!args.includes('--core')||!core)throw Error('Supply --core PCS_CHECKOUT');
+const code=`import json,sys,hashlib\nfrom pathlib import Path\nsys.path.insert(0,sys.argv[1]);sys.path.insert(0,sys.argv[1]+'/scripts')\nfrom benchmark_intervention import cases\nfrom pcs.experimental.intervention import plan,audit_proposal\nrows=[]\nfor name,task,limits,_,_ in cases():\n a=dict.fromkeys(task['problem']['variables'],True)\n rows.append({'id':name,'task':task,'limits':limits,'receipt':plan(task,limits),'proposal':audit_proposal(task,a,limits)})\nprint(json.dumps({'rows':rows,'source_sha256':{p:hashlib.sha256((Path(sys.argv[1])/p).read_bytes()).hexdigest() for p in ('pcs/experimental/conditional.py','pcs/experimental/intervention.py')}}))`;
+const child=spawnSync('python3',['-c',code,path.resolve(core)],{encoding:'utf8',maxBuffer:8*1024*1024});if(child.status!==0)throw Error(child.stderr||'Independent Python planner failed');
+const data=JSON.parse(child.stdout),published=JSON.parse(fs.readFileSync(new URL('../public/reasoning/intervention-measurements-v1.json',import.meta.url),'utf8'));
+if(canonical(data.source_sha256)!==canonical(published.source_sha256))throw Error('Published intervention source pins differ from checked independent core');
+for(const row of data.rows){const options=row.limits?{limits:row.limits}:{},r=await planIntervention(row.task,options);if(canonical(r)!==canonical(row.receipt))throw Error('Independent planner receipt mismatch: '+row.id);await verifyIntervention(r);const a=Object.fromEntries(row.task.problem.variables.map(n=>[n,true]));if(canonical(await auditInterventionProposal(row.task,a,options))!==canonical(row.proposal))throw Error('Independent proposal audit mismatch: '+row.id);}
+console.log(JSON.stringify({cases:data.rows.length,entire_receipts_match:true,entire_proposal_audits_match:true,source_sha256:data.source_sha256,paid_services:false}));
