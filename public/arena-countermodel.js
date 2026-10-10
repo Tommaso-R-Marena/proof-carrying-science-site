@@ -3,7 +3,9 @@ import {normalizeSearchSession,fitLocalSearchModel,validateSearchModelJSON,evalu
 import {rankSearchActions} from './countermodel-search-policy.mjs';
 import {shaText} from './omega-core.mjs';
 import {expedition,mastery,dailyMission,explainWorld} from './countermodel-expedition.mjs';
+import {plainMission,inverseWorldEdit,renderRelationMap} from './countermodel-visual.mjs';
 const $=id=>document.getElementById(id);
+let undoStack=[];
 let current=COUNTERMODEL_MISSIONS[0],history=[],world=initialWorld(),checked=null,localBest={};
 let notebooks=[],coachModel=null,pendingCoach=null,guided=false,learningBusy=false,modelRevision=0,implementationPromise;
 const LEARNING_SOURCE_ASSETS=new Set(['arena-countermodel.js','countermodel-learning.mjs','countermodel-search-policy.mjs']);
@@ -32,15 +34,22 @@ function renderMissions(){const dest=$('cmMissions');dest.replaceChildren();for(
  const sub=document.createElement('small');sub.textContent=`Level ${m.tier} · ${m.skill}`;b.append(title,sub);b.addEventListener('click',()=>choose(m.id));dest.append(b);}}
 function message(text,cls=''){const el=$('cmFeedback');el.className='cm-feedback '+cls;el.textContent=text;}
 function scoreNow(){try{return replayCountermodelSession({version:COUNTERMODEL_VERSION,mission_id:current.id,actions:history});}catch{return null;}}
-function draw(){const v=countermodelVerdict(current.id,world);$('cmTier').textContent=`LEVEL ${current.tier} · ${current.skill.toUpperCase()}`;
+function draw(){const focusKey=document.activeElement?.dataset?.cmFocus;const v=countermodelVerdict(current.id,world);$('cmTier').textContent=`LEVEL ${current.tier} · ${current.skill.toUpperCase()}`;
  $('cmTitle').textContent=current.name;$('cmStory').textContent=current.story;$('cmLeft').textContent=current.left;$('cmRight').textContent=current.right;
+ const [leftPlain,rightPlain]=plainMission(current.id);$('cmLeftPlain').textContent=leftPlain;$('cmRightPlain').textContent=rightPlain;
+ $('cmUndo').disabled=!undoStack.length;
  for(const [id,key] of [['cmLeftResult','left'],['cmRightResult','right']]){const e=$(id);e.textContent=checked?`${v[key]?'TRUE':'FALSE'} in your world`:'Not checked';e.className='cm-truth '+(checked?(v[key]?'true':'false'):'');}
+ $('cmDictionary').textContent=current.kind==='unary'?'In this puzzle, P means “has a key” and Q means “opens the door.” These labels illustrate the formal facts. An IF…THEN rule is only broken when its first fact is on and its second fact is off.':'An arrow from Agent 1 to Agent 2 means R(1,2) is true. Arrows are directed; an agent can also relate to itself.';
  $('cmWorldCount').textContent=`${world.n} agent${world.n===1?'':'s'} · ${current.kind==='relation'?'Toggle the R(x,y) relation for each pair.':'Toggle which facts P and Q hold for each agent.'}`;
  $('cmAdd').disabled=world.n>=3;$('cmRemove').disabled=world.n<=1;
  const dst=$('cmWorld');dst.replaceChildren();
  if(current.kind==='unary'){
-  for(let i=0;i<world.n;i++){const c=document.createElement('div');c.className='cm-agent';const h=document.createElement('h3');h.textContent=`Agent ${i+1}`;c.append(h);const actions=document.createElement('div');actions.className='cm-toggles';for(const p of ['P','Q']){const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(world[p][i]));b.textContent=`${world[p][i]?'●':'○'} ${p}(Agent ${i+1})`;b.addEventListener('click',()=>move({type:'toggle',p,i}));actions.append(b);}c.append(actions);dst.append(c);}
+  for(let i=0;i<world.n;i++){const c=document.createElement('div');c.className='cm-agent';const h=document.createElement('h3');h.textContent=`Agent ${i+1}`;const avatar=document.createElement('span');avatar.className='cm-avatar';avatar.textContent=String(i+1);avatar.setAttribute('aria-hidden','true');c.append(avatar,h);const actions=document.createElement('div');actions.className='cm-toggles';for(const p of ['P','Q']){const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(world[p][i]));b.textContent=`${p==='P'?'Has a key':'Opens the door'} · ${world[p][i]?'On':'Off'}`;b.setAttribute('aria-label',`Agent ${i+1}: ${p==='P'?'has a key':'opens the door'}, ${world[p][i]?'on':'off'}`);b.dataset.cmFocus=`fact-${p}-${i}`;b.addEventListener('click',()=>move({type:'toggle',p,i}));actions.append(b);}c.append(actions);dst.append(c);}
  }else{const c=document.createElement('div');c.className='cm-rel';const t=document.createElement('table');const header=document.createElement('tr');header.append(document.createElement('th'));for(let j=0;j<world.n;j++){const th=document.createElement('th');th.textContent=`To ${j+1}`;header.append(th);}t.append(header);for(let i=0;i<world.n;i++){const tr=document.createElement('tr');const th=document.createElement('th');th.textContent=`From ${i+1}`;tr.append(th);for(let j=0;j<world.n;j++){const td=document.createElement('td');const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',String(world.R[i][j]));b.textContent=world.R[i][j]?'● Yes':'○ No';b.setAttribute('aria-label',`R Agent ${i+1} to Agent ${j+1}`);b.addEventListener('click',()=>move({type:'toggle_relation',i,j}));td.append(b);tr.append(td);}t.append(tr);}c.append(t);dst.append(c);}
+ $('cmRelationMap').hidden=current.kind!=='relation';
+ if(current.kind==='relation')renderRelationMap(document,$('cmRelationMap'),world,(i,j)=>move({type:'toggle_relation',i,j}));
+ else $('cmRelationMap').replaceChildren();
+ if(focusKey)document.querySelector(`[data-cm-focus="${focusKey}"]`)?.focus({preventScroll:true});
  const traj=$('cmTrajectory');traj.replaceChildren();
  for(const step of history.map((action,index)=>({action,index}))){
   const li=document.createElement('li');li.textContent=(step.index+1)+'. '+step.action.type+
@@ -52,8 +61,8 @@ function draw(){const v=countermodelVerdict(current.id,world);$('cmTier').textCo
  $('cmChecks').textContent=history.filter(a=>a.type==='check').length;$('cmEdits').textContent=history.filter(a=>!['check','hint'].includes(a.type)).length;$('cmHints').textContent=history.filter(a=>a.type==='hint').length;$('cmScore').textContent=localBest[current.id]||'—';
  $('cmDonate').disabled=!(Boolean(checked?.final_verified)&&checked.edits>=1&&$('cmAdult').checked&&$('cmConsent').checked);$('cmLeanExport').disabled=!Boolean(checked?.final_verified);$('cmWitnessExport').disabled=!Boolean(checked?.final_verified);
  renderLearning();
- renderExpedition();
- if(guided)$('cmGuideStatus').textContent=checked?.final_verified?'You made a real counterexample: P is true and Q is false, so P → Q is false while Q → P is true. Restart before an unassisted attempt.':world.n===1&&world.P[0]&&!world.Q[0]?'Now click “Check my world” and compare both truth values.':'For this walkthrough keep one agent, turn P on and leave Q off. P → Q says that if P holds, Q must hold. Your clicks create the witness.';
+ renderExpedition();$('cmWinNext').hidden=!checked?.final_verified||!expedition(completedSessions).next;
+ if(guided)$('cmGuideStatus').textContent=checked?.final_verified?'You made a real counterexample: P is true and Q is false, so P → Q is false while Q → P is true. Restart before an unassisted attempt.':world.n===1&&world.P[0]&&!world.Q[0]?'Now click “Check my world” and compare both truth values.':'For this walkthrough keep one agent, turn “Has a key” (P) on and leave “Opens the door” (Q) off. P → Q says that if P holds, Q must hold. Your clicks create the witness.';
 }
 $('cmWitnessExport').addEventListener('click',()=>{
  if(!checked?.final_verified)return;
@@ -71,15 +80,16 @@ $('cmSessionExport').addEventListener('click',()=>{
  document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
  message('Downloaded your private search notebook. It is not a PCS scientific or Lean certificate.');
 });
-function choose(id){const m=COUNTERMODEL_MISSIONS.find(x=>x.id===id);if(!m)return;current=m;history=[];world=initialWorld();checked=null;pendingCoach=null;guided=false;$('cmGuideStatus').textContent='The walkthrough reveals a solution and is marked as assisted. Restart to make an unassisted search.';message('Build a world where the statements disagree, then run the checker.');renderMissions();draw();}
-function move(action){if(history.length>=120){message('This notebook is full. Restart for a fresh trajectory.','miss');return;}
+function choose(id){const m=COUNTERMODEL_MISSIONS.find(x=>x.id===id);if(!m)return;current=m;history=[];undoStack=[];world=initialWorld();checked=null;pendingCoach=null;guided=false;$('cmGuideStatus').textContent='The walkthrough reveals a solution and is marked as assisted. Restart to make an unassisted search.';message('Build a world where the statements disagree, then run the checker.');renderMissions();draw();}
+function move(action,recordUndo=true){if(history.length>=120){message('This notebook is full. Restart for a fresh trajectory.','miss');return;}
  const proposed=[...history,action];pendingCoach=null;try{
+  const inverse=recordUndo?inverseWorldEdit(action,world):null;
   // Replay state updates are deterministic; keep a direct local mirror for fast UI updates.
   if(action.type==='add'){const w=initialWorld(world.n+1);w.P=world.P.concat(false);w.Q=world.Q.concat(false);for(let i=0;i<world.n;i++)for(let j=0;j<world.n;j++)w.R[i][j]=world.R[i][j];world=w;}
   else if(action.type==='remove')world={n:world.n-1,P:world.P.slice(0,-1),Q:world.Q.slice(0,-1),R:world.R.slice(0,-1).map(row=>row.slice(0,-1))};
   else if(action.type==='toggle')world[action.p][action.i]=!world[action.p][action.i];
   else if(action.type==='toggle_relation')world.R[action.i][action.j]=!world.R[action.i][action.j];
-  history=proposed;checked=null;draw();
+  history=proposed;if(inverse)undoStack.push(inverse);checked=null;message('World changed. Check again to compare the two meanings.');draw();
  }catch{message('That move is outside the supported finite game.','miss');}}
 $('cmCheck').addEventListener('click',()=>{pendingCoach=null;if(history.length>=120){message('Notebook full—restart to check a new experiment.','miss');return;}const v=countermodelVerdict(current.id,world);history.push({type:'check'});checked=scoreNow();if(!checked){message('The finite checker rejected this attempt.','miss');return;}if(v.counterexample){if(completedSessions.length<200)completedSessions.push(session());const min=findMinimalCountermodel(current.id);const value=checked.score;if(value>(localBest[current.id]||0)){localBest[current.id]=value;try{localStorage.setItem('pcs-countermodel-best-v1',JSON.stringify(localBest));}catch{}}message(`Counterexample found! Original is ${v.left}, proposal is ${v.right}. Minimum domain size is ${min.n}; your score is ${value}. ${world.n===min.n?'You found a smallest possible world.':'Try removing agents to improve your solution.'}`,'win');}else message('Not yet: both statements have the same truth value here. Change the world and test again.','miss');draw();renderMissions();});
 $('cmHint').addEventListener('click',()=>{pendingCoach=null;if(history.length>=120||history.filter(a=>a.type==='hint').length>=3){message('Hint budget used. Try experimenting.','miss');return;}history.push({type:'hint'});checked=scoreNow();let msg='Try asking what changes between the two sentences. Which one requires more?';if(current.kind==='relation')msg='Try two agents. A relation can hold for each agent with a different partner, without one universal partner.';if(history.filter(a=>a.type==='hint').length===2)msg=`Hint: the smallest possible countermodel needs ${findMinimalCountermodel(current.id).n} agent(s).`;message(msg);draw();});
@@ -91,6 +101,12 @@ $('cmLeanExport').addEventListener('click',()=>{
   setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
   message('Lean source exported. Run it with the pinned Lean 4.28 toolchain; no kernel verdict was claimed here.');
  }catch(e){message('Lean export unavailable: '+e.message,'miss');}
+});
+$('cmUndo').addEventListener('click',()=>{
+ const inverse=undoStack.at(-1);if(!inverse)return;
+ if(history.length+inverse.length>120){message('The notebook is too full to record this undo. Restart for a fresh search.','miss');return;}
+ undoStack.pop();for(const action of inverse)move(action,false);
+ message('Last move reversed. The notebook keeps the original move and its reversal; hints and checks still count. Check the changed world again.');draw();if($('cmUndo').disabled)$('cmWorld').querySelector('button')?.focus({preventScroll:true});else $('cmUndo').focus({preventScroll:true});
 });
 $('cmRestart').addEventListener('click',()=>choose(current.id));$('cmAdd').addEventListener('click',()=>move({type:'add'}));$('cmRemove').addEventListener('click',()=>move({type:'remove'}));
 for(const id of ['cmAdult','cmConsent'])$(id).addEventListener('change',draw);
@@ -171,7 +187,8 @@ $('cmCoach').addEventListener('click',()=>{
  draw();
 });
 $('cmCoachApply').addEventListener('click',()=>{if(!pendingCoach)return;const action=pendingCoach.action;pendingCoach=null;if(action.type==='check')$('cmCheck').click();else move(action);});
+$('cmWinNext').addEventListener('click',()=>$('cmNext').click());
 $('cmNext').addEventListener('click',()=>{const next=expedition(completedSessions).next;if(next){choose(next);$('cmTitle').scrollIntoView({behavior:'smooth',block:'start'});}});
 $('cmDaily').addEventListener('click',()=>{const date=new Date().toISOString().slice(0,10);choose(dailyMission(date));$('cmDailyStatus').textContent=`${date} UTC challenge: ${current.name}. Earn all three mastery goals: minimal world, no help, at most two checks.`;$('cmTitle').scrollIntoView({behavior:'smooth',block:'start'});});
 const requestedMission=new URLSearchParams(location.search).get('mission');
-choose(COUNTERMODEL_MISSIONS.find(m=>m.id===requestedMission)?.id||COUNTERMODEL_MISSIONS[(Math.floor(Date.now()/86400000)%COUNTERMODEL_MISSIONS.length)].id);
+choose(COUNTERMODEL_MISSIONS.find(m=>m.id===requestedMission)?.id||'implication-flip');
