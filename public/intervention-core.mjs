@@ -1,6 +1,6 @@
 // Independent positive-cost Bellman planner over the independently built JS diagram.
 import {canonical,digest,exact,integer} from './omega-core.mjs';
-import {checkConditional,validateConditional} from './conditional-core.mjs';
+import {checkConditional,validateConditional,evaluateConditional} from './conditional-core.mjs';
 export const TASK='pcs-intervention-task-v1',RECEIPT='pcs-intervention-receipt-v1';
 export function validateIntervention(t){
  exact(t,['format','problem','baseline','costs','locked']);
@@ -33,6 +33,8 @@ export async function planIntervention(input,{limits}={}){
  else{const names=t.problem.variables,d=symbolic.diagram,{cells,choices}=bellman(d.nodes,t);let root=d.difference;
   r.bellman_cells=cells;r.dp_nodes=d.nodes.length;const cell=cells[root];
   if(cell===null)r.decision='no_feasible_plan';else{const assignment={...t.baseline};while(root>=2){const [v,lo,hi]=d.nodes[root-2],value=choices[root];assignment[names[v]]=value;root=value?hi:lo;}if(root!==1)throw Error('Invalid plan terminal');
+   const valid=evaluateConditional(t.problem.source,assignment)&&t.problem.assumptions.every(f=>evaluateConditional(f,assignment))&&t.locked.every(n=>assignment[n]===t.baseline[n]),actualCost=names.reduce((s,n)=>s+(assignment[n]!==t.baseline[n]?t.costs[n]:0),0);
+   if(!valid||actualCost!==cell[0])throw Error('Internal plan witness does not match the declared task or cost');
    Object.assign(r,{decision:'optimal_plan',minimum_cost:cell[0],optimal_count:cell[1],assignment,flips:names.filter(n=>assignment[n]!==t.baseline[n]),mandatory_flips:names.filter((n,i)=>Boolean(cell[2]&(2**i))),possible_flips:names.filter((n,i)=>Boolean(cell[3]&(2**i)))});
   }
  }
@@ -42,7 +44,6 @@ export async function verifyIntervention(input){const r=structuredClone(input);i
 export async function auditInterventionProposal(input,values,{limits}={}){
  const t=validateIntervention(structuredClone(input)),a=structuredClone(values);limits=limits===undefined?undefined:structuredClone(limits);
  exact(a,t.problem.variables);if(t.problem.variables.some(n=>typeof a[n]!=='boolean'))throw Error('Proposal values must be Boolean');
- const {evaluateConditional}=await import('./conditional-core.mjs');
  const r=await planIntervention(t,limits===undefined?{}:{limits}),premises=t.problem.assumptions.map(f=>evaluateConditional(f,a)),target=evaluateConditional(t.problem.source,a),violations=t.locked.filter(n=>a[n]!==t.baseline[n]),cost=t.problem.variables.reduce((s,n)=>s+(a[n]!==t.baseline[n]?t.costs[n]:0),0),feasible=premises.every(Boolean)&&target&&violations.length===0;
  return {assignment:a,assumptions_true:premises,target_true:target,lock_violations:violations,feasible,cost,optimality_gap:feasible&&r.decision==='optimal_plan'?cost-r.minimum_cost:null,planner_receipt:r,pcs_authority:false};
 }

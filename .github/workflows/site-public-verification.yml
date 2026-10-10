@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: 3435f896cf7a65b303a62eb1a26ce0b9dab80efc
+          ref: d4bffe22949b7c9a3c16787dbc7e106d7679e82e
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
