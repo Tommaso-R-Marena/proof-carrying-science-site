@@ -1,4 +1,5 @@
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
+import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement} from "./lean-research.js";
 import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
@@ -4263,6 +4264,23 @@ async function handleApi(request, env) {
   const url=new URL(request.url);
   const path=url.pathname;
   const method=request.method;
+
+  if(method==="POST" && path==="/api/lean-research/submit"){
+    const body=await readBody(request);
+    try{validatePublicStatement(body);}catch(error){throw new ApiError(400,String(error.message),"invalid_public_lean_statement");}
+    await rateLimit(request,env,"public-lean-submit",2,1440);
+    const globalQuota=new Request(request.url,{headers:{"CF-Connecting-IP":"PCS_PUBLIC_LEAN_GLOBAL"}});
+    await rateLimit(globalQuota,env,"public-lean-global",12,1440);
+    try{return json(await dispatchLeanResearch(env,body));}
+    catch(error){throw new ApiError(503,String(error.message||"Public Lean checker unavailable"),"lean_checker_unavailable");}
+  }
+  if(method==="POST" && path==="/api/lean-research/result"){
+    const body=await readBody(request);
+    if(!body||Object.keys(body).length!==1||typeof body.ticket!=="string")throw new ApiError(400,"A checker ticket is required.","invalid_lean_ticket");
+    await rateLimit(request,env,"public-lean-poll",120,60);
+    try{return json(await pollLeanResearch(env,body.ticket));}
+    catch(error){throw new ApiError(422,String(error.message||"Checker result unavailable"),"invalid_lean_result");}
+  }
 
   // Explicit, stateless demo replay. No account, research table or client labels.
   // Same implementation as practice; independent Python checking is a separate CLI.

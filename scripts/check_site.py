@@ -69,7 +69,8 @@ for html_path in HTML_FILES:
         if parsed.scheme in {"http", "https"}:
             # Owner-reviewed public source navigation, with no remote asset load.
             tag_prefix = text[text.rfind("<", 0, asset_match.start()):asset_match.start()]
-            if (ref == "https://github.com/Tommaso-R-Marena/proof-carrying-science"
+            if ((ref == "https://github.com/Tommaso-R-Marena/proof-carrying-science" or
+                 (html_path.name == "lean-learning-lab.html" and ref == "http://127.0.0.1:8766/"))
                     and re.match(r"<a\s", tag_prefix, re.IGNORECASE)
                     and asset_match.group(0).lower().startswith("href=")):
                 continue
@@ -1425,6 +1426,22 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
         for asset in expected:
             if not (ROOT / asset).is_file():
                 errors.append(f"omega-workspace.js: missing reviewed static asset {asset}")
+        continue
+
+    if js.name == "lean-learning-lab.mjs":
+        # Reviewed local backend only. Production CSP stays unchanged; the
+        # deployed page cannot submit statements to a remote Lean service.
+        for guard in ["location.protocol === 'http:'", "location.port === '8766'",
+                      "['127.0.0.1', 'localhost'].includes(location.hostname)",
+                      "new Set(['health','models','formalize','explain','solve','session','step'])",
+                      "if(!local)", "if(!LOCAL_ROUTES.has(route))", "const path='/api/'+route",
+                      "fetch(path,{credentials:'omit'", "redirect:'error'",
+                      "['/api/lean-research/submit','/api/lean-research/result'].includes(path)",
+                      "if(publicBusy||!$('publicConsent').checked)return", "public_consent:true,license:'CC0-1.0'"]:
+            if guard not in text:
+                errors.append(f"{js.name}: local checker boundary missing: {guard}")
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
+            errors.append(f"{js.name}: unreviewed network target")
         continue
 
     if js.name in NETWORKED_COMMONS_JS:
