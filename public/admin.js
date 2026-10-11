@@ -1177,6 +1177,24 @@
     finally{button.disabled=false;}
   });
 
+  let bridgeExportOffset=0;
+  $("#adminBridgeExport")?.addEventListener("click",async()=>{
+    const button=$("#adminBridgeExport"),status=$("#adminBridgeExportMessage");
+    button.disabled=true;status.textContent="Reading an explicitly consented research batch…";
+    try{
+      const dataset=await api("/api/admin/arena/bridge-builder/dataset?offset="+bridgeExportOffset);
+      if(dataset.format!=="pcs-bridge-consented-export-v1"||!Array.isArray(dataset.entries)||dataset.entries.length>25||dataset.eligible_for_training!==false)throw Error("Unexpected dataset boundary");
+      const next=dataset.next_offset;
+      if(next!==null&&(!Number.isSafeInteger(next)||next!==bridgeExportOffset+25))throw Error("Invalid research cursor");
+      const url=URL.createObjectURL(new Blob([JSON.stringify(dataset,null,2)+"\n"],{type:"application/json"}));
+      const link=document.createElement("a");link.href=url;link.download="pcs-bridge-adult-cc0-batch-"+bridgeExportOffset+".json";
+      document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      status.textContent="Exported "+dataset.entries.length+" sessions. Independent Lean replay is still required."+(next===null?" End of current export; the next click starts again.":" More sessions are available in the next batch.");
+      bridgeExportOffset=next===null?0:next;
+    }catch(e){status.textContent="Bridge Builder export unavailable: "+e.message;}
+    finally{button.disabled=false;}
+  });
+
   $("#adminCountermodelExport")?.addEventListener("click",async()=>{
     const button=$("#adminCountermodelExport"),status=$("#adminCountermodelExportMessage");
     button.disabled=true;status.textContent="Rechecking consented Countermodel research pages…";

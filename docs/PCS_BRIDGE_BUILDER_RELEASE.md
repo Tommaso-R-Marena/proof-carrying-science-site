@@ -43,4 +43,3 @@ Read back the successful Cloudflare build, changed asset bytes, bindings, free a
 ## Limitations
 
 The catalog is a finite teaching/research interface, not a browser Lean kernel or unlimited proof explorer. Public requests are quota-limited protected GitHub jobs; interactive arbitrary-step sessions run against the free local backend. The controlled English list/successor extension uses separate experimental modules, preserving Aristotle's exact source-bound legacy parser/IR. It has tests and actual elaboration but no unrestricted meaning-preservation or source-refinement proof. Novel mathematics, general Mathlib competence, graph superiority and autonomous scientific improvement are not established.
-

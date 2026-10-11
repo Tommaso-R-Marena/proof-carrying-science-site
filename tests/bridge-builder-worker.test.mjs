@@ -23,4 +23,3 @@ test('consent, age, login, verification, storage quota and origin are mandatory'
 test('producer scores and changed catalog never enter storage',async()=>{const c=fixture(),body=payload();body.session.score=100;assert.equal((await call(c,'/api/arena/bridge-builder/donate',body)).code,400);assert.equal(c.state.inserted,0);});
 test('erasure targets only the authenticated contributor',async()=>{const c=fixture(),r=await call(c,'/api/arena/bridge-builder/erase',{});assert.equal(r.code,200,JSON.stringify(r.body));assert.equal(c.state.deleted,1);});
 test('public replay has mathematical catalog labels, never fresh kernel authority',async()=>{const c=fixture(),r=await call(c,'/api/demo/bridge-builder/replay',session());assert.equal(r.code,200);assert.equal(r.body.completed,true);assert.match(r.body.label_boundary,/archived/);assert.equal(r.body.pcs_authority,false);assert.equal(c.state.inserted,0);});
-

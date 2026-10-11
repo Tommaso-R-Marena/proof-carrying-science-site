@@ -38,4 +38,3 @@ test('public signed ticket binds the exact human proof actions and kernel eviden
  assert.equal(parseResult(marker(record),p).result.status,'verified');record.actions_sha256='0'.repeat(64);assert.throws(()=>parseResult(marker(record),p),/binding/);
 });
 export {finish};
-

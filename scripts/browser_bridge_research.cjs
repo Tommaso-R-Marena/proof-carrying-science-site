@@ -35,7 +35,9 @@ async function cleanup(){if(userId){try{fixture("UPDATE users SET role='contribu
  if(!(await donate(200)).recorded||(await donate(200)).recorded)throw Error('D1 insertion/deduplication failed');
  fixture("UPDATE users SET role='admin',is_owner=1 WHERE id='"+userId+"' AND email='"+email+"'");
  const login=await context.request.post(base+'/api/admin/login',{headers:{Origin:base},data:{email,password}});if(login.status()!==200)throw Error('Synthetic owner login failed');
- const exported=await context.request.get(base+'/api/admin/arena/bridge-builder/dataset');if(exported.status()!==200)throw Error('Owner export failed');const data=await exported.json();
+ await page.goto(base+'/admin.html',{waitUntil:'networkidle'});await page.locator('#adminDashboard').waitFor();
+ const pendingExport=page.waitForEvent('download');await page.locator('#adminBridgeExport').click();const downloaded=await pendingExport;
+ const data=JSON.parse(fs.readFileSync(await downloaded.path(),'utf8'));
  if(data.entries.length!==1||JSON.stringify(data).includes(email)||JSON.stringify(data).includes(userId)||data.eligible_for_training!==false)throw Error('Export provenance/privacy failed');
  const file=path.join(output,'synthetic-export.json');fs.writeFileSync(file,JSON.stringify(data));
  const intake=path.join(output,'independent-intake.json');
@@ -62,9 +64,8 @@ async function cleanup(){if(userId){try{fixture("UPDATE users SET role='contribu
   'finally: env.close()'
  ].join('\n');
  r=spawnSync('python',['-c',trainingCode,intake,output],{cwd:core,encoding:'utf8',timeout:120000});if(r.status!==0)throw Error('Actual training update failed: '+r.stderr);
- const pending=page.waitForResponse(r=>r.url().endsWith('/api/arena/bridge-builder/erase'));await page.locator('#erase').click();const erased=await (await pending).json();if(erased.deleted!==1)throw Error('Active erasure failed');
+ const erased=await (await context.request.post(base+'/api/arena/bridge-builder/erase',{headers:{Origin:base},data:{}})).json();if(erased.deleted!==1)throw Error('Active erasure failed');
  const empty=await (await context.request.get(base+'/api/admin/arena/bridge-builder/dataset')).json();if(empty.entries.length)throw Error('Erased rows remained exportable');
  const report={format:'pcs-bridge-real-integration-v1',source:'synthetic browser/account fixture; zero human participant records',actualD1InsertAndDedup:true,emailVerificationFixture:true,identityFreeOwnerExport:true,independentLeanIntake:true,hintsTracked:true,actualGradientUpdate:true,checkpointNotPromoted:true,activeErasure:true,financial_spend:0};
  fs.writeFileSync(path.join(output,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));await cleanup();
 })().catch(async e=>{console.error(e);await cleanup();process.exitCode=1;});
-

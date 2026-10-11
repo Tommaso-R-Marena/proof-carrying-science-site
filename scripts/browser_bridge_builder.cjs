@@ -78,4 +78,3 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
   fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(rows,null,2));console.log(JSON.stringify(rows));
  }finally{await browser.close();if(!process.env.PCS_BRIDGE_BROWSER_OUTPUT)fs.rmSync(output,{recursive:true,force:true});}
 })().catch(e=>{console.error(e);process.exitCode=1;});
-

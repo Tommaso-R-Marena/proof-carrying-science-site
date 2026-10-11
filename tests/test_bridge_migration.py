@@ -21,4 +21,3 @@ else:raise AssertionError("duplicate session accepted")
 db.execute("DELETE FROM users WHERE id='adult'")
 assert db.execute("SELECT COUNT(*) FROM bridge_research_sessions").fetchone()[0]==0
 print("Bridge SQLite migration: constraints, deduplication and erasure passed")
-
