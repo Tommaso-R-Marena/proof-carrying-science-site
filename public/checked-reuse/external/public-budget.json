@@ -1,0 +1,45 @@
+{
+  "scope": "Additional frozen-policy operational smoke at the existing public budget 96; not part of the 64-expansion external benchmark or checkpoint selection",
+  "outcomes": {
+    "result": {
+      "status": "verified",
+      "expansions": 74,
+      "proof_actions": 16,
+      "portfolio": {
+        "format": "pcs-reuse-portfolio-v1",
+        "allocation": "one-quarter learned; remaining actual budget basic actions",
+        "budget": 96,
+        "stages": [
+          {
+            "stage": "learned_reuse",
+            "status": "unknown",
+            "expansions": 24,
+            "lean_invocations": 24,
+            "wall_seconds": 0.2879906289963401
+          },
+          {
+            "stage": "symbolic_fallback",
+            "status": "verified",
+            "expansions": 50,
+            "lean_invocations": 48,
+            "wall_seconds": 1.8572072669994668
+          }
+        ],
+        "selected_stage": "symbolic_fallback"
+      }
+    },
+    "previous": {
+      "status": "verified",
+      "expansions": 50,
+      "proof_actions": 16,
+      "portfolio": null
+    },
+    "baseline": {
+      "status": "verified",
+      "expansions": 50,
+      "proof_actions": 16,
+      "portfolio": null
+    }
+  },
+  "financial_spend": 0
+}

@@ -1,0 +1,9 @@
+{
+  "checkpoint_sha256": "f43d037ecad0c7aa7424c578a4bdc1c467c0eab57fa88252d7b87937632ba652",
+  "tasks_sha256": "1cbb8810fd37a607e611b01a12191e55a884060181c33faf68b1b12007df3815",
+  "budget": 64,
+  "beam": 4,
+  "scope": "Curated Mathlib statement specializations; shared elementary domains, not unseen whole-project automation or a blind private benchmark. Independent Mathlib bridges establish supported statements, not general English semantic fidelity. Two richer syntax probes must abstain. No task solutions enter the policy or its retrieval library. No training or model selection.",
+  "source_core_commit": "034738e5fa30af697b7aa880f713c1f3fff6d69e",
+  "financial_spend": 0
+}

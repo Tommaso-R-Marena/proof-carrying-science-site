@@ -1,7 +1,7 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "4034db308d171b46c41e7e9ba2723e7fe4db6647";
+export const CORE_SHA = "6f13233eb4d77daf2bedef5a1d40c4d576d31f19";
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
 const WORKFLOW = "pcs-lean-public.yml";
 const DOMAIN = "PCS_PUBLIC_LEAN_TICKET_V1:";
@@ -52,10 +52,26 @@ export function parseResult(log,payload){
   const binary=atob(markers[0][1]);if(binary.length>1000000)fail('Checker result exceeds bound');
   const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(binary,c=>c.charCodeAt(0))));
   if(result.format!=='pcs-public-lean-result-v1'||result.request_id!==payload.request_id||result.core_sha!==payload.core_sha||result.source_sha256!==payload.source_sha256||result.result?.pcs_authority!==false)fail('Checker result binding mismatch');
-  for(const observation of [result.result,result.baseline].filter(Boolean)){
+  for(const observation of [result.result,result.baseline,result.previous].filter(Boolean)){
     if(observation.pcs_authority!==false||!['verified','unknown','resource_exhaustion','unsupported_formalization','ambiguous_interpretation'].includes(observation.status))fail('Unapproved checker outcome or authority assertion');
     if(observation.status!=='verified')continue;
     const r=observation.search?.receipt;if(!r||r.format!=='pcs-prover-proof-v1'||r.kernel?.format!=='pcs-lean-kernel-v1'||!Array.isArray(r.kernel.axioms)||r.kernel.axioms.some(a=>!['propext','Classical.choice','Quot.sound'].includes(a))||typeof r.proof!=='string'||!r.proof.trim()||typeof r.lean!=='string'||!r.lean.includes('version 4.28.0,')||r.pcs_scientific_authority!==false)fail('Invalid scoped kernel receipt');
+  }
+  const observations=[result.result,result.baseline,result.previous].filter(Boolean);
+  if(observations.some(o=>o.status==='verified')){
+    const meaning=result.result.formalization?.candidates?.[payload.interpretation??0];
+    if(!meaning||!/^[0-9a-f]{64}$/.test(meaning.interpretation_sha256)||typeof meaning.lean!=='string')fail('Missing selected formal interpretation');
+    for(const observation of observations.filter(o=>o.status==='verified')){
+      const r=observation.search.receipt;
+      if(r.goal_sha256===meaning.interpretation_sha256&&r.statement===meaning.lean)continue;
+      if(observation===result.result)fail('Kernel proof differs from the selected interpretation');
+      // Keep the actual alternative proof inspectable; it cannot certify the
+      // selected meaning or count as a comparable solve.
+      observation.checker_status=observation.status;
+      observation.status='different_interpretation';
+      observation.certifies_selected_interpretation=false;
+      observation.reason='This checked comparison proof concerns a different formal interpretation.';
+    }
   }
   return result;
 }

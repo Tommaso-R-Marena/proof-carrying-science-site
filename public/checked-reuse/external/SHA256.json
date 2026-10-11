@@ -1,0 +1,9 @@
+{
+  "evaluations.json.gz": "1bab593d9a53f1329041f88b899d706eea1c3ca40a748b331c2d8dc68502db43",
+  "tasks.json": "cc4eea071ac205a9aac3409108d7d96f516c54e6a5abcec0bb2493416ded2f53",
+  "Grounding.lean": "dde465cfe8551e2bd37fb833e1de4a9f2d57115880c1bbc0ec4aeab57d090b71",
+  "audit-source.py": "66d9abeaf4a5b8dfc643a95d83d0ea503d38083e35107a8022fa61af761bbb22",
+  "protocol.json": "45daa2a7e8138d3aef73a537eb8c94fbc52401d440926ed4620c7f9484d0df1f",
+  "grounding.log": "f9e97b323eaf31e7f88553c66f6ca9d8858972ae5539f2822cb66de54e5c4469",
+  "summary.json": "fc783de9d62163be1a21ea0ac5db0223def344586410d95b3db462e953f85523"
+}

@@ -1,0 +1,243 @@
+[
+  {
+    "id": "Nat.two_mul_ne_two_mul_add_one",
+    "project": "https://github.com/leanprover-community/mathlib4",
+    "revision": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "source_file": "Mathlib/Data/Nat/Init.lean",
+    "source_file_sha256": "f48b70728c0b18a9768548cfce1badb93706697f08193b842d1db3be24537c34",
+    "license": "Apache-2.0",
+    "statement": "For all natural numbers m and n, not (2 * n equals 2 * m + 1).",
+    "formalization": {
+      "status": "supported",
+      "source": "For all natural numbers m and n, not (2 * n equals 2 * m + 1).",
+      "source_sha256": "a1602b2634389f1abd3a21782eb3df469556ae1f06d86eb722a5d4d1f04d6a8c",
+      "candidates": [
+        {
+          "ir": {
+            "format": "pcs-math-ir-v1",
+            "binders": [
+              {
+                "name": "m",
+                "type": "Nat"
+              },
+              {
+                "name": "n",
+                "type": "Nat"
+              }
+            ],
+            "body": {
+              "op": "not",
+              "arg": {
+                "op": "eq",
+                "left": {
+                  "op": "mul",
+                  "left": {
+                    "op": "number",
+                    "value": 2,
+                    "type": "Nat"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "n"
+                  }
+                },
+                "right": {
+                  "op": "add",
+                  "left": {
+                    "op": "mul",
+                    "left": {
+                      "op": "number",
+                      "value": 2,
+                      "type": "Nat"
+                    },
+                    "right": {
+                      "op": "var",
+                      "name": "m"
+                    }
+                  },
+                  "right": {
+                    "op": "number",
+                    "value": 1,
+                    "type": "Nat"
+                  }
+                }
+              }
+            }
+          },
+          "lean": "\u2200 (m : Nat) (n : Nat), (\u00ac (((2 : Nat) * n) = (((2 : Nat) * m) + (1 : Nat))))",
+          "interpretation_sha256": "a471d49cce89c6097902ca330615325808c3b4181ade3412711d7e351711036b",
+          "score": null
+        }
+      ],
+      "semantic_authorization": false,
+      "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+    },
+    "formal_label_bridge": "intro m n\n  exact Nat.two_mul_ne_two_mul_add_one (m := m) (n := n)"
+  },
+  {
+    "id": "Imp.swap",
+    "project": "https://github.com/leanprover-community/mathlib4",
+    "revision": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "source_file": "Mathlib/Logic/Basic.lean",
+    "source_file_sha256": "8b8dadf53bcb2044d08bbcc538411d415e6ab7190919431fe1a09023a288462f",
+    "license": "Apache-2.0",
+    "statement": "For all propositions A, B and C, (A implies (B implies C)) if and only if (B implies (A implies C)).",
+    "formalization": {
+      "status": "supported",
+      "source": "For all propositions A, B and C, (A implies (B implies C)) if and only if (B implies (A implies C)).",
+      "source_sha256": "2bfc7809dfe3b453354a36796938ea9d86204ce10e98d2fbc89699c1ff9bcff6",
+      "candidates": [
+        {
+          "ir": {
+            "format": "pcs-math-ir-v1",
+            "binders": [
+              {
+                "name": "A",
+                "type": "Prop"
+              },
+              {
+                "name": "B",
+                "type": "Prop"
+              },
+              {
+                "name": "C",
+                "type": "Prop"
+              }
+            ],
+            "body": {
+              "op": "iff",
+              "left": {
+                "op": "implies",
+                "left": {
+                  "op": "var",
+                  "name": "A"
+                },
+                "right": {
+                  "op": "implies",
+                  "left": {
+                    "op": "var",
+                    "name": "B"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "C"
+                  }
+                }
+              },
+              "right": {
+                "op": "implies",
+                "left": {
+                  "op": "var",
+                  "name": "B"
+                },
+                "right": {
+                  "op": "implies",
+                  "left": {
+                    "op": "var",
+                    "name": "A"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "C"
+                  }
+                }
+              }
+            }
+          },
+          "lean": "\u2200 (A : Prop) (B : Prop) (C : Prop), ((A \u2192 (B \u2192 C)) \u2194 (B \u2192 (A \u2192 C)))",
+          "interpretation_sha256": "ea5f795b28ac1fffb1eacb52e418bfec59fe7a95e89208e9f9fe6b68363b5fa7",
+          "score": null
+        }
+      ],
+      "semantic_authorization": false,
+      "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+    },
+    "formal_label_bridge": "intro A B C\n  exact Imp.swap"
+  },
+  {
+    "id": "not_imp_self",
+    "project": "https://github.com/leanprover-community/mathlib4",
+    "revision": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "source_file": "Mathlib/Logic/Basic.lean",
+    "source_file_sha256": "8b8dadf53bcb2044d08bbcc538411d415e6ab7190919431fe1a09023a288462f",
+    "license": "Apache-2.0",
+    "statement": "For all propositions A, (not A implies A) if and only if A.",
+    "formalization": {
+      "status": "supported",
+      "source": "For all propositions A, (not A implies A) if and only if A.",
+      "source_sha256": "b379164d1d9668f85305c3071d65473acc71cedf6a7001c22815e9427061447a",
+      "candidates": [
+        {
+          "ir": {
+            "format": "pcs-math-ir-v1",
+            "binders": [
+              {
+                "name": "A",
+                "type": "Prop"
+              }
+            ],
+            "body": {
+              "op": "iff",
+              "left": {
+                "op": "implies",
+                "left": {
+                  "op": "not",
+                  "arg": {
+                    "op": "var",
+                    "name": "A"
+                  }
+                },
+                "right": {
+                  "op": "var",
+                  "name": "A"
+                }
+              },
+              "right": {
+                "op": "var",
+                "name": "A"
+              }
+            }
+          },
+          "lean": "\u2200 (A : Prop), (((\u00ac A) \u2192 A) \u2194 A)",
+          "interpretation_sha256": "51c721475a597cb5e2a6443d9097c843aa165d17025893949dddbdc09b1e0570",
+          "score": null
+        }
+      ],
+      "semantic_authorization": false,
+      "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+    },
+    "formal_label_bridge": "intro A\n  exact not_imp_self"
+  },
+  {
+    "id": "Nat.div_right_comm",
+    "project": "https://github.com/leanprover-community/mathlib4",
+    "revision": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "source_file": "Mathlib/Data/Nat/Basic.lean",
+    "source_file_sha256": "8aabe9cb6c50045c7e3d8348830aabc05a39d43911493d0017f267ae435f95a8",
+    "license": "Apache-2.0",
+    "statement": "For all natural numbers a, b and c, a / b / c equals a / c / b.",
+    "formalization": {
+      "status": "unsupported",
+      "source": "For all natural numbers a, b and c, a / b / c equals a / c / b.",
+      "candidates": [],
+      "reason": "unsupported mathematical syntax"
+    },
+    "formal_label_bridge": null
+  },
+  {
+    "id": "Int.gcd_emod",
+    "project": "https://github.com/leanprover-community/mathlib4",
+    "revision": "8f9d9cff6bd728b17a24e163c9402775d9e6a365",
+    "source_file": "Mathlib/Data/Int/Basic.lean",
+    "source_file_sha256": "aa1b69d4e25829a159d8a93bbf74e9efefdd0a918287ebbd33db12939892df23",
+    "license": "Apache-2.0",
+    "statement": "For all integers m and n, gcd(m % n, n) equals gcd(m, n).",
+    "formalization": {
+      "status": "unsupported",
+      "source": "For all integers m and n, gcd(m % n, n) equals gcd(m, n).",
+      "candidates": [],
+      "reason": "unsupported mathematical syntax"
+    },
+    "formal_label_bridge": null
+  }
+]

@@ -38,7 +38,7 @@ async function runtime(secondRedirect){
   if(request.url==='https://test.blob.core.windows.net/proof/log'){
    assert.equal(request.headers.get('authorization'),null);
    if(secondRedirect)return new Response(null,{status:302,headers:{location:'https://evil.example/leak'}});
-   const record={format:'pcs-public-lean-result-v1',request_id:requestId,core_sha:CORE_SHA,source_sha256:createHash('sha256').update(JSON.stringify(body.statement)).digest('hex'),result:{status:'verified',pcs_authority:false,search:{receipt}},baseline:{status:'unknown',pcs_authority:false}};
+   const record={format:'pcs-public-lean-result-v1',request_id:requestId,core_sha:CORE_SHA,source_sha256:createHash('sha256').update(JSON.stringify(body.statement)).digest('hex'),result:{status:'verified',pcs_authority:false,formalization:{candidates:[{interpretation_sha256:receipt.goal_sha256,lean:receipt.statement}]},search:{receipt}},baseline:{status:'unknown',pcs_authority:false}};
    return new Response('PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(record)).toString('base64')+'\n');
   }
   throw Error('Unexpected outgoing runtime request: '+request.url);
