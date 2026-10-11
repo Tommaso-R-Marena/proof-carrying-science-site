@@ -1,5 +1,6 @@
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
 import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
+import {replay as replayBridge,VERSION as BRIDGE_VERSION} from "../public/bridge-builder-core.mjs";
 import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
@@ -4259,6 +4260,41 @@ async function exportSafetyForgeSessions(request,env,admin){
     entries,next_offset:entries.length===30?offset+30:null});
 }
 
+async function bridgeDonate(request,env,user){
+  await rateLimit(request,env,"bridge-donate",12,60);
+  if(!Number(user.email_verified))throw new ApiError(403,"Verify your PCS account email before donating.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||Object.keys(body).sort().join(",")!=="adult_confirmation,consent_training,session"||body.adult_confirmation!==true||body.consent_training!==true)
+    throw new ApiError(400,"Explicit adult consent and CC0 research release are required.","bridge_consent_required");
+  let replay;
+  try{replay=replayBridge(body.session);}catch(error){throw new ApiError(400,String(error.message).slice(0,200),"bridge_replay_rejected");}
+  if(!replay.transitions.length)throw new ApiError(400,"Choose at least one proof action before donating.","bridge_empty");
+  const quota=await env.COMMONS_DB.prepare("SELECT COUNT(*) AS n, COALESCE(SUM(LENGTH(session_json)),0) AS bytes FROM bridge_research_sessions").first();
+  if(Number(quota?.n||0)>=1000||Number(quota?.bytes||0)>=20000000)throw new ApiError(429,"Research storage is full; download your session instead.","bridge_storage_cap");
+  const digest=await sha256Hex(JSON.stringify(body.session));
+  const row=await env.COMMONS_DB.prepare("INSERT OR IGNORE INTO bridge_research_sessions (id,user_id,mission_id,version,session_digest,session_json,replay_json,consent_version,created_at) VALUES(?,?,?,?,?,?,?,?,?)")
+    .bind(crypto.randomUUID(),user.id,replay.mission_id,BRIDGE_VERSION,digest,JSON.stringify(body.session),JSON.stringify(replay),"pcs-bridge-adult-cc0-optin-v1",nowIso()).run();
+  return json({ok:true,recorded:Number(row.meta?.changes||0)>0,completed:replay.completed,eligible_for_training:false,
+    scope:"Server replay of archived Lean transitions. Independent fresh kernel replay is required before training intake."});
+}
+async function bridgeErase(env,user){
+  const row=await env.COMMONS_DB.prepare("DELETE FROM bridge_research_sessions WHERE user_id=?").bind(user.id).run();
+  await audit(env,user.id,"bridge_research_erased","research","bridge-builder",{deleted:Number(row.meta?.changes||0)});
+  return json({ok:true,deleted:Number(row.meta?.changes||0)});
+}
+async function bridgeExport(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Owner authority required for research export.","owner_required");
+  const raw=new URL(request.url).searchParams.get("offset")||"0";
+  if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid export offset.","bad_cursor");
+  const offset=Number(raw);
+  const rows=await env.COMMONS_DB.prepare("SELECT id,session_json FROM bridge_research_sessions WHERE version=? AND consent_version=? ORDER BY created_at,id LIMIT 25 OFFSET ?")
+    .bind(BRIDGE_VERSION,"pcs-bridge-adult-cc0-optin-v1",offset).all();
+  const entries=(rows.results||[]).map(row=>({id:row.id,session:JSON.parse(row.session_json),license:"CC0-1.0",adult_consented:true,training_consented:true}));
+  await audit(env,admin.id,"bridge_research_exported","research","bridge-builder",{offset,entries:entries.length});
+  return json({format:"pcs-bridge-consented-export-v1",version:BRIDGE_VERSION,entries,next_offset:entries.length===25?offset+25:null,
+    eligible_for_training:false,required_intake:"pcs.experimental.prover.bridge_data; fresh independent Lean replay",pcs_authority:false});
+}
+
 async function handleApi(request, env) {
   requireSameOrigin(request);
   const url=new URL(request.url);
@@ -4283,6 +4319,11 @@ async function handleApi(request, env) {
     await rateLimit(request,env,"public-lean-poll",120,60);
     try{return json(await pollLeanResearch(env,body.ticket));}
     catch(error){throw new ApiError(422,String(error.message||"Checker result unavailable"),"invalid_lean_result");}
+  }
+  if(method==="POST" && path==="/api/demo/bridge-builder/replay"){
+    await rateLimit(request,env,"bridge-replay",30,60);
+    try{return json(replayBridge(await readBody(request)));}
+    catch(error){throw new ApiError(400,String(error.message).slice(0,200),"bridge_replay_rejected");}
   }
 
   // Explicit, stateless demo replay. No account, research table or client labels.
@@ -4351,6 +4392,7 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/arena/forge-duel/dataset") return exportForgeDuelSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/prooflab/dataset") return exportProofLabDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/meaning/dataset") return meaningExport(request,env,admin);
+    if (method==="GET" && path==="/api/admin/arena/bridge-builder/dataset") return bridgeExport(request,env,admin);
     const peerListingMatch=path.match(/^\/api\/admin\/submissions\/([^/]+)\/peer-reviews$/);
     if(method==="GET"&&peerListingMatch)return adminPeerSubmissionReviews(env,admin,decodeURIComponent(peerListingMatch[1]));
     if (method==="GET" && path==="/api/admin/arena/proof-order/dataset") return exportProofQuestDataset(request,env,admin);
@@ -4436,6 +4478,8 @@ async function handleApi(request, env) {
   challengeMatch=path.match(/^\/api\/challenges\/entries\/([^/]+)\/withdraw$/);
   if (method==="POST" && challengeMatch) return withdrawChallengeEntry(request,env,user,decodeURIComponent(challengeMatch[1]));
   if (method==="POST" && path==="/api/arena/meaning/donate") return meaningDonate(request,env,user);
+  if (method==="POST" && path==="/api/arena/bridge-builder/donate") return bridgeDonate(request,env,user);
+  if (method==="POST" && path==="/api/arena/bridge-builder/erase") return bridgeErase(env,user);
   if (method==="POST" && path==="/api/arena/meaning/erase") return meaningErase(env,user);
   if (method==="POST" && path==="/api/arena/prooflab/donate") return donateProofLabSession(request,env,user);
   if (method==="POST" && path==="/api/arena/prooflab/erase") return eraseProofLabSessions(env,user);

@@ -42,8 +42,11 @@
     "test:browser:layout": "node scripts/browser_layout_check.cjs",
     "test:conditional": "node --test tests/conditional-reasoning.test.mjs",
     "test:intervention": "node --test tests/intervention.test.mjs",
-    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs",
-    "test:browser:checked-reuse": "node scripts/browser_checked_reuse.cjs"
+    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs && npm run test:bridge",
+    "test:browser:checked-reuse": "node scripts/browser_checked_reuse.cjs",
+    "test:bridge": "node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs && python3 tests/test_bridge_migration.py",
+    "test:browser:bridge": "node scripts/browser_bridge_builder.cjs",
+    "test:browser:bridge-research": "node scripts/browser_bridge_research.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",
