@@ -1,0 +1,252 @@
+{
+  "scope": "Cold standalone upload workspace; no copied .lake outputs and no local dependencies",
+  "build_jobs": 85,
+  "audited_principal_theorems": 54,
+  "axioms": {
+    "PCSRuntimeRefinement.PyIntervention.python_intervention_refines_reference": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSRuntimeRefinement.JsIntervention.javascript_intervention_refines_reference": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSRuntimeRefinement.source_extraction_certificate_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSRuntimeRefinement.runtime_result_semantics": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSRuntimeRefinement.OmegaReplay.omega_execution_replay_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.Language.language_candidates_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.typed_lowering_preserves_denotation": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.RoundTrip.render_parse_alpha_roundtrip": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.action_rendering_closed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.transition_preserves_original_goal": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.all_branches_required": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.final_receipt_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.replay_reestablishes_original_claim": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.admitted_library_conservative": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.macro_expansion_preserves_proof": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.research_plan_composes_checked_results": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.adaptive_fair_search_complete": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.resume_budget_monotone": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.cost_guided_search_optimal": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.Separation.shared_reasoning_family_upper_bound": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.Separation.baseline_family_lower_bound": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSReasoningLibrary.Separation.certified_reuse_complexity_separation": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.selector_projection_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.abduction_feasible_iff": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.abduction_global_optimum": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.abduction_optimal_count": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.abduction_mandatory_possible_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.Cegar.counterexample_clause_necessary": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.Cegar.cegar_optimum_preserved": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.Cegar.cegar_finite_termination": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSAssumptionDiscovery.abduction_result_replay_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSVerifiedLearning.episode_success_reward_requires_proof": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSVerifiedLearning.eligible_feedback_reverified": [],
+    "PCSVerifiedLearning.Shaping.potential_return_telescopes": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSVerifiedLearning.Shaping.potential_shaping_preserves_policy_order": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSVerifiedLearning.Shaping.macro_discount_correct": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSMathLanguage.alpha_firewall_exact": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSVerifiedLearning.training_export_label_noninterference": [],
+    "PCSVerifiedLearning.generation_preserves_verifier_authority": [
+      "propext"
+    ],
+    "PCSForgeRefinement.Rust.rust_certir_extraction_sound": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.Rust.rust_certificate_preserves_eval_expr": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.Rust.interp_eval_expr_source_bound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.certir_eval_correspondence": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.rewrite_certificate_universally_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.optimization_sequence_preserves_program": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.verified_static_cost_improvement": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSForgeRefinement.optimization_episode_reward_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSStatisticsCore.exposure_ledger_enforces_test_protocol": [
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSStatisticsCore.union_bound_generations": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSEndToEnd.end_to_end_acceptance_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSEndToEnd.policy_cannot_manufacture_acceptance": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSEndToEnd.success_independent_of_claims": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSEndToEnd.end_to_end_abduction_sound": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "PCSEndToEnd.abduction_policy_cannot_change_result": [
+      "propext"
+    ]
+  },
+  "input_sha256": "595c56c0aad77147e6f51b7eeed7fad0dacf11b2889ce0b75caf12949bd0b874",
+  "paid_resources": false
+}
