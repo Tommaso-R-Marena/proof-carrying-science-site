@@ -1,0 +1,38 @@
+{
+  "metrics": {
+    "raw_refined": {
+      "verified": 0,
+      "tasks": 3,
+      "expansions": 144,
+      "lean_invocations": 144,
+      "wall_seconds": 2.0226513919988065,
+      "proof_actions": 0,
+      "proofs_using_lemmas": 0
+    },
+    "symbolic": {
+      "verified": 1,
+      "tasks": 3,
+      "expansions": 82,
+      "lean_invocations": 83,
+      "wall_seconds": 2.425678819992754,
+      "proof_actions": 16,
+      "proofs_using_lemmas": 0
+    },
+    "portfolio": {
+      "verified": 0,
+      "tasks": 3,
+      "expansions": 128,
+      "lean_invocations": 115,
+      "wall_seconds": 1.9359683650036459,
+      "proof_actions": 0,
+      "proofs_using_lemmas": 0
+    }
+  },
+  "supported_tasks": 3,
+  "unsupported_abstentions": 2,
+  "grounding_kernel_checked": true,
+  "wall_seconds": 9.078745020000497,
+  "financial_spend": 0,
+  "gpu_used": false,
+  "scope": "Curated Mathlib statement specializations; shared elementary domains, not unseen whole-project automation or a blind private benchmark. Independent Mathlib bridges establish supported statements, not general English semantic fidelity. Two richer syntax probes must abstain. No task solutions enter the policy or its retrieval library. No training or model selection."
+}

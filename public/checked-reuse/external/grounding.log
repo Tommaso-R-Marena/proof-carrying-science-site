@@ -1,0 +1,3 @@
+'external_grounding_0' depends on axioms: [propext]
+'external_grounding_1' does not depend on any axioms
+'external_grounding_2' depends on axioms: [propext, Classical.choice, Quot.sound]

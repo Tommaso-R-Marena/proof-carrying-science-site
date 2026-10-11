@@ -38,3 +38,31 @@ test('an additional previous-model result cannot smuggle unapproved acceptance',
  const log='PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(evidence)).toString('base64')+'\n';
  assert.throws(()=>parseResult(log,payload),/kernel receipt/);
 });
+
+test('external Mathlib audit retains failures, abstentions and budget-specific regression',()=>{
+ const s=JSON.parse(read('external/summary.json')),t=JSON.parse(read('external/tasks.json'));
+ assert.equal(s.supported_tasks,3);assert.equal(s.unsupported_abstentions,2);
+ assert.equal(s.metrics.raw_refined.verified,0);assert.equal(s.metrics.symbolic.verified,1);assert.equal(s.metrics.portfolio.verified,0);
+ assert.equal(s.metrics.symbolic.proof_actions,16);
+ assert.equal(t.filter(x=>x.formalization.status==='unsupported').length,2);
+ assert.ok(t.every(x=>x.revision==='8f9d9cff6bd728b17a24e163c9402775d9e6a365'&&x.license==='Apache-2.0'));
+ assert.doesNotMatch(read('external/implication-exchange.lean'),/\b(sorry|admit|axiom|native_decide)\b/);
+ const operational=JSON.parse(read('external/public-budget.json'));
+ assert.equal(operational.outcomes.result.status,'verified');assert.equal(operational.outcomes.result.portfolio.budget,96);
+ assert.equal(operational.outcomes.result.expansions,74);assert.equal(operational.outcomes.baseline.expansions,50);
+});
+
+
+test('ranked comparison meanings cannot certify the selected interpretation',()=>{
+ const receipt=JSON.parse(readFileSync(new URL('./fixtures/lean-proof-receipt-v1.json',import.meta.url),'utf8'));
+ const payload={request_id:'1'.repeat(32),core_sha:CORE_SHA,source_sha256:'2'.repeat(64),interpretation:0};
+ const packet={format:'pcs-public-lean-result-v1',...payload,result:{status:'verified',pcs_authority:false,formalization:{candidates:[{interpretation_sha256:receipt.goal_sha256,lean:receipt.statement}]},search:{receipt:structuredClone(receipt)}},previous:{status:'verified',pcs_authority:false,search:{receipt:{...structuredClone(receipt),goal_sha256:'3'.repeat(64),statement:'Different formal statement'}}}};
+ const marker=x=>'PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(x)).toString('base64')+'\n';
+ const accepted=parseResult(marker(packet),payload);
+ assert.equal(accepted.result.status,'verified');assert.equal(accepted.previous.status,'different_interpretation');
+ assert.equal(accepted.previous.certifies_selected_interpretation,false);assert.equal(accepted.previous.checker_status,'verified');
+ const forged=structuredClone(packet);forged.result.search.receipt.goal_sha256='4'.repeat(64);
+ assert.throws(()=>parseResult(marker(forged),payload),/selected interpretation/);
+ const missing=structuredClone(packet);delete missing.result.formalization;
+ assert.throws(()=>parseResult(marker(missing),payload),/Missing selected/);
+});

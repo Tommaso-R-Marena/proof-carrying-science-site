@@ -41,9 +41,26 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
    if(layout.overflow||layout.clashes.length||errors.length)throw Error(JSON.stringify({width,layout,errors}));
    await page.screenshot({path:path.join(output,'lab-'+width+'.png'),fullPage:true});
    fs.writeFileSync(path.join(output,'receipt-'+width+'.json'),JSON.stringify(receipt,null,2));
+   await page.locator('[data-example=witness]').click();await page.locator('#interpret').click();await page.locator('#startProof:enabled').waitFor();await page.locator('#startProof').click();
+   await page.locator('.goal').waitFor();await page.getByRole('button',{name:/Introduce variable or assumption/}).click();
+   await page.getByRole('button',{name:'Choose witness h0',exact:true}).waitFor();await page.getByRole('button',{name:'Choose witness h0',exact:true}).click();
+   await page.getByRole('button',{name:'Build both parts',exact:true}).waitFor();await page.getByRole('button',{name:'Build both parts',exact:true}).click();
+   await page.waitForFunction(()=>document.querySelectorAll('.goal').length===2);
+   if(!(await page.locator('#stepGuide').textContent()).includes('remaining goals'))throw Error('Multiple goals not explained');
+   await page.getByRole('button',{name:'Check reflexive equality',exact:true}).click();await page.waitForFunction(()=>document.querySelectorAll('.goal').length===1);
+   if(!(await page.locator('#stepGuide').textContent()).includes('equality goal'))throw Error('Equality guidance incorrectly describes conjunction');
+   await page.getByRole('button',{name:'Check reflexive equality',exact:true}).click();await page.locator('#result').filter({hasText:'verified'}).waitFor();
+   const witness=JSON.parse(await page.locator('#evidence').textContent());
+   if(witness.actions.length!==5||witness.kernel.axioms.length!==0)throw Error('No actual local-variable witness proof');
+   if(width===1440){
+    await page.locator('[data-example=ruleOrder]').click();await page.locator('#interpret').click();await page.locator('#solve:enabled').waitFor();await page.locator('#solve').click();
+    await page.locator('#result').filter({hasText:'verified'}).waitFor({timeout:120000});
+    const searched=JSON.parse(await page.locator('#evidence').textContent());
+    if(searched.search.receipt.actions.length!==16||searched.search.portfolio.selected_stage!=='symbolic_fallback'||!(await page.locator('#result').textContent()).includes('symbolic fallback'))throw Error('Actual long proof or fallback attribution missing');
+   }
    await page.locator('[data-example=ambiguous]').click();await page.locator('#interpret').click();await page.waitForFunction(()=>document.querySelectorAll('#interpretations button').length===2);
    if(await page.locator('#solve').isEnabled())throw Error('Ambiguous meaning silently selected');
-   rows.push({width,actualProofActions:4,standaloneKernelChecked:true,libraryBound:true,layout,ambiguityRequiresSelection:true,errors});
+   rows.push({width,actualProofActions:4,standaloneKernelChecked:true,libraryBound:true,layout,ambiguityRequiresSelection:true,witnessProofActions:witness.actions.length,errors});
    await page.close();
   }
   fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(rows,null,2));console.log(JSON.stringify(rows));
