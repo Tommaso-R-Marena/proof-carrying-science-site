@@ -1446,6 +1446,19 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
             errors.append(f"{js.name}: unreviewed network target")
         continue
 
+    if js.name == "bridge-builder.mjs":
+        # Reviewed exact same-origin path: explicit public proof publication,
+        # separately authenticated adult CC0 donation, and user-owned erasure.
+        for guard in ["const BRIDGE_ROUTES=new Set(['/api/lean-research/submit','/api/lean-research/result','/api/arena/bridge-builder/donate','/api/arena/bridge-builder/erase'])",
+                      "if(!BRIDGE_ROUTES.has(path))", "credentials:'same-origin'", "redirect:'error'",
+                      "signal:AbortSignal.timeout(25000)", "!$('publicConsent').checked",
+                      "adult_confirmation:$('adult').checked", "consent_training:$('trainingConsent').checked"]:
+            if guard not in text:
+                errors.append(f"{js.name}: reviewed proof/research path missing: {guard}")
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
+            errors.append(f"{js.name}: unreviewed network target")
+        continue
+
     if js.name in NETWORKED_COMMONS_JS:
         # All network requests by these reviewed clients must pass a local path
         # named 'path'. GitHub URLs are allowed as navigational links, NOT fetches.

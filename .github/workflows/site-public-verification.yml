@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: c1c3ed267d55fc9adfedbe333baf1528bff7391b
+          ref: 52a15fd3720d57ef9f380123971c1368d6f8a21c
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -203,7 +203,8 @@ jobs:
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
-          python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --reuse-models .ci-components/lean-prover/research/checked-reuse-v2 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &
+          python -m pcs.experimental.prover.bridge_catalog --verify public/bridge-builder-catalog.json
+          python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --reuse-models .ci-components/lean-prover/research/checked-reuse-v2 --abstraction-models .ci-components/lean-prover/research/induction-abstraction-v2 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &
           lean_lab_pid=$!
           trap 'kill "$lean_lab_pid" 2>/dev/null || true' EXIT
           python - <<'PYWAIT'
@@ -218,4 +219,28 @@ jobs:
           PYWAIT
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" node scripts/browser_lean_learning.cjs
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:checked-reuse
+          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:bridge
+          # Separate disposable D1; synthetic accounts never touch production.
+          npx --no-install wrangler d1 migrations apply pcs-commons --local --persist-to "$RUNNER_TEMP/bridge-d1"
+          python - <<'PYSALT'
+          import os, secrets
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'bridge-local.env'
+          p.write_text('RATE_LIMIT_SALT='+secrets.token_hex(32)+'\n')
+          p.chmod(0o600)
+          PYSALT
+          npx --no-install wrangler dev --local --ip 127.0.0.1 --port 8789 --persist-to "$RUNNER_TEMP/bridge-d1" --env-file "$RUNNER_TEMP/bridge-local.env" --var PUBLIC_ORIGIN:http://127.0.0.1:8789 > "$RUNNER_TEMP/bridge-worker.log" 2>&1 &
+          bridge_worker_pid=$!
+          trap 'kill "$lean_lab_pid" "$bridge_worker_pid" 2>/dev/null || true' EXIT
+          python - <<'PYBRIDGEWAIT'
+          import time, urllib.request
+          for attempt in range(60):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8789/api/me',timeout=2) as r:
+                      assert r.status==200
+                  break
+              except (OSError, AssertionError): time.sleep(1)
+          else: raise SystemExit('Disposable research Worker did not start')
+          PYBRIDGEWAIT
+          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BROWSER_BASE_URL=http://127.0.0.1:8789 PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/bridge-d1" PCS_BRIDGE_RESEARCH_OUTPUT="$RUNNER_TEMP/bridge-intake" node scripts/browser_bridge_research.cjs
       # Exact proof receipts are in logs; no extra artifact storage is allocated.
