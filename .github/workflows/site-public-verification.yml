@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: 4034db308d171b46c41e7e9ba2723e7fe4db6647
+          ref: 034738e5fa30af697b7aa880f713c1f3fff6d69e
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -203,7 +203,7 @@ jobs:
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
-          python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &
+          python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --reuse-models .ci-components/lean-prover/research/checked-reuse-v2 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &
           lean_lab_pid=$!
           trap 'kill "$lean_lab_pid" 2>/dev/null || true' EXIT
           python - <<'PYWAIT'
@@ -217,4 +217,5 @@ jobs:
           else: raise SystemExit('Real Lean backend did not start')
           PYWAIT
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" node scripts/browser_lean_learning.cjs
+          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:checked-reuse
       # Exact proof receipts are in logs; no extra artifact storage is allocated.

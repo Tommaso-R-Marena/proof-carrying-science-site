@@ -52,7 +52,7 @@ export function parseResult(log,payload){
   const binary=atob(markers[0][1]);if(binary.length>1000000)fail('Checker result exceeds bound');
   const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(binary,c=>c.charCodeAt(0))));
   if(result.format!=='pcs-public-lean-result-v1'||result.request_id!==payload.request_id||result.core_sha!==payload.core_sha||result.source_sha256!==payload.source_sha256||result.result?.pcs_authority!==false)fail('Checker result binding mismatch');
-  for(const observation of [result.result,result.baseline].filter(Boolean)){
+  for(const observation of [result.result,result.baseline,result.previous].filter(Boolean)){
     if(observation.pcs_authority!==false||!['verified','unknown','resource_exhaustion','unsupported_formalization','ambiguous_interpretation'].includes(observation.status))fail('Unapproved checker outcome or authority assertion');
     if(observation.status!=='verified')continue;
     const r=observation.search?.receipt;if(!r||r.format!=='pcs-prover-proof-v1'||r.kernel?.format!=='pcs-lean-kernel-v1'||!Array.isArray(r.kernel.axioms)||r.kernel.axioms.some(a=>!['propext','Classical.choice','Quot.sound'].includes(a))||typeof r.proof!=='string'||!r.proof.trim()||typeof r.lean!=='string'||!r.lean.includes('version 4.28.0,')||r.pcs_scientific_authority!==false)fail('Invalid scoped kernel receipt');
