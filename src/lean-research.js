@@ -1,7 +1,7 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "52a15fd3720d57ef9f380123971c1368d6f8a21c";
+export const CORE_SHA = "68bac9b0d6e2d04cb16968fdb24e8308473c5485";
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
 const WORKFLOW = "pcs-lean-public.yml";
 const DOMAIN = "PCS_PUBLIC_LEAN_TICKET_V1:";
@@ -73,11 +73,17 @@ export async function dispatch(env,body,transport=fetch,now=Date.now()){
   return {status:'queued',ticket:await ticket(env,payload),request_id,core_sha:CORE_SHA,public_source:true,pcs_authority:false};
 }
 async function boundedText(response,max){if(!response.ok)fail('Checker log download failed');if(Number(response.headers.get('content-length')||0)>max)fail('Checker logs exceed bound');const reader=response.body.getReader();let size=0;const chunks=[];for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>max){await reader.cancel();fail('Checker logs exceed bound');}chunks.push(value);}const all=new Uint8Array(size);let offset=0;for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.length;}return new TextDecoder().decode(all);}
-export function parseResult(log,payload){
-  const markers=[...log.matchAll(/(?:^|\n)[^\n]*?PCS_LEAN_RESULT_V1:([A-Za-z0-9+/=]+)\s*(?=\n|$)/g)];
-  if(markers.length!==1)fail('Missing or duplicate independent checker result');
-  const binary=atob(markers[0][1]);if(binary.length>1000000)fail('Checker result exceeds bound');
-  const result=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(binary,c=>c.charCodeAt(0))));
+function resultMarker(log){
+  const markers=[...log.matchAll(/(?:^|\n)[^\n]*?PCS_LEAN_RESULT_(GZIP_V1|V1):([A-Za-z0-9+/=]+)\s*(?=\n|$)/g)];
+  const declarations=[...log.matchAll(/PCS_LEAN_RESULT_(?:GZIP_V1|V1):/g)];
+  if(markers.length!==1||declarations.length!==1)fail('Missing or duplicate independent checker result');
+  return {encoding:markers[0][1],value:markers[0][2]};
+}
+function resultJSON(raw){
+  if(raw.length>1000000)fail('Checker result exceeds bound');
+  return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(raw));
+}
+function validateResult(result,payload){
   if(result.format!=='pcs-public-lean-result-v1'||result.request_id!==payload.request_id||result.core_sha!==payload.core_sha||result.source_sha256!==payload.source_sha256||result.result?.pcs_authority!==false)fail('Checker result binding mismatch');
   if((payload.actions_sha256??null)!==(result.actions_sha256??null))fail('Exact human proof-action binding mismatch');
   if((payload.model_family??null)!==(result.model_family??null))fail('Reasoning model-family binding mismatch');
@@ -104,6 +110,26 @@ export function parseResult(log,payload){
   }
   return result;
 }
+export function parseResult(log,payload){
+  const marker=resultMarker(log);if(marker.encoding!=='V1')fail('Compressed result requires the streaming decoder');
+  const binary=atob(marker.value);if(binary.length>1000000)fail('Checker result exceeds bound');
+  return validateResult(resultJSON(Uint8Array.from(binary,c=>c.charCodeAt(0))),payload);
+}
+export async function parseResultLog(log,payload){
+  const marker=resultMarker(log);
+  if(marker.encoding==='V1')return parseResult(log,payload);
+  if(marker.value.length>64000)fail('Compressed checker result exceeds bound');
+  const binary=atob(marker.value);if(binary.length>48000)fail('Compressed checker result exceeds bound');
+  const compressed=Uint8Array.from(binary,c=>c.charCodeAt(0));
+  const reader=new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();
+  const chunks=[];let size=0;
+  try{
+    for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;
+      if(size>1000000){await reader.cancel();fail('Checker result exceeds bound');}chunks.push(value);}
+  }catch(error){throw new Error(error.message||'Invalid compressed checker result');}
+  const raw=new Uint8Array(size);let offset=0;for(const chunk of chunks){raw.set(chunk,offset);offset+=chunk.length;}
+  return validateResult(resultJSON(raw),payload);
+}
 export async function poll(env,value,transport=fetch,now=Date.now()){
   const payload=await verifyTicket(env,value,now);
   const runs=await object(await github(env,'/actions/workflows/'+WORKFLOW+'/runs?event=workflow_dispatch&per_page=30',{},transport));
@@ -119,5 +145,5 @@ export async function poll(env,value,transport=fetch,now=Date.now()){
   // Workers supports manual redirects. boundedText rejects every non-2xx reply,
   // so a second redirect cannot be followed or carry GitHub authorization.
   if(download.status===302){const location=download.headers.get('location');const target=new URL(location);if(target.protocol!=='https:'||target.port||target.username||target.password||!(target.hostname.endsWith('.blob.core.windows.net')||target.hostname.endsWith('.actions.githubusercontent.com')))fail('Unapproved log download destination');logs=await boundedText(await transport(target.href,{redirect:'manual',credentials:'omit'}),4000000);}else logs=await boundedText(download,4000000);
-  return {status:'completed',run_url:url,evidence:parseResult(logs,payload),pcs_authority:false};
+  return {status:'completed',run_url:url,evidence:await parseResultLog(logs,payload),pcs_authority:false};
 }

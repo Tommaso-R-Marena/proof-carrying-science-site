@@ -3,6 +3,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {gzipSync} from 'node:zlib';
 import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
@@ -20,7 +21,7 @@ export default {async fetch(){
  catch(error){return Response.json({error:error.message},{status:422});}
 }};`;
 
-async function runtime(secondRedirect){
+async function runtime(secondRedirect,compressed=false){
  let requestId;const calls=[];
  const provider=async request=>{
   const url=new URL(request.url);calls.push({url:request.url,authorization:request.headers.get('authorization')});
@@ -39,6 +40,7 @@ async function runtime(secondRedirect){
    assert.equal(request.headers.get('authorization'),null);
    if(secondRedirect)return new Response(null,{status:302,headers:{location:'https://evil.example/leak'}});
    const record={format:'pcs-public-lean-result-v1',request_id:requestId,core_sha:CORE_SHA,source_sha256:createHash('sha256').update(JSON.stringify(body.statement)).digest('hex'),result:{status:'verified',pcs_authority:false,formalization:{candidates:[{interpretation_sha256:receipt.goal_sha256,lean:receipt.statement}]},search:{receipt}},baseline:{status:'unknown',pcs_authority:false}};
+   if(compressed){record.diagnostics='explicit transport fixture; '.repeat(33000);return new Response('PCS_LEAN_RESULT_GZIP_V1:'+gzipSync(Buffer.from(JSON.stringify(record))).toString('base64')+'\n');}
    return new Response('PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(record)).toString('base64')+'\n');
   }
   throw Error('Unexpected outgoing runtime request: '+request.url);
@@ -53,6 +55,12 @@ async function runtime(secondRedirect){
 
 test('actual Workers runtime retrieves bound proof logs with supported fetch options',{timeout:30000},async()=>{
  const result=await runtime(false);assert.equal(result.status,200,JSON.stringify(result.body));assert.equal(result.body.status,'completed');assert.equal(result.body.pcs_authority,false);assert.equal(result.calls.length,7);
+});
+test('actual Workers runtime losslessly decodes a large compressed result',{timeout:30000},async()=>{
+ const result=await runtime(false,true);assert.equal(result.status,200,JSON.stringify(result.body));
+ assert.equal(result.body.status,'completed');assert.equal(result.body.evidence.result.status,'verified');
+ assert.equal(result.body.evidence.diagnostics,'explicit transport fixture; '.repeat(33000));
+ assert.equal(result.calls.length,7);
 });
 test('actual Workers runtime rejects a second redirect without following or leaking credentials',{timeout:30000},async()=>{
  const result=await runtime(true);assert.equal(result.status,422);assert.match(result.body.error,/Checker log download failed/);assert.equal(result.calls.length,7);assert.ok(result.calls.every(c=>!c.url.includes('evil.example')));

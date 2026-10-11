@@ -1,7 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CORE_SHA,dispatch,poll,parseResult,verifyTicket,validatePublicStatement} from '../src/lean-research.js';
+import {gzipSync} from 'node:zlib';
+import {CORE_SHA,dispatch,poll,parseResult,parseResultLog,verifyTicket,validatePublicStatement} from '../src/lean-research.js';
 const env={PCS_GITHUB_TOKEN:'test-only-protocol-token',RATE_LIMIT_SALT:'test-only-ticket-secret'};
 const body={statement:'For all propositions U and V, if (U and V) then (U and (U and V)).',interpretation:null,public_consent:true,license:'CC0-1.0'};
 const repository={private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'};
@@ -10,6 +11,27 @@ async function queued(now=1000000,override={}){const calls=[];const transport=as
 const receipt=JSON.parse(readFileSync(new URL('./fixtures/lean-proof-receipt-v1.json',import.meta.url)));
 function record(p){return {format:'pcs-public-lean-result-v1',request_id:p.request_id,core_sha:p.core_sha,source_sha256:p.source_sha256,result:{status:'verified',pcs_authority:false,formalization:{candidates:[{interpretation_sha256:receipt.goal_sha256,lean:receipt.statement}]},search:{receipt:structuredClone(receipt)}},baseline:{status:'unknown',pcs_authority:false}};}
 const marker=r=>'2026-10-10T00:00:00Z PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(r)).toString('base64')+'\n';
+const compressedMarker=r=>'2026-10-10T00:00:00Z PCS_LEAN_RESULT_GZIP_V1:'+gzipSync(Buffer.from(JSON.stringify(r))).toString('base64')+'\n';
+test('bounded gzip preserves the full large checker result and legacy compatibility',async()=>{
+ const q=await queued(),p=await verifyTicket(env,q.ticket,1000000),r=record(p);r.diagnostics='actual transport fixture; '.repeat(35000);
+ const raw=marker(r),compressed=compressedMarker(r);assert.ok(raw.length>1000000);assert.ok(compressed.length<65536);
+ assert.deepEqual(await parseResultLog(compressed,p),r);assert.deepEqual(await parseResultLog(marker(record(p)),p),record(p));
+});
+test('compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs',async()=>{
+ const q=await queued(),p=await verifyTicket(env,q.ticket,1000000),r=record(p),valid=compressedMarker(r);
+ for(const log of [valid+valid,valid+marker(r),valid+'PCS_LEAN_RESULT_GZIP_V1:invalid!\n'])await assert.rejects(parseResultLog(log,p),/duplicate/);
+ await assert.rejects(parseResultLog('PCS_LEAN_RESULT_GZIP_V1:'+Buffer.from('not gzip').toString('base64')+'\n',p));
+ const bomb=structuredClone(r);bomb.diagnostics='x'.repeat(1000000);await assert.rejects(parseResultLog(compressedMarker(bomb),p),/bound/);
+ await assert.rejects(parseResultLog('PCS_LEAN_RESULT_GZIP_V1:'+Buffer.alloc(48001).toString('base64')+'\n',p),/bound/);
+ const corrupt=gzipSync(Buffer.from(JSON.stringify(r)));corrupt[corrupt.length-8]^=1;
+ await assert.rejects(parseResultLog('PCS_LEAN_RESULT_GZIP_V1:'+corrupt.toString('base64')+'\n',p));
+});
+test('gzip does not weaken interpretation, source, action or kernel authority bindings',async()=>{
+ const q=await queued(),p=await verifyTicket(env,q.ticket,1000000),r=record(p);
+ for(const mutate of [r=>r.core_sha='0'.repeat(40),r=>r.source_sha256='0'.repeat(64),r=>r.actions_sha256='0'.repeat(64),r=>r.result.search.receipt.kernel.axioms.push('sorryAx'),r=>r.result.search.receipt.statement='False']){
+  const changed=structuredClone(r);mutate(changed);await assert.rejects(parseResultLog(compressedMarker(changed),p));
+ }
+});
 test('explicit public authorization and closed mathematical payload',()=>{validatePublicStatement(body);for(const changed of [{public_consent:false},{license:'private'},{statement:'theorem evil : False := by sorry'},{statement:'For all propositions P, P. bearer-token: secret'},{interpretation:16},{statement:body.statement,extra:'reward'}])assert.throws(()=>validatePublicStatement({...body,...changed}));});
 test('only pinned public main, safe environment input, signed expiring ticket',async()=>{const q=await queued();assert.equal(q.calls.length,3);const submitted=JSON.parse(q.calls[2].options.body);assert.equal(submitted.ref,'main');assert.equal(submitted.inputs.statement,body.statement);assert.equal(q.calls[2].options.redirect,'manual');const p=await verifyTicket(env,q.ticket,1000000);assert.equal(p.core_sha,CORE_SHA);await assert.rejects(verifyTicket(env,q.ticket,5000000),/Expired/);await assert.rejects(verifyTicket({...env,RATE_LIMIT_SALT:'other'},q.ticket,1000000),/Forged/);await assert.rejects(queued(1000000,{repo:{private:true}}),/public/);await assert.rejects(queued(1000000,{commit:{sha:'0'.repeat(40)}}),/approved/);});
 test('actual receipt format, source binding, duplicate markers and forbidden axioms',async()=>{const q=await queued();const p=await verifyTicket(env,q.ticket,1000000);const r=record(p);assert.equal(parseResult(marker(r),p).result.status,'verified');assert.throws(()=>parseResult(marker(r)+marker(r),p),/duplicate/);for(const mutate of [r=>r.source_sha256='0'.repeat(64),r=>r.core_sha='0'.repeat(40),r=>r.result.pcs_authority=true,r=>r.result.search.receipt.kernel.axioms.push('evil'),r=>r.result.search.receipt.proof=' ',r=>r.baseline={status:'verified',pcs_authority:false,search:{receipt:{}}}]){const changed=structuredClone(r);mutate(changed);assert.throws(()=>parseResult(marker(changed),p));}});
