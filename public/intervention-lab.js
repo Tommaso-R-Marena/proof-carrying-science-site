@@ -5,12 +5,15 @@ function status(text,error=false){$('planStatus').textContent=text;$('planStatus
 function invalidate(){revision++;receipt=null;checkedTask=null;$('planDownload').disabled=true;$('planScore').disabled=true;$('planResult').textContent='Inputs changed. Solve again to check this challenge.';delete $('planResult').dataset.decision;$('planReceipt').textContent='No current result.';$('planProposal').textContent='Your proposal has not been scored.';}
 function values(){return Object.fromEntries([...$('planVariables').querySelectorAll('.plan-variable')].map(row=>[row.dataset.name,{baseline:row.querySelector('[data-role=baseline]').checked,proposal:row.querySelector('[data-role=proposal]').checked,locked:row.querySelector('[data-role=locked]').checked,cost:Number(row.querySelector('[data-role=cost]').value)}]));}
 function controls(problem,policies=values()){
- $('planVariables').replaceChildren();
+ const panel=$('planVariables'),scroll=panel.scrollTop;panel.dataset.large=String(problem.variables.length>6);
+ $('planControlsSummary').textContent=problem.variables.length>6?`${problem.variables.length} variable controls. Scroll inside this panel, or focus it and use the arrow keys. Your choices stay set while you solve or score.`:`${problem.variables.length} variable controls. Set your proposal, then solve the minimum.`;
+ panel.replaceChildren();
  for(const n of problem.variables){const p=policies[n]||{baseline:false,proposal:false,locked:false,cost:1},row=document.createElement('div');row.className='plan-variable';row.dataset.name=n;const title=document.createElement('strong');title.textContent=n;row.append(title);
   for(const [role,label] of [['baseline','Starting value true'],['locked','Keep fixed'],['proposal','Your plan true'],['cost','Change cost']]){const l=document.createElement('label'),input=document.createElement('input'),span=document.createElement('span');input.dataset.role=role;input.setAttribute('aria-label',n+' · '+label);input.type=role==='cost'?'number':'checkbox';if(role==='cost'){input.min='1';input.max='1000000';input.step='1';input.required=true;input.value=String(p.cost);}else input.checked=p[role];span.textContent=label;l.append(input,span);row.append(l);}
   $('planVariables').append(row);
  }
  if(!problem.variables.length){const p=document.createElement('p');p.className='plan-controls-note';p.textContent='This constant task has no variables to change.';$('planVariables').append(p);}
+ panel.scrollTop=scroll;
 }
 function capture(){const problem=conditionalFromText($('planTarget').value,'FALSE',$('planAssumptions').value);const policy=values();controls(problem,policy);const names=problem.variables;
  return {format:TASK,problem,baseline:Object.fromEntries(names.map(n=>[n,policy[n]?.baseline??false])),costs:Object.fromEntries(names.map(n=>[n,policy[n]?.cost??1])),locked:names.filter(n=>policy[n]?.locked)};

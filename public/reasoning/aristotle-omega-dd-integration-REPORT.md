@@ -1,103 +1,45 @@
-# Aristotle Omega/decision-diagram integration
+# Aristotle reference proofs: verified integration
 
-Returned run: `b9577162-8244-44ff-83ca-dc7efe9d95a4`.
-Archive SHA256: `5bbe5fdcae4acad3d7bbe48de26559e89bc2eae2c0681a23526e2cedf4ea95a6`.
-Base: core `e0c4f7b3af37f1ae42eb5f4cbee8937f9dc93604`, site `711acdcb088654904e42d7cb94cbdd400df6eb7d`.
-Lean: exact 4.28.0 release, commit `7e01a1bf5c70fc6167d49c345d3bf80596e9a79b`.
+All 226 original named positive theorems and all 66 original positive controls pass ordinary Lean 4.28 kernel checks. The complete audit also checks 1,071 intermediate computation-certificate lemmas against permitted standard axioms. These helper lemmas are proof transitions, not extra benchmark problems, trained-model solves or newly discovered mathematics.
 
-## Evidence boundaries
+Core PR [#99](https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/99) merged under Tommaso-R-Marena as `4034db308d171b46c41e7e9ba2723e7fe4db6647` after protected verification of exact candidate `1dff9843854c2b3ad99cd2b22b7f6880e6823ac0`. [Full verification run](https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38103924818). The website proof service and browser CI pin this independently checked core release. Existing trained models, protected gates, game pipelines and authority contracts remain intact.
 
-The new `PCSOmega` and `PCSDecisionDiagram` libraries are executable typed reference models.
-They prove general evaluator, checker, replay, named-lowering, BDD apply/compile/canonicity,
-conditional-conflict/witness and strictly-positive-cost Bellman contracts. They do not prove
-that the Python or JavaScript engines refine those models. The existing authority libraries,
-import graph, toolchain and dependency lock are byte-identical to the supplied baseline.
-Models remain untrusted proposal policies. All browser/Python and new reference receipts
-retain false scientific-authority and per-result Lean-kernel flags.
+## What changed
 
-`formal/PCS_OMEGA_DECISION_DIAGRAM_REPORT.md` preserves Aristotle's returned report.
-`returned-logs/` contains its submitted logs, not our independent build evidence.
-`source-manifest.json` binds returned source and archive identity. The integration gate
-checks source identity, active admissions, complete declared axiom inventories and the
-precise mathematical rejection of deliberately false equivalence/minimum/mandatory claims.
+The original direct large-control computation exceeded available build resources. Three proof bodies now use typed computation certificates proved equal to the original compiler, checker and intervention planner results. Every original control assertion and executable definition is preserved. Twenty-one original returned source files remain byte-identical; the original Controls file is archived byte-for-byte. The 31-source manifest binds both the original archive and the integrated proof support. No reference algorithm, toolchain, lock, original authority import or scientific acceptance rule is weakened.
 
-## Executed finite runtime comparisons
+Untrusted native generators reproduce fixed-control certificate bytes. Reproduction is not verification: each generated transition and completed theorem is checked by the ordinary Lean kernel. The three large modules build sequentially; all original controls, complete axiom inventories and three deliberate false-claim rejections remain mandatory. The earlier cancelled run is retained as failed evidence. A subsequent run completed all Lean, authority and serialization checks, then failed the frozen byte-contract gate because a nested website checkout dirtied the core Git root. The final sibling checkout layout retains the exact owner repository basename and preserves clean-source enforcement. The preliminary short-name layout was rejected by local contribution checks and its CI run was cancelled before completion. The subsequent layout-only run was superseded by the checked action improvements; its partial passes are retained, not promoted to a complete release. None of these unsuccessful attempts is counted as a passed release.
 
-`parity/result.json`, `parity/tasks.json`, `parity/Parity.lean` and both native implementation
-receipt files retain 91 actual Lean/Python/JavaScript comparisons: 54 optimal plans,
-12 infeasible goals, 10 contradictory contexts and 15 resource limits. There are zero
-output disagreements, including complete diagram tables, exact work counters, witnesses,
-Bellman cells, lexicographic assignments, counts and necessity/possibility masks.
-Seventy-four resolved cases through six variables additionally match an independent
-exhaustive truth-table optimization oracle. Larger cases are explicitly finite controls,
-not an exhaustive evaluation of the 24-variable input domain or an implementation theorem.
-The JavaScript receipts also match the Python receipts including canonical content hashes.
+## Planner usability
 
-The 457 targeted Omega, conditional, intervention and integration tests pass locally.
-Seven gate integrity tests reject missing/duplicate/substituted axiom inventories, custom
-axioms, non-semantic negative failures, extra compiler errors and false success statuses.
+Large missions now keep their editable variables in a bounded, keyboard-accessible panel so solve and score actions stay reachable. All controls remain present; rebuilding for verification preserves off-screen proposals and scroll position. Local real-browser checks at widths 320, 390, 768 and 1440 found no detected overlaps or horizontal overflow. They check all 12 selected choices, invalidation on cost edits, the exact 4096-to-2048 optimum-count change, a proposal gap of 1 and restoration of the original 4096 count. Nothing is uploaded by these interactions.
 
-## Reproduction
+## Reproduce
+
+[Current kernel-control source snapshot](aristotle-kernel-controls-input-v2.tar.gz) · [SHA256](aristotle-kernel-controls-input-v2.sha256). The 38-member archive contains source and commands, with no compiled artifacts or credentials. It binds proof-source snapshot `3cfc1fff3bf0c722f968e50cf2cb874fbe44d838`. The release adds the sibling CI checkout layout and checked proof-action coverage for negation, projected equalities and named disjunction branches. All reference-proof and registered checkpoint bytes are unchanged. The arithmetic training snapshot remains independently pinned to its original source. Merge provenance and current approval are recorded separately above.
+
+The complete repository release and evidence are available at [this exact source revision](https://github.com/Tommaso-R-Marena/proof-carrying-science/tree/4034db308d171b46c41e7e9ba2723e7fe4db6647). From its root:
 
 ```sh
 source scripts/activate_lean_428.sh
 bash scripts/verify_lean.sh
 python scripts/verify_omega_dd_formal.py --output NEW_AUDIT_DIRECTORY
-python scripts/verify_omega_dd_parity.py --site ../proof-carrying-science-site --output NEW_PARITY_DIRECTORY
-python -m pytest -q tests/test_omega_dd_integration.py tests/test_conditional_reasoning.py tests/test_intervention.py
 ```
 
-The parity program emits actual reference results from generated typed tasks; it does not
-accept arbitrary user Lean or shell code. Its output codec and Python lowering remain
-unproved integration software. PR CI uses pinned public browser modules with no credentials
-and independently executes these gates. No new artifact upload is introduced.
+The source-only bundle's README gives standalone Std-only build commands. All three large certificate targets and the complete control target must finish successfully. The existing portability follow-up prompt/bundle records the earlier resource blocker; another Aristotle run is not needed for these controls.
 
-## Open obligations
+## Checked proof-action coverage
 
-Python/JavaScript refinement, JSON/text decoding, hash/serialization/authentication/browser
-assumptions, search-to-replay completeness, scientific grounding and authority correspondence
-remain open. Zero-cost change weights remain rejected; a feasible baseline can legitimately have optimal objective zero. This package establishes no learned
-accuracy gain, new model checkpoint, RL improvement or novel mathematical discovery.
-No financial service, paid runner/GPU, billing information or production D1 mutation is used.
+The [full diagnosed failures and checked repairs](../lean-learning/checked-action-coverage-REPORT.md) record three additional elementary problems. Parent, feedback and symbolic policies originally returned unknown on every problem. After fixing the receiver actions for negation, projected equalities and fresh disjunction names, all three policies complete the three development regressions. These inspected cases are not untouched evaluation or learning-improvement evidence. Both branches remain real obligations; closing one branch of a false statement is rejected by the independent verifier. All 42 Lean-learning regressions and the complete 1352-test local core gate pass. The report retains every failed search, all successful traces, separate standalone checks, exact source hashes and unchanged checkpoint identities.
 
-Independent build, complete axiom/negative logs and protected release identities are recorded
-separately once their checks complete; submitted build success is not substituted for them.
+## Actual arithmetic learning loop
 
-## Independent build resource diagnosis
+The [new arithmetic demonstration](../lean-learning/authored-arithmetic-REPORT.md) runs an independently interpreted natural-number equality through typed IR, a real seven-action learned search, a fresh Lean kernel check, English explanation, independent trajectory replay and four supervised epochs. A separate run reproduces the exact experimental next checkpoint. Both learned and symbolic policies solve the statement; no superiority or held-out improvement is claimed. The [Lean Learning Lab](../lean-learning-lab.html) includes this runnable example and downloads. Its active registry is unchanged. This is behavioral cloning, not additional RL training.
 
-The first fresh unrestricted parallel `lake build` ran all 291 jobs but exited 1: the
-large control module was killed by the 32 GiB environment limit (exit 137). General
-proof modules and existing authorities completed. `independent-build.json` records
-585.1 wall seconds and 24,317,528 KiB peak child RSS; this is a failed build, not success.
-`general-audit.json` independently records 214 checked general theorem inventories
-and all three intended false-claim rejections.
+## Evidence boundaries
 
-Integration preserves every returned Lean source byte. The Lake configuration builds
-reference libraries with the authorities and runs `PCSControls` afterward through the
-required `verify_lean.sh` gate. New library compilation uses `-j1 -M40000` with
-synchronous elaboration (`Elab.async=false`). This changes resources, not assertions,
-proof admissions or theorem statements. The returned configuration hash remains
-separate from the integration configuration hash.
+The original package is Aristotle run `b9577162-8244-44ff-83ca-dc7efe9d95a4`, archive SHA256 `5bbe5fdcae4acad3d7bbe48de26559e89bc2eae2c0681a23526e2cedf4ea95a6`. The reference models prove BDD, assumption checking, Bellman optimum/count/mask, reconstruction, accounting and replay contracts. The existing 91 actual Lean/Python/JavaScript comparisons and 74 independent exhaustive-oracle cases have zero disagreements; finite comparisons are not a refinement theorem.
 
-The 14 GB diagnostic reported a kernel excessive-memory error at the 24-variable
-De Morgan control. Terminal failure formatting subsequently became expensive.
-Per-command progress messages cannot establish success: Lean resets them between
-declarations. The isolated 28 GB terminal run was cancelled after 547 seconds and is
-not a passed build; `resource-diagnosis.json` records that distinction.
+Python/JavaScript refinement, grammar/decoding, hashing/authentication/browser assumptions, search completeness and scientific grounding remain open. Reference receipts retain false scientific-authority and per-result kernel flags. The browser does not run Lean. The reference-proof integration trains no model. The separate authored arithmetic demonstration updates an experimental checkpoint through verified feedback and claims no RL, GNN or scientific-discovery advantage. The public proof service remains bounded to its supported language and actual fresh kernel verification.
 
-The required release gate uses the existing standard public Ubuntu runner, with a
-bounded 32 GiB temporary swap file and a 34 GiB available-disk guard. It removes only
-unused preinstalled .NET, Android and Haskell SDK directories from the ephemeral
-runner image and removes the swap file afterward. No paid runner is selected and
-the swap file is never uploaded. Full compilation, all 226 axiom inventories and
-semantic negative controls must pass in protected CI before merge. Source identity,
-finite runtime comparisons and the general local proof audit are already recorded;
-this report does not substitute returned logs or a cancelled diagnostic for CI.
-
-## Integration release status
-
-The source integration is proposed in [PCS PR #99](https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/99), at candidate `f21f2e2cad94fbcea790f3f8a104280f64b74f03`; it is not merged. The independent 214-general-theorem audit and finite comparison artifacts are available at that [exact source revision](https://github.com/Tommaso-R-Marena/proof-carrying-science/tree/f21f2e2cad94fbcea790f3f8a104280f64b74f03/research/aristotle-omega-dd-v1). [Full CI attempt 38069883455](https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38069883455) completed the 288-job default library build, then was cancelled after nearly two hours in the control module. Its complete control build and 226-theorem release audit did not pass. This is a resource-blocked integration, not a released or fully independently verified package. The live proof service retains its previously verified core revision.
-
-## Resource-repair follow-up
-
-The [focused Aristotle prompt](ARISTOTLE_PORTABLE_KERNEL_CONTROLS_PROMPT.md), [source-only input bundle](aristotle-portable-controls-input-v1.tar.gz) and [checksum](aristotle-portable-controls-input-v1.sha256) request portable ordinary-kernel proofs without weakening the original statements or controls. The bundle preserves all 22 returned source bytes, the toolchain and lock; its minimal standalone Lake configuration selects only the reference libraries and controls. It contains no compiled outputs or credentials. This is an optional follow-up input, not a completed proof or another launched proof-service run. The original consolidated prompt and bundle remain unchanged.
+Existing standard public GitHub runners and Cloudflare Free infrastructure are retained. No paid service, GPU, billing information, new artifact upload or production D1 mutation is introduced.
