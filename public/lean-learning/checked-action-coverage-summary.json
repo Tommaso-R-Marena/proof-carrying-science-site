@@ -1,0 +1,247 @@
+{
+  "before": {
+    "format": "pcs-authored-feedback-transfer-v1",
+    "source_revision": "4190a40831e34d14c878b25d26b23c8cdcbe8638",
+    "protocol_sha256": "dbaa28ff488e782d910b4c33791621a8eb2e18dfded529b3ec763cea54b50bcb",
+    "results": [
+      {
+        "task": "arithmetic-equality-chain",
+        "policy": "parent",
+        "status": "unknown",
+        "expansions": 32,
+        "lean_invocations": 32,
+        "search_wall_seconds": 0.35062946100515546,
+        "artifact": "arithmetic-equality-chain-parent.json.gz"
+      },
+      {
+        "task": "arithmetic-equality-chain",
+        "policy": "feedback",
+        "status": "unknown",
+        "expansions": 32,
+        "lean_invocations": 32,
+        "search_wall_seconds": 0.3075661820039386,
+        "artifact": "arithmetic-equality-chain-feedback.json.gz"
+      },
+      {
+        "task": "arithmetic-equality-chain",
+        "policy": "symbolic",
+        "status": "unknown",
+        "expansions": 32,
+        "lean_invocations": 32,
+        "search_wall_seconds": 0.2658459189988207,
+        "artifact": "arithmetic-equality-chain-symbolic.json.gz"
+      },
+      {
+        "task": "disjunction-absorption",
+        "policy": "parent",
+        "status": "unknown",
+        "expansions": 10,
+        "lean_invocations": 10,
+        "search_wall_seconds": 0.04683461999957217,
+        "artifact": "disjunction-absorption-parent.json.gz"
+      },
+      {
+        "task": "disjunction-absorption",
+        "policy": "feedback",
+        "status": "unknown",
+        "expansions": 10,
+        "lean_invocations": 10,
+        "search_wall_seconds": 0.03921904199523851,
+        "artifact": "disjunction-absorption-feedback.json.gz"
+      },
+      {
+        "task": "disjunction-absorption",
+        "policy": "symbolic",
+        "status": "unknown",
+        "expansions": 10,
+        "lean_invocations": 10,
+        "search_wall_seconds": 0.030069344997173175,
+        "artifact": "disjunction-absorption-symbolic.json.gz"
+      },
+      {
+        "task": "contraposition",
+        "policy": "parent",
+        "status": "unknown",
+        "expansions": 10,
+        "lean_invocations": 10,
+        "search_wall_seconds": 0.057113129005301744,
+        "artifact": "contraposition-parent.json.gz"
+      },
+      {
+        "task": "contraposition",
+        "policy": "feedback",
+        "status": "unknown",
+        "expansions": 10,
+        "lean_invocations": 10,
+        "search_wall_seconds": 0.04341936600394547,
+        "artifact": "contraposition-feedback.json.gz"
+      },
+      {
+        "task": "contraposition",
+        "policy": "symbolic",
+        "status": "unknown",
+        "expansions": 10,
+        "lean_invocations": 10,
+        "search_wall_seconds": 0.0328813260057359,
+        "artifact": "contraposition-symbolic.json.gz"
+      }
+    ],
+    "verified_counts": {
+      "parent": 0,
+      "feedback": 0,
+      "symbolic": 0
+    },
+    "tasks_per_policy": 3,
+    "wall_seconds_including_verification": 24.442057344000204,
+    "no_evaluation_training": true,
+    "production_model_changed": false,
+    "statistical_superiority_established": false,
+    "pcs_authority": false
+  },
+  "after": {
+    "format": "pcs-authored-feedback-transfer-v1",
+    "source_revision": "1dff9843854c2b3ad99cd2b22b7f6880e6823ac0",
+    "protocol_sha256": "d1d272798dae4397e214c0bdbcdc760fe2c7f0dd5b542cb6915a1b6625d64f04",
+    "results": [
+      {
+        "task": "arithmetic-equality-chain",
+        "policy": "parent",
+        "status": "verified",
+        "expansions": 33,
+        "lean_invocations": 34,
+        "search_wall_seconds": 1.126827473002777,
+        "artifact": "arithmetic-equality-chain-parent.json.gz",
+        "proof_steps": 7,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "arithmetic-equality-chain-parent.lean"
+      },
+      {
+        "task": "arithmetic-equality-chain",
+        "policy": "feedback",
+        "status": "verified",
+        "expansions": 37,
+        "lean_invocations": 38,
+        "search_wall_seconds": 1.2729867970047053,
+        "artifact": "arithmetic-equality-chain-feedback.json.gz",
+        "proof_steps": 7,
+        "axioms": [
+          "propext"
+        ],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "arithmetic-equality-chain-feedback.lean"
+      },
+      {
+        "task": "arithmetic-equality-chain",
+        "policy": "symbolic",
+        "status": "verified",
+        "expansions": 37,
+        "lean_invocations": 38,
+        "search_wall_seconds": 1.2749276789982105,
+        "artifact": "arithmetic-equality-chain-symbolic.json.gz",
+        "proof_steps": 7,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "arithmetic-equality-chain-symbolic.lean"
+      },
+      {
+        "task": "disjunction-absorption",
+        "policy": "parent",
+        "status": "verified",
+        "expansions": 12,
+        "lean_invocations": 13,
+        "search_wall_seconds": 1.055227739001566,
+        "artifact": "disjunction-absorption-parent.json.gz",
+        "proof_steps": 6,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "disjunction-absorption-parent.lean"
+      },
+      {
+        "task": "disjunction-absorption",
+        "policy": "feedback",
+        "status": "verified",
+        "expansions": 12,
+        "lean_invocations": 13,
+        "search_wall_seconds": 0.870396554004401,
+        "artifact": "disjunction-absorption-feedback.json.gz",
+        "proof_steps": 6,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "disjunction-absorption-feedback.lean"
+      },
+      {
+        "task": "disjunction-absorption",
+        "policy": "symbolic",
+        "status": "verified",
+        "expansions": 12,
+        "lean_invocations": 13,
+        "search_wall_seconds": 0.9213172210002085,
+        "artifact": "disjunction-absorption-symbolic.json.gz",
+        "proof_steps": 6,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "disjunction-absorption-symbolic.lean"
+      },
+      {
+        "task": "contraposition",
+        "policy": "parent",
+        "status": "verified",
+        "expansions": 21,
+        "lean_invocations": 22,
+        "search_wall_seconds": 0.9352039279983728,
+        "artifact": "contraposition-parent.json.gz",
+        "proof_steps": 7,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "contraposition-parent.lean"
+      },
+      {
+        "task": "contraposition",
+        "policy": "feedback",
+        "status": "verified",
+        "expansions": 20,
+        "lean_invocations": 21,
+        "search_wall_seconds": 1.0087076920026448,
+        "artifact": "contraposition-feedback.json.gz",
+        "proof_steps": 7,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "contraposition-feedback.lean"
+      },
+      {
+        "task": "contraposition",
+        "policy": "symbolic",
+        "status": "verified",
+        "expansions": 19,
+        "lean_invocations": 20,
+        "search_wall_seconds": 0.9711035039945273,
+        "artifact": "contraposition-symbolic.json.gz",
+        "proof_steps": 7,
+        "axioms": [],
+        "fresh_standalone_kernel_exit": 0,
+        "proof_file": "contraposition-symbolic.lean"
+      }
+    ],
+    "verified_counts": {
+      "parent": 3,
+      "feedback": 3,
+      "symbolic": 3
+    },
+    "tasks_per_policy": 3,
+    "wall_seconds_including_verification": 35.75482191500487,
+    "no_evaluation_training": true,
+    "production_model_changed": false,
+    "statistical_superiority_established": false,
+    "pcs_authority": false,
+    "process_cpu_seconds": 1.033638,
+    "child_cpu_seconds": 34.828322,
+    "peak_child_rss_kib": 2529772,
+    "gpu_count": 0,
+    "additional_training_updates": 0
+  },
+  "archive_sha256": "e2b1bb806156a3c6b63eaa555cbb4ee968bdcdd1f173712e0027391dd448bd9f",
+  "manifest_members": 50,
+  "scope": "Action-generation development regression after diagnosed failures; not learning superiority or untouched evaluation.",
+  "pcs_authority": false
+}

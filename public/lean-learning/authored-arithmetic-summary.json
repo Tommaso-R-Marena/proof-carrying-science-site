@@ -1,0 +1,44 @@
+{
+  "source_revision": "3cfc1fff3bf0c722f968e50cf2cb874fbe44d838",
+  "statement": "For all natural numbers a and b, if a equals b then ((a + 0) equals b and (0 + a) equals (b + 0)).",
+  "status": {
+    "learned": "verified",
+    "symbolic": "verified"
+  },
+  "new_checkpoint": "f5f5501ca050e6c4c4e904f2dabe4c6a8c0bd0520ff1e9cc83e6db193f5c9e4a",
+  "production_model_changed": false,
+  "pcs_authority": false,
+  "proof_actions": 7,
+  "kernel_axioms": [
+    "propext"
+  ],
+  "training": {
+    "examples": 7,
+    "epochs": 4,
+    "last_loss": 0.0019436351722106338,
+    "changed_parameters": [
+      "tokens.weight",
+      "actions.weight",
+      "message.weight",
+      "message.bias",
+      "update.weight",
+      "update.bias",
+      "policy.0.weight",
+      "policy.0.bias",
+      "policy.2.weight",
+      "policy.2.bias",
+      "value.0.weight",
+      "value.0.bias",
+      "value.2.weight",
+      "value.2.bias",
+      "uncertainty.weight",
+      "uncertainty.bias"
+    ],
+    "training_data_sha256": "e0d4cf84b70639c058014c15899b526dd90cadd56cce7625ef57876e4a34ea38"
+  },
+  "heldout_improvement_evaluated": false,
+  "model_parameters": 10419,
+  "independent_expected_ir_matches": true,
+  "limits": "Verified replay and real gradient updates only; no new held-out improvement claim or automatic model promotion.",
+  "wall_seconds_total": 12.232980092001526
+}
