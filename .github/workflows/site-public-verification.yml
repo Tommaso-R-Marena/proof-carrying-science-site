@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: 6f13233eb4d77daf2bedef5a1d40c4d576d31f19
+          ref: c1c3ed267d55fc9adfedbe333baf1528bff7391b
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play

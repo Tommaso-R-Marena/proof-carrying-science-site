@@ -1,0 +1,73 @@
+{
+  "core": {
+    "number": 101,
+    "html_url": "https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/101",
+    "merge_commit_sha": "c1c3ed267d55fc9adfedbe333baf1528bff7391b",
+    "merged_at": "2026-10-11T14:38:30Z",
+    "tested_head": "e77219d550fae5aa46731dead26f3986629e93b3",
+    "merged_by": "Tommaso-R-Marena",
+    "protected_ci_run": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38144868729",
+    "merged_tree_matches_tested": true,
+    "tree": "66badb6d9b7d8eef13d9cb9e189bb11ecb06f57e"
+  },
+  "core_ci": {
+    "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38144868729",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "source-policy",
+        "conclusion": "success"
+      },
+      {
+        "name": "portability-ubuntu-24.04-py3.11",
+        "conclusion": "success"
+      },
+      {
+        "name": "lean-learning-loop",
+        "conclusion": "success"
+      },
+      {
+        "name": "portability-macos-15-py3.12",
+        "conclusion": "success"
+      },
+      {
+        "name": "portability-ubuntu-24.04-py3.13",
+        "conclusion": "success"
+      },
+      {
+        "name": "portability-windows-2022-py3.12",
+        "conclusion": "success"
+      },
+      {
+        "name": "core-full-gate",
+        "conclusion": "success"
+      },
+      {
+        "name": "real-analysis-bridge",
+        "conclusion": "success"
+      },
+      {
+        "name": "certiforge-integration",
+        "conclusion": "success"
+      },
+      {
+        "name": "verified-public-integration",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "certiforge": {
+    "html_url": "https://github.com/Tommaso-R-Marena/certiforge/pull/2",
+    "merge_commit_sha": "415a1de40eaeadc366ac2d824c05ee52bb2bd66e",
+    "merged_at": "2026-10-11T13:29:53Z",
+    "merged_by": "Tommaso-R-Marena",
+    "number": 2
+  },
+  "certiforge_ci": {
+    "url": "https://github.com/Tommaso-R-Marena/certiforge/actions/runs/38143180376",
+    "conclusion": "success",
+    "tested_head": "596f295435ecf116bb9e0c7bc9afed7350b1dd62"
+  },
+  "financial_spend": 0,
+  "scientific_authority": false
+}
