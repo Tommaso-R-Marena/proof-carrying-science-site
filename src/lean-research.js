@@ -1,7 +1,7 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "979bc7aaacb5f92882848b02e5590e4af206ecb3";
+export const CORE_SHA = "e1067e406a1a1991497e7130e1f209239e5607cc";
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
 const WORKFLOW = "pcs-lean-public.yml";
 const DOMAIN = "PCS_PUBLIC_LEAN_TICKET_V1:";
