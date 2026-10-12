@@ -1,0 +1,34 @@
+{
+  "format": "pcs-research-lineage-ledger-v1",
+  "artifacts": [
+    {
+      "sha256": "2c007f8648b3da369e64bd96b45b4251ecf86071c48e85c4e4881b54a81c63b3",
+      "kind": "export",
+      "withdrawn_members": 1,
+      "future_use": "quarantined",
+      "prior_copies_erased": false,
+      "model_unlearned": false,
+      "scientific_authority": false
+    },
+    {
+      "sha256": "5e2e99125ddbd517ce6f24322daaf3b6b4e4bceed6f4161b57f963f0f787ffa6",
+      "kind": "dataset",
+      "withdrawn_members": 1,
+      "future_use": "quarantined",
+      "prior_copies_erased": false,
+      "model_unlearned": false,
+      "scientific_authority": false
+    },
+    {
+      "sha256": "7eb2cd5b8f4b43978f3fb43b8fe09402eee3fb563013091de8be4551a57a5030",
+      "kind": "model",
+      "withdrawn_members": 1,
+      "future_use": "quarantined",
+      "prior_copies_erased": false,
+      "model_unlearned": false,
+      "scientific_authority": false
+    }
+  ],
+  "events": 4,
+  "scope": "Local custody and future-use quarantine only; ledger content does not verify proof labels, human authenticity, evaluator separation or scientific acceptance."
+}

@@ -1,0 +1,8 @@
+{
+  "format": "pcs-withdrawal-future-use-denial-v1",
+  "dataset_sha256": "5e2e99125ddbd517ce6f24322daaf3b6b4e4bceed6f4161b57f963f0f787ffa6",
+  "exit_code": 1,
+  "withdrawal_preflight_rejected": true,
+  "past_weights_unlearned": false,
+  "real_participants": 0
+}

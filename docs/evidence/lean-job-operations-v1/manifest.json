@@ -1,0 +1,47 @@
+{
+  "format": "pcs-lean-operational-client-evidence-v1",
+  "base_site_revision": "1a351144cac080a990ab6f75fe8b57b476c3b08a",
+  "tested_source": "uncommitted integration overlay; exact source hashes below, protected release qualification still required",
+  "source_sha256": {
+    "src/lean-research.js": "8f5445b56783b201a813f848a9b825836f30ec7f7130a249c2171e4dfb34265f",
+    "src/lean-job-journal.js": "7141407a7fa769b014ed1e83f9998235c3d0b429fd8b15de4c7a8186714e6e4d",
+    "src/lean-job-service.js": "d774bcd36e61e0098c60eeaf79f87ece2c207229d07726ec535a715fee5f268f",
+    "public/lean-job-client.mjs": "855e982342690a3978e100f4b1e3c35ae584544fa6059962f0d428215933900d",
+    "public/lean-learning-lab.mjs": "984ad9e9b062a6e2f433fdc2f5bd709c93bbc36f2782f4144cc48ead01236e0f",
+    "public/lean-learning-lab.html": "88da53a5d78f92bfb56e001671069c7d65de892255fb5b1158356ca5ee5fb7b5",
+    "scripts/browser_lean_job_recovery.cjs": "ea5708b7260e0566b967c222ee2636cb8917715911e68f794e78d3df58cec10b",
+    "tests/lean-research.test.mjs": "f429e1353d2aedfa77c146fb672cc89a833fff6e7e650c64083facaf26e4f526",
+    "tests/lean-job-journal.test.mjs": "83728351d4600de8d86cd005e2b3d5ce110d91d98962e092104e72a483e12326",
+    "tests/lean-job-client.test.mjs": "f0b3b8275ba692724a03950a647ce9c5383d6a5f883c226b5b717cbbb2cce502",
+    "scripts/check_site.py": "b81b248be02a3bbcaade4ec555f88dda0548810372428ee731a88c96d756c8b9",
+    "package.json": "6c3411758bb7957c728c8088ae3ca02562c7ab1728e7fbbe80ef858369d3cf9e",
+    ".github/workflows/site-public-verification.yml": "43217612b8680bb4659563d18536901cdcab8c0a8ce38cabf463ecd42d9b7176"
+  },
+  "artifacts": {
+    "browser-recovery.json": "6627e2f3145c597d53a67228d9186ee45283af8a5d31cb04429d7307f83dea9b",
+    "static-release-gates.log": "8e524fca47e84735f8c97a3d907b5c6fafdeda6e7e36dbda2737e204059d4377",
+    "operational-tests.log": "33f845802955f7d4efb7a0f3e8fe60991ea290c70e9a79589803a7db21ec89a4",
+    "browser-recovery.log": "80ce6730adbfa54d8c399b852391e415d4fa5293955900a6acc03ed021725442"
+  },
+  "tests": {
+    "lean_receiver_journal_client_node": 36,
+    "bridge_memory_node": 14,
+    "platform_governance_node": 5,
+    "platform_governance_python": 5,
+    "existing_bridge_sqlite_script": "passed",
+    "browser_widths": [
+      320,
+      768,
+      1440
+    ],
+    "static_release_gate": "passed"
+  },
+  "boundaries": {
+    "real_browser": true,
+    "real_workerd_sqlite_journal": true,
+    "provider_replies": "explicit fixtures; no hosted Lean runs in this campaign",
+    "production_requests": 0,
+    "financial_spend": 0,
+    "pcs_authority": false
+  }
+}

@@ -33,3 +33,17 @@ export function label(action,node,premise=null){
  const labels={intro:['Open the assumption','Bring the next assumption onto your board.'],constructor:['Split the delivery','Build one bridge for each part of the goal.'],assumption:['Match a fact','Ask Lean whether an existing fact directly closes this goal.'],rfl:['Check identical sides','Close an equality if both sides compute to the same expression.'],rewrite:['Use the equality',text||'Replace equal expressions.'],rewrite_back:['Reverse the equality',text||'Replace equal expressions in the other direction.'],apply:['Follow this rule',text||'Work backward from the destination.'],exact:['Deliver this fact',text||'Supply a fact with exactly the required type.'],induct_list:['Build an induction bridge','Prove the step for a shorter train, then the empty train.'],induct_nat:['Build a counting bridge','Prove the successor step and the zero case.'],normalize:['Unpack the definitions','Reduce append, length or arithmetic using a controlled set of verified identities.'],simp:['Simplify arithmetic','Use the controlled arithmetic identities.']};
  return labels[action.kind]||[action.kind,String(text||'')];
 }
+
+// Practice estimates are from replayed catalog transitions in this tab. They never grant account skills.
+export function curriculum(selected,sessions=[]){
+ if(!selected||!Array.isArray(selected.missions)||!Array.isArray(sessions)||sessions.length>40)throw Error('Invalid bounded practice history');
+ const progress=new Map();
+ for(const session of sessions){const r=replay(session,selected);if(!r.completed)continue;
+  const score={hint_events:r.hints,invalid_actions:r.invalid_attempts,undo_events:session.events.filter(e=>e.kind==='undo').length};
+  const previous=progress.get(r.mission_id);if(!previous||score.hint_events+score.invalid_actions<previous.hint_events+previous.invalid_actions)progress.set(r.mission_id,score);
+ }
+ const levels=selected.missions.map((m,index)=>{const paths=m.receipts.map(r=>Math.max(0,r.actions.length-m.automatic_setup_actions.length));const actions=Math.min(...paths);const induction=m.receipts.some(r=>r.actions.some(a=>['induct_list','induct_nat'].includes(a.kind)));return {id:m.id,index,minimum_checked_actions:actions,uses_induction:induction,difficulty:induction?'induction':actions>3?'multiple steps':'first bridges',completion:progress.get(m.id)||null};});
+ const ordered=[...levels].sort((a,b)=>Number(a.uses_induction)-Number(b.uses_induction)||a.minimum_checked_actions-b.minimum_checked_actions||a.index-b.index);
+ const next=ordered.find(m=>!m.completion)||ordered.find(m=>m.completion.hint_events>0)||ordered[0];
+ return {format:'pcs-tab-practice-curriculum-v1',missions:levels,recommended_mission_id:next?.id||null,completed_missions:progress.size,reason:ordered.some(m=>!m.completion)?'Try an unfinished crossing, progressing from matching facts to longer proofs and induction.':'Replay a crossing without a hint, or choose any challenge you enjoy.',authority:'Archived Lean-state replay only; no verified account skill or training authorization.',storage:'This tab only; no automatic research collection.'};
+}

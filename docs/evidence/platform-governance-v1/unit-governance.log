@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: practice recommendations progress from genuinely replayed solutions to induction
+ok 1 - practice recommendations progress from genuinely replayed solutions to induction
+  ---
+  duration_ms: 8.131599
+  type: 'test'
+  ...
+# Subtest: changed catalogs and fabricated success cannot become progression
+ok 2 - changed catalogs and fabricated success cannot become progression
+  ---
+  duration_ms: 0.827181
+  type: 'test'
+  ...
+# Subtest: quality separates archived partial, assisted, invalid and synthetic labels
+ok 3 - quality separates archived partial, assisted, invalid and synthetic labels
+  ---
+  duration_ms: 1.30453
+  type: 'test'
+  ...
+# Subtest: export content and membership hashes are deterministic and consent strict
+ok 4 - export content and membership hashes are deterministic and consent strict
+  ---
+  duration_ms: 97.759177
+  type: 'test'
+  ...
+# Subtest: withdrawal provides downstream membership without promising model erasure
+ok 5 - withdrawal provides downstream membership without promising model erasure
+  ---
+  duration_ms: 0.691583
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 686.967598
