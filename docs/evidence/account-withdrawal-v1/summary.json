@@ -1,0 +1,21 @@
+{
+  "format": "pcs-account-withdrawal-tested-v1",
+  "actual_disposable_Worker_D1": true,
+  "actual_browser_widths": [
+    320,
+    768,
+    1440
+  ],
+  "check_count": 34,
+  "all_passed": true,
+  "human_participants": 0,
+  "model_unlearning": false,
+  "actualBrowserWithdrawalDownload": true,
+  "financial_spend": 0,
+  "source_sha256": {
+    "src/worker.js": "94becdaba664f2966cf9c7b2b8875bf382f8ce7899bbbff1a41c8c0739226165",
+    "public/account.js": "994a77edc1d6206d635111d1b3c4741f69c5191b520c3b32601cdf04426048ce",
+    "scripts/browser_platform_governance.cjs": "3aafa95ba90386c5c16cb22d0c9e920309ffaa0bb9fc04dc0d4b710a009369f2"
+  },
+  "prior_fixtures_preserved": "Earlier 33-check evidence is an archived pre-withdrawal source overlay, not this source."
+}

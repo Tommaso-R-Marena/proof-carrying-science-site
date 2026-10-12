@@ -1,7 +1,10 @@
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
 import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
+import {submitJob,pollJob,cancelJob} from './lean-job-service.js';
+import {AuditJournal} from './lean-job-journal.js';
 import {replay as replayBridgeCatalog, CATALOG as originalBridgeCatalog, VERSION as BRIDGE_VERSION} from "../public/bridge-builder-core.mjs";
 import memoryWorkshopCatalog from '../public/memory-workshop-catalog.mjs';
+import {qualityLabels,exportManifest,withdrawalReceipt} from '../public/research-governance-core.mjs';
 const bridgeCatalogs=new Map([originalBridgeCatalog,memoryWorkshopCatalog].map(c=>[c.content_sha256,c]));
 function replayBridge(session){const c=bridgeCatalogs.get(session?.catalog_sha256);if(!c)throw Error('Unsupported bridge catalog');return replayBridgeCatalog(session,c);}
 import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
@@ -735,6 +738,16 @@ async function audit(env, actorUserId, action, subjectType, subjectId, detail = 
     detailJson,
     createdAt,
   });
+}
+
+function archiveLeanEvent(env){
+  return async event=>{
+    const existing=await env.COMMONS_DB.prepare('SELECT action,subject_type,subject_id,detail_json,event_hash FROM audit_archive WHERE event_id=?').bind(event.eventId).first();
+    const matches=row=>row&&row.action===event.action&&row.subject_type===event.subjectType&&row.subject_id===event.subjectId&&row.detail_json===event.detailJson;
+    if(existing){if(!matches(existing))throw new ApiError(500,'Immutable journal archive mismatch.','journal_archive_mismatch');return existing.event_hash;}
+    try{return await appendAuditArchive(env,event);}
+    catch(error){const won=await env.COMMONS_DB.prepare('SELECT action,subject_type,subject_id,detail_json,event_hash FROM audit_archive WHERE event_id=?').bind(event.eventId).first();if(matches(won))return won.event_hash;throw error;}
+  };
 }
 
 function mailRelayConfigured(env) {
@@ -3386,6 +3399,7 @@ async function adminSubmissionDecision(request, env, admin, submissionId) {
      WHERE s.id=?`
   ).bind(submissionId).first();
   if (!row) throw new ApiError(404,"Submission not found.","submission_not_found");
+  if (row.user_id===admin.id) throw new ApiError(403,"A different qualified reviewer must review your submission.","self_review_forbidden");
   if (!["submitted","needs_changes"].includes(row.status)) {
     throw new ApiError(409,"This submission already has a final review decision.","submission_already_decided");
   }
@@ -4284,9 +4298,17 @@ async function bridgeDonate(request,env,user){
     scope:"Server replay of archived Lean transitions. Independent fresh kernel replay is required before training intake."});
 }
 async function bridgeErase(env,user){
-  const row=await env.COMMONS_DB.prepare("DELETE FROM bridge_research_sessions WHERE user_id=?").bind(user.id).run();
-  await audit(env,user.id,"bridge_research_erased","research","bridge-builder",{deleted:Number(row.meta?.changes||0)});
-  return json({ok:true,deleted:Number(row.meta?.changes||0)});
+  const [selected,deleted,left]=await env.COMMONS_DB.batch([
+    env.COMMONS_DB.prepare("SELECT id FROM bridge_research_sessions WHERE user_id=? ORDER BY id LIMIT 1000").bind(user.id),
+    env.COMMONS_DB.prepare("DELETE FROM bridge_research_sessions WHERE user_id=? AND id IN (SELECT id FROM bridge_research_sessions WHERE user_id=? ORDER BY id LIMIT 1000)").bind(user.id,user.id),
+    env.COMMONS_DB.prepare("SELECT COUNT(*) AS remaining FROM bridge_research_sessions WHERE user_id=?").bind(user.id),
+  ]);
+  const ids=(selected.results||[]).map(row=>row.id);
+  const count=Number(deleted.meta?.changes||0);
+  if(count!==ids.length)throw new ApiError(500,"Withdrawal membership could not be reconciled.","withdrawal_mismatch");
+  const remaining=Number(left.results?.[0]?.remaining||0);
+  await audit(env,user.id,"bridge_research_erased","research","bridge-builder",{deleted:count,remaining});
+  return json({ok:true,deleted:count,remaining,withdrawal:withdrawalReceipt(ids)});
 }
 async function bridgeExport(request,env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Owner authority required for research export.","owner_required");
@@ -4297,9 +4319,10 @@ async function bridgeExport(request,env,admin){
   if(catalogSha!==null&&!bridgeCatalogs.has(catalogSha))throw new ApiError(400,"Unknown research catalog.","bad_catalog");
   const rows=await env.COMMONS_DB.prepare("SELECT id,session_json FROM bridge_research_sessions WHERE version=? AND consent_version=? AND json_extract(session_json,'$.catalog_sha256')=? ORDER BY created_at,id LIMIT 25 OFFSET ?")
     .bind(BRIDGE_VERSION,"pcs-bridge-adult-cc0-optin-v1",catalogSha,offset).all();
-  const entries=(rows.results||[]).map(row=>({id:row.id,session:JSON.parse(row.session_json),license:"CC0-1.0",adult_consented:true,training_consented:true}));
+  const entries=(rows.results||[]).map(row=>{const session=JSON.parse(row.session_json);return {id:row.id,session,license:"CC0-1.0",adult_consented:true,training_consented:true,quality:qualityLabels(session,replayBridge(session),{origin:"consented-account"})};});
+  const manifest=await exportManifest(entries,catalogSha);
   await audit(env,admin.id,"bridge_research_exported","research","bridge-builder",{offset,entries:entries.length});
-  return json({format:"pcs-bridge-consented-export-v1",version:BRIDGE_VERSION,entries,next_offset:entries.length===25?offset+25:null,
+  return json({format:"pcs-bridge-consented-export-v1",version:BRIDGE_VERSION,entries,manifest,next_offset:entries.length===25?offset+25:null,
     eligible_for_training:false,required_intake:"pcs.experimental.prover.bridge_data; fresh independent Lean replay",pcs_authority:false});
 }
 
@@ -4310,23 +4333,29 @@ async function handleApi(request, env) {
   const method=request.method;
 
   if(method==="GET" && path==="/api/lean-research/status"){
-    return json({status:env.PCS_LEAN_GITHUB_TOKEN?"configured":"unavailable",core_sha:LEAN_CORE_SHA,pcs_authority:false});
+    return json({status:env.PCS_LEAN_GITHUB_TOKEN?"configured":"unavailable",core_sha:LEAN_CORE_SHA,lifecycle:'pcs-public-lean-lifecycle-v1',idempotency:'same request body, key and client scope',pcs_authority:false});
   }
   if(method==="POST" && path==="/api/lean-research/submit"){
     const body=await readBody(request);
     try{validatePublicStatement(body);}catch(error){throw new ApiError(400,String(error.message),"invalid_public_lean_statement");}
-    await rateLimit(request,env,"public-lean-submit",2,1440);
-    const globalQuota=new Request(request.url,{headers:{"CF-Connecting-IP":"PCS_PUBLIC_LEAN_GLOBAL"}});
-    await rateLimit(globalQuota,env,"public-lean-global",12,1440);
-    try{return json(await dispatchLeanResearch(env,body));}
-    catch(error){throw new ApiError(503,String(error.message||"Public Lean checker unavailable"),"lean_checker_unavailable");}
+    await rateLimit(request,env,"public-lean-retry",120,60);
+    const idempotencyKey=request.headers.get('Idempotency-Key')||crypto.randomUUID().replace(/-/g,'');
+    const admit=async()=>{await rateLimit(request,env,"public-lean-submit",2,1440);const globalQuota=new Request(request.url,{headers:{"CF-Connecting-IP":"PCS_PUBLIC_LEAN_GLOBAL"}});await rateLimit(globalQuota,env,"public-lean-global",12,1440);};
+    try{return json(await submitJob(env,body,{ip:request.headers.get('CF-Connecting-IP')||'unknown',idempotencyKey,admit,archive:archiveLeanEvent(env)}));}
+    catch(error){if(error instanceof ApiError)throw error;if(/Idempotency|idempotency|Immutable request/.test(error.message))throw new ApiError(409,'The idempotency key must remain bound to the same request.','idempotency_conflict');throw new ApiError(503,"Public Lean checker unavailable. Retry with the same idempotency key.","lean_checker_unavailable");}
   }
   if(method==="POST" && path==="/api/lean-research/result"){
     const body=await readBody(request);
     if(!body||Object.keys(body).length!==1||typeof body.ticket!=="string")throw new ApiError(400,"A checker ticket is required.","invalid_lean_ticket");
     await rateLimit(request,env,"public-lean-poll",120,60);
-    try{return json(await pollLeanResearch(env,body.ticket));}
+    try{return json(await pollJob(env,body.ticket,{archive:archiveLeanEvent(env)}));}
     catch(error){throw new ApiError(422,String(error.message||"Checker result unavailable"),"invalid_lean_result");}
+  }
+  if(method==="POST" && path==="/api/lean-research/cancel"){
+    const body=await readBody(request);
+    if(!body||Object.keys(body).length!==1||typeof body.ticket!=='string')throw new ApiError(400,'A checker ticket is required.','invalid_lean_ticket');
+    await rateLimit(request,env,'public-lean-cancel',12,60);
+    try{return json(await cancelJob(env,body.ticket,{archive:archiveLeanEvent(env)}));}catch(error){throw new ApiError(422,'This exact checker request could not be cancelled.','invalid_lean_cancellation');}
   }
   if(method==="POST" && path==="/api/demo/bridge-builder/replay"){
     await rateLimit(request,env,"bridge-replay",30,60);
@@ -4394,6 +4423,11 @@ async function handleApi(request, env) {
 
   if (path.startsWith("/api/admin/")) {
     const admin=await requireAdmin(request,env);
+    if(method==='GET'&&path==='/api/admin/lean-research/jobs'){
+      if(!isOwner(admin))throw new ApiError(403,'Owner authority required for checker diagnostics.','owner_required');
+      const raw=url.searchParams.get('limit')||'20';if(!/^(?:[1-9]|1[0-9]|20)$/.test(raw))throw new ApiError(400,'Use a diagnostic limit from 1 to 20.','invalid_diagnostic_limit');
+      return json({format:'pcs-public-lean-diagnostics-v1',jobs:await new AuditJournal(env.COMMONS_DB,{archive:archiveLeanEvent(env)}).diagnostics(Number(raw)),contains_statement:false,contains_credentials:false,pcs_authority:false});
+    }
     if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/countermodel/dataset") return exportCountermodelSessions(request,env,admin);
@@ -4509,9 +4543,20 @@ async function handleApi(request, env) {
     const password=String(body.password||"");
     const computed=await derivePassword(password,user.password_salt,Number(user.password_iterations));
     if (!fixedEqual(computed,user.password_hash)) throw new ApiError(403,"Password did not match.","bad_password");
-    await audit(env,user.id,"account_deleted","user",user.id,{});
-    await env.COMMONS_DB.prepare("DELETE FROM users WHERE id=?").bind(user.id).run();
-    return json({ok:true},200,{"set-cookie":clearSessionCookie()});
+    await audit(env,user.id,"account_delete_requested","user",user.id,{});
+    // Preserve exact supported proof-game withdrawal membership before the
+    // foreign-key cascade removes it. Both statements share one D1 transaction.
+    // A larger historical account must use bounded erasure first, rather than
+    // silently discarding membership needed to quarantine prior exports.
+    const [selected,deleted]=await env.COMMONS_DB.batch([
+      env.COMMONS_DB.prepare("SELECT id FROM bridge_research_sessions WHERE user_id=? ORDER BY id LIMIT 1001").bind(user.id),
+      env.COMMONS_DB.prepare("DELETE FROM users WHERE id=? AND (SELECT COUNT(*) FROM bridge_research_sessions WHERE user_id=?)<=1000").bind(user.id,user.id),
+    ]);
+    const ids=(selected.results||[]).map(row=>row.id);
+    if(ids.length>1000)throw new ApiError(409,"Delete donated proof-game data in the Memory Workshop first, then retry account deletion.","withdrawal_batch_required");
+    if(Number(deleted.meta?.changes||0)<1)throw new ApiError(409,"Account deletion could not be reconciled; sign in again before retrying.","account_delete_mismatch");
+    await audit(env,null,"account_deleted","user",user.id,{proof_game_withdrawal:withdrawalReceipt(ids)});
+    return json({ok:true,proof_game_withdrawal:withdrawalReceipt(ids)},200,{"set-cookie":clearSessionCookie()});
   }
 
   if (method==="GET" && path==="/api/reviewer/submissions/queue") return reviewerSubmissionQueue(request,env,await requireMeaningReviewer(request,env));

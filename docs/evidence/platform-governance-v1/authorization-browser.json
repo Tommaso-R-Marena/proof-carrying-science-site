@@ -1,0 +1,242 @@
+{
+  "format": "pcs-platform-governance-real-integration-v1",
+  "real_human_participants": 0,
+  "synthetic_accounts": true,
+  "financial_spend": 0,
+  "checks": [
+    {
+      "name": "browser registration",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "fixture registration",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "fixture registration",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "contributor cannot enter owner dataset export",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "name": "owner impersonation cannot set level",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "name": "forged reviewer identity cannot inspect submissions",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "name": "cross-origin profile mutation",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "name": "forged profile fields",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "isolated owner admin login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "browser manual skill application",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "independent owner skill review",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "actual variable evaluation",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "cross-user evaluation submit",
+      "status": 404,
+      "expected": 404,
+      "passed": true
+    },
+    {
+      "name": "honest failing automatic evaluation",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "evaluation replay rejected",
+      "status": 409,
+      "expected": 409,
+      "passed": true
+    },
+    {
+      "name": "browser actual task start",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "cross-user submission denied",
+      "status": 404,
+      "expected": 404,
+      "passed": true
+    },
+    {
+      "name": "browser evidence submission",
+      "status": 201,
+      "expected": 201,
+      "passed": true
+    },
+    {
+      "name": "contributor cannot accept own work",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "name": "delegated admin fixture login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "delegated admin own review rejected",
+      "status": 403,
+      "expected": 403,
+      "passed": true
+    },
+    {
+      "name": "independent reviewer actionable feedback",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "independent low-risk acceptance",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "replayed final acceptance rejected",
+      "status": 409,
+      "expected": 409,
+      "passed": true
+    },
+    {
+      "name": "fabricated training consent rejected",
+      "status": 400,
+      "expected": 400,
+      "passed": true
+    },
+    {
+      "name": "forged catalog trajectory rejected",
+      "status": 400,
+      "expected": 400,
+      "passed": true
+    },
+    {
+      "name": "consented actual D1 research donation",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "identity-free quality/lineage owner export",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "actual active erasure and withdrawal membership",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "withdrawn entries no longer exported",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "synthetic account cleanup",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "synthetic account cleanup",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "name": "owner fixture cleanup",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    }
+  ],
+  "browser": [
+    {
+      "width": 320,
+      "scroll": 320,
+      "reducedMotion": true,
+      "keyboardProofCompleted": true,
+      "replayedCurriculum": true,
+      "errors": []
+    },
+    {
+      "width": 768,
+      "scroll": 768,
+      "reducedMotion": true,
+      "keyboardProofCompleted": true,
+      "replayedCurriculum": true,
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "scroll": 1440,
+      "reducedMotion": true,
+      "keyboardProofCompleted": true,
+      "replayedCurriculum": true,
+      "errors": []
+    }
+  ],
+  "boundary": "Email delivery and GitHub integration are not exercised; verification/Owner fixture setup is local SQL only.",
+  "gameToModel": {
+    "source": "synthetic browser route only; zero human participants",
+    "freshKernelReplay": true,
+    "actualGradientUpdate": true,
+    "checkpointPromoted": false,
+    "exportDatasetModelLineage": true,
+    "withdrawalQuarantinesAllDescendants": true,
+    "priorWeightsErased": false
+  }
+}

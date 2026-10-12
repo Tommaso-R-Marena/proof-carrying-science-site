@@ -1,0 +1,16 @@
+{
+  "format": "pcs-platform-artifact-seal-v1",
+  "files": {
+    "SOURCE_OVERLAY.json": "2702b103071277b7dd76aa22cf87c5b0185fc4e34de363552b0bd2d9639205cf",
+    "authorization-browser.json": "c0d2ad1a66b375f4216a1ec37e862987b8c91bdbdc43fb7901fd6735901fda14",
+    "future-use-denial.json": "5e25e14bb9628d4e4586ba71b15b384b0374296320be5a3e4dc65056ee342a1c",
+    "lineage-quarantine.json": "364a0a263eb15a928937a5afe3679ce7b306bcc13740c4ac337d8c3f9961995c",
+    "migration-recovery.json": "b792b53f002711f557a602027197d351d31ab6a6f65c28795e666cf28b8a967d",
+    "synthetic-candidate.json": "7eb2cd5b8f4b43978f3fb43b8fe09402eee3fb563013091de8be4551a57a5030",
+    "synthetic-kernel-intake.json": "5e2e99125ddbd517ce6f24322daaf3b6b4e4bceed6f4161b57f963f0f787ffa6",
+    "synthetic-training.json": "913b1b587d08d277b90d7975d6efbbb25d86963b042b93b27403f0fba38706d9",
+    "unit-governance.log": "76479e7f7e2f484207acc1bc94a3287dc8648bfa4c483a9a8dad46d13d360395",
+    "unit-lineage.log": "6f283ee6225d2cef4c0127d95456a6f954c45141c92b97dd89016cb1c630e8f4",
+    "unit-migration.log": "a2b25d26fe5ee07ddae96fa7f590b4d52b6d0756c42a197d2766aa9825daf121"
+  }
+}

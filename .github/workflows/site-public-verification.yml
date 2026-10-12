@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: d4bffe22949b7c9a3c16787dbc7e106d7679e82e
+          ref: fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
@@ -174,7 +174,7 @@ jobs:
   lean-learning-browser:
     if: ${{ github.event.repository.private == false }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: e1067e406a1a1991497e7130e1f209239e5607cc
+          ref: fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -199,6 +199,9 @@ jobs:
           export WRANGLER_SEND_METRICS=false
           npm ci --ignore-scripts --no-audit --no-fund
           npm run test:lean-research
+          export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
+          # Production UI recovery runs in Chromium against explicit loopback provider fixtures.
+          PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
           source .ci-components/lean-prover/scripts/activate_lean_428.sh
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
@@ -246,4 +249,6 @@ jobs:
           PYBRIDGEWAIT
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BROWSER_BASE_URL=http://127.0.0.1:8789 PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/bridge-d1" PCS_BRIDGE_RESEARCH_OUTPUT="$RUNNER_TEMP/bridge-intake" node scripts/browser_bridge_research.cjs
           PCS_BRIDGE_RESEARCH_MODE=memory PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BROWSER_BASE_URL=http://127.0.0.1:8789 PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/bridge-d1" PCS_BRIDGE_RESEARCH_OUTPUT="$RUNNER_TEMP/memory-intake" node scripts/browser_bridge_research.cjs
+          # Same disposable database; five synthetic registrations total.
+          PCS_CHROMIUM="$PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH" PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BROWSER_BASE_URL=http://127.0.0.1:8789 PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/bridge-d1" PCS_PLATFORM_OUTPUT="$RUNNER_TEMP/platform-governance" node scripts/browser_platform_governance.cjs
       # Exact proof receipts are in logs; no extra artifact storage is allocated.

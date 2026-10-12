@@ -1,0 +1,50 @@
+
+> verify:release
+> python3 scripts/check_site.py && python3 scripts/security_campaign.py --static && python3 scripts/check_free_infrastructure.py
+
+SITE CHECK: PASS (58 HTML pages, v0.6 mainline + cross-machine/runtime/restoration evidence + legacy v0.5 fixture bound)
+PASS  origin guard                                                             ok
+PASS  no sibling-site CSRF allowance                                           same-site is not accepted by Fetch Metadata guard
+PASS  separate admin session                                                   ok
+PASS  admin APIs gated before contributor session                              admin router executes before contributor-session router
+PASS  owner invariants                                                         ok
+PASS  session revocation on governance loss                                    ok
+PASS  evaluation replay/attempt controls                                       ok
+PASS  task anti-squatting controls                                             ok
+PASS  database reservation exclusivity                                         ok
+PASS  stale authority fails closed                                             ok
+PASS  database contributor concurrency caps                                    ok
+PASS  one-shot evaluation submission                                           ok
+PASS  verified skill revocation cannot use review API                          ok
+PASS  review decisions are one-shot                                            ok
+PASS  marketplace publication is default-deny                                  ok
+PASS  code tasks expose only curated bounded source excerpts                   ok
+PASS  code expansion requests are explicit and audited                         ok
+PASS  ongoing roles cannot masquerade as task authority                        ok
+PASS  dependency graph carries explicit gate semantics                         ok
+PASS  dependency graph editing fails closed                                    ok
+PASS  Proof Quest practice does not auto-upload                                ok
+PASS  Proof Quest research requires adult consent and verified email           ok
+PASS  Proof Quest Owner export excludes account identity                       ok
+PASS  Proof Quest data limits and deletion are enforced by database            ok
+PASS  Safety Forge opt-in is separate from free play                           ok
+PASS  Safety Forge donation fails closed on unauthorized or unconsented input  ok
+PASS  Safety Forge donor deletion and export require appropriate authority     ok
+PASS  Safety Forge finite state safety plus mission liveness                   ok
+PASS  Safety Forge donor data scoped and lifetime-bound                        ok
+PASS  Arena leaderboard is verification-gated                                  ok
+PASS  Arena score is server-side and challenge-specific                        ok
+PASS  immutable audit archive                                                  ok
+PASS  immutable admin evidence                                                 ok
+PASS  evidence upload bounds                                                   ok
+PASS  private evidence downloads                                               ok
+PASS  skill revocation fails closed                                            ok
+PASS  mail relay authentication                                                ok
+PASS  mail relay replay resistance                                             ok
+PASS  mail replay authority is not best-effort cache                           nonce authority uses persistent locked properties, not CacheService
+PASS  admin audit evidence UI                                                  ok
+PASS  admin pages not cached/indexed                                           ok
+PASS  no audit/evidence mutation API                                           no DELETE/PATCH/PUT audit/evidence route
+
+42/42 checks passed
+FREE INFRA CHECK: PASS (Workers Free + reviewed D1 account state + static assets + observability; no unreviewed paid/stateful bindings)

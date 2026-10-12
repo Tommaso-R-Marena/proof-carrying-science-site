@@ -1,6 +1,6 @@
 {
   "status_format": "pcs-public-status-v1",
-  "updated": "2026-10-05",
+  "updated": "2026-10-12",
   "released": {
     "specification": "pcs-0.5",
     "checker": "pcs-python-kernel/0.5.0",
@@ -39,7 +39,8 @@
       "terminal_gate": "restoration-boundaries-complete",
       "formal_wire_lean_gate": "PASS",
       "product_demo_hardening_gate": "PASS",
-      "restoration_and_abi_gate": "PASS"
+      "restoration_and_abi_gate": "PASS",
+      "role": "historical_v06_gate_not_current_release"
     },
     "released": false,
     "real_world_benchmark": {
@@ -634,5 +635,37 @@
       "database_update_delete_triggers": true,
       "infrastructure_owner_can_destroy_database": true
     }
+  },
+  "research_platform_v1": {
+    "status": "experimental_core_verified_website_release_pending",
+    "core_pull_request": "https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/105",
+    "certiforge_protected_main_sha": "c71e8575db2800b015a9d444f8ed572490f3a871",
+    "certiforge_pull_request": "https://github.com/Tommaso-R-Marena/certiforge/pull/3",
+    "capability_evidence": {
+      "frozen_authored_comparisons": 144,
+      "typed_final_tasks": 8,
+      "hybrid_solved": 7,
+      "ordinary_Std_solved": 5,
+      "memory_structural_solved": 4,
+      "historical_learned_solved": 4,
+      "unique_neural_successes": 0,
+      "measured_RL_gain": false,
+      "Mathlib_final_tasks": 6,
+      "Mathlib_structural_solved": 4,
+      "Mathlib_standard_tactics_solved": 3,
+      "independently_authored_external_benchmark": false
+    },
+    "source_report": "https://github.com/Tommaso-R-Marena/proof-carrying-science/blob/main/docs/PCS_GENERALIZATION_AND_LEARNING_EVALUATION.md",
+    "scientific_numerical_claim_PCS_status": "OPEN",
+    "automatic_training": false,
+    "automatic_promotion": false,
+    "pcs_authority": false,
+    "financial_spend": 0,
+    "core_protected_main_sha": "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722",
+    "core_verified_feature_sha": "1e3134144e146db17cdb09e24e303fadb5fae5ec",
+    "core_required_checks_passed": 10,
+    "core_verification_run": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38312790669",
+    "website_pull_request": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/pull/116",
+    "website_pending": true
   }
 }

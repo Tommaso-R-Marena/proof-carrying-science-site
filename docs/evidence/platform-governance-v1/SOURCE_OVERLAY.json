@@ -1,0 +1,21 @@
+{
+  "format": "pcs-platform-source-overlay-v1",
+  "website_base_sha": "1a351144cac080a990ab6f75fe8b57b476c3b08a",
+  "core_base_sha": "e1067e406a1a1991497e7130e1f209239e5607cc",
+  "files": {
+    "public/bridge-builder-core.mjs": "09b4b82f975131274df1c89f6ebefe4c75dcbb348ff0cb104b097ec4ccc13303",
+    "public/bridge-builder.mjs": "32887698fe49162cd3b7e000aca4bfb2dee19bc76771dd5105ae7e6a3907b979",
+    "public/bridge-builder.html": "e30e4a6da815cd441e7bf5e0e81b81d1315d16857c835cef3344595725d16e59",
+    "public/memory-workshop.html": "16902d18dba8d7011f16ecf5b567dc3ba3e4a6561e1b502f9262a729ccdfbf78",
+    "public/research-governance-core.mjs": "a4d75f9235307164cbe1fb89a1a71b14ee3ac94a7f22207d60cb00b83c8c4972",
+    "src/worker.js": "b6482892188d3f30ad1fe3cef00b5d707262a70a6d24de53dfa97e4058f1189d",
+    "scripts/browser_platform_governance.cjs": "b522a4ec3f18dabf7a9002f91ba701832b80567e5b3bcea9c98eef6a3f8439fc",
+    "scripts/d1_reconcile.py": "9e63fdb7b3e644b088c176abfd18f2da2c4ba2a36ea1aba9d9856a9a271b2439",
+    "scripts/research_lineage.py": "53aed76a05fbf54ec995a82ef49b56b38fcae6cdd921ec89ddbf32e67a0aadde",
+    "tests/bridge-curriculum.test.mjs": "db783c09bd0ef5c8f680108f7bae73193d6a88319bdd32f91374dddbcbc9ef41",
+    "tests/research-governance.test.mjs": "e62026d73124f4c904d91980bc328e4dd24d3cadd4ef0e42783b7cf850409efb",
+    "tests/test_d1_reconcile.py": "4c5a59433127adb02e4f807cfe5620796c589da75131621638b46e3593e2ff19",
+    "tests/test_research_lineage.py": "65f50e9ea174832a5120fe13607e4dea0286ca937f43c19e476e3d14d26560ee"
+  },
+  "boundary": "Source overlay captured after integration. Local Worker hot reload was used; protected release/source attribution is independently required before production claims."
+}
