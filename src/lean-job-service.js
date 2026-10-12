@@ -1,5 +1,5 @@
 import {AuditJournal,TERMINAL,requestKey} from './lean-job-journal.js';
-import {preparePublicRequest,signPreparedTicket,verifyTicket,dispatch,poll,requestCancellation} from './lean-research.js';
+import {CORE_SHA,approvedTicketRevision,preparePublicRequest,signPreparedTicket,verifyTicket,dispatch,poll,requestCancellation} from './lean-research.js';
 import {canonical,sha256} from '../public/research-governance-core.mjs';
 
 // Provider uncertainty is never retried by dispatching another workflow. Polling
@@ -21,6 +21,8 @@ export async function submitJob(env,body,{ip='unknown',idempotencyKey=crypto.ran
   if(existing&&existing.binding_sha256!==binding)throw Error('Idempotency key is already bound to a different request');
   if(existing){
     const expected=await preparePublicRequest(body,payload.issued,requestId);
+    if(!approvedTicketRevision(payload.core_sha))throw Error('Unapproved immutable request revision');
+    expected.core_sha=payload.core_sha;
     if(canonical(expected)!==canonical(payload))throw Error('Immutable request mismatch');
   }
   let row=existing||await store.create(payload,binding,now);
@@ -29,6 +31,10 @@ export async function submitJob(env,body,{ip='unknown',idempotencyKey=crypto.ran
   payload=row.payload;
   if(now>payload.expires&&!TERMINAL.has(row.state))row=(await store.advance(row,'expired','ticket_expired',{now})).current;
   if(TERMINAL.has(row.state))return reply(env,row,{reused:true});
+  if(payload.core_sha!==CORE_SHA){
+    if(['created','authorizing','authorized','queued'].includes(row.state))row=(await store.advance(row,'failed','admission_failed',{now})).current;
+    return reply(env,row,{reused:true}); // Never dispatch the older revision again.
+  }
   if(row.state==='created'){
     const claim=await store.advance(row,'authorizing','admission_started',{now});row=claim.current;
     if(!claim.won)return reply(env,row,{reused:true});

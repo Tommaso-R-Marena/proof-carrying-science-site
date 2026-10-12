@@ -1,7 +1,12 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "e1067e406a1a1991497e7130e1f209239e5607cc";
+export const CORE_SHA = "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722";
+// One previously protected revision remains eligible for already signed tickets
+// during their original one-hour lifetime. New dispatch always requires CORE_SHA.
+export const PREVIOUS_CORE_SHA = "e1067e406a1a1991497e7130e1f209239e5607cc";
+const APPROVED_TICKET_REVISIONS = new Set([CORE_SHA, PREVIOUS_CORE_SHA]);
+export const approvedTicketRevision = value => APPROVED_TICKET_REVISIONS.has(value);
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
 const WORKFLOW = "pcs-lean-public.yml";
 const DOMAIN = "PCS_PUBLIC_LEAN_TICKET_V1:";
@@ -20,7 +25,7 @@ export async function verifyTicket(env,value,now=Date.now(),allowExpired=false){
   const p=JSON.parse(data);
   const keys=['format','request_id','core_sha','source_sha256','interpretation','issued','expires'];
   if(p.actions_sha256!==undefined)keys.push('actions_sha256');if(p.model_family!==undefined)keys.push('model_family');
-  if(!exact(p,keys)||(p.actions_sha256!==undefined&&!/^[0-9a-f]{64}$/.test(p.actions_sha256))||(p.model_family!==undefined&&!['induction-abstraction-v2','verified-memory-v1','prospective-hybrid-v2'].includes(p.model_family))||(p.actions_sha256!==undefined&&['induction-abstraction-v2','prospective-hybrid-v2'].includes(p.model_family))||p.format!=='pcs-public-lean-ticket-v1'||p.core_sha!==CORE_SHA||!/^[0-9a-f]{32}$/.test(p.request_id)||!/^[0-9a-f]{64}$/.test(p.source_sha256)||!(p.interpretation===null||Number.isInteger(p.interpretation)&&p.interpretation>=0&&p.interpretation<=15)||!Number.isSafeInteger(p.issued)||p.issued<0||!Number.isSafeInteger(p.expires)||p.expires!==p.issued+3600000||now<p.issued-60000||(!allowExpired&&now>p.expires))fail('Expired or mismatched checker ticket');
+  if(!exact(p,keys)||(p.actions_sha256!==undefined&&!/^[0-9a-f]{64}$/.test(p.actions_sha256))||(p.model_family!==undefined&&!['induction-abstraction-v2','verified-memory-v1','prospective-hybrid-v2'].includes(p.model_family))||(p.actions_sha256!==undefined&&['induction-abstraction-v2','prospective-hybrid-v2'].includes(p.model_family))||p.format!=='pcs-public-lean-ticket-v1'||!APPROVED_TICKET_REVISIONS.has(p.core_sha)||!/^[0-9a-f]{32}$/.test(p.request_id)||!/^[0-9a-f]{64}$/.test(p.source_sha256)||!(p.interpretation===null||Number.isInteger(p.interpretation)&&p.interpretation>=0&&p.interpretation<=15)||!Number.isSafeInteger(p.issued)||p.issued<0||!Number.isSafeInteger(p.expires)||p.expires!==p.issued+3600000||now<p.issued-60000||(!allowExpired&&now>p.expires))fail('Expired or mismatched checker ticket');
   return p;
 }
 async function github(env,path,options={},transport=fetch){
@@ -209,7 +214,7 @@ export async function poll(env,value,transport=fetch,now=Date.now(),onProgress=n
   const runs=await object(await github(env,'/actions/workflows/'+WORKFLOW+'/runs?event=workflow_dispatch&per_page=30',{},transport));
   const matches=runs.workflow_runs.filter(r=>r.display_title==='PCS public Lean '+payload.request_id);
   if(!matches.length)return {status:'queued',pcs_authority:false};if(matches.length!==1)fail('Ambiguous workflow run');
-  const run=matches[0];if(!Number.isSafeInteger(run.id)||run.id<1||run.head_sha!==CORE_SHA||run.head_branch!=='main'||run.event!=='workflow_dispatch'||run.path!=='.github/workflows/'+WORKFLOW||run.repository?.full_name!==REPO)fail('Unapproved checker execution');
+  const run=matches[0];if(!Number.isSafeInteger(run.id)||run.id<1||run.head_sha!==payload.core_sha||run.head_branch!=='main'||run.event!=='workflow_dispatch'||run.path!=='.github/workflows/'+WORKFLOW||run.repository?.full_name!==REPO)fail('Unapproved checker execution');
   const url='https://github.com/'+REPO+'/actions/runs/'+run.id;
   if(run.status!=='completed'){if(onProgress)await onProgress('running',run.id);return {status:'running',run_url:url,pcs_authority:false};}
   if(run.conclusion!=='success')return {status:run.conclusion==='cancelled'?'cancelled':run.conclusion==='timed_out'?'resource_exhaustion':'failed',run_id:run.id,run_url:url,reason:'The real checker job did not complete successfully.',pcs_authority:false};
@@ -230,7 +235,7 @@ export async function requestCancellation(env,value,transport=fetch,now=Date.now
   const matches=runs.workflow_runs.filter(r=>r.display_title==='PCS public Lean '+payload.request_id);
   if(matches.length!==1)fail('A unique dispatched checker run is required for cancellation');
   const run=matches[0];
-  if(!Number.isSafeInteger(run.id)||run.id<1||run.head_sha!==CORE_SHA||run.head_branch!=='main'||run.event!=='workflow_dispatch'||run.path!=='.github/workflows/'+WORKFLOW||run.repository?.full_name!==REPO)fail('Unapproved checker execution');
+  if(!Number.isSafeInteger(run.id)||run.id<1||run.head_sha!==payload.core_sha||run.head_branch!=='main'||run.event!=='workflow_dispatch'||run.path!=='.github/workflows/'+WORKFLOW||run.repository?.full_name!==REPO)fail('Unapproved checker execution');
   if(run.status==='completed')return {status:'already_terminal',run_id:run.id,pcs_authority:false};
   if(onAuthorized)await onAuthorized(run.id);
   const response=await github(env,'/actions/runs/'+run.id+'/cancel',{method:'POST'},transport);

@@ -4543,9 +4543,20 @@ async function handleApi(request, env) {
     const password=String(body.password||"");
     const computed=await derivePassword(password,user.password_salt,Number(user.password_iterations));
     if (!fixedEqual(computed,user.password_hash)) throw new ApiError(403,"Password did not match.","bad_password");
-    await audit(env,user.id,"account_deleted","user",user.id,{});
-    await env.COMMONS_DB.prepare("DELETE FROM users WHERE id=?").bind(user.id).run();
-    return json({ok:true},200,{"set-cookie":clearSessionCookie()});
+    await audit(env,user.id,"account_delete_requested","user",user.id,{});
+    // Preserve exact supported proof-game withdrawal membership before the
+    // foreign-key cascade removes it. Both statements share one D1 transaction.
+    // A larger historical account must use bounded erasure first, rather than
+    // silently discarding membership needed to quarantine prior exports.
+    const [selected,deleted]=await env.COMMONS_DB.batch([
+      env.COMMONS_DB.prepare("SELECT id FROM bridge_research_sessions WHERE user_id=? ORDER BY id LIMIT 1001").bind(user.id),
+      env.COMMONS_DB.prepare("DELETE FROM users WHERE id=? AND (SELECT COUNT(*) FROM bridge_research_sessions WHERE user_id=?)<=1000").bind(user.id,user.id),
+    ]);
+    const ids=(selected.results||[]).map(row=>row.id);
+    if(ids.length>1000)throw new ApiError(409,"Delete donated proof-game data in the Memory Workshop first, then retry account deletion.","withdrawal_batch_required");
+    if(Number(deleted.meta?.changes||0)<1)throw new ApiError(409,"Account deletion could not be reconciled; sign in again before retrying.","account_delete_mismatch");
+    await audit(env,null,"account_deleted","user",user.id,{proof_game_withdrawal:withdrawalReceipt(ids)});
+    return json({ok:true,proof_game_withdrawal:withdrawalReceipt(ids)},200,{"set-cookie":clearSessionCookie()});
   }
 
   if (method==="GET" && path==="/api/reviewer/submissions/queue") return reviewerSubmissionQueue(request,env,await requireMeaningReviewer(request,env));

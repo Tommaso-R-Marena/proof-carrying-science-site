@@ -637,7 +637,7 @@
     }
   },
   "research_platform_v1": {
-    "status": "experimental_protected_release_in_progress",
+    "status": "experimental_core_verified_website_release_pending",
     "core_pull_request": "https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/105",
     "certiforge_protected_main_sha": "c71e8575db2800b015a9d444f8ed572490f3a871",
     "certiforge_pull_request": "https://github.com/Tommaso-R-Marena/certiforge/pull/3",
@@ -660,6 +660,12 @@
     "automatic_training": false,
     "automatic_promotion": false,
     "pcs_authority": false,
-    "financial_spend": 0
+    "financial_spend": 0,
+    "core_protected_main_sha": "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722",
+    "core_verified_feature_sha": "1e3134144e146db17cdb09e24e303fadb5fae5ec",
+    "core_required_checks_passed": 10,
+    "core_verification_run": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38312790669",
+    "website_pull_request": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/pull/116",
+    "website_pending": true
   }
 }

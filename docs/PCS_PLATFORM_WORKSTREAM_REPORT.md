@@ -99,3 +99,7 @@ Source references and file digests are in [SOURCE_OVERLAY.json](evidence/platfor
 ## Remaining boundaries
 
 This work does not claim complete task taxonomy, external email or GitHub submission integration, scientific acceptance, actual human training data, held-out model improvement, protected production merges, deployed-source guarantees, production D1 reconciliation, remote rollback/recovery, global distributed-copy deletion, or legal clearance for all external datasets. No new third-party dependency, license change, financial information or production secret was introduced. Full per-stage CPU/memory profiling was not collected; executed gradient counts, checkpoint hashes, checks and database fingerprints are retained instead.
+
+## Account deletion addendum
+
+The later 34-check actual Worker/D1/Chromium campaign also verifies deletion through the actual account UI and download of exact proof-game withdrawal membership. The D1 selection and user cascade share one transaction; unsupported oversized historical membership blocks deletion pending bounded erasure. The receipt preserves membership for future local quarantine and does not erase prior weights. Earlier sealed 33-check evidence remains unchanged. See `docs/evidence/account-withdrawal-v1/summary.json`. Signed unexpired tickets also preserve their one explicitly approved previous core revision during a deployment transition; new dispatch requires the current protected revision.

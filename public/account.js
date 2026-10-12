@@ -477,8 +477,14 @@
     if(!confirm("Permanently delete your PCS Commons account and linked account/task data? This cannot be undone.")) return;
     const fd=new FormData(event.currentTarget);
     try{
-      await api("/api/account/delete",{method:"POST",body:{password:fd.get("password")}});
-      setMessage("deleteAccountMessage","Account deleted.",true);
+      const result=await api("/api/account/delete",{method:"POST",body:{password:fd.get("password")}});
+      const withdrawal=result.proof_game_withdrawal;
+      if(withdrawal?.withdrawn_entry_ids?.length){
+        const link=document.createElement("a");
+        const url=URL.createObjectURL(new Blob([JSON.stringify(withdrawal,null,2)],{type:"application/json"}));
+        link.href=url;link.download="pcs-proof-game-withdrawal.json";document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      }
+      setMessage("deleteAccountMessage",withdrawal?.withdrawn_entry_ids?.length?"Account deleted. Your proof-game withdrawal receipt was downloaded; previous exports or models require separate handling.":"Account deleted.",true);
       await load();
     }catch(e){setMessage("deleteAccountMessage",e.message);}
   });

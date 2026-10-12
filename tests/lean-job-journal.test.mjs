@@ -8,7 +8,7 @@ import {createHash} from 'node:crypto';
 import {Miniflare,convertV4MiniflareOptions} from 'miniflare';
 import {AuditJournal,requestKey,eventId} from '../src/lean-job-journal.js';
 import {submitJob,pollJob,cancelJob} from '../src/lean-job-service.js';
-import {CORE_SHA,preparePublicRequest} from '../src/lean-research.js';
+import {CORE_SHA,PREVIOUS_CORE_SHA,preparePublicRequest} from '../src/lean-research.js';
 const BODY={statement:'For all propositions U and V, if (U and V) then (U and (U and V)).',interpretation:null,public_consent:true,license:'CC0-1.0'};
 const NOW=1760000000000;
 const receipt=JSON.parse(readFileSync(new URL('./fixtures/lean-proof-receipt-v1.json',import.meta.url)));
@@ -94,4 +94,16 @@ test('persisted event corruption and skipped versions fail closed',async()=>fixt
  const r=await store.create(p,'5'.repeat(64),NOW);
  await db.prepare('UPDATE audit_log SET detail_json=? WHERE id=?').bind(JSON.stringify({...r,state:'complete'}),eventId(p.request_id,0)).run();
  await assert.rejects(store.current(p.request_id),/digest mismatch/);
+}));
+
+test('an already dispatched older approved request recovers without another dispatch',async()=>fixture(async({env})=>{
+ const idempotencyKey='6'.repeat(32),ip='fixture-previous',key=await requestKey(env,ip,idempotencyKey);
+ const payload=await preparePublicRequest(BODY,NOW,key.slice(0,32));payload.core_sha=PREVIOUS_CORE_SHA;
+ const store=new AuditJournal(env.COMMONS_DB),canonical=v=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':v&&typeof v==='object'?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}':JSON.stringify(v);
+ let row=await store.create(payload,createHash('sha256').update(canonical(BODY)).digest('hex'),NOW);
+ for(const [state,code]of [['authorizing','admission_started'],['authorized','admission_passed'],['queued','queued'],['dispatching','dispatch_started'],['dispatched','dispatch_confirmed']])row=(await store.advance(row,state,code,{now:NOW})).current;
+ const p=provider();let admissions=0;
+ const recovered=await submitJob(env,BODY,{ip,idempotencyKey,admit:async()=>{admissions++;},transport:p.transport,now:NOW+1});
+ assert.equal(recovered.core_sha,PREVIOUS_CORE_SHA);assert.equal(recovered.request_id,payload.request_id);assert.equal(p.dispatches,0);assert.equal(admissions,0);
+ assert.equal((await store.current(payload.request_id)).state,'dispatched');
 }));
