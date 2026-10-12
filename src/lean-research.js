@@ -1,7 +1,7 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "68bac9b0d6e2d04cb16968fdb24e8308473c5485";
+export const CORE_SHA = "979bc7aaacb5f92882848b02e5590e4af206ecb3";
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
 const WORKFLOW = "pcs-lean-public.yml";
 const DOMAIN = "PCS_PUBLIC_LEAN_TICKET_V1:";
@@ -20,7 +20,7 @@ export async function verifyTicket(env,value,now=Date.now()){
   const p=JSON.parse(data);
   const keys=['format','request_id','core_sha','source_sha256','interpretation','issued','expires'];
   if(p.actions_sha256!==undefined)keys.push('actions_sha256');if(p.model_family!==undefined)keys.push('model_family');
-  if(!exact(p,keys)||(p.actions_sha256!==undefined&&!/^[0-9a-f]{64}$/.test(p.actions_sha256))||(p.model_family!==undefined&&p.model_family!=='induction-abstraction-v2')||(p.actions_sha256!==undefined&&p.model_family!==undefined)||p.format!=='pcs-public-lean-ticket-v1'||p.core_sha!==CORE_SHA||!/^[0-9a-f]{32}$/.test(p.request_id)||!/^[0-9a-f]{64}$/.test(p.source_sha256)||!Number.isSafeInteger(p.issued)||!Number.isSafeInteger(p.expires)||p.expires!==p.issued+3600000||now<p.issued-60000||now>p.expires)fail('Expired or mismatched checker ticket');
+  if(!exact(p,keys)||(p.actions_sha256!==undefined&&!/^[0-9a-f]{64}$/.test(p.actions_sha256))||(p.model_family!==undefined&&!['induction-abstraction-v2','verified-memory-v1'].includes(p.model_family))||(p.actions_sha256!==undefined&&p.model_family==='induction-abstraction-v2')||p.format!=='pcs-public-lean-ticket-v1'||p.core_sha!==CORE_SHA||!/^[0-9a-f]{32}$/.test(p.request_id)||!/^[0-9a-f]{64}$/.test(p.source_sha256)||!Number.isSafeInteger(p.issued)||!Number.isSafeInteger(p.expires)||p.expires!==p.issued+3600000||now<p.issued-60000||now>p.expires)fail('Expired or mismatched checker ticket');
   return p;
 }
 async function github(env,path,options={},transport=fetch){
@@ -33,7 +33,7 @@ async function object(response){if(!response.ok)fail('GitHub checker operation u
 export function validatePublicStatement(body){
   const keys=['statement','interpretation','public_consent','license'];
   if(body?.proof_actions!==undefined)keys.push('proof_actions');if(body?.model_family!==undefined)keys.push('model_family');
-  if(!exact(body,keys)||(body.model_family!==undefined&&body.model_family!=='induction-abstraction-v2')||(body.proof_actions!==undefined&&body.model_family!==undefined)||typeof body.statement!=='string'||!body.statement.trim()||body.statement.length>3000||body.public_consent!==true||body.license!=='CC0-1.0'||!(body.interpretation===null||(Number.isInteger(body.interpretation)&&body.interpretation>=0&&body.interpretation<=15)))fail('Explicit authorized public CC0 statement and valid interpretation required');
+  if(!exact(body,keys)||(body.model_family!==undefined&&!['induction-abstraction-v2','verified-memory-v1'].includes(body.model_family))||(body.proof_actions!==undefined&&body.model_family==='induction-abstraction-v2')||typeof body.statement!=='string'||!body.statement.trim()||body.statement.length>3000||body.public_consent!==true||body.license!=='CC0-1.0'||!(body.interpretation===null||(Number.isInteger(body.interpretation)&&body.interpretation>=0&&body.interpretation<=15)))fail('Explicit authorized public CC0 statement and valid interpretation required');
   if(body.proof_actions!==undefined)validateProofActions(body.proof_actions);
   if(!/^(For (all|every|any) (propositions?|natural numbers?|integers?|functions from natural numbers to natural numbers|predicates on natural numbers|lists of natural numbers)|There exists (a|an) (natural number|integer|proposition)) /i.test(body.statement)||!/^[A-Za-z0-9_(), .:+*=≤¬∧∨→↔∀∃-]+$/.test(body.statement)||/\b[0-9]{5,}\b/.test(body.statement))fail('Use a supported public mathematical statement; personal data and credentials are not accepted');
   if(/\b(?:bearer|password|api_key|access_token|private_key|authorization)\b/i.test(body.statement)||/\b(?:ghp|github_pat|sk)-?[A-Za-z0-9_]{12,}\b/.test(body.statement))fail('Credential-like text is not eligible for public submission');
@@ -87,12 +87,17 @@ function validateResult(result,payload){
   if(result.format!=='pcs-public-lean-result-v1'||result.request_id!==payload.request_id||result.core_sha!==payload.core_sha||result.source_sha256!==payload.source_sha256||result.result?.pcs_authority!==false)fail('Checker result binding mismatch');
   if((payload.actions_sha256??null)!==(result.actions_sha256??null))fail('Exact human proof-action binding mismatch');
   if((payload.model_family??null)!==(result.model_family??null))fail('Reasoning model-family binding mismatch');
-  for(const observation of [result.result,result.baseline,result.previous].filter(Boolean)){
-    if(observation.pcs_authority!==false||!['verified','unknown','resource_exhaustion','unsupported_formalization','ambiguous_interpretation'].includes(observation.status))fail('Unapproved checker outcome or authority assertion');
+  for(const observation of [result.result,result.baseline,result.previous,result.strong_baseline].filter(Boolean)){
+    if(observation.pcs_authority!==false||!['verified','verified_counterexample','unknown','resource_exhaustion','unsupported_formalization','ambiguous_interpretation'].includes(observation.status))fail('Unapproved checker outcome or authority assertion');
+    if(observation.status==='verified_counterexample'){
+      if(payload.model_family!=='verified-memory-v1')fail('Unapproved counterexample family');
+      const c=observation.counterexample?.receipt,meaning=result.result.formalization?.candidates?.[payload.interpretation??0];
+      if(!c||c.format!=='pcs-memory-counterexample-v1'||c.original_goal_sha256!==meaning?.interpretation_sha256||c.statement!==meaning?.lean||c.pcs_authority!==false||c.kernel?.format!=='pcs-lean-kernel-v1'||!Array.isArray(c.kernel.axioms)||c.kernel.axioms.some(a=>!['propext','Classical.choice','Quot.sound'].includes(a))||typeof c.proof!=='string'||!c.proof.trim()||!c.lean?.includes('version 4.28.0,'))fail('Invalid original-goal counterexample receipt');
+    }
     if(observation.status!=='verified')continue;
-    const r=observation.search?.receipt;if(!r||r.format!=='pcs-prover-proof-v1'||r.kernel?.format!=='pcs-lean-kernel-v1'||!Array.isArray(r.kernel.axioms)||r.kernel.axioms.some(a=>!['propext','Classical.choice','Quot.sound'].includes(a))||typeof r.proof!=='string'||!r.proof.trim()||typeof r.lean!=='string'||!r.lean.includes('version 4.28.0,')||r.pcs_scientific_authority!==false)fail('Invalid scoped kernel receipt');
+    const r=observation.search?.receipt;if(!r||!(r.format==='pcs-prover-proof-v1'||observation===result.strong_baseline&&payload.model_family==='verified-memory-v1'&&r.format==='pcs-std-baseline-proof-v1')||r.kernel?.format!=='pcs-lean-kernel-v1'||!Array.isArray(r.kernel.axioms)||r.kernel.axioms.some(a=>!['propext','Classical.choice','Quot.sound'].includes(a))||typeof r.proof!=='string'||!r.proof.trim()||typeof r.lean!=='string'||!r.lean.includes('version 4.28.0,')||r.pcs_scientific_authority!==false)fail('Invalid scoped kernel receipt');
   }
-  const observations=[result.result,result.baseline,result.previous].filter(Boolean);
+  const observations=[result.result,result.baseline,result.previous,result.strong_baseline].filter(Boolean);
   if(observations.some(o=>o.status==='verified')){
     const meaning=result.result.formalization?.candidates?.[payload.interpretation??0];
     if(!meaning||!/^[0-9a-f]{64}$/.test(meaning.interpretation_sha256)||typeof meaning.lean!=='string')fail('Missing selected formal interpretation');
@@ -115,6 +120,28 @@ export function parseResult(log,payload){
   const binary=atob(marker.value);if(binary.length>1000000)fail('Checker result exceeds bound');
   return validateResult(resultJSON(Uint8Array.from(binary,c=>c.charCodeAt(0))),payload);
 }
+async function expandCatalogPacket(packet,payload){
+  if(payload.model_family!=='verified-memory-v1'||!exact(packet,['format','payload','catalogs','expanded_limit_bytes'])||packet.expanded_limit_bytes!==4000000)fail('Unapproved interned packet');
+  if(!packet.catalogs||typeof packet.catalogs!=='object'||Array.isArray(packet.catalogs)||Object.keys(packet.catalogs).length>8)fail('Catalog bound');
+  const canonical=v=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':v&&typeof v==='object'?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}':JSON.stringify(v);
+  const depthCheck=(v,d=0)=>{if(d>64)fail('Packet nesting bound');if(v&&typeof v==='object'){if('pcs_catalog_ref' in v)fail('Nested catalog reference');for(const x of Object.values(v))depthCheck(x,d+1);}};
+  const sizes=new Map();
+  for(const [id,value] of Object.entries(packet.catalogs)){
+    if(!/^[0-9a-f]{64}$/.test(id)||!Array.isArray(value))fail('Invalid catalog');depthCheck(value);
+    const bytes=encoder.encode(canonical(value));if(hex(await crypto.subtle.digest('SHA-256',bytes))!==id)fail('Catalog digest mismatch');sizes.set(id,bytes.length);
+  }
+  let remaining=4000000;
+  const charge=n=>{remaining-=n;if(remaining<0)fail('Expanded packet bound');};
+  const visit=(v,d=0)=>{
+    if(d>64)fail('Packet nesting bound');
+    if(Array.isArray(v)){charge(2+Math.max(0,v.length-1));return v.map(x=>visit(x,d+1));}
+    if(!v||typeof v!=='object'){charge(encoder.encode(JSON.stringify(v)).length);return v;}
+    if(exact(v,['pcs_catalog_ref'])){const id=v.pcs_catalog_ref;if(typeof id!=='string'||!sizes.has(id))fail('Missing catalog reference');charge(sizes.get(id));return packet.catalogs[id];}
+    charge(2+Math.max(0,Object.keys(v).length-1)+Object.keys(v).reduce((n,k)=>n+encoder.encode(JSON.stringify(k)).length+1,0));
+    return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,visit(x,d+1)]));
+  };
+  return visit(packet.payload);
+}
 export async function parseResultLog(log,payload){
   const marker=resultMarker(log);
   if(marker.encoding==='V1')return parseResult(log,payload);
@@ -128,7 +155,7 @@ export async function parseResultLog(log,payload){
       if(size>1000000){await reader.cancel();fail('Checker result exceeds bound');}chunks.push(value);}
   }catch(error){throw new Error(error.message||'Invalid compressed checker result');}
   const raw=new Uint8Array(size);let offset=0;for(const chunk of chunks){raw.set(chunk,offset);offset+=chunk.length;}
-  return validateResult(resultJSON(raw),payload);
+  const parsed=resultJSON(raw);return validateResult(parsed.format==='pcs-interned-public-lean-v1'?await expandCatalogPacket(parsed,payload):parsed,payload);
 }
 export async function poll(env,value,transport=fetch,now=Date.now()){
   const payload=await verifyTicket(env,value,now);

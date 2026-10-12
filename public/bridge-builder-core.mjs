@@ -3,11 +3,11 @@ export const VERSION='pcs-bridge-builder-v1';
 export const CATALOG=catalog;
 const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).sort().join(',')===keys.sort().join(',');
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
-export function mission(id){const m=catalog.missions.find(x=>x.id===id);if(!m)throw Error('Unknown bridge mission');return m;}
-export function createSession(id){mission(id);return {format:'pcs-bridge-session-v1',version:VERSION,catalog_sha256:catalog.content_sha256,mission_id:id,events:[]};}
-export function replay(session){
- if(!exact(session,['format','version','catalog_sha256','mission_id','events'])||session.format!=='pcs-bridge-session-v1'||session.version!==VERSION||session.catalog_sha256!==catalog.content_sha256||!Array.isArray(session.events)||session.events.length>120)throw Error('Unsupported or changed bridge session');
- const m=mission(session.mission_id);let current=m.start,stack=[current],last=-1,hints=0,invalid=0;const transitions=[];
+export function mission(id,selected=catalog){const m=selected.missions.find(x=>x.id===id);if(!m)throw Error('Unknown bridge mission');return m;}
+export function createSession(id,selected=catalog){mission(id,selected);return {format:'pcs-bridge-session-v1',version:VERSION,catalog_sha256:selected.content_sha256,mission_id:id,events:[]};}
+export function replay(session,selected=catalog){
+ if(!exact(session,['format','version','catalog_sha256','mission_id','events'])||session.format!=='pcs-bridge-session-v1'||session.version!==VERSION||session.catalog_sha256!==selected.content_sha256||!Array.isArray(session.events)||session.events.length>120)throw Error('Unsupported or changed bridge session');
+ const m=mission(session.mission_id,selected);let current=m.start,stack=[current],last=-1,hints=0,invalid=0;const transitions=[];
  for(const [index,event] of session.events.entries()){
   if(!exact(event,['kind','node','edge','sequence'])||!['choose','undo','hint'].includes(event.kind)||!Number.isSafeInteger(event.sequence)||event.sequence!==index||event.node!==current)throw Error('Invalid event or reordered history');
   last=event.sequence;
@@ -21,7 +21,7 @@ export function replay(session){
   current=edge.next;stack.push(current);
  }
  const node=m.nodes[current],completed=node.receipt_index!==undefined;
- return {format:'pcs-bridge-replay-v1',mission_id:m.id,catalog_sha256:catalog.content_sha256,goal_sha256:m.goal_sha256,
+ return {format:'pcs-bridge-replay-v1',mission_id:m.id,catalog_sha256:selected.content_sha256,goal_sha256:m.goal_sha256,
   current_node:current,stack,completed,hints,invalid_attempts:invalid,transitions,proof_actions:node.path,
   receipt:completed?m.receipts[node.receipt_index]:null,
   label_boundary:'Replay of archived real Lean transitions; fresh kernel replay is required before training intake.',

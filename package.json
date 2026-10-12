@@ -44,9 +44,10 @@
     "test:intervention": "node --test tests/intervention.test.mjs",
     "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs && npm run test:bridge",
     "test:browser:checked-reuse": "node scripts/browser_checked_reuse.cjs",
-    "test:bridge": "node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs && python3 tests/test_bridge_migration.py",
+    "test:bridge": "node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs tests/memory-workshop.test.mjs && python3 tests/test_bridge_migration.py",
     "test:browser:bridge": "node scripts/browser_bridge_builder.cjs",
-    "test:browser:bridge-research": "node scripts/browser_bridge_research.cjs"
+    "test:browser:bridge-research": "node scripts/browser_bridge_research.cjs",
+    "test:browser:memory": "PCS_BRIDGE_PAGE=memory-workshop.html PCS_BRIDGE_CATALOG=memory-workshop-catalog.json node scripts/browser_bridge_builder.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

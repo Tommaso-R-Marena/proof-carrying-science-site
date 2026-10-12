@@ -1,6 +1,9 @@
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
 import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
-import {replay as replayBridge,VERSION as BRIDGE_VERSION} from "../public/bridge-builder-core.mjs";
+import {replay as replayBridgeCatalog, CATALOG as originalBridgeCatalog, VERSION as BRIDGE_VERSION} from "../public/bridge-builder-core.mjs";
+import memoryWorkshopCatalog from '../public/memory-workshop-catalog.mjs';
+const bridgeCatalogs=new Map([originalBridgeCatalog,memoryWorkshopCatalog].map(c=>[c.content_sha256,c]));
+function replayBridge(session){const c=bridgeCatalogs.get(session?.catalog_sha256);if(!c)throw Error('Unsupported bridge catalog');return replayBridgeCatalog(session,c);}
 import {MEANING_VERSION,MISSIONS,publicMission,replaySession} from "../public/meaning-forge-core.mjs";
 import {parseAuditPage,auditSearchPattern} from "./audit-query.js";
 import {SAFETY_LAB_VERSION,evaluateResearchSession} from "../public/safety-forge-core.mjs";
@@ -4272,8 +4275,11 @@ async function bridgeDonate(request,env,user){
   const quota=await env.COMMONS_DB.prepare("SELECT COUNT(*) AS n, COALESCE(SUM(LENGTH(session_json)),0) AS bytes FROM bridge_research_sessions").first();
   if(Number(quota?.n||0)>=1000||Number(quota?.bytes||0)>=20000000)throw new ApiError(429,"Research storage is full; download your session instead.","bridge_storage_cap");
   const digest=await sha256Hex(JSON.stringify(body.session));
+  const storedReplay=body.session.catalog_sha256===memoryWorkshopCatalog.content_sha256?
+    {...replay,receipt:null,receipt_sha256:replay.receipt?await sha256Hex(JSON.stringify(replay.receipt)):null}:replay;
+  if(JSON.stringify(body.session).length>20000||JSON.stringify(storedReplay).length>40000)throw new ApiError(400,"Research session exceeds storage bounds.","bridge_size_bound");
   const row=await env.COMMONS_DB.prepare("INSERT OR IGNORE INTO bridge_research_sessions (id,user_id,mission_id,version,session_digest,session_json,replay_json,consent_version,created_at) VALUES(?,?,?,?,?,?,?,?,?)")
-    .bind(crypto.randomUUID(),user.id,replay.mission_id,BRIDGE_VERSION,digest,JSON.stringify(body.session),JSON.stringify(replay),"pcs-bridge-adult-cc0-optin-v1",nowIso()).run();
+    .bind(crypto.randomUUID(),user.id,replay.mission_id,BRIDGE_VERSION,digest,JSON.stringify(body.session),JSON.stringify(storedReplay),"pcs-bridge-adult-cc0-optin-v1",nowIso()).run();
   return json({ok:true,recorded:Number(row.meta?.changes||0)>0,completed:replay.completed,eligible_for_training:false,
     scope:"Server replay of archived Lean transitions. Independent fresh kernel replay is required before training intake."});
 }
@@ -4287,8 +4293,10 @@ async function bridgeExport(request,env,admin){
   const raw=new URL(request.url).searchParams.get("offset")||"0";
   if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid export offset.","bad_cursor");
   const offset=Number(raw);
-  const rows=await env.COMMONS_DB.prepare("SELECT id,session_json FROM bridge_research_sessions WHERE version=? AND consent_version=? ORDER BY created_at,id LIMIT 25 OFFSET ?")
-    .bind(BRIDGE_VERSION,"pcs-bridge-adult-cc0-optin-v1",offset).all();
+  const catalogSha=new URL(request.url).searchParams.get("catalog_sha256")||originalBridgeCatalog.content_sha256;
+  if(catalogSha!==null&&!bridgeCatalogs.has(catalogSha))throw new ApiError(400,"Unknown research catalog.","bad_catalog");
+  const rows=await env.COMMONS_DB.prepare("SELECT id,session_json FROM bridge_research_sessions WHERE version=? AND consent_version=? AND json_extract(session_json,'$.catalog_sha256')=? ORDER BY created_at,id LIMIT 25 OFFSET ?")
+    .bind(BRIDGE_VERSION,"pcs-bridge-adult-cc0-optin-v1",catalogSha,offset).all();
   const entries=(rows.results||[]).map(row=>({id:row.id,session:JSON.parse(row.session_json),license:"CC0-1.0",adult_consented:true,training_consented:true}));
   await audit(env,admin.id,"bridge_research_exported","research","bridge-builder",{offset,entries:entries.length});
   return json({format:"pcs-bridge-consented-export-v1",version:BRIDGE_VERSION,entries,next_offset:entries.length===25?offset+25:null,

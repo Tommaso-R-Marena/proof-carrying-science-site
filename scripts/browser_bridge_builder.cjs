@@ -6,7 +6,7 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
  const base=process.env.PCS_BRIDGE_BASE||'http://127.0.0.1:8766';
  const output=process.env.PCS_BRIDGE_BROWSER_OUTPUT||fs.mkdtempSync(path.join(os.tmpdir(),'pcs-bridge-'));
  fs.mkdirSync(output,{recursive:true});
- const catalog=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../public/bridge-builder-catalog.json'),'utf8'));
+ const catalog=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../public/'+(process.env.PCS_BRIDGE_CATALOG||'bridge-builder-catalog.json')),'utf8'));
  const prefix=child.execFileSync('lean',['--print-prefix'],{cwd:core,encoding:'utf8'}).trim();
  const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||'/usr/bin/chromium',headless:true});
  const rows=[];
@@ -14,7 +14,7 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
   for(const width of [320,390,768,1440]){
    const page=await browser.newPage({viewport:{width,height:1000}}),errors=[];
    page.on('pageerror',e=>errors.push(e.message));
-   await page.goto(base+'/bridge-builder.html',{waitUntil:'networkidle'});
+   await page.goto(base+'/'+(process.env.PCS_BRIDGE_PAGE||'bridge-builder.html'),{waitUntil:'networkidle'});
    await page.locator('#choices button').first().waitFor();
    if(await page.locator('#donate').isEnabled()||await page.locator('#kernelCheck').isEnabled())throw Error('Consent defaults invalid');
    await page.locator('#guideDismiss').click();

@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: 68bac9b0d6e2d04cb16968fdb24e8308473c5485
+          ref: 979bc7aaacb5f92882848b02e5590e4af206ecb3
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -204,7 +204,8 @@ jobs:
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
           python -m pcs.experimental.prover.bridge_catalog --verify public/bridge-builder-catalog.json
-          python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --reuse-models .ci-components/lean-prover/research/checked-reuse-v2 --abstraction-models .ci-components/lean-prover/research/induction-abstraction-v2 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &
+          python -m pcs.experimental.prover.memory_catalog --verify public/memory-workshop-catalog.json
+          python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --reuse-models .ci-components/lean-prover/research/checked-reuse-v2 --abstraction-models .ci-components/lean-prover/research/induction-abstraction-v2 --memory-models .ci-components/lean-prover/research/verified-memory-v1 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &
           lean_lab_pid=$!
           trap 'kill "$lean_lab_pid" 2>/dev/null || true' EXIT
           python - <<'PYWAIT'
@@ -220,6 +221,7 @@ jobs:
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" node scripts/browser_lean_learning.cjs
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:checked-reuse
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:bridge
+          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:memory
           # Separate disposable D1; synthetic accounts never touch production.
           npx --no-install wrangler d1 migrations apply pcs-commons --local --persist-to "$RUNNER_TEMP/bridge-d1"
           python - <<'PYSALT'
@@ -243,4 +245,5 @@ jobs:
           else: raise SystemExit('Disposable research Worker did not start')
           PYBRIDGEWAIT
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BROWSER_BASE_URL=http://127.0.0.1:8789 PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/bridge-d1" PCS_BRIDGE_RESEARCH_OUTPUT="$RUNNER_TEMP/bridge-intake" node scripts/browser_bridge_research.cjs
+          PCS_BRIDGE_RESEARCH_MODE=memory PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BROWSER_BASE_URL=http://127.0.0.1:8789 PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/bridge-d1" PCS_BRIDGE_RESEARCH_OUTPUT="$RUNNER_TEMP/memory-intake" node scripts/browser_bridge_research.cjs
       # Exact proof receipts are in logs; no extra artifact storage is allocated.

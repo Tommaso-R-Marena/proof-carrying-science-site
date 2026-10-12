@@ -5,6 +5,8 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
 const {spawnSync}=require('node:child_process');
 const base=process.env.PCS_BROWSER_BASE_URL||'http://127.0.0.1:8788';
 const state=process.env.PCS_RESEARCH_DB_STATE,output=process.env.PCS_BRIDGE_RESEARCH_OUTPUT;
+const isMemory=process.env.PCS_BRIDGE_RESEARCH_MODE==='memory';
+const catalogName=isMemory?'memory-workshop-catalog.json':'bridge-builder-catalog.json';
 const core=process.env.PCS_LEAN_CORE||path.resolve(__dirname,'../../proof-carrying-science');
 if(!['127.0.0.1','localhost'].includes(new URL(base).hostname)||!state||!path.isAbsolute(state)||!output||!path.isAbsolute(output))throw Error('Disposable loopback database and absolute private output required');
 fs.mkdirSync(output,{recursive:true});
@@ -20,8 +22,8 @@ async function cleanup(){if(userId){try{fixture("UPDATE users SET role='contribu
  await page.locator('#registerForm [name=ai_policy_ack]').check();await page.locator('#registerForm [name=terms_ack]').check();
  const registration=page.waitForResponse(r=>r.url().endsWith('/api/auth/register'));await page.locator('#registerForm button[type=submit]').click();if((await registration).status()!==201)throw Error('Fixture registration failed');
  const me=await (await context.request.get(base+'/api/me')).json();userId=me.user.id;if(!/^[0-9a-f-]{36}$/.test(userId)||me.user.is_owner||me.user.level!==0)throw Error('Invalid fixture identity');
- const catalog=JSON.parse(fs.readFileSync('public/bridge-builder-catalog.json','utf8')),mission=catalog.missions[0];
- await page.goto(base+'/bridge-builder.html',{waitUntil:'networkidle'});await page.locator('#guideDismiss').click();
+ const catalog=JSON.parse(fs.readFileSync('public/'+catalogName,'utf8')),mission=catalog.missions[0];
+ await page.goto(base+'/'+(isMemory?'memory-workshop.html':'bridge-builder.html'),{waitUntil:'networkidle'});await page.locator('#guideDismiss').click();
  let node=mission.start;const invalid=mission.nodes[node].edges.findIndex(e=>e.status==='invalid');
  if(invalid>=0)await page.locator('#choices button').nth(invalid).click();
  for(const action of mission.receipts[0].actions.slice(mission.automatic_setup_actions.length)){
@@ -36,12 +38,12 @@ async function cleanup(){if(userId){try{fixture("UPDATE users SET role='contribu
  fixture("UPDATE users SET role='admin',is_owner=1 WHERE id='"+userId+"' AND email='"+email+"'");
  const login=await context.request.post(base+'/api/admin/login',{headers:{Origin:base},data:{email,password}});if(login.status()!==200)throw Error('Synthetic owner login failed');
  await page.goto(base+'/admin.html',{waitUntil:'networkidle'});await page.locator('#adminDashboard').waitFor();
- const pendingExport=page.waitForEvent('download');await page.locator('#adminBridgeExport').click();const downloaded=await pendingExport;
+ const pendingExport=page.waitForEvent('download');await page.locator(isMemory?'#adminMemoryExport':'#adminBridgeExport').click();const downloaded=await pendingExport;
  const data=JSON.parse(fs.readFileSync(await downloaded.path(),'utf8'));
  if(data.entries.length!==1||JSON.stringify(data).includes(email)||JSON.stringify(data).includes(userId)||data.eligible_for_training!==false)throw Error('Export provenance/privacy failed');
  const file=path.join(output,'synthetic-export.json');fs.writeFileSync(file,JSON.stringify(data));
  const intake=path.join(output,'independent-intake.json');
- let r=spawnSync('python',['-m','pcs.experimental.prover.bridge_data','--catalog',path.resolve('public/bridge-builder-catalog.json'),'--export',file,'--heldout',path.join(core,'research/induction-abstraction-v2/tasks.json'),'--output',intake],{cwd:core,encoding:'utf8',timeout:120000});
+ let r=spawnSync('python',['-m','pcs.experimental.prover.bridge_data','--catalog',path.resolve('public/'+catalogName),'--export',file,'--heldout',path.join(core,isMemory?'research/verified-memory-v1/tasks.json':'research/induction-abstraction-v2/tasks.json'),'--output',intake],{cwd:core,encoding:'utf8',timeout:120000});
  if(r.status!==0)throw Error('Independent Lean intake failed: '+r.stderr);
  const checked=JSON.parse(fs.readFileSync(intake,'utf8'));if(checked.verified_training_examples.length!==1||!checked.verified_training_examples[0].hint_exposure)throw Error('Fresh trajectory/hint label missing');
  const trainingCode=[
@@ -50,12 +52,14 @@ async function cleanup(){if(userId){try{fixture("UPDATE users SET role='contribu
   'from pcs.experimental.prover.grounded_model import GroundedNetwork',
   'from pcs.experimental.prover.environment import LeanEnvironment',
   'from pcs.experimental.prover.model import imitate',
-  'folder=Path("research/induction-abstraction-v2")',
+  'from pcs.experimental.prover.memory_model import MemoryNetwork',
+  'from pcs.experimental.prover.memory_environment import MemoryEnvironment',
+  'folder=Path("research/'+(isMemory?'verified-memory-v1':'induction-abstraction-v2')+'")',
   'registry=json.loads((folder/"registry.json").read_text())',
   'entry=next(e for e in registry["models"] if e["id"]==registry["selected_local_experiment"])',
-  'model=GroundedNetwork.load(folder/entry["checkpoint"],entry["sha256"])',
+  'model='+(isMemory?'MemoryNetwork':'GroundedNetwork')+'.load(folder/entry["checkpoint"],entry["sha256"])',
   'examples=json.loads(Path(sys.argv[1]).read_text())["verified_training_examples"]',
-  'env=LeanEnvironment(timeout=30)',
+  isMemory?'env=MemoryEnvironment(json.loads((folder/"library.json").read_text()),timeout=30)':'env=LeanEnvironment(timeout=30)',
   'try:',
   ' report=imitate(model,examples,epochs=2,seed=71,candidate_provider=env.candidates)',
   ' assert report["changed_parameters"]',
@@ -65,7 +69,7 @@ async function cleanup(){if(userId){try{fixture("UPDATE users SET role='contribu
  ].join('\n');
  r=spawnSync('python',['-c',trainingCode,intake,output],{cwd:core,encoding:'utf8',timeout:120000});if(r.status!==0)throw Error('Actual training update failed: '+r.stderr);
  const erased=await (await context.request.post(base+'/api/arena/bridge-builder/erase',{headers:{Origin:base},data:{}})).json();if(erased.deleted!==1)throw Error('Active erasure failed');
- const empty=await (await context.request.get(base+'/api/admin/arena/bridge-builder/dataset')).json();if(empty.entries.length)throw Error('Erased rows remained exportable');
- const report={format:'pcs-bridge-real-integration-v1',source:'synthetic browser/account fixture; zero human participant records',actualD1InsertAndDedup:true,emailVerificationFixture:true,identityFreeOwnerExport:true,independentLeanIntake:true,hintsTracked:true,actualGradientUpdate:true,checkpointNotPromoted:true,activeErasure:true,financial_spend:0};
+ const empty=await (await context.request.get(base+'/api/admin/arena/bridge-builder/dataset'+(isMemory?'?catalog_sha256='+catalog.content_sha256:''))).json();if(empty.entries.length)throw Error('Erased rows remained exportable');
+ const report={format:'pcs-bridge-real-integration-v1',source:'synthetic browser/account fixture; zero human participant records',memoryWorkshop:isMemory,actualD1InsertAndDedup:true,emailVerificationFixture:true,identityFreeOwnerExport:true,independentLeanIntake:true,hintsTracked:true,actualGradientUpdate:true,checkpointNotPromoted:true,activeErasure:true,financial_spend:0};
  fs.writeFileSync(path.join(output,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));await cleanup();
 })().catch(async e=>{console.error(e);await cleanup();process.exitCode=1;});
