@@ -1,10 +1,10 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722";
+export const CORE_SHA = "b59badd68cedba3dcc9c72a6d5148e7986545ebd";
 // One previously protected revision remains eligible for already signed tickets
 // during their original one-hour lifetime. New dispatch always requires CORE_SHA.
-export const PREVIOUS_CORE_SHA = "e1067e406a1a1991497e7130e1f209239e5607cc";
+export const PREVIOUS_CORE_SHA = "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722";
 const APPROVED_TICKET_REVISIONS = new Set([CORE_SHA, PREVIOUS_CORE_SHA]);
 export const approvedTicketRevision = value => APPROVED_TICKET_REVISIONS.has(value);
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
