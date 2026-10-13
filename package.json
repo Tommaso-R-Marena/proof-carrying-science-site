@@ -42,16 +42,18 @@
     "test:browser:layout": "node scripts/browser_layout_check.cjs",
     "test:conditional": "node --test tests/conditional-reasoning.test.mjs",
     "test:intervention": "node --test tests/intervention.test.mjs",
-    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs tests/lean-job-client.test.mjs tests/lean-job-journal.test.mjs tests/lean-admission.test.mjs && npm run test:bridge && npm run test:platform-governance && npm run test:scientific-workflow",
+    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs tests/lean-job-client.test.mjs tests/lean-job-journal.test.mjs tests/lean-admission.test.mjs && npm run test:bridge && npm run test:platform-governance && npm run test:scientific-workflow && npm run test:transport-workflow",
     "test:browser:checked-reuse": "node scripts/browser_checked_reuse.cjs",
     "test:bridge": "node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs tests/memory-workshop.test.mjs && python3 tests/test_bridge_migration.py",
     "test:browser:bridge": "node scripts/browser_bridge_builder.cjs",
     "test:browser:bridge-research": "node scripts/browser_bridge_research.cjs",
     "test:browser:memory": "PCS_BRIDGE_PAGE=memory-workshop.html PCS_BRIDGE_CATALOG=memory-workshop-catalog.json node scripts/browser_bridge_builder.cjs",
-    "test:platform-governance": "node --test tests/bridge-curriculum.test.mjs tests/research-governance.test.mjs && python3 tests/test_d1_reconcile.py && python3 tests/test_research_lineage.py && python3 tests/test_d1_production_preflight.py",
+    "test:platform-governance": "node --test tests/bridge-curriculum.test.mjs tests/research-governance.test.mjs && python3 tests/test_d1_reconcile.py && python3 tests/test_research_lineage.py && python3 tests/test_d1_production_preflight.py && python3 tests/test_d1_schema_recovery_v2.py",
     "test:browser:lean-recovery": "node scripts/browser_lean_job_recovery.cjs",
     "test:scientific-workflow": "node --test tests/scientific-workflow-v2.test.mjs",
-    "test:browser:scientific-workflow": "node scripts/browser_scientific_workflow_v2.cjs"
+    "test:browser:scientific-workflow": "node scripts/browser_scientific_workflow_v2.cjs",
+    "test:transport-workflow": "node --test tests/transport-workflow-v3.test.mjs",
+    "test:browser:transport-workflow": "node scripts/browser_transport_workflow_v3.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

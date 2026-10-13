@@ -1,0 +1,589 @@
+{
+  "format": "pcs-schema-only-capture-v2",
+  "captured_at": "2026-10-13T07:48:17.282420+00:00",
+  "query": "SELECT type,name,tbl_name AS table_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY type,name LIMIT 257",
+  "query_sha256": "3a4cc9dfb617ba2d85de2af68d7a32ca9aadef3a2502748f5eadb61e924aa69a",
+  "schema_sha256": "c39546dd9bf8f19012734e90d19a76f3270bbd100072d37003be0ca1838acb8b",
+  "objects": [
+    {
+      "type": "index",
+      "name": "bridge_sessions_export",
+      "table_name": "bridge_research_sessions",
+      "sql": "CREATE INDEX bridge_sessions_export ON bridge_research_sessions(version,created_at,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_admin_evidence_sha",
+      "table_name": "admin_evidence_files",
+      "sql": "CREATE INDEX idx_admin_evidence_sha ON admin_evidence_files(sha256_hex)"
+    },
+    {
+      "type": "index",
+      "name": "idx_admin_evidence_subject",
+      "table_name": "admin_evidence_files",
+      "sql": "CREATE INDEX idx_admin_evidence_subject ON admin_evidence_files(subject_user_id,created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "idx_admin_evidence_uploader",
+      "table_name": "admin_evidence_files",
+      "sql": "CREATE INDEX idx_admin_evidence_uploader ON admin_evidence_files(uploader_user_id,created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "idx_admin_sessions_expiry",
+      "table_name": "admin_sessions",
+      "sql": "CREATE INDEX idx_admin_sessions_expiry ON admin_sessions(expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_admin_sessions_user",
+      "table_name": "admin_sessions",
+      "sql": "CREATE INDEX idx_admin_sessions_user ON admin_sessions(user_id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_audit_archive_action",
+      "table_name": "audit_archive",
+      "sql": "CREATE INDEX idx_audit_archive_action ON audit_archive(action,created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "idx_audit_archive_actor",
+      "table_name": "audit_archive",
+      "sql": "CREATE INDEX idx_audit_archive_actor ON audit_archive(actor_user_id,created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "idx_audit_archive_created",
+      "table_name": "audit_archive",
+      "sql": "CREATE INDEX idx_audit_archive_created ON audit_archive(created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "idx_audit_archive_subject",
+      "table_name": "audit_archive",
+      "sql": "CREATE INDEX idx_audit_archive_subject ON audit_archive(subject_type,subject_id,created_at DESC)"
+    },
+    {
+      "type": "index",
+      "name": "idx_audit_subject",
+      "table_name": "audit_log",
+      "sql": "CREATE INDEX idx_audit_subject ON audit_log(subject_type, subject_id, created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_challenge_entries_rank",
+      "table_name": "challenge_entries",
+      "sql": "CREATE INDEX idx_challenge_entries_rank ON challenge_entries(challenge_id,status,raw_score,verified_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_challenge_entries_user",
+      "table_name": "challenge_entries",
+      "sql": "CREATE INDEX idx_challenge_entries_user ON challenge_entries(user_id,challenge_id,submitted_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_competency_eval_status",
+      "table_name": "competency_evaluations",
+      "sql": "CREATE INDEX idx_competency_eval_status ON competency_evaluations(status,expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_competency_eval_user",
+      "table_name": "competency_evaluations",
+      "sql": "CREATE INDEX idx_competency_eval_user ON competency_evaluations(user_id,skill,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_competency_one_open_per_skill",
+      "table_name": "competency_evaluations",
+      "sql": "CREATE UNIQUE INDEX idx_competency_one_open_per_skill ON competency_evaluations(user_id,skill) WHERE status='open'"
+    },
+    {
+      "type": "index",
+      "name": "idx_countermodel_export",
+      "table_name": "countermodel_research_sessions",
+      "sql": "CREATE INDEX idx_countermodel_export ON countermodel_research_sessions(created_at,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_countermodel_user_created",
+      "table_name": "countermodel_research_sessions",
+      "sql": "CREATE INDEX idx_countermodel_user_created ON countermodel_research_sessions(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_email_verify_user",
+      "table_name": "email_verification_tokens",
+      "sql": "CREATE INDEX idx_email_verify_user ON email_verification_tokens(user_id, expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_forge_duel_by_user",
+      "table_name": "forge_duel_research_sessions",
+      "sql": "CREATE INDEX idx_forge_duel_by_user ON forge_duel_research_sessions(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_forge_duel_for_export",
+      "table_name": "forge_duel_research_sessions",
+      "sql": "CREATE INDEX idx_forge_duel_for_export ON forge_duel_research_sessions(created_at,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_meaning_forge_created",
+      "table_name": "meaning_forge_sessions",
+      "sql": "CREATE INDEX idx_meaning_forge_created\n ON meaning_forge_sessions(created_at,mission_id,mode)"
+    },
+    {
+      "type": "index",
+      "name": "idx_meaning_forge_user",
+      "table_name": "meaning_forge_sessions",
+      "sql": "CREATE INDEX idx_meaning_forge_user\n ON meaning_forge_sessions(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_notifications_user",
+      "table_name": "notifications",
+      "sql": "CREATE INDEX idx_notifications_user ON notifications(user_id, created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_production_promotions_state",
+      "table_name": "production_promotions",
+      "sql": "CREATE INDEX idx_production_promotions_state ON production_promotions(state,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_proof_order_research_by_puzzle",
+      "table_name": "proof_order_research_attempts",
+      "sql": "CREATE INDEX idx_proof_order_research_by_puzzle\n  ON proof_order_research_attempts(puzzle_id,puzzle_version,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_proof_order_research_by_user",
+      "table_name": "proof_order_research_attempts",
+      "sql": "CREATE INDEX idx_proof_order_research_by_user\n  ON proof_order_research_attempts(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_prooflab_by_time",
+      "table_name": "prooflab_research_sessions",
+      "sql": "CREATE INDEX idx_prooflab_by_time\n  ON prooflab_research_sessions(created_at,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_prooflab_by_user",
+      "table_name": "prooflab_research_sessions",
+      "sql": "CREATE INDEX idx_prooflab_by_user\n  ON prooflab_research_sessions(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_prooflab_source_export_created",
+      "table_name": "prooflab_source_research_sessions",
+      "sql": "CREATE INDEX idx_prooflab_source_export_created ON prooflab_source_research_sessions(created_at,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_prooflab_source_user_created",
+      "table_name": "prooflab_source_research_sessions",
+      "sql": "CREATE INDEX idx_prooflab_source_user_created ON prooflab_source_research_sessions(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_role_applications_status",
+      "table_name": "role_applications",
+      "sql": "CREATE INDEX idx_role_applications_status ON role_applications(status,requested_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_role_one_active_application",
+      "table_name": "role_applications",
+      "sql": "CREATE UNIQUE INDEX idx_role_one_active_application ON role_applications(role_id,user_id) WHERE status='pending'"
+    },
+    {
+      "type": "index",
+      "name": "idx_safety_forge_export",
+      "table_name": "safety_forge_research_sessions",
+      "sql": "CREATE INDEX idx_safety_forge_export\n  ON safety_forge_research_sessions(created_at,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_safety_forge_user",
+      "table_name": "safety_forge_research_sessions",
+      "sql": "CREATE INDEX idx_safety_forge_user\n  ON safety_forge_research_sessions(user_id,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_sessions_expiry",
+      "table_name": "sessions",
+      "sql": "CREATE INDEX idx_sessions_expiry ON sessions(expires_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_sessions_user",
+      "table_name": "sessions",
+      "sql": "CREATE INDEX idx_sessions_user ON sessions(user_id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_submission_peer_reviews_decisions",
+      "table_name": "submission_peer_reviews",
+      "sql": "CREATE INDEX idx_submission_peer_reviews_decisions ON submission_peer_reviews(submission_id,decision)"
+    },
+    {
+      "type": "index",
+      "name": "idx_submissions_github_stage",
+      "table_name": "submissions",
+      "sql": "CREATE INDEX idx_submissions_github_stage\n  ON submissions(github_stage_state,submitted_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_code_packets_task",
+      "table_name": "task_code_packets",
+      "sql": "CREATE INDEX idx_task_code_packets_task ON task_code_packets(task_id,active,sort_order,id)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_code_requests_admin",
+      "table_name": "task_code_requests",
+      "sql": "CREATE INDEX idx_task_code_requests_admin ON task_code_requests(status,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_code_requests_user_task",
+      "table_name": "task_code_requests",
+      "sql": "CREATE INDEX idx_task_code_requests_user_task ON task_code_requests(user_id,task_id,status,created_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_dependencies_task",
+      "table_name": "task_dependencies",
+      "sql": "CREATE INDEX idx_task_dependencies_task ON task_dependencies(task_id,dependency_type)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_dependency_groups_task",
+      "table_name": "task_dependency_groups",
+      "sql": "CREATE INDEX idx_task_dependency_groups_task ON task_dependency_groups(task_id,sort_order)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_requests_due",
+      "table_name": "task_requests",
+      "sql": "CREATE INDEX idx_task_requests_due ON task_requests(status, decision_due_at)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_requests_one_active_per_user_task",
+      "table_name": "task_requests",
+      "sql": "CREATE UNIQUE INDEX idx_task_requests_one_active_per_user_task ON task_requests(task_id,user_id) WHERE status IN ('pending','approved')"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_requests_task",
+      "table_name": "task_requests",
+      "sql": "CREATE INDEX idx_task_requests_task ON task_requests(task_id, status)"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_requests_unique_reservation",
+      "table_name": "task_requests",
+      "sql": "CREATE UNIQUE INDEX idx_task_requests_unique_reservation ON task_requests(reservation_key) WHERE reservation_key IS NOT NULL"
+    },
+    {
+      "type": "index",
+      "name": "idx_task_requests_user",
+      "table_name": "task_requests",
+      "sql": "CREATE INDEX idx_task_requests_user ON task_requests(user_id, status)"
+    },
+    {
+      "type": "index",
+      "name": "idx_users_single_owner",
+      "table_name": "users",
+      "sql": "CREATE UNIQUE INDEX idx_users_single_owner ON users(is_owner) WHERE is_owner=1"
+    },
+    {
+      "type": "table",
+      "name": "admin_evidence_chunks",
+      "table_name": "admin_evidence_chunks",
+      "sql": "CREATE TABLE admin_evidence_chunks (file_id TEXT NOT NULL,chunk_index INTEGER NOT NULL,data_base64 TEXT NOT NULL,PRIMARY KEY(file_id,chunk_index),FOREIGN KEY(file_id) REFERENCES admin_evidence_files(id) ON DELETE RESTRICT)"
+    },
+    {
+      "type": "table",
+      "name": "admin_evidence_files",
+      "table_name": "admin_evidence_files",
+      "sql": "CREATE TABLE admin_evidence_files (id TEXT PRIMARY KEY,uploader_user_id TEXT NOT NULL,uploader_email TEXT NOT NULL DEFAULT '',uploader_name TEXT NOT NULL DEFAULT '',purpose TEXT NOT NULL,subject_user_id TEXT,original_name TEXT NOT NULL,content_type TEXT NOT NULL,extension TEXT NOT NULL,size_bytes INTEGER NOT NULL,sha256_hex TEXT NOT NULL,chunk_count INTEGER NOT NULL,created_at TEXT NOT NULL,FOREIGN KEY(uploader_user_id) REFERENCES users(id) ON DELETE RESTRICT)"
+    },
+    {
+      "type": "table",
+      "name": "admin_sessions",
+      "table_name": "admin_sessions",
+      "sql": "CREATE TABLE admin_sessions (token_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,created_at TEXT NOT NULL,expires_at TEXT NOT NULL,last_seen_at TEXT NOT NULL,FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE)"
+    },
+    {
+      "type": "table",
+      "name": "audit_archive",
+      "table_name": "audit_archive",
+      "sql": "CREATE TABLE audit_archive (seq INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL UNIQUE,legacy_audit_id TEXT UNIQUE,actor_user_id TEXT,actor_email TEXT NOT NULL DEFAULT '',actor_name TEXT NOT NULL DEFAULT '',actor_role TEXT NOT NULL DEFAULT '',action TEXT NOT NULL,subject_type TEXT NOT NULL,subject_id TEXT NOT NULL,detail_json TEXT NOT NULL DEFAULT '{}',created_at TEXT NOT NULL,prev_hash TEXT NOT NULL UNIQUE,event_hash TEXT NOT NULL UNIQUE)"
+    },
+    {
+      "type": "table",
+      "name": "audit_log",
+      "table_name": "audit_log",
+      "sql": "CREATE TABLE audit_log (\n  id TEXT PRIMARY KEY,\n  actor_user_id TEXT,\n  action TEXT NOT NULL,\n  subject_type TEXT NOT NULL,\n  subject_id TEXT NOT NULL,\n  detail_json TEXT NOT NULL DEFAULT '{}',\n  created_at TEXT NOT NULL,\n  FOREIGN KEY(actor_user_id) REFERENCES users(id) ON DELETE SET NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "bridge_research_sessions",
+      "table_name": "bridge_research_sessions",
+      "sql": "CREATE TABLE bridge_research_sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  mission_id TEXT NOT NULL,\n  version TEXT NOT NULL,\n  session_digest TEXT NOT NULL CHECK(length(session_digest)=64),\n  session_json TEXT NOT NULL CHECK(length(session_json)<=20000),\n  replay_json TEXT NOT NULL CHECK(length(replay_json)<=40000),\n  consent_version TEXT NOT NULL CHECK(consent_version='pcs-bridge-adult-cc0-optin-v1'),\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id,version,session_digest)\n)"
+    },
+    {
+      "type": "table",
+      "name": "challenge_entries",
+      "table_name": "challenge_entries",
+      "sql": "CREATE TABLE challenge_entries (id TEXT PRIMARY KEY,challenge_id TEXT NOT NULL,user_id TEXT NOT NULL,leaderboard_alias TEXT NOT NULL,artifact_url TEXT NOT NULL,summary TEXT NOT NULL,hidden_dependency_explanation TEXT NOT NULL DEFAULT '',workflow_nodes INTEGER NOT NULL DEFAULT 0,dependency_edges INTEGER NOT NULL DEFAULT 0,evidence_items INTEGER NOT NULL DEFAULT 0,claims INTEGER NOT NULL DEFAULT 0,raw_score REAL NOT NULL,status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','verified','rejected','withdrawn')),submitted_at TEXT NOT NULL,verified_at TEXT,verified_by TEXT,review_note TEXT,FOREIGN KEY(challenge_id) REFERENCES challenges(id) ON DELETE RESTRICT,FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,FOREIGN KEY(verified_by) REFERENCES users(id) ON DELETE SET NULL)"
+    },
+    {
+      "type": "table",
+      "name": "challenges",
+      "table_name": "challenges",
+      "sql": "CREATE TABLE challenges (id TEXT PRIMARY KEY,task_id TEXT,title TEXT NOT NULL,summary TEXT NOT NULL,objective TEXT NOT NULL,scoring_rule TEXT NOT NULL,score_direction TEXT NOT NULL CHECK(score_direction IN ('min','max')),verification_mode TEXT NOT NULL CHECK(verification_mode IN ('manual_gate','automatic','kernel')),leaderboard_state TEXT NOT NULL DEFAULT 'draft' CHECK(leaderboard_state IN ('draft','pilot','live','closed')),min_level INTEGER NOT NULL DEFAULT 0,max_entries_per_day INTEGER NOT NULL DEFAULT 5,opens_at TEXT,closes_at TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE SET NULL)"
+    },
+    {
+      "type": "table",
+      "name": "competency_evaluations",
+      "table_name": "competency_evaluations",
+      "sql": "CREATE TABLE competency_evaluations (id TEXT PRIMARY KEY,user_id TEXT NOT NULL,skill TEXT NOT NULL,task_id TEXT,variant_token TEXT NOT NULL,challenge_json TEXT NOT NULL,answer_key_json TEXT NOT NULL,created_at TEXT NOT NULL,expires_at TEXT NOT NULL,submitted_at TEXT,answers_json TEXT,rationale TEXT NOT NULL DEFAULT '',score INTEGER,max_score INTEGER NOT NULL DEFAULT 4,auto_pass INTEGER CHECK(auto_pass IN (0,1)),status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','submitted','expired')),FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE SET NULL)"
+    },
+    {
+      "type": "table",
+      "name": "countermodel_research_sessions",
+      "table_name": "countermodel_research_sessions",
+      "sql": "CREATE TABLE countermodel_research_sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  mission_id TEXT NOT NULL,\n  game_version TEXT NOT NULL,\n  session_digest TEXT NOT NULL CHECK(length(session_digest)=64),\n  session_json TEXT NOT NULL,\n  replay_json TEXT NOT NULL,\n  actions_count INTEGER NOT NULL CHECK(actions_count BETWEEN 1 AND 120),\n  checked_count INTEGER NOT NULL CHECK(checked_count>=1),\n  found_countermodel INTEGER NOT NULL CHECK(found_countermodel IN (0,1)),\n  consent_version TEXT NOT NULL,\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id,session_digest)\n)"
+    },
+    {
+      "type": "table",
+      "name": "d1_migrations",
+      "table_name": "d1_migrations",
+      "sql": "CREATE TABLE \"d1_migrations\"(\n\t\tid         INTEGER PRIMARY KEY AUTOINCREMENT,\n\t\tname       TEXT UNIQUE,\n\t\tapplied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "email_verification_tokens",
+      "table_name": "email_verification_tokens",
+      "sql": "CREATE TABLE email_verification_tokens (\n  token_hash TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL,\n  created_at TEXT NOT NULL,\n  expires_at TEXT NOT NULL,\n  used_at TEXT,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "forge_duel_research_sessions",
+      "table_name": "forge_duel_research_sessions",
+      "sql": "CREATE TABLE forge_duel_research_sessions (id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,session_digest TEXT NOT NULL CHECK(LENGTH(session_digest)=64),session_version TEXT NOT NULL CHECK(session_version='pcs-forge-duel-v1'),submitted_ballots_json TEXT NOT NULL,verified_replay_json TEXT NOT NULL,ballot_count INTEGER NOT NULL CHECK(ballot_count BETWEEN 2 AND 3),correct_count INTEGER NOT NULL CHECK(correct_count BETWEEN 0 AND ballot_count),consent_version TEXT NOT NULL CHECK(consent_version='pcs-forge-duel-adult-optin-v1'),created_at TEXT NOT NULL,UNIQUE(user_id,session_digest))"
+    },
+    {
+      "type": "table",
+      "name": "meaning_forge_explanation_reviews",
+      "table_name": "meaning_forge_explanation_reviews",
+      "sql": "CREATE TABLE meaning_forge_explanation_reviews (\n  session_id TEXT NOT NULL,\n  reviewer_user_id TEXT NOT NULL,\n  label TEXT NOT NULL CHECK(label IN ('faithful','unfaithful','ambiguous','unsupported')),\n  rationale TEXT NOT NULL,\n  reviewed_at TEXT NOT NULL,\n  PRIMARY KEY(session_id,reviewer_user_id),\n  FOREIGN KEY(session_id) REFERENCES meaning_forge_sessions(id) ON DELETE CASCADE,\n  FOREIGN KEY(reviewer_user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "meaning_forge_sessions",
+      "table_name": "meaning_forge_sessions",
+      "sql": "CREATE TABLE meaning_forge_sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL,\n  mission_id TEXT NOT NULL,\n  mode TEXT NOT NULL CHECK(mode IN ('english-to-lean','lean-to-english')),\n  replay_digest TEXT NOT NULL,\n  protocol_version TEXT NOT NULL,\n  verified_replay_json TEXT NOT NULL,\n  structurally_correct INTEGER NOT NULL CHECK(structurally_correct IN (0,1)),\n  consent_version TEXT NOT NULL,\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id,replay_digest),\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "notifications",
+      "table_name": "notifications",
+      "sql": "CREATE TABLE notifications (\n  id TEXT PRIMARY KEY,\n  user_id TEXT,\n  kind TEXT NOT NULL,\n  subject TEXT NOT NULL,\n  body TEXT NOT NULL,\n  created_at TEXT NOT NULL,\n  read_at TEXT,\n  email_state TEXT NOT NULL DEFAULT 'queued' CHECK(email_state IN ('queued','sent','failed','disabled')),\n  email_error TEXT,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "production_promotions",
+      "table_name": "production_promotions",
+      "sql": "CREATE TABLE production_promotions (\n  id TEXT PRIMARY KEY,\n  submission_id TEXT NOT NULL UNIQUE,\n  task_id TEXT NOT NULL,\n  repo TEXT NOT NULL CHECK (repo IN ('Tommaso-R-Marena/proof-carrying-science','Tommaso-R-Marena/proof-carrying-science-site')),\n  source_pr_number INTEGER NOT NULL CHECK (source_pr_number>0),\n  mapping_json TEXT NOT NULL,\n  rationale TEXT NOT NULL,\n  state TEXT NOT NULL DEFAULT 'requested'\n    CHECK(state IN ('requested','stage_error','staged','needs_changes','rejected','approved','merged')),\n  created_at TEXT NOT NULL,\n  created_by TEXT NOT NULL,\n  staged_at TEXT,\n  base_sha TEXT,\n  branch TEXT,\n  head_sha TEXT,\n  pr_number INTEGER,\n  pr_url TEXT,\n  stage_error TEXT,\n  decision_at TEXT,\n  decision_by TEXT,\n  decision_note TEXT,\n  approved_head_sha TEXT,\n  merged_at TEXT,\n  merge_sha TEXT, attempt INTEGER NOT NULL DEFAULT 1 CHECK(attempt BETWEEN 1 AND 50),\n  FOREIGN KEY(submission_id) REFERENCES submissions(id) ON DELETE CASCADE,\n  FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE RESTRICT,\n  FOREIGN KEY(decision_by) REFERENCES users(id) ON DELETE SET NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "proof_order_research_attempts",
+      "table_name": "proof_order_research_attempts",
+      "sql": "CREATE TABLE proof_order_research_attempts (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  puzzle_id TEXT NOT NULL,\n  puzzle_version TEXT NOT NULL,\n  ordering_json TEXT NOT NULL,\n  hints_used INTEGER NOT NULL CHECK(hints_used BETWEEN 0 AND 20),\n  score INTEGER NOT NULL CHECK(score BETWEEN 0 AND 100),\n  correct_constraints INTEGER NOT NULL CHECK(correct_constraints >= 0),\n  total_constraints INTEGER NOT NULL CHECK(total_constraints > 0),\n  valid_order INTEGER NOT NULL CHECK(valid_order IN (0,1)),\n  consent_version TEXT NOT NULL CHECK(consent_version='pcs-proof-quest-adult-optin-v1'),\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id,puzzle_id,puzzle_version,ordering_json)\n)"
+    },
+    {
+      "type": "table",
+      "name": "prooflab_research_sessions",
+      "table_name": "prooflab_research_sessions",
+      "sql": "CREATE TABLE prooflab_research_sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  digest TEXT NOT NULL CHECK(LENGTH(digest)=64),\n  task_id TEXT NOT NULL,\n  source_module TEXT NOT NULL,\n  task_split TEXT NOT NULL CHECK(task_split IN ('train','challenge')),\n  core_revision TEXT NOT NULL,\n  session_version TEXT NOT NULL CHECK(session_version='pcs-prooflab-educational-plan-v1'),\n  submitted_actions_json TEXT NOT NULL,\n  verified_replay_json TEXT NOT NULL,\n  action_count INTEGER NOT NULL CHECK(action_count BETWEEN 6 AND 80),\n  game_score INTEGER NOT NULL CHECK(game_score BETWEEN 0 AND 100),\n  consent_version TEXT NOT NULL CHECK(consent_version='pcs-prooflab-adult-research-v1'),\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id,digest)\n)"
+    },
+    {
+      "type": "table",
+      "name": "prooflab_source_research_sessions",
+      "table_name": "prooflab_source_research_sessions",
+      "sql": "CREATE TABLE prooflab_source_research_sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  case_id TEXT NOT NULL CHECK(LENGTH(case_id) BETWEEN 8 AND 96),\n  source_commit TEXT NOT NULL CHECK(source_commit='cff0b67595abd4862ab0c156b157f262b169eca5'),\n  session_digest TEXT NOT NULL CHECK(LENGTH(session_digest)=64),\n  session_version TEXT NOT NULL CHECK(session_version='pcs-prooflab-plan-v1'),\n  submitted_plan_json TEXT NOT NULL,\n  verified_replay_json TEXT NOT NULL,\n  action_count INTEGER NOT NULL CHECK(action_count BETWEEN 4 AND 26),\n  accepted_count INTEGER NOT NULL CHECK(accepted_count BETWEEN 0 AND action_count),\n  rejected_count INTEGER NOT NULL CHECK(rejected_count BETWEEN 0 AND action_count),\n  completed INTEGER NOT NULL CHECK(completed IN (0,1)),\n  consent_version TEXT NOT NULL CHECK(consent_version='pcs-prooflab-adult-optin-v1'),\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id, session_digest)\n)"
+    },
+    {
+      "type": "table",
+      "name": "rate_limits",
+      "table_name": "rate_limits",
+      "sql": "CREATE TABLE rate_limits (\n  key TEXT PRIMARY KEY,\n  window_start TEXT NOT NULL,\n  count INTEGER NOT NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "role_applications",
+      "table_name": "role_applications",
+      "sql": "CREATE TABLE role_applications (id TEXT PRIMARY KEY,role_id TEXT NOT NULL,user_id TEXT NOT NULL,note TEXT NOT NULL,experience TEXT NOT NULL DEFAULT '',availability TEXT NOT NULL DEFAULT '',status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','withdrawn')),requested_at TEXT NOT NULL,decided_at TEXT,decided_by TEXT,decision_note TEXT,FOREIGN KEY(role_id) REFERENCES role_openings(id) ON DELETE RESTRICT,FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,FOREIGN KEY(decided_by) REFERENCES users(id) ON DELETE SET NULL)"
+    },
+    {
+      "type": "table",
+      "name": "role_openings",
+      "table_name": "role_openings",
+      "sql": "CREATE TABLE role_openings (id TEXT PRIMARY KEY,title TEXT NOT NULL,summary TEXT NOT NULL,category TEXT NOT NULL,min_level INTEGER NOT NULL DEFAULT 0,required_skill TEXT,expected_hours_per_week INTEGER NOT NULL DEFAULT 2,slots INTEGER NOT NULL DEFAULT 1,responsibilities TEXT NOT NULL,selection_criteria TEXT NOT NULL,publication_state TEXT NOT NULL DEFAULT 'draft' CHECK(publication_state IN ('draft','published','paused','retired')),priority INTEGER NOT NULL DEFAULT 50,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)"
+    },
+    {
+      "type": "table",
+      "name": "safety_forge_research_sessions",
+      "table_name": "safety_forge_research_sessions",
+      "sql": "CREATE TABLE safety_forge_research_sessions (\n  id TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,\n  scenario_seed INTEGER NOT NULL CHECK(scenario_seed BETWEEN 1 AND 9999999),\n  scenario_version TEXT NOT NULL CHECK(scenario_version='pcs-safety-forge-v1'),\n  session_digest TEXT NOT NULL CHECK(LENGTH(session_digest)=64),\n  submitted_choices_json TEXT NOT NULL,\n  verified_replay_json TEXT NOT NULL,\n  attack_count INTEGER NOT NULL CHECK(attack_count BETWEEN 0 AND 12),\n  repair_count INTEGER NOT NULL CHECK(repair_count BETWEEN 0 AND 12),\n  unsafe_witness_count INTEGER NOT NULL CHECK(unsafe_witness_count BETWEEN 0 AND 12),\n  valid_repair_count INTEGER NOT NULL CHECK(valid_repair_count BETWEEN 0 AND 12),\n  consent_version TEXT NOT NULL CHECK(consent_version='pcs-safety-forge-adult-optin-v1'),\n  created_at TEXT NOT NULL,\n  UNIQUE(user_id,session_digest)\n)"
+    },
+    {
+      "type": "table",
+      "name": "sessions",
+      "table_name": "sessions",
+      "sql": "CREATE TABLE sessions (\n  token_hash TEXT PRIMARY KEY,\n  user_id TEXT NOT NULL,\n  created_at TEXT NOT NULL,\n  expires_at TEXT NOT NULL,\n  last_seen_at TEXT NOT NULL,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "skills",
+      "table_name": "skills",
+      "sql": "CREATE TABLE skills (\n  user_id TEXT NOT NULL,\n  skill TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'self_reported' CHECK(status IN ('self_reported','pending','verified','rejected')),\n  evidence TEXT,\n  verification_note TEXT,\n  requested_at TEXT,\n  verified_at TEXT,\n  verified_by TEXT, review_due_at TEXT, source TEXT NOT NULL DEFAULT 'manual', evaluation_id TEXT,\n  PRIMARY KEY(user_id, skill),\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,\n  FOREIGN KEY(verified_by) REFERENCES users(id) ON DELETE SET NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "submission_files",
+      "table_name": "submission_files",
+      "sql": "CREATE TABLE submission_files (\n  submission_id TEXT NOT NULL,\n  filename TEXT NOT NULL,\n  content TEXT NOT NULL,\n  sha256 TEXT NOT NULL,\n  created_at TEXT NOT NULL,\n  PRIMARY KEY(submission_id,filename),\n  FOREIGN KEY(submission_id) REFERENCES submissions(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "submission_peer_reviews",
+      "table_name": "submission_peer_reviews",
+      "sql": "CREATE TABLE submission_peer_reviews (\n  submission_id TEXT NOT NULL,\n  reviewer_user_id TEXT NOT NULL,\n  decision TEXT NOT NULL CHECK(decision IN ('recommend_accept','request_changes','recommend_reject')),\n  rationale TEXT NOT NULL,\n  ci_head_sha TEXT,\n  ci_verified INTEGER NOT NULL DEFAULT 0 CHECK(ci_verified IN (0,1)),\n  created_at TEXT NOT NULL,\n  PRIMARY KEY(submission_id,reviewer_user_id),\n  FOREIGN KEY(submission_id) REFERENCES submissions(id) ON DELETE CASCADE,\n  FOREIGN KEY(reviewer_user_id) REFERENCES users(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "submissions",
+      "table_name": "submissions",
+      "sql": "CREATE TABLE submissions (\n  id TEXT PRIMARY KEY,\n  request_id TEXT NOT NULL,\n  user_id TEXT NOT NULL,\n  summary TEXT NOT NULL,\n  artifact_url TEXT,\n  ai_used INTEGER NOT NULL DEFAULT 0 CHECK(ai_used IN (0,1)),\n  ai_tools TEXT,\n  verification_note TEXT NOT NULL,\n  understanding_note TEXT NOT NULL,\n  submitted_at TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'submitted' CHECK(status IN ('submitted','needs_changes','accepted','rejected')),\n  reviewed_at TEXT,\n  reviewed_by TEXT,\n  review_note TEXT, github_repo TEXT, github_branch TEXT, github_pr_number INTEGER, github_pr_url TEXT, github_stage_state TEXT NOT NULL DEFAULT 'not_applicable'\n  CHECK (github_stage_state IN ('not_applicable','pending','not_configured','error','staged','merged')), github_stage_error TEXT, evidence_kind TEXT NOT NULL DEFAULT 'none'\n  CHECK (evidence_kind IN ('none','activity','outcome')), outcome_metric TEXT, outcome_count INTEGER,\n  FOREIGN KEY(request_id) REFERENCES task_requests(id) ON DELETE CASCADE,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,\n  FOREIGN KEY(reviewed_by) REFERENCES users(id) ON DELETE SET NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "task_code_packets",
+      "table_name": "task_code_packets",
+      "sql": "CREATE TABLE task_code_packets (\n  id TEXT PRIMARY KEY,\n  task_id TEXT NOT NULL,\n  repo_target TEXT NOT NULL CHECK(repo_target IN ('core','site')),\n  path TEXT NOT NULL,\n  start_line INTEGER NOT NULL CHECK(start_line >= 1),\n  end_line INTEGER NOT NULL CHECK(end_line >= start_line),\n  allowed_start_line INTEGER NOT NULL CHECK(allowed_start_line >= 1),\n  allowed_end_line INTEGER NOT NULL CHECK(allowed_end_line >= allowed_start_line),\n  purpose TEXT NOT NULL,\n  sort_order INTEGER NOT NULL DEFAULT 0,\n  active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)),\n  created_at TEXT NOT NULL,\n  FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,\n  UNIQUE(task_id,path,start_line,end_line)\n)"
+    },
+    {
+      "type": "table",
+      "name": "task_code_requests",
+      "table_name": "task_code_requests",
+      "sql": "CREATE TABLE task_code_requests (\n  id TEXT PRIMARY KEY,\n  task_id TEXT NOT NULL,\n  user_id TEXT NOT NULL,\n  task_request_id TEXT NOT NULL,\n  packet_id TEXT NOT NULL,\n  repo_target TEXT NOT NULL CHECK(repo_target IN ('core','site')),\n  requested_path TEXT NOT NULL,\n  requested_start_line INTEGER NOT NULL CHECK(requested_start_line >= 1),\n  requested_end_line INTEGER NOT NULL CHECK(requested_end_line >= requested_start_line),\n  reason TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),\n  decision_note TEXT,\n  created_at TEXT NOT NULL,\n  decided_at TEXT,\n  FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,\n  FOREIGN KEY(task_request_id) REFERENCES task_requests(id) ON DELETE CASCADE,\n  FOREIGN KEY(packet_id) REFERENCES task_code_packets(id) ON DELETE CASCADE\n)"
+    },
+    {
+      "type": "table",
+      "name": "task_dependencies",
+      "table_name": "task_dependencies",
+      "sql": "CREATE TABLE task_dependencies (task_id TEXT NOT NULL,depends_on_task_id TEXT NOT NULL,dependency_type TEXT NOT NULL DEFAULT 'informative' CHECK(dependency_type IN ('informative','hard')),rationale TEXT NOT NULL DEFAULT '', group_id TEXT, relation TEXT NOT NULL DEFAULT 'requires', required_outcome TEXT NOT NULL DEFAULT 'completed', artifact_contract TEXT NOT NULL DEFAULT '', criticality INTEGER NOT NULL DEFAULT 50,PRIMARY KEY(task_id,depends_on_task_id),FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,FOREIGN KEY(depends_on_task_id) REFERENCES tasks(id) ON DELETE CASCADE)"
+    },
+    {
+      "type": "table",
+      "name": "task_dependency_groups",
+      "table_name": "task_dependency_groups",
+      "sql": "CREATE TABLE task_dependency_groups (id TEXT PRIMARY KEY,task_id TEXT NOT NULL,label TEXT NOT NULL,mode TEXT NOT NULL CHECK(mode IN ('all','any','at_least')),min_satisfied INTEGER NOT NULL DEFAULT 1,description TEXT NOT NULL DEFAULT '',sort_order INTEGER NOT NULL DEFAULT 0,FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE)"
+    },
+    {
+      "type": "table",
+      "name": "task_requests",
+      "table_name": "task_requests",
+      "sql": "CREATE TABLE task_requests (\n  id TEXT PRIMARY KEY,\n  task_id TEXT NOT NULL,\n  user_id TEXT NOT NULL,\n  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','withdrawn','expired','completed')),\n  application_note TEXT NOT NULL DEFAULT '',\n  ai_use_plan TEXT NOT NULL DEFAULT '',\n  verification_plan TEXT NOT NULL DEFAULT '',\n  requested_at TEXT NOT NULL,\n  decision_due_at TEXT NOT NULL,\n  decision_at TEXT,\n  decided_by TEXT,\n  decision_note TEXT,\n  reservation_expires_at TEXT,\n  checkpoint_due_at TEXT,\n  checkpoint_status TEXT CHECK(checkpoint_status IN ('pending','accepted','missed','not_required')),\n  last_progress_at TEXT, checkpoint_note TEXT NOT NULL DEFAULT '', extension_count INTEGER NOT NULL DEFAULT 0, reservation_key TEXT,\n  FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,\n  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,\n  FOREIGN KEY(decided_by) REFERENCES users(id) ON DELETE SET NULL\n)"
+    },
+    {
+      "type": "table",
+      "name": "tasks",
+      "table_name": "tasks",
+      "sql": "CREATE TABLE tasks (\n  id TEXT PRIMARY KEY,\n  title TEXT NOT NULL,\n  summary TEXT NOT NULL,\n  min_level INTEGER NOT NULL DEFAULT 0 CHECK(min_level BETWEEN 0 AND 6),\n  claim_mode TEXT NOT NULL CHECK(claim_mode IN ('open','approval','invite')),\n  required_skill TEXT,\n  expected_hours INTEGER NOT NULL,\n  review_sla_business_days INTEGER NOT NULL DEFAULT 2,\n  checkpoint_hours INTEGER,\n  reservation_hours INTEGER,\n  max_active_per_user INTEGER NOT NULL DEFAULT 1,\n  status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','paused','closed')),\n  compensation_type TEXT NOT NULL DEFAULT 'volunteer',\n  compensation_label TEXT NOT NULL DEFAULT 'Volunteer',\n  funding_status TEXT NOT NULL DEFAULT 'open',\n  created_at TEXT NOT NULL,\n  updated_at TEXT NOT NULL\n, calibrates_skill TEXT, program_id TEXT, program_step INTEGER, source_ref TEXT, deliverable TEXT, verification_rule TEXT, acceptance_criteria TEXT, publication_state TEXT NOT NULL DEFAULT 'draft' CHECK(publication_state IN ('draft','published','paused','retired')), category TEXT NOT NULL DEFAULT 'research' CHECK(category IN ('research','engineering','security','review','operations','administrative','marketing','outreach','design','documentation','community')), work_type TEXT NOT NULL DEFAULT 'task' CHECK(work_type IN ('task','challenge')), need_status TEXT NOT NULL DEFAULT 'needed' CHECK(need_status IN ('needed','satisfied','retired')), priority INTEGER NOT NULL DEFAULT 50, why_now TEXT, success_metric TEXT, published_at TEXT, retired_at TEXT, expected_minutes INTEGER, integration_target TEXT NOT NULL DEFAULT 'none'\n  CHECK (integration_target IN ('none','core','site')))"
+    },
+    {
+      "type": "table",
+      "name": "users",
+      "table_name": "users",
+      "sql": "CREATE TABLE users (\n  id TEXT PRIMARY KEY,\n  email TEXT NOT NULL UNIQUE COLLATE NOCASE,\n  display_name TEXT NOT NULL,\n  password_hash TEXT NOT NULL,\n  password_salt TEXT NOT NULL,\n  password_iterations INTEGER NOT NULL DEFAULT 250000,\n  recovery_hash TEXT NOT NULL,\n  level INTEGER NOT NULL DEFAULT 0 CHECK(level BETWEEN 0 AND 6),\n  role TEXT NOT NULL DEFAULT 'contributor' CHECK(role IN ('contributor','admin')),\n  status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','suspended','disabled')),\n  ai_policy_ack INTEGER NOT NULL DEFAULT 0 CHECK(ai_policy_ack IN (0,1)),\n  created_at TEXT NOT NULL,\n  updated_at TEXT NOT NULL,\n  last_login_at TEXT,\n  failed_login_count INTEGER NOT NULL DEFAULT 0,\n  locked_until TEXT\n, availability_hours INTEGER NOT NULL DEFAULT 1, track TEXT NOT NULL DEFAULT 'nontechnical', compensation_preference TEXT NOT NULL DEFAULT 'either', profile_note TEXT NOT NULL DEFAULT '', level_review_note TEXT NOT NULL DEFAULT '', email_verified INTEGER NOT NULL DEFAULT 0, terms_version TEXT NOT NULL DEFAULT 'commons-v1', is_owner INTEGER NOT NULL DEFAULT 0 CHECK(is_owner IN (0,1)))"
+    },
+    {
+      "type": "trigger",
+      "name": "admin_evidence_chunks_no_delete",
+      "table_name": "admin_evidence_chunks",
+      "sql": "CREATE TRIGGER admin_evidence_chunks_no_delete BEFORE DELETE ON admin_evidence_chunks BEGIN SELECT RAISE(ABORT,'PCS admin evidence chunks cannot be deleted'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "admin_evidence_chunks_no_update",
+      "table_name": "admin_evidence_chunks",
+      "sql": "CREATE TRIGGER admin_evidence_chunks_no_update BEFORE UPDATE ON admin_evidence_chunks BEGIN SELECT RAISE(ABORT,'PCS admin evidence chunks are immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "admin_evidence_files_no_delete",
+      "table_name": "admin_evidence_files",
+      "sql": "CREATE TRIGGER admin_evidence_files_no_delete BEFORE DELETE ON admin_evidence_files BEGIN SELECT RAISE(ABORT,'PCS admin evidence files cannot be deleted'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "admin_evidence_files_no_update",
+      "table_name": "admin_evidence_files",
+      "sql": "CREATE TRIGGER admin_evidence_files_no_update BEFORE UPDATE ON admin_evidence_files BEGIN SELECT RAISE(ABORT,'PCS admin evidence metadata is immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "audit_archive_no_delete",
+      "table_name": "audit_archive",
+      "sql": "CREATE TRIGGER audit_archive_no_delete BEFORE DELETE ON audit_archive BEGIN SELECT RAISE(ABORT,'PCS audit archive is immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "audit_archive_no_update",
+      "table_name": "audit_archive",
+      "sql": "CREATE TRIGGER audit_archive_no_update BEFORE UPDATE ON audit_archive BEGIN SELECT RAISE(ABORT,'PCS audit archive is immutable'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "audit_log_no_delete",
+      "table_name": "audit_log",
+      "sql": "CREATE TRIGGER audit_log_no_delete BEFORE DELETE ON audit_log BEGIN SELECT RAISE(ABORT,'PCS legacy audit log rows cannot be deleted'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "competency_evaluations_daily_cap",
+      "table_name": "competency_evaluations",
+      "sql": "CREATE TRIGGER competency_evaluations_daily_cap BEFORE INSERT ON competency_evaluations WHEN (SELECT COUNT(*) FROM competency_evaluations e WHERE e.user_id=NEW.user_id AND e.skill=NEW.skill AND unixepoch(e.created_at) >= unixepoch(NEW.created_at)-86400) >= 3 BEGIN SELECT RAISE(ABORT,'PCS daily evaluation attempt limit'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "task_requests_pending_cap",
+      "table_name": "task_requests",
+      "sql": "CREATE TRIGGER task_requests_pending_cap BEFORE INSERT ON task_requests WHEN NEW.status='pending' AND COALESCE((SELECT claim_mode FROM tasks WHERE id=NEW.task_id),'open')!='open' AND (SELECT COUNT(*) FROM task_requests r JOIN tasks t ON t.id=r.task_id WHERE r.user_id=NEW.user_id AND r.status='pending' AND t.claim_mode!='open') >= 2 BEGIN SELECT RAISE(ABORT,'PCS pending high-tier application limit'); END"
+    },
+    {
+      "type": "trigger",
+      "name": "task_requests_reserved_cap",
+      "table_name": "task_requests",
+      "sql": "CREATE TRIGGER task_requests_reserved_cap BEFORE UPDATE OF status ON task_requests WHEN NEW.status='approved' AND OLD.status!='approved' AND COALESCE((SELECT claim_mode FROM tasks WHERE id=NEW.task_id),'open')!='open' AND (SELECT COUNT(*) FROM task_requests r JOIN tasks t ON t.id=r.task_id WHERE r.user_id=NEW.user_id AND r.status='approved' AND t.claim_mode!='open') >= (CASE WHEN COALESCE((SELECT level FROM users WHERE id=NEW.user_id),0) < 2 THEN 0 WHEN COALESCE((SELECT level FROM users WHERE id=NEW.user_id),0) < 4 THEN 1 ELSE 2 END) BEGIN SELECT RAISE(ABORT,'PCS active reserved task limit'); END"
+    }
+  ],
+  "scope": "Only sqlite_master metadata; no account/game rows or application table contents.",
+  "production_rows_read": false,
+  "production_written": false,
+  "ledger_read": false
+}

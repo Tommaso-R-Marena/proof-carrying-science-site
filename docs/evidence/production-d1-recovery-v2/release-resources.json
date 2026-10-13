@@ -1,0 +1,57 @@
+{
+  "format": "pcs-schema-recovery-execution-cost-v2",
+  "platform": "Linux CPU",
+  "high_water_rss_scope": "Cumulative children high-water within this qualification process, not isolated per-command peak.",
+  "commands": [
+    {
+      "command": [
+        "python",
+        "tests/test_d1_schema_recovery_v2.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.0856469110003673,
+      "user_cpu_seconds": 0.5702619999999999,
+      "system_cpu_seconds": 0.19144799999999998,
+      "children_lifetime_high_water_rss_kib": 54256,
+      "log_sha256": "b5f97c4df41d6b72c7fe49000e94dd56b58f9222117e3990e27b0ab7fa86f91b",
+      "credentials_removed": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_BUILDS_API_TOKEN",
+        "GH_TOKEN",
+        "GITHUB_TOKEN",
+        "PCS_GITHUB_TOKEN",
+        "PCS_LEAN_GITHUB_TOKEN"
+      ],
+      "remote_queries": 0
+    },
+    {
+      "command": [
+        "python",
+        "scripts/d1_schema_recovery_v2.py",
+        "--capture",
+        "docs/evidence/production-d1-recovery-v2/captured-schema.json",
+        "--output",
+        "docs/evidence/production-d1-recovery-v2/campaign-release.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.6187966729921754,
+      "user_cpu_seconds": 0.31670200000000004,
+      "system_cpu_seconds": 0.072354,
+      "children_lifetime_high_water_rss_kib": 54256,
+      "log_sha256": "5f20dacae9d38a722e7d9f34e45a502d57b5176e1376e637a6f2f1681f2f6dcd",
+      "credentials_removed": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_BUILDS_API_TOKEN",
+        "GH_TOKEN",
+        "GITHUB_TOKEN",
+        "PCS_GITHUB_TOKEN",
+        "PCS_LEAN_GITHUB_TOKEN"
+      ],
+      "remote_queries": 0
+    }
+  ],
+  "network_requests_by_local_campaign": 0,
+  "financial_actions": 0
+}
