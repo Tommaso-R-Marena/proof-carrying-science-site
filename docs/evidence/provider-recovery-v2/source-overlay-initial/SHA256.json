@@ -1,0 +1,14 @@
+{
+  "format": "pcs-source-overlay-preservation-v1",
+  "description": "Before global-readiness-budget additions; preserves original executed recovery overlay and Worker route.",
+  "files": {
+    "src/lean-job-service.js": "ac4273c8ad02471c4127fe93bf53d026a7ca76509cfd679640afbe7f21c4a869",
+    "src/lean-research.js": "55c8e01ab4aa810bf6c24cd0771606f78aac97ffa57e536afc3e48d9d2053949",
+    "src/worker.js": "94becdaba664f2966cf9c7b2b8875bf382f8ce7899bbbff1a41c8c0739226165",
+    "tests/lean-job-journal.test.mjs": "6c94901963be7c08485718151262e543a0de27baa594ce6f11e4e9950b01b5d6",
+    "tests/lean-research.test.mjs": "c9195f97155d4ba934c04e8b84c8ce991677bb29a29cf93c7351c3cf89cac386",
+    "tests/lean-research-runtime.test.mjs": "f7ccd85b22ea0ac891216067f35b66cb4ec72eaea5ee25c1ac0f464175552a90",
+    "tests/bridge-builder.test.mjs": "76f63cffba424a0feccca23f1581c22dc00fda5668f72e23d6de3b8dcc01872b",
+    "tests/memory-workshop.test.mjs": "9049311a48ee60dbb4a7d8097a7166ac5d233796fa4edce5657728740d4c641c"
+  }
+}

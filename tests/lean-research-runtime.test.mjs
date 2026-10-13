@@ -12,7 +12,7 @@ import {CORE_SHA} from '../src/lean-research.js';
 
 const root=fileURLToPath(new URL('..',import.meta.url));
 const body={statement:'For all propositions U and V, if (U and V) then (U and (U and V)).',interpretation:null,public_consent:true,license:'CC0-1.0'};
-const repository={private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'};
+const repository={private:false,default_branch:'main',full_name:'Tommaso-R-Marena/proof-carrying-science'};
 const receipt=JSON.parse(readFileSync(new URL('./fixtures/lean-proof-receipt-v1.json',import.meta.url)));
 const entry=`import {dispatch,poll} from '../src/lean-research.js';
 export default {async fetch(){
@@ -30,8 +30,9 @@ async function runtime(secondRedirect,compressed=false){
    assert.equal(request.headers.get('authorization'),'Bearer test-only-edge-token');
    const path=url.pathname;
    if(path.endsWith('/proof-carrying-science'))return json(repository);
-   if(path.endsWith('/commits/main'))return json({sha:CORE_SHA});
-   if(path.endsWith('/dispatches')){requestId=(await request.json()).inputs.request_id;return new Response(null,{status:204});}
+   if(path.endsWith('/git/ref/heads/main'))return json({object:{sha:CORE_SHA}});
+   if(path.endsWith('/actions/workflows/pcs-lean-public.yml'))return json({state:'active',path:'.github/workflows/pcs-lean-public.yml'});
+    if(path.endsWith('/dispatches')){requestId=(await request.json()).inputs.request_id;return new Response(null,{status:204});}
    if(path.endsWith('/pcs-lean-public.yml/runs'))return json({workflow_runs:[{id:123,display_title:'PCS public Lean '+requestId,head_sha:CORE_SHA,head_branch:'main',event:'workflow_dispatch',path:'.github/workflows/pcs-lean-public.yml',repository,status:'completed',conclusion:'success'}]});
    if(path.endsWith('/123/jobs'))return json({jobs:[{id:456,name:'public-lean',conclusion:'success'}]});
    if(path.endsWith('/456/logs'))return new Response(null,{status:302,headers:{location:'https://test.blob.core.windows.net/proof/log'}});
@@ -54,14 +55,14 @@ async function runtime(secondRedirect,compressed=false){
 }
 
 test('actual Workers runtime retrieves bound proof logs with supported fetch options',{timeout:30000},async()=>{
- const result=await runtime(false);assert.equal(result.status,200,JSON.stringify(result.body));assert.equal(result.body.status,'completed');assert.equal(result.body.pcs_authority,false);assert.equal(result.calls.length,7);
+ const result=await runtime(false);assert.equal(result.status,200,JSON.stringify(result.body));assert.equal(result.body.status,'completed');assert.equal(result.body.pcs_authority,false);assert.equal(result.calls.length,8);
 });
 test('actual Workers runtime losslessly decodes a large compressed result',{timeout:30000},async()=>{
  const result=await runtime(false,true);assert.equal(result.status,200,JSON.stringify(result.body));
  assert.equal(result.body.status,'completed');assert.equal(result.body.evidence.result.status,'verified');
  assert.equal(result.body.evidence.diagnostics,'explicit transport fixture; '.repeat(33000));
- assert.equal(result.calls.length,7);
+ assert.equal(result.calls.length,8);
 });
 test('actual Workers runtime rejects a second redirect without following or leaking credentials',{timeout:30000},async()=>{
- const result=await runtime(true);assert.equal(result.status,422);assert.match(result.body.error,/Checker log download failed/);assert.equal(result.calls.length,7);assert.ok(result.calls.every(c=>!c.url.includes('evil.example')));
+ const result=await runtime(true);assert.equal(result.status,422);assert.match(result.body.error,/Checker log download failed/);assert.equal(result.calls.length,8);assert.ok(result.calls.every(c=>!c.url.includes('evil.example')));
 });

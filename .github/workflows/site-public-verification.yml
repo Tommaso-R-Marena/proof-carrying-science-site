@@ -202,6 +202,7 @@ jobs:
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
           # Production UI recovery runs in Chromium against explicit loopback provider fixtures.
           PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
+          PCS_SCIENCE_BROWSER_OUTPUT="$RUNNER_TEMP/scientific-workflow-browser.json" npm run test:browser:scientific-workflow
           source .ci-components/lean-prover/scripts/activate_lean_428.sh
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover

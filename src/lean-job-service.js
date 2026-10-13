@@ -1,5 +1,5 @@
 import {AuditJournal,TERMINAL,requestKey} from './lean-job-journal.js';
-import {CORE_SHA,approvedTicketRevision,preparePublicRequest,signPreparedTicket,verifyTicket,dispatch,poll,requestCancellation} from './lean-research.js';
+import {CORE_SHA,approvedTicketRevision,preparePublicRequest,signPreparedTicket,verifyTicket,preflightDispatch,dispatch,poll,requestCancellation} from './lean-research.js';
 import {canonical,sha256} from '../public/research-governance-core.mjs';
 
 // Provider uncertainty is never retried by dispatching another workflow. Polling
@@ -10,8 +10,9 @@ async function reply(env,row,{reused=false}={}){
     ticket:await signPreparedTicket(env,row.payload),request_id:row.payload.request_id,core_sha:row.payload.core_sha,
     issued:row.payload.issued,expires:row.payload.expires,reused,public_source:true,pcs_authority:false};
 }
-export async function submitJob(env,body,{ip='unknown',idempotencyKey=crypto.randomUUID().replace(/-/g,''),admit,archive=null,transport=fetch,now=Date.now()}={}){
+export async function submitJob(env,body,{ip='unknown',idempotencyKey=crypto.randomUUID().replace(/-/g,''),admit,readinessAdmit=null,archive=null,transport=fetch,now=Date.now()}={}){
   if(typeof admit!=='function')throw Error('Trusted admission is required');
+  if(readinessAdmit!==null&&typeof readinessAdmit!=='function')throw Error('Trusted readiness admission is required');
   const binding=await sha256(canonical(body));
   const scoped=await requestKey(env,ip,idempotencyKey);
   const requestId=scoped.slice(0,32),store=journal(env,archive);
@@ -24,6 +25,14 @@ export async function submitJob(env,body,{ip='unknown',idempotencyKey=crypto.ran
     if(!approvedTicketRevision(payload.core_sha))throw Error('Unapproved immutable request revision');
     expected.core_sha=payload.core_sha;
     if(canonical(expected)!==canonical(payload))throw Error('Immutable request mismatch');
+  }
+  // A known provider outage or stale release must not consume a proof admission.
+  // GETs can race safely; only the journal CAS winner may charge and dispatch.
+  if(!existing||existing.state==='created'){
+    // A trusted route-wide budget bounds provider metadata work across clients.
+    // Acknowledged requests do not spend this allowance when merely resumed.
+    if(readinessAdmit)await readinessAdmit();
+    await preflightDispatch(env,transport);
   }
   let row=existing||await store.create(payload,binding,now);
   // Concurrent first writers may have different clocks. Every caller must use
@@ -52,8 +61,13 @@ export async function submitJob(env,body,{ip='unknown',idempotencyKey=crypto.ran
       }catch(error){
         // No retransmission after a timeout, network error, or ambiguous 5xx.
         // A single accepted provider run can still be recovered by its identity.
+        if(error.dispatch_may_have_been_accepted===false){
+          row=(await store.advance(row,'failed','provider_unavailable',{now})).current;
+          return {...await reply(env,row),dispatch_attempted:error.dispatch_attempted===true,dispatch_outcome:error.dispatch_attempted?'declined':'not_sent',
+            reason:'Provider rejected readiness or dispatch. No workflow was accepted; this admission is recorded and is not charged again.'};
+        }
         row=(await store.advance(row,'dispatch_uncertain','dispatch_uncertain',{now})).current;
-        return {...await reply(env,row),reason:'Dispatch confirmation unavailable. Poll this request; do not submit it again with a new key.'};
+        return {...await reply(env,row),dispatch_attempted:true,dispatch_outcome:'unknown',reason:'Dispatch confirmation unavailable. Poll this request; do not submit it again with a new key.'};
       }
     }
   }

@@ -637,7 +637,7 @@
     }
   },
   "research_platform_v1": {
-    "status": "experimental_core_verified_website_release_pending",
+    "status": "experimental_protected_release_verified",
     "core_pull_request": "https://github.com/Tommaso-R-Marena/proof-carrying-science/pull/105",
     "certiforge_protected_main_sha": "c71e8575db2800b015a9d444f8ed572490f3a871",
     "certiforge_pull_request": "https://github.com/Tommaso-R-Marena/certiforge/pull/3",
@@ -666,6 +666,73 @@
     "core_required_checks_passed": 10,
     "core_verification_run": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38312790669",
     "website_pull_request": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/pull/116",
-    "website_pending": true
+    "website_pending": false,
+    "website_protected_main_sha": "72a47c92d47c93249b6c8b9ec0dc70b95232f48c",
+    "website_required_checks_passed": 5,
+    "website_verification_run": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/38319164005",
+    "hosted_operational_diagnostics": {
+      "cases": 10,
+      "provider_jobs_passed": 10,
+      "run": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38319055799",
+      "scope": "fixed authored operational controls; zero public admissions; not blind capability evaluation"
+    },
+    "live_proof_demonstration": {
+      "run": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/38320816481",
+      "verified_actions": 5,
+      "winning_component": "memory_structural",
+      "fresh_local_kernel_replay": true,
+      "scope": "post-evaluation authored induction family; not novel mathematics"
+    },
+    "deployed_website_build": "ed195caf-8037-40dc-a51c-5b4b06322b0b",
+    "release_record_scope": "Last independently qualified protected release; subsequent changes require their own verification."
+  },
+  "research_platform_v2": {
+    "status": "experimental_local_evidence_available",
+    "source_snapshot": "continuation feature; protected release/provider verification recorded separately",
+    "model_comparison": {
+      "parameters": 6099,
+      "frozen_task_count": 12,
+      "symbolic_solved": 5,
+      "trained_DAG_solved": 4,
+      "bag_solved": 3,
+      "separate_stronger_Std_solved": 12,
+      "RL_training_episodes": 8,
+      "independently_replayed_RL_terminals": 7,
+      "fresh_RL_final_tasks": 4,
+      "supervised_solved": 2,
+      "RL_solved": 2,
+      "separate_RL_Std_solved": 4,
+      "measured_RL_gain": false,
+      "promoted": false,
+      "external_blind_benchmark": false
+    },
+    "scientific_case": {
+      "page": "/scientific-workflow-v2.html",
+      "source": "Palmer Penguins, pinned CC0 field measurements",
+      "records": 344,
+      "complete_pairs": 342,
+      "recorded_compiled_dimension_claims_supported": 2,
+      "numerical_claim": "OPEN",
+      "empirical_claim": "OPEN",
+      "browser_runs_Lean": false,
+      "browser_collects_data": false,
+      "scientific_acceptance": false
+    },
+    "source_bound_Rust_wrapper": {
+      "kernel_theorems": 17,
+      "native_regression_controls": 31,
+      "mutated_source_kernel_rejections": 2,
+      "compiler_or_top_level_eval_refinement": false
+    },
+    "production_changes": {
+      "proof_quotas_changed": false,
+      "schema_changes": false,
+      "key_rotation": false,
+      "migration_ledger_backfill": false
+    },
+    "pcs_authority": false,
+    "automatic_training": false,
+    "automatic_promotion": false,
+    "financial_spend": 0
   }
 }

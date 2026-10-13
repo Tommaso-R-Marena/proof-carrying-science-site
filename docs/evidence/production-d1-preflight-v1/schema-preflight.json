@@ -1,0 +1,903 @@
+{
+  "format": "pcs-d1-production-schema-preflight-v1",
+  "schema_sha256": "c39546dd9bf8f19012734e90d19a76f3270bbd100072d37003be0ca1838acb8b",
+  "object_count": 96,
+  "objects": [
+    {
+      "name": "bridge_sessions_export",
+      "type": "index",
+      "definition_sha256": "fdaa0f4e3a9980213bccce0c48941fb78c089af1cc2e277934b0280d4f26eda3"
+    },
+    {
+      "name": "idx_admin_evidence_sha",
+      "type": "index",
+      "definition_sha256": "5cb893b30ec867b4d0f5311218294c1a007accdf47ad9768e13eb34eea7c8efc"
+    },
+    {
+      "name": "idx_admin_evidence_subject",
+      "type": "index",
+      "definition_sha256": "0ab2c3d303a9d7ac2115d5ca4a6cdd6768c9e1553095f521df243ee981f79238"
+    },
+    {
+      "name": "idx_admin_evidence_uploader",
+      "type": "index",
+      "definition_sha256": "b68b800b41c1d3f8a9e6daa163a4282825dd142de7e6aed2fa34412cb3295488"
+    },
+    {
+      "name": "idx_admin_sessions_expiry",
+      "type": "index",
+      "definition_sha256": "ff15c15feb82d4a3dbf60851013b8f68cb2ae97c51fcce0f46f0c0993db9ad26"
+    },
+    {
+      "name": "idx_admin_sessions_user",
+      "type": "index",
+      "definition_sha256": "4d353e9528539b991cc4f5779ad031f6d32969475f601e1fa1edf3d78549a064"
+    },
+    {
+      "name": "idx_audit_archive_action",
+      "type": "index",
+      "definition_sha256": "3734271136f2c66ac898170e690b47864a2ae7f32f8c1ad2b11bbfa410df9279"
+    },
+    {
+      "name": "idx_audit_archive_actor",
+      "type": "index",
+      "definition_sha256": "41b13fae2cd430a75a0f906ffb5180a064c6ce4e11ef684ad2c3689bf48ffa4f"
+    },
+    {
+      "name": "idx_audit_archive_created",
+      "type": "index",
+      "definition_sha256": "75227381aa4a6b00d8128aa9c66279d47941196a495c2fcadfc0ec895d7a1dd0"
+    },
+    {
+      "name": "idx_audit_archive_subject",
+      "type": "index",
+      "definition_sha256": "086c90a0b5f7e741b22bdcf92633a44ee362d858643ae1cd2eb178df0de1ce35"
+    },
+    {
+      "name": "idx_audit_subject",
+      "type": "index",
+      "definition_sha256": "4b8cd267cac8f6111c2b7b75ac088e30e9fade9e3b1ab2dc5c8f3a3abda4f4f5"
+    },
+    {
+      "name": "idx_challenge_entries_rank",
+      "type": "index",
+      "definition_sha256": "95f5bce10fa04f906ed3ad3db13cfe29e2497b1fd1cbc0678aafe02c8eb46e6d"
+    },
+    {
+      "name": "idx_challenge_entries_user",
+      "type": "index",
+      "definition_sha256": "5e80e646ad20e4bac24fa4eda224065865581b8aaef3827318652d9e9c3ee8c1"
+    },
+    {
+      "name": "idx_competency_eval_status",
+      "type": "index",
+      "definition_sha256": "2d985271271e8be2ffc178cbed163ef3f54a271a721d1800edf3b7c444878d66"
+    },
+    {
+      "name": "idx_competency_eval_user",
+      "type": "index",
+      "definition_sha256": "d2288ac8648eda7f612768646bcdbc4035b0467e35aae12e2a8a3ee9c534e7b0"
+    },
+    {
+      "name": "idx_competency_one_open_per_skill",
+      "type": "index",
+      "definition_sha256": "d3a3ce41b4016494c8712a492c3cc30da5120b15370586229dbdb228afd46154"
+    },
+    {
+      "name": "idx_countermodel_export",
+      "type": "index",
+      "definition_sha256": "c5292b565c43909508b6e0528f093219465a213cc46ba2046ddde7a667325047"
+    },
+    {
+      "name": "idx_countermodel_user_created",
+      "type": "index",
+      "definition_sha256": "a06ec8ef433baee2d8fc183adc55943dd0cf0bd5451447a342127047230f2a19"
+    },
+    {
+      "name": "idx_email_verify_user",
+      "type": "index",
+      "definition_sha256": "557aa9438ace3b568b4fd37e806bb77fbed6393037d514bfc7071c2de3ca8ffb"
+    },
+    {
+      "name": "idx_forge_duel_by_user",
+      "type": "index",
+      "definition_sha256": "c95431046dcedbdc361e226a0c062dd7309b695e240f7b1552d79c1d86855bd7"
+    },
+    {
+      "name": "idx_forge_duel_for_export",
+      "type": "index",
+      "definition_sha256": "7243e1edae4593519f441f54ee1bb44356281bcfa221bb370d58c897ea1d6b0e"
+    },
+    {
+      "name": "idx_meaning_forge_created",
+      "type": "index",
+      "definition_sha256": "25f041037d5b8f2b27b95d3e0cd55b82e84eca3c5eff3bde97af32d66c5fc880"
+    },
+    {
+      "name": "idx_meaning_forge_user",
+      "type": "index",
+      "definition_sha256": "8196d4685792ede8bf8d5245fdaa2dd5a8ebd187e6dcf6b00732b8f1e1bf3e40"
+    },
+    {
+      "name": "idx_notifications_user",
+      "type": "index",
+      "definition_sha256": "489803cb9d4697242e3643853377eeec851c107bb4a15af584629663d12f5f37"
+    },
+    {
+      "name": "idx_production_promotions_state",
+      "type": "index",
+      "definition_sha256": "d767b520df92e7613eb764719fb9afac00aadc35edaf8fb341e3499b7af5e550"
+    },
+    {
+      "name": "idx_proof_order_research_by_puzzle",
+      "type": "index",
+      "definition_sha256": "c3e8c724e58c169c3537c97a5f6e9ad650fef2a0219c1bcc619f6e8e37d59abd"
+    },
+    {
+      "name": "idx_proof_order_research_by_user",
+      "type": "index",
+      "definition_sha256": "75b8b359513d3a14994ddb7c0088a792473454d58a85a060a451f2fa2efa0f81"
+    },
+    {
+      "name": "idx_prooflab_by_time",
+      "type": "index",
+      "definition_sha256": "0289f4b1cfcb31f1a5d38632e9dab12ac2a7eb44abdbae63450a2d1132a3a6f6"
+    },
+    {
+      "name": "idx_prooflab_by_user",
+      "type": "index",
+      "definition_sha256": "e85bf355ed81240c32d7a435a4e294a23052a2cf686d0db17ac9216147017892"
+    },
+    {
+      "name": "idx_prooflab_source_export_created",
+      "type": "index",
+      "definition_sha256": "93e9a0ef9bf5ffc729071320f245f289cb031ec315074d095eeb28d34b2a7a26"
+    },
+    {
+      "name": "idx_prooflab_source_user_created",
+      "type": "index",
+      "definition_sha256": "2ed06f296203cb2148954de9b7b467a5f5a0c92665f1d3f82a9a078f584dae29"
+    },
+    {
+      "name": "idx_role_applications_status",
+      "type": "index",
+      "definition_sha256": "4c7aa6d018b320232e3f427c12f9e9c62e15bd21e4897e2c9c82429622e4a83c"
+    },
+    {
+      "name": "idx_role_one_active_application",
+      "type": "index",
+      "definition_sha256": "b70f3201de03d2b599898a07d7bcace54a9146bdb043b4848b82ab666da267ec"
+    },
+    {
+      "name": "idx_safety_forge_export",
+      "type": "index",
+      "definition_sha256": "b00c0b9fc2131a6d482e37565b8401f006fb41b9755b9d4762f8407744e2fd84"
+    },
+    {
+      "name": "idx_safety_forge_user",
+      "type": "index",
+      "definition_sha256": "36e49a0c4fbe007f604a207b6ee80030e12490ee097f3bd495181fd0915db7da"
+    },
+    {
+      "name": "idx_sessions_expiry",
+      "type": "index",
+      "definition_sha256": "806d38626e748aede3c3dca774d336ed35df703c7ad636598e9975e8658d5ea3"
+    },
+    {
+      "name": "idx_sessions_user",
+      "type": "index",
+      "definition_sha256": "739e51ee15d31d1598c18a5d72a0ae692679815748590d94948c5ff4409fbfc5"
+    },
+    {
+      "name": "idx_submission_peer_reviews_decisions",
+      "type": "index",
+      "definition_sha256": "d3b9a59320ccd13fa44adb10640ab4c4ad8a8f6e29bcd9a5d5ba5fd6042e100b"
+    },
+    {
+      "name": "idx_submissions_github_stage",
+      "type": "index",
+      "definition_sha256": "70e4a28e0024125f991e4fa566d7dcdfd83fc917252ddaac4a98676a818c6bd6"
+    },
+    {
+      "name": "idx_task_code_packets_task",
+      "type": "index",
+      "definition_sha256": "3a7ecf66d70e43cb4177a559e94d0997bb36d48d887bfb510cd55e7d8cf71740"
+    },
+    {
+      "name": "idx_task_code_requests_admin",
+      "type": "index",
+      "definition_sha256": "0e0ad768d17db4765bb5727370307e355522b016df373bbf4f7dd5707922cfda"
+    },
+    {
+      "name": "idx_task_code_requests_user_task",
+      "type": "index",
+      "definition_sha256": "3ea5cd5b8e982b4d3ccd4aad1752de0c3471d8163df46d7c45f4eff1e0bdf692"
+    },
+    {
+      "name": "idx_task_dependencies_task",
+      "type": "index",
+      "definition_sha256": "f9e4387170eed3e9f6c46cd508c0678e1b2c6518a0facb2c4fef793a973599ae"
+    },
+    {
+      "name": "idx_task_dependency_groups_task",
+      "type": "index",
+      "definition_sha256": "bb813149ee79d47fb188d3c4a40fdd10ce83c0502a60316fd34b90087f687d2d"
+    },
+    {
+      "name": "idx_task_requests_due",
+      "type": "index",
+      "definition_sha256": "845c58a00a6d22e99dff24b947f62cd9e0ade859249bc7ec40e0286730c802cf"
+    },
+    {
+      "name": "idx_task_requests_one_active_per_user_task",
+      "type": "index",
+      "definition_sha256": "b7fb44b34c5753c95aea9c22f4cc207f908efc1b41523dd91b6d5ac6f26c385b"
+    },
+    {
+      "name": "idx_task_requests_task",
+      "type": "index",
+      "definition_sha256": "ed41a63148cc53bf31a768f5b369ac2fadbd79527777ffdca06c3d27c99ae7c3"
+    },
+    {
+      "name": "idx_task_requests_unique_reservation",
+      "type": "index",
+      "definition_sha256": "96de84499bbfb10a0cb177b4351eac457c57ff75a983a88ca38728600ad453c3"
+    },
+    {
+      "name": "idx_task_requests_user",
+      "type": "index",
+      "definition_sha256": "739162ac61acec920b37eefc47dfc9719c9ca34a74e5c967fd720dcacefee2a6"
+    },
+    {
+      "name": "idx_users_single_owner",
+      "type": "index",
+      "definition_sha256": "4ca4bd62b657bbac40873618b5d5f246ae9bb359a19fa8aecd00ea799e1c8b1b"
+    },
+    {
+      "name": "admin_evidence_chunks",
+      "type": "table",
+      "definition_sha256": "5560a88c2e4569889a3522a304b6364fc93a9171883773457d85893bc68cd8da"
+    },
+    {
+      "name": "admin_evidence_files",
+      "type": "table",
+      "definition_sha256": "fdac9568e6429c219acd87caf1d3a456932ab33cf6f57a285e441441e1068444"
+    },
+    {
+      "name": "admin_sessions",
+      "type": "table",
+      "definition_sha256": "a95416cf9423e2bb4407a765800b6b0f1b2a43f974bfa554db0cc765efc7273a"
+    },
+    {
+      "name": "audit_archive",
+      "type": "table",
+      "definition_sha256": "e4a5b34fc39b2619cb9e002432ef5036a5460ceeab548d9fbb1fc6ad6377ccde"
+    },
+    {
+      "name": "audit_log",
+      "type": "table",
+      "definition_sha256": "52c6318eee732fa6114d1fccbe2a9ed9907b53b63dc0de40cbb0b013d2c65b58"
+    },
+    {
+      "name": "bridge_research_sessions",
+      "type": "table",
+      "definition_sha256": "57b67616939c292d3cdc2b05ab090a3106ff6d3e982a1969233773f0da40c06b"
+    },
+    {
+      "name": "challenge_entries",
+      "type": "table",
+      "definition_sha256": "b8e559612ada9bed2e5b097e88d0f9f1ef8fdf8fdcc805896013af42a218ac66"
+    },
+    {
+      "name": "challenges",
+      "type": "table",
+      "definition_sha256": "3a07f4de3ece0975402b2274c25b90083e616bdcbffd0dab8090aee87731543b"
+    },
+    {
+      "name": "competency_evaluations",
+      "type": "table",
+      "definition_sha256": "185735669544eb25af63c94ba5424928631b7651afe2b7c5ab4bfbc90c9ed4c7"
+    },
+    {
+      "name": "countermodel_research_sessions",
+      "type": "table",
+      "definition_sha256": "e0554300d3fb8f3567985fb21dfabc413dcbe840ccd3e987482eb94c9c6792fc"
+    },
+    {
+      "name": "d1_migrations",
+      "type": "table",
+      "definition_sha256": "27130fd825c955e2145eff822805208618c14fd63b04b7359b0b1132ed900f0a"
+    },
+    {
+      "name": "email_verification_tokens",
+      "type": "table",
+      "definition_sha256": "304be96dfb5d4515175e2e4f3d94407d592f932691a9a9a58690ebd1ef163c04"
+    },
+    {
+      "name": "forge_duel_research_sessions",
+      "type": "table",
+      "definition_sha256": "1e69f956ea094111743add4d94aa81c4a741ad020e14ab986efcf40766ea1226"
+    },
+    {
+      "name": "meaning_forge_explanation_reviews",
+      "type": "table",
+      "definition_sha256": "e5ecece6dade57451de3b81c43d167bd228b4f55f069b1ecca6db75c8e37c4de"
+    },
+    {
+      "name": "meaning_forge_sessions",
+      "type": "table",
+      "definition_sha256": "674004748e1e0af4cc42d80cf0b89c5c2f1a097c2c62482987190b539fd473ce"
+    },
+    {
+      "name": "notifications",
+      "type": "table",
+      "definition_sha256": "0f207173b5cba59aa877fd7a897a76858f08358e15b103205f0a87a084b69122"
+    },
+    {
+      "name": "production_promotions",
+      "type": "table",
+      "definition_sha256": "1fcb9ae085593be89559610a9e354129f1868ca2058c2d98c8f8ce234f1ff44c"
+    },
+    {
+      "name": "proof_order_research_attempts",
+      "type": "table",
+      "definition_sha256": "66efd7a1bbde54d3ab584dca3c92918e1b6ae53a8526de7c4f6e9ecfec38827f"
+    },
+    {
+      "name": "prooflab_research_sessions",
+      "type": "table",
+      "definition_sha256": "2e7bdb3bfd0a8ce48fd170a0b508b325da0b6494b055c59428d45ee4002fc4d6"
+    },
+    {
+      "name": "prooflab_source_research_sessions",
+      "type": "table",
+      "definition_sha256": "4eb3f09cd9636436f2787d3df2d6d9f1e09ad819f21acbfa741efb1c33a74f87"
+    },
+    {
+      "name": "rate_limits",
+      "type": "table",
+      "definition_sha256": "15152b60bb2da6d400e1b379258eaab4a72715d734c49c37e2ea4c2874565d41"
+    },
+    {
+      "name": "role_applications",
+      "type": "table",
+      "definition_sha256": "8f89696692cf60c2f3940c99d3d95b21452f1a21909b1fd6490f21f2528899a5"
+    },
+    {
+      "name": "role_openings",
+      "type": "table",
+      "definition_sha256": "72748a1e52e3e2f898e8dbf04761ca26ea4d362f4de999735b1a2330e51ccd6b"
+    },
+    {
+      "name": "safety_forge_research_sessions",
+      "type": "table",
+      "definition_sha256": "bbc77bb63d9aa71650e209fa2871e268aebfc326a44ddc41cc8a93805ee8809e"
+    },
+    {
+      "name": "sessions",
+      "type": "table",
+      "definition_sha256": "6964352662bcbaf179b23f08a0b19367ba016847cce6ef5bb2c81ed985b8d459"
+    },
+    {
+      "name": "skills",
+      "type": "table",
+      "definition_sha256": "37ec79a558b08c1f4ce26413cb77079b03ff41959d944e47870531a0b1a42f75"
+    },
+    {
+      "name": "submission_files",
+      "type": "table",
+      "definition_sha256": "7c2f2702dc49e95fae18692bc01abed99442f4fe467d78e1a41fe6a8f808c0e6"
+    },
+    {
+      "name": "submission_peer_reviews",
+      "type": "table",
+      "definition_sha256": "3f6e5af5b1dca4d352a5c73edc8262ce648832303d8e5b357f833d1ae5c08e90"
+    },
+    {
+      "name": "submissions",
+      "type": "table",
+      "definition_sha256": "21c3bd02b9650c43f524a026ee885c1f8488ee3e7c98307d3d98793254c2562c"
+    },
+    {
+      "name": "task_code_packets",
+      "type": "table",
+      "definition_sha256": "f3ded8fa6c39af79acf4370dbc23adacfe83d8877d4e49583446879d2ba91f10"
+    },
+    {
+      "name": "task_code_requests",
+      "type": "table",
+      "definition_sha256": "7e9644714dcc5baea26559d7f534fb5fef30ef214c811b1d8dae9a9425ced07f"
+    },
+    {
+      "name": "task_dependencies",
+      "type": "table",
+      "definition_sha256": "8ceef441b2e422d7edb7de317ddd2579bec6b07dd5adbf1852a663bee8f84cbb"
+    },
+    {
+      "name": "task_dependency_groups",
+      "type": "table",
+      "definition_sha256": "980859270ab7e06a8c4431530d4c02df1101d36d8ff9ced520bbc859dae9f502"
+    },
+    {
+      "name": "task_requests",
+      "type": "table",
+      "definition_sha256": "f73ee11df5b4d02a2bb36cc8c78d3ca223204ae3c19b32afa7278b561b303531"
+    },
+    {
+      "name": "tasks",
+      "type": "table",
+      "definition_sha256": "17759bd0d577df230617f04077f54ddea28a309aecaad01f33a6fc897e5d5757"
+    },
+    {
+      "name": "users",
+      "type": "table",
+      "definition_sha256": "14f49bc60a659cb9eab1b717996baa8fcb368d0103f2d517720d08571cdee3aa"
+    },
+    {
+      "name": "admin_evidence_chunks_no_delete",
+      "type": "trigger",
+      "definition_sha256": "08799864dc708d677c64af412d907486b6d00482560f2f4d1232f8816a7a9723"
+    },
+    {
+      "name": "admin_evidence_chunks_no_update",
+      "type": "trigger",
+      "definition_sha256": "faab78b4c00a87fe499373659493b09d43d9ae80d9b6a4b7e6e85a39d68ff3ca"
+    },
+    {
+      "name": "admin_evidence_files_no_delete",
+      "type": "trigger",
+      "definition_sha256": "a6882fc3ff41623470db643b46fc0f919068cc40b24fa44517e77629b8244d27"
+    },
+    {
+      "name": "admin_evidence_files_no_update",
+      "type": "trigger",
+      "definition_sha256": "4c676b2e5167c344ab9766a266eef357468419689d300836a587428e2a450030"
+    },
+    {
+      "name": "audit_archive_no_delete",
+      "type": "trigger",
+      "definition_sha256": "25a8d56b01625b80392bf6f141deb4b10384b7f1b43dc782e588a7cb73fbf197"
+    },
+    {
+      "name": "audit_archive_no_update",
+      "type": "trigger",
+      "definition_sha256": "aa6cb988505aff99126271bb5862be8bdf41b617b2ba9b7fc2ea78119e5cc260"
+    },
+    {
+      "name": "audit_log_no_delete",
+      "type": "trigger",
+      "definition_sha256": "d6caa1e254867364fb39e45451b78204a81786547f12406d547ce90a9d48661d"
+    },
+    {
+      "name": "competency_evaluations_daily_cap",
+      "type": "trigger",
+      "definition_sha256": "63f4df84225aee59287d3bc034c64f564fb78bdcdcaa0064a1ce0285f3be616f"
+    },
+    {
+      "name": "task_requests_pending_cap",
+      "type": "trigger",
+      "definition_sha256": "857a164f29ff8aae07040fcb5895cf0d432356711127239e126e55af3179cac0"
+    },
+    {
+      "name": "task_requests_reserved_cap",
+      "type": "trigger",
+      "definition_sha256": "5c79a51bab5d49d397feaf43f5874c34ee32021dd50b9b91fe99bcefe8bc59b6"
+    }
+  ],
+  "missing_objects": [],
+  "extra_objects": [
+    "d1_migrations",
+    "idx_prooflab_by_time",
+    "idx_prooflab_by_user",
+    "prooflab_research_sessions"
+  ],
+  "exact_definition_matches": [
+    "audit_log",
+    "bridge_research_sessions",
+    "bridge_sessions_export",
+    "countermodel_research_sessions",
+    "email_verification_tokens",
+    "idx_admin_evidence_sha",
+    "idx_admin_evidence_subject",
+    "idx_admin_evidence_uploader",
+    "idx_admin_sessions_expiry",
+    "idx_admin_sessions_user",
+    "idx_audit_archive_created",
+    "idx_audit_subject",
+    "idx_challenge_entries_rank",
+    "idx_challenge_entries_user",
+    "idx_countermodel_export",
+    "idx_countermodel_user_created",
+    "idx_email_verify_user",
+    "idx_meaning_forge_created",
+    "idx_meaning_forge_user",
+    "idx_notifications_user",
+    "idx_production_promotions_state",
+    "idx_proof_order_research_by_puzzle",
+    "idx_proof_order_research_by_user",
+    "idx_prooflab_source_export_created",
+    "idx_prooflab_source_user_created",
+    "idx_role_applications_status",
+    "idx_safety_forge_export",
+    "idx_safety_forge_user",
+    "idx_sessions_expiry",
+    "idx_sessions_user",
+    "idx_submission_peer_reviews_decisions",
+    "idx_submissions_github_stage",
+    "idx_task_dependencies_task",
+    "idx_task_dependency_groups_task",
+    "idx_task_requests_due",
+    "idx_task_requests_task",
+    "idx_task_requests_user",
+    "idx_users_single_owner",
+    "meaning_forge_explanation_reviews",
+    "meaning_forge_sessions",
+    "notifications",
+    "production_promotions",
+    "proof_order_research_attempts",
+    "prooflab_source_research_sessions",
+    "rate_limits",
+    "safety_forge_research_sessions",
+    "sessions",
+    "skills",
+    "submission_files",
+    "submission_peer_reviews",
+    "submissions",
+    "task_code_packets",
+    "task_code_requests"
+  ],
+  "different_definitions": [
+    "admin_evidence_chunks",
+    "admin_evidence_chunks_no_delete",
+    "admin_evidence_chunks_no_update",
+    "admin_evidence_files",
+    "admin_evidence_files_no_delete",
+    "admin_evidence_files_no_update",
+    "admin_sessions",
+    "audit_archive",
+    "audit_archive_no_delete",
+    "audit_archive_no_update",
+    "audit_log_no_delete",
+    "challenge_entries",
+    "challenges",
+    "competency_evaluations",
+    "competency_evaluations_daily_cap",
+    "forge_duel_research_sessions",
+    "idx_audit_archive_action",
+    "idx_audit_archive_actor",
+    "idx_audit_archive_subject",
+    "idx_competency_eval_status",
+    "idx_competency_eval_user",
+    "idx_competency_one_open_per_skill",
+    "idx_forge_duel_by_user",
+    "idx_forge_duel_for_export",
+    "idx_role_one_active_application",
+    "idx_task_code_packets_task",
+    "idx_task_code_requests_admin",
+    "idx_task_code_requests_user_task",
+    "idx_task_requests_one_active_per_user_task",
+    "idx_task_requests_unique_reservation",
+    "role_applications",
+    "role_openings",
+    "task_dependencies",
+    "task_dependency_groups",
+    "task_requests",
+    "task_requests_pending_cap",
+    "task_requests_reserved_cap",
+    "tasks",
+    "users"
+  ],
+  "different_sql_matching_columns_or_index_layout": [
+    "admin_evidence_chunks",
+    "admin_evidence_files",
+    "admin_sessions",
+    "audit_archive",
+    "challenge_entries",
+    "challenges",
+    "competency_evaluations",
+    "forge_duel_research_sessions",
+    "idx_audit_archive_action",
+    "idx_audit_archive_actor",
+    "idx_audit_archive_subject",
+    "idx_competency_eval_status",
+    "idx_competency_eval_user",
+    "idx_competency_one_open_per_skill",
+    "idx_forge_duel_by_user",
+    "idx_forge_duel_for_export",
+    "idx_role_one_active_application",
+    "idx_task_code_packets_task",
+    "idx_task_code_requests_admin",
+    "idx_task_code_requests_user_task",
+    "idx_task_requests_one_active_per_user_task",
+    "idx_task_requests_unique_reservation",
+    "role_applications",
+    "role_openings",
+    "task_dependencies",
+    "task_dependency_groups",
+    "task_requests"
+  ],
+  "column_or_foreign_key_or_index_layout_differences": [
+    "tasks",
+    "users"
+  ],
+  "table_layout_details": {
+    "tasks": {
+      "missing_columns": [],
+      "extra_columns": [],
+      "changed_column_metadata": [],
+      "foreign_keys_equal": true,
+      "column_order_equal": false
+    },
+    "users": {
+      "missing_columns": [],
+      "extra_columns": [],
+      "changed_column_metadata": [
+        {
+          "name": "password_iterations",
+          "actual": [
+            "INTEGER",
+            1,
+            "250000",
+            0,
+            0
+          ],
+          "source": [
+            "INTEGER",
+            1,
+            "100000",
+            0,
+            0
+          ]
+        }
+      ],
+      "foreign_keys_equal": true,
+      "column_order_equal": true
+    }
+  },
+  "structural_matches_prove_all_constraints_equal": false,
+  "recorded_migrations": [
+    "0024_countermodel_lab.sql",
+    "0025_bridge_research_sessions.sql"
+  ],
+  "unrecorded_source_migrations": [
+    {
+      "name": "0001_commons_auth.sql",
+      "sha256": "70dc0e500fb73ed429931694e35ef3924058801bcb78b1dc8580f44c99932742",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0002_seed_commons_tasks.sql",
+      "sha256": "28b05e7fc4670ba292081accb035b5fa353a044675a9502aee4d3d15fee7788b",
+      "mutations": [
+        "INSERT"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0003_competency_evaluations.sql",
+      "sha256": "5357c4c69a703ad1fe471501c0738635b551db84c2ca65e0088d3132cee4469a",
+      "mutations": [
+        "ALTER",
+        "DELETE",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0004_admin_sessions_immutable_audit.sql",
+      "sha256": "5e5bddf51c67b7d19e43dc05df7d943d309744c432799ae74c439e4ce60ba1a3",
+      "mutations": [
+        "DELETE",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0005_admin_action_evidence.sql",
+      "sha256": "9d5e82ed5441d518e03367e2219c809a4b9f979e63922080f5d413ff7ea0ccac",
+      "mutations": [
+        "DELETE",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0006_claim_invalidation_program.sql",
+      "sha256": "89e44dd572eb7892fa92aedace231f5357250d35d3e181da4b3d60f0d4610447",
+      "mutations": [
+        "ALTER",
+        "DELETE",
+        "INSERT",
+        "REPLACE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0007_reserved_task_exclusivity.sql",
+      "sha256": "198228707b7716b77abca468224586dfee3f770a24d6dd69bca321726faf9e3e",
+      "mutations": [
+        "ALTER",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0008_contributor_concurrency_guards.sql",
+      "sha256": "8adfcb812c7bd909771fa1cd5656e022f8f7fc7c3115d7aed716ae0d94649350",
+      "mutations": [
+        "INSERT",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0009_curated_work_and_roles.sql",
+      "sha256": "972eeae00e8dd85dcda936bf343bc8cbf3a8b541beb238d786a0fa4150101b8a",
+      "mutations": [
+        "ALTER",
+        "DELETE",
+        "INSERT",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0010_rich_task_dependency_graph.sql",
+      "sha256": "992ffcb252a6ce16f125be76c257e7c8bb0a95bc6701daf4556d369604a7376c",
+      "mutations": [
+        "ALTER",
+        "DELETE",
+        "INSERT",
+        "REPLACE",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0011_pcs_arena.sql",
+      "sha256": "b103fce679832c00dbacdc3bbabf11d46f14a52a76c9b0666af4c03edea9e5b2",
+      "mutations": [
+        "DELETE",
+        "INSERT",
+        "REPLACE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0012_dependency_edge_enrichment.sql",
+      "sha256": "c9d515eb67a41a35c153de237156fb7a8b9006f1f856a33bffb128b06622e9b1",
+      "mutations": [
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0013_submission_automation_microtasks.sql",
+      "sha256": "5abb1c5bae75b592260322b85b01905077cf1d3425554ac2a2ceb726ccc89c66",
+      "mutations": [
+        "ALTER",
+        "DELETE",
+        "INSERT"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0014_production_promotions.sql",
+      "sha256": "e3a5055879682ec37aefbe64f5344df7b5b52a368674589715fe8ff3cde29611",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0015_promotion_attempts.sql",
+      "sha256": "83dc679f1443b8745edae4cede73252b3d2daf39916d004777b576abba79ffc6",
+      "mutations": [
+        "ALTER"
+      ],
+      "data_effect_review_required": false,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0016_proof_quest_adult_consent.sql",
+      "sha256": "eca62bd12ac8bbf10beaf8ef0df0a947414745aa0bccc79b12ae495754b725be",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0017_curated_needed_tasks_and_roles.sql",
+      "sha256": "dc6c7c80d4b8a6dc6919f3c7247fbc8f36aac4984bc5b50fd9c9684b03d28a1c",
+      "mutations": [
+        "INSERT",
+        "replace"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0018_safety_forge_research_sessions.sql",
+      "sha256": "cd04455215656a980588652aa7ea7395c1040c11cb6fee26bb4b5cec77d657fd",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0019_forge_duel_preference_research.sql",
+      "sha256": "d167290e059d05bca05b1454dd19180b1762106ffaf0c366a3bc1f4bca475013",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0020_prooflab_adult_optin_research.sql",
+      "sha256": "41a54964e0b86d804b9c28d1bd2d44d073946948f3894e268342ddc8c60f3dc5",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0021_task_code_packets.sql",
+      "sha256": "72293713d5d170eb75dd4f023f88777e785e37f116c1bac3c4c85acc5f961123",
+      "mutations": [
+        "DELETE",
+        "INSERT",
+        "UPDATE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0022_meaning_forge_research.sql",
+      "sha256": "0a67fb0dbe51f7f09e105b9c13458195640516777fde7d91b07d5cdb23e3c876",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    },
+    {
+      "name": "0023_submission_peer_reviews.sql",
+      "sha256": "c3d93dafdfa8361f050a03d0180722549067152a6e8d290c4f4366f20d14c38b",
+      "mutations": [
+        "DELETE"
+      ],
+      "data_effect_review_required": true,
+      "replay_unsafe_without_review": true
+    }
+  ],
+  "unknown_recorded_migrations": [],
+  "schema_match_is_historical_execution_proof": false,
+  "historical_ledger_backfill_authorized": false,
+  "production_migration_authorized": false,
+  "database_mutated": false,
+  "account_or_game_rows_read": false,
+  "backup_restore_exercised": false,
+  "next_step": "Review definition differences and every historical data effect on an isolated backup before any operator-approved ledger reconciliation.",
+  "migration_ledger_present": true
+}

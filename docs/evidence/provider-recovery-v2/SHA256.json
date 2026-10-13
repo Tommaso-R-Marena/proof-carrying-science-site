@@ -1,0 +1,12 @@
+{
+  "format": "pcs-provider-recovery-seal-v1",
+  "files": {
+    "actual-readiness-supported-proxy.json": "0fe29f5c554b06d903a27a7284e413dd8589b6ea193baff90d90bd7ed73113cc",
+    "actual-readiness.json": "a1cb20e2ec264a4f857edbb5575b06d899416243f7bddb44bc16ae3dd9fba438",
+    "focused.log": "f9e16e832c9aadc13cc2c01b823e83ea76d92ccaebaf14ee957b281756daad48",
+    "initial-focused.log": "61468f9cdeca6c5c862f86668fa926414b8e3ffdc93f547bc3ed3f9ca1c9cdf9",
+    "mandatory-integration.log": "216615adfb09f81e9118d0a235f7671eb243213b9aff19b88c5e6eb207dec22e",
+    "summary.json": "d0456c8962b45f98d6fd7283d81302e55d4a9b05c3c73d6aa6fed4c02b63a6ce"
+  },
+  "external_attestation": false
+}

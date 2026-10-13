@@ -19,15 +19,16 @@ async function setup(path){
   return {mf,db,env:{COMMONS_DB:db,RATE_LIMIT_SALT:'test-only-journal-salt',PCS_LEAN_GITHUB_TOKEN:'test-only-provider-token'}};
 }
 function provider({loseConfirmation=false}={}){
-  const state={dispatches:0,run:null,status:'in_progress',conclusion:null,badResult:false,cancels:0,unavailable:false};
-  const repository={private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'};
+  const state={dispatches:0,run:null,status:'in_progress',conclusion:null,badResult:false,cancels:0,unavailable:false,mainSha:CORE_SHA,workflowState:'active',dispatchStatus:204,gets:0};
+  const repository={private:false,default_branch:'main',full_name:'Tommaso-R-Marena/proof-carrying-science'};
   const json=x=>new Response(JSON.stringify(x),{headers:{'content-type':'application/json'}});
   state.transport=async(url,options={})=>{
     if(state.unavailable)throw TypeError('test network interruption');
-    const path=new URL(url).pathname;
+    const path=new URL(url).pathname;if(options.method!=='POST')state.gets++;
     if(path.endsWith('/proof-carrying-science'))return json(repository);
-    if(path.endsWith('/commits/main'))return json({sha:CORE_SHA});
-    if(path.endsWith('/dispatches')){state.dispatches++;const inputs=JSON.parse(options.body).inputs;state.run=inputs.request_id;await new Promise(r=>setTimeout(r,10));if(loseConfirmation)throw TypeError('test accepted POST, lost response');return new Response(null,{status:204});}
+    if(path.endsWith('/git/ref/heads/main'))return json({object:{sha:state.mainSha}});
+    if(path.endsWith('/actions/workflows/pcs-lean-public.yml'))return json({state:state.workflowState,path:'.github/workflows/pcs-lean-public.yml'});
+    if(path.endsWith('/dispatches')){state.dispatches++;if(state.dispatchStatus!==204)return new Response(null,{status:state.dispatchStatus});const inputs=JSON.parse(options.body).inputs;state.run=inputs.request_id;await new Promise(r=>setTimeout(r,10));if(loseConfirmation)throw TypeError('test accepted POST, lost response');return new Response(null,{status:204});}
     if(path.endsWith('/pcs-lean-public.yml/runs'))return json({workflow_runs:state.run?[{id:123,display_title:'PCS public Lean '+state.run,head_sha:CORE_SHA,head_branch:'main',event:'workflow_dispatch',path:'.github/workflows/pcs-lean-public.yml',repository,status:state.status,conclusion:state.conclusion}]:[]});
     if(path.endsWith('/123/cancel')){state.cancels++;return new Response(null,{status:202});}
     if(path.endsWith('/123/jobs'))return json({jobs:[{id:456,name:'public-lean',conclusion:'success'}]});
@@ -106,4 +107,57 @@ test('an already dispatched older approved request recovers without another disp
  const recovered=await submitJob(env,BODY,{ip,idempotencyKey,admit:async()=>{admissions++;},transport:p.transport,now:NOW+1});
  assert.equal(recovered.core_sha,PREVIOUS_CORE_SHA);assert.equal(recovered.request_id,payload.request_id);assert.equal(p.dispatches,0);assert.equal(admissions,0);
  assert.equal((await store.current(payload.request_id)).state,'dispatched');
+}));
+
+test('provider readiness failure creates no journal, charges no admission, and same-key recovery dispatches once',async()=>fixture(async({env})=>{
+ const p=provider(),o={ip:'fixture',idempotencyKey:'7'.repeat(32),transport:p.transport,now:NOW};let admissions=0;o.admit=async()=>{admissions++;};
+ for(const fault of ['unavailable','mainSha','workflowState']){
+  p[fault]=fault==='unavailable'?true:fault==='mainSha'?'0'.repeat(40):'disabled_manually';
+  await assert.rejects(submitJob(env,BODY,o),error=>error.code==='provider_unavailable'&&error.dispatch_attempted===false);
+  assert.equal(admissions,0);assert.equal(p.dispatches,0);
+  const key=await requestKey(env,o.ip,o.idempotencyKey);assert.equal(await new AuditJournal(env.COMMONS_DB).current(key.slice(0,32)),null);
+  p[fault]=fault==='unavailable'?false:fault==='mainSha'?CORE_SHA:'active';
+ }
+ const result=await submitJob(env,BODY,o);assert.equal(result.job_state,'dispatched');assert.equal(admissions,1);assert.equal(p.dispatches,1);
+}));
+test('revision changes after admission are definite no-dispatch, not dispatch uncertainty',async()=>fixture(async({env})=>{
+ const p=provider();let admissions=0;
+ const o={ip:'fixture',idempotencyKey:'8'.repeat(32),transport:p.transport,now:NOW,admit:async()=>{admissions++;p.mainSha='0'.repeat(40);}};
+ const r=await submitJob(env,BODY,o);assert.equal(r.job_state,'failed');assert.equal(r.dispatch_attempted,false);assert.equal(p.dispatches,0);assert.equal(admissions,1);
+ p.mainSha=CORE_SHA;assert.equal((await submitJob(env,BODY,o)).job_state,'failed');assert.equal(admissions,1);assert.equal(p.dispatches,0);
+ const rows=await new AuditJournal(env.COMMONS_DB).history(r.request_id);assert.equal(rows.at(-1).code,'provider_unavailable');assert.ok(!JSON.stringify(rows).includes(BODY.statement));
+}));
+test('explicit provider decline is terminal while server errors retain dispatch uncertainty',async()=>fixture(async({env})=>{
+ for(const [key,status,state,attempted] of [['9',401,'failed',true],['a',422,'failed',true],['b',429,'failed',true],['c',500,'dispatch_uncertain',true],['d',503,'dispatch_uncertain',true]]){
+  const p=provider();p.dispatchStatus=status;let admissions=0;
+  const o={ip:'fixture-decline',idempotencyKey:key.repeat(32),transport:p.transport,now:NOW,admit:async()=>{admissions++;}};
+  const r=await submitJob(env,BODY,o);assert.equal(r.job_state,state);assert.equal(r.dispatch_attempted,attempted);
+  await submitJob(env,BODY,o);assert.equal(p.dispatches,1);assert.equal(admissions,1);
+ }
+}));
+test('a restarted SQLite journal retains definitive no-dispatch and never charges or sends it again',async()=>{
+ const path=mkdtempSync(join(tmpdir(),'pcs-provider-restart-'));let a=await setup(path);const p=provider();let admissions=0;
+ const o={ip:'fixture',idempotencyKey:'e'.repeat(32),transport:p.transport,now:NOW,admit:async()=>{admissions++;p.workflowState='disabled_manually';}};
+ try{
+  const first=await submitJob(a.env,BODY,o);assert.equal(first.job_state,'failed');assert.equal(p.dispatches,0);
+  await a.mf.dispose();a=await setup(path);p.workflowState='active';
+  const recovered=await submitJob(a.env,BODY,o);assert.equal(recovered.ticket,first.ticket);assert.equal(recovered.job_state,'failed');assert.equal(admissions,1);assert.equal(p.dispatches,0);
+ }finally{await a.mf.dispose();rmSync(path,{recursive:true,force:true});}
+});
+test('twenty concurrent unavailable requests cannot charge quota and recover with one admission and POST',async()=>fixture(async({env})=>{
+ const p=provider();p.unavailable=true;let admissions=0;
+ const o={ip:'fixture-race',idempotencyKey:'f'.repeat(32),transport:p.transport,now:NOW,admit:async()=>{admissions++;}};
+ const failures=await Promise.allSettled(Array.from({length:20},()=>submitJob(env,BODY,o)));
+ assert.ok(failures.every(r=>r.status==='rejected'&&r.reason.code==='provider_unavailable'));assert.equal(admissions,0);assert.equal(p.dispatches,0);
+ p.unavailable=false;
+ const recovered=await Promise.all(Array.from({length:20},(_,i)=>submitJob(env,BODY,{...o,now:NOW+i})));
+ assert.equal(admissions,1);assert.equal(p.dispatches,1);assert.equal(new Set(recovered.map(r=>r.ticket)).size,1);
+}));
+
+test('trusted readiness allowance runs only before initial/created attempts, never acknowledged reuse',async()=>fixture(async({env})=>{
+ const p=provider();let checks=0,admissions=0;
+ const o={ip:'readiness-fixture',idempotencyKey:'0'.repeat(32),transport:p.transport,now:NOW,readinessAdmit:async()=>{checks++;},admit:async()=>{admissions++;}};
+ const first=await submitJob(env,BODY,o);assert.equal(checks,1);
+ await submitJob(env,BODY,o);assert.equal(checks,1);assert.equal(admissions,1);assert.equal(p.dispatches,1);
+ assert.equal((await submitJob(env,BODY,{...o,readinessAdmit:async()=>{throw Error('Must not be invoked');}})).ticket,first.ticket);
 }));

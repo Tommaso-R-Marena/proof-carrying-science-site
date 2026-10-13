@@ -1,0 +1,20 @@
+{
+  "format": "pcs-read-only-provider-probe-v1",
+  "observed_at": "2026-10-13T02:18:32.883Z",
+  "credential_binding": "PCS_LEAN_GITHUB_TOKEN",
+  "transport": "Node22 --use-env-proxy",
+  "target_core_sha": "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722",
+  "readiness": {
+    "format": "pcs-lean-provider-readiness-v1",
+    "status": "ready",
+    "core_sha": "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722",
+    "public_repository": true,
+    "workflow_active": true,
+    "pcs_authority": false
+  },
+  "wall_seconds": 1.300179621,
+  "proof_admissions": 0,
+  "workflow_dispatches": 0,
+  "financial_actions": 0,
+  "pcs_authority": false
+}

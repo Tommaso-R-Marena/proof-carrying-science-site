@@ -1,0 +1,99 @@
+
+> test:bridge
+> node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs tests/memory-workshop.test.mjs && python3 tests/test_bridge_migration.py
+
+TAP version 13
+# Subtest: real Worker replays explicit authenticated adult donation, without training authority
+ok 1 - real Worker replays explicit authenticated adult donation, without training authority
+  ---
+  duration_ms: 45.166253
+  type: 'test'
+  ...
+# Subtest: consent, age, login, verification, storage quota and origin are mandatory
+ok 2 - consent, age, login, verification, storage quota and origin are mandatory
+  ---
+  duration_ms: 11.709496
+  type: 'test'
+  ...
+# Subtest: producer scores and changed catalog never enter storage
+ok 3 - producer scores and changed catalog never enter storage
+  ---
+  duration_ms: 2.026509
+  type: 'test'
+  ...
+# Subtest: erasure targets only the authenticated contributor
+ok 4 - erasure targets only the authenticated contributor
+  ---
+  duration_ms: 3.687002
+  type: 'test'
+  ...
+# Subtest: public replay has mathematical catalog labels, never fresh kernel authority
+ok 5 - public replay has mathematical catalog labels, never fresh kernel authority
+  ---
+  duration_ms: 3.830362
+  type: 'test'
+  ...
+# Subtest: all public routes retain exact original goals and completed kernel artifacts
+ok 6 - all public routes retain exact original goals and completed kernel artifacts
+  ---
+  duration_ms: 4.988409
+  type: 'test'
+  ...
+# Subtest: actual rejected choices, undo and visible hint exposure replay separately
+ok 7 - actual rejected choices, undo and visible hint exposure replay separately
+  ---
+  duration_ms: 0.334851
+  type: 'test'
+  ...
+# Subtest: forged labels, goal fields, catalog identity, timeline and reordered history fail closed
+ok 8 - forged labels, goal fields, catalog identity, timeline and reordered history fail closed
+  ---
+  duration_ms: 0.870084
+  type: 'test'
+  ...
+# Subtest: typed action envelope rejects code, admissions and fabricated rewards
+ok 9 - typed action envelope rejects code, admissions and fabricated rewards
+  ---
+  duration_ms: 0.413136
+  type: 'test'
+  ...
+# Subtest: public signed ticket binds the exact human proof actions and kernel evidence
+ok 10 - public signed ticket binds the exact human proof actions and kernel evidence
+  ---
+  duration_ms: 42.319312
+  type: 'test'
+  ...
+# Subtest: memory missions retain actual induction, exact goals, and immutable catalogs
+ok 11 - memory missions retain actual induction, exact goals, and immutable catalogs
+  ---
+  duration_ms: 10.054371
+  type: 'test'
+  ...
+# Subtest: actual Worker recognizes the pinned memory catalog and rejects a forged identity
+ok 12 - actual Worker recognizes the pinned memory catalog and rejects a forged identity
+  ---
+  duration_ms: 46.8298
+  type: 'test'
+  ...
+# Subtest: memory proof requests bind both model generation and exact typed human actions
+ok 13 - memory proof requests bind both model generation and exact typed human actions
+  ---
+  duration_ms: 37.462617
+  type: 'test'
+  ...
+# Subtest: strong symbolic baseline remains distinct, goal-bound and axiom-audited
+ok 14 - strong symbolic baseline remains distinct, goal-bound and axiom-audited
+  ---
+  duration_ms: 6.775867
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 211.44831
+Bridge SQLite migration: constraints, deduplication and erasure passed

@@ -1,0 +1,12 @@
+{
+  "format": "pcs-read-only-provider-probe-v1",
+  "observed_at": "2026-10-13T02:17:09.371Z",
+  "target_core_sha": "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722",
+  "status": "unavailable",
+  "diagnostic": "repository_unavailable",
+  "wall_seconds": 0.072080545,
+  "proof_admissions": 0,
+  "workflow_dispatches": 0,
+  "financial_actions": 0,
+  "pcs_authority": false
+}

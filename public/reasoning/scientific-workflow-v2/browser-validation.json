@@ -1,0 +1,54 @@
+{
+  "format": "pcs-scientific-workflow-browser-v2",
+  "source_sha256": {
+    "scientific-workflow-v2.html": "fc0d9494533d4a908ff5c30ac3f93d51e6dce886f604c84dda73460e85300683",
+    "scientific-workflow-v2.css": "d5b904f7f26754beb6fc89b16bd88ba82078b4fe0353db1f29f7f96a82069948",
+    "scientific-workflow-v2.mjs": "04a8fcea4f5b1d2f62c6306660a5fc6c1f66a1b12aca3b458e91a2693a41717c",
+    "scientific-workflow-v2-core.mjs": "cf0312a310bec87e6674cb2d120e999fc8400bcac10c0652eb6ebd395c91d8f3",
+    "reasoning/scientific-workflow-v2/penguins.csv": "f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93",
+    "reasoning/scientific-workflow-v2/positive.pcs.zip": "7f503d99a7069a2d3663883520e7c68663241b1f0eed66584bcb343756be8290",
+    "reasoning/scientific-workflow-v2/recorded-receipt.json": "4b8b2af1ace6925af5baac8487b400e42c34bcfbf89d34cbb0b0982e5d501c07",
+    "scripts/browser_scientific_workflow_v2.cjs": "7fc5b675d6febb9db48f4151023ea9a6e9f757a60d36eea2afd2bf67514ab921"
+  },
+  "actualFrozenData": true,
+  "remoteCheckerInvocations": 0,
+  "humanParticipants": 0,
+  "training": false,
+  "viewports": [
+    {
+      "width": 320,
+      "completePoints": 342,
+      "filteredGentooPoints": 123,
+      "keyboard": true,
+      "pointer": true,
+      "unitConversion": true,
+      "actualDownloads": true,
+      "noOverflow": true,
+      "noApiOrPostRequests": true
+    },
+    {
+      "width": 768,
+      "completePoints": 342,
+      "filteredGentooPoints": 123,
+      "keyboard": true,
+      "pointer": true,
+      "unitConversion": true,
+      "actualDownloads": true,
+      "noOverflow": true,
+      "noApiOrPostRequests": true
+    },
+    {
+      "width": 1440,
+      "completePoints": 342,
+      "filteredGentooPoints": 123,
+      "keyboard": true,
+      "pointer": true,
+      "unitConversion": true,
+      "actualDownloads": true,
+      "noOverflow": true,
+      "noApiOrPostRequests": true
+    }
+  ],
+  "corruptAssetFailClosed": true,
+  "unlistedManifestAssetRejectedBeforeFetch": true
+}

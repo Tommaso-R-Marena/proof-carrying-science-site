@@ -22,7 +22,7 @@ test('actual Worker recognizes the pinned memory catalog and rejects a forged id
 });
 test('memory proof requests bind both model generation and exact typed human actions',async()=>{
  const m=catalog.missions[1],{r}=finished(m),env={PCS_LEAN_GITHUB_TOKEN:'test-token',RATE_LIMIT_SALT:'test-secret'};
- const transport=async url=>url.endsWith('/dispatches')?new Response(null,{status:204}):Response.json(url.endsWith('/commits/main')?{sha:CORE_SHA}:{private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'});
+ const transport=async url=>url.endsWith('/actions/workflows/pcs-lean-public.yml')?Response.json({state:'active',path:'.github/workflows/pcs-lean-public.yml'}):url.endsWith('/dispatches')?new Response(null,{status:204}):Response.json(url.endsWith('/git/ref/heads/main')?{object:{sha:CORE_SHA}}:{private:false,default_branch:'main',full_name:'Tommaso-R-Marena/proof-carrying-science'});
  const q=await dispatch(env,{statement:m.statement,interpretation:0,public_consent:true,license:'CC0-1.0',proof_actions:r.proof_actions,model_family:'verified-memory-v1'},transport,1000000);
  const p=await verifyTicket(env,q.ticket,1000000);assert.equal(p.model_family,'verified-memory-v1');assert.match(p.actions_sha256,/^[0-9a-f]{64}$/);
  const record={format:'pcs-public-lean-result-v1',request_id:p.request_id,core_sha:p.core_sha,source_sha256:p.source_sha256,actions_sha256:p.actions_sha256,model_family:p.model_family,result:{pcs_authority:false,status:'verified',formalization:{candidates:[{interpretation_sha256:m.goal_sha256,lean:r.receipt.statement}]},search:{receipt:r.receipt}}};

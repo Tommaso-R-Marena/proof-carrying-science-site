@@ -29,7 +29,7 @@ test('typed action envelope rejects code, admissions and fabricated rewards',()=
 test('public signed ticket binds the exact human proof actions and kernel evidence',async()=>{
  const r=replay(finish()),m=mission('tutorial'),env={PCS_LEAN_GITHUB_TOKEN:'test-actions-token',RATE_LIMIT_SALT:'test-ticket-secret'};
  const body={statement:m.statement,interpretation:0,public_consent:true,license:'CC0-1.0',proof_actions:r.proof_actions},calls=[];
- const transport=async(url,options)=>{calls.push({url,options});if(url.endsWith('/dispatches'))return new Response(null,{status:204});return Response.json(url.endsWith('/commits/main')?{sha:CORE_SHA}:{private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'});};
+ const transport=async(url,options)=>{calls.push({url,options});if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return Response.json({state:'active',path:'.github/workflows/pcs-lean-public.yml'});if(url.endsWith('/dispatches'))return new Response(null,{status:204});return Response.json(url.endsWith('/git/ref/heads/main')?{object:{sha:CORE_SHA}}:{private:false,default_branch:'main',full_name:'Tommaso-R-Marena/proof-carrying-science'});};
  const q=await dispatch(env,body,transport,1000000),p=await verifyTicket(env,q.ticket,1000000);
  const hash=createHash('sha256').update(JSON.stringify(r.proof_actions.map(a=>({argument:a.argument,kind:a.kind})))).digest('hex');assert.equal(p.actions_sha256,hash);
  assert.deepEqual(JSON.parse(JSON.parse(calls.at(-1).options.body).inputs.proof_actions),r.proof_actions);

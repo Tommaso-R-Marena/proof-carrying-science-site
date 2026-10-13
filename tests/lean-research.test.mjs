@@ -2,12 +2,12 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {gzipSync} from 'node:zlib';
-import {CORE_SHA,PREVIOUS_CORE_SHA,dispatch,poll,parseResult,parseResultLog,verifyTicket,validatePublicStatement} from '../src/lean-research.js';
+import {CORE_SHA,PREVIOUS_CORE_SHA,preflightDispatch,dispatch,poll,parseResult,parseResultLog,verifyTicket,validatePublicStatement} from '../src/lean-research.js';
 const env={PCS_GITHUB_TOKEN:'test-only-protocol-token',RATE_LIMIT_SALT:'test-only-ticket-secret'};
 const body={statement:'For all propositions U and V, if (U and V) then (U and (U and V)).',interpretation:null,public_consent:true,license:'CC0-1.0'};
-const repository={private:false,full_name:'Tommaso-R-Marena/proof-carrying-science'};
+const repository={private:false,default_branch:'main',full_name:'Tommaso-R-Marena/proof-carrying-science'};
 const response=(value,status=200,headers={})=>new Response(value===null?null:JSON.stringify(value),{status,headers});
-async function queued(now=1000000,override={}){const calls=[];const transport=async(url,options)=>{calls.push({url,options});if(url.endsWith('/commits/main'))return response({sha:CORE_SHA,...override.commit});if(url.endsWith('/dispatches'))return response(null,204);return response({...repository,...override.repo});};return {...await dispatch(env,body,transport,now),calls};}
+async function queued(now=1000000,override={}){const calls=[];const transport=async(url,options)=>{calls.push({url,options});if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA,...override.commit}});if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});if(url.endsWith('/dispatches'))return response(null,204);return response({...repository,...override.repo});};return {...await dispatch(env,body,transport,now),calls};}
 const receipt=JSON.parse(readFileSync(new URL('./fixtures/lean-proof-receipt-v1.json',import.meta.url)));
 function record(p){return {format:'pcs-public-lean-result-v1',request_id:p.request_id,core_sha:p.core_sha,source_sha256:p.source_sha256,result:{status:'verified',pcs_authority:false,formalization:{candidates:[{interpretation_sha256:receipt.goal_sha256,lean:receipt.statement}]},search:{receipt:structuredClone(receipt)}},baseline:{status:'unknown',pcs_authority:false}};}
 const marker=r=>'2026-10-10T00:00:00Z PCS_LEAN_RESULT_V1:'+Buffer.from(JSON.stringify(r)).toString('base64')+'\n';
@@ -33,7 +33,7 @@ test('gzip does not weaken interpretation, source, action or kernel authority bi
  }
 });
 test('explicit public authorization and closed mathematical payload',()=>{validatePublicStatement(body);for(const changed of [{public_consent:false},{license:'private'},{statement:'theorem evil : False := by sorry'},{statement:'For all propositions P, P. bearer-token: secret'},{interpretation:16},{statement:body.statement,extra:'reward'}])assert.throws(()=>validatePublicStatement({...body,...changed}));});
-test('only pinned public main, safe environment input, signed expiring ticket',async()=>{const q=await queued();assert.equal(q.calls.length,3);const submitted=JSON.parse(q.calls[2].options.body);assert.equal(submitted.ref,'main');assert.equal(submitted.inputs.statement,body.statement);assert.equal(q.calls[2].options.redirect,'manual');const p=await verifyTicket(env,q.ticket,1000000);assert.equal(p.core_sha,CORE_SHA);await assert.rejects(verifyTicket(env,q.ticket,5000000),/Expired/);await assert.rejects(verifyTicket({...env,RATE_LIMIT_SALT:'other'},q.ticket,1000000),/Forged/);await assert.rejects(queued(1000000,{repo:{private:true}}),/public/);await assert.rejects(queued(1000000,{commit:{sha:'0'.repeat(40)}}),/approved/);});
+test('only pinned public main, safe environment input, signed expiring ticket',async()=>{const q=await queued();assert.equal(q.calls.length,4);const submitted=JSON.parse(q.calls[3].options.body);assert.equal(submitted.ref,'main');assert.equal(submitted.inputs.statement,body.statement);assert.equal(q.calls[3].options.redirect,'manual');const p=await verifyTicket(env,q.ticket,1000000);assert.equal(p.core_sha,CORE_SHA);await assert.rejects(verifyTicket(env,q.ticket,5000000),/Expired/);await assert.rejects(verifyTicket({...env,RATE_LIMIT_SALT:'other'},q.ticket,1000000),/Forged/);await assert.rejects(queued(1000000,{repo:{private:true}}),/public/);await assert.rejects(queued(1000000,{commit:{sha:'0'.repeat(40)}}),/approved/);});
 test('actual receipt format, source binding, duplicate markers and forbidden axioms',async()=>{const q=await queued();const p=await verifyTicket(env,q.ticket,1000000);const r=record(p);assert.equal(parseResult(marker(r),p).result.status,'verified');assert.throws(()=>parseResult(marker(r)+marker(r),p),/duplicate/);for(const mutate of [r=>r.source_sha256='0'.repeat(64),r=>r.core_sha='0'.repeat(40),r=>r.result.pcs_authority=true,r=>r.result.search.receipt.kernel.axioms.push('evil'),r=>r.result.search.receipt.proof=' ',r=>r.baseline={status:'verified',pcs_authority:false,search:{receipt:{}}}]){const changed=structuredClone(r);mutate(changed);assert.throws(()=>parseResult(marker(changed),p));}});
 test('completed job provenance and redirected logs never carry GitHub credentials',async()=>{const q=await queued();const p=await verifyTicket(env,q.ticket,1000000);let logOptions;
  const run={id:123,display_title:'PCS public Lean '+p.request_id,head_sha:CORE_SHA,head_branch:'main',event:'workflow_dispatch',path:'.github/workflows/pcs-lean-public.yml',repository,status:'completed',conclusion:'success'};
@@ -54,7 +54,7 @@ function quotaEnv(count) {
 const origin='https://proof-carrying-science-site.marenatommaso.workers.dev';
 const submitRequest=(payload,requestOrigin=origin)=>new Request(origin+'/api/lean-research/submit',{method:'POST',headers:{origin:requestOrigin,'content-type':'application/json','CF-Connecting-IP':'192.0.2.1'},body:JSON.stringify(payload)});
 test('real Worker rejects origin and absent consent before any quota or provider operation',async()=>{const q=quotaEnv(1);assert.equal((await worker.fetch(submitRequest(body,'https://hostile.example'),q.env)).status,403);assert.equal((await worker.fetch(submitRequest({...body,public_consent:false}),q.env)).status,400);assert.equal(q.state.calls,0);});
-test('actual Worker/D1 preserves admission quotas and missing-provider recovery without proof',async()=>{
+test('actual Worker/D1 rejects absent provider before proof admission',async()=>{
  const {Miniflare,convertV4MiniflareOptions}=await import('miniflare');
  const mf=new Miniflare(convertV4MiniflareOptions({telemetry:{enabled:false},workers:[{name:'route-db',compatibilityDate:'2026-09-28',modules:true,script:'export default {fetch(){return new Response("fixture");}}',d1Databases:{COMMONS_DB:'route-db'}}]}));
  try{
@@ -62,14 +62,16 @@ test('actual Worker/D1 preserves admission quotas and missing-provider recovery 
   await db.exec('CREATE TABLE rate_limits(key TEXT PRIMARY KEY,window_start TEXT NOT NULL,count INTEGER NOT NULL); CREATE TABLE audit_log(id TEXT PRIMARY KEY,actor_user_id TEXT,action TEXT NOT NULL,subject_type TEXT NOT NULL,subject_id TEXT NOT NULL,detail_json TEXT NOT NULL,created_at TEXT NOT NULL); CREATE TABLE audit_archive(seq INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL UNIQUE,legacy_audit_id TEXT UNIQUE,actor_user_id TEXT,actor_email TEXT,actor_name TEXT,actor_role TEXT,action TEXT,subject_type TEXT,subject_id TEXT,detail_json TEXT,created_at TEXT,prev_hash TEXT UNIQUE,event_hash TEXT UNIQUE)');
   const env={COMMONS_DB:db,RATE_LIMIT_SALT:'test-only-real-route-db'},results=[];
   for(let i=0;i<3;i++)results.push(await worker.fetch(submitRequest(body),env));
-  assert.deepEqual(results.map(r=>r.status),[200,200,429]);
-  for(const response of results.slice(0,2)){const value=await response.json();assert.equal(value.job_state,'dispatch_uncertain');assert.equal(value.pcs_authority,false);assert.equal(value.evidence,undefined);assert.ok(value.ticket);}
-  const rows=(await db.prepare('SELECT detail_json FROM audit_log').all()).results.map(r=>JSON.parse(r.detail_json));
-  assert.equal(rows.filter(r=>r.code==='admission_passed').length,2);assert.equal(rows.filter(r=>r.code==='rate_limited').length,1);
+  assert.deepEqual(results.map(r=>r.status),[503,503,503]);
+  for(const response of results){const value=await response.json();assert.equal(value.error,'lean_checker_unavailable');assert.equal(value.evidence,undefined);assert.equal(value.ticket,undefined);}
+  const rows=(await db.prepare('SELECT detail_json FROM audit_log').all()).results;
+  assert.equal(rows.length,0);
+  const quotas=(await db.prepare('SELECT key,count FROM rate_limits').all()).results;
+  assert.equal(quotas.length,2);assert.ok(quotas.every(q=>q.count===3)); // Client retry and global readiness only; no proof quota.
  }finally{await mf.dispose();}
 });
 
-test('dedicated proof-dispatch credential is preferred without replacing existing website credential',async()=>{const scoped={...env,PCS_LEAN_GITHUB_TOKEN:'test-only-scoped-actions-token'};const calls=[];const transport=async(url,options)=>{calls.push(options.headers.Authorization);if(url.endsWith('/commits/main'))return response({sha:CORE_SHA});if(url.endsWith('/dispatches'))return response(null,204);return response(repository);};assert.equal((await dispatch(scoped,body,transport)).status,'queued');assert.ok(calls.every(h=>h==='Bearer test-only-scoped-actions-token'));assert.equal(scoped.PCS_GITHUB_TOKEN,env.PCS_GITHUB_TOKEN);});
+test('dedicated proof-dispatch credential is preferred without replacing existing website credential',async()=>{const scoped={...env,PCS_LEAN_GITHUB_TOKEN:'test-only-scoped-actions-token'};const calls=[];const transport=async(url,options)=>{calls.push(options.headers.Authorization);if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA}});if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});if(url.endsWith('/dispatches'))return response(null,204);return response(repository);};assert.equal((await dispatch(scoped,body,transport)).status,'queued');assert.ok(calls.every(h=>h==='Bearer test-only-scoped-actions-token'));assert.equal(scoped.PCS_GITHUB_TOKEN,env.PCS_GITHUB_TOKEN);});
 
 test('real Worker availability exposes configuration only, without credentials or authority',async()=>{const q=quotaEnv(1);let r=await worker.fetch(new Request(origin+'/api/lean-research/status'),q.env);assert.equal((await r.json()).status,'unavailable');r=await worker.fetch(new Request(origin+'/api/lean-research/status'),{...q.env,PCS_LEAN_GITHUB_TOKEN:'test-only-proof-scope'});const configured=await r.json();assert.equal(configured.status,'configured');assert.equal(configured.pcs_authority,false);assert.doesNotMatch(JSON.stringify(configured),/test-only-proof-scope/);assert.equal(q.state.calls,0);});
 
@@ -84,7 +86,7 @@ test('optional operational evidence is source-correlated, ordered and never auth
  const changed=structuredClone(r);changed.job_events[1].wall_seconds=Infinity;assert.throws(()=>parseResult(marker(changed),p));
 });
 test('the action digest binds actual checked receipt actions rather than a repeated output assertion',async()=>{
- const actions=structuredClone(receipt.actions),transport=async url=>url.endsWith('/commits/main')?response({sha:CORE_SHA}):url.endsWith('/dispatches')?response(null,204):response(repository);
+ const actions=structuredClone(receipt.actions),transport=async url=>url.endsWith('/git/ref/heads/main')?response({object:{sha:CORE_SHA}}):url.endsWith('/dispatches')?response(null,204):url.endsWith('/actions/workflows/pcs-lean-public.yml')?response({state:'active',path:'.github/workflows/pcs-lean-public.yml'}):response(repository);
  const q=await dispatch(env,{...body,proof_actions:actions},transport,1000000),p=await verifyTicket(env,q.ticket,1000000),r=record(p);r.actions_sha256=p.actions_sha256;
  assert.equal((await parseResultLog(marker(r),p)).result.status,'verified');
  const forged=structuredClone(r);forged.result.search.receipt.actions=[{kind:'rfl',argument:null}];
@@ -94,7 +96,7 @@ test('the action digest binds actual checked receipt actions rather than a repea
 test('hybrid requests require an attributed independently replayed proof and reject human action overrides',async()=>{
  validatePublicStatement({...body,model_family:'prospective-hybrid-v2'});
  assert.throws(()=>validatePublicStatement({...body,model_family:'prospective-hybrid-v2',proof_actions:[{kind:'rfl',argument:null}]}));
- const transport=async url=>url.endsWith('/commits/main')?response({sha:CORE_SHA}):url.endsWith('/dispatches')?response(null,204):response(repository);
+ const transport=async url=>url.endsWith('/git/ref/heads/main')?response({object:{sha:CORE_SHA}}):url.endsWith('/dispatches')?response(null,204):url.endsWith('/actions/workflows/pcs-lean-public.yml')?response({state:'active',path:'.github/workflows/pcs-lean-public.yml'}):response(repository);
  const q=await dispatch(env,{...body,model_family:'prospective-hybrid-v2'},transport,1000000),p=await verifyTicket(env,q.ticket,1000000),r=record(p);
  r.model_family='prospective-hybrid-v2';Object.assign(r.result,{checkpoint_sha256:'b'.repeat(64),library_sha256:'c'.repeat(64),production_authority:false,automatic_training:false,automatic_promotion:false});
  Object.assign(r.result.search,{format:'pcs-attributed-hybrid-v1',status:'verified',goal_sha256:receipt.goal_sha256,budget:48,expansions:4,stages:[{component:'ordinary_Std',status:'unknown',expansions:3},{component:'memory_structural',status:'verified',expansions:1}],cost:{measured_lean_calls_excluding_legacy_memory_replay:9,cold_wall_seconds:1},winning_component:'memory_structural',independent_replay:{status:'verified',goal_sha256:receipt.goal_sha256,kernel:structuredClone(receipt.kernel)}});
@@ -118,3 +120,80 @@ test('previous protected source stays bound to an already signed unexpired ticke
  await assert.rejects(verifyTicket(env,(await signed('f'.repeat(40))).ticket,now),/mismatched/);
  await assert.rejects(verifyTicket(env,old.ticket,now+3600001),/Expired/);
 });
+
+test('readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics',async()=>{
+ const calls=[];
+ const transport=async(url,options)=>{
+  calls.push({url,options});assert.ok(options.signal instanceof AbortSignal);assert.equal(options.redirect,'manual');assert.equal(options.method,undefined);
+  if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA}});
+  if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});
+  return response(repository);
+ };
+ const readiness=await preflightDispatch(env,transport);assert.equal(readiness.status,'ready');assert.equal(readiness.pcs_authority,false);assert.equal(calls.length,3);
+ for(const fixture of [
+  async()=>{throw Error('secret-token-private-provider-detail');},
+  async()=>new Response('not-json-secret-token'),
+  async()=>new Response('x'.repeat(32769)),
+  async()=>response({...repository,default_branch:'release'}),
+  async()=>response(repository,302,{location:'https://evil.example'})
+ ]){
+  await assert.rejects(preflightDispatch(env,fixture),error=>error.code==='provider_unavailable'&&error.dispatch_attempted===false&&!/secret|private-provider|evil/.test(error.message));
+ }
+});
+test('a POST transport exception cannot spoof a definite no-dispatch result',async()=>{
+ const transport=async(url)=>{
+  if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA}});
+  if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});
+  if(url.endsWith('/dispatches'))throw Object.assign(Error('sensitive provider body'),{dispatch_attempted:false,dispatch_may_have_been_accepted:false});
+  return response(repository);
+ };
+ await assert.rejects(dispatch(env,body,transport),error=>error.dispatch_attempted===true&&error.dispatch_may_have_been_accepted===true&&!error.message.includes('sensitive'));
+});
+
+// Real Worker route and SQLite, with provider metadata/dispatch transport fixtures.
+// Preseed near the cap: this does not make hundreds of GitHub calls.
+async function globalReadinessFixture(fn){
+ const {Miniflare,convertV4MiniflareOptions}=await import('miniflare');
+ const mf=new Miniflare(convertV4MiniflareOptions({telemetry:{enabled:false},workers:[{name:'readiness-global-db',compatibilityDate:'2026-09-28',modules:true,script:'export default {fetch(){return new Response("fixture");}}',d1Databases:{COMMONS_DB:'readiness-global-db'}}]}));
+ const originalFetch=globalThis.fetch;
+ try{
+  const db=await mf.getD1Database('COMMONS_DB');
+  await db.exec('CREATE TABLE rate_limits(key TEXT PRIMARY KEY,window_start TEXT NOT NULL,count INTEGER NOT NULL); CREATE TABLE audit_log(id TEXT PRIMARY KEY,actor_user_id TEXT,action TEXT NOT NULL,subject_type TEXT NOT NULL,subject_id TEXT NOT NULL,detail_json TEXT NOT NULL,created_at TEXT NOT NULL); CREATE TABLE audit_archive(seq INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL UNIQUE,legacy_audit_id TEXT UNIQUE,actor_user_id TEXT,actor_email TEXT,actor_name TEXT,actor_role TEXT,action TEXT,subject_type TEXT,subject_id TEXT,detail_json TEXT,created_at TEXT,prev_hash TEXT UNIQUE,event_hash TEXT UNIQUE)');
+  const env={COMMONS_DB:db,RATE_LIMIT_SALT:'test-only-global-readiness-salt',PCS_LEAN_GITHUB_TOKEN:'test-only-global-readiness-token'};
+  const quotaKey=async(scope,ip)=>Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(`${env.RATE_LIMIT_SALT}:${scope}:${ip}`))).toString('base64url');
+  const readinessKey=await quotaKey('public-lean-readiness','PCS_PUBLIC_LEAN_READINESS_GLOBAL');
+  await db.prepare('INSERT INTO rate_limits(key,window_start,count) VALUES(?,?,?)').bind(readinessKey,new Date().toISOString(),239).run();
+  const calls={metadata:0,dispatches:0};
+  globalThis.fetch=async(url,options={})=>{
+   if(new URL(url).hostname!=='api.github.com')throw Error('Unexpected external test request');
+   if(url.endsWith('/dispatches')){calls.dispatches++;return response(null,204);}
+   calls.metadata++;
+   if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA}});
+   if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});
+   return response(repository);
+  };
+  const send=(ip,key)=>worker.fetch(new Request(origin+'/api/lean-research/submit',{method:'POST',headers:{origin,'content-type':'application/json','CF-Connecting-IP':ip,'Idempotency-Key':key},body:JSON.stringify(body)}),env);
+  await fn({db,env,readinessKey,quotaKey,calls,send});
+ }finally{globalThis.fetch=originalFetch;await mf.dispose();}
+}
+test('global readiness cap spans clients, sends no denied metadata, and acknowledged reuse bypasses the new allowance',async()=>globalReadinessFixture(async({db,readinessKey,quotaKey,calls,send})=>{
+ const accepted=await send('192.0.2.20','a'.repeat(32));assert.equal(accepted.status,200);const first=await accepted.json();assert.equal(first.job_state,'dispatched');assert.equal(calls.metadata,6);assert.equal(calls.dispatches,1);
+ for(const [ip,key] of [['192.0.2.21','b'],['192.0.2.22','c']]){
+  const denied=await send(ip,key.repeat(32));assert.equal(denied.status,429);assert.equal((await denied.json()).error,'rate_limited');
+  assert.equal(await db.prepare('SELECT count FROM rate_limits WHERE key=?').bind(await quotaKey('public-lean-submit',ip)).first(),null);
+ }
+ assert.equal(calls.metadata,6);assert.equal(calls.dispatches,1);
+ const before=(await db.prepare('SELECT count FROM rate_limits WHERE key=?').bind(readinessKey).first()).count;
+ const duplicate=await send('192.0.2.20','a'.repeat(32));assert.equal(duplicate.status,200);assert.equal((await duplicate.json()).ticket,first.ticket);
+ assert.equal((await db.prepare('SELECT count FROM rate_limits WHERE key=?').bind(readinessKey).first()).count,before);
+ assert.equal(calls.metadata,6);assert.equal(calls.dispatches,1);
+ assert.equal((await db.prepare('SELECT count FROM rate_limits WHERE key=?').bind(await quotaKey('public-lean-submit','192.0.2.20')).first()).count,1);
+ assert.equal((await db.prepare('SELECT count FROM rate_limits WHERE key=?').bind(await quotaKey('public-lean-global','PCS_PUBLIC_LEAN_GLOBAL')).first()).count,1);
+}));
+test('sixteen concurrent clients at the global readiness boundary permit exactly one metadata attempt and admission',async()=>globalReadinessFixture(async({db,quotaKey,calls,send})=>{
+ const results=await Promise.all(Array.from({length:16},(_,index)=>send('198.51.100.'+(index+1),index.toString(16).repeat(32))));
+ assert.equal(results.filter(r=>r.status===200).length,1);assert.equal(results.filter(r=>r.status===429).length,15);assert.equal(calls.metadata,6);assert.equal(calls.dispatches,1);
+ const quota=await db.prepare('SELECT count FROM rate_limits WHERE key=?').bind(await quotaKey('public-lean-global','PCS_PUBLIC_LEAN_GLOBAL')).first();assert.equal(quota.count,1);
+ const rows=(await db.prepare('SELECT detail_json FROM audit_log').all()).results.map(r=>JSON.parse(r.detail_json));
+ assert.equal(new Set(rows.map(r=>r.payload.request_id)).size,1);assert.equal(rows.filter(r=>r.code==='admission_passed').length,1);
+}));
