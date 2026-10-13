@@ -1,0 +1,56 @@
+{
+  "format": "pcs-schema-recovery-execution-cost-v2",
+  "platform": "Linux CPU",
+  "commands": [
+    {
+      "command": [
+        "python",
+        "tests/test_d1_schema_recovery_v2.py"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.4930117940093623,
+      "user_cpu_seconds": 1.266262,
+      "system_cpu_seconds": 0.573507,
+      "child_high_water_rss_kib": 52836,
+      "log_sha256": "8aaf7d026bfb5b86be7ef8cac74917a66209f01f8ff4a488bf9fabbd7a64e1f0",
+      "credentials_removed": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_BUILDS_API_TOKEN",
+        "GH_TOKEN",
+        "GITHUB_TOKEN",
+        "PCS_GITHUB_TOKEN",
+        "PCS_LEAN_GITHUB_TOKEN"
+      ],
+      "remote_queries": 0
+    },
+    {
+      "command": [
+        "python",
+        "scripts/d1_schema_recovery_v2.py",
+        "--capture",
+        "docs/evidence/production-d1-recovery-v2/captured-schema.json",
+        "--output",
+        "docs/evidence/production-d1-recovery-v2/campaign-qualified.json"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.9287611750041833,
+      "user_cpu_seconds": 0.6071500000000001,
+      "system_cpu_seconds": 0.17481400000000002,
+      "child_high_water_rss_kib": 52836,
+      "log_sha256": "5f20dacae9d38a722e7d9f34e45a502d57b5176e1376e637a6f2f1681f2f6dcd",
+      "credentials_removed": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_BUILDS_API_TOKEN",
+        "GH_TOKEN",
+        "GITHUB_TOKEN",
+        "PCS_GITHUB_TOKEN",
+        "PCS_LEAN_GITHUB_TOKEN"
+      ],
+      "remote_queries": 0
+    }
+  ],
+  "network_requests_by_local_campaign": 0,
+  "financial_actions": 0
+}

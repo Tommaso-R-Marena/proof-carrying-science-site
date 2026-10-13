@@ -1,0 +1,35 @@
+{
+  "format": "pcs-schema-only-recovery-release-summary-v2",
+  "site_base_sha": "738da43fbdb840ab258dcda7d41861126df15559",
+  "core_base_sha": "b59badd68cedba3dcc9c72a6d5148e7986545ebd",
+  "capture_schema_sha256": "c39546dd9bf8f19012734e90d19a76f3270bbd100072d37003be0ca1838acb8b",
+  "restored_objects": 96,
+  "exact_definition_identity_equal": true,
+  "restored_application_rows": 0,
+  "synthetic_controls": 24,
+  "unit_tests_passed": 14,
+  "atomic_sql_race": {
+    "clients": 60,
+    "threads": 8,
+    "admitted": 12,
+    "denied": 48,
+    "partial_client_charges": 0
+  },
+  "future_additive_candidate_preserved_synthetic_state": true,
+  "negative_transaction_rollback_equal": true,
+  "negative_schema_partial_objects": 0,
+  "historical_source_migrations_analyzed": 25,
+  "historical_migrations_executed": 0,
+  "production_metadata_queries": 1,
+  "remote_application_rows_read": false,
+  "remote_ledger_rows_read": false,
+  "production_modified": false,
+  "production_data_backup_or_restore_proven": false,
+  "source_sha256": {
+    "scripts/d1_schema_recovery_v2.py": "bac5dcf2d44a7cf808d9fc1c54308a823b260840f9c9e8c1760b429f4445aa41",
+    "tests/test_d1_schema_recovery_v2.py": "f3f7b08797d015976268faea706dbb3123142f4c275f01f3729b7880f8eaa6fb",
+    "src/lean-admission.js": "7fe75335c2be2f55739ce25850a380dff809143b40306731d7d1bba0fed3986a"
+  },
+  "real_data_boundary": "Production row contents, application history, actual account/game/audit preservation, point-in-time RPO/RTO, remote restore/cutover and operator-approved ledger reconciliation remain untested.",
+  "financial_actions": 0
+}

@@ -1,0 +1,14 @@
+{
+  "format": "pcs-transport-public-assets-v3",
+  "authority": "unsigned byte integrity; not independent scientific verification",
+  "data_origin": "synthetic_numerical_computation_not_empirical",
+  "files": {
+    "LICENSE.md": "5616cc12b09f29ce1165d404c80d0160fdbf9a995de8622118fe3366830694e3",
+    "contract.json": "03d39878aedb0b1cbc24d6e56f8ce509d1cc66960f41294219c9e79dd3e57c37",
+    "positive.pcs.zip": "e42cd03113e5f65b7eaa0399bb1dc05be50cf5689ed1980caa058cd252442681",
+    "producer-public.pem": "12afa3b9610d13cc393c30420084816636db1c55c4cde2b3b1b3a658d73e7679",
+    "recorded-receipt.json": "ac1315e3b248c0c8ec9c4961322f885da4d59af7a35bf08d797519a5471b399c",
+    "trajectory.csv": "87e446992afc2c5af6fe2f8abd1bc444bc6e19f68213fe3c616f75dac0c8a112",
+    "browser-validation.json": "680e31bf2b654f57ac18dfe18c315949b0f9f510cbf8c658900fb88e79bf7f57"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "format": "pcs-d1-schema-recovery-evidence-seal-v2",
+  "files": {
+    "campaign-final.json": "15c06ef61726bb5e73f18badc80ebd03c39a4d1e3087682e0af101e65a2f9c56",
+    "campaign-final.log": "5f20dacae9d38a722e7d9f34e45a502d57b5176e1376e637a6f2f1681f2f6dcd",
+    "campaign-initial.json": "04868137dcaa348807f9bcd56748a82620193a8ddd34b007f783dc76990ea81d",
+    "campaign-initial.log": "c855d3a2453bf93a33d0f98685842b871c7c01bc7a8d2110c224f8137e972dc3",
+    "campaign-qualified.json": "15c06ef61726bb5e73f18badc80ebd03c39a4d1e3087682e0af101e65a2f9c56",
+    "campaign-qualified.log": "5f20dacae9d38a722e7d9f34e45a502d57b5176e1376e637a6f2f1681f2f6dcd",
+    "campaign-release.json": "15c06ef61726bb5e73f18badc80ebd03c39a4d1e3087682e0af101e65a2f9c56",
+    "campaign-release.log": "5f20dacae9d38a722e7d9f34e45a502d57b5176e1376e637a6f2f1681f2f6dcd",
+    "captured-schema.json": "be4ce7206f5f6061af5504981bfeba69209df5a2e5de2f33ded205c2d391a712",
+    "negative-capture-invalid-index.json": "4a3c00352b581bcf966c6e366542b5204769bde003deb18ada0fb3e7d39b954c",
+    "qualification-resources.json": "e3b665522053679a8de155276d19ccf3f2a3d7d8348ba866bb25131a0f99cc07",
+    "release-resources.json": "08a1f60ca453eae31abb7797affc99589b9f84c5925758f899d14df04568e235",
+    "source-overlay/scripts/d1_schema_recovery_v2.py": "bac5dcf2d44a7cf808d9fc1c54308a823b260840f9c9e8c1760b429f4445aa41",
+    "source-overlay/src/lean-admission.js": "7fe75335c2be2f55739ce25850a380dff809143b40306731d7d1bba0fed3986a",
+    "source-overlay/tests/test_d1_schema_recovery_v2.py": "f3f7b08797d015976268faea706dbb3123142f4c275f01f3729b7880f8eaa6fb",
+    "summary.json": "db26b2f24fd4f12547f290afa8003230fce4c51782f1ea7298c1c8fddcfcf4a4",
+    "tests-final.log": "a07c3803181fc7c2415c377485106218059a114933d37b52a45c0addfdc0dae4",
+    "tests-fk-qualified.log": "86569416d95a8a410a1e315bf291fba37c614c14b7ec1d0520aad7ee9be75bbb",
+    "tests-initial.log": "296f5f6edec044f347e64f721c2261323bf0e2e195edce5e869afd160d2d3eb5",
+    "tests-qualified.log": "8aaf7d026bfb5b86be7ef8cac74917a66209f01f8ff4a488bf9fabbd7a64e1f0",
+    "tests-release.log": "b5f97c4df41d6b72c7fe49000e94dd56b58f9222117e3990e27b0ab7fa86f91b"
+  },
+  "external_attestation": false
+}

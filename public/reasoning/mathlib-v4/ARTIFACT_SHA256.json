@@ -1,0 +1,9 @@
+{
+  "format": "pcs-mathlib-public-evidence-v4",
+  "scope": "Recorded research evidence only; no hosted Mathlib inference or promotion",
+  "files": {
+    "REPORT.md": "2fcd53a945e08e30f9d38009481f964180f0b63bf2a442d81552bed004228bd7",
+    "summary.json": "58e824ff1f3d4e43a1ab67559008b08b534a59465b4b2406c07d5fb734ff71eb",
+    "model-registry.json": "97d2571f4ae0653e4a8f4b582122e7ead5343147052e392f3947f1fac16befc8"
+  }
+}
