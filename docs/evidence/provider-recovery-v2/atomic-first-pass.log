@@ -1,0 +1,262 @@
+TAP version 13
+# Subtest: empty quota creates both keys and the final available slots change atomically
+ok 1 - empty quota creates both keys and the final available slots change atomically
+  ---
+  duration_ms: 1164.585998
+  type: 'test'
+  ...
+# Subtest: exhausted global or client quota never charges, creates, or resets the other counter
+ok 2 - exhausted global or client quota never charges, creates, or resets the other counter
+  ---
+  duration_ms: 634.455909
+  type: 'test'
+  ...
+# Subtest: sixty concurrent distinct clients admit exactly twelve without partial client charges
+ok 3 - sixty concurrent distinct clients admit exactly twelve without partial client charges
+  ---
+  duration_ms: 1515.680377
+  type: 'test'
+  ...
+# Subtest: twenty concurrent same-client admissions consume exactly two global and client slots
+ok 4 - twenty concurrent same-client admissions consume exactly two global and client slots
+  ---
+  duration_ms: 759.173453
+  type: 'test'
+  ...
+# Subtest: window reset preserves the existing strict cutoff and resets both only upon admission
+ok 5 - window reset preserves the existing strict cutoff and resets both only upon admission
+  ---
+  duration_ms: 977.987154
+  type: 'test'
+  ...
+# Subtest: admission SQL failure never falls back to separate or speculative quota changes
+ok 6 - admission SQL failure never falls back to separate or speculative quota changes
+  ---
+  duration_ms: 2.042394
+  type: 'test'
+  ...
+# Subtest: twenty concurrent identical requests consume admission once and dispatch once
+ok 7 - twenty concurrent identical requests consume admission once and dispatch once
+  ---
+  duration_ms: 2892.049826
+  type: 'test'
+  ...
+# Subtest: same-key changed meaning is rejected without consuming another admission
+ok 8 - same-key changed meaning is rejected without consuming another admission
+  ---
+  duration_ms: 628.882294
+  type: 'test'
+  ...
+# Subtest: accepted dispatch with lost confirmation is reconciled, never retransmitted
+ok 9 - accepted dispatch with lost confirmation is reconciled, never retransmitted
+  ---
+  duration_ms: 1506.070401
+  type: 'test'
+  ...
+# Subtest: complete provider result is frozen by digest and cannot be replaced
+ok 10 - complete provider result is frozen by digest and cannot be replaced
+  ---
+  duration_ms: 748.532374
+  type: 'test'
+  ...
+# Subtest: forged evidence becomes failed and never supplies a proof
+ok 11 - forged evidence becomes failed and never supplies a proof
+  ---
+  duration_ms: 587.591542
+  type: 'test'
+  ...
+# Subtest: expiration, provider cancellation and timeout remain distinct nonproof outcomes
+ok 12 - expiration, provider cancellation and timeout remain distinct nonproof outcomes
+  ---
+  duration_ms: 1511.612441
+  type: 'test'
+  ...
+# Subtest: cancellation requires the exact run and is confirmed only by provider state
+ok 13 - cancellation requires the exact run and is confirmed only by provider state
+  ---
+  duration_ms: 1006.571423
+  type: 'test'
+  ...
+# Subtest: a restarted actual workerd database retains immutable request identity
+ok 14 - a restarted actual workerd database retains immutable request identity
+  ---
+  duration_ms: 1317.357964
+  type: 'test'
+  ...
+# Subtest: persisted event corruption and skipped versions fail closed
+ok 15 - persisted event corruption and skipped versions fail closed
+  ---
+  duration_ms: 451.325702
+  type: 'test'
+  ...
+# Subtest: an already dispatched older approved request recovers without another dispatch
+ok 16 - an already dispatched older approved request recovers without another dispatch
+  ---
+  duration_ms: 541.390051
+  type: 'test'
+  ...
+# Subtest: provider readiness failure creates no journal, charges no admission, and same-key recovery dispatches once
+ok 17 - provider readiness failure creates no journal, charges no admission, and same-key recovery dispatches once
+  ---
+  duration_ms: 1201.086435
+  type: 'test'
+  ...
+# Subtest: revision changes after admission are definite no-dispatch, not dispatch uncertainty
+ok 18 - revision changes after admission are definite no-dispatch, not dispatch uncertainty
+  ---
+  duration_ms: 518.291091
+  type: 'test'
+  ...
+# Subtest: explicit provider decline is terminal while server errors retain dispatch uncertainty
+ok 19 - explicit provider decline is terminal while server errors retain dispatch uncertainty
+  ---
+  duration_ms: 1308.913006
+  type: 'test'
+  ...
+# Subtest: a restarted SQLite journal retains definitive no-dispatch and never charges or sends it again
+ok 20 - a restarted SQLite journal retains definitive no-dispatch and never charges or sends it again
+  ---
+  duration_ms: 1106.562443
+  type: 'test'
+  ...
+# Subtest: twenty concurrent unavailable requests cannot charge quota and recover with one admission and POST
+ok 21 - twenty concurrent unavailable requests cannot charge quota and recover with one admission and POST
+  ---
+  duration_ms: 2284.746138
+  type: 'test'
+  ...
+# Subtest: trusted readiness allowance runs only before initial/created attempts, never acknowledged reuse
+ok 22 - trusted readiness allowance runs only before initial/created attempts, never acknowledged reuse
+  ---
+  duration_ms: 584.187997
+  type: 'test'
+  ...
+# Subtest: bounded gzip preserves the full large checker result and legacy compatibility
+ok 23 - bounded gzip preserves the full large checker result and legacy compatibility
+  ---
+  duration_ms: 334.882203
+  type: 'test'
+  ...
+# Subtest: compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs
+ok 24 - compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs
+  ---
+  duration_ms: 89.706043
+  type: 'test'
+  ...
+# Subtest: gzip does not weaken interpretation, source, action or kernel authority bindings
+ok 25 - gzip does not weaken interpretation, source, action or kernel authority bindings
+  ---
+  duration_ms: 54.430216
+  type: 'test'
+  ...
+# Subtest: explicit public authorization and closed mathematical payload
+ok 26 - explicit public authorization and closed mathematical payload
+  ---
+  duration_ms: 0.88646
+  type: 'test'
+  ...
+# Subtest: only pinned public main, safe environment input, signed expiring ticket
+ok 27 - only pinned public main, safe environment input, signed expiring ticket
+  ---
+  duration_ms: 7.724308
+  type: 'test'
+  ...
+# Subtest: actual receipt format, source binding, duplicate markers and forbidden axioms
+ok 28 - actual receipt format, source binding, duplicate markers and forbidden axioms
+  ---
+  duration_ms: 17.719095
+  type: 'test'
+  ...
+# Subtest: completed job provenance and redirected logs never carry GitHub credentials
+ok 29 - completed job provenance and redirected logs never carry GitHub credentials
+  ---
+  duration_ms: 9.032486
+  type: 'test'
+  ...
+# Subtest: bounded logs and missing final evidence remain unresolved
+ok 30 - bounded logs and missing final evidence remain unresolved
+  ---
+  duration_ms: 9.502305
+  type: 'test'
+  ...
+# Subtest: real Worker rejects origin and absent consent before any quota or provider operation
+ok 31 - real Worker rejects origin and absent consent before any quota or provider operation
+  ---
+  duration_ms: 4.524605
+  type: 'test'
+  ...
+# Subtest: actual Worker/D1 rejects absent provider before proof admission
+ok 32 - actual Worker/D1 rejects absent provider before proof admission
+  ---
+  duration_ms: 1921.219883
+  type: 'test'
+  ...
+# Subtest: dedicated proof-dispatch credential is preferred without replacing existing website credential
+ok 33 - dedicated proof-dispatch credential is preferred without replacing existing website credential
+  ---
+  duration_ms: 3.796987
+  type: 'test'
+  ...
+# Subtest: real Worker availability exposes configuration only, without credentials or authority
+ok 34 - real Worker availability exposes configuration only, without credentials or authority
+  ---
+  duration_ms: 1.197065
+  type: 'test'
+  ...
+# Subtest: optional operational evidence is source-correlated, ordered and never authorizes training
+ok 35 - optional operational evidence is source-correlated, ordered and never authorizes training
+  ---
+  duration_ms: 26.534596
+  type: 'test'
+  ...
+# Subtest: the action digest binds actual checked receipt actions rather than a repeated output assertion
+ok 36 - the action digest binds actual checked receipt actions rather than a repeated output assertion
+  ---
+  duration_ms: 5.029864
+  type: 'test'
+  ...
+# Subtest: hybrid requests require an attributed independently replayed proof and reject human action overrides
+ok 37 - hybrid requests require an attributed independently replayed proof and reject human action overrides
+  ---
+  duration_ms: 21.307233
+  type: 'test'
+  ...
+# Subtest: previous protected source stays bound to an already signed unexpired ticket
+ok 38 - previous protected source stays bound to an already signed unexpired ticket
+  ---
+  duration_ms: 4.094543
+  type: 'test'
+  ...
+# Subtest: readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics
+ok 39 - readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics
+  ---
+  duration_ms: 1.336459
+  type: 'test'
+  ...
+# Subtest: a POST transport exception cannot spoof a definite no-dispatch result
+ok 40 - a POST transport exception cannot spoof a definite no-dispatch result
+  ---
+  duration_ms: 1.066243
+  type: 'test'
+  ...
+# Subtest: global readiness cap spans clients, sends no denied metadata, and acknowledged reuse bypasses the new allowance
+ok 41 - global readiness cap spans clients, sends no denied metadata, and acknowledged reuse bypasses the new allowance
+  ---
+  duration_ms: 1695.043488
+  type: 'test'
+  ...
+# Subtest: sixteen concurrent clients at the global readiness boundary permit exactly one metadata attempt and admission
+ok 42 - sixteen concurrent clients at the global readiness boundary permit exactly one metadata attempt and admission
+  ---
+  duration_ms: 2458.786272
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 42
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19529.165704

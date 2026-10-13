@@ -1,0 +1,437 @@
+
+> test:lean-research
+> node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs tests/lean-job-client.test.mjs tests/lean-job-journal.test.mjs && npm run test:bridge && npm run test:platform-governance
+
+TAP version 13
+# Subtest: published refinement exposes selection, all seeds and the stronger baseline
+ok 1 - published refinement exposes selection, all seeds and the stronger baseline
+  ---
+  duration_ms: 3.278724
+  type: 'test'
+  ...
+# Subtest: downloadable transfer proof includes the actual checked dependencies
+ok 2 - downloadable transfer proof includes the actual checked dependencies
+  ---
+  duration_ms: 24.212175
+  type: 'test'
+  ...
+# Subtest: each exported multi-step mathematical result has an actual bound final proof
+ok 3 - each exported multi-step mathematical result has an actual bound final proof
+  ---
+  duration_ms: 3.47376
+  type: 'test'
+  ...
+# Subtest: an additional previous-model result cannot smuggle unapproved acceptance
+ok 4 - an additional previous-model result cannot smuggle unapproved acceptance
+  ---
+  duration_ms: 1.440511
+  type: 'test'
+  ...
+# Subtest: external Mathlib audit retains failures, abstentions and budget-specific regression
+ok 5 - external Mathlib audit retains failures, abstentions and budget-specific regression
+  ---
+  duration_ms: 0.558078
+  type: 'test'
+  ...
+# Subtest: ranked comparison meanings cannot certify the selected interpretation
+ok 6 - ranked comparison meanings cannot certify the selected interpretation
+  ---
+  duration_ms: 3.625341
+  type: 'test'
+  ...
+# Subtest: a tab reload preserves the same consented body and idempotency key
+ok 7 - a tab reload preserves the same consented body and idempotency key
+  ---
+  duration_ms: 6.596765
+  type: 'test'
+  ...
+# Subtest: only validated acknowledgements bind a ticket and forgetting removes it
+ok 8 - only validated acknowledgements bind a ticket and forgetting removes it
+  ---
+  duration_ms: 0.738682
+  type: 'test'
+  ...
+# Subtest: unavailable storage is disclosed while current-tab retry remains coherent
+ok 9 - unavailable storage is disclosed while current-tab retry remains coherent
+  ---
+  duration_ms: 0.3958
+  type: 'test'
+  ...
+# Subtest: twenty concurrent identical requests consume admission once and dispatch once
+ok 10 - twenty concurrent identical requests consume admission once and dispatch once
+  ---
+  duration_ms: 2474.595566
+  type: 'test'
+  ...
+# Subtest: same-key changed meaning is rejected without consuming another admission
+ok 11 - same-key changed meaning is rejected without consuming another admission
+  ---
+  duration_ms: 515.644099
+  type: 'test'
+  ...
+# Subtest: accepted dispatch with lost confirmation is reconciled, never retransmitted
+ok 12 - accepted dispatch with lost confirmation is reconciled, never retransmitted
+  ---
+  duration_ms: 568.464742
+  type: 'test'
+  ...
+# Subtest: complete provider result is frozen by digest and cannot be replaced
+ok 13 - complete provider result is frozen by digest and cannot be replaced
+  ---
+  duration_ms: 823.72125
+  type: 'test'
+  ...
+# Subtest: forged evidence becomes failed and never supplies a proof
+ok 14 - forged evidence becomes failed and never supplies a proof
+  ---
+  duration_ms: 738.220971
+  type: 'test'
+  ...
+# Subtest: expiration, provider cancellation and timeout remain distinct nonproof outcomes
+ok 15 - expiration, provider cancellation and timeout remain distinct nonproof outcomes
+  ---
+  duration_ms: 1268.954983
+  type: 'test'
+  ...
+# Subtest: cancellation requires the exact run and is confirmed only by provider state
+ok 16 - cancellation requires the exact run and is confirmed only by provider state
+  ---
+  duration_ms: 1096.126964
+  type: 'test'
+  ...
+# Subtest: a restarted actual workerd database retains immutable request identity
+ok 17 - a restarted actual workerd database retains immutable request identity
+  ---
+  duration_ms: 1179.008823
+  type: 'test'
+  ...
+# Subtest: persisted event corruption and skipped versions fail closed
+ok 18 - persisted event corruption and skipped versions fail closed
+  ---
+  duration_ms: 438.995681
+  type: 'test'
+  ...
+# Subtest: an already dispatched older approved request recovers without another dispatch
+ok 19 - an already dispatched older approved request recovers without another dispatch
+  ---
+  duration_ms: 506.899893
+  type: 'test'
+  ...
+# Subtest: provider readiness failure creates no journal, charges no admission, and same-key recovery dispatches once
+ok 20 - provider readiness failure creates no journal, charges no admission, and same-key recovery dispatches once
+  ---
+  duration_ms: 748.012521
+  type: 'test'
+  ...
+# Subtest: revision changes after admission are definite no-dispatch, not dispatch uncertainty
+ok 21 - revision changes after admission are definite no-dispatch, not dispatch uncertainty
+  ---
+  duration_ms: 544.871095
+  type: 'test'
+  ...
+# Subtest: explicit provider decline is terminal while server errors retain dispatch uncertainty
+ok 22 - explicit provider decline is terminal while server errors retain dispatch uncertainty
+  ---
+  duration_ms: 1145.879313
+  type: 'test'
+  ...
+# Subtest: a restarted SQLite journal retains definitive no-dispatch and never charges or sends it again
+ok 23 - a restarted SQLite journal retains definitive no-dispatch and never charges or sends it again
+  ---
+  duration_ms: 937.019523
+  type: 'test'
+  ...
+# Subtest: twenty concurrent unavailable requests cannot charge quota and recover with one admission and POST
+ok 24 - twenty concurrent unavailable requests cannot charge quota and recover with one admission and POST
+  ---
+  duration_ms: 1719.161763
+  type: 'test'
+  ...
+# Subtest: actual Workers runtime retrieves bound proof logs with supported fetch options
+ok 25 - actual Workers runtime retrieves bound proof logs with supported fetch options
+  ---
+  duration_ms: 463.555927
+  type: 'test'
+  ...
+# Subtest: actual Workers runtime losslessly decodes a large compressed result
+ok 26 - actual Workers runtime losslessly decodes a large compressed result
+  ---
+  duration_ms: 402.438237
+  type: 'test'
+  ...
+# Subtest: actual Workers runtime rejects a second redirect without following or leaking credentials
+ok 27 - actual Workers runtime rejects a second redirect without following or leaking credentials
+  ---
+  duration_ms: 293.947976
+  type: 'test'
+  ...
+# Subtest: bounded gzip preserves the full large checker result and legacy compatibility
+ok 28 - bounded gzip preserves the full large checker result and legacy compatibility
+  ---
+  duration_ms: 155.87324
+  type: 'test'
+  ...
+# Subtest: compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs
+ok 29 - compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs
+  ---
+  duration_ms: 53.648795
+  type: 'test'
+  ...
+# Subtest: gzip does not weaken interpretation, source, action or kernel authority bindings
+ok 30 - gzip does not weaken interpretation, source, action or kernel authority bindings
+  ---
+  duration_ms: 165.327443
+  type: 'test'
+  ...
+# Subtest: explicit public authorization and closed mathematical payload
+ok 31 - explicit public authorization and closed mathematical payload
+  ---
+  duration_ms: 1.185487
+  type: 'test'
+  ...
+# Subtest: only pinned public main, safe environment input, signed expiring ticket
+ok 32 - only pinned public main, safe environment input, signed expiring ticket
+  ---
+  duration_ms: 9.259206
+  type: 'test'
+  ...
+# Subtest: actual receipt format, source binding, duplicate markers and forbidden axioms
+ok 33 - actual receipt format, source binding, duplicate markers and forbidden axioms
+  ---
+  duration_ms: 11.728705
+  type: 'test'
+  ...
+# Subtest: completed job provenance and redirected logs never carry GitHub credentials
+ok 34 - completed job provenance and redirected logs never carry GitHub credentials
+  ---
+  duration_ms: 45.66856
+  type: 'test'
+  ...
+# Subtest: bounded logs and missing final evidence remain unresolved
+ok 35 - bounded logs and missing final evidence remain unresolved
+  ---
+  duration_ms: 20.308725
+  type: 'test'
+  ...
+# Subtest: real Worker rejects origin and absent consent before any quota or provider operation
+ok 36 - real Worker rejects origin and absent consent before any quota or provider operation
+  ---
+  duration_ms: 5.317922
+  type: 'test'
+  ...
+# Subtest: actual Worker/D1 rejects absent provider before proof admission
+ok 37 - actual Worker/D1 rejects absent provider before proof admission
+  ---
+  duration_ms: 1691.053244
+  type: 'test'
+  ...
+# Subtest: dedicated proof-dispatch credential is preferred without replacing existing website credential
+ok 38 - dedicated proof-dispatch credential is preferred without replacing existing website credential
+  ---
+  duration_ms: 3.872995
+  type: 'test'
+  ...
+# Subtest: real Worker availability exposes configuration only, without credentials or authority
+ok 39 - real Worker availability exposes configuration only, without credentials or authority
+  ---
+  duration_ms: 1.17382
+  type: 'test'
+  ...
+# Subtest: optional operational evidence is source-correlated, ordered and never authorizes training
+ok 40 - optional operational evidence is source-correlated, ordered and never authorizes training
+  ---
+  duration_ms: 37.128873
+  type: 'test'
+  ...
+# Subtest: the action digest binds actual checked receipt actions rather than a repeated output assertion
+ok 41 - the action digest binds actual checked receipt actions rather than a repeated output assertion
+  ---
+  duration_ms: 6.284628
+  type: 'test'
+  ...
+# Subtest: hybrid requests require an attributed independently replayed proof and reject human action overrides
+ok 42 - hybrid requests require an attributed independently replayed proof and reject human action overrides
+  ---
+  duration_ms: 23.456096
+  type: 'test'
+  ...
+# Subtest: previous protected source stays bound to an already signed unexpired ticket
+ok 43 - previous protected source stays bound to an already signed unexpired ticket
+  ---
+  duration_ms: 3.371981
+  type: 'test'
+  ...
+# Subtest: readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics
+ok 44 - readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics
+  ---
+  duration_ms: 1.643468
+  type: 'test'
+  ...
+# Subtest: a POST transport exception cannot spoof a definite no-dispatch result
+ok 45 - a POST transport exception cannot spoof a definite no-dispatch result
+  ---
+  duration_ms: 1.919002
+  type: 'test'
+  ...
+1..45
+# tests 45
+# suites 0
+# pass 45
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15698.124973
+
+> test:bridge
+> node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs tests/memory-workshop.test.mjs && python3 tests/test_bridge_migration.py
+
+TAP version 13
+# Subtest: real Worker replays explicit authenticated adult donation, without training authority
+ok 1 - real Worker replays explicit authenticated adult donation, without training authority
+  ---
+  duration_ms: 35.89432
+  type: 'test'
+  ...
+# Subtest: consent, age, login, verification, storage quota and origin are mandatory
+ok 2 - consent, age, login, verification, storage quota and origin are mandatory
+  ---
+  duration_ms: 18.347361
+  type: 'test'
+  ...
+# Subtest: producer scores and changed catalog never enter storage
+ok 3 - producer scores and changed catalog never enter storage
+  ---
+  duration_ms: 2.350053
+  type: 'test'
+  ...
+# Subtest: erasure targets only the authenticated contributor
+ok 4 - erasure targets only the authenticated contributor
+  ---
+  duration_ms: 4.703391
+  type: 'test'
+  ...
+# Subtest: public replay has mathematical catalog labels, never fresh kernel authority
+ok 5 - public replay has mathematical catalog labels, never fresh kernel authority
+  ---
+  duration_ms: 2.072336
+  type: 'test'
+  ...
+# Subtest: all public routes retain exact original goals and completed kernel artifacts
+ok 6 - all public routes retain exact original goals and completed kernel artifacts
+  ---
+  duration_ms: 5.111429
+  type: 'test'
+  ...
+# Subtest: actual rejected choices, undo and visible hint exposure replay separately
+ok 7 - actual rejected choices, undo and visible hint exposure replay separately
+  ---
+  duration_ms: 0.288533
+  type: 'test'
+  ...
+# Subtest: forged labels, goal fields, catalog identity, timeline and reordered history fail closed
+ok 8 - forged labels, goal fields, catalog identity, timeline and reordered history fail closed
+  ---
+  duration_ms: 0.636052
+  type: 'test'
+  ...
+# Subtest: typed action envelope rejects code, admissions and fabricated rewards
+ok 9 - typed action envelope rejects code, admissions and fabricated rewards
+  ---
+  duration_ms: 0.713675
+  type: 'test'
+  ...
+# Subtest: public signed ticket binds the exact human proof actions and kernel evidence
+ok 10 - public signed ticket binds the exact human proof actions and kernel evidence
+  ---
+  duration_ms: 56.923379
+  type: 'test'
+  ...
+# Subtest: memory missions retain actual induction, exact goals, and immutable catalogs
+ok 11 - memory missions retain actual induction, exact goals, and immutable catalogs
+  ---
+  duration_ms: 15.372848
+  type: 'test'
+  ...
+# Subtest: actual Worker recognizes the pinned memory catalog and rejects a forged identity
+ok 12 - actual Worker recognizes the pinned memory catalog and rejects a forged identity
+  ---
+  duration_ms: 43.853536
+  type: 'test'
+  ...
+# Subtest: memory proof requests bind both model generation and exact typed human actions
+ok 13 - memory proof requests bind both model generation and exact typed human actions
+  ---
+  duration_ms: 40.64927
+  type: 'test'
+  ...
+# Subtest: strong symbolic baseline remains distinct, goal-bound and axiom-audited
+ok 14 - strong symbolic baseline remains distinct, goal-bound and axiom-audited
+  ---
+  duration_ms: 8.201927
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 232.335764
+Bridge SQLite migration: constraints, deduplication and erasure passed
+
+> test:platform-governance
+> node --test tests/bridge-curriculum.test.mjs tests/research-governance.test.mjs && python3 tests/test_d1_reconcile.py && python3 tests/test_research_lineage.py
+
+TAP version 13
+# Subtest: practice recommendations progress from genuinely replayed solutions to induction
+ok 1 - practice recommendations progress from genuinely replayed solutions to induction
+  ---
+  duration_ms: 1.891391
+  type: 'test'
+  ...
+# Subtest: changed catalogs and fabricated success cannot become progression
+ok 2 - changed catalogs and fabricated success cannot become progression
+  ---
+  duration_ms: 0.58075
+  type: 'test'
+  ...
+# Subtest: quality separates archived partial, assisted, invalid and synthetic labels
+ok 3 - quality separates archived partial, assisted, invalid and synthetic labels
+  ---
+  duration_ms: 1.502992
+  type: 'test'
+  ...
+# Subtest: export content and membership hashes are deterministic and consent strict
+ok 4 - export content and membership hashes are deterministic and consent strict
+  ---
+  duration_ms: 19.41812
+  type: 'test'
+  ...
+# Subtest: withdrawal provides downstream membership without promising model erasure
+ok 5 - withdrawal provides downstream membership without promising model erasure
+  ---
+  duration_ms: 0.611035
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 89.109672
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.482s
+
+OK
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.002s
+
+OK

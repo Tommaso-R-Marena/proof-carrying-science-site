@@ -1,0 +1,20 @@
+{
+  "format": "pcs-scientific-workflow-public-assets-v2",
+  "authority": "unsigned byte-integrity inventory; not independent scientific attestation",
+  "upstream_revision": "8957207b78d6ccd1b4654a9dd9c9041b657478ab",
+  "license": "CC0-1.0",
+  "source_core_protocol_sha256": "117fb2bb6e15c9f7fed43912e097f3468928ab7f5b9f9d5e419894dc3ac2d429",
+  "public_key_fingerprint": "f7e1184ae513ef6fe9688094fa0d64e2d94bb4f9752d3f7c35a2b44b009146e5",
+  "files": {
+    "UPSTREAM_LICENSE.md": "8e2c443dd9aea6fcd6c293dbf66935bd5ef502fc0ca9b466c773cf9316d5e04c",
+    "UPSTREAM_README.md": "30248c3c8c97d7b2f3a4bc361f9209c64ad9c53f47169eb9fbb5c2d00fe5db92",
+    "contract.json": "4090ea72c973074e80ed8c157e78275a37584e6eb81592f8906f3a95565d38ea",
+    "penguins.csv": "f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93",
+    "positive.pcs.zip": "7f503d99a7069a2d3663883520e7c68663241b1f0eed66584bcb343756be8290",
+    "producer-public.pem": "0af2f17c1b77b67c593dafc717b099391f85fbc19d5d547a7587375ae3f2d38d",
+    "provenance.json": "e0b856c085a51a9f7241787c41167e1883aaf6075541fea63c3264c7e839f69c",
+    "recorded-negative-controls.json": "ead62c081a4418925a17fc45d3c0337f4d9f61557bba48fc1e0a915e2b239383",
+    "recorded-receipt.json": "4b8b2af1ace6925af5baac8487b400e42c34bcfbf89d34cbb0b0982e5d501c07",
+    "browser-validation.json": "140ee2230577f495dad9ebb5c9b4b16a6f4622c9d647ddb6b653ad5e3b53e344"
+  }
+}

@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722
+          ref: b59badd68cedba3dcc9c72a6d5148e7986545ebd
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
@@ -189,7 +189,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722
+          ref: b59badd68cedba3dcc9c72a6d5148e7986545ebd
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -202,6 +202,7 @@ jobs:
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
           # Production UI recovery runs in Chromium against explicit loopback provider fixtures.
           PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
+          PCS_SCIENCE_BROWSER_OUTPUT="$RUNNER_TEMP/scientific-workflow-browser.json" npm run test:browser:scientific-workflow
           source .ci-components/lean-prover/scripts/activate_lean_428.sh
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover

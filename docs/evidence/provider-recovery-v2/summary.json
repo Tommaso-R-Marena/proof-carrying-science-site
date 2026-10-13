@@ -1,0 +1,46 @@
+{
+  "format": "pcs-provider-recovery-evidence-v2",
+  "status": "tested_bounded",
+  "source_base_site_sha": "72a47c92d47c93249b6c8b9ec0dc70b95232f48c",
+  "source_files_sha256": {
+    "src/lean-job-service.js": "ac4273c8ad02471c4127fe93bf53d026a7ca76509cfd679640afbe7f21c4a869",
+    "src/lean-research.js": "55c8e01ab4aa810bf6c24cd0771606f78aac97ffa57e536afc3e48d9d2053949",
+    "tests/lean-job-journal.test.mjs": "6c94901963be7c08485718151262e543a0de27baa594ce6f11e4e9950b01b5d6",
+    "tests/lean-research.test.mjs": "c9195f97155d4ba934c04e8b84c8ce991677bb29a29cf93c7351c3cf89cac386",
+    "tests/lean-research-runtime.test.mjs": "f7ccd85b22ea0ac891216067f35b66cb4ec72eaea5ee25c1ac0f464175552a90",
+    "tests/bridge-builder.test.mjs": "76f63cffba424a0feccca23f1581c22dc00fda5668f72e23d6de3b8dcc01872b",
+    "tests/memory-workshop.test.mjs": "9049311a48ee60dbb4a7d8097a7166ac5d233796fa4edce5657728740d4c641c"
+  },
+  "focused": {
+    "command": "node --test tests/lean-job-journal.test.mjs tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/bridge-builder.test.mjs tests/memory-workshop.test.mjs",
+    "passed": 45,
+    "failed": 0,
+    "wall_seconds": 17.855440392
+  },
+  "mandatory": {
+    "command": "npm run test:lean-research",
+    "node_test_groups": [
+      45,
+      14,
+      5
+    ],
+    "python_test_groups": [
+      3,
+      2
+    ],
+    "failed": 0
+  },
+  "initial_negative": {
+    "tests": 38,
+    "passed": 37,
+    "failed": 1,
+    "reason": "Test expected code; actual existing Worker response uses error. Assertion corrected; implementation did not change for this failure."
+  },
+  "provider_fixtures": true,
+  "actual_database_runtime": "workerd SQLite via Miniflare V4, persistence directory, disposed and restarted runtime",
+  "actual_provider_readiness": "Exact new preflight, bound PCS_LEAN_GITHUB_TOKEN and supported HTTPS proxy; repository public/main, pinned SHA, active exact workflow checked in1.300179621s. No dispatch.",
+  "direct_node_transport_negative": "The first Node command omitted --use-env-proxy and could not reach the provider. Python urllib and proxy-enabled Node succeeded with the same bindings; this is not a credential rejection.",
+  "new_live_proof_admissions": 0,
+  "workflow_dispatches": 0,
+  "pcs_authority": false
+}

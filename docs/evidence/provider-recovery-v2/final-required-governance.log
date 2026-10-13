@@ -1,0 +1,59 @@
+
+> test:platform-governance
+> node --test tests/bridge-curriculum.test.mjs tests/research-governance.test.mjs && python3 tests/test_d1_reconcile.py && python3 tests/test_research_lineage.py && python3 tests/test_d1_production_preflight.py
+
+TAP version 13
+# Subtest: practice recommendations progress from genuinely replayed solutions to induction
+ok 1 - practice recommendations progress from genuinely replayed solutions to induction
+  ---
+  duration_ms: 2.934719
+  type: 'test'
+  ...
+# Subtest: changed catalogs and fabricated success cannot become progression
+ok 2 - changed catalogs and fabricated success cannot become progression
+  ---
+  duration_ms: 2.015192
+  type: 'test'
+  ...
+# Subtest: quality separates archived partial, assisted, invalid and synthetic labels
+ok 3 - quality separates archived partial, assisted, invalid and synthetic labels
+  ---
+  duration_ms: 1.454561
+  type: 'test'
+  ...
+# Subtest: export content and membership hashes are deterministic and consent strict
+ok 4 - export content and membership hashes are deterministic and consent strict
+  ---
+  duration_ms: 25.766461
+  type: 'test'
+  ...
+# Subtest: withdrawal provides downstream membership without promising model erasure
+ok 5 - withdrawal provides downstream membership without promising model erasure
+  ---
+  duration_ms: 0.516106
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 92.624325
+...
+----------------------------------------------------------------------
+Ran 3 tests in 1.023s
+
+OK
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.003s
+
+OK
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.004s
+
+OK

@@ -2,6 +2,7 @@ import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSessio
 import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
 import {submitJob,pollJob,cancelJob} from './lean-job-service.js';
 import {AuditJournal} from './lean-job-journal.js';
+import {admitLeanProof,LeanAdmissionError} from './lean-admission.js';
 import {replay as replayBridgeCatalog, CATALOG as originalBridgeCatalog, VERSION as BRIDGE_VERSION} from "../public/bridge-builder-core.mjs";
 import memoryWorkshopCatalog from '../public/memory-workshop-catalog.mjs';
 import {qualityLabels,exportManifest,withdrawalReceipt} from '../public/research-governance-core.mjs';
@@ -4340,8 +4341,16 @@ async function handleApi(request, env) {
     try{validatePublicStatement(body);}catch(error){throw new ApiError(400,String(error.message),"invalid_public_lean_statement");}
     await rateLimit(request,env,"public-lean-retry",120,60);
     const idempotencyKey=request.headers.get('Idempotency-Key')||crypto.randomUUID().replace(/-/g,'');
-    const admit=async()=>{await rateLimit(request,env,"public-lean-submit",2,1440);const globalQuota=new Request(request.url,{headers:{"CF-Connecting-IP":"PCS_PUBLIC_LEAN_GLOBAL"}});await rateLimit(globalQuota,env,"public-lean-global",12,1440);};
-    try{return json(await submitJob(env,body,{ip:request.headers.get('CF-Connecting-IP')||'unknown',idempotencyKey,admit,archive:archiveLeanEvent(env)}));}
+    const readinessAdmit=async()=>{
+      // Internal fixed scope: clients cannot create separate provider budgets.
+      const globalReadiness=new Request(request.url,{headers:{"CF-Connecting-IP":"PCS_PUBLIC_LEAN_READINESS_GLOBAL"}});
+      await rateLimit(globalReadiness,env,"public-lean-readiness",240,60);
+    };
+    const admit=async()=>{
+      try{await admitLeanProof(env,request.headers.get('CF-Connecting-IP')||'unknown');}
+      catch(error){if(error instanceof LeanAdmissionError)throw new ApiError(error.status,error.message,error.code);throw error;}
+    };
+    try{return json(await submitJob(env,body,{ip:request.headers.get('CF-Connecting-IP')||'unknown',idempotencyKey,admit,readinessAdmit,archive:archiveLeanEvent(env)}));}
     catch(error){if(error instanceof ApiError)throw error;if(/Idempotency|idempotency|Immutable request/.test(error.message))throw new ApiError(409,'The idempotency key must remain bound to the same request.','idempotency_conflict');throw new ApiError(503,"Public Lean checker unavailable. Retry with the same idempotency key.","lean_checker_unavailable");}
   }
   if(method==="POST" && path==="/api/lean-research/result"){

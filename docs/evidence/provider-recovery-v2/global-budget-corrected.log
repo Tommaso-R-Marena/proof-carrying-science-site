@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: bounded gzip preserves the full large checker result and legacy compatibility
+ok 1 - bounded gzip preserves the full large checker result and legacy compatibility
+  ---
+  duration_ms: 109.15423
+  type: 'test'
+  ...
+# Subtest: compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs
+ok 2 - compressed receipts reject mixed/duplicate markers, malformed gzip and expansion bombs
+  ---
+  duration_ms: 30.997536
+  type: 'test'
+  ...
+# Subtest: gzip does not weaken interpretation, source, action or kernel authority bindings
+ok 3 - gzip does not weaken interpretation, source, action or kernel authority bindings
+  ---
+  duration_ms: 18.785039
+  type: 'test'
+  ...
+# Subtest: explicit public authorization and closed mathematical payload
+ok 4 - explicit public authorization and closed mathematical payload
+  ---
+  duration_ms: 0.458141
+  type: 'test'
+  ...
+# Subtest: only pinned public main, safe environment input, signed expiring ticket
+ok 5 - only pinned public main, safe environment input, signed expiring ticket
+  ---
+  duration_ms: 4.29219
+  type: 'test'
+  ...
+# Subtest: actual receipt format, source binding, duplicate markers and forbidden axioms
+ok 6 - actual receipt format, source binding, duplicate markers and forbidden axioms
+  ---
+  duration_ms: 10.694332
+  type: 'test'
+  ...
+# Subtest: completed job provenance and redirected logs never carry GitHub credentials
+ok 7 - completed job provenance and redirected logs never carry GitHub credentials
+  ---
+  duration_ms: 6.206025
+  type: 'test'
+  ...
+# Subtest: bounded logs and missing final evidence remain unresolved
+ok 8 - bounded logs and missing final evidence remain unresolved
+  ---
+  duration_ms: 6.708371
+  type: 'test'
+  ...
+# Subtest: real Worker rejects origin and absent consent before any quota or provider operation
+ok 9 - real Worker rejects origin and absent consent before any quota or provider operation
+  ---
+  duration_ms: 3.74007
+  type: 'test'
+  ...
+# Subtest: actual Worker/D1 rejects absent provider before proof admission
+ok 10 - actual Worker/D1 rejects absent provider before proof admission
+  ---
+  duration_ms: 1409.151064
+  type: 'test'
+  ...
+# Subtest: dedicated proof-dispatch credential is preferred without replacing existing website credential
+ok 11 - dedicated proof-dispatch credential is preferred without replacing existing website credential
+  ---
+  duration_ms: 2.750971
+  type: 'test'
+  ...
+# Subtest: real Worker availability exposes configuration only, without credentials or authority
+ok 12 - real Worker availability exposes configuration only, without credentials or authority
+  ---
+  duration_ms: 1.555408
+  type: 'test'
+  ...
+# Subtest: optional operational evidence is source-correlated, ordered and never authorizes training
+ok 13 - optional operational evidence is source-correlated, ordered and never authorizes training
+  ---
+  duration_ms: 32.069732
+  type: 'test'
+  ...
+# Subtest: the action digest binds actual checked receipt actions rather than a repeated output assertion
+ok 14 - the action digest binds actual checked receipt actions rather than a repeated output assertion
+  ---
+  duration_ms: 22.658284
+  type: 'test'
+  ...
+# Subtest: hybrid requests require an attributed independently replayed proof and reject human action overrides
+ok 15 - hybrid requests require an attributed independently replayed proof and reject human action overrides
+  ---
+  duration_ms: 20.516577
+  type: 'test'
+  ...
+# Subtest: previous protected source stays bound to an already signed unexpired ticket
+ok 16 - previous protected source stays bound to an already signed unexpired ticket
+  ---
+  duration_ms: 4.346447
+  type: 'test'
+  ...
+# Subtest: readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics
+ok 17 - readiness uses only bounded pinned metadata GETs with sanitized fixed diagnostics
+  ---
+  duration_ms: 2.045707
+  type: 'test'
+  ...
+# Subtest: a POST transport exception cannot spoof a definite no-dispatch result
+ok 18 - a POST transport exception cannot spoof a definite no-dispatch result
+  ---
+  duration_ms: 1.331991
+  type: 'test'
+  ...
+# Subtest: global readiness cap spans clients, sends no denied metadata, and acknowledged reuse bypasses the new allowance
+ok 19 - global readiness cap spans clients, sends no denied metadata, and acknowledged reuse bypasses the new allowance
+  ---
+  duration_ms: 1342.901955
+  type: 'test'
+  ...
+# Subtest: sixteen concurrent clients at the global readiness boundary permit exactly one metadata attempt and admission
+ok 20 - sixteen concurrent clients at the global readiness boundary permit exactly one metadata attempt and admission
+  ---
+  duration_ms: 2069.955618
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5250.971236

@@ -1497,14 +1497,19 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
         parsed = urlparse(ref)
         if parsed.scheme or parsed.netloc or parsed.query or parsed.fragment:
             return match.group(0)
-        target = ROOT / parsed.path.lstrip("/")
+        target = (ROOT / parsed.path.lstrip("/")).resolve()
+        try:
+            target.relative_to(ROOT.resolve())
+        except ValueError:
+            errors.append(f"{js.name}: literal static fetch escapes public assets: {ref}")
+            return match.group(0)
         if not target.is_file():
             errors.append(f"{js.name}: literal static fetch target is missing: {ref}")
             return match.group(0)
         return "/* validated same-origin static fetch */"
 
     reviewed = re.sub(
-        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*(?:,\s*\{\s*cache\s*:\s*["']no-store["']\s*\}\s*)?\)""",
+        r"""\bfetch\s*\(\s*["'](?P<ref>[A-Za-z0-9._/-]+)["']\s*(?:,\s*\{\s*(?:cache\s*:\s*["']no-store["']|credentials\s*:\s*["']omit["'])\s*\}\s*)?\)""",
         _strip_static_fetch,
         text,
     )

@@ -1,0 +1,11 @@
+{
+  "format": "pcs-production-atomic-admission-readonly-explain-v1",
+  "source_sha256": "7fe75335c2be2f55739ce25850a380dff809143b40306731d7d1bba0fed3986a",
+  "sql_sha256": "9c34f612525becfa8d5961616697fc39155777193c65da3c79833d36b0e824bd",
+  "provider_success": true,
+  "query_plan_rows": 15,
+  "rows_written": 0,
+  "database_mutated": false,
+  "proof_admissions": 0,
+  "scope": "Actual production D1 parser/planner accepted exact materialized atomic admission SQL under EXPLAIN QUERY PLAN. Statement was not executed; this does not prove production races or runtime admission."
+}

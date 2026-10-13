@@ -1,0 +1,85 @@
+{
+  "format": "pcs-provider-recovery-global-atomic-v2",
+  "status": "tested_bounded",
+  "source_base_site_sha": "72a47c92d47c93249b6c8b9ec0dc70b95232f48c",
+  "source_files_sha256": {
+    "src/lean-job-service.js": "eb41d2ca490d6213da7441e58d43a24205a04cf3c3b014463cde80437b3c67ca",
+    "src/lean-research.js": "55c8e01ab4aa810bf6c24cd0771606f78aac97ffa57e536afc3e48d9d2053949",
+    "src/lean-admission.js": "7fe75335c2be2f55739ce25850a380dff809143b40306731d7d1bba0fed3986a",
+    "src/worker.js": "7504c8c1403c5805b9854494706ffa79fd59874e4885db4443ea376558549f3a",
+    "tests/lean-job-journal.test.mjs": "4f5034d6312938384bc46aaa5aed06b28524c4da039ecaf64c17164c493f1ecd",
+    "tests/lean-research.test.mjs": "4ae2fa88dc975f03ec7d76a6904dd44a4b027e59abbbac48a81af4d186597cd4",
+    "tests/lean-research-runtime.test.mjs": "f7ccd85b22ea0ac891216067f35b66cb4ec72eaea5ee25c1ac0f464175552a90",
+    "tests/lean-admission.test.mjs": "80ed0176951750afc3870ff2ed25d62b5844084a80afd1e6b8a472c110bee660",
+    "tests/bridge-builder.test.mjs": "76f63cffba424a0feccca23f1581c22dc00fda5668f72e23d6de3b8dcc01872b",
+    "tests/memory-workshop.test.mjs": "9049311a48ee60dbb4a7d8097a7166ac5d233796fa4edce5657728740d4c641c"
+  },
+  "source_overlay": "source-overlay-global-atomic",
+  "initial_source_overlay": "source-overlay-initial",
+  "global_budget": {
+    "max_initial_or_created_attempts": 240,
+    "window_minutes": 60,
+    "scope": "public-lean-readiness",
+    "fixed_internal_client": "PCS_PUBLIC_LEAN_READINESS_GLOBAL",
+    "acknowledged_reuse_exempt": true,
+    "provider_fixtures": true,
+    "actual_worker_sqlite_boundary_race_clients": 16,
+    "allowed": 1,
+    "denied": 15,
+    "denied_metadata_calls": 0,
+    "denied_proof_admissions": 0
+  },
+  "atomic_admission": {
+    "limits": {
+      "per_client": 2,
+      "global": 12,
+      "window_minutes": 1440
+    },
+    "key_encoding": "existing SHA256 base64url",
+    "single_sqlite_statement": true,
+    "materialized_eligibility": true,
+    "different_client_race": {
+      "attempts": 60,
+      "admitted": 12,
+      "denied": 48,
+      "partial_client_charges": 0
+    },
+    "same_client_race": {
+      "attempts": 20,
+      "admitted": 2,
+      "client_counter": 2,
+      "global_counter": 2
+    },
+    "strict_cutoff_preserved": true,
+    "exhausted_other_counter_changed": false,
+    "negative_counter_fails_closed": true,
+    "production_quota_resets": 0
+  },
+  "focused": {
+    "passed": 55,
+    "failed": 0,
+    "wall_seconds": 19.951792223
+  },
+  "required_components": {
+    "first_node_group": 55,
+    "bridge_node_group": 14,
+    "governance_node_group": 5,
+    "governance_python_groups": [
+      3,
+      2,
+      5
+    ],
+    "bridge_sqlite_migration_control": "passed",
+    "failed": 0,
+    "scope": "Ran current mandatory prover/bridge/governance components; newly added independent scientific-workflow component belongs to root integration campaign."
+  },
+  "initial_negative": {
+    "reason": "Test preseed used hex keys; existing rateLimit uses base64url. Corrected fixture only; cap/window not weakened.",
+    "preserved_log": "global-budget-initial-negative.log"
+  },
+  "actual_provider_preflight": "Previously sealed read-only positive; no repeated public/hosted job request in this phase.",
+  "financial_actions": 0,
+  "production_database_changes": 0,
+  "workflow_dispatches": 0,
+  "pcs_authority": false
+}

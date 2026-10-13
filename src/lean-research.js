@@ -1,10 +1,10 @@
 /* Public proof proposals run only in pinned, protected PCS main on free standard
    public GitHub runners. Hosted CI is a trust dependency, not PCS scientific
    authority. No artifact storage, model API, arbitrary ref or executable input. */
-export const CORE_SHA = "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722";
+export const CORE_SHA = "b59badd68cedba3dcc9c72a6d5148e7986545ebd";
 // One previously protected revision remains eligible for already signed tickets
 // during their original one-hour lifetime. New dispatch always requires CORE_SHA.
-export const PREVIOUS_CORE_SHA = "e1067e406a1a1991497e7130e1f209239e5607cc";
+export const PREVIOUS_CORE_SHA = "fd4ddaf8e106cfb37ced3bd1dc5cffe568f1c722";
 const APPROVED_TICKET_REVISIONS = new Set([CORE_SHA, PREVIOUS_CORE_SHA]);
 export const approvedTicketRevision = value => APPROVED_TICKET_REVISIONS.has(value);
 const REPO = "Tommaso-R-Marena/proof-carrying-science";
@@ -70,21 +70,64 @@ export async function preparePublicRequest(body,issued=Date.now(),request_id=cry
   return payload;
 }
 export async function signPreparedTicket(env,payload){const value=await ticket(env,payload);await verifyTicket(env,value,payload.issued);return value;}
+// Readiness is a bounded observation, never authority or a reservation. Repeat
+// it immediately before POST; the final receipt still pins the execution SHA.
+const READINESS_TIMEOUT_MS=6000;
+const DECLINED_DISPATCH_STATUSES=new Set([400,401,403,404,405,409,410,422,429]);
+function unavailable(reason,attempted=false,uncertain=attempted){
+  return Object.assign(new Error('Public Lean provider unavailable ('+reason+'); retry the same request key.'),
+    {code:'provider_unavailable',readiness_code:reason,dispatch_attempted:attempted,dispatch_may_have_been_accepted:uncertain});
+}
+export async function preflightDispatch(env,transport=fetch){
+  let stage='repository';
+  try{
+    if(!/^[0-9a-f]{40}$/.test(CORE_SHA))throw unavailable('unapproved_revision');
+    const read=async path=>{
+      const response=await github(env,path,{signal:AbortSignal.timeout(READINESS_TIMEOUT_MS)},transport);
+      if(!response.ok)throw unavailable(stage+'_unavailable');
+      // GitHub metadata has fixed small fields; do not retain provider text.
+      return JSON.parse(await boundedText(response,32768));
+    };
+    const repository=await read('');
+    if(repository.private!==false||repository.full_name!==REPO||repository.default_branch!=='main')throw unavailable('repository_not_public_main');
+    stage='revision';
+    const current=await read('/git/ref/heads/main');
+    if(current.object?.sha!==CORE_SHA)throw unavailable('revision_not_approved');
+    stage='workflow';
+    const workflow=await read('/actions/workflows/'+WORKFLOW);
+    if(workflow.state!=='active'||workflow.path!=='.github/workflows/'+WORKFLOW)throw unavailable('workflow_not_active');
+    return {format:'pcs-lean-provider-readiness-v1',status:'ready',core_sha:CORE_SHA,
+      public_repository:true,workflow_active:true,pcs_authority:false};
+  }catch(error){
+    // Only fixed diagnostics escape this boundary, never arbitrary exception text.
+    const allowed=new Set(['unapproved_revision','repository_unavailable','repository_not_public_main','revision_unavailable','revision_not_approved','workflow_unavailable','workflow_not_active']);
+    throw unavailable(allowed.has(error.readiness_code)?error.readiness_code:stage+'_unavailable');
+  }
+}
 export async function dispatch(env,body,transport=fetch,now=Date.now(),prepared=null){
-  if(!/^[0-9a-f]{40}$/.test(CORE_SHA))fail('A protected checker revision has not been approved');
-  validatePublicStatement(body);
-  const repository=await object(await github(env,'',{},transport));if(repository.private!==false||repository.full_name!==REPO)fail('Only standard public-repository compute is permitted');
-  const current=await object(await github(env,'/commits/main',{},transport));if(current.sha!==CORE_SHA)fail('Default branch differs from the approved checker revision');
-  const payload=await preparePublicRequest(body,prepared?.issued??now,prepared?.request_id);
-  if(prepared&&JSON.stringify(payload)!==JSON.stringify(prepared))fail('Immutable checker request mismatch');
-  if(now>payload.expires)fail('Expired checker request cannot dispatch');
-  const {request_id}=payload;
-  const inputs={request_id,statement:body.statement,interpretation:body.interpretation===null?'':String(body.interpretation)};
-  if(body.proof_actions!==undefined)inputs.proof_actions=JSON.stringify(body.proof_actions);
-  if(body.model_family!==undefined)inputs.model_family=body.model_family;
-  const response=await github(env,'/actions/workflows/'+WORKFLOW+'/dispatches',{method:'POST',body:JSON.stringify({ref:'main',inputs})},transport);
-  if(response.status!==204)fail('GitHub proof dispatch unavailable ('+response.status+')');
-  return {status:'queued',ticket:await ticket(env,payload),request_id,core_sha:CORE_SHA,public_source:true,pcs_authority:false};
+  let payload,acknowledgement,inputs;
+  try{
+    validatePublicStatement(body);
+    payload=await preparePublicRequest(body,prepared?.issued??now,prepared?.request_id);
+    if(prepared&&JSON.stringify(payload)!==JSON.stringify(prepared))fail('Immutable checker request mismatch');
+    if(now>payload.expires)fail('Expired checker request cannot dispatch');
+    await preflightDispatch(env,transport);
+    // Complete local work which might throw before the external effect.
+    acknowledgement=await ticket(env,payload);
+    inputs={request_id:payload.request_id,statement:body.statement,interpretation:body.interpretation===null?'':String(body.interpretation)};
+    if(body.proof_actions!==undefined)inputs.proof_actions=JSON.stringify(body.proof_actions);
+    if(body.model_family!==undefined)inputs.model_family=body.model_family;
+  }catch(error){
+    if(error.code==='provider_unavailable')throw error;
+    throw Object.assign(new Error('Checker request cannot dispatch'),{code:'invalid_checker_evidence',dispatch_attempted:false,dispatch_may_have_been_accepted:false});
+  }
+  let response;
+  try{
+    response=await github(env,'/actions/workflows/'+WORKFLOW+'/dispatches',{
+      method:'POST',body:JSON.stringify({ref:'main',inputs}),signal:AbortSignal.timeout(READINESS_TIMEOUT_MS)},transport);
+  }catch{throw unavailable('dispatch_confirmation_unavailable',true);}
+  if(response.status!==204)throw unavailable(DECLINED_DISPATCH_STATUSES.has(response.status)?'dispatch_declined':'dispatch_confirmation_unavailable',true,!DECLINED_DISPATCH_STATUSES.has(response.status));
+  return {status:'queued',ticket:acknowledgement,request_id:payload.request_id,core_sha:CORE_SHA,public_source:true,pcs_authority:false};
 }
 async function boundedText(response,max){if(!response.ok)fail('Checker log download failed','provider_unavailable');if(Number(response.headers.get('content-length')||0)>max)fail('Checker logs exceed bound');const reader=response.body.getReader();let size=0;const chunks=[];for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>max){await reader.cancel();fail('Checker logs exceed bound');}chunks.push(value);}const all=new Uint8Array(size);let offset=0;for(const chunk of chunks){all.set(chunk,offset);offset+=chunk.length;}return new TextDecoder().decode(all);}
 function resultMarker(log){
