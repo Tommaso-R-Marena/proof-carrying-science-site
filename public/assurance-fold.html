@@ -86,7 +86,7 @@
 
 <section class="af-research" aria-labelledby="afResearchTitle">
   <div class="kicker">WHAT YOUR PLAY LEAVES BEHIND</div>
-  <h2 id="afResearchTitle">We keep the moves you made, then re-check them ourselves</h2>
+  <h2 id="afResearchTitle">We keep the moves you made, then re-check them ourselves.</h2>
   <p>While you play, the page records ordinary moves: placing a token, nudging it, shaking the board, asking for a heat report, and locking. When a board locks, that notebook is saved here in the tab. Before anything is treated as training data, the same game engine plays the notebook back and recomputes heat, rewards, whether the board was stable, and whether you used help. Scores typed by the browser are ignored.</p>
   <p>Nothing leaves your machine unless you click an export button and save a file. That export can include step-by-step transitions for reinforcement learning, and pairs of nearby moves ranked by which one left the board cooler—useful if someone later trains a ranking model. Assisted runs (Shake or coach) are kept out of the unassisted training set. The held-out board <code>fold-adversarial-nest</code> is never used to fit the local coach.</p>
   <p id="afResearchStatus" class="af-research-status" role="status">Moves this run 0 · notebooks saved 0/20 · coach not fitted</p>
