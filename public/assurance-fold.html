@@ -75,6 +75,27 @@
   </section>
 </div>
 
+<section class="af-research" aria-labelledby="afResearchTitle">
+  <div class="kicker">USEFUL DATA · CHECKER BEFORE LABEL</div>
+  <h2 id="afResearchTitle">Capture fold trajectories for RL and behavior cloning</h2>
+  <p>Every place, nudge, wiggle, check, and lock is a typed action. When you save a notebook, PCS <strong>replays the session through the fold engine</strong> and recomputes energy, rewards, stability, and assistance flags. Client-claimed scores are rejected. Practice stays in this tab — no auto-upload.</p>
+  <p id="afResearchStatus" class="af-research-status" role="status">Live actions 0 · saved notebooks 0/20 · coach none</p>
+  <div class="af-actions">
+    <button type="button" class="button primary" id="afSaveNotebook">Save locked notebook</button>
+    <button type="button" class="button secondary" id="afExportRl">Export RL dataset (s,a,r,s′)</button>
+    <button type="button" class="button secondary" id="afExportSessions">Export raw sessions</button>
+    <button type="button" class="button secondary" id="afFitCoach">Fit local fold coach</button>
+    <button type="button" class="button secondary" id="afAskCoach">Ask coach (selected bead)</button>
+    <button type="button" class="button secondary" id="afClearNotebooks">Clear local notebooks</button>
+  </div>
+  <ul class="af-research-points">
+    <li><strong>RL rows:</strong> state coords · action · engine reward · next state · done · 16-D features</li>
+    <li><strong>Held-out:</strong> <code>fold-adversarial-nest</code> never enters coach fitting</li>
+    <li><strong>Assistance:</strong> wiggle-flagged notebooks are excluded from unassisted fitting</li>
+    <li><strong>Honesty:</strong> <code>issues_accept: false</code> · authority NONE · not Lean / clinical / merge advice</li>
+  </ul>
+</section>
+
 <section class="section" aria-label="Real evidence and related tools">
   <div class="commons-home-banner">
     <div>

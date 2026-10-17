@@ -180,6 +180,32 @@ body.assurance-fold-page {
 .af-feedback[data-tone="warn"] { border-color: #c47b16; background: var(--af-warn-bg); }
 .af-feedback ul { margin: 0.45rem 0 0; padding-left: 1.1rem; }
 
+.af-research {
+  margin: 1.5rem 0 1.75rem;
+  padding: 1.1rem 1.15rem 1.2rem;
+  background: var(--af-panel);
+  border: 1px solid var(--af-line);
+  animation: af-rise 0.7s ease-out both;
+}
+.af-research h2 {
+  font-family: var(--af-serif);
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  margin: 0.25rem 0 0.55rem;
+  max-width: 28ch;
+}
+.af-research-status {
+  font-family: var(--af-mono);
+  font-size: 0.85rem;
+  color: var(--af-muted);
+  margin: 0.65rem 0;
+}
+.af-research-points {
+  margin: 0.35rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--af-muted);
+}
+.af-research-points li { margin: 0.25rem 0; }
+
 @keyframes af-rise {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }

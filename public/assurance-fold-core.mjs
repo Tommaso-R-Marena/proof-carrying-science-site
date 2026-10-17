@@ -215,15 +215,196 @@ export function nudgeResidue(pose, residueId, dx, dy) {
   return moveResidue(pose, residueId, r.x + dx, r.y + dy);
 }
 
-/** Small random wiggle — Foldit-like local search assist (counts as a hint). */
+/**
+ * Small random wiggle — Foldit-like local search assist (counts as a hint).
+ * Deterministic in (pose.seed, seed) so research trajectories can be replayed.
+ */
 export function wigglePose(pose, seed = "wiggle") {
-  const rng = mulberry32(hashSeed(`${pose.seed}:${seed}:${Date.now()}`));
+  const rng = mulberry32(hashSeed(`${pose.seed}:${seed}`));
   const residues = pose.residues.map((r) => ({
     ...r,
     x: Math.min(0.96, Math.max(0.04, r.x + (rng() - 0.5) * 0.06)),
     y: Math.min(0.96, Math.max(0.04, r.y + (rng() - 0.5) * 0.06)),
   }));
   return { ...pose, residues };
+}
+
+/** Held-out structures never enter local fold-coach fitting. */
+export const EVALUATION_STRUCTURES = Object.freeze(["fold-adversarial-nest"]);
+
+export const SESSION_FORMAT = "pcs-assurance-fold-session-v1";
+export const MAX_SESSION_ACTIONS = 400;
+
+function quantize(v) {
+  return Math.round(Number(v) * 1000) / 1000;
+}
+
+function poseCoords(pose) {
+  return pose.residues.map((r) => ({
+    id: r.id,
+    kind: r.kind,
+    x: quantize(r.x),
+    y: quantize(r.y),
+  }));
+}
+
+function assertAction(action) {
+  if (!action || typeof action !== "object" || Array.isArray(action)) {
+    throw new Error("Invalid fold action");
+  }
+  if ("reward" in action || "energy" in action || "score" in action || "stable" in action) {
+    throw new Error("Client-supplied labels rejected");
+  }
+  const keys = Object.keys(action).sort().join(",");
+  if (action.type === "place" && keys === "residue_id,type,x,y") {
+    if (typeof action.residue_id !== "string") throw new Error("Invalid place");
+    if (!Number.isFinite(action.x) || !Number.isFinite(action.y)) throw new Error("Invalid place coords");
+    return;
+  }
+  if (action.type === "nudge" && keys === "dx,dy,residue_id,type") {
+    if (typeof action.residue_id !== "string") throw new Error("Invalid nudge");
+    if (!Number.isFinite(action.dx) || !Number.isFinite(action.dy)) throw new Error("Invalid nudge");
+    if (Math.abs(action.dx) > 0.2 || Math.abs(action.dy) > 0.2) throw new Error("Nudge too large");
+    return;
+  }
+  if (action.type === "wiggle" && keys === "seed,type") {
+    if (typeof action.seed !== "string" || action.seed.length > 64) throw new Error("Invalid wiggle seed");
+    return;
+  }
+  if (action.type === "check" && keys === "type") return;
+  if (action.type === "lock" && keys === "type") return;
+  throw new Error("Unknown or unavailable fold action");
+}
+
+/**
+ * Replay a typed action session. Energy, reward, stability and assistance are
+ * recomputed by the engine — never accepted from the client.
+ */
+export function replayFoldSession(input) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new Error("Invalid fold session");
+  }
+  const required = ["actions", "format", "game_version", "seed", "structure_id"];
+  const keys = Object.keys(input).sort();
+  if (keys.join(",") !== required.join(",")) {
+    throw new Error("Unexpected fold session fields");
+  }
+  if (input.format !== SESSION_FORMAT) throw new Error("Unsupported fold session format");
+  if (input.game_version !== GAME_VERSION) throw new Error("Unsupported fold game version");
+  if (typeof input.structure_id !== "string") throw new Error("Unknown structure");
+  getStructure(input.structure_id);
+  if (typeof input.seed !== "string" || input.seed.length > 80) throw new Error("Invalid seed");
+  if (!Array.isArray(input.actions) || input.actions.length < 1 || input.actions.length > MAX_SESSION_ACTIONS) {
+    throw new Error("Invalid fold action trajectory length");
+  }
+
+  let pose = initialPose(input.structure_id, input.seed);
+  let hints = 0;
+  let checks = 0;
+  let locked = false;
+  const transitions = [];
+
+  for (let i = 0; i < input.actions.length; i++) {
+    const action = input.actions[i];
+    assertAction(action);
+    const before = gradePose(input.structure_id, pose, { hints_used: hints });
+    const stateBefore = poseCoords(pose);
+    const assistedBefore = hints > 0;
+
+    if (action.type === "place") {
+      pose = moveResidue(pose, action.residue_id, quantize(action.x), quantize(action.y));
+    } else if (action.type === "nudge") {
+      pose = nudgeResidue(pose, action.residue_id, quantize(action.dx), quantize(action.dy));
+    } else if (action.type === "wiggle") {
+      hints = Math.min(40, hints + 1);
+      pose = wigglePose(pose, action.seed);
+    } else if (action.type === "check") {
+      checks += 1;
+    } else if (action.type === "lock") {
+      if (!before.stable) throw new Error("Lock requires a stable pose");
+      locked = true;
+    }
+
+    const after = gradePose(input.structure_id, pose, { hints_used: hints });
+    const delta = before.energy - after.energy;
+    let reward = Math.round(delta * 5) / 10;
+    if (after.components.overclaim > before.components.overclaim) reward -= 2;
+    if (action.type === "wiggle") reward -= 0.4;
+    if (action.type === "check" && after.stable) reward += 3;
+    if (action.type === "lock" && after.stable) reward += 10;
+    reward = Math.round(reward * 10) / 10;
+
+    transitions.push({
+      index: i,
+      action: { ...action },
+      state_before: stateBefore,
+      state_after: poseCoords(pose),
+      energy_before: before.energy,
+      energy_after: after.energy,
+      components_after: after.components,
+      stable_after: after.stable,
+      assisted_before_action: assistedBefore,
+      assisted: hints > 0,
+      reward,
+      done: locked,
+    });
+  }
+
+  const final = gradePose(input.structure_id, pose, { hints_used: hints });
+  const split = EVALUATION_STRUCTURES.includes(input.structure_id) ? "evaluation" : "training";
+  return {
+    format: "pcs-assurance-fold-verified-session-v1",
+    game_version: GAME_VERSION,
+    structure_id: input.structure_id,
+    seed: input.seed,
+    split,
+    transitions,
+    checks,
+    hints,
+    locked,
+    final_energy: final.energy,
+    final_stable: final.stable,
+    issues_accept: false,
+    inspection_is_not_authority: true,
+    training_use:
+      "Replay-checked spatial fold choices only. Rewards and stability are engine-derived. " +
+      "Not a Lean proof, clinical validation, security certification, or merge recommendation.",
+  };
+}
+
+/** Build a compact session envelope from recorded actions (no labels). */
+export function makeFoldSession(structureId, seed, actions) {
+  return {
+    format: SESSION_FORMAT,
+    game_version: GAME_VERSION,
+    structure_id: structureId,
+    seed: String(seed),
+    actions,
+  };
+}
+
+/**
+ * Synthetic expert trajectory: place each residue onto its ideal pocket pose.
+ * Tagged only via caller provenance — useful for offline RL bootstrap, not human data.
+ */
+export function syntheticExpertActions(structureId, seed = "synthetic") {
+  const start = initialPose(structureId, seed);
+  const ideal = idealPose(structureId);
+  const byId = new Map(ideal.residues.map((r) => [r.id, r]));
+  const actions = [];
+  for (const r of start.residues) {
+    const target = byId.get(r.id);
+    actions.push({
+      type: "place",
+      residue_id: r.id,
+      x: quantize(target.x),
+      y: quantize(target.y),
+    });
+  }
+  actions.push({ type: "check" });
+  const probe = replayFoldSession(makeFoldSession(structureId, seed, actions));
+  if (probe.final_stable) actions.push({ type: "lock" });
+  return actions;
 }
 
 /**
