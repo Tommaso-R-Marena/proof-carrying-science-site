@@ -58,6 +58,8 @@ jobs:
         run: node scripts/verify_countermodel_python.mjs --core .ci-components/pcs | tee countermodel-python-results.log
       - name: Reproduce the complete calibration export from its exact qualified CI archive
         run: |
+          python -m pip install --require-hashes -r .ci-components/pcs/requirements-build.lock -r .ci-components/pcs/requirements-dev.lock
+          python -m pip install --no-deps --no-build-isolation -e .ci-components/pcs
           python scripts/export_calibration_site.py --core .ci-components/pcs --verify
           python scripts/check_research_release_sources.py --core .ci-components/pcs
       - name: Independently replay complete player trajectories and assistance
