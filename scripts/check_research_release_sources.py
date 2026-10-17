@@ -22,6 +22,9 @@ def verify(core):
             raise ValueError('Protected research document source mismatch: '+name)
     admission=(ROOT/'src/lean-research.js').read_text()
     current=re.search(r'export const CORE_SHA = "([0-9a-f]{40})";',admission)[1]
+    status=json.loads((ROOT/'public/status.json').read_text())
+    if manifest.get('current_verification_core_sha')!=current or status['research_platform_v3'].get('current_verification_core_sha')!=current:
+        raise ValueError('Published verification revision differs from the dispatch revision')
     if subprocess.check_output(['git','-C',str(core),'rev-parse','HEAD'],text=True).strip()!=current:
         raise ValueError('Independent checkout differs from the public dispatch revision')
     workflow=(ROOT/'.github/workflows/site-public-verification.yml').read_text()

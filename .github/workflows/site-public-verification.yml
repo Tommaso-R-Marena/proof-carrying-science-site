@@ -51,7 +51,7 @@ jobs:
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
           fetch-depth: 0
-          ref: 68d8351a326565496908bf76c8a8daf082b94ff9
+          ref: fabc704efdbda4c8822881366e4db3d3e31f066a
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
@@ -197,7 +197,7 @@ jobs:
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
           fetch-depth: 0
-          ref: 68d8351a326565496908bf76c8a8daf082b94ff9
+          ref: fabc704efdbda4c8822881366e4db3d3e31f066a
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play

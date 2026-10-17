@@ -774,6 +774,7 @@
     "public_source": "protected core; website deployment separately observed",
     "production_migration_required": false,
     "pcs_authority": false,
-    "automatic_promotion": false
+    "automatic_promotion": false,
+    "current_verification_core_sha": "fabc704efdbda4c8822881366e4db3d3e31f066a"
   }
 }

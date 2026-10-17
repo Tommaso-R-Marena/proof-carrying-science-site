@@ -7,7 +7,8 @@
     109,
     115,
     116,
-    118
+    118,
+    119
   ],
   "excluded_draft_prs": [
     117
@@ -34,5 +35,6 @@
   "calibration_artifact_sha256": "4b53e9a38d283da4e60577b031ceb9ebfd5b6b844308b0956696eb80aa965924",
   "scientific_acceptance": false,
   "pcs_authority": false,
-  "website_copy_is_independent_review": false
+  "website_copy_is_independent_review": false,
+  "current_verification_core_sha": "fabc704efdbda4c8822881366e4db3d3e31f066a"
 }
