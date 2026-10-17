@@ -1,0 +1,186 @@
+"""Preserve a legacy D1 baseline and stage ONLY reviewed forward migrations.
+
+Never contacts Cloudflare, writes production, backfills d1_migrations or replays
+legacy SQL on the supplied database. Input is a private restored SQLite backup.
+Historical data writes are reviewed on a fresh reference, not replayed on users.
+"""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import sqlite3
+import tempfile
+
+from d1_reconcile import digest, inventory, readonly, historical_effects
+from d1_production_preflight import SCHEMA_QUERY, assess, sha
+
+FORMAT='pcs-d1-present-state-baseline-v1'
+DATABASE='9e5288c2-efef-4918-b029-7ef001b70064'
+NAME=re.compile(r'^([0-9]{4})_[a-z0-9_]+\.sql$')
+
+def migrations(folder):
+    folder=Path(folder)
+    result=[]
+    for file in sorted(folder.glob('*.sql')):
+        if file.is_symlink() or not file.is_file() or not NAME.fullmatch(file.name):
+            raise ValueError('Invalid or linked migration source')
+        result.append({'name':file.name,'sha256':hashlib.sha256(file.read_bytes()).hexdigest()})
+    sequence=[int(NAME.fullmatch(x['name'])[1]) for x in result]
+    if not sequence or sequence!=list(range(1,len(sequence)+1)):
+        raise ValueError('Migration sequence must be complete, unique and contiguous')
+    return result
+
+def capture(database):
+    with readonly(database) as db:
+        db.row_factory=sqlite3.Row
+        schema=[dict(r) for r in db.execute(SCHEMA_QUERY)]
+        ledger=[dict(r) for r in db.execute('SELECT name FROM d1_migrations ORDER BY id LIMIT 201')]
+        state=inventory(db)
+    if len(schema)>256 or len(ledger)>200 or state['integrity']!=['ok'] or state['foreign_key_violations']:
+        raise ValueError('Incomplete or inconsistent private snapshot')
+    return schema,ledger,state
+
+def baseline(database,folder,*,remote_schema_sha256,backup_sha256,source_revision):
+    for value in [remote_schema_sha256,backup_sha256]:
+        if not re.fullmatch('[0-9a-f]{64}',value):
+            raise ValueError('Exact backup and authenticated schema digests required')
+    if not re.fullmatch('[0-9a-f]{40}',source_revision):
+        raise ValueError('Exact protected website revision required')
+    schema,ledger,state=capture(database)
+    if sha(schema)!=remote_schema_sha256:
+        raise ValueError('Private restore and authenticated live schema differ')
+    source=migrations(folder)
+    assessment=assess(schema,ledger,folder)
+    if assessment['missing_objects'] or assessment['unknown_recorded_migrations']:
+        raise ValueError('Missing schema or unknown actual migration')
+    recorded=[r['name'] for r in ledger]
+    if len(recorded)!=len(set(recorded)):
+        raise ValueError('Duplicate actual ledger name')
+    effects=[]
+    for effect in historical_effects(folder):
+        tables=sorted({w['table'] for w in effect['reference_writes'] if w['context']=='top-level'})
+        if any(t not in state['tables'] for t in tables):
+            raise ValueError('Historical data-effect table missing from present state')
+        if tables:
+            effects.append({'migration':effect['name'],'reference_top_level_write_tables':tables,
+                            'disposition':'PRESERVE_CURRENT_STATE_DO_NOT_REPLAY',
+                            'historical_execution_proven':False})
+    if migrations(folder)!=source:
+        raise ValueError('Migration source changed during baseline capture')
+    return {'format':FORMAT,'database_id':DATABASE,'source_website_revision':source_revision,
+            'cutoff':len(source),'source_migrations':source,'actual_ledger_names':recorded,
+            'legacy_excluded_names':[x['name'] for x in source if x['name'] not in recorded],
+            'observed_schema_sha256':sha(schema),'private_backup_sha256':backup_sha256,
+            'private_snapshot_content_sha256':digest(state),
+            'private_snapshot_schema_sha256':state['schema_sha256'],
+            'historical_data_effects':effects,
+            'schema_differences_preserved':assessment['different_definitions'],
+            'extra_objects_preserved':assessment['extra_objects'],
+            'table_layout_details_preserved':assessment['table_layout_details'],
+            'historical_execution_inferred':False,'ledger_backfill_authorized':False,
+            'baseline_meaning':'Adopt the observed current schema and data as the starting state. This does not assert historical SQL execution or that current catalog/application state equals a fresh seed.',
+            'production_mutated':False,'private_rows_published':False}
+
+def validate_baseline(record):
+    if record.get('format')!=FORMAT or record.get('database_id')!=DATABASE or record.get('historical_execution_inferred') is not False or record.get('ledger_backfill_authorized') is not False or record.get('production_mutated') is not False:
+        raise ValueError('Baseline scope changed')
+    source=record.get('source_migrations')
+    if not isinstance(source,list) or type(record.get('cutoff')) is not int or record['cutoff']!=len(source) or not source:
+        raise ValueError('Baseline source inventory incomplete')
+    for i,item in enumerate(source,1):
+        if set(item)!={'name','sha256'} or not NAME.fullmatch(item['name']) or int(NAME.fullmatch(item['name'])[1])!=i or not re.fullmatch('[0-9a-f]{64}',item['sha256']):
+            raise ValueError('Malformed baseline migration identity')
+    recorded=record.get('actual_ledger_names')
+    if not isinstance(recorded,list) or len(recorded)!=len(set(recorded)) or not set(recorded)<=set(x['name'] for x in source):
+        raise ValueError('Baseline actual ledger malformed')
+    if record.get('legacy_excluded_names')!=[x['name'] for x in source if x['name'] not in recorded]:
+        raise ValueError('Legacy exclusion inventory differs')
+    for key in ['observed_schema_sha256','private_backup_sha256','private_snapshot_content_sha256']:
+        if not re.fullmatch('[0-9a-f]{64}',record.get(key,'')):
+            raise ValueError('Baseline digest missing')
+
+def forward_plan(database,folder,record):
+    validate_baseline(record)
+    source=migrations(folder)
+    if source[:record['cutoff']]!=record['source_migrations']:
+        raise ValueError('Historical migration source changed; explicit new baseline review required')
+    schema,ledger,state=capture(database)
+    if sha(schema)!=record['observed_schema_sha256'] or [r['name'] for r in ledger]!=record['actual_ledger_names']:
+        raise ValueError('Schema or actual ledger drift; explicit baseline advancement required')
+    pending=source[record['cutoff']:]
+    if any(x['name'] in record['legacy_excluded_names'] for x in pending):
+        raise ValueError('Legacy replay forbidden')
+    # Clone only. The original is read-only; arbitrary new SQL never touches it.
+    with tempfile.TemporaryDirectory(prefix='pcs-forward-clone-') as temp:
+        cloned=Path(temp)/'clone.sqlite'
+        with readonly(database) as old,sqlite3.connect(cloned) as new:
+            old.backup(new)
+        with sqlite3.connect(cloned) as db:
+            for item in pending:
+                raw=(Path(folder)/item['name']).read_bytes()
+                if hashlib.sha256(raw).hexdigest()!=item['sha256']:
+                    raise ValueError('Forward SQL changed during planning')
+                try:
+                    db.executescript(raw.decode('utf-8'))
+                except sqlite3.Error as error:
+                    raise ValueError('Forward migration failed on private clone: '+item['name']) from error
+            after=inventory(db)
+        if after['integrity']!=['ok'] or after['foreign_key_violations']:
+            raise ValueError('Forward clone violates integrity or foreign keys')
+    with readonly(database) as old:
+        if inventory(old)!=state:
+            raise ValueError('Private source changed during dry run')
+    if migrations(folder)!=source:
+        raise ValueError('Migration source changed during dry run')
+    changed=sorted(n for n in set(state['tables'])|set(after['tables']) if state['tables'].get(n)!=after['tables'].get(n))
+    return {'format':'pcs-d1-forward-plan-v1','baseline_sha256':digest(record),
+            'source_schema_sha256':sha(schema),'source_ledger_names':[r['name'] for r in ledger],
+            'snapshot_content_sha256':digest(state),'pending':pending,'changed_tables_on_clone':changed,
+            'clone_after_sha256':digest(after),'private_source_preserved':True,
+            'legacy_migrations_staged':0,'ledger_backfilled':False,'production_mutated':False,
+            'requires_operator_review_of_all_changed_tables':True,
+            'live_schema_and_ledger_must_be_rechecked_before_apply':True}
+
+def stage(plan,folder,record,output,*,expected_plan_sha256):
+    if digest(plan)!=expected_plan_sha256 or plan.get('format')!='pcs-d1-forward-plan-v1' or plan.get('legacy_migrations_staged')!=0 or plan.get('ledger_backfilled') is not False or plan.get('production_mutated') is not False:
+        raise ValueError('Exact reviewed plan digest and forward-only scope required')
+    validate_baseline(record)
+    current=migrations(folder)
+    pending=plan['pending']
+    if plan['baseline_sha256']!=digest(record) or current[:record['cutoff']]!=record['source_migrations'] or pending!=current[record['cutoff']:]:
+        raise ValueError('Planned SQL bytes changed')
+    frozen={item['name']:(Path(folder)/item['name']).read_bytes() for item in pending}
+    if any(hashlib.sha256(frozen[item['name']]).hexdigest()!=item['sha256'] for item in pending):
+        raise ValueError('Planned SQL bytes changed while reading')
+    output=Path(output)
+    output.mkdir(parents=False,exist_ok=False)
+    isolated=output/'pending';isolated.mkdir()
+    for item in pending:
+        (isolated/item['name']).write_bytes(frozen[item['name']])
+    config={'name':'pcs-reviewed-forward-migrations','compatibility_date':'2026-09-28',
+            'd1_databases':[{'binding':'COMMONS_DB','database_name':'pcs-commons','database_id':DATABASE,'migrations_dir':'./pending'}]}
+    (output/'wrangler.jsonc').write_text(json.dumps(config,indent=2)+'\n')
+    (output/'plan.json').write_text(json.dumps(plan,indent=2)+'\n')
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--database',type=Path,required=True)
+    parser.add_argument('--migrations',type=Path,default=Path(__file__).resolve().parents[1]/'migrations')
+    parser.add_argument('--baseline',type=Path,required=True)
+    parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--stage',type=Path)
+    parser.add_argument('--plan-sha256')
+    args=parser.parse_args()
+    record=json.loads(args.baseline.read_text())
+    plan=forward_plan(args.database,args.migrations,record)
+    if args.stage:
+        stage(plan,args.migrations,record,args.stage,expected_plan_sha256=args.plan_sha256)
+    with args.output.open('x') as file:
+        json.dump(plan,file,indent=2);file.write('\n')
+    print(json.dumps({'plan_sha256':digest(plan),'pending':[x['name'] for x in plan['pending']],
+                      'legacy_migrations_staged':0,'production_mutated':False}))
+
+if __name__=='__main__':
+    main()

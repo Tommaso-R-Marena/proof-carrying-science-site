@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "script_tag": "9839a5c3137543fcadfc463f27380be4",
+  "git_repository": {
+    "repo_name": "proof-carrying-science-site",
+    "provider_type": "github",
+    "provider_account_name": "Tommaso-R-Marena",
+    "branch": "main"
+  },
+  "previews_enabled": false,
+  "production_settings": {
+    "build_command": "bash scripts/cloudflare_build.sh",
+    "deploy_command": "npx --no-install wrangler deploy --keep-vars",
+    "root_directory": "/"
+  },
+  "previews_base_config": {
+    "build_command": "npm run verify:release && npm run test:submissions && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run deploy:dry-run",
+    "deploy_command": "npx wrangler deploy --dry-run",
+    "root_directory": "/"
+  }
+}

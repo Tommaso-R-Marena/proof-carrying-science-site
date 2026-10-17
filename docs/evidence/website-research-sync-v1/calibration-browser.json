@@ -1,0 +1,54 @@
+{
+  "format": "pcs-calibration-browser-v1",
+  "source_sha256": {
+    "public/calibration-core.mjs": "b9f02b50fbd984063aa8593fced426f4c9aad749a720c04390af48ccd1e33c45",
+    "public/calibration-lab.mjs": "9b7585f9601d6ad94f034551bcc78a1e5adc1047ee51d4e91441fc795be90bf1",
+    "public/calibration-lab.html": "91e25f22b22f0a787a09b1e39c3555c7324068d76874f059639166db678d6e32",
+    "public/calibration-lab.css": "93354510a701d6661046d02705c18e6b2a5ed58461521c1c685807a45a43cf67",
+    "scripts/browser_calibration.cjs": "64b8c5c3a630c710fd6647b580f5fde7f07f0005bce4421819cffbd0559fa46a"
+  },
+  "kernel_invocations": 0,
+  "scientific_acceptance": false,
+  "viewports": [
+    {
+      "width": 320,
+      "observations": 14,
+      "hulls": 22,
+      "selectors": true,
+      "exact_radii": true,
+      "corrupt_witness_rejected": true,
+      "stale_result_cleared": true,
+      "restored": true,
+      "exact_evidence_download": true,
+      "no_overflow": true,
+      "no_external_requests": true
+    },
+    {
+      "width": 768,
+      "observations": 14,
+      "hulls": 22,
+      "selectors": true,
+      "exact_radii": true,
+      "corrupt_witness_rejected": true,
+      "stale_result_cleared": true,
+      "restored": true,
+      "exact_evidence_download": true,
+      "no_overflow": true,
+      "no_external_requests": true
+    },
+    {
+      "width": 1440,
+      "observations": 14,
+      "hulls": 22,
+      "selectors": true,
+      "exact_radii": true,
+      "corrupt_witness_rejected": true,
+      "stale_result_cleared": true,
+      "restored": true,
+      "exact_evidence_download": true,
+      "no_overflow": true,
+      "no_external_requests": true
+    }
+  ],
+  "corrupt_source_fail_closed": true
+}

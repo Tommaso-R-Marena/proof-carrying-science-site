@@ -1,0 +1,326 @@
+{
+  "format": "pcs-d1-present-state-baseline-v1",
+  "database_id": "9e5288c2-efef-4918-b029-7ef001b70064",
+  "source_website_revision": "a6a9a54bb8f2e8fb45f783a9df56929aca11a54b",
+  "cutoff": 25,
+  "source_migrations": [
+    {
+      "name": "0001_commons_auth.sql",
+      "sha256": "70dc0e500fb73ed429931694e35ef3924058801bcb78b1dc8580f44c99932742"
+    },
+    {
+      "name": "0002_seed_commons_tasks.sql",
+      "sha256": "28b05e7fc4670ba292081accb035b5fa353a044675a9502aee4d3d15fee7788b"
+    },
+    {
+      "name": "0003_competency_evaluations.sql",
+      "sha256": "5357c4c69a703ad1fe471501c0738635b551db84c2ca65e0088d3132cee4469a"
+    },
+    {
+      "name": "0004_admin_sessions_immutable_audit.sql",
+      "sha256": "5e5bddf51c67b7d19e43dc05df7d943d309744c432799ae74c439e4ce60ba1a3"
+    },
+    {
+      "name": "0005_admin_action_evidence.sql",
+      "sha256": "9d5e82ed5441d518e03367e2219c809a4b9f979e63922080f5d413ff7ea0ccac"
+    },
+    {
+      "name": "0006_claim_invalidation_program.sql",
+      "sha256": "89e44dd572eb7892fa92aedace231f5357250d35d3e181da4b3d60f0d4610447"
+    },
+    {
+      "name": "0007_reserved_task_exclusivity.sql",
+      "sha256": "198228707b7716b77abca468224586dfee3f770a24d6dd69bca321726faf9e3e"
+    },
+    {
+      "name": "0008_contributor_concurrency_guards.sql",
+      "sha256": "8adfcb812c7bd909771fa1cd5656e022f8f7fc7c3115d7aed716ae0d94649350"
+    },
+    {
+      "name": "0009_curated_work_and_roles.sql",
+      "sha256": "972eeae00e8dd85dcda936bf343bc8cbf3a8b541beb238d786a0fa4150101b8a"
+    },
+    {
+      "name": "0010_rich_task_dependency_graph.sql",
+      "sha256": "992ffcb252a6ce16f125be76c257e7c8bb0a95bc6701daf4556d369604a7376c"
+    },
+    {
+      "name": "0011_pcs_arena.sql",
+      "sha256": "b103fce679832c00dbacdc3bbabf11d46f14a52a76c9b0666af4c03edea9e5b2"
+    },
+    {
+      "name": "0012_dependency_edge_enrichment.sql",
+      "sha256": "c9d515eb67a41a35c153de237156fb7a8b9006f1f856a33bffb128b06622e9b1"
+    },
+    {
+      "name": "0013_submission_automation_microtasks.sql",
+      "sha256": "5abb1c5bae75b592260322b85b01905077cf1d3425554ac2a2ceb726ccc89c66"
+    },
+    {
+      "name": "0014_production_promotions.sql",
+      "sha256": "e3a5055879682ec37aefbe64f5344df7b5b52a368674589715fe8ff3cde29611"
+    },
+    {
+      "name": "0015_promotion_attempts.sql",
+      "sha256": "83dc679f1443b8745edae4cede73252b3d2daf39916d004777b576abba79ffc6"
+    },
+    {
+      "name": "0016_proof_quest_adult_consent.sql",
+      "sha256": "eca62bd12ac8bbf10beaf8ef0df0a947414745aa0bccc79b12ae495754b725be"
+    },
+    {
+      "name": "0017_curated_needed_tasks_and_roles.sql",
+      "sha256": "dc6c7c80d4b8a6dc6919f3c7247fbc8f36aac4984bc5b50fd9c9684b03d28a1c"
+    },
+    {
+      "name": "0018_safety_forge_research_sessions.sql",
+      "sha256": "cd04455215656a980588652aa7ea7395c1040c11cb6fee26bb4b5cec77d657fd"
+    },
+    {
+      "name": "0019_forge_duel_preference_research.sql",
+      "sha256": "d167290e059d05bca05b1454dd19180b1762106ffaf0c366a3bc1f4bca475013"
+    },
+    {
+      "name": "0020_prooflab_adult_optin_research.sql",
+      "sha256": "41a54964e0b86d804b9c28d1bd2d44d073946948f3894e268342ddc8c60f3dc5"
+    },
+    {
+      "name": "0021_task_code_packets.sql",
+      "sha256": "72293713d5d170eb75dd4f023f88777e785e37f116c1bac3c4c85acc5f961123"
+    },
+    {
+      "name": "0022_meaning_forge_research.sql",
+      "sha256": "0a67fb0dbe51f7f09e105b9c13458195640516777fde7d91b07d5cdb23e3c876"
+    },
+    {
+      "name": "0023_submission_peer_reviews.sql",
+      "sha256": "c3d93dafdfa8361f050a03d0180722549067152a6e8d290c4f4366f20d14c38b"
+    },
+    {
+      "name": "0024_countermodel_lab.sql",
+      "sha256": "bc3601c14e5c868ce606ba09eac0e8b47dcd86ea99c8f954a0c1a7e498b7e3cc"
+    },
+    {
+      "name": "0025_bridge_research_sessions.sql",
+      "sha256": "18bbd22f5e6cfb17eda834fdfdc5f4bf226c21999817b7cb32fc1e0b3beb2335"
+    }
+  ],
+  "actual_ledger_names": [
+    "0024_countermodel_lab.sql",
+    "0025_bridge_research_sessions.sql"
+  ],
+  "legacy_excluded_names": [
+    "0001_commons_auth.sql",
+    "0002_seed_commons_tasks.sql",
+    "0003_competency_evaluations.sql",
+    "0004_admin_sessions_immutable_audit.sql",
+    "0005_admin_action_evidence.sql",
+    "0006_claim_invalidation_program.sql",
+    "0007_reserved_task_exclusivity.sql",
+    "0008_contributor_concurrency_guards.sql",
+    "0009_curated_work_and_roles.sql",
+    "0010_rich_task_dependency_graph.sql",
+    "0011_pcs_arena.sql",
+    "0012_dependency_edge_enrichment.sql",
+    "0013_submission_automation_microtasks.sql",
+    "0014_production_promotions.sql",
+    "0015_promotion_attempts.sql",
+    "0016_proof_quest_adult_consent.sql",
+    "0017_curated_needed_tasks_and_roles.sql",
+    "0018_safety_forge_research_sessions.sql",
+    "0019_forge_duel_preference_research.sql",
+    "0020_prooflab_adult_optin_research.sql",
+    "0021_task_code_packets.sql",
+    "0022_meaning_forge_research.sql",
+    "0023_submission_peer_reviews.sql"
+  ],
+  "observed_schema_sha256": "c39546dd9bf8f19012734e90d19a76f3270bbd100072d37003be0ca1838acb8b",
+  "private_backup_sha256": "4fbedae91d45466d5a11aeb6250da90a2fd0d1dc4e79f2204951244bd1c147c9",
+  "private_snapshot_content_sha256": "bf40dca6672736a462091d7bc0b741ca570ef0b4c761e4a4db5305ede352d674",
+  "private_snapshot_schema_sha256": "e3a4d4c3a3109a02e742c260f1611bf8c6fbf177ac37cae5cdf1e25d4aa7e311",
+  "historical_data_effects": [
+    {
+      "migration": "0002_seed_commons_tasks.sql",
+      "reference_top_level_write_tables": [
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0003_competency_evaluations.sql",
+      "reference_top_level_write_tables": [
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0006_claim_invalidation_program.sql",
+      "reference_top_level_write_tables": [
+        "competency_evaluations",
+        "submissions",
+        "task_dependencies",
+        "task_requests",
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0007_reserved_task_exclusivity.sql",
+      "reference_top_level_write_tables": [
+        "task_requests"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0009_curated_work_and_roles.sql",
+      "reference_top_level_write_tables": [
+        "role_openings",
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0010_rich_task_dependency_graph.sql",
+      "reference_top_level_write_tables": [
+        "task_dependencies",
+        "task_dependency_groups"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0011_pcs_arena.sql",
+      "reference_top_level_write_tables": [
+        "challenges"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0012_dependency_edge_enrichment.sql",
+      "reference_top_level_write_tables": [
+        "task_dependencies"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0013_submission_automation_microtasks.sql",
+      "reference_top_level_write_tables": [
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0017_curated_needed_tasks_and_roles.sql",
+      "reference_top_level_write_tables": [
+        "role_openings",
+        "task_dependencies",
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    },
+    {
+      "migration": "0021_task_code_packets.sql",
+      "reference_top_level_write_tables": [
+        "task_code_packets",
+        "tasks"
+      ],
+      "disposition": "PRESERVE_CURRENT_STATE_DO_NOT_REPLAY",
+      "historical_execution_proven": false
+    }
+  ],
+  "schema_differences_preserved": [
+    "admin_evidence_chunks",
+    "admin_evidence_chunks_no_delete",
+    "admin_evidence_chunks_no_update",
+    "admin_evidence_files",
+    "admin_evidence_files_no_delete",
+    "admin_evidence_files_no_update",
+    "admin_sessions",
+    "audit_archive",
+    "audit_archive_no_delete",
+    "audit_archive_no_update",
+    "audit_log_no_delete",
+    "challenge_entries",
+    "challenges",
+    "competency_evaluations",
+    "competency_evaluations_daily_cap",
+    "forge_duel_research_sessions",
+    "idx_audit_archive_action",
+    "idx_audit_archive_actor",
+    "idx_audit_archive_subject",
+    "idx_competency_eval_status",
+    "idx_competency_eval_user",
+    "idx_competency_one_open_per_skill",
+    "idx_forge_duel_by_user",
+    "idx_forge_duel_for_export",
+    "idx_role_one_active_application",
+    "idx_task_code_packets_task",
+    "idx_task_code_requests_admin",
+    "idx_task_code_requests_user_task",
+    "idx_task_requests_one_active_per_user_task",
+    "idx_task_requests_unique_reservation",
+    "role_applications",
+    "role_openings",
+    "task_dependencies",
+    "task_dependency_groups",
+    "task_requests",
+    "task_requests_pending_cap",
+    "task_requests_reserved_cap",
+    "tasks",
+    "users"
+  ],
+  "extra_objects_preserved": [
+    "d1_migrations",
+    "idx_prooflab_by_time",
+    "idx_prooflab_by_user",
+    "prooflab_research_sessions"
+  ],
+  "table_layout_details_preserved": {
+    "tasks": {
+      "missing_columns": [],
+      "extra_columns": [],
+      "changed_column_metadata": [],
+      "foreign_keys_equal": true,
+      "column_order_equal": false
+    },
+    "users": {
+      "missing_columns": [],
+      "extra_columns": [],
+      "changed_column_metadata": [
+        {
+          "name": "password_iterations",
+          "actual": [
+            "INTEGER",
+            1,
+            "250000",
+            0,
+            0
+          ],
+          "source": [
+            "INTEGER",
+            1,
+            "100000",
+            0,
+            0
+          ]
+        }
+      ],
+      "foreign_keys_equal": true,
+      "column_order_equal": true
+    }
+  },
+  "historical_execution_inferred": false,
+  "ledger_backfill_authorized": false,
+  "baseline_meaning": "Adopt the observed current schema and data as the starting state. This does not assert historical SQL execution or that current catalog/application state equals a fresh seed.",
+  "production_mutated": false,
+  "private_rows_published": false
+}

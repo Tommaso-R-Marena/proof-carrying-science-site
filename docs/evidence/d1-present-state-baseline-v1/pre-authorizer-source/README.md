@@ -1,0 +1,1 @@
+Historical local qualification source before the SQLite authorizer repair. Bytes match the recorded earlier source hashes exactly. Retained for provenance only; do not use this version for migration planning. The current tool and clone-boundary-qualification.json include the escape prevention fix.

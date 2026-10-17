@@ -1,0 +1,38 @@
+{
+  "format": "pcs-protected-research-site-sync-v1",
+  "capability_source_sha": "68d8351a326565496908bf76c8a8daf082b94ff9",
+  "previous_site_core_sha": "c600b007940881fd65fe41d2adddd5f002679478",
+  "merged_core_prs": [
+    108,
+    109,
+    115,
+    116,
+    118
+  ],
+  "excluded_draft_prs": [
+    117
+  ],
+  "documents": {
+    "ARISTOTLE_INTEGRATION_REPORT.md": {
+      "core_path": "research/formal-integration-phase-v1/REPORT.md",
+      "sha256": "2fd75eb282974e95155c4682a62ceca6a1815497a606b851b9d62e73b38c550e"
+    },
+    "ARISTOTLE_SOURCE_IMPORT_MANIFEST.json": {
+      "core_path": "docs/ARISTOTLE_SOURCE_IMPORT_MANIFEST.json",
+      "sha256": "7cd80c03ebf14adfc37a05813197d4caea6c3349bbb531bafcb1aec7d2a16158"
+    },
+    "TRANSPORT_KERNEL.md": {
+      "core_path": "docs/PCS_TRANSPORT_KERNEL_V1.md",
+      "sha256": "b56f4a87a9912536cc318426d3b5b11d4dd50a235d5f1028b8def2676302f369"
+    },
+    "TRANSPORT_TRACE_KERNEL.md": {
+      "core_path": "docs/PCS_TRANSPORT_TRACE_KERNEL_V1.md",
+      "sha256": "daeef26d658cb6843830778c5762eb4c878e513e1221f67e5af5b01fda4e46b0"
+    }
+  },
+  "calibration_qualified_ci_run": 38993270715,
+  "calibration_artifact_sha256": "4b53e9a38d283da4e60577b031ceb9ebfd5b6b844308b0956696eb80aa965924",
+  "scientific_acceptance": false,
+  "pcs_authority": false,
+  "website_copy_is_independent_review": false
+}

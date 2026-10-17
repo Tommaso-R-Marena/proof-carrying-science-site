@@ -1,0 +1,19 @@
+{
+  "format": "pcs-d1-forward-plan-v1",
+  "baseline_sha256": "143e6a142210d135f04b9dc9b8c8365a50e37bdf4e817d67324d4b013a4e5dc3",
+  "source_schema_sha256": "c39546dd9bf8f19012734e90d19a76f3270bbd100072d37003be0ca1838acb8b",
+  "source_ledger_names": [
+    "0024_countermodel_lab.sql",
+    "0025_bridge_research_sessions.sql"
+  ],
+  "snapshot_content_sha256": "bf40dca6672736a462091d7bc0b741ca570ef0b4c761e4a4db5305ede352d674",
+  "pending": [],
+  "changed_tables_on_clone": [],
+  "clone_after_sha256": "bf40dca6672736a462091d7bc0b741ca570ef0b4c761e4a4db5305ede352d674",
+  "private_source_preserved": true,
+  "legacy_migrations_staged": 0,
+  "ledger_backfilled": false,
+  "production_mutated": false,
+  "requires_operator_review_of_all_changed_tables": true,
+  "live_schema_and_ledger_must_be_rechecked_before_apply": true
+}

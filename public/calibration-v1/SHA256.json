@@ -1,0 +1,16 @@
+{
+  "files": {
+    "ATTRIBUTION.md": "7bcbdfa7822e6b0b774df4d5ba366a96d203119757529fab7aedb85fb8f97e2b",
+    "CAPABILITY.md": "c0e9a14a92f7ca833c85edd640990614d9670b3202f3c00f4c4141af20866bf3",
+    "Calibration.lean": "4ddac85f8b3b3ad87eb91ad7121465b62cd13af0ca4b18aad2cd8dc14ff0969e",
+    "REPORT.md": "c9b1dd7356723ff1c6a174bcea46baeada61788858426b12753c7dbeb115ea79",
+    "UPSTREAM_LICENSE.txt": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+    "numeric-axioms.json": "9205ff8bfc2bb850197fb2170c245198293538037e2525794cc3a7a15923456e",
+    "protected-ci-calibration.zip": "4b53e9a38d283da4e60577b031ceb9ebfd5b6b844308b0956696eb80aa965924",
+    "provenance.json": "c1e986f9b127a08587dbfce789e8366bb2948362f0ffd4384fccb70f9d7f0252",
+    "static-axioms.json": "0feb8d4c262763763432e454a04431b1be9895be9c52b0fde2dd4e06a67439e3",
+    "view.json": "52f214687073222fd7b0f091375d512e2c3f2b7ee9c5ecb5bda6a20159e009c0",
+    "yacht_hydrodynamics.data": "00dfecc0fc01ddd4c90b558a3ac11b246df8ebcfea130724223475a9a67f0ea1"
+  },
+  "format": "pcs-calibration-public-assets-v1"
+}

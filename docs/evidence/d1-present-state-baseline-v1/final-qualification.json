@@ -1,0 +1,16 @@
+{
+  "format": "pcs-d1-final-tool-private-snapshot-qualification-v1",
+  "source_sha256": {
+    "scripts/d1_forward_migrations.py": "7ccf8040e783a667222dc2d7787790bda9a8b56faf265c38ba3e6fdd0d7104c0",
+    "tests/test_d1_forward_migrations.py": "1b5e2f20dd91d1e11e31ec89920ecd958588e3678177b8c3c2c6b744fd573cc1"
+  },
+  "baseline_sha256": "143e6a142210d135f04b9dc9b8c8365a50e37bdf4e817d67324d4b013a4e5dc3",
+  "private_snapshot_content_sha256": "bf40dca6672736a462091d7bc0b741ca570ef0b4c761e4a4db5305ede352d674",
+  "actual_private_restore_tested": true,
+  "forward_only_staging_passed": true,
+  "legacy_migrations_staged": 0,
+  "duplicate_alter_rejected": true,
+  "all_existing_table_inventories_preserved": true,
+  "production_mutated": false,
+  "private_rows_published": false
+}
