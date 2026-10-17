@@ -64,6 +64,8 @@ let dragTrail = [];
 let nearMiss = 0;
 let boardFlash = 0;
 let lastDragPos = null;
+let hoverId = null;
+let seatFlash = null; // { pocket, until }
 
 function esc(v) {
   return String(v ?? "")
@@ -249,8 +251,92 @@ function renderMissionList() {
   }
 }
 
+function zoneColor(name) {
+  return name === "authority"
+    ? "#6ea8ff"
+    : name === "reject"
+      ? "#ff7a7a"
+      : name === "scientific"
+        ? "#f0b35a"
+        : name === "limits"
+          ? "#e0c35a"
+          : "#5fd0a8";
+}
+
+function seatSelected(pocketName) {
+  if (!selectedId || locked || !pose) return;
+  const pocket = POCKETS[pocketName];
+  if (!pocket) return;
+  const bead = pose.residues.find((r) => r.id === selectedId);
+  if (!bead) return;
+  const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
+  // Slight offset so multiple seats don't stack perfectly on one pixel.
+  const jitter = (String(bead.id).charCodeAt(0) % 7) * 0.008 - 0.02;
+  pose = moveResidue(pose, selectedId, pocket.x + jitter, pocket.y + jitter * 0.6);
+  pose = softMagnetPose(pose, selectedId);
+  const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
+  const placed = pose.residues.find((r) => r.id === selectedId);
+  record({ type: "place", residue_id: selectedId, x: q(placed.x), y: q(placed.y) });
+  onEnergyDrop(before, after, placed);
+  spawnSpark(placed.x, placed.y, KINDS[placed.kind].color, 14);
+  seatFlash = { pocket: pocketName, until: performance.now() + 450 };
+  boardFlash = Math.min(1, boardFlash + 0.25);
+  $("afLive").textContent = `Seated “${placed.label}” in ${pocket.label}.`;
+  renderInteractControls();
+}
+
+function renderInteractControls() {
+  const tray = $("afTokenTray");
+  const zones = $("afZonePad");
+  if (!tray || !zones || !pose) return;
+  tray.innerHTML = "";
+  for (const r of pose.residues) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("aria-pressed", selectedId === r.id ? "true" : "false");
+    btn.innerHTML = `<span class="af-dot" style="background:${esc(KINDS[r.kind].color)}"></span>${esc(r.label)}`;
+    btn.addEventListener("click", () => {
+      if (locked) return;
+      selectedId = r.id;
+      $("afLive").textContent = `Selected “${r.label}” — drag it, or Seat in home zone / tap a zone pad.`;
+      renderInteractControls();
+    });
+    tray.appendChild(btn);
+  }
+  zones.innerHTML = "";
+  const home = selectedId
+    ? KINDS[pose.residues.find((r) => r.id === selectedId)?.kind]?.pocket
+    : null;
+  for (const [name, pocket] of Object.entries(POCKETS)) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.disabled = !selectedId || locked;
+    btn.dataset.home = home === name ? "true" : "false";
+    btn.style.borderColor = zoneColor(name);
+    btn.textContent = pocket.label.replace(" zone", "");
+    btn.addEventListener("click", () => seatSelected(name));
+    zones.appendChild(btn);
+  }
+  const seat = $("afSeatHome");
+  if (seat) seat.disabled = !selectedId || locked || !home;
+}
+
+function hitPocket(nx, ny) {
+  let best = null;
+  let bestD = Infinity;
+  for (const [name, pocket] of Object.entries(POCKETS)) {
+    const d = Math.hypot(nx - pocket.x, ny - pocket.y);
+    if (d <= pocket.r * 1.05 && d < bestD) {
+      best = name;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
 function updateHud(grade) {
   $("afEnergyValue").textContent = String(grade.energy);
+  if ($("afHeatChip")) $("afHeatChip").textContent = String(grade.energy);
   $("afEnergyBar").max = Math.max(40, grade.threshold * 4);
   $("afEnergyBar").value = Math.min(grade.energy, $("afEnergyBar").max);
   const hold = holdStarted
@@ -275,28 +361,32 @@ function draw() {
   const ctx = canvas.getContext("2d");
   const w = canvas.width;
   const h = canvas.height;
+  const m = Math.min(w, h);
   const ox = shake ? (Math.random() - 0.5) * shake * 8 : 0;
   const oy = shake ? (Math.random() - 0.5) * shake * 8 : 0;
   shake *= 0.85;
-  pulse = (pulse + 0.04) % (Math.PI * 2);
+  pulse = (pulse + 0.045) % (Math.PI * 2);
+  const grade = gradePose(pose.structure_id, pose, { hints_used: hintsUsed });
+  const heatT = Math.min(1, grade.energy / Math.max(8, grade.threshold * 3));
 
   ctx.clearRect(0, 0, w, h);
-  // Signal-board atmosphere (not a protein canvas).
-  const g = ctx.createLinearGradient(0, 0, w, h);
-  g.addColorStop(0, "#10241f");
-  g.addColorStop(0.45, "#16352d");
-  g.addColorStop(1, "#1a2a33");
+  const g = ctx.createRadialGradient(w * 0.5, h * 0.42, m * 0.05, w * 0.5, h * 0.5, m * 0.85);
+  g.addColorStop(0, `rgb(${18 + heatT * 40}, ${42 - heatT * 10}, ${36})`);
+  g.addColorStop(0.55, "#122a24");
+  g.addColorStop(1, "#0b1714");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = "rgba(180, 220, 200, 0.06)";
+
+  // Soft vignette + animated scan lines
+  ctx.strokeStyle = `rgba(180, 220, 200, ${0.04 + (1 - heatT) * 0.03})`;
   ctx.lineWidth = 1;
-  for (let gx = 0; gx < w; gx += Math.max(28, w / 24)) {
+  for (let gx = 0; gx < w; gx += Math.max(26, w / 26)) {
     ctx.beginPath();
     ctx.moveTo(gx, 0);
     ctx.lineTo(gx, h);
     ctx.stroke();
   }
-  for (let gy = 0; gy < h; gy += Math.max(28, h / 16)) {
+  for (let gy = 0; gy < h; gy += Math.max(26, h / 18)) {
     ctx.beginPath();
     ctx.moveTo(0, gy);
     ctx.lineTo(w, gy);
@@ -312,17 +402,23 @@ function draw() {
   for (const [name, pocket] of Object.entries(POCKETS)) {
     const px = pocket.x * w;
     const py = pocket.y * h;
-    const pr = pocket.r * Math.min(w, h);
+    const pr = pocket.r * m;
     const hot = homePocket === name;
-    const pad = pr + (hot ? Math.sin(pulse) * 3 : 0);
-    const color =
-      name === "authority" ? "#6ea8ff" : name === "reject" ? "#ff7a7a" : name === "scientific" ? "#f0b35a" : name === "limits" ? "#e0c35a" : "#5fd0a8";
-    // Rounded zone pads
-    const rw = pad * 1.7;
-    const rh = pad * 1.25;
+    const flash = seatFlash && seatFlash.pocket === name && performance.now() < seatFlash.until;
+    const pad = pr + (hot ? Math.sin(pulse) * 4 : 0) + (flash ? 6 : 0);
+    const color = zoneColor(name);
+    const rw = pad * 1.85;
+    const rh = pad * 1.35;
     const x0 = px - rw / 2;
     const y0 = py - rh / 2;
-    const rad = Math.min(18, pad * 0.35);
+    const rad = Math.min(22, pad * 0.38);
+    if (hot || flash) {
+      const glow = ctx.createRadialGradient(px, py, pr * 0.2, px, py, pr * 1.6);
+      glow.addColorStop(0, `${color}55`);
+      glow.addColorStop(1, `${color}00`);
+      ctx.fillStyle = glow;
+      ctx.fillRect(px - pr * 1.8, py - pr * 1.8, pr * 3.6, pr * 3.6);
+    }
     ctx.beginPath();
     ctx.moveTo(x0 + rad, y0);
     ctx.arcTo(x0 + rw, y0, x0 + rw, y0 + rh, rad);
@@ -330,23 +426,57 @@ function draw() {
     ctx.arcTo(x0, y0 + rh, x0, y0, rad);
     ctx.arcTo(x0, y0, x0 + rw, y0, rad);
     ctx.closePath();
-    ctx.fillStyle = hot ? `${color}22` : `${color}14`;
+    ctx.fillStyle = hot ? `${color}28` : `${color}16`;
     ctx.fill();
-    ctx.strokeStyle = hot ? color : `${color}99`;
-    ctx.lineWidth = hot ? 2.5 : 1.5;
+    ctx.strokeStyle = hot || flash ? color : `${color}aa`;
+    ctx.lineWidth = hot || flash ? 3 : 1.6;
     ctx.stroke();
+    // Inner dashed ring for magnetism feel
+    ctx.beginPath();
+    ctx.setLineDash([5, 6]);
+    ctx.strokeStyle = `${color}66`;
+    ctx.lineWidth = 1;
+    ctx.ellipse(px, py, rw * 0.34, rh * 0.34, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
     const occ = zoneOccupancy()[name] || 0;
-    ctx.fillStyle = "rgba(236, 245, 240, 0.85)";
-    ctx.font = `${Math.max(11, Math.floor(w * 0.014))}px sans-serif`;
+    ctx.fillStyle = "rgba(236, 245, 240, 0.92)";
+    ctx.font = `600 ${Math.max(13, Math.floor(w * 0.016))}px "Source Sans 3", sans-serif`;
     ctx.textAlign = "center";
-    ctx.fillText(`${pocket.label}${occ ? ` · ${occ}` : ""}`, px, y0 - 8);
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`${pocket.label}${occ ? ` · ${occ}` : ""}`, px, y0 - 6);
   }
 
-  // Drag trail
+  // Aim guide from selected/dragging token to home zone
+  if (selected && homePocket) {
+    const home = POCKETS[homePocket];
+    ctx.beginPath();
+    ctx.strokeStyle = `${zoneColor(homePocket)}88`;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 8]);
+    ctx.moveTo(selected.x * w, selected.y * h);
+    ctx.lineTo(home.x * w, home.y * h);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Arrow tip
+    const ang = Math.atan2(home.y - selected.y, home.x - selected.x);
+    const ax = home.x * w;
+    const ay = home.y * h;
+    ctx.beginPath();
+    ctx.fillStyle = zoneColor(homePocket);
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - Math.cos(ang - 0.4) * 12, ay - Math.sin(ang - 0.4) * 12);
+    ctx.lineTo(ax - Math.cos(ang + 0.4) * 12, ay - Math.sin(ang + 0.4) * 12);
+    ctx.closePath();
+    ctx.fill();
+  }
+
   if (dragTrail.length > 1) {
     ctx.beginPath();
-    ctx.strokeStyle = "rgba(127, 255, 196, 0.45)";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(127, 255, 196, 0.55)";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctx.moveTo(dragTrail[0].x * w, dragTrail[0].y * h);
     for (let i = 1; i < dragTrail.length; i++) ctx.lineTo(dragTrail[i].x * w, dragTrail[i].y * h);
     ctx.stroke();
@@ -355,10 +485,10 @@ function draw() {
   if (ghostPose?.residues) {
     for (const r of ghostPose.residues) {
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(220, 245, 230, 0.28)";
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "rgba(220, 245, 230, 0.32)";
+      ctx.lineWidth = 1.8;
       ctx.setLineDash([3, 4]);
-      ctx.arc(r.x * w, r.y * h, r.radius * Math.min(w, h), 0, Math.PI * 2);
+      ctx.arc(r.x * w, r.y * h, r.radius * m * 1.05, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -366,12 +496,15 @@ function draw() {
 
   const structure = getStructure(pose.structure_id);
   const byId = new Map(pose.residues.map((r) => [r.id, r]));
-  ctx.strokeStyle = "rgba(160, 210, 190, 0.35)";
-  ctx.lineWidth = 1.5;
   for (const [aId, bId] of structure.bonds) {
     const a = byId.get(aId);
     const b = byId.get(bId);
+    const grad = ctx.createLinearGradient(a.x * w, a.y * h, b.x * w, b.y * h);
+    grad.addColorStop(0, `${KINDS[a.kind].color}99`);
+    grad.addColorStop(1, `${KINDS[b.kind].color}99`);
     ctx.beginPath();
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2.2;
     ctx.moveTo(a.x * w, a.y * h);
     ctx.lineTo(b.x * w, b.y * h);
     ctx.stroke();
@@ -381,31 +514,62 @@ function draw() {
     const meta = KINDS[r.kind];
     const rx = r.x * w;
     const ry = r.y * h;
-    const rr = r.radius * Math.min(w, h);
+    const rr = r.radius * m * (selectedId === r.id || hoverId === r.id ? 1.12 : 1);
+    // Soft shadow
     ctx.beginPath();
-    ctx.fillStyle = meta.color;
+    ctx.fillStyle = "rgba(0,0,0,0.28)";
+    ctx.ellipse(rx + 2, ry + 4, rr * 0.95, rr * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    const disc = ctx.createRadialGradient(rx - rr * 0.25, ry - rr * 0.3, rr * 0.1, rx, ry, rr);
+    disc.addColorStop(0, "#ffffff55");
+    disc.addColorStop(0.35, meta.color);
+    disc.addColorStop(1, meta.color);
+    ctx.beginPath();
+    ctx.fillStyle = disc;
     ctx.arc(rx, ry, rr, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.35)";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = selectedId === r.id ? "#f4fff8" : hoverId === r.id ? "#d7ffe9" : "rgba(255,255,255,0.4)";
+    ctx.lineWidth = selectedId === r.id ? 3.5 : 1.8;
     ctx.stroke();
     if (selectedId === r.id) {
-      ctx.strokeStyle = "#f4fff8";
-      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(125, 255, 196, ${0.35 + Math.sin(pulse) * 0.2})`;
+      ctx.lineWidth = 2;
+      ctx.arc(rx, ry, rr + 7 + Math.sin(pulse) * 2, 0, Math.PI * 2);
       ctx.stroke();
     }
     ctx.fillStyle = "#fff";
-    ctx.font = `600 ${Math.max(10, Math.floor(rr * 0.55))}px sans-serif`;
+    ctx.font = `600 ${Math.max(12, Math.floor(rr * 0.58))}px "Source Sans 3", sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const label = r.label.length > 8 ? r.label.slice(0, 7) + "…" : r.label;
+    const label = r.label.length > 9 ? `${r.label.slice(0, 8)}…` : r.label;
     ctx.fillText(label, rx, ry);
   }
+
+  // Side heat thermometer
+  const thermoX = w - 28;
+  const thermoTop = h * 0.18;
+  const thermoH = h * 0.55;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.fillRect(thermoX - 8, thermoTop, 16, thermoH);
+  const fillH = thermoH * heatT;
+  const tg = ctx.createLinearGradient(0, thermoTop + thermoH, 0, thermoTop);
+  tg.addColorStop(0, "#7dffc4");
+  tg.addColorStop(0.55, "#f0b35a");
+  tg.addColorStop(1, "#ff7a7a");
+  ctx.fillStyle = tg;
+  ctx.fillRect(thermoX - 6, thermoTop + thermoH - fillH, 12, fillH);
+  ctx.fillStyle = "rgba(236,245,240,0.8)";
+  ctx.font = `600 ${Math.max(11, Math.floor(w * 0.013))}px "IBM Plex Mono", monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText("HEAT", thermoX, thermoTop - 10);
 
   for (const p of particles) {
     ctx.globalAlpha = Math.max(0, p.life);
     ctx.fillStyle = p.color;
-    ctx.fillRect(p.x * w, p.y * h, 3, 3);
+    ctx.beginPath();
+    ctx.arc(p.x * w, p.y * h, 2.4, 0, Math.PI * 2);
+    ctx.fill();
     p.x += p.vx;
     p.y += p.vy;
     p.life -= 0.04;
@@ -413,7 +577,7 @@ function draw() {
   for (const f of floaters) {
     ctx.globalAlpha = Math.max(0, f.life);
     ctx.fillStyle = f.tone === "good" ? "#7dffc4" : f.tone === "bad" ? "#ff8f8f" : "#ffd27a";
-    ctx.font = `700 ${Math.max(14, Math.floor(w * 0.02))}px sans-serif`;
+    ctx.font = `700 ${Math.max(16, Math.floor(w * 0.022))}px "Source Sans 3", sans-serif`;
     ctx.textAlign = "center";
     ctx.fillText(f.text, f.x * w, f.y * h - (1 - f.life) * 28);
     f.y -= 0.0015;
@@ -431,6 +595,7 @@ function draw() {
     ctx.fillRect(0, 0, w, h);
     boardFlash *= 0.9;
   }
+  if (seatFlash && performance.now() > seatFlash.until) seatFlash = null;
   ctx.restore();
 }
 
@@ -593,8 +758,12 @@ function loadStructure(id, seed = "play") {
   $("afGoal").textContent = s.goal;
   $("afFeedback").hidden = true;
   $("afNext").hidden = true;
-  $("afLive").textContent = "Drag tokens toward their zones. They’ll ease in if you release near the edge.";
+  $("afLive").textContent =
+    "Drag tokens toward their zones, or tap a token below and Seat in home zone. Zones glow when they match.";
+  hoverId = null;
+  seatFlash = null;
   renderMissionList();
+  renderInteractControls();
   refreshResearchHud();
   refreshMetaHud();
 }
@@ -615,23 +784,37 @@ function bindCanvas() {
     event.preventDefault();
     const p = canvasPoint(event, canvas);
     const hit = hitResidue(p.x, p.y);
-    if (!hit) return;
-    selectedId = hit.id;
-    dragging = hit.id;
-    lastSampled = performance.now();
-    $("afLive").textContent = `Moving “${hit.label}” — it belongs in the ${KINDS[hit.kind].label.toLowerCase()} zone`;
+    if (hit) {
+      selectedId = hit.id;
+      dragging = hit.id;
+      lastSampled = performance.now();
+      canvas.setPointerCapture?.(event.pointerId);
+      $("afLive").textContent = `Moving “${hit.label}” — it belongs in the ${KINDS[hit.kind].label.toLowerCase()} zone`;
+      renderInteractControls();
+      return;
+    }
+    // Tap a zone with a selection to seat the token there.
+    const pocket = hitPocket(p.x, p.y);
+    if (pocket && selectedId) {
+      seatSelected(pocket);
+    }
   };
   const move = (event) => {
-    if (!dragging || locked) return;
-    event.preventDefault();
     const p = canvasPoint(event, canvas);
+    if (!dragging) {
+      const hit = hitResidue(p.x, p.y);
+      hoverId = hit?.id || null;
+      canvas.style.cursor = hit ? "grab" : hitPocket(p.x, p.y) && selectedId ? "pointer" : "default";
+      return;
+    }
+    if (locked) return;
+    event.preventDefault();
     const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     pose = moveResidue(pose, dragging, p.x, p.y);
     const bead = pose.residues.find((r) => r.id === dragging);
     dragTrail.push({ x: bead.x, y: bead.y });
-    if (dragTrail.length > 28) dragTrail.shift();
+    if (dragTrail.length > 36) dragTrail.shift();
     const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
-    // Dense samples only when the token actually moved (cleaner RL signal).
     const now = performance.now();
     const moved =
       !lastDragPos || Math.hypot(bead.x - lastDragPos.x, bead.y - lastDragPos.y) >= 0.018;
@@ -642,24 +825,33 @@ function bindCanvas() {
       lastDragPos = { x: bead.x, y: bead.y };
     }
   };
-  const end = () => {
+  const end = (event) => {
     if (!dragging) return;
+    try {
+      canvas.releasePointerCapture?.(event.pointerId);
+    } catch {
+      /* ignore */
+    }
     const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     pose = softMagnetPose(pose, dragging);
     const bead = pose.residues.find((r) => r.id === dragging);
     const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
-    spawnSpark(bead.x, bead.y, KINDS[bead.kind].color, 10);
+    spawnSpark(bead.x, bead.y, KINDS[bead.kind].color, 12);
     record({ type: "place", residue_id: dragging, x: q(bead.x), y: q(bead.y) });
     onEnergyDrop(before, after, bead);
     dragging = null;
     lastDragPos = null;
     dragTrail = [];
+    renderInteractControls();
   };
 
   canvas.addEventListener("pointerdown", start);
   canvas.addEventListener("pointermove", move);
   canvas.addEventListener("pointerup", end);
-  canvas.addEventListener("pointerleave", end);
+  canvas.addEventListener("pointerleave", () => {
+    hoverId = null;
+    if (!dragging) canvas.style.cursor = "default";
+  });
   canvas.addEventListener("pointercancel", end);
 }
 
@@ -781,6 +973,12 @@ function boot() {
     loadStructure(CAMPAIGN_ORDER[0], "boot");
   }
 
+  $("afSeatHome")?.addEventListener("click", () => {
+    if (!selectedId || locked) return;
+    const bead = pose.residues.find((r) => r.id === selectedId);
+    const home = KINDS[bead?.kind]?.pocket;
+    if (home) seatSelected(home);
+  });
   $("afWiggle").addEventListener("click", () => {
     if (locked) return;
     hintsUsed = Math.min(40, hintsUsed + 1);
@@ -793,6 +991,7 @@ function boot() {
     onEnergyDrop(before, after, { x: 0.5, y: 0.45 });
     $("afLive").textContent = `Shake ×${hintsUsed} — this run counts as assisted; combo reset.`;
     spawnSpark(0.5, 0.45, "#c47b16", 12);
+    renderInteractControls();
   });
   $("afReset").addEventListener("click", () => loadStructure(pose.structure_id, pose.seed));
   $("afShuffle").addEventListener("click", () =>

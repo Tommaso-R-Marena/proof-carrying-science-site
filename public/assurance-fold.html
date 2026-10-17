@@ -7,11 +7,12 @@
 <meta name="robots" content="index,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="pcs-readable-fonts.css">
 <link rel="stylesheet" href="game-guide.css">
 <link rel="stylesheet" href="assurance-fold.css">
 </head>
 <body class="commons-page assurance-fold-page">
-<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · arrange claims, cool the board, lock a calm layout</span><a href="arena.html">All Arena challenges</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · drag, seat, cool the board</span><a href="arena.html">All Arena challenges</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -67,10 +68,24 @@
     <h2 id="afTitle">Loading…</h2>
     <p id="afStory"></p>
     <div class="af-goal"><strong>Goal:</strong> <span id="afGoal"></span></div>
-    <p id="afLive" role="status" aria-live="polite">Drag any colored token to begin.</p>
+    <p id="afLive" role="status" aria-live="polite">Drag a token, or tap one below then Seat in home zone.</p>
 
-    <div class="af-canvas-wrap">
-      <canvas id="afCanvas" width="960" height="640" role="img" aria-label="Assurance Fold board with claim zones and draggable tokens"></canvas>
+    <div class="af-play-stage">
+      <div class="af-canvas-wrap">
+        <canvas id="afCanvas" width="1100" height="720" role="img" aria-label="Assurance Fold board with claim zones and draggable tokens"></canvas>
+        <div class="af-heat-chip" aria-hidden="true"><span>HEAT</span><strong id="afHeatChip">—</strong></div>
+      </div>
+      <div class="af-interact" aria-label="Quick controls">
+        <div>
+          <div class="af-interact-label">Tokens — tap to select</div>
+          <div id="afTokenTray" class="af-token-tray"></div>
+        </div>
+        <div>
+          <div class="af-interact-label">Zones — seat the selected token</div>
+          <div id="afZonePad" class="af-zone-pad"></div>
+        </div>
+        <button type="button" class="button primary" id="afSeatHome">Seat in home zone →</button>
+      </div>
     </div>
 
     <div class="af-actions">

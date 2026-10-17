@@ -218,7 +218,7 @@ async function showStep(id) {
         }
         ${esc(receipt.meaning || "")}
       </div>
-      <pre>${esc(JSON.stringify(highlights, null, 2))}</pre>
+      <pre class="pcs-lean-print" tabindex="0">${esc(JSON.stringify(highlights, null, 2))}</pre>
       <p class="pd-meta"><a href="${esc(step.receipt)}">Download full receipt JSON</a></p>`;
   }
 

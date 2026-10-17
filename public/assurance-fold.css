@@ -1,4 +1,4 @@
-/* Assurance Fold — PCS claim-board game */
+/* Assurance Fold — visual interactive claim-board */
 :root {
   --af-ink: #14241f;
   --af-muted: #3d534b;
@@ -12,9 +12,9 @@
   --af-bad-bg: #fdecea;
   --af-ok: #0b5f4b;
   --af-ok-bg: #e5f3ee;
-  --af-mono: "IBM Plex Mono", "Consolas", "Menlo", monospace;
+  --af-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
   --af-sans: "Source Sans 3", "Segoe UI", "Helvetica Neue", sans-serif;
-  --af-serif: "Source Serif 4", "Iowan Old Style", "Georgia", serif;
+  --af-serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
 }
 
 body.assurance-fold-page {
@@ -68,7 +68,7 @@ body.assurance-fold-page {
 }
 .af-energy-bar progress {
   width: 100%;
-  height: 0.9rem;
+  height: 1.05rem;
   accent-color: var(--af-accent);
   transition: accent-color 0.25s ease;
 }
@@ -99,12 +99,12 @@ body.assurance-fold-page {
 }
 .af-meta-strip strong {
   font-family: var(--af-mono);
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   color: var(--af-accent);
 }
 .af-hold-track {
   margin-top: 0.35rem;
-  height: 0.35rem;
+  height: 0.4rem;
   background: #d7e3dd;
   overflow: hidden;
 }
@@ -116,11 +116,12 @@ body.assurance-fold-page {
 }
 .af-energy-readout {
   font-family: var(--af-mono);
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-align: right;
+  line-height: 1.45;
 }
-.af-energy-readout strong { display: block; font-size: 1.45rem; line-height: 1.1; }
-.af-scoreline { display: block; color: var(--af-muted); margin-top: 0.25rem; font-size: 0.78rem; }
+.af-energy-readout strong { display: block; font-size: 1.7rem; line-height: 1.1; }
+.af-scoreline { display: block; color: var(--af-muted); margin-top: 0.25rem; font-size: 0.88rem; }
 
 .af-layout {
   display: grid;
@@ -179,21 +180,117 @@ body.assurance-fold-page {
   border-left: 4px solid var(--af-ok);
 }
 
+.af-play-stage {
+  display: grid;
+  gap: 0.75rem;
+}
 .af-canvas-wrap {
+  position: relative;
   border: 1px solid #1a332c;
-  background: #122821;
-  box-shadow: 0 10px 28px rgba(16, 36, 31, 0.18);
+  background: #0e1f1b;
+  box-shadow:
+    0 14px 36px rgba(16, 36, 31, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   touch-action: none;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: 12px;
 }
 #afCanvas {
   display: block;
   width: 100%;
-  height: min(62vh, 640px);
+  height: min(68vh, 720px);
   cursor: grab;
 }
 #afCanvas:active { cursor: grabbing; }
+.af-heat-chip {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  min-width: 4.5rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(8, 22, 18, 0.72);
+  border: 1px solid rgba(180, 220, 200, 0.28);
+  color: #e8fff4;
+  text-align: center;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+.af-heat-chip span {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #9ecbb8;
+}
+.af-heat-chip strong {
+  font-family: var(--af-mono);
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.af-interact {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  background: var(--af-panel);
+  border: 1px solid var(--af-line);
+  border-radius: 12px;
+}
+.af-interact-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--af-muted);
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}
+.af-token-tray,
+.af-zone-pad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.af-token-tray button,
+.af-zone-pad button {
+  border: 1px solid var(--af-line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  font: 650 0.92rem/1.2 var(--af-sans);
+  color: var(--af-ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.af-token-tray button:hover,
+.af-zone-pad button:hover,
+.af-token-tray button:focus-visible,
+.af-zone-pad button:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--af-accent);
+  outline: 2px solid var(--af-accent);
+  outline-offset: 1px;
+}
+.af-token-tray button[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px #0a6b55, 0 6px 16px rgba(10, 107, 85, 0.18);
+  border-color: var(--af-accent);
+}
+.af-token-tray button .af-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+  vertical-align: -0.05rem;
+}
+.af-zone-pad button[data-home="true"] {
+  border-color: var(--af-ok);
+  background: var(--af-ok-bg);
+}
+.af-zone-pad button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
 
 .af-actions {
   display: flex;
@@ -203,9 +300,18 @@ body.assurance-fold-page {
 }
 .af-feedback {
   margin: 0.55rem 0 1.1rem;
-  padding: 0.85rem 1rem;
+  padding: 0.95rem 1.05rem;
   border-left: 4px solid var(--af-line);
   background: var(--af-panel);
+  border-radius: 0 10px 10px 0;
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+.af-feedback code {
+  font-size: 1.02rem;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 0.08rem 0.28rem;
+  border-radius: 4px;
 }
 .af-feedback[data-tone="ok"] { border-color: var(--af-ok); background: var(--af-ok-bg); }
 .af-feedback[data-tone="bad"] { border-color: var(--af-bad); background: var(--af-bad-bg); }
@@ -226,8 +332,7 @@ body.assurance-fold-page {
   max-width: 28ch;
 }
 .af-research-status {
-  font-family: var(--af-mono);
-  font-size: 0.85rem;
+  font-size: 0.98rem;
   color: var(--af-muted);
   margin: 0.65rem 0;
 }
@@ -243,8 +348,9 @@ body.assurance-fold-page {
   to { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .af-hero { animation: none; }
-  .af-hold-fill, .af-mission-list button { transition: none; }
+  .af-hero, .af-meta-strip > div, .af-research { animation: none; }
+  .af-hold-fill, .af-mission-list button,
+  .af-token-tray button, .af-zone-pad button { transition: none; }
 }
 @media (max-width: 860px) {
   .af-layout { grid-template-columns: 1fr; }
@@ -253,5 +359,5 @@ body.assurance-fold-page {
   .af-energy-bar { grid-template-columns: 1fr; }
   .af-energy-readout { text-align: left; }
   .af-meta-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  #afCanvas { height: min(55vh, 480px); }
+  #afCanvas { height: min(58vh, 520px); }
 }
