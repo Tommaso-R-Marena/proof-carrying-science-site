@@ -1,6 +1,6 @@
 {
   "status_format": "pcs-public-status-v1",
-  "updated": "2026-10-12",
+  "updated": "2026-10-17",
   "released": {
     "specification": "pcs-0.5",
     "checker": "pcs-python-kernel/0.5.0",
@@ -734,5 +734,47 @@
     "automatic_training": false,
     "automatic_promotion": false,
     "financial_spend": 0
+  },
+  "research_platform_v3": {
+    "status": "experimental_protected_core_evidence_available",
+    "capability_core_sha": "68d8351a326565496908bf76c8a8daf082b94ff9",
+    "merged_core_prs": [
+      109,
+      115,
+      116,
+      118
+    ],
+    "excluded_draft_prs": [
+      117
+    ],
+    "research_updates_page": "/research-updates.html",
+    "calibration_page": "/calibration-lab.html",
+    "calibration": {
+      "general_theorems": 20,
+      "hull_groups": 22,
+      "distinct_response_curves": 21,
+      "observations": 308,
+      "heldout_observations": 154,
+      "fits": 132,
+      "paired_queries": 528,
+      "audited_identities_per_full_receiver": 386,
+      "qualified_core_ci_run": 38993270715,
+      "artifact_sha256": "4b53e9a38d283da4e60577b031ceb9ebfd5b6b844308b0956696eb80aa965924",
+      "browser_runs_Lean": false,
+      "new_physical_measurements": 0,
+      "scientific_acceptance": false,
+      "external_domain_review": "NOT_OBTAINED"
+    },
+    "transport": {
+      "all_time_general_theorems": 14,
+      "trace_general_theorems": 7,
+      "implementation_correspondence": "OPEN",
+      "empirical_validity": "OPEN"
+    },
+    "public_source": "protected core; website deployment separately observed",
+    "production_migration_required": false,
+    "pcs_authority": false,
+    "automatic_promotion": false,
+    "current_verification_core_sha": "fabc704efdbda4c8822881366e4db3d3e31f066a"
   }
 }

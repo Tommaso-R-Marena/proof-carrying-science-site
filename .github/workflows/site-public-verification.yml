@@ -50,11 +50,18 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: c600b007940881fd65fe41d2adddd5f002679478
+          fetch-depth: 0
+          ref: fabc704efdbda4c8822881366e4db3d3e31f066a
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
         run: node scripts/verify_countermodel_python.mjs --core .ci-components/pcs | tee countermodel-python-results.log
+      - name: Reproduce the complete calibration export from its exact qualified CI archive
+        run: |
+          python -m pip install --require-hashes -r .ci-components/pcs/requirements-build.lock -r .ci-components/pcs/requirements-dev.lock
+          python -m pip install --no-deps --no-build-isolation -e .ci-components/pcs
+          python scripts/export_calibration_site.py --core .ci-components/pcs --verify
+          python scripts/check_research_release_sources.py --core .ci-components/pcs
       - name: Independently replay complete player trajectories and assistance
         run: |
           set -euo pipefail
@@ -189,7 +196,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
-          ref: c600b007940881fd65fe41d2adddd5f002679478
+          fetch-depth: 0
+          ref: fabc704efdbda4c8822881366e4db3d3e31f066a
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -204,6 +212,7 @@ jobs:
           PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
           PCS_SCIENCE_BROWSER_OUTPUT="$RUNNER_TEMP/scientific-workflow-browser.json" npm run test:browser:scientific-workflow
           npm run test:browser:transport-workflow
+          PCS_CALIBRATION_BROWSER_OUTPUT="$RUNNER_TEMP/calibration-browser.json" npm run test:browser:calibration
           source .ci-components/lean-prover/scripts/activate_lean_428.sh
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover

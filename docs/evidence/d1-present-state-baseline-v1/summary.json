@@ -1,0 +1,32 @@
+{
+  "format": "pcs-d1-present-state-baseline-evidence-v1",
+  "baseline_sha256": "143e6a142210d135f04b9dc9b8c8365a50e37bdf4e817d67324d4b013a4e5dc3",
+  "authenticated_live_schema_matches_private_restore": true,
+  "private_restoration_integrity_ok": true,
+  "foreign_key_violations": 0,
+  "objects": 96,
+  "tables": 36,
+  "actual_ledger_names": [
+    "0024_countermodel_lab.sql",
+    "0025_bridge_research_sessions.sql"
+  ],
+  "excluded_legacy_migrations": 23,
+  "historical_top_level_data_effect_migrations_reviewed": 11,
+  "current_forward_pending": 0,
+  "rehearsal_only_migrations_staged": 1,
+  "rehearsal_changed_tables": [
+    "pcs_forward_rehearsal"
+  ],
+  "all_preexisting_table_inventories_preserved_on_success": true,
+  "duplicate_alter_rejected_on_clone": true,
+  "transactional_failed_ddl_rolled_back": true,
+  "stronger_password_default_preserved": 250000,
+  "private_source_unchanged": true,
+  "production_mutated": false,
+  "legacy_ledger_backfilled": false,
+  "private_rows_published": false,
+  "backup_uploaded": false,
+  "remote_restore_or_rpo_rto_claimed": false,
+  "historical_execution_claimed": false,
+  "boundary": "A current-state maintenance baseline, not historical execution reconstruction, external review, remote disaster recovery or legal clearance."
+}

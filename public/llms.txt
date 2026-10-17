@@ -48,3 +48,8 @@ The contributor system now uses authenticated server-side accounts for contribut
 The former fixed public CAL-* calibration tasks are paused. The variable evaluation system covers Python, Lean, security, ML, research, biology, and review skills, requires a manual reasoning note, limits repeated attempts, and never automatically confers contributor level or review authority.
 
 AI assistance is permitted, but higher-trust submissions require disclosure, independent verification, and an explanation of what the work establishes, does not establish, and still assumes. Proposed bounties are not payable unless a task is explicitly marked funded and PCS confirms written terms. Contributor submissions never become assurance merely because they were submitted: the commons principle is "crowdsource the work, never the truth."
+
+## Protected research integration — 2026-10-17
+- /research-updates.html: all protected Aristotle (#109), all-time transport (#115), recorded trace (#116) and calibration (#118) integrations since the previous website core pin. Draft #117 is excluded.
+- /calibration-lab.html: exact browser recalculation of all 22 source hull groups from 308 archived CC BY 4.0 yacht observations; 154 held out, 21 distinct response curves. Recorded protected-CI Lean evidence is downloadable; the browser does not run Lean. Physical validity, actual measurement precision, generalization and external review remain OPEN.
+- The site retains its existing canonical Workers hostname and intentional index/follow posture; no new domain, trademark clearance, model promotion or scientific acceptance is implied.

@@ -1,0 +1,6 @@
+{
+  "scripts/d1_forward_migrations.py": "7ccf8040e783a667222dc2d7787790bda9a8b56faf265c38ba3e6fdd0d7104c0",
+  "scripts/d1_reconcile.py": "9e63fdb7b3e644b088c176abfd18f2da2c4ba2a36ea1aba9d9856a9a271b2439",
+  "scripts/d1_production_preflight.py": "c9d8b9f732acea4270fb46539e9c035eb1fb5904b44525bc09e6fa3ad737e2e2",
+  "tests/test_d1_forward_migrations.py": "1b5e2f20dd91d1e11e31ec89920ecd958588e3678177b8c3c2c6b744fd573cc1"
+}

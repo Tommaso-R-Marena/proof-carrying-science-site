@@ -4,3 +4,8 @@ Copyright 2026 the respective contributors credited in Git history.
 Original project source is declared under Apache License 2.0.
 Third-party dependencies, data, and assets retain their own licenses.
 This notice is attribution, not certification of ownership or publication clearance.
+
+The archived Yacht Hydrodynamics observations are attributed to Gerritsma,
+Onnink and Versluis (1981), UCI Machine Learning Repository,
+DOI 10.24432/C5XG7R, under CC BY 4.0. Original source bytes, attribution,
+provenance and the complete license are retained in public/calibration-v1/.

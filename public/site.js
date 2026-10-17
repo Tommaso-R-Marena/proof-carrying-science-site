@@ -71,6 +71,8 @@
       {heading:"FOR RESEARCHERS",links:[
         ["omega-workspace.html","Omega · inspect claims and learned search"],
         ["lean-learning-lab.html","Lean learning lab · real goals and trained policies"],
+        ["calibration-lab.html","Calibration lab · real measurements and exact prediction limits"],
+        ["research-updates.html","Verified research updates · proofs, experiments and limits"],
         ["reasoning-lab.html","Assumption Workbench · explore what follows"],
         ["intervention-lab.html","Intervention Planner · find the smallest change"],
         ["result-anatomy.html","Understand a verification result"],
@@ -148,6 +150,8 @@
     ["PCS Arena","arena.html","Games and research challenges","Play"],
     ["Bridge Builder","bridge-builder.html","Build real Lean proof bridges, learn induction and optionally donate checked choices","Play"],
     ["Lean learning lab","lean-learning-lab.html","Enter mathematics, inspect real Lean states and compare trained proof policies","Try PCS"],
+    ["Calibration lab","calibration-lab.html","Inspect real yacht measurements, exact fits and sharp prediction limits","Try PCS"],
+    ["Verified research updates","research-updates.html","Protected Aristotle, transport, trace and calibration results","Research"],
     ["Meaning Forge","meaning-forge.html","Repair English/Lean quantifiers, negation and logical structure","Play"],
     ["Research preview","research-preview.html","Editable local AI and science checks","Try PCS"],
     ["Guided submission","guided-submission.html?demo=1","Project to evidence, step by step","Try PCS"],

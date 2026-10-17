@@ -1,0 +1,16 @@
+{
+  "format": "pcs-d1-clone-boundary-qualification-v1",
+  "source_sha256": {
+    "scripts/d1_forward_migrations.py": "819204e7434b2f9dd93faa4fe87edb7057bf7c81dcae856344f3d5f0b2f24283",
+    "tests/test_d1_forward_migrations.py": "329eabac2976d9a966465ea809a6c3fd3642cfbccefb338227bcca24a224e591"
+  },
+  "actual_private_restore_tested": true,
+  "baseline_sha256": "143e6a142210d135f04b9dc9b8c8365a50e37bdf4e817d67324d4b013a4e5dc3",
+  "all_existing_tables_preserved": true,
+  "forward_staging_passed": true,
+  "duplicate_alter_rejected": true,
+  "attach_and_vacuum_escape_prevented": true,
+  "unit_tests_passed": 11,
+  "production_mutated": false,
+  "private_rows_published": false
+}

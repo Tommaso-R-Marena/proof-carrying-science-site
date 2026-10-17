@@ -63,3 +63,17 @@ website build failure remain unverified. Successful protected CI and explicit
 deployment do not establish that Cloudflare Builds passed.
 Historical failed Cloudflare check runs are retained as history; do not rewrite
 their conclusions to create artificial green evidence.
+
+## Observed provider readback — 2026-10-17
+
+Authenticated Builds readback is now available. Both retired core Workers have
+empty trigger lists. The website retains exactly one production trigger,
+including only `main`, with no exclusions, root `/`, build command
+`bash scripts/cloudflare_build.sh` and deploy command
+`npx --no-install wrangler deploy --keep-vars`. The linked repository is the
+public website repository and production branch `main`; `previews_enabled` is
+false. This resolves the earlier unverified configuration observations above.
+It does not change the historical conclusions of old builds or establish that
+a later build/deployment has succeeded. Preserve the existing nine Worker
+bindings, D1 identity and free-tier posture. Current release success must still
+be read back separately after protected integration.
