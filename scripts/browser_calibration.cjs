@@ -28,6 +28,7 @@ async function run(){
       await page.locator('#hull:enabled').waitFor();
       if(await page.locator('#hull option').count()!==22)throw Error('Missing source hulls');
       if(await page.locator('#chart circle').count()!==14)throw Error('Actual observations not plotted');
+      if(!await page.locator('#chart').evaluate(svg=>Math.abs(svg.viewBox.baseVal.width-svg.clientWidth)<2))throw Error('Plot labels are scaled down instead of using the actual viewport');
       const r=JSON.parse(await page.locator('#exact').textContent());
       if(r.scores.minimax!=='789285969463/41472000000'||r.kernel_executed!==false||r.scientific_acceptance!==false)throw Error('Exact result or authority boundary differs');
       await page.locator('#query').selectOption('7');

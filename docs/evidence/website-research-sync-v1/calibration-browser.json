@@ -2,10 +2,10 @@
   "format": "pcs-calibration-browser-v1",
   "source_sha256": {
     "public/calibration-core.mjs": "b9f02b50fbd984063aa8593fced426f4c9aad749a720c04390af48ccd1e33c45",
-    "public/calibration-lab.mjs": "9b7585f9601d6ad94f034551bcc78a1e5adc1047ee51d4e91441fc795be90bf1",
+    "public/calibration-lab.mjs": "b3b1db0debeca275ca3dc33064d170c2b294beff4f1637046bb8dfe0231ca50d",
     "public/calibration-lab.html": "91e25f22b22f0a787a09b1e39c3555c7324068d76874f059639166db678d6e32",
     "public/calibration-lab.css": "93354510a701d6661046d02705c18e6b2a5ed58461521c1c685807a45a43cf67",
-    "scripts/browser_calibration.cjs": "64b8c5c3a630c710fd6647b580f5fde7f07f0005bce4421819cffbd0559fa46a"
+    "scripts/browser_calibration.cjs": "6e6887a62fe0e19201d1b2a58e611bcfc98b7bd3dc2209df133ad6b43b906df5"
   },
   "kernel_invocations": 0,
   "scientific_acceptance": false,

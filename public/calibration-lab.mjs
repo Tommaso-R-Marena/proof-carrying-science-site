@@ -6,13 +6,15 @@ const node=(tag,attrs,content)=>{const n=document.createElementNS(NS,tag);for(co
 function disable(){for(const id of ['hull','degree','query','epsilon','tamper','restore'])$(id).disabled=true;}
 function chart(result){
   const svg=$('chart');svg.replaceChildren(node('title',{id:'chartTitle'},'Recorded responses and held-out predictions'),node('desc',{id:'chartDescription'},'Fourteen recorded observations, with seven held-out predictions from each method. Exact errors appear immediately below.'));
+  const width=Math.max(240,Math.round(svg.clientWidth)),height=width<500?330:420,bottom=height-70;
+  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
   const points=[...result.observations,...result.predictions.slice(0,7).flatMap(p=>[{x:p.x,y:p.least_squares},{x:p.x,y:p.minimax}])];
   const low=Math.min(0,...points.map(p=>p.y)),high=Math.max(...points.map(p=>p.y));
-  const x=n=>65+(n-.125)/(.45-.125)*700,y=n=>350-(n-low)/(high-low||1)*300;
-  svg.append(node('line',{x1:65,y1:350,x2:765,y2:350,stroke:'#92a7bf'}),node('line',{x1:65,y1:30,x2:65,y2:350,stroke:'#92a7bf'}));
-  for(const t of [.15,.25,.35,.45])svg.append(node('text',{x:x(t),y:375,fill:'#dce8f6','text-anchor':'middle','font-size':16},t.toFixed(2)));
-  for(const t of [low,(low+high)/2,high])svg.append(node('text',{x:58,y:y(t)+5,fill:'#dce8f6','text-anchor':'end','font-size':14},t.toFixed(1)));
-  svg.append(node('text',{x:410,y:407,fill:'#dce8f6','text-anchor':'middle','font-size':17},'Froude number'),node('text',{x:22,y:200,fill:'#dce8f6',transform:'rotate(-90 22 200)','text-anchor':'middle','font-size':15},'Source resistance response'));
+  const x=n=>55+(n-.125)/(.45-.125)*(width-75),y=n=>bottom-(n-low)/(high-low||1)*(bottom-30);
+  svg.append(node('line',{x1:55,y1:bottom,x2:width-20,y2:bottom,stroke:'#92a7bf'}),node('line',{x1:55,y1:30,x2:55,y2:bottom,stroke:'#92a7bf'}));
+  for(const t of [.15,.25,.35,.45])svg.append(node('text',{x:x(t),y:bottom+25,fill:'#dce8f6','text-anchor':'middle','font-size':14},t.toFixed(2)));
+  for(const t of [low,(low+high)/2,high])svg.append(node('text',{x:49,y:y(t)+5,fill:'#dce8f6','text-anchor':'end','font-size':13},t.toFixed(1)));
+  svg.append(node('text',{x:width/2,y:height-13,fill:'#dce8f6','text-anchor':'middle','font-size':17},'Froude number'),node('text',{x:15,y:bottom/2+15,fill:'#dce8f6',transform:`rotate(-90 15 ${bottom/2+15})`,'text-anchor':'middle','font-size':14},'Source resistance response'));
   for(const [kind,color] of [['least_squares','#9ad8ff'],['minimax','#ffda86']]){
     const pairs=result.predictions.slice(0,7).map(p=>[x(p.x),y(p[kind])]);
     svg.append(node('polyline',{points:pairs.map(p=>p.join(',')).join(' '),fill:'none',stroke:color,'stroke-width':2,'stroke-dasharray':kind==='minimax'?'6 4':''}));
@@ -46,6 +48,7 @@ function show(){
 for(const id of ['hull','degree','query','epsilon'])$(id).addEventListener('change',()=>{broken=false;show();});
 $('tamper').addEventListener('click',()=>{broken=true;show();});
 $('restore').addEventListener('click',()=>{broken=false;show();});
+window.addEventListener('resize',()=>show());
 try{
   const response=await fetch('calibration-v1/view.json',{credentials:'omit'});
   if(!response.ok)throw Error('Recorded data unavailable');
