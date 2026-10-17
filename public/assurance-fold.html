@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assurance Fold · PCS Arena</title>
+<meta name="description" content="Foldit-inspired evidence-package folding game. Place claims, artifacts, and limitations into honest assurance lanes. Local play; independent energy checker; never issues scientific ACCEPT.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/assurance-fold.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="game-guide.css">
+<link rel="stylesheet" href="assurance-fold.css">
+</head>
+<body class="commons-page assurance-fold-page">
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · Fold evidence like a puzzle — keep science honest</span><a href="arena.html">All Arena challenges</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="assurance-fold.html">Assurance Fold</a>
+    <a href="arena.html">Arena</a>
+    <a href="package-inspector.html">Package inspector</a>
+    <a href="account.html">Account</a>
+  </div>
+</nav>
+<main>
+<header class="af-hero">
+  <span class="af-pill">ASSURANCE FOLD · FOLDIT-INSPIRED</span>
+  <h1>Fold the evidence package until the honesty energy drops.</h1>
+  <p>Drag tiles into the right assurance lanes—authority, computational support, scientific openness, rejection, and limitations. Like Foldit, you explore a configuration space and get an objective score. Unlike Foldit, a perfect fold still never certifies science.</p>
+  <p class="af-disclaimer" role="status"><strong>Boundaries:</strong> This is an educational local game. It does not run Lean, does not issue ACCEPT/PASS, does not establish clinical validity, and does not recommend merges. Practice stays in your browser unless you separately use other PCS research opt-ins.</p>
+</header>
+
+<section class="af-energy-bar" aria-label="Fold energy">
+  <div>
+    <div class="kicker">FOLD ENERGY · LOWER IS BETTER</div>
+    <progress id="afEnergyBar" max="100" value="100"></progress>
+  </div>
+  <div class="af-energy-readout">
+    <strong id="afEnergyValue">—</strong>
+    <span id="afEnergyMeta">Place tiles, then check the fold</span>
+  </div>
+</section>
+
+<div class="af-layout">
+  <aside class="af-sidebar" aria-label="Missions">
+    <h2>Mission map</h2>
+    <p>Each mission is a scrambled evidence package. Solve by folding every tile into its honest lane.</p>
+    <div id="afMissionList" class="af-mission-list"></div>
+    <button type="button" class="button secondary" id="afDaily">Today’s fold</button>
+    <button type="button" class="button secondary" id="afShuffle">Rescramble bench</button>
+    <p class="arena-fineprint">Seeds are deterministic and shareable. The checker recomputes energy from lane placement; the browser cannot declare a scientific win.</p>
+  </aside>
+
+  <section class="af-board" aria-labelledby="afTitle">
+    <div class="kicker" id="afLevel">MISSION</div>
+    <h2 id="afTitle">Loading…</h2>
+    <p id="afStory"></p>
+    <div class="af-goal"><strong>Your mission:</strong> <span id="afGoal"></span></div>
+    <p id="afLive" class="quest-live" role="status" aria-live="polite">Drag a tile, or select it and choose a lane.</p>
+
+    <div id="afLanes" class="af-lanes"></div>
+
+    <div class="af-move-panel">
+      <label for="afLaneSelect">Move selected tile to</label>
+      <select id="afLaneSelect" aria-label="Target lane for selected tile"></select>
+      <button type="button" class="button secondary" id="afMoveSelected">Move tile</button>
+    </div>
+
+    <div class="af-actions">
+      <button type="button" class="button secondary" id="afHint">Hint (adds energy)</button>
+      <button type="button" class="button secondary" id="afReset">Reset fold</button>
+      <button type="button" class="button primary" id="afCheck">Check fold energy →</button>
+      <button type="button" class="button primary" id="afNext" hidden>Next mission →</button>
+    </div>
+    <div id="afFeedback" class="af-feedback" hidden role="status" aria-live="polite"></div>
+  </section>
+</div>
+
+<section class="section" aria-label="Related PCS tools">
+  <div class="commons-home-banner">
+    <div>
+      <div class="kicker">CONNECTED TOOLS</div>
+      <h2>From game lanes to real package inspection.</h2>
+      <p>Assurance Fold trains the same separation used by the offline Assurance Card and package inspector: authority vs inspection, computational support vs scientific openness.</p>
+    </div>
+    <div class="actions">
+      <a class="button secondary" href="package-inspector.html">Open package inspector</a>
+      <a class="button secondary" href="arena-proof-quest.html">Try Proof Quest</a>
+      <a class="button primary" href="arena.html">Back to Arena</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Play</strong><a href="arena.html">Arena</a><a href="assurance-fold.html">Assurance Fold</a><a href="arena-safety-forge.html">Safety Forge</a></div><div class="footercol"><strong>Trust</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script type="module" src="assurance-fold.js"></script>
+<script type="module" src="game-guide.mjs"></script>
+</body></html>

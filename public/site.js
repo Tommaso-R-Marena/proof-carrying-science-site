@@ -81,6 +81,7 @@
     addMenu("Play & help", [
       {heading:"PLAY — NO BACKGROUND REQUIRED",links:[
         ["arena.html","PCS Arena · choose a game"],
+        ["assurance-fold.html","Assurance Fold · Foldit-style evidence folding"],
         ["bridge-builder.html","Bridge Builder · learn with actual Lean proofs"],
         ["meaning-forge.html","Meaning Forge · English ↔ Lean interpretation"],
         ["arena-safety-forge.html","Safety Forge · break and repair a toy agent"],
@@ -141,6 +142,7 @@
   const siteShortcuts=[
     ["Start here","experience.html","A two-minute interactive tour","Explore"],
     ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
+    ["Assurance Fold","assurance-fold.html","Foldit-style evidence folding across honest assurance lanes","Play"],
     ["Safety Forge","arena-safety-forge.html","Build and check toy AI safety shields","Play"],
     ["Shield Duel","forge-duel.html","Blind AI policy decisions, human reason tags and checked outcomes","Play"],
     ["Proof Quest","arena-proof-quest.html","Learn prerequisite logic through puzzles","Play"],
@@ -245,6 +247,7 @@
   const breadcrumbParents={
     "experience.html":["Start here"],
     "arena.html":["Play Arena"],"arena-proof-quest.html":["Play Arena","Proof Quest"],
+    "assurance-fold.html":["Play Arena","Assurance Fold"],
     "prooflab.html":["Play Arena","ProofLab"],
     "arena-safety-forge.html":["Play Arena","Safety Forge"],
     "guided-submission.html":["Use PCS","Guided submission"],

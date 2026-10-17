@@ -1,6 +1,6 @@
 # Beginner play and visual countermodels
 
-Eleven Arena games and reasoning demos share a local, three-step guide: try a
+Twelve Arena games and reasoning demos share a local, three-step guide: try a
 move, check or reveal, then read the result and experiment again. Each guide
 uses that game's actual controls. Players can jump directly to play, close the
 guide, use Escape, or revisit it. Navigation help never executes a hint, alters
@@ -34,7 +34,7 @@ schema changes are required.
 `npm run test:arena:experience` includes independent replay of removal/restoration
 for all 512 three-agent relation assignments and all 64 three-agent P/Q
 assignments. Browser checks use real local Chromium, block network mutations,
-visit all eleven guides at 320/390/768/1440 pixels, and exercise keyboard edits,
+visit all twelve guides at 320/390/768/1440 pixels, and exercise keyboard edits,
 stale-result invalidation, full undo traces, downloads and mission advancement.
 
 Run `npm run test:browser:usability` against the isolated local Worker using

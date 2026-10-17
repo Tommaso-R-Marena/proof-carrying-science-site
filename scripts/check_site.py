@@ -375,6 +375,63 @@ for proof_name, tokens in {
         if token not in source:
             errors.append(f"Proof Quest {proof_name}: contract drift {token}")
 
+# Assurance Fold: Foldit-inspired local evidence folding with independent energy
+# checker. Must stay practice-local (no auto-upload) and never issue ACCEPT.
+for fold_name, tokens in {
+    "assurance-fold.html": [
+        "Assurance Fold",
+        'id="afCheck"',
+        'id="afLanes"',
+        'id="afEnergyBar"',
+        "never issues scientific ACCEPT",
+        "does not run Lean",
+        'href="arena.html"',
+        'src="assurance-fold.js"',
+        'href="assurance-fold.css"',
+    ],
+    "assurance-fold.js": [
+        "gradeFold",
+        "initialPlacement",
+        "moveTile",
+        "issues_accept",
+        "assurance-fold-core.mjs",
+        "No network calls",
+    ],
+    "assurance-fold-core.mjs": [
+        "GAME_VERSION",
+        "gradeFold",
+        "HOME_LANE",
+        "scientific_overclaim",
+        "false_accept",
+        "issues_accept: false",
+        "not a Lean 4 proof",
+        "MISSIONS",
+    ],
+    "assurance-fold.css": [
+        "@media (max-width: 860px)",
+        "prefers-reduced-motion",
+        "--af-accent",
+    ],
+}.items():
+    p = ROOT / fold_name
+    if not p.exists():
+        errors.append(f"Assurance Fold missing {fold_name}")
+        continue
+    source = p.read_text(encoding="utf-8")
+    for token in tokens:
+        if token not in source:
+            errors.append(f"Assurance Fold {fold_name}: contract drift {token}")
+if "assurance-fold.html" not in (ROOT / "arena.html").read_text(encoding="utf-8"):
+    errors.append("arena.html: Assurance Fold entry missing")
+if "assurance-fold.html" not in (ROOT / "site.js").read_text(encoding="utf-8"):
+    errors.append("site.js: Assurance Fold navigation missing")
+if "assurance-fold.html" not in (ROOT / "game-guide.mjs").read_text(encoding="utf-8"):
+    errors.append("game-guide.mjs: Assurance Fold play guide missing")
+if "assurance-fold.html" not in (ROOT / "sitemap.xml").read_text(encoding="utf-8"):
+    errors.append("sitemap.xml: Assurance Fold URL missing")
+if "Assurance Fold" not in (ROOT / "llms.txt").read_text(encoding="utf-8"):
+    errors.append("llms.txt: Assurance Fold listing missing")
+
 for proof_phrase in [
     "adult_confirmation!==true", "consent_training!==true",
     "proof_order_research_attempts", "PUZZLE_VERSION", "gradeOrder(",
