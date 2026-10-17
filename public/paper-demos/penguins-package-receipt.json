@@ -1,0 +1,54 @@
+{
+  "format": "pcs-paper-demo-package-receipt-v1",
+  "demo_id": "palmer-penguins-scientific-workflow-v2",
+  "atlas_links": [
+    "zenodo-3960218",
+    "peng-2011"
+  ],
+  "paper_motivation": "Real Palmer Penguins field measurements (Gorman / Palmer LTER; packaged via palmerpenguins, Zenodo 10.5281/zenodo.3960218 lineage). PCS shows signed package replay with Lean-authoritative dimensional checks while leaving biological/causal claims OPEN.",
+  "source_dois": [
+    "10.5281/zenodo.3960218",
+    "10.1371/journal.pone.0090081"
+  ],
+  "pcs_package_valid": true,
+  "independent_replay_consistent": true,
+  "scientific_acceptance": false,
+  "lean_authority_verdict": "ACCEPT",
+  "lean_authority_accepted": true,
+  "domain_outcome": "PASS",
+  "domain_checks": [
+    {
+      "id": "slope_dimensions",
+      "outcome": "PASS"
+    },
+    {
+      "id": "intercept_dimensions",
+      "outcome": "PASS"
+    },
+    {
+      "id": "data_binding",
+      "outcome": "PASS"
+    },
+    {
+      "id": "complete_case_policy",
+      "outcome": "PASS"
+    },
+    {
+      "id": "exact_unit_conversion",
+      "outcome": "PASS"
+    },
+    {
+      "id": "least_squares_replay",
+      "outcome": "PASS"
+    }
+  ],
+  "open_obligations": [
+    "population_or_causal_validity"
+  ],
+  "bundle_sha256": "7f503d99a7069a2d3663883520e7c68663241b1f0eed66584bcb343756be8290",
+  "elapsed_seconds": 0.358,
+  "pcs_authority": false,
+  "issues_accept": false,
+  "checked_at_utc": "2026-10-17T23:20:41Z",
+  "meaning": "Independent receiver replay of the signed penguins PCS package. Lean authority may ACCEPT the computational package while scientific_acceptance stays false and population/causal validity stays OPEN."
+}

@@ -522,10 +522,11 @@ function finalizeLock(grade) {
     <p>${isPb ? "New personal best — your ghost outline will remember this layout." : "Board locked."} A notebook of this run was saved in the tab (${actions.length} actions).${
       nextId && isUnlocked(nextId) ? ` Next up: <em>${esc(getStructure(nextId).title)}</em>.` : ""
     }</p>
-    <p>${esc(grade.meaning)}</p>`;
+    <p>${esc(grade.meaning)}</p>
+    <p>Want the real kernel / package trail this board is practicing for? Open <a href="paper-demos.html">Paper Demos</a> (penguins Lean authority, Countermodel witnesses, Bridge Builder).</p>`;
   $("afNext").hidden = false;
   if ($("afAgain")) $("afAgain").hidden = false;
-  $("afLive").textContent = `${rating.label}. Notebook saved in this tab — play again, or try the next mission.`;
+  $("afLive").textContent = `${rating.label}. Notebook saved — play again, next mission, or Paper Demos.`;
   boardFlash = 1;
   for (let i = 0; i < 22; i++) {
     spawnSpark(0.5 + (Math.random() - 0.5) * 0.25, 0.45 + (Math.random() - 0.5) * 0.25, "#7dffc4", 1);

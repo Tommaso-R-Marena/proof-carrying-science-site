@@ -14,7 +14,8 @@
       "also": "https://www.nature.com/articles/nature09304",
       "pmc": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2956414/",
       "why": "Classic citizen-science result: humans explore hard configuration spaces under an objective score. Listed as related research on human search—not a claim that Assurance Fold is protein folding.",
-      "pcs_surface": ["assurance-fold.html", "arena.html"]
+      "pcs_surface": ["assurance-fold.html", "arena.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#fold"
     },
     {
       "id": "ioannidis-2005",
@@ -26,7 +27,8 @@
       "url": "https://doi.org/10.1371/journal.pmed.0020124",
       "also": "https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124",
       "why": "Motivates separating computational or statistical 'PASS' language from empirical truth. PCS keeps scientific adequacy explicitly open.",
-      "pcs_surface": ["assurance-fold.html", "trust.html", "validation.html"]
+      "pcs_surface": ["assurance-fold.html", "trust.html", "validation.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#fold"
     },
     {
       "id": "peng-2011",
@@ -37,7 +39,8 @@
       "doi": "10.1126/science.1213847",
       "url": "https://doi.org/10.1126/science.1213847",
       "why": "Classic argument for linking claims to the exact computational trail reviewers can rerun—the PCS packaging problem.",
-      "pcs_surface": ["package-inspector.html", "live-demo.html"]
+      "pcs_surface": ["package-inspector.html", "live-demo.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#countermodel"
     },
     {
       "id": "nosek-2015-reproducibility",
@@ -68,7 +71,8 @@
       "venue": "GitHub",
       "url": "https://github.com/leanprover/lean4",
       "why": "Kernel-checked formal authority stack referenced by PCS Lean gates.",
-      "pcs_surface": ["trust.html", "bridge-builder.html"]
+      "pcs_surface": ["trust.html", "bridge-builder.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#bridge"
     },
     {
       "id": "mathlib4",
@@ -78,7 +82,8 @@
       "venue": "GitHub",
       "url": "https://github.com/leanprover-community/mathlib4",
       "why": "Shared formal library appearing in PCS trust-boundary discussions (TCB / rebuild cost).",
-      "pcs_surface": ["trust.html", "architecture.html"]
+      "pcs_surface": ["trust.html", "architecture.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#bridge"
     },
     {
       "id": "rfc8032",
@@ -88,7 +93,8 @@
       "venue": "RFC Editor",
       "url": "https://www.rfc-editor.org/rfc/rfc8032",
       "why": "Signature authenticity lane for PCS packages (cryptographic validity ≠ scientific adequacy).",
-      "pcs_surface": ["assurance-fold.html", "package-inspector.html"]
+      "pcs_surface": ["assurance-fold.html", "package-inspector.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#fold"
     },
     {
       "id": "zenodo-3960218",
@@ -99,7 +105,8 @@
       "doi": "10.5281/zenodo.3960218",
       "url": "https://doi.org/10.5281/zenodo.3960218",
       "why": "Example of content-addressed supplementary research artifacts the site already references in scientific-workflow docs.",
-      "pcs_surface": ["live-demo.html"]
+      "pcs_surface": ["live-demo.html", "scientific-workflow-v2.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#penguins"
     },
     {
       "id": "rosalind-franklin-foldit-followon",

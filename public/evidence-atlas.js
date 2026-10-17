@@ -51,14 +51,19 @@ function render(entries, filter) {
       links.push(`<a href="${esc(href)}" rel="noopener noreferrer" target="_blank">${esc(label)}</a>`);
     }
     const surfaces = (e.pcs_surface || [])
-      .map((s) => `<a href="${esc(s)}">${esc(s.replace(".html", ""))}</a>`)
+      .map((s) => `<a href="${esc(s)}">${esc(s.replace(".html", "").replace(/#.*$/, ""))}</a>`)
       .join(" · ");
+    const demo =
+      typeof e.demo_run === "string" && e.demo_run.startsWith("paper-demos.html")
+        ? `<p class="ea-demo"><a class="button secondary" href="${esc(e.demo_run)}">Run PCS paper demo →</a></p>`
+        : "";
     card.innerHTML = `
       <span class="ea-kind">${esc(e.kind)}</span>
       <h2>${esc(e.title)}</h2>
       <p class="ea-meta">${esc(e.authors)} · ${esc(e.venue)}${e.doi ? ` · DOI <code>${esc(e.doi)}</code>` : ""}</p>
       <p class="ea-why">${esc(e.why)}</p>
       <div class="ea-links">${links.join("")}</div>
+      ${demo}
       <p class="ea-surfaces"><strong>PCS surfaces:</strong> ${surfaces || "—"}</p>`;
     root.appendChild(card);
   }

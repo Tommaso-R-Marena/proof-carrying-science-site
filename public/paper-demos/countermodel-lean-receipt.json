@@ -1,0 +1,26 @@
+{
+  "format": "pcs-paper-demo-lean-receipt-v1",
+  "demo_id": "countermodel-lab-witnesses",
+  "atlas_links": [
+    "peng-2011",
+    "lean4"
+  ],
+  "paper_motivation": "Peng (Science 2011) argues for linking claims to a computational trail reviewers can rerun. Countermodel Lab emits Lean 4 source for each finite witness; this receipt records a fresh kernel compile of those theorems.",
+  "missions_verified": [
+    "quantifier-switch",
+    "negation-drop",
+    "implication-flip",
+    "connective-swap",
+    "assumption-loss",
+    "quantifier-scope",
+    "variable-capture"
+  ],
+  "mission_count": 7,
+  "status": "verified",
+  "lean_version": "4.28.0",
+  "pcs_authority": false,
+  "pcs_scientific_authority": false,
+  "issues_accept": false,
+  "checked_at_utc": "2026-10-17T23:20:40Z",
+  "meaning": "Fresh Lean 4.28.0 kernel verification of Countermodel Lab finite witnesses. Logic education only \u2014 not a scientific ACCEPT."
+}

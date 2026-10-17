@@ -82,6 +82,7 @@
       {heading:"PLAY — NO BACKGROUND REQUIRED",links:[
         ["arena.html","PCS Arena · choose a game"],
         ["assurance-fold.html","Assurance Fold · arrange claims until the board cools"],
+        ["paper-demos.html","Paper Demos · real data + Lean receipts"],
         ["evidence-atlas.html","Evidence Atlas · real papers, repos, supplements"],
         ["bridge-builder.html","Bridge Builder · learn with actual Lean proofs"],
         ["meaning-forge.html","Meaning Forge · English ↔ Lean interpretation"],
@@ -144,6 +145,7 @@
     ["Start here","experience.html","A two-minute interactive tour","Explore"],
     ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
     ["Assurance Fold","assurance-fold.html","Arrange claim tokens and cool the board","Play"],
+    ["Paper Demos","paper-demos.html","Penguins package replay and fresh Lean receipts","Try PCS"],
     ["Evidence Atlas","evidence-atlas.html","Real DOIs, journals, repos, and supplements behind the demos","Explore"],
     ["Safety Forge","arena-safety-forge.html","Build and check toy AI safety shields","Play"],
     ["Shield Duel","forge-duel.html","Blind AI policy decisions, human reason tags and checked outcomes","Play"],

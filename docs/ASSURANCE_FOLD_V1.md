@@ -12,13 +12,23 @@ replay.
 A locked board still sets `issues_accept: false` and never claims Lean proof,
 clinical validity, security certification, or merge readiness.
 
-## Evidence Atlas
+## Evidence Atlas and Paper Demos
 
 `evidence-atlas.html` lists reviewed external sources with real DOIs and
 repository URLs (citizen-science search papers, reproducibility studies,
 Lean 4, mathlib4, RFC 8032, Zenodo supplements, and related work). Citations
 motivate demos; they are not PCS authority, and Assurance Fold is not those
 external projects.
+
+`paper-demos.html` is the guided run-through that attaches those sources to
+**fresh local checks**: Lean 4.28 Countermodel witnesses, Bridge Builder tutorial
+kernel verify, and Palmer Penguins signed-package replay (Lean authority ACCEPT
+with `scientific_acceptance: false`). Regenerate with:
+
+```bash
+source ../proof-carrying-science/scripts/activate_lean_428.sh
+python3 scripts/run_paper_demos_kernel.py
+```
 
 ## Research data (RL / behavior cloning)
 

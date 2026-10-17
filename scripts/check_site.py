@@ -30,6 +30,7 @@ ALLOWED_EXTERNAL_HREFS = {
     "https://doi.org/10.1126/science.aac4716",
     "https://www.rfc-editor.org/rfc/rfc8032",
     "https://doi.org/10.5281/zenodo.3960218",
+    "https://doi.org/10.1371/journal.pone.0090081",
 }
 errors: list[str] = []
 
@@ -483,6 +484,33 @@ for fold_name, tokens in {
         "10.1038/nature09304",
         "10.1371/journal.pmed.0020124",
         '"issues_accept": false',
+        "demo_run",
+        "paper-demos.html",
+    ],
+    "paper-demos.html": [
+        "Paper Demos",
+        "Palmer Penguins",
+        "does not mean the biology is true",
+        'href="assurance-fold.html"',
+        'href="evidence-atlas.html"',
+        'src="paper-demos.js"',
+        'href="paper-demos.css"',
+        "issues_accept",
+    ],
+    "paper-demos.js": [
+        "paper-demos/manifest.json",
+        "issues_accept",
+        "penguins-package-receipt.json",
+        "countermodel-lean-receipt.json",
+        "bridge-tutorial-lean-receipt.json",
+        "assurance-fold.html",
+    ],
+    "paper-demos/manifest.json": [
+        "pcs-paper-demos-manifest-v1",
+        '"issues_accept": false',
+        "countermodel-lean-receipt.json",
+        "bridge-tutorial-lean-receipt.json",
+        "penguins-package-receipt.json",
     ],
 }.items():
     p = ROOT / fold_name
@@ -497,20 +525,28 @@ if "assurance-fold.html" not in (ROOT / "arena.html").read_text(encoding="utf-8"
     errors.append("arena.html: Assurance Fold entry missing")
 if "evidence-atlas.html" not in (ROOT / "arena.html").read_text(encoding="utf-8"):
     errors.append("arena.html: Evidence Atlas entry missing")
+if "paper-demos.html" not in (ROOT / "arena.html").read_text(encoding="utf-8"):
+    errors.append("arena.html: Paper Demos entry missing")
 if "assurance-fold.html" not in (ROOT / "site.js").read_text(encoding="utf-8"):
     errors.append("site.js: Assurance Fold navigation missing")
 if "evidence-atlas.html" not in (ROOT / "site.js").read_text(encoding="utf-8"):
     errors.append("site.js: Evidence Atlas navigation missing")
+if "paper-demos.html" not in (ROOT / "site.js").read_text(encoding="utf-8"):
+    errors.append("site.js: Paper Demos navigation missing")
 if "assurance-fold.html" not in (ROOT / "game-guide.mjs").read_text(encoding="utf-8"):
     errors.append("game-guide.mjs: Assurance Fold play guide missing")
 if "assurance-fold.html" not in (ROOT / "sitemap.xml").read_text(encoding="utf-8"):
     errors.append("sitemap.xml: Assurance Fold URL missing")
 if "evidence-atlas.html" not in (ROOT / "sitemap.xml").read_text(encoding="utf-8"):
     errors.append("sitemap.xml: Evidence Atlas URL missing")
+if "paper-demos.html" not in (ROOT / "sitemap.xml").read_text(encoding="utf-8"):
+    errors.append("sitemap.xml: Paper Demos URL missing")
 if "Assurance Fold" not in (ROOT / "llms.txt").read_text(encoding="utf-8"):
     errors.append("llms.txt: Assurance Fold listing missing")
 if "Evidence Atlas" not in (ROOT / "llms.txt").read_text(encoding="utf-8"):
     errors.append("llms.txt: Evidence Atlas listing missing")
+if "Paper Demos" not in (ROOT / "llms.txt").read_text(encoding="utf-8"):
+    errors.append("llms.txt: Paper Demos listing missing")
 
 for proof_phrase in [
     "adult_confirmation!==true", "consent_training!==true",
