@@ -14,6 +14,23 @@ ASSET_RE = re.compile(r"""(?:src|href)=["']([^"'#]+)""", re.I)
 IGNORE_SCHEMES = {"mailto", "tel", "data", "blob", "javascript"}
 CONTACT = "marenatommaso@gmail.com"
 PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
+# Owner-reviewed external navigation targets only (never script/src). Used for
+# Evidence Atlas / journal DOIs / upstream repos. Adding a URL requires review.
+ALLOWED_EXTERNAL_HREFS = {
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science",
+    "https://github.com/leanprover/lean4",
+    "https://github.com/leanprover-community/mathlib4",
+    "https://doi.org/10.1038/nature09304",
+    "https://www.nature.com/articles/nature09304",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2956414/",
+    "https://doi.org/10.1038/nsmb.2119",
+    "https://doi.org/10.1371/journal.pmed.0020124",
+    "https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124",
+    "https://doi.org/10.1126/science.1213847",
+    "https://doi.org/10.1126/science.aac4716",
+    "https://www.rfc-editor.org/rfc/rfc8032",
+    "https://doi.org/10.5281/zenodo.3960218",
+}
 errors: list[str] = []
 
 site_js = ROOT / "site.js"
@@ -69,10 +86,14 @@ for html_path in HTML_FILES:
         if parsed.scheme in {"http", "https"}:
             # Owner-reviewed public source navigation, with no remote asset load.
             tag_prefix = text[text.rfind("<", 0, asset_match.start()):asset_match.start()]
-            if ((ref == "https://github.com/Tommaso-R-Marena/proof-carrying-science" or
-                 (html_path.name == "lean-learning-lab.html" and ref == "http://127.0.0.1:8766/"))
-                    and re.match(r"<a\s", tag_prefix, re.IGNORECASE)
-                    and asset_match.group(0).lower().startswith("href=")):
+            is_anchor_href = (
+                re.match(r"<a\s", tag_prefix, re.IGNORECASE)
+                and asset_match.group(0).lower().startswith("href=")
+            )
+            if is_anchor_href and (
+                ref in ALLOWED_EXTERNAL_HREFS
+                or (html_path.name == "lean-learning-lab.html" and ref == "http://127.0.0.1:8766/")
+            ):
                 continue
             if parsed.scheme != "https" or parsed.netloc != PRODUCTION_HOST:
                 errors.append(f"{html_path.name}: external runtime dependency/link requires review: {ref}")
@@ -375,62 +396,93 @@ for proof_name, tokens in {
         if token not in source:
             errors.append(f"Proof Quest {proof_name}: contract drift {token}")
 
-# Assurance Fold: Foldit-inspired local evidence folding with independent energy
-# checker. Must stay practice-local (no auto-upload) and never issue ACCEPT.
+# Assurance Fold v2: continuous Foldit-style spatial folding + Evidence Atlas.
 for fold_name, tokens in {
     "assurance-fold.html": [
         "Assurance Fold",
         'id="afCheck"',
-        'id="afLanes"',
+        'id="afCanvas"',
         'id="afEnergyBar"',
-        "never issues scientific ACCEPT",
-        "does not run Lean",
+        'id="afWiggle"',
+        "never certifies science",
+        'href="evidence-atlas.html"',
         'href="arena.html"',
         'src="assurance-fold.js"',
         'href="assurance-fold.css"',
     ],
     "assurance-fold.js": [
-        "gradeFold",
-        "initialPlacement",
-        "moveTile",
+        "gradePose",
+        "initialPose",
+        "moveResidue",
+        "wigglePose",
         "issues_accept",
         "assurance-fold-core.mjs",
-        "No network calls",
+        "No network",
     ],
     "assurance-fold-core.mjs": [
         "GAME_VERSION",
-        "gradeFold",
-        "HOME_LANE",
+        "gradePose",
+        "POCKETS",
         "scientific_overclaim",
-        "false_accept",
         "issues_accept: false",
         "not a Lean 4 proof",
-        "MISSIONS",
+        "STRUCTURES",
+        "idealPose",
     ],
     "assurance-fold.css": [
         "@media (max-width: 860px)",
         "prefers-reduced-motion",
         "--af-accent",
+        "#afCanvas",
+    ],
+    "evidence-atlas.html": [
+        "Evidence Atlas",
+        "https://doi.org/10.1038/nature09304",
+        "https://doi.org/10.1371/journal.pmed.0020124",
+        "https://github.com/Tommaso-R-Marena/proof-carrying-science",
+        "https://www.rfc-editor.org/rfc/rfc8032",
+        'src="evidence-atlas.js"',
+        "does not treat bibliography as Lean proof",
+    ],
+    "evidence-atlas.js": [
+        "ALLOWED_HOSTS",
+        "evidence-atlas.json",
+        "issues_accept",
+        "noopener noreferrer",
+    ],
+    "evidence-atlas.json": [
+        "pcs-evidence-atlas-v1",
+        "10.1038/nature09304",
+        "10.1371/journal.pmed.0020124",
+        '"issues_accept": false',
     ],
 }.items():
     p = ROOT / fold_name
     if not p.exists():
-        errors.append(f"Assurance Fold missing {fold_name}")
+        errors.append(f"Assurance Fold / Evidence Atlas missing {fold_name}")
         continue
     source = p.read_text(encoding="utf-8")
     for token in tokens:
         if token not in source:
-            errors.append(f"Assurance Fold {fold_name}: contract drift {token}")
+            errors.append(f"Assurance Fold / Evidence Atlas {fold_name}: contract drift {token}")
 if "assurance-fold.html" not in (ROOT / "arena.html").read_text(encoding="utf-8"):
     errors.append("arena.html: Assurance Fold entry missing")
+if "evidence-atlas.html" not in (ROOT / "arena.html").read_text(encoding="utf-8"):
+    errors.append("arena.html: Evidence Atlas entry missing")
 if "assurance-fold.html" not in (ROOT / "site.js").read_text(encoding="utf-8"):
     errors.append("site.js: Assurance Fold navigation missing")
+if "evidence-atlas.html" not in (ROOT / "site.js").read_text(encoding="utf-8"):
+    errors.append("site.js: Evidence Atlas navigation missing")
 if "assurance-fold.html" not in (ROOT / "game-guide.mjs").read_text(encoding="utf-8"):
     errors.append("game-guide.mjs: Assurance Fold play guide missing")
 if "assurance-fold.html" not in (ROOT / "sitemap.xml").read_text(encoding="utf-8"):
     errors.append("sitemap.xml: Assurance Fold URL missing")
+if "evidence-atlas.html" not in (ROOT / "sitemap.xml").read_text(encoding="utf-8"):
+    errors.append("sitemap.xml: Evidence Atlas URL missing")
 if "Assurance Fold" not in (ROOT / "llms.txt").read_text(encoding="utf-8"):
     errors.append("llms.txt: Assurance Fold listing missing")
+if "Evidence Atlas" not in (ROOT / "llms.txt").read_text(encoding="utf-8"):
+    errors.append("llms.txt: Evidence Atlas listing missing")
 
 for proof_phrase in [
     "adult_confirmation!==true", "consent_training!==true",

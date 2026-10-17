@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Assurance Fold · PCS Arena</title>
-<meta name="description" content="Foldit-inspired evidence-package folding game. Place claims, artifacts, and limitations into honest assurance lanes. Local play; independent energy checker; never issues scientific ACCEPT.">
+<meta name="description" content="Foldit-style continuous evidence folding: drag residues, watch energy fall, hold a stable pose. Local play; never issues scientific ACCEPT.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/assurance-fold.html">
 <meta name="robots" content="index,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
@@ -11,12 +11,13 @@
 <link rel="stylesheet" href="assurance-fold.css">
 </head>
 <body class="commons-page assurance-fold-page">
-<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · Fold evidence like a puzzle — keep science honest</span><a href="arena.html">All Arena challenges</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · continuous Foldit-style evidence folding</span><a href="arena.html">All Arena challenges</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
   <div class="navlinks">
     <a href="assurance-fold.html">Assurance Fold</a>
+    <a href="evidence-atlas.html">Evidence Atlas</a>
     <a href="arena.html">Arena</a>
     <a href="package-inspector.html">Package inspector</a>
     <a href="account.html">Account</a>
@@ -24,74 +25,72 @@
 </nav>
 <main>
 <header class="af-hero">
-  <span class="af-pill">ASSURANCE FOLD · FOLDIT-INSPIRED</span>
-  <h1>Fold the evidence package until the honesty energy drops.</h1>
-  <p>Drag tiles into the right assurance lanes—authority, computational support, scientific openness, rejection, and limitations. Like Foldit, you explore a configuration space and get an objective score. Unlike Foldit, a perfect fold still never certifies science.</p>
-  <p class="af-disclaimer" role="status"><strong>Boundaries:</strong> This is an educational local game. It does not run Lean, does not issue ACCEPT/PASS, does not establish clinical validity, and does not recommend merges. Practice stays in your browser unless you separately use other PCS research opt-ins.</p>
+  <span class="af-pill">ASSURANCE FOLD · CONTINUOUS PLAY</span>
+  <h1>Fold the evidence until the energy drops—and hold it.</h1>
+  <p>This is not a quiz. Drag residues across a live board, feel clashes and overclaim penalties, and park each bead in soft “wells” the way Foldit players bury hydrophobics. A stable low-energy pose still never certifies science.</p>
+  <p class="af-disclaimer" role="status"><strong>Boundaries:</strong> Educational local game. No Lean kernel, no clinical validity, no merge recommendation, no auto-upload. Inspired by citizen-science folding games; see the <a href="evidence-atlas.html">Evidence Atlas</a> for real papers and repositories.</p>
 </header>
 
 <section class="af-energy-bar" aria-label="Fold energy">
   <div>
-    <div class="kicker">FOLD ENERGY · LOWER IS BETTER</div>
-    <progress id="afEnergyBar" max="100" value="100"></progress>
+    <div class="kicker">LIVE FOLD ENERGY · LOWER IS BETTER</div>
+    <progress id="afEnergyBar" max="40" value="40"></progress>
+    <div class="af-hold-track" aria-hidden="true"><div id="afHoldFill" class="af-hold-fill"></div></div>
   </div>
   <div class="af-energy-readout">
     <strong id="afEnergyValue">—</strong>
-    <span id="afEnergyMeta">Place tiles, then check the fold</span>
+    <span id="afEnergyMeta">Drag residues into the wells</span>
+    <span class="af-scoreline">Score <b id="afScore">0</b> · <span id="afComponents">—</span></span>
   </div>
 </section>
 
 <div class="af-layout">
-  <aside class="af-sidebar" aria-label="Missions">
-    <h2>Mission map</h2>
-    <p>Each mission is a scrambled evidence package. Solve by folding every tile into its honest lane.</p>
+  <aside class="af-sidebar" aria-label="Structures">
+    <h2>Structures</h2>
+    <p>Each structure is a messy evidence chain. Fold it by hand—wiggle is an optional assist that costs energy.</p>
     <div id="afMissionList" class="af-mission-list"></div>
-    <button type="button" class="button secondary" id="afDaily">Today’s fold</button>
-    <button type="button" class="button secondary" id="afShuffle">Rescramble bench</button>
-    <p class="arena-fineprint">Seeds are deterministic and shareable. The checker recomputes energy from lane placement; the browser cannot declare a scientific win.</p>
+    <button type="button" class="button secondary" id="afDaily">Today’s structure</button>
+    <button type="button" class="button secondary" id="afShuffle">Rescramble pose</button>
+    <p class="arena-fineprint">Keyboard: click a residue, then arrow keys (Shift = larger nudge). Hold a stable pose to lock the fold.</p>
   </aside>
 
   <section class="af-board" aria-labelledby="afTitle">
-    <div class="kicker" id="afLevel">MISSION</div>
+    <div class="kicker" id="afLevel">STRUCTURE</div>
     <h2 id="afTitle">Loading…</h2>
     <p id="afStory"></p>
     <div class="af-goal"><strong>Your mission:</strong> <span id="afGoal"></span></div>
-    <p id="afLive" class="quest-live" role="status" aria-live="polite">Drag a tile, or select it and choose a lane.</p>
+    <p id="afLive" role="status" aria-live="polite">Drag any colored residue to begin.</p>
 
-    <div id="afLanes" class="af-lanes"></div>
-
-    <div class="af-move-panel">
-      <label for="afLaneSelect">Move selected tile to</label>
-      <select id="afLaneSelect" aria-label="Target lane for selected tile"></select>
-      <button type="button" class="button secondary" id="afMoveSelected">Move tile</button>
+    <div class="af-canvas-wrap">
+      <canvas id="afCanvas" width="960" height="640" role="img" aria-label="Assurance Fold playfield with soft energy wells and draggable residues"></canvas>
     </div>
 
     <div class="af-actions">
-      <button type="button" class="button secondary" id="afHint">Hint (adds energy)</button>
-      <button type="button" class="button secondary" id="afReset">Reset fold</button>
-      <button type="button" class="button primary" id="afCheck">Check fold energy →</button>
-      <button type="button" class="button primary" id="afNext" hidden>Next mission →</button>
+      <button type="button" class="button secondary" id="afWiggle">Wiggle (hint)</button>
+      <button type="button" class="button secondary" id="afReset">Reset pose</button>
+      <button type="button" class="button primary" id="afCheck">Read energy report →</button>
+      <button type="button" class="button primary" id="afNext" hidden>Next structure →</button>
     </div>
     <div id="afFeedback" class="af-feedback" hidden role="status" aria-live="polite"></div>
   </section>
 </div>
 
-<section class="section" aria-label="Related PCS tools">
+<section class="section" aria-label="Real evidence and related tools">
   <div class="commons-home-banner">
     <div>
-      <div class="kicker">CONNECTED TOOLS</div>
-      <h2>From game lanes to real package inspection.</h2>
-      <p>Assurance Fold trains the same separation used by the offline Assurance Card and package inspector: authority vs inspection, computational support vs scientific openness.</p>
+      <div class="kicker">FROM GAME TO REAL EVIDENCE</div>
+      <h2>Foldit taught search; PCS teaches honest assurance boundaries.</h2>
+      <p>Play here, then open the Evidence Atlas for peer-reviewed studies, model repos, and supplementary materials that motivate these lanes.</p>
     </div>
     <div class="actions">
-      <a class="button secondary" href="package-inspector.html">Open package inspector</a>
-      <a class="button secondary" href="arena-proof-quest.html">Try Proof Quest</a>
-      <a class="button primary" href="arena.html">Back to Arena</a>
+      <a class="button primary" href="evidence-atlas.html">Open Evidence Atlas →</a>
+      <a class="button secondary" href="package-inspector.html">Package inspector</a>
+      <a class="button secondary" href="arena.html">Back to Arena</a>
     </div>
   </div>
 </section>
 </main>
-<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Play</strong><a href="arena.html">Arena</a><a href="assurance-fold.html">Assurance Fold</a><a href="arena-safety-forge.html">Safety Forge</a></div><div class="footercol"><strong>Trust</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a></div></div></footer>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Play</strong><a href="arena.html">Arena</a><a href="assurance-fold.html">Assurance Fold</a><a href="evidence-atlas.html">Evidence Atlas</a></div><div class="footercol"><strong>Trust</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a></div></div></footer>
 </div>
 <script src="site.js"></script>
 <script type="module" src="assurance-fold.js"></script>

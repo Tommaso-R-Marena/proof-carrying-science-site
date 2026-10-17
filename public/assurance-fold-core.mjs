@@ -1,135 +1,130 @@
 /**
- * Assurance Fold — Foldit-inspired evidence-package folding engine.
+ * Assurance Fold v2 — continuous Foldit-style spatial folding engine.
  *
- * Players place package tiles into assurance lanes. An independent energy
- * function scores the fold. Lower energy is better. The checker never trusts
- * a client-claimed win and never issues scientific ACCEPT/PASS.
+ * Players freely drag evidence “residues” on a 2D board. An independent
+ * energy function scores clashes, backbone stretch, pocket affinity, and
+ * scientific overclaim. Lower energy is better. Stability requires holding
+ * a low-energy pose — not answering a quiz.
  *
- * Practice is local-only. This is not Lean verification, clinical validity,
- * or residual-trust closure.
+ * Never issues scientific ACCEPT/PASS. Local practice only.
  */
 
-export const GAME_VERSION = "assurance-fold-v1";
-export const LANES = Object.freeze([
-  "bench",
-  "authority",
-  "computational",
-  "scientific_open",
-  "rejected",
-  "limitations",
-]);
+export const GAME_VERSION = "assurance-fold-v2";
 
-export const LANE_META = Object.freeze({
-  bench: {
-    title: "Workbench",
-    hint: "Unsorted pieces start here. Leaving claims on the bench costs energy.",
-  },
-  authority: {
-    title: "Authority lane",
-    hint: "Only black-box verify / cryptographic authority markers belong here.",
-  },
-  computational: {
-    title: "Computational support",
-    hint: "Replayable checks and non-science claims that are computationally supported.",
-  },
-  scientific_open: {
-    title: "Scientific adequacy (open)",
-    hint: "Biology / adequacy claims stay open even if computation passed.",
-  },
-  rejected: {
-    title: "Rejected / failed",
-    hint: "Hash mismatches, false ACCEPT traps, and failed checks.",
-  },
-  limitations: {
-    title: "Limitations & non-claims",
-    hint: "Keep the honest boundary visible: PASS ≠ empirical adequacy.",
-  },
+export const KINDS = Object.freeze({
+  authority: { label: "Authority", color: "#1f3a5f", pocket: "authority" },
+  computational: { label: "Computational", color: "#0c5c4a", pocket: "computational" },
+  artifact: { label: "Artifact", color: "#0b7a5c", pocket: "computational" },
+  scientific: { label: "Scientific open", color: "#8a4b00", pocket: "scientific" },
+  trap: { label: "Overclaim trap", color: "#8f1d1d", pocket: "reject" },
+  rejected: { label: "Failed check", color: "#b42318", pocket: "reject" },
+  limitation: { label: "Limitations", color: "#7a6200", pocket: "limits" },
 });
 
-/** Correct home lane for each tile kind (hard constraint). */
-export const HOME_LANE = Object.freeze({
-  authority_marker: "authority",
-  claim_crypto: "authority",
-  claim_computational: "computational",
-  artifact: "computational",
-  assumption: "computational",
-  claim_scientific: "scientific_open",
-  false_accept: "rejected",
-  claim_failed: "rejected",
-  limitation: "limitations",
+/** Soft attractor pockets (normalized 0–1 board coords). */
+export const POCKETS = Object.freeze({
+  authority: { x: 0.18, y: 0.28, r: 0.14, label: "Authority well" },
+  computational: { x: 0.52, y: 0.32, r: 0.16, label: "Computational well" },
+  scientific: { x: 0.82, y: 0.30, r: 0.13, label: "Science-open well" },
+  reject: { x: 0.22, y: 0.72, r: 0.14, label: "Reject well" },
+  limits: { x: 0.72, y: 0.74, r: 0.15, label: "Limitations well" },
 });
 
-export const MISSIONS = Object.freeze([
+export const STRUCTURES = Object.freeze([
   {
-    id: "fold-01-pkpd-boundary",
-    title: "PKPD evidence fold",
-    story:
-      "A one-compartment PK model package verified computationally, but biology remains open. Fold the pieces so authority, computation, science, and limitations stay honest.",
-    goal: "Minimize fold energy without scientific overclaim.",
-    energy_threshold: 0,
-    tiles: [
-      { id: "t_auth", kind: "authority_marker", label: "pcs verify · ok", note: "Black-box CLI authority" },
-      { id: "t_replay", kind: "claim_computational", label: "C_REPLAY", note: "Predictions match analytic model" },
-      { id: "t_art", kind: "artifact", label: "predictions.csv", note: "Bound artifact bytes" },
-      { id: "t_bio", kind: "claim_scientific", label: "C_BIOLOGY", note: "Biological adequacy — still open" },
-      { id: "t_lim", kind: "limitation", label: "LIMITATIONS", note: "Computational PASS ≠ empirical adequacy" },
-      { id: "t_trap", kind: "false_accept", label: "ACCEPT biology", note: "Trap: card never issues ACCEPT" },
+    id: "fold-pkpd-chain",
+    title: "PKPD honesty fold",
+    blurb: "A computational PK package with an open biology claim. Dock residues into honest wells—keep science out of the authority pocket.",
+    goal: "Hold energy ≤ 8 for 1.5s without scientific overclaim.",
+    threshold: 8,
+    hold_ms: 1500,
+    residues: [
+      { id: "R1", kind: "authority", label: "pcs verify", note: "CLI authority" },
+      { id: "R2", kind: "computational", label: "C_REPLAY", note: "Analytic match" },
+      { id: "R3", kind: "artifact", label: "predictions.csv", note: "Bound bytes" },
+      { id: "R4", kind: "scientific", label: "C_BIOLOGY", note: "Adequacy open" },
+      { id: "R5", kind: "limitation", label: "LIMITATIONS", note: "PASS ≠ adequacy" },
+      { id: "R6", kind: "trap", label: "ACCEPT biology", note: "Trap bead" },
+    ],
+    bonds: [["R1", "R2"], ["R2", "R3"], ["R3", "R4"], ["R4", "R5"], ["R5", "R6"]],
+    contacts: [
+      { a: "R2", b: "R3", d: 0.11 },
+      { a: "R5", b: "R4", d: 0.14 },
     ],
   },
   {
-    id: "fold-02-tamper-reject",
-    title: "Tampered package fold",
-    story:
-      "Someone swapped a prediction file. Integrity failed. Fold authority failure, rejected claims, and limitations so a reviewer cannot confuse this with science PASS.",
-    goal: "Put failures in rejected; keep limitations visible; never elevate science.",
-    energy_threshold: 0,
-    tiles: [
-      { id: "t_auth", kind: "authority_marker", label: "pcs verify · fail", note: "Authority lane records failure" },
-      { id: "t_hash", kind: "claim_failed", label: "C_INTEGRITY", note: "Hash mismatch" },
-      { id: "t_art", kind: "artifact", label: "model.json", note: "Declared model bytes" },
-      { id: "t_sci", kind: "claim_scientific", label: "C_ADEQUACY", note: "Still scientifically open" },
-      { id: "t_lim", kind: "limitation", label: "LIMITATIONS", note: "Failure is not scientific proof either" },
-      { id: "t_trap", kind: "false_accept", label: "MERGE READY", note: "Trap: never merge from a game win" },
+    id: "fold-tamper-storm",
+    title: "Tamper storm",
+    blurb: "Integrity failed. Yank the failure and traps into the reject well while keeping limitations parked and science open.",
+    goal: "Hold energy ≤ 10 for 1.5s after burying traps.",
+    threshold: 10,
+    hold_ms: 1500,
+    residues: [
+      { id: "R1", kind: "authority", label: "verify fail", note: "Authority recorded fail" },
+      { id: "R2", kind: "rejected", label: "C_INTEGRITY", note: "Hash mismatch" },
+      { id: "R3", kind: "artifact", label: "model.json", note: "Declared model" },
+      { id: "R4", kind: "scientific", label: "C_ADEQUACY", note: "Still open" },
+      { id: "R5", kind: "limitation", label: "LIMITATIONS", note: "Failure ≠ science proof" },
+      { id: "R6", kind: "trap", label: "MERGE READY", note: "Trap" },
+      { id: "R7", kind: "trap", label: "REGULATORY OK", note: "Trap" },
+    ],
+    bonds: [["R1", "R2"], ["R2", "R3"], ["R3", "R4"], ["R4", "R5"], ["R5", "R6"], ["R6", "R7"]],
+    contacts: [
+      { a: "R2", b: "R6", d: 0.12 },
+      { a: "R5", b: "R4", d: 0.15 },
     ],
   },
   {
-    id: "fold-03-crypto-vs-science",
-    title: "Signatures are not science",
-    story:
-      "A package has a valid signature and computational replay, plus an open clinical claim. Fold crypto into authority, replay into computational support, and keep clinical adequacy open.",
-    goal: "Separate cryptographic validity from scientific adequacy.",
-    energy_threshold: 0,
-    tiles: [
-      { id: "t_sig", kind: "claim_crypto", label: "C_SIGNATURE", note: "Ed25519 package authenticity" },
-      { id: "t_auth", kind: "authority_marker", label: "pcs verify · ok", note: "CLI authority outcome" },
-      { id: "t_comp", kind: "claim_computational", label: "C_UNITS", note: "Unit compatibility check" },
-      { id: "t_asm", kind: "assumption", label: "A_MODEL", note: "Declared equation form" },
-      { id: "t_clin", kind: "claim_scientific", label: "C_CLINICAL", note: "Clinical validity — open" },
-      { id: "t_lim", kind: "limitation", label: "NON-CLAIMS", note: "No clinical validity claimed" },
-      { id: "t_trap", kind: "false_accept", label: "REGULATORY OK", note: "Trap: not regulatory acceptance" },
+    id: "fold-crypto-vs-clinic",
+    title: "Signatures ≠ clinics",
+    blurb: "Valid signatures and unit checks can sit near authority—clinical adequacy must stay in the science-open well.",
+    goal: "Hold energy ≤ 9 for 1.5s with no clinical bead in the authority well.",
+    threshold: 9,
+    hold_ms: 1500,
+    residues: [
+      { id: "R1", kind: "authority", label: "Ed25519 ok", note: "Package authenticity" },
+      { id: "R2", kind: "computational", label: "C_UNITS", note: "Unit check" },
+      { id: "R3", kind: "artifact", label: "certificate", note: "Evidence root" },
+      { id: "R4", kind: "scientific", label: "C_CLINICAL", note: "Clinical open" },
+      { id: "R5", kind: "limitation", label: "NON-CLAIMS", note: "No clinical validity" },
+      { id: "R6", kind: "trap", label: "SAFE DRUG", note: "Trap" },
+    ],
+    bonds: [["R1", "R2"], ["R2", "R3"], ["R3", "R4"], ["R4", "R5"], ["R1", "R5"]],
+    contacts: [
+      { a: "R1", b: "R2", d: 0.12 },
+      { a: "R4", b: "R5", d: 0.12 },
     ],
   },
   {
-    id: "fold-04-adversarial-trap",
-    title: "Adversarial overclaim fold",
-    story:
-      "An adversarial package tries to smuggle ACCEPT language next to a computational PASS. Fold traps into rejected and keep the inspection lattice honest.",
-    goal: "Reject traps; keep science open; preserve limitations.",
-    energy_threshold: 0,
-    tiles: [
-      { id: "t_auth", kind: "authority_marker", label: "pcs verify · ok", note: "Computational package valid" },
-      { id: "t_comp", kind: "claim_computational", label: "C_REPLAY", note: "Supported computationally" },
-      { id: "t_art", kind: "artifact", label: "certificate.json", note: "Evidence package root" },
-      { id: "t_sci", kind: "claim_scientific", label: "C_REALWORLD", note: "Real-world adequacy open" },
-      { id: "t_lim", kind: "limitation", label: "LIMITATIONS", note: "Inspection is not authority" },
-      { id: "t_trap1", kind: "false_accept", label: "card_issues_accept:true", note: "Trap flag" },
-      { id: "t_trap2", kind: "false_accept", label: "LEAN ACCEPT = SCIENCE", note: "Trap conflation" },
-      { id: "t_fail", kind: "claim_failed", label: "C_POLICY", note: "Reviewer policy not met" },
+    id: "fold-adversarial-nest",
+    title: "Adversarial nest",
+    blurb: "An adversarial package nests ACCEPT language beside a computational PASS. Separate them in space until the energy bottoms out.",
+    goal: "Hold energy ≤ 11 for 1.8s after isolating traps.",
+    threshold: 11,
+    hold_ms: 1800,
+    residues: [
+      { id: "R1", kind: "authority", label: "verify ok", note: "Computational valid" },
+      { id: "R2", kind: "computational", label: "C_REPLAY", note: "Supported" },
+      { id: "R3", kind: "artifact", label: "receipt", note: "Reported fields" },
+      { id: "R4", kind: "scientific", label: "C_REALWORLD", note: "Open" },
+      { id: "R5", kind: "limitation", label: "inspection≠authority", note: "Banner" },
+      { id: "R6", kind: "trap", label: "card_issues_accept", note: "Trap flag" },
+      { id: "R7", kind: "trap", label: "LEAN=SCIENCE", note: "Trap conflation" },
+      { id: "R8", kind: "rejected", label: "C_POLICY", note: "Policy unmet" },
+    ],
+    bonds: [
+      ["R1", "R2"], ["R2", "R3"], ["R3", "R4"], ["R4", "R5"],
+      ["R5", "R6"], ["R6", "R7"], ["R7", "R8"],
+    ],
+    contacts: [
+      { a: "R2", b: "R3", d: 0.1 },
+      { a: "R6", b: "R7", d: 0.1 },
+      { a: "R8", b: "R6", d: 0.12 },
     ],
   },
 ]);
 
-const MISSION_BY_ID = new Map(MISSIONS.map((m) => [m.id, m]));
+const STRUCTURE_BY_ID = new Map(STRUCTURES.map((s) => [s.id, s]));
 
 function mulberry32(seed) {
   let t = seed >>> 0;
@@ -150,150 +145,281 @@ function hashSeed(text) {
   return h >>> 0;
 }
 
-export function getMission(id) {
-  const mission = MISSION_BY_ID.get(id);
-  if (!mission) throw new Error(`Unknown mission: ${id}`);
-  return mission;
+function dist(a, b) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  return Math.hypot(dx, dy);
 }
 
-/** Deterministic shuffled starting placement — all tiles begin on the bench. */
-export function initialPlacement(missionId, seed = "default") {
-  const mission = getMission(missionId);
-  const rng = mulberry32(hashSeed(`${GAME_VERSION}:${missionId}:${seed}`));
-  const tiles = mission.tiles.map((t) => ({ ...t }));
-  for (let i = tiles.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-  }
-  const placement = {};
-  for (const tile of tiles) placement[tile.id] = "bench";
+export function getStructure(id) {
+  const s = STRUCTURE_BY_ID.get(id);
+  if (!s) throw new Error(`Unknown structure: ${id}`);
+  return s;
+}
+
+export function listStructures() {
+  return STRUCTURES.map((s) => ({
+    id: s.id,
+    title: s.title,
+    blurb: s.blurb,
+    goal: s.goal,
+    residue_count: s.residues.length,
+    threshold: s.threshold,
+  }));
+}
+
+/** Scrambled starting pose (continuous coords in [0.08,0.92]). */
+export function initialPose(structureId, seed = "default") {
+  const structure = getStructure(structureId);
+  const rng = mulberry32(hashSeed(`${GAME_VERSION}:${structureId}:${seed}`));
+  const residues = structure.residues.map((r, i) => {
+    // Start as a messy arc so the fold is a real rearrange, not a quiz.
+    const t = (i + rng()) / Math.max(1, structure.residues.length);
+    return {
+      ...r,
+      x: 0.12 + rng() * 0.76,
+      y: 0.18 + ((t + rng() * 0.2) % 1) * 0.64,
+      vx: 0,
+      vy: 0,
+      radius: 0.045,
+    };
+  });
   return {
-    mission_id: missionId,
+    structure_id: structureId,
     seed: String(seed),
     game_version: GAME_VERSION,
-    order: tiles.map((t) => t.id),
-    placement,
+    residues,
   };
 }
 
-export function moveTile(state, tileId, lane) {
-  if (!LANES.includes(lane)) throw new Error("Unknown lane");
-  if (!(tileId in state.placement)) throw new Error("Unknown tile");
-  return {
-    ...state,
-    placement: { ...state.placement, [tileId]: lane },
-  };
+export function moveResidue(pose, residueId, x, y) {
+  if (!pose?.residues?.some((r) => r.id === residueId)) {
+    throw new Error("Unknown residue");
+  }
+  const residues = pose.residues.map((r) => {
+    if (r.id !== residueId) return r;
+    return {
+      ...r,
+      x: Math.min(0.96, Math.max(0.04, x)),
+      y: Math.min(0.96, Math.max(0.04, y)),
+      vx: 0,
+      vy: 0,
+    };
+  });
+  return { ...pose, residues };
+}
+
+export function nudgeResidue(pose, residueId, dx, dy) {
+  const r = pose.residues.find((x) => x.id === residueId);
+  if (!r) throw new Error("Unknown residue");
+  return moveResidue(pose, residueId, r.x + dx, r.y + dy);
+}
+
+/** Small random wiggle — Foldit-like local search assist (counts as a hint). */
+export function wigglePose(pose, seed = "wiggle") {
+  const rng = mulberry32(hashSeed(`${pose.seed}:${seed}:${Date.now()}`));
+  const residues = pose.residues.map((r) => ({
+    ...r,
+    x: Math.min(0.96, Math.max(0.04, r.x + (rng() - 0.5) * 0.06)),
+    y: Math.min(0.96, Math.max(0.04, r.y + (rng() - 0.5) * 0.06)),
+  }));
+  return { ...pose, residues };
 }
 
 /**
- * Independent energy / validity checker.
- * Returns a structured grade; never invents scientific ACCEPT.
+ * Independent continuous energy. Returns components for UI feedback.
  */
-export function gradeFold(missionId, placement, options = {}) {
-  const mission = getMission(missionId);
+export function gradePose(structureId, pose, options = {}) {
+  const structure = getStructure(structureId);
   const hints = Number(options.hints_used || 0);
-  if (!Number.isInteger(hints) || hints < 0 || hints > 20) {
+  if (!Number.isInteger(hints) || hints < 0 || hints > 40) {
     throw new Error("Invalid hint count");
   }
+  if (!pose || !Array.isArray(pose.residues)) throw new Error("Invalid pose");
 
-  const tileIds = new Set(mission.tiles.map((t) => t.id));
-  const placedIds = Object.keys(placement || {});
-  if (placedIds.length !== tileIds.size || placedIds.some((id) => !tileIds.has(id))) {
-    throw new Error("Placement must include each mission tile exactly once");
+  const byId = new Map(pose.residues.map((r) => [r.id, r]));
+  for (const r of structure.residues) {
+    if (!byId.has(r.id)) throw new Error("Pose missing residue");
   }
-  for (const id of placedIds) {
-    if (!LANES.includes(placement[id])) throw new Error("Unknown lane in placement");
+  if (pose.residues.length !== structure.residues.length) {
+    throw new Error("Pose residue count mismatch");
   }
 
-  const mistakes = [];
-  let energy = 0;
+  let clash = 0;
+  let backbone = 0;
+  let contact = 0;
+  let pocket = 0;
+  let overclaim = 0;
+  const tensions = [];
 
-  for (const tile of mission.tiles) {
-    const lane = placement[tile.id];
-    const home = HOME_LANE[tile.kind];
-    if (!home) {
-      mistakes.push({ tile: tile.id, reason: "unknown_kind" });
-      energy += 50;
-      continue;
+  const residues = pose.residues;
+  for (let i = 0; i < residues.length; i++) {
+    for (let j = i + 1; j < residues.length; j++) {
+      const a = residues[i];
+      const b = residues[j];
+      const d = dist(a, b);
+      const min = a.radius + b.radius;
+      if (d < min) {
+        const pen = ((min - d) / min) ** 2 * 18;
+        clash += pen;
+        if (pen > 2) tensions.push({ type: "clash", a: a.id, b: b.id });
+      }
+      // Scientific overclaim: science bead pressed into authority bead.
+      if (
+        (a.kind === "scientific" && b.kind === "authority") ||
+        (b.kind === "scientific" && a.kind === "authority")
+      ) {
+        if (d < 0.16) {
+          overclaim += (0.16 - d) * 55;
+          tensions.push({ type: "scientific_overclaim", a: a.id, b: b.id });
+        }
+      }
+      // Trap near authority/computational when not in reject pocket.
+      const trap = a.kind === "trap" ? a : b.kind === "trap" ? b : null;
+      const other = trap === a ? b : trap === b ? a : null;
+      if (trap && other && (other.kind === "authority" || other.kind === "computational")) {
+        if (d < 0.14) {
+          overclaim += (0.14 - d) * 40;
+          tensions.push({ type: "trap_near_authority", a: trap.id, b: other.id });
+        }
+      }
     }
-    if (lane === "bench") {
-      mistakes.push({ tile: tile.id, reason: "left_on_bench", home });
-      energy += tile.kind === "limitation" || tile.kind.startsWith("false") ? 25 : 12;
-      continue;
+  }
+
+  for (const [aId, bId] of structure.bonds) {
+    const a = byId.get(aId);
+    const b = byId.get(bId);
+    const d = dist(a, b);
+    // Same-pocket bonds stay tight; cross-well chain links may span the board.
+    const samePocket = KINDS[a.kind]?.pocket === KINDS[b.kind]?.pocket;
+    const target = samePocket ? 0.12 : 0.4;
+    const weight = samePocket ? 22 : 6;
+    backbone += (d - target) ** 2 * weight;
+  }
+
+  for (const c of structure.contacts) {
+    const a = byId.get(c.a);
+    const b = byId.get(c.b);
+    contact += (dist(a, b) - c.d) ** 2 * 30;
+  }
+
+  for (const r of residues) {
+    const home = KINDS[r.kind]?.pocket;
+    const pocketDef = POCKETS[home];
+    if (!pocketDef) continue;
+    const d = dist(r, pocketDef);
+    // Soft well: reward being inside pocket radius.
+    if (d > pocketDef.r) {
+      pocket += (d - pocketDef.r) ** 2 * 35;
+      if (d - pocketDef.r > 0.08) {
+        tensions.push({ type: "off_pocket", a: r.id, pocket: home });
+      }
     }
-    if (lane !== home) {
-      // Scientific overclaim is especially expensive.
-      const overclaim =
-        tile.kind === "claim_scientific" &&
-        (lane === "authority" || lane === "computational");
-      const trapEscape = tile.kind === "false_accept" && lane !== "rejected";
-      mistakes.push({
-        tile: tile.id,
-        reason: overclaim ? "scientific_overclaim" : trapEscape ? "trap_not_rejected" : "wrong_lane",
-        lane,
-        home,
-      });
-      energy += overclaim ? 40 : trapEscape ? 45 : 18;
+    // Extra punishment: science inside authority pocket.
+    if (r.kind === "scientific") {
+      const auth = POCKETS.authority;
+      if (dist(r, auth) < auth.r * 0.9) {
+        overclaim += 25;
+        tensions.push({ type: "science_in_authority_well", a: r.id });
+      }
+    }
+    if (r.kind === "trap") {
+      const rej = POCKETS.reject;
+      if (dist(r, rej) > rej.r) {
+        pocket += 6;
+      }
     }
   }
 
-  // Soft structure bonuses / penalties (Foldit-like local interactions).
-  const limOk = mission.tiles
-    .filter((t) => t.kind === "limitation")
-    .every((t) => placement[t.id] === "limitations");
-  if (!limOk) {
-    energy += 8;
-    mistakes.push({ tile: null, reason: "limitations_not_visible" });
-  }
-
-  const scienceInAuth = mission.tiles.some(
-    (t) => t.kind === "claim_scientific" && placement[t.id] === "authority"
-  );
-  if (scienceInAuth) {
-    energy += 20;
-  }
-
-  // Hint usage increases energy (discourages assisted “wins” without changing hard validity).
-  energy += Math.min(20, hints) * 2;
-
-  const threshold = mission.energy_threshold;
-  // Valid only when every tile is in its home lane.
-  const allHome = mission.tiles.every((t) => placement[t.id] === HOME_LANE[t.kind]);
-  const valid = allHome && energy <= threshold + hints * 2;
-  const score = Math.max(0, Math.round(100 - energy));
+  const hintPenalty = Math.min(40, hints) * 0.35;
+  const energy =
+    clash + backbone * 0.45 + contact * 0.35 + pocket + overclaim + hintPenalty;
+  const rounded = Math.round(energy * 10) / 10;
+  const threshold = structure.threshold;
+  const stable = rounded <= threshold && overclaim < 0.5;
+  const score = Math.max(0, Math.round(100 - rounded));
 
   return {
     game_version: GAME_VERSION,
-    mission_id: missionId,
-    valid,
-    energy,
+    structure_id: structureId,
+    energy: rounded,
     threshold,
     score,
+    stable,
     hints_used: hints,
-    mistakes,
-    hard_clear: allHome,
+    components: {
+      clash: Math.round(clash * 10) / 10,
+      backbone: Math.round(backbone * 0.45 * 10) / 10,
+      contact: Math.round(contact * 0.35 * 10) / 10,
+      pocket: Math.round(pocket * 10) / 10,
+      overclaim: Math.round(overclaim * 10) / 10,
+      hints: Math.round(hintPenalty * 10) / 10,
+    },
+    tensions: tensions.slice(0, 12),
     issues_accept: false,
     inspection_is_not_authority: true,
     meaning:
-      "Assurance Fold grades lane placement for an educational evidence package. " +
-      "A low-energy fold is not a Lean 4 proof, clinical validation, security proof, " +
-      "or merge recommendation. card_issues_accept remains false.",
+      "Assurance Fold v2 grades a continuous spatial pose for an educational " +
+      "evidence package. A stable low-energy fold is not a Lean 4 proof, clinical " +
+      "validation, security proof, or merge recommendation. card_issues_accept remains false.",
   };
 }
 
-/** Seeded daily mission id (UTC day). */
-export function dailyMissionId(date = new Date()) {
+export function dailyStructureId(date = new Date()) {
   const day = date.toISOString().slice(0, 10);
-  const idx = hashSeed(`daily:${day}`) % MISSIONS.length;
-  return MISSIONS[idx].id;
+  return STRUCTURES[hashSeed(`daily:${day}`) % STRUCTURES.length].id;
 }
 
-export function listMissions() {
-  return MISSIONS.map((m) => ({
-    id: m.id,
-    title: m.title,
-    story: m.story,
-    goal: m.goal,
-    tile_count: m.tiles.length,
-  }));
+/**
+ * Near-optimal pose for tests/tutorials: pack each residue inside its home
+ * pocket without bead clashes. Cross-well bonds remain soft so a pocket-correct
+ * fold can sit under the structure threshold.
+ */
+export function idealPose(structureId) {
+  const structure = getStructure(structureId);
+  const groups = new Map();
+  for (const r of structure.residues) {
+    const home = KINDS[r.kind].pocket;
+    if (!groups.has(home)) groups.set(home, []);
+    groups.get(home).push(r);
+  }
+  const placed = new Map();
+  for (const [home, list] of groups) {
+    const pocket = POCKETS[home];
+    const n = list.length;
+    list.forEach((r, i) => {
+      const angle = n === 1 ? 0 : (i / n) * Math.PI * 2 + 0.35;
+      // Keep beads clear of each other (radius 0.045 → center spacing ≥ 0.1).
+      const rad = n === 1 ? 0 : Math.min(pocket.r * 0.55, 0.055 + (n - 2) * 0.012);
+      placed.set(r.id, {
+        ...r,
+        x: pocket.x + Math.cos(angle) * rad,
+        y: pocket.y + Math.sin(angle) * rad,
+        vx: 0,
+        vy: 0,
+        radius: 0.045,
+      });
+    });
+  }
+  // Nudge bonded same-pocket pairs slightly closer for contact targets.
+  for (const c of structure.contacts || []) {
+    const a = placed.get(c.a);
+    const b = placed.get(c.b);
+    if (!a || !b) continue;
+    if (KINDS[a.kind].pocket !== KINDS[b.kind].pocket) continue;
+    const midX = (a.x + b.x) / 2;
+    const midY = (a.y + b.y) / 2;
+    const half = Math.max(0.05, c.d / 2);
+    const ang = Math.atan2(b.y - a.y, b.x - a.x) || 0.2;
+    a.x = midX - Math.cos(ang) * half;
+    a.y = midY - Math.sin(ang) * half;
+    b.x = midX + Math.cos(ang) * half;
+    b.y = midY + Math.sin(ang) * half;
+  }
+  return {
+    structure_id: structureId,
+    seed: "ideal",
+    game_version: GAME_VERSION,
+    residues: structure.residues.map((r) => placed.get(r.id)),
+  };
 }

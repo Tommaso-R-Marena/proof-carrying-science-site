@@ -1,37 +1,30 @@
-# Assurance Fold v1 — Foldit-inspired evidence folding
+# Assurance Fold v2 — continuous Foldit-style evidence folding
 
 ## Intent
 
-Assurance Fold is a local, Foldit-style configuration game for PCS assurance
-boundaries. Players rearrange evidence-package tiles across lanes:
+Assurance Fold is a **continuous spatial game**, not a quiz. Players drag
+evidence “residues” on a live canvas, feel clash / stretch / pocket / overclaim
+energy in real time, optionally wiggle (hint cost), and must **hold** a
+low-energy pose to lock the fold—the Foldit pattern of exploring a
+configuration space under an objective function.
 
-- Authority
-- Computational support
-- Scientific adequacy (open)
-- Rejected / failed
-- Limitations & non-claims
-
-An independent energy function scores the fold. Lower energy is better. A
-perfect fold still sets `issues_accept: false` and never claims Lean proof,
+A locked fold still sets `issues_accept: false` and never claims Lean proof,
 clinical validity, security certification, or merge readiness.
 
-## Why this is Foldit-like (and honest)
+## Evidence Atlas
 
-Foldit worked because players explored a large configuration space under an
-objective energy function. Assurance Fold reuses that pattern for evidence
-packages: many placements, continuous feedback, and an independent checker that
-does not trust a browser-declared win.
+`evidence-atlas.html` lists owner-reviewed external sources with real DOIs and
+repository URLs (Foldit Nature 2010, Ioannidis 2005, Peng 2011, OSC 2015,
+Lean 4, mathlib4, RFC 8032, Zenodo supplements). Citations motivate demos;
+they are not PCS authority.
 
-It is **not** Foldit-level scientific evidence production. Practice remains
-local-only with no auto-upload endpoint in v1.
-
-## Security posture
+## Security
 
 - Pure deterministic grading in `assurance-fold-core.mjs`
-- UI escapes all tile text before HTML insertion
-- No `fetch` / XHR / WebSocket from the game module
-- CSP remains site-wide via `public/_headers`
-- Research donation is intentionally **not** wired in v1 (fail closed)
+- No game network I/O; atlas loads same-origin JSON only
+- External `<a href>` targets are allowlisted in `scripts/check_site.py`
+- Atlas JS re-validates hosts before rendering dynamic links
+- CSP via `public/_headers` unchanged
 
 ## Validation
 
@@ -40,6 +33,3 @@ npm run test:assurance-fold
 python3 scripts/check_site.py
 python3 scripts/security_campaign.py --static
 ```
-
-Browser usability includes `assurance-fold` in
-`scripts/browser_game_usability.cjs`.
