@@ -1,12 +1,13 @@
-# Assurance Fold v2 — continuous Foldit-style evidence folding
+# Assurance Fold v3 — continuous Foldit-style evidence folding
 
 ## Intent
 
 Assurance Fold is a **continuous spatial game**, not a quiz. Players drag
 evidence “residues” on a live canvas, feel clash / stretch / pocket / overclaim
-energy in real time, optionally wiggle (hint cost), and must **hold** a
-low-energy pose to lock the fold—the Foldit pattern of exploring a
-configuration space under an objective function.
+energy in real time, ride soft pocket magnetism, stack energy-drop combos,
+chase personal-best ghosts, unlock a campaign, optionally wiggle (hint cost),
+and must **hold** a low-energy pose to lock the fold—the Foldit pattern of
+exploring a configuration space under an objective function.
 
 A locked fold still sets `issues_accept: false` and never claims Lean proof,
 clinical validity, security certification, or merge readiness.
@@ -20,15 +21,21 @@ they are not PCS authority.
 
 ## Research data (RL / behavior cloning)
 
-Typed sessions (`pcs-assurance-fold-session-v1`) contain only actions.
-`replayFoldSession` recomputes energy, rewards, stability, and assistance —
-client-supplied `reward`/`score`/`energy` fields are rejected.
+Typed sessions (`pcs-assurance-fold-session-v1`) contain only actions plus an
+optional `mode` (`practice` / `campaign` / `daily`).
+`replayFoldSession` recomputes energy, rewards, stability, stars, and
+assistance — client-supplied `reward`/`score`/`energy` fields are rejected.
+
+Play loop captures denser data:
+- Throttled drag samples (~90ms) for continuous-control trajectories
+- Auto-save notebooks on lock (local only)
+- Combo / star / campaign metadata for preference learning
 
 Exports:
 - **RL dataset** — `(state, action, reward, next_state, done, features)` rows
 - **Raw sessions** — action notebooks for offline replay
 - **Local fold coach** — tiny masked-softmax BC over pocket classes; held-out
-  structure `fold-adversarial-nest` never enters fitting; wiggle-assisted
+  structure `fold-adversarial-nest` never enters fitting; wiggle/assist
   notebooks excluded from unassisted fitting
 
 Synthetic expert bootstrap can seed a coach when no human notebooks exist; it

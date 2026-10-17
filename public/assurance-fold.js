@@ -1,9 +1,11 @@
 /**
- * Assurance Fold v2 UI — continuous canvas Foldit-style play.
- * No network. Independent energy from assurance-fold-core.mjs.
- * Local notebooks export RL transitions; labels are engine-replayed only.
+ * Assurance Fold v3 UI — addictive continuous Foldit-style play.
+ * No network. Soft magnetism, combos, campaign unlocks, personal-best ghosts.
+ * Trajectories auto-save locally; labels are engine-replayed only.
  */
 import {
+  CAMPAIGN_ORDER,
+  EVALUATION_STRUCTURES,
   GAME_VERSION,
   KINDS,
   POCKETS,
@@ -14,8 +16,11 @@ import {
   listStructures,
   makeFoldSession,
   moveResidue,
+  nextCampaignStructure,
   nudgeResidue,
+  rateFoldLock,
   replayFoldSession,
+  softMagnetPose,
   wigglePose,
 } from "./assurance-fold-core.mjs";
 import {
@@ -27,7 +32,10 @@ import {
 } from "./assurance-fold-learning.mjs";
 
 const $ = (id) => document.getElementById(id);
-const MAX_NOTEBOOKS = 20;
+const MAX_NOTEBOOKS = 24;
+const STORAGE_UNLOCK = "pcs-af-campaign-unlock-v3";
+const STORAGE_BEST = "pcs-af-best-v3";
+const STORAGE_STREAK = "pcs-af-daily-streak-v3";
 
 let pose = null;
 let selectedId = null;
@@ -38,11 +46,19 @@ let holdStarted = null;
 let locked = false;
 let raf = 0;
 let particles = [];
+let floaters = [];
 let shake = 0;
 let actions = [];
 let notebooks = [];
 let coachModel = null;
 let lockRecorded = false;
+let combo = 0;
+let comboMax = 0;
+let lastSampled = 0;
+let playMode = "campaign";
+let pulse = 0;
+let ghostPose = null;
+let sessionStarted = 0;
 
 function esc(v) {
   return String(v ?? "")
@@ -56,10 +72,69 @@ function q(v) {
   return Math.round(Number(v) * 1000) / 1000;
 }
 
+function loadJson(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveJson(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* private mode */
+  }
+}
+
+function unlockedThrough() {
+  const saved = loadJson(STORAGE_UNLOCK, { index: 0 });
+  return Math.max(0, Math.min(CAMPAIGN_ORDER.length - 1, Number(saved.index) || 0));
+}
+
+function isUnlocked(id) {
+  if (EVALUATION_STRUCTURES.includes(id)) return true;
+  const idx = CAMPAIGN_ORDER.indexOf(id);
+  if (idx < 0) return true;
+  return idx <= unlockedThrough();
+}
+
+function personalBest(id) {
+  const all = loadJson(STORAGE_BEST, {});
+  return all[id] || null;
+}
+
+function rememberBest(id, energy, coords, stars) {
+  const all = loadJson(STORAGE_BEST, {});
+  const prev = all[id];
+  if (!prev || energy < prev.energy) {
+    all[id] = { energy, coords, stars, at: Date.now() };
+    saveJson(STORAGE_BEST, all);
+    return true;
+  }
+  if (stars > (prev.stars || 0)) {
+    all[id] = { ...prev, stars };
+    saveJson(STORAGE_BEST, all);
+  }
+  return false;
+}
+
+function bumpDailyStreak() {
+  const day = new Date().toISOString().slice(0, 10);
+  const st = loadJson(STORAGE_STREAK, { day: null, count: 0 });
+  if (st.day === day) return st.count;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const count = st.day === yesterday ? st.count + 1 : 1;
+  saveJson(STORAGE_STREAK, { day, count });
+  return count;
+}
+
 function record(action) {
   if (locked && action.type !== "lock") return;
   if (actions.length >= 400) {
-    $("afLive").textContent = "Action cap reached for this notebook (400). Export or reset.";
+    $("afLive").textContent = "Action cap reached (400). Export or reshuffle.";
     return;
   }
   actions.push(action);
@@ -81,7 +156,7 @@ function hitResidue(nx, ny) {
   let bestD = Infinity;
   for (const r of pose.residues) {
     const d = Math.hypot(r.x - nx, r.y - ny);
-    if (d < r.radius * 1.35 && d < bestD) {
+    if (d < r.radius * 1.45 && d < bestD) {
       best = r;
       bestD = d;
     }
@@ -89,17 +164,21 @@ function hitResidue(nx, ny) {
   return best;
 }
 
-function spawnSpark(x, y, color) {
-  for (let i = 0; i < 6; i++) {
+function spawnSpark(x, y, color, n = 6) {
+  for (let i = 0; i < n; i++) {
     particles.push({
       x,
       y,
-      vx: (Math.random() - 0.5) * 0.01,
-      vy: (Math.random() - 0.5) * 0.01,
+      vx: (Math.random() - 0.5) * 0.012,
+      vy: (Math.random() - 0.5) * 0.012,
       life: 1,
       color,
     });
   }
+}
+
+function spawnFloater(x, y, text, tone = "good") {
+  floaters.push({ x, y, text, tone, life: 1 });
 }
 
 function download(name, text, type = "application/json") {
@@ -113,7 +192,7 @@ function download(name, text, type = "application/json") {
 }
 
 function currentSession() {
-  return makeFoldSession(pose.structure_id, pose.seed, actions);
+  return makeFoldSession(pose.structure_id, pose.seed, actions, playMode);
 }
 
 function refreshResearchHud() {
@@ -121,7 +200,18 @@ function refreshResearchHud() {
   if (!status) return;
   status.textContent = `Live actions ${actions.length} · saved notebooks ${notebooks.length}/${MAX_NOTEBOOKS} · coach ${
     coachModel ? "fitted" : "none"
-  }`;
+  } · combo ${combo} (max ${comboMax})`;
+}
+
+function refreshMetaHud() {
+  const streak = loadJson(STORAGE_STREAK, { count: 0 }).count || 0;
+  const pb = personalBest(pose?.structure_id);
+  if ($("afCombo")) $("afCombo").textContent = String(combo);
+  if ($("afStars")) $("afStars").textContent = locked && pb ? "★".repeat(pb.stars || 1) : "☆☆☆";
+  if ($("afStreak")) $("afStreak").textContent = String(streak);
+  if ($("afPersonalBest")) {
+    $("afPersonalBest").textContent = pb ? `PB ${pb.energy}` : "PB —";
+  }
 }
 
 function renderMissionList() {
@@ -131,9 +221,21 @@ function renderMissionList() {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.dataset.structure = s.id;
+    const unlocked = isUnlocked(s.id);
+    const pb = personalBest(s.id);
     if (pose?.structure_id === s.id) btn.setAttribute("aria-current", "true");
-    btn.innerHTML = `<strong>${esc(s.title)}</strong><small>${esc(s.residue_count)} residues · threshold ${esc(s.threshold)}</small>`;
-    btn.addEventListener("click", () => loadStructure(s.id));
+    if (!unlocked) {
+      btn.disabled = true;
+      btn.innerHTML = `<strong>🔒 ${esc(s.title)}</strong><small>Clear prior campaign fold to unlock</small>`;
+    } else {
+      btn.innerHTML = `<strong>${esc(s.title)}</strong><small>${esc(s.residue_count)} beads · thr ${esc(s.threshold)}${
+        pb ? ` · PB ${esc(pb.energy)} ${"★".repeat(pb.stars || 1)}` : ""
+      }</small>`;
+      btn.addEventListener("click", () => {
+        playMode = CAMPAIGN_ORDER.includes(s.id) ? "campaign" : "practice";
+        loadStructure(s.id);
+      });
+    }
     list.appendChild(btn);
   }
 }
@@ -146,13 +248,16 @@ function updateHud(grade) {
     ? Math.min(1, (performance.now() - holdStarted) / getStructure(pose.structure_id).hold_ms)
     : 0;
   $("afEnergyMeta").textContent = grade.stable
-    ? `Stable zone · hold ${(hold * 100).toFixed(0)}% · best ${bestEnergy === Infinity ? "—" : bestEnergy}`
-    : `Exploring · best ${bestEnergy === Infinity ? "—" : bestEnergy} · overclaim ${grade.components.overclaim}`;
-  $("afScore").textContent = String(grade.score);
+    ? `Stable · hold ${(hold * 100).toFixed(0)}% · combo ${combo}`
+    : `Exploring · best ${bestEnergy === Infinity ? "—" : bestEnergy} · combo ${combo}`;
+  $("afScore").textContent = String(grade.score + Math.min(40, combo * 2));
   $("afComponents").textContent =
     `clash ${grade.components.clash} · pocket ${grade.components.pocket} · stretch ${grade.components.backbone} · traps ${grade.components.overclaim}`;
   const fill = $("afHoldFill");
   if (fill) fill.style.width = `${(hold * 100).toFixed(1)}%`;
+  const bar = $("afEnergyBar");
+  if (bar) bar.dataset.zone = grade.stable ? "stable" : grade.components.overclaim > 0 ? "hot" : "cold";
+  refreshMetaHud();
 }
 
 function draw() {
@@ -164,32 +269,56 @@ function draw() {
   const ox = shake ? (Math.random() - 0.5) * shake * 8 : 0;
   const oy = shake ? (Math.random() - 0.5) * shake * 8 : 0;
   shake *= 0.85;
+  pulse = (pulse + 0.04) % (Math.PI * 2);
 
   ctx.clearRect(0, 0, w, h);
   const g = ctx.createLinearGradient(0, 0, w, h);
   g.addColorStop(0, "#e7f3ee");
-  g.addColorStop(1, "#f4f7f5");
+  g.addColorStop(0.55, "#eef6f2");
+  g.addColorStop(1, "#f3f7f5");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
 
   ctx.save();
   ctx.translate(ox, oy);
 
+  const selected = pose.residues.find((r) => r.id === selectedId);
+  const homePocket = selected ? KINDS[selected.kind]?.pocket : null;
+
   for (const [name, pocket] of Object.entries(POCKETS)) {
     const px = pocket.x * w;
     const py = pocket.y * h;
     const pr = pocket.r * Math.min(w, h);
+    const hot = homePocket === name;
     ctx.beginPath();
     ctx.setLineDash([6, 6]);
     ctx.strokeStyle = name === "authority" ? "#1f3a5f99" : name === "reject" ? "#8f1d1d99" : "#0c5c4a88";
-    ctx.lineWidth = 2;
-    ctx.arc(px, py, pr, 0, Math.PI * 2);
+    ctx.lineWidth = hot ? 3.5 : 2;
+    ctx.arc(px, py, pr + (hot ? Math.sin(pulse) * 4 : 0), 0, Math.PI * 2);
     ctx.stroke();
+    if (hot) {
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(12, 92, 74, 0.08)";
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.setLineDash([]);
     ctx.fillStyle = "#13241f99";
     ctx.font = `${Math.max(11, Math.floor(w * 0.014))}px sans-serif`;
     ctx.textAlign = "center";
     ctx.fillText(pocket.label, px, py - pr - 6);
+  }
+
+  if (ghostPose?.residues) {
+    for (const r of ghostPose.residues) {
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(19, 36, 31, 0.18)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 4]);
+      ctx.arc(r.x * w, r.y * h, r.radius * Math.min(w, h), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
   }
 
   const structure = getStructure(pose.structure_id);
@@ -225,7 +354,6 @@ function draw() {
     ctx.textBaseline = "middle";
     const label = r.label.length > 8 ? r.label.slice(0, 7) + "…" : r.label;
     ctx.fillText(label, rx, ry);
-    ctx.textAlign = "start";
   }
 
   for (const p of particles) {
@@ -236,9 +364,85 @@ function draw() {
     p.y += p.vy;
     p.life -= 0.04;
   }
+  for (const f of floaters) {
+    ctx.globalAlpha = Math.max(0, f.life);
+    ctx.fillStyle = f.tone === "good" ? "#0b5f4b" : f.tone === "bad" ? "#8f1d1d" : "#8a4b00";
+    ctx.font = `700 ${Math.max(14, Math.floor(w * 0.02))}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.fillText(f.text, f.x * w, f.y * h - (1 - f.life) * 28);
+    f.y -= 0.0015;
+    f.life -= 0.018;
+  }
   ctx.globalAlpha = 1;
   particles = particles.filter((p) => p.life > 0);
+  floaters = floaters.filter((f) => f.life > 0);
   ctx.restore();
+}
+
+function onEnergyDrop(prev, next, at) {
+  if (next < prev - 0.15) {
+    combo += 1;
+    comboMax = Math.max(comboMax, combo);
+    spawnFloater(at?.x ?? 0.5, at?.y ?? 0.4, `−${(prev - next).toFixed(1)}`, "good");
+    if (combo >= 3) spawnFloater(0.5, 0.22, `COMBO ×${combo}`, "good");
+  } else if (next > prev + 0.4) {
+    combo = 0;
+    spawnFloater(at?.x ?? 0.5, at?.y ?? 0.4, `+${(next - prev).toFixed(1)}`, "bad");
+  }
+}
+
+function finalizeLock(grade) {
+  locked = true;
+  if (!lockRecorded) {
+    record({ type: "lock" });
+    lockRecorded = true;
+  }
+  const rating = rateFoldLock({
+    energy: grade.energy,
+    threshold: grade.threshold,
+    actionCount: actions.length,
+    hints: hintsUsed,
+    comboMax,
+  });
+  const coords = pose.residues.map((r) => ({ id: r.id, x: q(r.x), y: q(r.y), radius: r.radius }));
+  const isPb = rememberBest(pose.structure_id, grade.energy, coords, rating.stars);
+  if (playMode === "daily") bumpDailyStreak();
+
+  const campaignIdx = CAMPAIGN_ORDER.indexOf(pose.structure_id);
+  if (campaignIdx >= 0 && campaignIdx >= unlockedThrough() && campaignIdx < CAMPAIGN_ORDER.length - 1) {
+    saveJson(STORAGE_UNLOCK, { index: campaignIdx + 1 });
+  }
+
+  // Auto-save notebook for research density (local only).
+  try {
+    const session = currentSession();
+    const replay = replayFoldSession(session);
+    if (replay.locked && replay.final_stable) {
+      if (notebooks.length >= MAX_NOTEBOOKS) notebooks.shift();
+      notebooks.push(session);
+    }
+  } catch {
+    /* keep playable even if save fails */
+  }
+
+  const nextId = nextCampaignStructure(pose.structure_id);
+  const box = $("afFeedback");
+  box.hidden = false;
+  box.dataset.tone = "ok";
+  box.innerHTML = `<strong>${esc(rating.label)} · ${"★".repeat(rating.stars)}${"☆".repeat(3 - rating.stars)}</strong>
+    <p>Energy <code>${grade.energy}</code> · score <code>${grade.score}</code> · combo max <code>${comboMax}</code> · issues_accept <code>false</code></p>
+    <p>${isPb ? "New personal best — ghost trail updated." : "Locked."} Notebook auto-saved locally (${actions.length} actions).${
+      nextId && isUnlocked(nextId) ? ` Next unlock ready: <em>${esc(getStructure(nextId).title)}</em>.` : ""
+    }</p>
+    <p>${esc(grade.meaning)}</p>`;
+  $("afNext").hidden = false;
+  $("afLive").textContent = `${rating.label}! Save/export whenever — data already captured locally.`;
+  for (let i = 0; i < 22; i++) {
+    spawnSpark(0.5 + (Math.random() - 0.5) * 0.25, 0.45 + (Math.random() - 0.5) * 0.25, "#0c5c4a", 1);
+  }
+  renderMissionList();
+  refreshResearchHud();
+  refreshMetaHud();
 }
 
 function tick() {
@@ -246,32 +450,14 @@ function tick() {
   const grade = gradePose(pose.structure_id, pose, { hints_used: hintsUsed });
   if (grade.energy < bestEnergy) {
     bestEnergy = grade.energy;
-    spawnSpark(0.5, 0.5, "#0c5c4a");
+    spawnSpark(0.5, 0.5, "#0c5c4a", 4);
   }
   if (grade.components.clash > 4 || grade.components.overclaim > 8) shake = Math.min(1, shake + 0.35);
 
   if (grade.stable) {
     if (!holdStarted) holdStarted = performance.now();
     const need = getStructure(pose.structure_id).hold_ms;
-    if (!locked && performance.now() - holdStarted >= need) {
-      locked = true;
-      if (!lockRecorded) {
-        record({ type: "lock" });
-        lockRecorded = true;
-      }
-      const box = $("afFeedback");
-      box.hidden = false;
-      box.dataset.tone = "ok";
-      box.innerHTML = `<strong>Stable fold locked</strong>
-        <p>Energy <code>${grade.energy}</code> · score <code>${grade.score}</code> · issues_accept <code>false</code></p>
-        <p>Trajectory has <code>${actions.length}</code> typed actions ready to save as an RL notebook.</p>
-        <p>${esc(grade.meaning)}</p>`;
-      $("afNext").hidden = false;
-      $("afLive").textContent = "Fold locked — save the notebook to capture engine-replayed rewards.";
-      for (let i = 0; i < 18; i++) {
-        spawnSpark(0.5 + (Math.random() - 0.5) * 0.2, 0.45 + (Math.random() - 0.5) * 0.2, "#0c5c4a");
-      }
-    }
+    if (!locked && performance.now() - holdStarted >= need) finalizeLock(grade);
   } else {
     holdStarted = null;
     if (!lockRecorded) locked = false;
@@ -283,6 +469,10 @@ function tick() {
 }
 
 function loadStructure(id, seed = "play") {
+  if (!isUnlocked(id)) {
+    $("afLive").textContent = "That structure is still locked — clear the campaign folds before it.";
+    return;
+  }
   pose = initialPose(id, seed);
   selectedId = null;
   hintsUsed = 0;
@@ -291,17 +481,25 @@ function loadStructure(id, seed = "play") {
   locked = false;
   lockRecorded = false;
   particles = [];
+  floaters = [];
   actions = [];
+  combo = 0;
+  comboMax = 0;
+  lastSampled = 0;
+  sessionStarted = performance.now();
+  const pb = personalBest(id);
+  ghostPose = pb?.coords ? { residues: pb.coords } : null;
   const s = getStructure(id);
-  $("afLevel").textContent = `${s.id} · ${GAME_VERSION}`;
+  $("afLevel").textContent = `${s.id} · ${GAME_VERSION} · ${playMode}`;
   $("afTitle").textContent = s.title;
   $("afStory").textContent = s.blurb;
   $("afGoal").textContent = s.goal;
   $("afFeedback").hidden = true;
   $("afNext").hidden = true;
-  $("afLive").textContent = "Drag residues into the soft wells. Every place/nudge/wiggle is typed for research export.";
+  $("afLive").textContent = "Drag beads into pulsing wells. Soft snap near the rim. Chase combos and ★★★.";
   renderMissionList();
   refreshResearchHud();
+  refreshMetaHud();
 }
 
 function bindCanvas() {
@@ -323,19 +521,34 @@ function bindCanvas() {
     if (!hit) return;
     selectedId = hit.id;
     dragging = hit.id;
-    $("afLive").textContent = `Dragging ${hit.label} (${KINDS[hit.kind].label})`;
+    lastSampled = performance.now();
+    $("afLive").textContent = `Dragging ${hit.label} → aim for the ${KINDS[hit.kind].label.toLowerCase()} well`;
   };
   const move = (event) => {
     if (!dragging || locked) return;
     event.preventDefault();
     const p = canvasPoint(event, canvas);
+    const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     pose = moveResidue(pose, dragging, p.x, p.y);
+    const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
+    // Dense trajectory samples for continuous-control RL (throttled).
+    const now = performance.now();
+    if (now - lastSampled > 90) {
+      const bead = pose.residues.find((r) => r.id === dragging);
+      record({ type: "place", residue_id: dragging, x: q(bead.x), y: q(bead.y) });
+      onEnergyDrop(before, after, bead);
+      lastSampled = now;
+    }
   };
   const end = () => {
     if (!dragging) return;
+    const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
+    pose = softMagnetPose(pose, dragging);
     const bead = pose.residues.find((r) => r.id === dragging);
-    spawnSpark(bead.x, bead.y, KINDS[bead.kind].color);
+    const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
+    spawnSpark(bead.x, bead.y, KINDS[bead.kind].color, 10);
     record({ type: "place", residue_id: dragging, x: q(bead.x), y: q(bead.y) });
+    onEnergyDrop(before, after, bead);
     dragging = null;
   };
 
@@ -348,7 +561,7 @@ function bindCanvas() {
 
 function saveNotebook() {
   if (!actions.length) {
-    $("afLive").textContent = "No actions yet — fold first, then save.";
+    $("afLive").textContent = "No actions yet — fold first.";
     return;
   }
   try {
@@ -361,7 +574,7 @@ function saveNotebook() {
     if (notebooks.length >= MAX_NOTEBOOKS) notebooks.shift();
     notebooks.push(session);
     refreshResearchHud();
-    $("afLive").textContent = `Notebook saved (${replay.transitions.length} engine-labeled transitions, split=${replay.split}).`;
+    $("afLive").textContent = `Notebook saved (${replay.transitions.length} transitions, ${replay.rating?.stars || "?"}★, split=${replay.split}).`;
   } catch (err) {
     $("afLive").textContent = `Save failed: ${err.message}`;
   }
@@ -369,7 +582,7 @@ function saveNotebook() {
 
 function exportRlDataset() {
   if (!notebooks.length) {
-    $("afLive").textContent = "Save at least one locked notebook before exporting.";
+    $("afLive").textContent = "Lock a fold first (notebooks auto-save on lock).";
     return;
   }
   try {
@@ -382,10 +595,10 @@ function exportRlDataset() {
       checker_before_label: true,
       rows,
       meaning:
-        "Engine-replayed (s,a,r,s') rows for offline RL / BC. Not Lean authority or clinical validity.",
+        "Engine-replayed (s,a,r,s') rows for offline RL / BC. Dense drag samples included. Not Lean authority.",
     };
     download(`assurance-fold-rl-${Date.now()}.json`, JSON.stringify(payload, null, 2));
-    $("afLive").textContent = `Exported ${rows.length} RL transitions (rewards recomputed by the fold engine).`;
+    $("afLive").textContent = `Exported ${rows.length} RL transitions.`;
   } catch (err) {
     $("afLive").textContent = `Export failed: ${err.message}`;
   }
@@ -398,7 +611,15 @@ function exportSessions() {
   }
   download(
     `assurance-fold-sessions-${Date.now()}.json`,
-    JSON.stringify({ format: "pcs-assurance-fold-notebook-collection-v1", sessions: notebooks }, null, 2)
+    JSON.stringify(
+      {
+        format: "pcs-assurance-fold-notebook-collection-v1",
+        game_version: GAME_VERSION,
+        sessions: notebooks,
+      },
+      null,
+      2
+    )
   );
 }
 
@@ -417,7 +638,7 @@ function fitCoach() {
     });
     download(`assurance-fold-coach-${Date.now()}.json`, JSON.stringify(coachModel, null, 2));
     refreshResearchHud();
-    $("afLive").textContent = `Fold coach fitted on ${fitted.training.examples} place-actions (${fitted.training.episodes} episodes). Untrusted suggestion only.`;
+    $("afLive").textContent = `Coach fitted on ${fitted.training.examples} place-actions. Untrusted suggestion only.`;
   } catch (err) {
     $("afLive").textContent = `Fit failed: ${err.message}`;
   }
@@ -425,17 +646,19 @@ function fitCoach() {
 
 function askCoach() {
   if (!coachModel) {
-    $("afLive").textContent = "Fit a local coach first (or it will refuse without data).";
+    $("afLive").textContent = "Fit a local coach first.";
     return;
   }
   if (!selectedId) {
-    $("afLive").textContent = "Select a residue, then ask the coach which pocket it suggests.";
+    $("afLive").textContent = "Select a residue, then ask the coach.";
     return;
   }
   try {
     const state = pose.residues.map((r) => ({ id: r.id, kind: r.kind, x: q(r.x), y: q(r.y) }));
     const tip = suggestPocket(coachModel, state);
-    $("afLive").textContent = `Coach suggests pocket “${tip.pocket}” for the current pose (authority=NONE). Not ACCEPT.`;
+    hintsUsed = Math.min(40, hintsUsed + 1);
+    record({ type: "assist" });
+    $("afLive").textContent = `Coach → “${tip.pocket}” (counts as assistance). Authority=NONE.`;
   } catch (err) {
     $("afLive").textContent = `Coach failed: ${err.message}`;
   }
@@ -444,26 +667,35 @@ function askCoach() {
 function boot() {
   bindCanvas();
   const params = new URLSearchParams(location.search);
-  const id = params.get("structure") || dailyStructureId();
+  playMode = params.get("mode") === "daily" ? "daily" : "campaign";
+  const want = params.get("structure") || (playMode === "daily" ? dailyStructureId() : CAMPAIGN_ORDER[0]);
   try {
-    loadStructure(id, params.get("seed") || "boot");
+    loadStructure(isUnlocked(want) ? want : CAMPAIGN_ORDER[0], params.get("seed") || "boot");
   } catch {
-    loadStructure(listStructures()[0].id, "boot");
+    loadStructure(CAMPAIGN_ORDER[0], "boot");
   }
 
   $("afWiggle").addEventListener("click", () => {
+    if (locked) return;
     hintsUsed = Math.min(40, hintsUsed + 1);
     const seed = `w${hintsUsed}`;
+    const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed - 1 }).energy;
     pose = wigglePose(pose, seed);
+    const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     record({ type: "wiggle", seed });
-    $("afLive").textContent = `Wiggle assist used (${hintsUsed}). Energy penalty applied; flagged assisted.`;
-    spawnSpark(0.5, 0.45, "#c47b16");
+    combo = 0;
+    onEnergyDrop(before, after, { x: 0.5, y: 0.45 });
+    $("afLive").textContent = `Wiggle ×${hintsUsed} — assisted flag on; combo reset.`;
+    spawnSpark(0.5, 0.45, "#c47b16", 12);
   });
   $("afReset").addEventListener("click", () => loadStructure(pose.structure_id, pose.seed));
   $("afShuffle").addEventListener("click", () =>
     loadStructure(pose.structure_id, `shuffle-${Math.floor(Math.random() * 1e9)}`)
   );
-  $("afDaily").addEventListener("click", () => loadStructure(dailyStructureId(), "daily"));
+  $("afDaily").addEventListener("click", () => {
+    playMode = "daily";
+    loadStructure(dailyStructureId(), "daily");
+  });
   $("afCheck").addEventListener("click", () => {
     record({ type: "check" });
     const grade = gradePose(pose.structure_id, pose, { hints_used: hintsUsed });
@@ -475,14 +707,19 @@ function boot() {
           .slice(0, 6)
           .map((t) => `<li><code>${esc(t.type)}</code>${t.a ? ` · ${esc(t.a)}` : ""}${t.b ? `↔${esc(t.b)}` : ""}</li>`)
           .join("")}</ul>`
-      : "<p>No major tensions listed — keep holding in the stable zone.</p>";
+      : "<p>No major tensions — hold still in the stable zone.</p>";
     box.innerHTML = `<strong>${grade.stable ? "In the stable zone" : "Still tense"}</strong>
-      <p>Energy <code>${grade.energy}</code> / threshold <code>${grade.threshold}</code> · score <code>${grade.score}</code> · issues_accept <code>false</code></p>
-      ${tensions}
-      <p>${esc(grade.meaning)}</p>`;
+      <p>Energy <code>${grade.energy}</code> / <code>${grade.threshold}</code> · combo <code>${combo}</code> · issues_accept <code>false</code></p>
+      ${tensions}`;
   });
   $("afNext").addEventListener("click", () => {
-    const ids = listStructures().map((s) => s.id);
+    const next = nextCampaignStructure(pose.structure_id);
+    if (next && isUnlocked(next)) {
+      playMode = "campaign";
+      loadStructure(next, `next-${Date.now()}`);
+      return;
+    }
+    const ids = listStructures().map((s) => s.id).filter(isUnlocked);
     const idx = ids.indexOf(pose.structure_id);
     loadStructure(ids[(idx + 1) % ids.length], `next-${Date.now()}`);
   });
@@ -496,7 +733,7 @@ function boot() {
     notebooks = [];
     coachModel = null;
     refreshResearchHud();
-    $("afLive").textContent = "Local notebooks cleared. Nothing was uploaded.";
+    $("afLive").textContent = "Local notebooks cleared. Progress/PBs kept.";
   });
 
   document.addEventListener("keydown", (event) => {
@@ -510,8 +747,11 @@ function boot() {
     else if (event.key === "ArrowDown") dy = step;
     else return;
     event.preventDefault();
+    const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     pose = nudgeResidue(pose, selectedId, dx, dy);
+    const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     record({ type: "nudge", residue_id: selectedId, dx: q(dx), dy: q(dy) });
+    onEnergyDrop(before, after, pose.residues.find((r) => r.id === selectedId));
   });
 
   cancelAnimationFrame(raf);

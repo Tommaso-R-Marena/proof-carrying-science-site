@@ -1,15 +1,15 @@
 /**
- * Assurance Fold v2 — continuous Foldit-style spatial folding engine.
+ * Assurance Fold v3 — continuous Foldit-style spatial folding engine.
  *
  * Players freely drag evidence “residues” on a 2D board. An independent
  * energy function scores clashes, backbone stretch, pocket affinity, and
- * scientific overclaim. Lower energy is better. Stability requires holding
- * a low-energy pose — not answering a quiz.
+ * scientific overclaim. Soft magnetism, combo/star ratings, and campaign
+ * unlocks live in the UI; the engine stays the sole label authority.
  *
  * Never issues scientific ACCEPT/PASS. Local practice only.
  */
 
-export const GAME_VERSION = "assurance-fold-v2";
+export const GAME_VERSION = "assurance-fold-v3";
 
 export const KINDS = Object.freeze({
   authority: { label: "Authority", color: "#1f3a5f", pocket: "authority" },
@@ -30,7 +30,37 @@ export const POCKETS = Object.freeze({
   limits: { x: 0.72, y: 0.74, r: 0.15, label: "Limitations well" },
 });
 
+/** Campaign unlock order (held-out structures are always playable as challenges). */
+export const CAMPAIGN_ORDER = Object.freeze([
+  "fold-spark-start",
+  "fold-pkpd-chain",
+  "fold-crypto-vs-clinic",
+  "fold-tamper-storm",
+  "fold-adversarial-nest",
+]);
+
 export const STRUCTURES = Object.freeze([
+  {
+    id: "fold-spark-start",
+    title: "Spark start",
+    blurb: "Warm-up fold: bury the ACCEPT trap, park science in the open well, and feel the energy crash when the chain snaps into honest pockets.",
+    goal: "Hold energy ≤ 9 for 1.2s. Chase a 3★ clear (few moves, no wiggle).",
+    threshold: 9,
+    hold_ms: 1200,
+    residues: [
+      { id: "R1", kind: "authority", label: "verify", note: "CLI authority" },
+      { id: "R2", kind: "computational", label: "replay", note: "Matches bytes" },
+      { id: "R3", kind: "artifact", label: "receipt", note: "Bound artifact" },
+      { id: "R4", kind: "scientific", label: "open claim", note: "Still open" },
+      { id: "R5", kind: "limitation", label: "limits", note: "Non-claims" },
+      { id: "R6", kind: "trap", label: "ACCEPT!", note: "Trap bead" },
+    ],
+    bonds: [["R1", "R2"], ["R2", "R3"], ["R3", "R4"], ["R4", "R5"], ["R5", "R6"]],
+    contacts: [
+      { a: "R2", b: "R3", d: 0.11 },
+      { a: "R4", b: "R5", d: 0.12 },
+    ],
+  },
   {
     id: "fold-pkpd-chain",
     title: "PKPD honesty fold",
@@ -216,6 +246,51 @@ export function nudgeResidue(pose, residueId, dx, dy) {
 }
 
 /**
+ * Soft pocket magnetism — Foldit-like “snap feel” without forcing a quiz answer.
+ * Pulls a bead toward its home well only when already near the rim.
+ */
+export function softMagnetPose(pose, residueId) {
+  const r = pose.residues.find((x) => x.id === residueId);
+  if (!r) throw new Error("Unknown residue");
+  const home = POCKETS[KINDS[r.kind]?.pocket];
+  if (!home) return pose;
+  const d = dist(r, home);
+  const pullStart = home.r * 1.35;
+  if (d <= home.r * 0.85 || d > pullStart) return pose;
+  const t = Math.min(1, (pullStart - d) / (pullStart - home.r * 0.85));
+  const strength = 0.22 + t * 0.45;
+  const nx = r.x + (home.x - r.x) * strength;
+  const ny = r.y + (home.y - r.y) * strength;
+  return moveResidue(pose, residueId, nx, ny);
+}
+
+/**
+ * Star rating for a locked fold. Pure function of engine grade + action stats.
+ * 3★ = tight energy, short trajectory, no wiggle. Never issues ACCEPT.
+ */
+export function rateFoldLock({ energy, threshold, actionCount, hints, comboMax = 0 }) {
+  if (!Number.isFinite(energy) || !Number.isFinite(threshold) || energy > threshold) {
+    throw new Error("rateFoldLock requires a stable under-threshold energy");
+  }
+  const headroom = (threshold - energy) / Math.max(0.1, threshold);
+  let stars = 1;
+  if (headroom >= 0.15 && actionCount <= 48 && hints === 0) stars = 2;
+  if (headroom >= 0.35 && actionCount <= 28 && hints === 0 && comboMax >= 3) stars = 3;
+  return {
+    stars,
+    headroom: Math.round(headroom * 1000) / 1000,
+    issues_accept: false,
+    label: stars === 3 ? "Flawless fold" : stars === 2 ? "Clean fold" : "Locked fold",
+  };
+}
+
+export function nextCampaignStructure(clearedId) {
+  const idx = CAMPAIGN_ORDER.indexOf(clearedId);
+  if (idx < 0 || idx >= CAMPAIGN_ORDER.length - 1) return null;
+  return CAMPAIGN_ORDER[idx + 1];
+}
+
+/**
  * Small random wiggle — Foldit-like local search assist (counts as a hint).
  * Deterministic in (pose.seed, seed) so research trajectories can be replayed.
  */
@@ -273,6 +348,7 @@ function assertAction(action) {
   }
   if (action.type === "check" && keys === "type") return;
   if (action.type === "lock" && keys === "type") return;
+  if (action.type === "assist" && keys === "type") return;
   throw new Error("Unknown or unavailable fold action");
 }
 
@@ -284,13 +360,16 @@ export function replayFoldSession(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     throw new Error("Invalid fold session");
   }
-  const required = ["actions", "format", "game_version", "seed", "structure_id"];
   const keys = Object.keys(input).sort();
-  if (keys.join(",") !== required.join(",")) {
-    throw new Error("Unexpected fold session fields");
+  const allowed = ["actions", "format", "game_version", "mode", "seed", "structure_id"];
+  if (keys.some((k) => !allowed.includes(k))) throw new Error("Unexpected fold session fields");
+  for (const req of ["actions", "format", "game_version", "seed", "structure_id"]) {
+    if (!keys.includes(req)) throw new Error("Unexpected fold session fields");
   }
   if (input.format !== SESSION_FORMAT) throw new Error("Unsupported fold session format");
   if (input.game_version !== GAME_VERSION) throw new Error("Unsupported fold game version");
+  const mode = input.mode ?? "practice";
+  if (!["practice", "campaign", "daily"].includes(mode)) throw new Error("Invalid fold mode");
   if (typeof input.structure_id !== "string") throw new Error("Unknown structure");
   getStructure(input.structure_id);
   if (typeof input.seed !== "string" || input.seed.length > 80) throw new Error("Invalid seed");
@@ -318,6 +397,8 @@ export function replayFoldSession(input) {
     } else if (action.type === "wiggle") {
       hints = Math.min(40, hints + 1);
       pose = wigglePose(pose, action.seed);
+    } else if (action.type === "assist") {
+      hints = Math.min(40, hints + 1);
     } else if (action.type === "check") {
       checks += 1;
     } else if (action.type === "lock") {
@@ -329,7 +410,7 @@ export function replayFoldSession(input) {
     const delta = before.energy - after.energy;
     let reward = Math.round(delta * 5) / 10;
     if (after.components.overclaim > before.components.overclaim) reward -= 2;
-    if (action.type === "wiggle") reward -= 0.4;
+    if (action.type === "wiggle" || action.type === "assist") reward -= 0.4;
     if (action.type === "check" && after.stable) reward += 3;
     if (action.type === "lock" && after.stable) reward += 10;
     reward = Math.round(reward * 10) / 10;
@@ -352,11 +433,21 @@ export function replayFoldSession(input) {
 
   const final = gradePose(input.structure_id, pose, { hints_used: hints });
   const split = EVALUATION_STRUCTURES.includes(input.structure_id) ? "evaluation" : "training";
+  const rating = locked && final.stable
+    ? rateFoldLock({
+        energy: final.energy,
+        threshold: final.threshold,
+        actionCount: input.actions.length,
+        hints,
+        comboMax: 0,
+      })
+    : null;
   return {
     format: "pcs-assurance-fold-verified-session-v1",
     game_version: GAME_VERSION,
     structure_id: input.structure_id,
     seed: input.seed,
+    mode,
     split,
     transitions,
     checks,
@@ -364,6 +455,7 @@ export function replayFoldSession(input) {
     locked,
     final_energy: final.energy,
     final_stable: final.stable,
+    rating,
     issues_accept: false,
     inspection_is_not_authority: true,
     training_use:
@@ -373,12 +465,14 @@ export function replayFoldSession(input) {
 }
 
 /** Build a compact session envelope from recorded actions (no labels). */
-export function makeFoldSession(structureId, seed, actions) {
+export function makeFoldSession(structureId, seed, actions, mode = "practice") {
+  if (!["practice", "campaign", "daily"].includes(mode)) throw new Error("Invalid fold mode");
   return {
     format: SESSION_FORMAT,
     game_version: GAME_VERSION,
     structure_id: structureId,
     seed: String(seed),
+    mode,
     actions,
   };
 }
@@ -540,7 +634,7 @@ export function gradePose(structureId, pose, options = {}) {
     issues_accept: false,
     inspection_is_not_authority: true,
     meaning:
-      "Assurance Fold v2 grades a continuous spatial pose for an educational " +
+      "Assurance Fold v3 grades a continuous spatial pose for an educational " +
       "evidence package. A stable low-energy fold is not a Lean 4 proof, clinical " +
       "validation, security proof, or merge recommendation. card_issues_accept remains false.",
   };

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  CAMPAIGN_ORDER,
   GAME_VERSION,
   STRUCTURES,
   dailyStructureId,
@@ -10,11 +11,14 @@ import {
   initialPose,
   listStructures,
   moveResidue,
+  rateFoldLock,
+  softMagnetPose,
   wigglePose,
 } from "../public/assurance-fold-core.mjs";
 
 test("structures expose continuous Foldit-style search spaces", () => {
-  assert.ok(STRUCTURES.length >= 4);
+  assert.ok(STRUCTURES.length >= 5);
+  assert.ok(CAMPAIGN_ORDER.length >= 5);
   for (const s of STRUCTURES) {
     assert.ok(s.residues.length >= 6, s.id);
     assert.ok(s.bonds.length >= 4, s.id);
@@ -22,6 +26,18 @@ test("structures expose continuous Foldit-style search spaces", () => {
     assert.ok(s.threshold > 0);
     assert.ok(s.hold_ms >= 1000);
   }
+});
+
+test("soft magnet pulls near-pocket beads without teleporting", () => {
+  const pose = initialPose("fold-spark-start", "magnet");
+  const bead = pose.residues.find((r) => r.kind === "trap");
+  const near = moveResidue(pose, bead.id, 0.28, 0.72);
+  const pulled = softMagnetPose(near, bead.id);
+  const after = pulled.residues.find((r) => r.id === bead.id);
+  assert.ok(Math.hypot(after.x - 0.22, after.y - 0.72) < Math.hypot(0.28 - 0.22, 0.72 - 0.72) + 0.001);
+  const rating = rateFoldLock({ energy: 2, threshold: 9, actionCount: 12, hints: 0, comboMax: 4 });
+  assert.equal(rating.stars, 3);
+  assert.equal(rating.issues_accept, false);
 });
 
 test("ideal poses are stable and never issue accept", () => {
