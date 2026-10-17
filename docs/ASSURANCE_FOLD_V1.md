@@ -1,29 +1,27 @@
-# Assurance Fold v3 — continuous Foldit-style evidence folding
+# Assurance Fold — live claim-board game
 
 ## Intent
 
-Assurance Fold is a **continuous spatial game**, not a quiz. Players drag
-evidence “residues” on a live canvas, feel clash / stretch / pocket / overclaim
-energy in real time, ride soft pocket magnetism, stack energy-drop combos,
-chase personal-best ghosts, unlock a campaign, optionally wiggle (hint cost),
-and must **hold** a low-energy pose to lock the fold—the Foldit pattern of
-exploring a configuration space under an objective function.
+Assurance Fold is a **spatial PCS Arena game**, not a quiz and not a protein
+folding clone. Players drag claim tokens on a live board, crash board heat,
+stack combos, beat personal-best ghosts, unlock a campaign, and must **hold**
+a cool board to lock it.
 
-A locked fold still sets `issues_accept: false` and never claims Lean proof,
+A locked board still sets `issues_accept: false` and never claims Lean proof,
 clinical validity, security certification, or merge readiness.
 
 ## Evidence Atlas
 
 `evidence-atlas.html` lists owner-reviewed external sources with real DOIs and
-repository URLs (Foldit Nature 2010, Ioannidis 2005, Peng 2011, OSC 2015,
-Lean 4, mathlib4, RFC 8032, Zenodo supplements). Citations motivate demos;
-they are not PCS authority.
+repository URLs (including citizen-science search papers, reproducibility
+studies, Lean 4, mathlib4, RFC 8032, Zenodo supplements). Citations motivate
+demos; they are not PCS authority and do not mean Assurance Fold is those games.
 
 ## Research data (RL / behavior cloning)
 
 Typed sessions (`pcs-assurance-fold-session-v1`) contain only actions plus an
 optional `mode` (`practice` / `campaign` / `daily`).
-`replayFoldSession` recomputes energy, rewards, stability, stars, and
+`replayFoldSession` recomputes heat, rewards, stability, stars, and
 assistance — client-supplied `reward`/`score`/`energy` fields are rejected.
 
 Play loop captures denser data:
@@ -34,8 +32,8 @@ Play loop captures denser data:
 Exports:
 - **RL dataset** — `(state, action, reward, next_state, done, features)` rows
 - **Raw sessions** — action notebooks for offline replay
-- **Local fold coach** — tiny masked-softmax BC over pocket classes; held-out
-  structure `fold-adversarial-nest` never enters fitting; wiggle/assist
+- **Local coach** — tiny masked-softmax BC over zone classes; held-out
+  structure `fold-adversarial-nest` never enters fitting; shake/assist
   notebooks excluded from unassisted fitting
 
 Synthetic expert bootstrap can seed a coach when no human notebooks exist; it

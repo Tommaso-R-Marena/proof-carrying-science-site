@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Assurance Fold · PCS Arena</title>
-<meta name="description" content="Foldit-style continuous evidence folding: drag residues, watch energy fall, hold a stable pose. Local play; never issues scientific ACCEPT.">
+<meta name="description" content="Drag claim tokens, crash the heat, stack combos, and lock an honest board. Local PCS Arena game that captures RL trajectories without issuing scientific ACCEPT.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/assurance-fold.html">
 <meta name="robots" content="index,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="assurance-fold.css">
 </head>
 <body class="commons-page assurance-fold-page">
-<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · continuous Foldit-style evidence folding</span><a href="arena.html">All Arena challenges</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>PCS Arena · Assurance Fold · crash the heat, lock an honest board</span><a href="arena.html">All Arena challenges</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -25,21 +25,21 @@
 </nav>
 <main>
 <header class="af-hero">
-  <span class="af-pill">ASSURANCE FOLD · v3 · CHASE THE CRASH</span>
-  <h1>Fold the evidence until the energy drops—and hold it.</h1>
-  <p>Drag beads, ride soft snaps into wells, stack energy-drop combos, beat your ghost, and unlock the next structure. Still never certifies science — but every lock auto-captures dense RL trajectories locally.</p>
-  <p class="af-disclaimer" role="status"><strong>Boundaries:</strong> Educational local game. No Lean kernel, no clinical validity, no merge recommendation, no auto-upload. Inspired by citizen-science folding games; see the <a href="evidence-atlas.html">Evidence Atlas</a> for real papers and repositories.</p>
+  <span class="af-pill">ASSURANCE FOLD · LIVE BOARD · CHASE THE CRASH</span>
+  <h1>Crash the heat. Lock an honest board.</h1>
+  <p>Drag claim tokens into the right zones, stack energy-drop combos, beat your ghost, and unlock the next mission. It is a PCS training game—not a quiz, not a proof, and not a science certificate.</p>
+  <p class="af-disclaimer" role="status"><strong>Boundaries:</strong> Educational local play. No Lean kernel, no clinical validity, no merge recommendation, no auto-upload. Real papers and repos that motivate these lanes live in the <a href="evidence-atlas.html">Evidence Atlas</a>.</p>
 </header>
 
-<section class="af-energy-bar" aria-label="Fold energy">
+<section class="af-energy-bar" aria-label="Board heat">
   <div>
-    <div class="kicker">LIVE FOLD ENERGY · LOWER IS BETTER</div>
+    <div class="kicker">LIVE BOARD HEAT · LOWER IS BETTER</div>
     <progress id="afEnergyBar" max="40" value="40"></progress>
     <div class="af-hold-track" aria-hidden="true"><div id="afHoldFill" class="af-hold-fill"></div></div>
   </div>
   <div class="af-energy-readout">
     <strong id="afEnergyValue">—</strong>
-    <span id="afEnergyMeta">Drag residues into the wells</span>
+    <span id="afEnergyMeta">Drag tokens into zones</span>
     <span class="af-scoreline">Score <b id="afScore">0</b> · <span id="afComponents">—</span></span>
   </div>
 </section>
@@ -52,31 +52,31 @@
 </section>
 
 <div class="af-layout">
-  <aside class="af-sidebar" aria-label="Structures">
+  <aside class="af-sidebar" aria-label="Missions">
     <h2>Campaign</h2>
-    <p>Clear folds to unlock the next. Ghost outlines show your personal best. Wiggle/coach count as assisted data.</p>
+    <p>Clear boards to unlock the next. Ghost outlines show your personal best. Shake/coach count as assisted data.</p>
     <div id="afMissionList" class="af-mission-list"></div>
-    <button type="button" class="button secondary" id="afDaily">Today’s structure</button>
-    <button type="button" class="button secondary" id="afShuffle">Rescramble pose</button>
-    <p class="arena-fineprint">Keyboard: click a residue, then arrow keys (Shift = larger nudge). Hold a stable pose to lock the fold.</p>
+    <button type="button" class="button secondary" id="afDaily">Today’s board</button>
+    <button type="button" class="button secondary" id="afShuffle">Rescramble</button>
+    <p class="arena-fineprint">Keyboard: select a token, then arrow keys (Shift = larger nudge). Hold a cool board to lock it.</p>
   </aside>
 
   <section class="af-board" aria-labelledby="afTitle">
-    <div class="kicker" id="afLevel">STRUCTURE</div>
+    <div class="kicker" id="afLevel">MISSION</div>
     <h2 id="afTitle">Loading…</h2>
     <p id="afStory"></p>
     <div class="af-goal"><strong>Your mission:</strong> <span id="afGoal"></span></div>
-    <p id="afLive" role="status" aria-live="polite">Drag any colored residue to begin.</p>
+    <p id="afLive" role="status" aria-live="polite">Drag any colored token to begin.</p>
 
     <div class="af-canvas-wrap">
-      <canvas id="afCanvas" width="960" height="640" role="img" aria-label="Assurance Fold playfield with soft energy wells and draggable residues"></canvas>
+      <canvas id="afCanvas" width="960" height="640" role="img" aria-label="Assurance Fold playfield with heat zones and draggable claim tokens"></canvas>
     </div>
 
     <div class="af-actions">
-      <button type="button" class="button secondary" id="afWiggle">Wiggle (hint)</button>
-      <button type="button" class="button secondary" id="afReset">Reset pose</button>
-      <button type="button" class="button primary" id="afCheck">Read energy report →</button>
-      <button type="button" class="button primary" id="afNext" hidden>Next structure →</button>
+      <button type="button" class="button secondary" id="afWiggle">Shake (hint)</button>
+      <button type="button" class="button secondary" id="afReset">Reset board</button>
+      <button type="button" class="button primary" id="afCheck">Read heat report →</button>
+      <button type="button" class="button primary" id="afNext" hidden>Next mission →</button>
     </div>
     <div id="afFeedback" class="af-feedback" hidden role="status" aria-live="polite"></div>
   </section>
@@ -84,21 +84,21 @@
 
 <section class="af-research" aria-labelledby="afResearchTitle">
   <div class="kicker">USEFUL DATA · CHECKER BEFORE LABEL</div>
-  <h2 id="afResearchTitle">Capture fold trajectories for RL and behavior cloning</h2>
-  <p>Every place, nudge, wiggle, check, and lock is a typed action. When you save a notebook, PCS <strong>replays the session through the fold engine</strong> and recomputes energy, rewards, stability, and assistance flags. Client-claimed scores are rejected. Practice stays in this tab — no auto-upload.</p>
+  <h2 id="afResearchTitle">Capture play trajectories for RL and behavior cloning</h2>
+  <p>Every place, nudge, shake, check, and lock is a typed action. When a board locks, PCS <strong>replays the session through the game engine</strong> and recomputes heat, rewards, stability, and assistance flags. Client-claimed scores are rejected. Practice stays in this tab — no auto-upload.</p>
   <p id="afResearchStatus" class="af-research-status" role="status">Live actions 0 · saved notebooks 0/20 · coach none</p>
   <div class="af-actions">
     <button type="button" class="button primary" id="afSaveNotebook">Save locked notebook</button>
     <button type="button" class="button secondary" id="afExportRl">Export RL dataset (s,a,r,s′)</button>
     <button type="button" class="button secondary" id="afExportSessions">Export raw sessions</button>
-    <button type="button" class="button secondary" id="afFitCoach">Fit local fold coach</button>
-    <button type="button" class="button secondary" id="afAskCoach">Ask coach (selected bead)</button>
+    <button type="button" class="button secondary" id="afFitCoach">Fit local coach</button>
+    <button type="button" class="button secondary" id="afAskCoach">Ask coach (selected token)</button>
     <button type="button" class="button secondary" id="afClearNotebooks">Clear local notebooks</button>
   </div>
   <ul class="af-research-points">
     <li><strong>RL rows:</strong> state coords · action · engine reward · next state · done · 16-D features</li>
     <li><strong>Held-out:</strong> <code>fold-adversarial-nest</code> never enters coach fitting</li>
-    <li><strong>Assistance:</strong> wiggle-flagged notebooks are excluded from unassisted fitting</li>
+    <li><strong>Assistance:</strong> shake/coach-flagged notebooks are excluded from unassisted fitting</li>
     <li><strong>Honesty:</strong> <code>issues_accept: false</code> · authority NONE · not Lean / clinical / merge advice</li>
   </ul>
 </section>
@@ -107,8 +107,8 @@
   <div class="commons-home-banner">
     <div>
       <div class="kicker">FROM GAME TO REAL EVIDENCE</div>
-      <h2>Foldit taught search; PCS teaches honest assurance boundaries.</h2>
-      <p>Play here, then open the Evidence Atlas for peer-reviewed studies, model repos, and supplementary materials that motivate these lanes.</p>
+      <h2>Play for skill and signal; cite real sources separately.</h2>
+      <p>Assurance Fold teaches honest claim boundaries. The Evidence Atlas links the peer-reviewed studies, model repos, and standards that motivate these missions.</p>
     </div>
     <div class="actions">
       <a class="button primary" href="evidence-atlas.html">Open Evidence Atlas →</a>

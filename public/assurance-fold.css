@@ -1,11 +1,11 @@
-/* Assurance Fold v2 — continuous Foldit-style board */
+/* Assurance Fold — PCS claim-board game */
 :root {
-  --af-ink: #13241f;
+  --af-ink: #14241f;
   --af-muted: #3d534b;
   --af-line: #b7c7bf;
-  --af-bg: #eef4f1;
-  --af-panel: #fbfdfc;
-  --af-accent: #0c5c4a;
+  --af-bg: #e8f1ec;
+  --af-panel: #f7fbf8;
+  --af-accent: #0a6b55;
   --af-warn: #8a4b00;
   --af-warn-bg: #fff4e5;
   --af-bad: #8f1d1d;
@@ -19,9 +19,9 @@
 
 body.assurance-fold-page {
   background:
-    radial-gradient(circle at 18% -8%, #d5ebe3 0%, transparent 40%),
-    radial-gradient(circle at 90% 10%, #e7eef2 0%, transparent 35%),
-    linear-gradient(180deg, #f7fbf9 0%, var(--af-bg) 48%, #e3ede8 100%);
+    radial-gradient(circle at 12% -10%, #cfe8dc 0%, transparent 42%),
+    radial-gradient(circle at 92% 8%, #d7e4ef 0%, transparent 38%),
+    linear-gradient(165deg, #f4faf7 0%, var(--af-bg) 46%, #dce8e2 100%);
   color: var(--af-ink);
   font-family: var(--af-sans);
 }
@@ -180,11 +180,12 @@ body.assurance-fold-page {
 }
 
 .af-canvas-wrap {
-  border: 1px solid var(--af-line);
-  background: #f3f8f5;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+  border: 1px solid #1a332c;
+  background: #122821;
+  box-shadow: 0 10px 28px rgba(16, 36, 31, 0.18);
   touch-action: none;
   overflow: hidden;
+  border-radius: 2px;
 }
 #afCanvas {
   display: block;

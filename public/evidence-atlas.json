@@ -13,7 +13,7 @@
       "url": "https://doi.org/10.1038/nature09304",
       "also": "https://www.nature.com/articles/nature09304",
       "pmc": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2956414/",
-      "why": "Canonical Foldit result: humans explore hard configuration spaces under an objective energy. Assurance Fold adapts that interaction pattern to evidence-package honesty, not protein physics.",
+      "why": "Classic citizen-science result: humans explore hard configuration spaces under an objective score. Listed as related research on human search—not a claim that Assurance Fold is protein folding.",
       "pcs_surface": ["assurance-fold.html", "arena.html"]
     },
     {
@@ -109,7 +109,7 @@
       "venue": "Nature Structural & Molecular Biology 18, 1175–1177 (2011)",
       "doi": "10.1038/nsmb.2119",
       "url": "https://doi.org/10.1038/nsmb.2119",
-      "why": "Follow-on Foldit scientific payoff—players contributed to a solved structure. PCS games aim for useful research signal, with honest non-claims.",
+      "why": "Follow-on citizen-science payoff—players contributed to a solved structure. Listed as related research on useful human search signal, with honest non-claims.",
       "pcs_surface": ["assurance-fold.html", "arena.html"]
     }
   ]

@@ -1,5 +1,5 @@
 /**
- * Assurance Fold v3 UI — addictive continuous Foldit-style play.
+ * Assurance Fold UI — addictive spatial claim-board play for PCS Arena.
  * No network. Soft magnetism, combos, campaign unlocks, personal-best ghosts.
  * Trajectories auto-save locally; labels are engine-replayed only.
  */
@@ -228,7 +228,7 @@ function renderMissionList() {
       btn.disabled = true;
       btn.innerHTML = `<strong>🔒 ${esc(s.title)}</strong><small>Clear prior campaign fold to unlock</small>`;
     } else {
-      btn.innerHTML = `<strong>${esc(s.title)}</strong><small>${esc(s.residue_count)} beads · thr ${esc(s.threshold)}${
+      btn.innerHTML = `<strong>${esc(s.title)}</strong><small>${esc(s.residue_count)} tokens · heat ≤ ${esc(s.threshold)}${
         pb ? ` · PB ${esc(pb.energy)} ${"★".repeat(pb.stars || 1)}` : ""
       }</small>`;
       btn.addEventListener("click", () => {
@@ -248,11 +248,11 @@ function updateHud(grade) {
     ? Math.min(1, (performance.now() - holdStarted) / getStructure(pose.structure_id).hold_ms)
     : 0;
   $("afEnergyMeta").textContent = grade.stable
-    ? `Stable · hold ${(hold * 100).toFixed(0)}% · combo ${combo}`
-    : `Exploring · best ${bestEnergy === Infinity ? "—" : bestEnergy} · combo ${combo}`;
+    ? `Cool zone · hold ${(hold * 100).toFixed(0)}% · combo ${combo}`
+    : `Heating · best ${bestEnergy === Infinity ? "—" : bestEnergy} · combo ${combo}`;
   $("afScore").textContent = String(grade.score + Math.min(40, combo * 2));
   $("afComponents").textContent =
-    `clash ${grade.components.clash} · pocket ${grade.components.pocket} · stretch ${grade.components.backbone} · traps ${grade.components.overclaim}`;
+    `clash ${grade.components.clash} · zone ${grade.components.pocket} · stretch ${grade.components.backbone} · traps ${grade.components.overclaim}`;
   const fill = $("afHoldFill");
   if (fill) fill.style.width = `${(hold * 100).toFixed(1)}%`;
   const bar = $("afEnergyBar");
@@ -272,12 +272,27 @@ function draw() {
   pulse = (pulse + 0.04) % (Math.PI * 2);
 
   ctx.clearRect(0, 0, w, h);
+  // Signal-board atmosphere (not a protein canvas).
   const g = ctx.createLinearGradient(0, 0, w, h);
-  g.addColorStop(0, "#e7f3ee");
-  g.addColorStop(0.55, "#eef6f2");
-  g.addColorStop(1, "#f3f7f5");
+  g.addColorStop(0, "#10241f");
+  g.addColorStop(0.45, "#16352d");
+  g.addColorStop(1, "#1a2a33");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "rgba(180, 220, 200, 0.06)";
+  ctx.lineWidth = 1;
+  for (let gx = 0; gx < w; gx += Math.max(28, w / 24)) {
+    ctx.beginPath();
+    ctx.moveTo(gx, 0);
+    ctx.lineTo(gx, h);
+    ctx.stroke();
+  }
+  for (let gy = 0; gy < h; gy += Math.max(28, h / 16)) {
+    ctx.beginPath();
+    ctx.moveTo(0, gy);
+    ctx.lineTo(w, gy);
+    ctx.stroke();
+  }
 
   ctx.save();
   ctx.translate(ox, oy);
@@ -290,29 +305,37 @@ function draw() {
     const py = pocket.y * h;
     const pr = pocket.r * Math.min(w, h);
     const hot = homePocket === name;
+    const pad = pr + (hot ? Math.sin(pulse) * 3 : 0);
+    const color =
+      name === "authority" ? "#6ea8ff" : name === "reject" ? "#ff7a7a" : name === "scientific" ? "#f0b35a" : name === "limits" ? "#e0c35a" : "#5fd0a8";
+    // Rounded zone pads
+    const rw = pad * 1.7;
+    const rh = pad * 1.25;
+    const x0 = px - rw / 2;
+    const y0 = py - rh / 2;
+    const rad = Math.min(18, pad * 0.35);
     ctx.beginPath();
-    ctx.setLineDash([6, 6]);
-    ctx.strokeStyle = name === "authority" ? "#1f3a5f99" : name === "reject" ? "#8f1d1d99" : "#0c5c4a88";
-    ctx.lineWidth = hot ? 3.5 : 2;
-    ctx.arc(px, py, pr + (hot ? Math.sin(pulse) * 4 : 0), 0, Math.PI * 2);
+    ctx.moveTo(x0 + rad, y0);
+    ctx.arcTo(x0 + rw, y0, x0 + rw, y0 + rh, rad);
+    ctx.arcTo(x0 + rw, y0 + rh, x0, y0 + rh, rad);
+    ctx.arcTo(x0, y0 + rh, x0, y0, rad);
+    ctx.arcTo(x0, y0, x0 + rw, y0, rad);
+    ctx.closePath();
+    ctx.fillStyle = hot ? `${color}22` : `${color}14`;
+    ctx.fill();
+    ctx.strokeStyle = hot ? color : `${color}99`;
+    ctx.lineWidth = hot ? 2.5 : 1.5;
     ctx.stroke();
-    if (hot) {
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(12, 92, 74, 0.08)";
-      ctx.arc(px, py, pr, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.setLineDash([]);
-    ctx.fillStyle = "#13241f99";
+    ctx.fillStyle = "rgba(236, 245, 240, 0.85)";
     ctx.font = `${Math.max(11, Math.floor(w * 0.014))}px sans-serif`;
     ctx.textAlign = "center";
-    ctx.fillText(pocket.label, px, py - pr - 6);
+    ctx.fillText(pocket.label, px, y0 - 8);
   }
 
   if (ghostPose?.residues) {
     for (const r of ghostPose.residues) {
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(19, 36, 31, 0.18)";
+      ctx.strokeStyle = "rgba(220, 245, 230, 0.28)";
       ctx.lineWidth = 1.5;
       ctx.setLineDash([3, 4]);
       ctx.arc(r.x * w, r.y * h, r.radius * Math.min(w, h), 0, Math.PI * 2);
@@ -323,7 +346,7 @@ function draw() {
 
   const structure = getStructure(pose.structure_id);
   const byId = new Map(pose.residues.map((r) => [r.id, r]));
-  ctx.strokeStyle = "#9aada4";
+  ctx.strokeStyle = "rgba(160, 210, 190, 0.35)";
   ctx.lineWidth = 1.5;
   for (const [aId, bId] of structure.bonds) {
     const a = byId.get(aId);
@@ -343,8 +366,11 @@ function draw() {
     ctx.fillStyle = meta.color;
     ctx.arc(rx, ry, rr, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
     if (selectedId === r.id) {
-      ctx.strokeStyle = "#13241f";
+      ctx.strokeStyle = "#f4fff8";
       ctx.lineWidth = 3;
       ctx.stroke();
     }
@@ -366,7 +392,7 @@ function draw() {
   }
   for (const f of floaters) {
     ctx.globalAlpha = Math.max(0, f.life);
-    ctx.fillStyle = f.tone === "good" ? "#0b5f4b" : f.tone === "bad" ? "#8f1d1d" : "#8a4b00";
+    ctx.fillStyle = f.tone === "good" ? "#7dffc4" : f.tone === "bad" ? "#ff8f8f" : "#ffd27a";
     ctx.font = `700 ${Math.max(14, Math.floor(w * 0.02))}px sans-serif`;
     ctx.textAlign = "center";
     ctx.fillText(f.text, f.x * w, f.y * h - (1 - f.life) * 28);
@@ -496,7 +522,7 @@ function loadStructure(id, seed = "play") {
   $("afGoal").textContent = s.goal;
   $("afFeedback").hidden = true;
   $("afNext").hidden = true;
-  $("afLive").textContent = "Drag beads into pulsing wells. Soft snap near the rim. Chase combos and ★★★.";
+  $("afLive").textContent = "Drag tokens into pulsing zones. Soft snap near the rim. Chase combos and ★★★.";
   renderMissionList();
   refreshResearchHud();
   refreshMetaHud();
@@ -522,7 +548,7 @@ function bindCanvas() {
     selectedId = hit.id;
     dragging = hit.id;
     lastSampled = performance.now();
-    $("afLive").textContent = `Dragging ${hit.label} → aim for the ${KINDS[hit.kind].label.toLowerCase()} well`;
+    $("afLive").textContent = `Dragging ${hit.label} → aim for the ${KINDS[hit.kind].label.toLowerCase()} zone`;
   };
   const move = (event) => {
     if (!dragging || locked) return;
@@ -685,7 +711,7 @@ function boot() {
     record({ type: "wiggle", seed });
     combo = 0;
     onEnergyDrop(before, after, { x: 0.5, y: 0.45 });
-    $("afLive").textContent = `Wiggle ×${hintsUsed} — assisted flag on; combo reset.`;
+    $("afLive").textContent = `Shake ×${hintsUsed} — assisted flag on; combo reset.`;
     spawnSpark(0.5, 0.45, "#c47b16", 12);
   });
   $("afReset").addEventListener("click", () => loadStructure(pose.structure_id, pose.seed));
@@ -707,9 +733,9 @@ function boot() {
           .slice(0, 6)
           .map((t) => `<li><code>${esc(t.type)}</code>${t.a ? ` · ${esc(t.a)}` : ""}${t.b ? `↔${esc(t.b)}` : ""}</li>`)
           .join("")}</ul>`
-      : "<p>No major tensions — hold still in the stable zone.</p>";
-    box.innerHTML = `<strong>${grade.stable ? "In the stable zone" : "Still tense"}</strong>
-      <p>Energy <code>${grade.energy}</code> / <code>${grade.threshold}</code> · combo <code>${combo}</code> · issues_accept <code>false</code></p>
+      : "<p>No major tensions — hold still while the board stays cool.</p>";
+    box.innerHTML = `<strong>${grade.stable ? "Board is cool enough" : "Still too hot"}</strong>
+      <p>Heat <code>${grade.energy}</code> / <code>${grade.threshold}</code> · combo <code>${combo}</code> · issues_accept <code>false</code></p>
       ${tensions}`;
   });
   $("afNext").addEventListener("click", () => {

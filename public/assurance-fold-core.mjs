@@ -1,10 +1,10 @@
 /**
- * Assurance Fold v3 — continuous Foldit-style spatial folding engine.
+ * Assurance Fold — spatial claim-board engine for PCS Arena.
  *
- * Players freely drag evidence “residues” on a 2D board. An independent
- * energy function scores clashes, backbone stretch, pocket affinity, and
- * scientific overclaim. Soft magnetism, combo/star ratings, and campaign
- * unlocks live in the UI; the engine stays the sole label authority.
+ * Players drag evidence tokens on a live board. An independent heat function
+ * scores clashes, chain stretch, zone affinity, and scientific overclaim.
+ * Soft magnetism, combos, and campaign unlocks live in the UI; the engine
+ * stays the sole label authority.
  *
  * Never issues scientific ACCEPT/PASS. Local practice only.
  */
@@ -21,13 +21,13 @@ export const KINDS = Object.freeze({
   limitation: { label: "Limitations", color: "#7a6200", pocket: "limits" },
 });
 
-/** Soft attractor pockets (normalized 0–1 board coords). */
+/** Soft attractor zones (normalized 0–1 board coords). */
 export const POCKETS = Object.freeze({
-  authority: { x: 0.18, y: 0.28, r: 0.14, label: "Authority well" },
-  computational: { x: 0.52, y: 0.32, r: 0.16, label: "Computational well" },
-  scientific: { x: 0.82, y: 0.30, r: 0.13, label: "Science-open well" },
-  reject: { x: 0.22, y: 0.72, r: 0.14, label: "Reject well" },
-  limits: { x: 0.72, y: 0.74, r: 0.15, label: "Limitations well" },
+  authority: { x: 0.18, y: 0.28, r: 0.14, label: "Authority zone" },
+  computational: { x: 0.52, y: 0.32, r: 0.16, label: "Computational zone" },
+  scientific: { x: 0.82, y: 0.30, r: 0.13, label: "Science-open zone" },
+  reject: { x: 0.22, y: 0.72, r: 0.14, label: "Reject zone" },
+  limits: { x: 0.72, y: 0.74, r: 0.15, label: "Limitations zone" },
 });
 
 /** Campaign unlock order (held-out structures are always playable as challenges). */
@@ -43,8 +43,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-spark-start",
     title: "Spark start",
-    blurb: "Warm-up fold: bury the ACCEPT trap, park science in the open well, and feel the energy crash when the chain snaps into honest pockets.",
-    goal: "Hold energy ≤ 9 for 1.2s. Chase a 3★ clear (few moves, no wiggle).",
+    blurb: "Warm-up board: bury the ACCEPT trap, park science in the open zone, and crash the heat when tokens snap into honest places.",
+    goal: "Hold heat ≤ 9 for 1.2s. Chase a 3★ clear (few moves, no shake).",
     threshold: 9,
     hold_ms: 1200,
     residues: [
@@ -63,9 +63,9 @@ export const STRUCTURES = Object.freeze([
   },
   {
     id: "fold-pkpd-chain",
-    title: "PKPD honesty fold",
-    blurb: "A computational PK package with an open biology claim. Dock residues into honest wells—keep science out of the authority pocket.",
-    goal: "Hold energy ≤ 8 for 1.5s without scientific overclaim.",
+    title: "PKPD honesty board",
+    blurb: "A computational PK package with an open biology claim. Seat tokens in honest zones—keep science out of the authority zone.",
+    goal: "Hold heat ≤ 8 for 1.5s without scientific overclaim.",
     threshold: 8,
     hold_ms: 1500,
     residues: [
@@ -85,8 +85,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-tamper-storm",
     title: "Tamper storm",
-    blurb: "Integrity failed. Yank the failure and traps into the reject well while keeping limitations parked and science open.",
-    goal: "Hold energy ≤ 10 for 1.5s after burying traps.",
+    blurb: "Integrity failed. Yank the failure and traps into the reject zone while keeping limitations parked and science open.",
+    goal: "Hold heat ≤ 10 for 1.5s after burying traps.",
     threshold: 10,
     hold_ms: 1500,
     residues: [
@@ -107,8 +107,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-crypto-vs-clinic",
     title: "Signatures ≠ clinics",
-    blurb: "Valid signatures and unit checks can sit near authority—clinical adequacy must stay in the science-open well.",
-    goal: "Hold energy ≤ 9 for 1.5s with no clinical bead in the authority well.",
+    blurb: "Valid signatures and unit checks can sit near authority—clinical adequacy must stay in the science-open zone.",
+    goal: "Hold heat ≤ 9 for 1.5s with no clinical token in the authority zone.",
     threshold: 9,
     hold_ms: 1500,
     residues: [
@@ -128,8 +128,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-adversarial-nest",
     title: "Adversarial nest",
-    blurb: "An adversarial package nests ACCEPT language beside a computational PASS. Separate them in space until the energy bottoms out.",
-    goal: "Hold energy ≤ 11 for 1.8s after isolating traps.",
+    blurb: "An adversarial package nests ACCEPT language beside a computational PASS. Separate them in space until the heat bottoms out.",
+    goal: "Hold heat ≤ 11 for 1.8s after isolating traps.",
     threshold: 11,
     hold_ms: 1800,
     residues: [
@@ -246,8 +246,8 @@ export function nudgeResidue(pose, residueId, dx, dy) {
 }
 
 /**
- * Soft pocket magnetism — Foldit-like “snap feel” without forcing a quiz answer.
- * Pulls a bead toward its home well only when already near the rim.
+ * Soft zone magnetism — snap feel without forcing a quiz answer.
+ * Pulls a token toward its home zone only when already near the rim.
  */
 export function softMagnetPose(pose, residueId) {
   const r = pose.residues.find((x) => x.id === residueId);
@@ -291,7 +291,7 @@ export function nextCampaignStructure(clearedId) {
 }
 
 /**
- * Small random wiggle — Foldit-like local search assist (counts as a hint).
+ * Small random shake — local search assist (counts as a hint).
  * Deterministic in (pose.seed, seed) so research trajectories can be replayed.
  */
 export function wigglePose(pose, seed = "wiggle") {
@@ -634,8 +634,8 @@ export function gradePose(structureId, pose, options = {}) {
     issues_accept: false,
     inspection_is_not_authority: true,
     meaning:
-      "Assurance Fold v3 grades a continuous spatial pose for an educational " +
-      "evidence package. A stable low-energy fold is not a Lean 4 proof, clinical " +
+      "Assurance Fold grades a continuous spatial board for an educational " +
+      "evidence package. A locked low-heat board is not a Lean 4 proof, clinical " +
       "validation, security proof, or merge recommendation. card_issues_accept remains false.",
   };
 }

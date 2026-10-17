@@ -81,7 +81,7 @@
     addMenu("Play & help", [
       {heading:"PLAY — NO BACKGROUND REQUIRED",links:[
         ["arena.html","PCS Arena · choose a game"],
-        ["assurance-fold.html","Assurance Fold · continuous Foldit-style folding"],
+        ["assurance-fold.html","Assurance Fold · crash the heat, lock an honest board"],
         ["evidence-atlas.html","Evidence Atlas · real papers, repos, supplements"],
         ["bridge-builder.html","Bridge Builder · learn with actual Lean proofs"],
         ["meaning-forge.html","Meaning Forge · English ↔ Lean interpretation"],
@@ -143,7 +143,7 @@
   const siteShortcuts=[
     ["Start here","experience.html","A two-minute interactive tour","Explore"],
     ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
-    ["Assurance Fold","assurance-fold.html","Continuous Foldit-style evidence folding on a live board","Play"],
+    ["Assurance Fold","assurance-fold.html","Crash the heat and lock an honest claim board","Play"],
     ["Evidence Atlas","evidence-atlas.html","Real DOIs, journals, repos, and supplements behind the demos","Explore"],
     ["Safety Forge","arena-safety-forge.html","Build and check toy AI safety shields","Play"],
     ["Shield Duel","forge-duel.html","Blind AI policy decisions, human reason tags and checked outcomes","Play"],

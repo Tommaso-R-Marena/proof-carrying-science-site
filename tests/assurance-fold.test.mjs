@@ -16,7 +16,7 @@ import {
   wigglePose,
 } from "../public/assurance-fold-core.mjs";
 
-test("structures expose continuous Foldit-style search spaces", () => {
+test("structures expose continuous spatial search spaces", () => {
   assert.ok(STRUCTURES.length >= 5);
   assert.ok(CAMPAIGN_ORDER.length >= 5);
   for (const s of STRUCTURES) {
