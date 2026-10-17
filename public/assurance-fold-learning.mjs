@@ -101,7 +101,12 @@ function placeActionClass(action, stateBefore) {
 
 export function normalizeFoldSession(input) {
   const replay = replayFoldSession(input);
-  const session = makeFoldSession(input.structure_id, input.seed, replay.transitions.map((t) => t.action));
+  const session = makeFoldSession(
+    input.structure_id,
+    input.seed,
+    replay.transitions.map((t) => t.action),
+    input.mode || replay.mode || "practice"
+  );
   return { session, replay };
 }
 
@@ -133,6 +138,7 @@ export function exportFoldRlRows(sessions, split = "training") {
     replay.transitions.map((t) => ({
       structure_id: session.structure_id,
       seed: session.seed,
+      mode: session.mode || replay.mode,
       split: replay.split,
       index: t.index,
       state: t.state_before,
@@ -142,11 +148,55 @@ export function exportFoldRlRows(sessions, split = "training") {
       done: t.done,
       energy_before: t.energy_before,
       energy_after: t.energy_after,
+      overclaim_after: t.components_after.overclaim,
       assisted: t.assisted,
       features: foldFeatures(t.state_before),
       issues_accept: false,
     }))
   );
+}
+
+/**
+ * Preference pairs for ranking / DPO-style offline learning.
+ * Preferred = lower engine energy after consecutive place actions.
+ */
+export function exportFoldPreferencePairs(sessions, split = "training") {
+  if (!["training", "evaluation", "all"].includes(split)) throw new Error("Unknown split");
+  const entries = eligibleSessions(sessions).filter(
+    ({ replay }) => (split === "all" || replay.split === split) && !replay.hints
+  );
+  const pairs = [];
+  for (const { session, replay } of entries) {
+    const places = replay.transitions.filter((t) => t.action.type === "place");
+    for (let i = 1; i < places.length; i++) {
+      const a = places[i - 1];
+      const b = places[i];
+      if (a.energy_after === b.energy_after) continue;
+      const better = a.energy_after < b.energy_after ? a : b;
+      const worse = a.energy_after < b.energy_after ? b : a;
+      pairs.push({
+        structure_id: session.structure_id,
+        seed: session.seed,
+        split: replay.split,
+        preferred: {
+          state: better.state_before,
+          action: better.action,
+          energy_after: better.energy_after,
+          features: foldFeatures(better.state_before),
+        },
+        rejected: {
+          state: worse.state_before,
+          action: worse.action,
+          energy_after: worse.energy_after,
+          features: foldFeatures(worse.state_before),
+        },
+        margin: Math.round(Math.abs(a.energy_after - b.energy_after) * 10) / 10,
+        issues_accept: false,
+        authority: "NONE",
+      });
+    }
+  }
+  return pairs;
 }
 
 export function foldSessionRows(sessions, split) {

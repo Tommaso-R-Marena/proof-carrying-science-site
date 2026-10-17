@@ -280,8 +280,27 @@ export function rateFoldLock({ energy, threshold, actionCount, hints, comboMax =
     stars,
     headroom: Math.round(headroom * 1000) / 1000,
     issues_accept: false,
-    label: stars === 3 ? "Flawless fold" : stars === 2 ? "Clean fold" : "Locked fold",
+    label: stars === 3 ? "Flawless board" : stars === 2 ? "Clean board" : "Board locked",
   };
+}
+
+/** Recompute combo streak from engine energy deltas (never trust the client). */
+export function comboStatsFromTransitions(transitions) {
+  if (!Array.isArray(transitions)) throw new Error("Invalid transitions");
+  let combo = 0;
+  let comboMax = 0;
+  let heatDrops = 0;
+  for (const t of transitions) {
+    const drop = (t.energy_before ?? 0) - (t.energy_after ?? 0);
+    if (drop > 0.15) {
+      combo += 1;
+      heatDrops += 1;
+      comboMax = Math.max(comboMax, combo);
+    } else if ((t.energy_after ?? 0) > (t.energy_before ?? 0) + 0.4) {
+      combo = 0;
+    }
+  }
+  return { combo_max: comboMax, heat_drops: heatDrops };
 }
 
 export function nextCampaignStructure(clearedId) {
@@ -323,32 +342,49 @@ function poseCoords(pose) {
   }));
 }
 
+function assertTiming(tMs) {
+  if (tMs === undefined) return;
+  if (!Number.isFinite(tMs) || tMs < 0 || tMs > 900000) throw new Error("Invalid action timing");
+}
+
 function assertAction(action) {
   if (!action || typeof action !== "object" || Array.isArray(action)) {
     throw new Error("Invalid fold action");
   }
-  if ("reward" in action || "energy" in action || "score" in action || "stable" in action) {
+  if ("reward" in action || "energy" in action || "score" in action || "stable" in action || "combo" in action) {
     throw new Error("Client-supplied labels rejected");
   }
   const keys = Object.keys(action).sort().join(",");
-  if (action.type === "place" && keys === "residue_id,type,x,y") {
+  if (action.type === "place" && (keys === "residue_id,type,x,y" || keys === "residue_id,t_ms,type,x,y")) {
     if (typeof action.residue_id !== "string") throw new Error("Invalid place");
     if (!Number.isFinite(action.x) || !Number.isFinite(action.y)) throw new Error("Invalid place coords");
+    assertTiming(action.t_ms);
     return;
   }
-  if (action.type === "nudge" && keys === "dx,dy,residue_id,type") {
+  if (action.type === "nudge" && (keys === "dx,dy,residue_id,type" || keys === "dx,dy,residue_id,t_ms,type")) {
     if (typeof action.residue_id !== "string") throw new Error("Invalid nudge");
     if (!Number.isFinite(action.dx) || !Number.isFinite(action.dy)) throw new Error("Invalid nudge");
     if (Math.abs(action.dx) > 0.2 || Math.abs(action.dy) > 0.2) throw new Error("Nudge too large");
+    assertTiming(action.t_ms);
     return;
   }
-  if (action.type === "wiggle" && keys === "seed,type") {
+  if (action.type === "wiggle" && (keys === "seed,type" || keys === "seed,t_ms,type")) {
     if (typeof action.seed !== "string" || action.seed.length > 64) throw new Error("Invalid wiggle seed");
+    assertTiming(action.t_ms);
     return;
   }
-  if (action.type === "check" && keys === "type") return;
-  if (action.type === "lock" && keys === "type") return;
-  if (action.type === "assist" && keys === "type") return;
+  if (action.type === "check" && (keys === "type" || keys === "t_ms,type")) {
+    assertTiming(action.t_ms);
+    return;
+  }
+  if (action.type === "lock" && (keys === "type" || keys === "t_ms,type")) {
+    assertTiming(action.t_ms);
+    return;
+  }
+  if (action.type === "assist" && (keys === "type" || keys === "t_ms,type")) {
+    assertTiming(action.t_ms);
+    return;
+  }
   throw new Error("Unknown or unavailable fold action");
 }
 
@@ -381,6 +417,9 @@ export function replayFoldSession(input) {
   let hints = 0;
   let checks = 0;
   let locked = false;
+  let peakOverclaim = 0;
+  let heatIntegral = 0;
+  const moved = new Set();
   const transitions = [];
 
   for (let i = 0; i < input.actions.length; i++) {
@@ -392,8 +431,10 @@ export function replayFoldSession(input) {
 
     if (action.type === "place") {
       pose = moveResidue(pose, action.residue_id, quantize(action.x), quantize(action.y));
+      moved.add(action.residue_id);
     } else if (action.type === "nudge") {
       pose = nudgeResidue(pose, action.residue_id, quantize(action.dx), quantize(action.dy));
+      moved.add(action.residue_id);
     } else if (action.type === "wiggle") {
       hints = Math.min(40, hints + 1);
       pose = wigglePose(pose, action.seed);
@@ -407,6 +448,8 @@ export function replayFoldSession(input) {
     }
 
     const after = gradePose(input.structure_id, pose, { hints_used: hints });
+    peakOverclaim = Math.max(peakOverclaim, after.components.overclaim);
+    heatIntegral += after.energy;
     const delta = before.energy - after.energy;
     let reward = Math.round(delta * 5) / 10;
     if (after.components.overclaim > before.components.overclaim) reward -= 2;
@@ -433,15 +476,18 @@ export function replayFoldSession(input) {
 
   const final = gradePose(input.structure_id, pose, { hints_used: hints });
   const split = EVALUATION_STRUCTURES.includes(input.structure_id) ? "evaluation" : "training";
+  const combo = comboStatsFromTransitions(transitions);
   const rating = locked && final.stable
     ? rateFoldLock({
         energy: final.energy,
         threshold: final.threshold,
         actionCount: input.actions.length,
         hints,
-        comboMax: 0,
+        comboMax: combo.combo_max,
       })
     : null;
+  const timings = input.actions.map((a) => a.t_ms).filter((t) => Number.isFinite(t));
+  const durationMs = timings.length ? Math.round(Math.max(...timings) - Math.min(...timings)) : null;
   return {
     format: "pcs-assurance-fold-verified-session-v1",
     game_version: GAME_VERSION,
@@ -456,10 +502,20 @@ export function replayFoldSession(input) {
     final_energy: final.energy,
     final_stable: final.stable,
     rating,
+    summary: {
+      combo_max: combo.combo_max,
+      heat_drops: combo.heat_drops,
+      peak_overclaim: Math.round(peakOverclaim * 10) / 10,
+      mean_heat: Math.round((heatIntegral / Math.max(1, transitions.length)) * 10) / 10,
+      tokens_moved: moved.size,
+      place_actions: input.actions.filter((a) => a.type === "place").length,
+      duration_ms: durationMs,
+      issues_accept: false,
+    },
     issues_accept: false,
     inspection_is_not_authority: true,
     training_use:
-      "Replay-checked spatial fold choices only. Rewards and stability are engine-derived. " +
+      "Replay-checked spatial board choices only. Rewards, combo, and stability are engine-derived. " +
       "Not a Lean proof, clinical validation, security certification, or merge recommendation.",
   };
 }

@@ -76,6 +76,7 @@
       <button type="button" class="button secondary" id="afWiggle">Shake (hint)</button>
       <button type="button" class="button secondary" id="afReset">Reset board</button>
       <button type="button" class="button primary" id="afCheck">Read heat report →</button>
+      <button type="button" class="button primary" id="afAgain" hidden>Play again</button>
       <button type="button" class="button primary" id="afNext" hidden>Next mission →</button>
     </div>
     <div id="afFeedback" class="af-feedback" hidden role="status" aria-live="polite"></div>
@@ -96,7 +97,8 @@
     <button type="button" class="button secondary" id="afClearNotebooks">Clear local notebooks</button>
   </div>
   <ul class="af-research-points">
-    <li><strong>RL rows:</strong> state coords · action · engine reward · next state · done · 16-D features</li>
+    <li><strong>RL rows:</strong> state · action · engine reward · next state · overclaim · timing · 16-D features</li>
+    <li><strong>Preference pairs:</strong> consecutive place actions ranked by engine heat (for ranking / DPO-style training)</li>
     <li><strong>Held-out:</strong> <code>fold-adversarial-nest</code> never enters coach fitting</li>
     <li><strong>Assistance:</strong> shake/coach-flagged notebooks are excluded from unassisted fitting</li>
     <li><strong>Honesty:</strong> <code>issues_accept: false</code> · authority NONE · not Lean / clinical / merge advice</li>

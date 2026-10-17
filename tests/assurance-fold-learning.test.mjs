@@ -3,11 +3,13 @@ import assert from "node:assert/strict";
 import {
   EVALUATION_STRUCTURES,
   GAME_VERSION,
+  comboStatsFromTransitions,
   makeFoldSession,
   replayFoldSession,
   syntheticExpertActions,
 } from "../public/assurance-fold-core.mjs";
 import {
+  exportFoldPreferencePairs,
   exportFoldRlRows,
   fitFoldSessions,
   foldFeatures,
@@ -82,4 +84,29 @@ test("feature vector is bounded and deterministic", () => {
   assert.deepEqual(foldFeatures(state), foldFeatures(state));
   assert.equal(foldFeatures(state).length, 16);
   assert.ok(foldFeatures(state).every((x) => x >= 0 && x <= 1));
+});
+
+test("replay summary recomputes combo and preference pairs are engine-ranked", () => {
+  const sessions = syntheticBootstrapSessions(["pref-1"]);
+  const replay = replayFoldSession(sessions[0]);
+  assert.ok(replay.summary);
+  assert.equal(typeof replay.summary.combo_max, "number");
+  assert.equal(replay.summary.issues_accept, false);
+  const fromTransitions = comboStatsFromTransitions(replay.transitions);
+  assert.equal(replay.summary.combo_max, fromTransitions.combo_max);
+  if (replay.rating) assert.ok(replay.rating.stars >= 1 && replay.rating.stars <= 3);
+  const pairs = exportFoldPreferencePairs(sessions, "training");
+  assert.ok(pairs.length >= 1);
+  for (const p of pairs) {
+    assert.ok(p.preferred.energy_after < p.rejected.energy_after);
+    assert.equal(p.issues_accept, false);
+  }
+  assert.throws(
+    () =>
+      replayFoldSession({
+        ...sessions[0],
+        actions: [{ type: "place", residue_id: "R1", x: 0.2, y: 0.2, combo: 9 }],
+      }),
+    /Client-supplied labels/
+  );
 });

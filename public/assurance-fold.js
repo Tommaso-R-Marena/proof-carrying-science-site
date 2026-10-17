@@ -24,6 +24,7 @@ import {
   wigglePose,
 } from "./assurance-fold-core.mjs";
 import {
+  exportFoldPreferencePairs,
   exportFoldRlRows,
   fitFoldSessions,
   foldModelEnvelope,
@@ -59,6 +60,10 @@ let playMode = "campaign";
 let pulse = 0;
 let ghostPose = null;
 let sessionStarted = 0;
+let dragTrail = [];
+let nearMiss = 0;
+let boardFlash = 0;
+let lastDragPos = null;
 
 function esc(v) {
   return String(v ?? "")
@@ -131,13 +136,17 @@ function bumpDailyStreak() {
   return count;
 }
 
+function nowMs() {
+  return Math.max(0, Math.round(performance.now() - sessionStarted));
+}
+
 function record(action) {
   if (locked && action.type !== "lock") return;
   if (actions.length >= 400) {
     $("afLive").textContent = "Action cap reached (400). Export or reshuffle.";
     return;
   }
-  actions.push(action);
+  actions.push({ ...action, t_ms: nowMs() });
   refreshResearchHud();
 }
 
@@ -326,10 +335,21 @@ function draw() {
     ctx.strokeStyle = hot ? color : `${color}99`;
     ctx.lineWidth = hot ? 2.5 : 1.5;
     ctx.stroke();
+    const occ = zoneOccupancy()[name] || 0;
     ctx.fillStyle = "rgba(236, 245, 240, 0.85)";
     ctx.font = `${Math.max(11, Math.floor(w * 0.014))}px sans-serif`;
     ctx.textAlign = "center";
-    ctx.fillText(pocket.label, px, y0 - 8);
+    ctx.fillText(`${pocket.label}${occ ? ` · ${occ}` : ""}`, px, y0 - 8);
+  }
+
+  // Drag trail
+  if (dragTrail.length > 1) {
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(127, 255, 196, 0.45)";
+    ctx.lineWidth = 2;
+    ctx.moveTo(dragTrail[0].x * w, dragTrail[0].y * h);
+    for (let i = 1; i < dragTrail.length; i++) ctx.lineTo(dragTrail[i].x * w, dragTrail[i].y * h);
+    ctx.stroke();
   }
 
   if (ghostPose?.residues) {
@@ -402,6 +422,15 @@ function draw() {
   ctx.globalAlpha = 1;
   particles = particles.filter((p) => p.life > 0);
   floaters = floaters.filter((f) => f.life > 0);
+  if (nearMiss > 0.05) {
+    ctx.fillStyle = `rgba(255, 90, 90, ${0.08 + nearMiss * 0.12})`;
+    ctx.fillRect(0, 0, w, h);
+  }
+  if (boardFlash > 0.02) {
+    ctx.fillStyle = `rgba(125, 255, 196, ${boardFlash * 0.18})`;
+    ctx.fillRect(0, 0, w, h);
+    boardFlash *= 0.9;
+  }
   ctx.restore();
 }
 
@@ -410,10 +439,37 @@ function onEnergyDrop(prev, next, at) {
     combo += 1;
     comboMax = Math.max(comboMax, combo);
     spawnFloater(at?.x ?? 0.5, at?.y ?? 0.4, `−${(prev - next).toFixed(1)}`, "good");
-    if (combo >= 3) spawnFloater(0.5, 0.22, `COMBO ×${combo}`, "good");
+    if (combo >= 3) {
+      spawnFloater(0.5, 0.22, `COMBO ×${combo}`, "good");
+      boardFlash = Math.min(1, 0.35 + combo * 0.05);
+    }
   } else if (next > prev + 0.4) {
     combo = 0;
     spawnFloater(at?.x ?? 0.5, at?.y ?? 0.4, `+${(next - prev).toFixed(1)}`, "bad");
+  }
+}
+
+function zoneOccupancy() {
+  const counts = { authority: 0, computational: 0, scientific: 0, reject: 0, limits: 0 };
+  for (const r of pose.residues) {
+    const home = KINDS[r.kind]?.pocket;
+    const z = POCKETS[home];
+    if (!z) continue;
+    if (Math.hypot(r.x - z.x, r.y - z.y) <= z.r) counts[home] += 1;
+  }
+  return counts;
+}
+
+function updateNearMiss(grade) {
+  const sci = pose.residues.filter((r) => r.kind === "scientific");
+  const auth = POCKETS.authority;
+  let closest = Infinity;
+  for (const r of sci) closest = Math.min(closest, Math.hypot(r.x - auth.x, r.y - auth.y));
+  if (closest < auth.r * 1.35 && grade.components.overclaim === 0) {
+    nearMiss = Math.min(1, nearMiss + 0.08);
+    if (nearMiss > 0.55) $("afLive").textContent = "Careful — science is drifting toward authority.";
+  } else {
+    nearMiss *= 0.9;
   }
 }
 
@@ -423,14 +479,32 @@ function finalizeLock(grade) {
     record({ type: "lock" });
     lockRecorded = true;
   }
-  const rating = rateFoldLock({
+  const coords = pose.residues.map((r) => ({ id: r.id, x: q(r.x), y: q(r.y), radius: r.radius }));
+  let rating = rateFoldLock({
     energy: grade.energy,
     threshold: grade.threshold,
     actionCount: actions.length,
     hints: hintsUsed,
     comboMax,
   });
-  const coords = pose.residues.map((r) => ({ id: r.id, x: q(r.x), y: q(r.y), radius: r.radius }));
+  let summaryLine = "";
+  // Auto-save + engine-authoritative rating/combo from replay.
+  try {
+    const session = currentSession();
+    const replay = replayFoldSession(session);
+    if (replay.locked && replay.final_stable) {
+      if (notebooks.length >= MAX_NOTEBOOKS) notebooks.shift();
+      notebooks.push(session);
+      if (replay.rating) rating = replay.rating;
+      if (replay.summary) {
+        comboMax = replay.summary.combo_max;
+        summaryLine = ` · drops ${replay.summary.heat_drops} · peak overclaim ${replay.summary.peak_overclaim} · tokens ${replay.summary.tokens_moved}`;
+      }
+    }
+  } catch {
+    /* keep playable even if save fails */
+  }
+
   const isPb = rememberBest(pose.structure_id, grade.energy, coords, rating.stars);
   if (playMode === "daily") bumpDailyStreak();
 
@@ -439,32 +513,22 @@ function finalizeLock(grade) {
     saveJson(STORAGE_UNLOCK, { index: campaignIdx + 1 });
   }
 
-  // Auto-save notebook for research density (local only).
-  try {
-    const session = currentSession();
-    const replay = replayFoldSession(session);
-    if (replay.locked && replay.final_stable) {
-      if (notebooks.length >= MAX_NOTEBOOKS) notebooks.shift();
-      notebooks.push(session);
-    }
-  } catch {
-    /* keep playable even if save fails */
-  }
-
   const nextId = nextCampaignStructure(pose.structure_id);
   const box = $("afFeedback");
   box.hidden = false;
   box.dataset.tone = "ok";
   box.innerHTML = `<strong>${esc(rating.label)} · ${"★".repeat(rating.stars)}${"☆".repeat(3 - rating.stars)}</strong>
-    <p>Energy <code>${grade.energy}</code> · score <code>${grade.score}</code> · combo max <code>${comboMax}</code> · issues_accept <code>false</code></p>
-    <p>${isPb ? "New personal best — ghost trail updated." : "Locked."} Notebook auto-saved locally (${actions.length} actions).${
-      nextId && isUnlocked(nextId) ? ` Next unlock ready: <em>${esc(getStructure(nextId).title)}</em>.` : ""
+    <p>Heat <code>${grade.energy}</code> · score <code>${grade.score}</code> · combo max <code>${comboMax}</code>${esc(summaryLine)} · issues_accept <code>false</code></p>
+    <p>${isPb ? "New personal best — ghost updated." : "Locked."} Notebook auto-saved locally (${actions.length} actions).${
+      nextId && isUnlocked(nextId) ? ` Next unlock: <em>${esc(getStructure(nextId).title)}</em>.` : ""
     }</p>
     <p>${esc(grade.meaning)}</p>`;
   $("afNext").hidden = false;
-  $("afLive").textContent = `${rating.label}! Save/export whenever — data already captured locally.`;
+  if ($("afAgain")) $("afAgain").hidden = false;
+  $("afLive").textContent = `${rating.label}! Data captured — hit Play again or Next mission.`;
+  boardFlash = 1;
   for (let i = 0; i < 22; i++) {
-    spawnSpark(0.5 + (Math.random() - 0.5) * 0.25, 0.45 + (Math.random() - 0.5) * 0.25, "#0c5c4a", 1);
+    spawnSpark(0.5 + (Math.random() - 0.5) * 0.25, 0.45 + (Math.random() - 0.5) * 0.25, "#7dffc4", 1);
   }
   renderMissionList();
   refreshResearchHud();
@@ -489,6 +553,7 @@ function tick() {
     if (!lockRecorded) locked = false;
   }
 
+  updateNearMiss(grade);
   updateHud(grade);
   draw();
   raf = requestAnimationFrame(tick);
@@ -512,9 +577,14 @@ function loadStructure(id, seed = "play") {
   combo = 0;
   comboMax = 0;
   lastSampled = 0;
+  lastDragPos = null;
+  dragTrail = [];
+  nearMiss = 0;
+  boardFlash = 0;
   sessionStarted = performance.now();
   const pb = personalBest(id);
   ghostPose = pb?.coords ? { residues: pb.coords } : null;
+  if ($("afAgain")) $("afAgain").hidden = true;
   const s = getStructure(id);
   $("afLevel").textContent = `${s.id} · ${GAME_VERSION} · ${playMode}`;
   $("afTitle").textContent = s.title;
@@ -556,14 +626,19 @@ function bindCanvas() {
     const p = canvasPoint(event, canvas);
     const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
     pose = moveResidue(pose, dragging, p.x, p.y);
+    const bead = pose.residues.find((r) => r.id === dragging);
+    dragTrail.push({ x: bead.x, y: bead.y });
+    if (dragTrail.length > 28) dragTrail.shift();
     const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
-    // Dense trajectory samples for continuous-control RL (throttled).
+    // Dense samples only when the token actually moved (cleaner RL signal).
     const now = performance.now();
-    if (now - lastSampled > 90) {
-      const bead = pose.residues.find((r) => r.id === dragging);
+    const moved =
+      !lastDragPos || Math.hypot(bead.x - lastDragPos.x, bead.y - lastDragPos.y) >= 0.018;
+    if (moved && now - lastSampled > 85) {
       record({ type: "place", residue_id: dragging, x: q(bead.x), y: q(bead.y) });
       onEnergyDrop(before, after, bead);
       lastSampled = now;
+      lastDragPos = { x: bead.x, y: bead.y };
     }
   };
   const end = () => {
@@ -576,6 +651,8 @@ function bindCanvas() {
     record({ type: "place", residue_id: dragging, x: q(bead.x), y: q(bead.y) });
     onEnergyDrop(before, after, bead);
     dragging = null;
+    lastDragPos = null;
+    dragTrail = [];
   };
 
   canvas.addEventListener("pointerdown", start);
@@ -613,6 +690,7 @@ function exportRlDataset() {
   }
   try {
     const rows = exportFoldRlRows(notebooks, "all");
+    const pairs = exportFoldPreferencePairs(notebooks, "all");
     const payload = {
       format: "pcs-assurance-fold-rl-dataset-v1",
       game_version: GAME_VERSION,
@@ -620,11 +698,12 @@ function exportRlDataset() {
       authority: "NONE",
       checker_before_label: true,
       rows,
+      preference_pairs: pairs,
       meaning:
-        "Engine-replayed (s,a,r,s') rows for offline RL / BC. Dense drag samples included. Not Lean authority.",
+        "Engine-replayed (s,a,r,s') rows plus preference pairs for offline RL / ranking. Not Lean authority.",
     };
     download(`assurance-fold-rl-${Date.now()}.json`, JSON.stringify(payload, null, 2));
-    $("afLive").textContent = `Exported ${rows.length} RL transitions.`;
+    $("afLive").textContent = `Exported ${rows.length} RL transitions + ${pairs.length} preference pairs.`;
   } catch (err) {
     $("afLive").textContent = `Export failed: ${err.message}`;
   }
@@ -748,6 +827,9 @@ function boot() {
     const ids = listStructures().map((s) => s.id).filter(isUnlocked);
     const idx = ids.indexOf(pose.structure_id);
     loadStructure(ids[(idx + 1) % ids.length], `next-${Date.now()}`);
+  });
+  $("afAgain")?.addEventListener("click", () => {
+    loadStructure(pose.structure_id, `again-${Math.floor(Math.random() * 1e9)}`);
   });
 
   $("afSaveNotebook")?.addEventListener("click", saveNotebook);
