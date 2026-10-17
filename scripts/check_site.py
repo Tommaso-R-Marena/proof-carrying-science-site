@@ -396,7 +396,7 @@ for proof_name, tokens in {
         if token not in source:
             errors.append(f"Proof Quest {proof_name}: contract drift {token}")
 
-# Assurance Fold: live claim-board heat game + Evidence Atlas.
+# Assurance Fold: claim-board heat game + Evidence Atlas.
 for fold_name, tokens in {
     "assurance-fold.html": [
         "Assurance Fold",
@@ -408,11 +408,11 @@ for fold_name, tokens in {
         'id="afAgain"',
         'id="afSaveNotebook"',
         'id="afExportRl"',
-        "not a science certificate",
-        "Capture play trajectories",
+        "does not mean Lean accepted",
+        "WHAT YOUR PLAY LEAVES BEHIND",
         "Preference pairs",
-        "CHASE THE CRASH",
-        "Crash the heat",
+        "Put each claim where it belongs",
+        "Evidence Atlas",
         'href="evidence-atlas.html"',
         'href="arena.html"',
         'src="assurance-fold.js"',

@@ -43,8 +43,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-spark-start",
     title: "Spark start",
-    blurb: "Warm-up board: bury the ACCEPT trap, park science in the open zone, and crash the heat when tokens snap into honest places.",
-    goal: "Hold heat ≤ 9 for 1.2s. Chase a 3★ clear (few moves, no shake).",
+    blurb: "A short warm-up. Put the ACCEPT trap in Reject, keep the open claim in Science-open, and let the board cool when everything sits where it belongs.",
+    goal: "Hold heat at or below 9 for 1.2 seconds. Three stars means a short path with no Shake.",
     threshold: 9,
     hold_ms: 1200,
     residues: [
@@ -64,8 +64,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-pkpd-chain",
     title: "PKPD honesty board",
-    blurb: "A computational PK package with an open biology claim. Seat tokens in honest zones—keep science out of the authority zone.",
-    goal: "Hold heat ≤ 8 for 1.5s without scientific overclaim.",
+    blurb: "A computational pharmacokinetics package that also carries an open biology claim. Keep replay and artifacts with computational work; leave biology in Science-open, not under Authority.",
+    goal: "Hold heat at or below 8 for 1.5 seconds without scientific overclaim.",
     threshold: 8,
     hold_ms: 1500,
     residues: [
@@ -85,8 +85,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-tamper-storm",
     title: "Tamper storm",
-    blurb: "Integrity failed. Yank the failure and traps into the reject zone while keeping limitations parked and science open.",
-    goal: "Hold heat ≤ 10 for 1.5s after burying traps.",
+    blurb: "Integrity already failed. Move the failed check and the merge/regulatory traps into Reject. Keep limitations visible and the adequacy claim in Science-open.",
+    goal: "Hold heat at or below 10 for 1.5 seconds after the traps are buried.",
     threshold: 10,
     hold_ms: 1500,
     residues: [
@@ -107,8 +107,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-crypto-vs-clinic",
     title: "Signatures ≠ clinics",
-    blurb: "Valid signatures and unit checks can sit near authority—clinical adequacy must stay in the science-open zone.",
-    goal: "Hold heat ≤ 9 for 1.5s with no clinical token in the authority zone.",
+    blurb: "Signatures and unit checks can sit near Authority. Clinical adequacy cannot. Leave the clinical claim in Science-open and put the “SAFE DRUG” trap in Reject.",
+    goal: "Hold heat at or below 9 for 1.5 seconds with no clinical token in Authority.",
     threshold: 9,
     hold_ms: 1500,
     residues: [
@@ -128,8 +128,8 @@ export const STRUCTURES = Object.freeze([
   {
     id: "fold-adversarial-nest",
     title: "Adversarial nest",
-    blurb: "An adversarial package nests ACCEPT language beside a computational PASS. Separate them in space until the heat bottoms out.",
-    goal: "Hold heat ≤ 11 for 1.8s after isolating traps.",
+    blurb: "An adversarial package mixes ACCEPT language next to a computational PASS. Pull those traps into Reject and keep the real-world claim open until the board cools.",
+    goal: "Hold heat at or below 11 for 1.8 seconds after the traps are isolated.",
     threshold: 11,
     hold_ms: 1800,
     residues: [
@@ -280,7 +280,7 @@ export function rateFoldLock({ energy, threshold, actionCount, hints, comboMax =
     stars,
     headroom: Math.round(headroom * 1000) / 1000,
     issues_accept: false,
-    label: stars === 3 ? "Flawless board" : stars === 2 ? "Clean board" : "Board locked",
+    label: stars === 3 ? "Quiet board, short path" : stars === 2 ? "Steady layout" : "Board locked",
   };
 }
 
@@ -690,9 +690,9 @@ export function gradePose(structureId, pose, options = {}) {
     issues_accept: false,
     inspection_is_not_authority: true,
     meaning:
-      "Assurance Fold grades a continuous spatial board for an educational " +
-      "evidence package. A locked low-heat board is not a Lean 4 proof, clinical " +
-      "validation, security proof, or merge recommendation. card_issues_accept remains false.",
+      "Assurance Fold scored this board for practice only. A calm locked layout is " +
+      "not a Lean 4 proof, not clinical validation, not a security certification, and " +
+      "not a merge recommendation. card_issues_accept remains false.",
   };
 }
 

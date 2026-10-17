@@ -1,21 +1,24 @@
-# Assurance Fold — live claim-board game
+# Assurance Fold — claim-board game
 
 ## Intent
 
-Assurance Fold is a **spatial PCS Arena game**, not a quiz and not a protein
-folding clone. Players drag claim tokens on a live board, crash board heat,
-stack combos, beat personal-best ghosts, unlock a campaign, and must **hold**
-a cool board to lock it.
+Assurance Fold is a **spatial PCS Arena game**: not a quiz, and not a protein
+folding clone. Each mission is a scrambled evidence package. You drag claim
+tokens into zones (authority, computational, science-open, reject, limits),
+watch board heat fall, and hold a cool layout long enough to lock it. Combos,
+stars, personal-best ghosts, and a short campaign make it competitive to
+replay.
 
 A locked board still sets `issues_accept: false` and never claims Lean proof,
 clinical validity, security certification, or merge readiness.
 
 ## Evidence Atlas
 
-`evidence-atlas.html` lists owner-reviewed external sources with real DOIs and
-repository URLs (including citizen-science search papers, reproducibility
-studies, Lean 4, mathlib4, RFC 8032, Zenodo supplements). Citations motivate
-demos; they are not PCS authority and do not mean Assurance Fold is those games.
+`evidence-atlas.html` lists reviewed external sources with real DOIs and
+repository URLs (citizen-science search papers, reproducibility studies,
+Lean 4, mathlib4, RFC 8032, Zenodo supplements, and related work). Citations
+motivate demos; they are not PCS authority, and Assurance Fold is not those
+external projects.
 
 ## Research data (RL / behavior cloning)
 
@@ -30,7 +33,7 @@ Play loop captures denser data:
 - Combo / star / campaign metadata for preference learning
 
 Exports:
-- **RL dataset** — `(state, action, reward, next_state, done, features)` rows
+- **Training dataset** — `(state, action, reward, next_state, done, features)` rows
 - **Raw sessions** — action notebooks for offline replay
 - **Local coach** — tiny masked-softmax BC over zone classes; held-out
   structure `fold-adversarial-nest` never enters fitting; shake/assist

@@ -1,5 +1,5 @@
 /**
- * Assurance Fold UI — addictive spatial claim-board play for PCS Arena.
+ * Assurance Fold UI — spatial claim-board play for PCS Arena.
  * No network. Soft magnetism, combos, campaign unlocks, personal-best ghosts.
  * Trajectories auto-save locally; labels are engine-replayed only.
  */
@@ -143,7 +143,7 @@ function nowMs() {
 function record(action) {
   if (locked && action.type !== "lock") return;
   if (actions.length >= 400) {
-    $("afLive").textContent = "Action cap reached (400). Export or reshuffle.";
+    $("afLive").textContent = "You’ve made 400 moves on this board — export what you have, or reshuffle and start fresh.";
     return;
   }
   actions.push({ ...action, t_ms: nowMs() });
@@ -207,9 +207,9 @@ function currentSession() {
 function refreshResearchHud() {
   const status = $("afResearchStatus");
   if (!status) return;
-  status.textContent = `Live actions ${actions.length} · saved notebooks ${notebooks.length}/${MAX_NOTEBOOKS} · coach ${
-    coachModel ? "fitted" : "none"
-  } · combo ${combo} (max ${comboMax})`;
+  status.textContent = `Moves this run ${actions.length} · notebooks saved ${notebooks.length}/${MAX_NOTEBOOKS} · coach ${
+    coachModel ? "ready" : "not fitted"
+  } · combo ${combo} (best ${comboMax})`;
 }
 
 function refreshMetaHud() {
@@ -235,7 +235,7 @@ function renderMissionList() {
     if (pose?.structure_id === s.id) btn.setAttribute("aria-current", "true");
     if (!unlocked) {
       btn.disabled = true;
-      btn.innerHTML = `<strong>🔒 ${esc(s.title)}</strong><small>Clear prior campaign fold to unlock</small>`;
+      btn.innerHTML = `<strong>🔒 ${esc(s.title)}</strong><small>Finish the earlier campaign boards first</small>`;
     } else {
       btn.innerHTML = `<strong>${esc(s.title)}</strong><small>${esc(s.residue_count)} tokens · heat ≤ ${esc(s.threshold)}${
         pb ? ` · PB ${esc(pb.energy)} ${"★".repeat(pb.stars || 1)}` : ""
@@ -257,8 +257,8 @@ function updateHud(grade) {
     ? Math.min(1, (performance.now() - holdStarted) / getStructure(pose.structure_id).hold_ms)
     : 0;
   $("afEnergyMeta").textContent = grade.stable
-    ? `Cool zone · hold ${(hold * 100).toFixed(0)}% · combo ${combo}`
-    : `Heating · best ${bestEnergy === Infinity ? "—" : bestEnergy} · combo ${combo}`;
+    ? `Cool enough — keep it there ${(hold * 100).toFixed(0)}% · combo ${combo}`
+    : `Still warm · lowest so far ${bestEnergy === Infinity ? "—" : bestEnergy} · combo ${combo}`;
   $("afScore").textContent = String(grade.score + Math.min(40, combo * 2));
   $("afComponents").textContent =
     `clash ${grade.components.clash} · zone ${grade.components.pocket} · stretch ${grade.components.backbone} · traps ${grade.components.overclaim}`;
@@ -467,7 +467,7 @@ function updateNearMiss(grade) {
   for (const r of sci) closest = Math.min(closest, Math.hypot(r.x - auth.x, r.y - auth.y));
   if (closest < auth.r * 1.35 && grade.components.overclaim === 0) {
     nearMiss = Math.min(1, nearMiss + 0.08);
-    if (nearMiss > 0.55) $("afLive").textContent = "Careful — science is drifting toward authority.";
+    if (nearMiss > 0.55) $("afLive").textContent = "Careful: a science token is getting too close to Authority.";
   } else {
     nearMiss *= 0.9;
   }
@@ -518,14 +518,14 @@ function finalizeLock(grade) {
   box.hidden = false;
   box.dataset.tone = "ok";
   box.innerHTML = `<strong>${esc(rating.label)} · ${"★".repeat(rating.stars)}${"☆".repeat(3 - rating.stars)}</strong>
-    <p>Heat <code>${grade.energy}</code> · score <code>${grade.score}</code> · combo max <code>${comboMax}</code>${esc(summaryLine)} · issues_accept <code>false</code></p>
-    <p>${isPb ? "New personal best — ghost updated." : "Locked."} Notebook auto-saved locally (${actions.length} actions).${
-      nextId && isUnlocked(nextId) ? ` Next unlock: <em>${esc(getStructure(nextId).title)}</em>.` : ""
+    <p>Heat <code>${grade.energy}</code> · score <code>${grade.score}</code> · longest combo <code>${comboMax}</code>${esc(summaryLine)} · issues_accept <code>false</code></p>
+    <p>${isPb ? "New personal best — your ghost outline will remember this layout." : "Board locked."} A notebook of this run was saved in the tab (${actions.length} actions).${
+      nextId && isUnlocked(nextId) ? ` Next up: <em>${esc(getStructure(nextId).title)}</em>.` : ""
     }</p>
     <p>${esc(grade.meaning)}</p>`;
   $("afNext").hidden = false;
   if ($("afAgain")) $("afAgain").hidden = false;
-  $("afLive").textContent = `${rating.label}! Data captured — hit Play again or Next mission.`;
+  $("afLive").textContent = `${rating.label}. Notebook saved in this tab — play again, or try the next mission.`;
   boardFlash = 1;
   for (let i = 0; i < 22; i++) {
     spawnSpark(0.5 + (Math.random() - 0.5) * 0.25, 0.45 + (Math.random() - 0.5) * 0.25, "#7dffc4", 1);
@@ -561,7 +561,7 @@ function tick() {
 
 function loadStructure(id, seed = "play") {
   if (!isUnlocked(id)) {
-    $("afLive").textContent = "That structure is still locked — clear the campaign folds before it.";
+    $("afLive").textContent = "That board is still locked — finish the earlier campaign missions first.";
     return;
   }
   pose = initialPose(id, seed);
@@ -592,7 +592,7 @@ function loadStructure(id, seed = "play") {
   $("afGoal").textContent = s.goal;
   $("afFeedback").hidden = true;
   $("afNext").hidden = true;
-  $("afLive").textContent = "Drag tokens into pulsing zones. Soft snap near the rim. Chase combos and ★★★.";
+  $("afLive").textContent = "Drag tokens toward their zones. They’ll ease in if you release near the edge.";
   renderMissionList();
   refreshResearchHud();
   refreshMetaHud();
@@ -618,7 +618,7 @@ function bindCanvas() {
     selectedId = hit.id;
     dragging = hit.id;
     lastSampled = performance.now();
-    $("afLive").textContent = `Dragging ${hit.label} → aim for the ${KINDS[hit.kind].label.toLowerCase()} zone`;
+    $("afLive").textContent = `Moving “${hit.label}” — it belongs in the ${KINDS[hit.kind].label.toLowerCase()} zone`;
   };
   const move = (event) => {
     if (!dragging || locked) return;
@@ -664,20 +664,20 @@ function bindCanvas() {
 
 function saveNotebook() {
   if (!actions.length) {
-    $("afLive").textContent = "No actions yet — fold first.";
+    $("afLive").textContent = "Nothing to save yet — move a few tokens first.";
     return;
   }
   try {
     const session = currentSession();
     const replay = replayFoldSession(session);
     if (!replay.locked || !replay.final_stable) {
-      $("afLive").textContent = "Only locked stable folds can enter the notebook collection.";
+      $("afLive").textContent = "Only a locked, stable board can be added to the notebook list.";
       return;
     }
     if (notebooks.length >= MAX_NOTEBOOKS) notebooks.shift();
     notebooks.push(session);
     refreshResearchHud();
-    $("afLive").textContent = `Notebook saved (${replay.transitions.length} transitions, ${replay.rating?.stars || "?"}★, split=${replay.split}).`;
+    $("afLive").textContent = `Notebook saved (${replay.transitions.length} steps, ${replay.rating?.stars || "?"}★, split=${replay.split}).`;
   } catch (err) {
     $("afLive").textContent = `Save failed: ${err.message}`;
   }
@@ -685,7 +685,7 @@ function saveNotebook() {
 
 function exportRlDataset() {
   if (!notebooks.length) {
-    $("afLive").textContent = "Lock a fold first (notebooks auto-save on lock).";
+    $("afLive").textContent = "Lock a board first — notebooks save automatically when you lock.";
     return;
   }
   try {
@@ -700,10 +700,10 @@ function exportRlDataset() {
       rows,
       preference_pairs: pairs,
       meaning:
-        "Engine-replayed (s,a,r,s') rows plus preference pairs for offline RL / ranking. Not Lean authority.",
+        "Engine-replayed step rows plus preference pairs for offline training or ranking. Not Lean authority.",
     };
     download(`assurance-fold-rl-${Date.now()}.json`, JSON.stringify(payload, null, 2));
-    $("afLive").textContent = `Exported ${rows.length} RL transitions + ${pairs.length} preference pairs.`;
+    $("afLive").textContent = `Exported ${rows.length} training steps and ${pairs.length} preference pairs.`;
   } catch (err) {
     $("afLive").textContent = `Export failed: ${err.message}`;
   }
@@ -711,7 +711,7 @@ function exportRlDataset() {
 
 function exportSessions() {
   if (!notebooks.length) {
-    $("afLive").textContent = "No notebooks to export.";
+    $("afLive").textContent = "No notebooks to export yet.";
     return;
   }
   download(
@@ -743,7 +743,7 @@ function fitCoach() {
     });
     download(`assurance-fold-coach-${Date.now()}.json`, JSON.stringify(coachModel, null, 2));
     refreshResearchHud();
-    $("afLive").textContent = `Coach fitted on ${fitted.training.examples} place-actions. Untrusted suggestion only.`;
+    $("afLive").textContent = `Local coach fitted on ${fitted.training.examples} placements. Suggestions only — not authority.`;
   } catch (err) {
     $("afLive").textContent = `Fit failed: ${err.message}`;
   }
@@ -751,11 +751,11 @@ function fitCoach() {
 
 function askCoach() {
   if (!coachModel) {
-    $("afLive").textContent = "Fit a local coach first.";
+    $("afLive").textContent = "Fit a local coach first, then ask again.";
     return;
   }
   if (!selectedId) {
-    $("afLive").textContent = "Select a residue, then ask the coach.";
+    $("afLive").textContent = "Click a token first, then ask the coach.";
     return;
   }
   try {
@@ -763,7 +763,7 @@ function askCoach() {
     const tip = suggestPocket(coachModel, state);
     hintsUsed = Math.min(40, hintsUsed + 1);
     record({ type: "assist" });
-    $("afLive").textContent = `Coach → “${tip.pocket}” (counts as assistance). Authority=NONE.`;
+    $("afLive").textContent = `Coach suggests the “${tip.pocket}” zone (counts as help). Not authority.`;
   } catch (err) {
     $("afLive").textContent = `Coach failed: ${err.message}`;
   }
@@ -790,7 +790,7 @@ function boot() {
     record({ type: "wiggle", seed });
     combo = 0;
     onEnergyDrop(before, after, { x: 0.5, y: 0.45 });
-    $("afLive").textContent = `Shake ×${hintsUsed} — assisted flag on; combo reset.`;
+    $("afLive").textContent = `Shake ×${hintsUsed} — this run counts as assisted; combo reset.`;
     spawnSpark(0.5, 0.45, "#c47b16", 12);
   });
   $("afReset").addEventListener("click", () => loadStructure(pose.structure_id, pose.seed));
@@ -841,7 +841,7 @@ function boot() {
     notebooks = [];
     coachModel = null;
     refreshResearchHud();
-    $("afLive").textContent = "Local notebooks cleared. Progress/PBs kept.";
+    $("afLive").textContent = "Local notebooks cleared. Campaign progress and personal bests stayed put.";
   });
 
   document.addEventListener("keydown", (event) => {

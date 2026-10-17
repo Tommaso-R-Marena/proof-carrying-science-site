@@ -24,7 +24,7 @@ Canonical site: https://proof-carrying-science-site.marenatommaso.workers.dev/
 - Intervention Planner (minimum positive-cost Boolean changes, locks, optimal assignment counts and mandatory/possible flips; general BDD/Bellman refinement remains open): /intervention-lab.html
 - Single consolidated Aristotle Lean 4.28 prompt and public source bundle: /reasoning/ARISTOTLE_CONSOLIDATED_LEAN_4_28_PROMPT.md and /reasoning/aristotle-consolidated-input-v1.tar.gz
 - Product overview: /
-- Assurance Fold (live claim-board heat game: drag tokens into honest zones, combos, campaign unlocks, dense local RL trajectories; never issues scientific ACCEPT): /assurance-fold.html
+- Assurance Fold (arrange claim tokens on a board, cool the heat, lock a calm layout; local notebooks for later training export; never issues scientific ACCEPT): /assurance-fold.html
 - Evidence Atlas (curated real DOIs, journal pages, GitHub repos, RFC 8032, Zenodo supplements motivating PCS demos; bibliography is not Lean authority): /evidence-atlas.html
 - Safety Forge (break → repair → optimize a bounded synthetic agent shield; opt-in replays yield counterexample-search and sequential repair data; not Lean proof verification): /arena-safety-forge.html
 - ProofLab v2 (controlled next-investigation choices around real source-pinned PCS Lean theorem targets; server-reconstructed candidate/feasibility labels; no Lean kernel execution in the game): /prooflab.html
