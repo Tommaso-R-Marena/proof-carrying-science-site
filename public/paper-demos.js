@@ -142,16 +142,29 @@ function renderManifest(manifest) {
         : demo.kind === "spatial_training_game"
           ? "warn"
           : "ok";
+    const stepHash =
+      demo.id === "palmer-penguins-scientific-workflow-v2"
+        ? "#penguins"
+        : demo.id === "countermodel-lab-witnesses"
+          ? "#countermodel"
+          : demo.id === "bridge-tutorial-transitivity"
+            ? "#bridge"
+            : demo.id === "assurance-fold-claim-board"
+              ? "#fold"
+              : "";
     li.innerHTML = `<span class="pd-badge ${badgeClass}">${esc(demo.kind || "demo")}</span>
       <span><strong>${esc(demo.id)}</strong> · ${esc(demo.status)}${
         demo.note ? `<br><small>${esc(demo.note)}</small>` : ""
       }</span>
       <span>${
+        stepHash ? `<a href="paper-demos.html${esc(stepHash)}">view step</a> · ` : ""
+      }${
         demo.receipt
-          ? `<a href="${esc(demo.receipt)}">receipt</a> · `
+          ? `<a href="${esc(demo.receipt)}" download="${esc(demo.id)}.json">download receipt</a> · `
           : ""
-      }<a href="${esc(demo.play)}">open</a></span>`;
+      }<a href="${esc(demo.play)}">open play surface</a></span>`;
     list.appendChild(li);
+    // Prefer in-page step view over dumping raw JSON in the tab.
   }
 }
 

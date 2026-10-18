@@ -20,6 +20,7 @@ import {
   nudgeResidue,
   rateFoldLock,
   replayFoldSession,
+  seatInPocket,
   softMagnetPose,
   wigglePose,
 } from "./assurance-fold-core.mjs";
@@ -263,6 +264,20 @@ function zoneColor(name) {
           : "#5fd0a8";
 }
 
+function nextOffHomeToken(afterId) {
+  if (!pose) return null;
+  const order = pose.residues;
+  const idx = order.findIndex((r) => r.id === afterId);
+  const start = idx >= 0 ? idx : -1;
+  for (let i = 1; i <= order.length; i++) {
+    const r = order[(start + i) % order.length];
+    const home = POCKETS[KINDS[r.kind]?.pocket];
+    if (!home) continue;
+    if (Math.hypot(r.x - home.x, r.y - home.y) > home.r * 0.95) return r.id;
+  }
+  return null;
+}
+
 function seatSelected(pocketName) {
   if (!selectedId || locked || !pose) return;
   const pocket = POCKETS[pocketName];
@@ -270,10 +285,7 @@ function seatSelected(pocketName) {
   const bead = pose.residues.find((r) => r.id === selectedId);
   if (!bead) return;
   const before = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
-  // Slight offset so multiple seats don't stack perfectly on one pixel.
-  const jitter = (String(bead.id).charCodeAt(0) % 7) * 0.008 - 0.02;
-  pose = moveResidue(pose, selectedId, pocket.x + jitter, pocket.y + jitter * 0.6);
-  pose = softMagnetPose(pose, selectedId);
+  pose = seatInPocket(pose, selectedId, pocketName);
   const after = gradePose(pose.structure_id, pose, { hints_used: hintsUsed }).energy;
   const placed = pose.residues.find((r) => r.id === selectedId);
   record({ type: "place", residue_id: selectedId, x: q(placed.x), y: q(placed.y) });
@@ -281,7 +293,12 @@ function seatSelected(pocketName) {
   spawnSpark(placed.x, placed.y, KINDS[placed.kind].color, 14);
   seatFlash = { pocket: pocketName, until: performance.now() + 450 };
   boardFlash = Math.min(1, boardFlash + 0.25);
-  $("afLive").textContent = `Seated “${placed.label}” in ${pocket.label}.`;
+  const seatedId = selectedId;
+  const nxt = nextOffHomeToken(seatedId);
+  selectedId = nxt;
+  $("afLive").textContent = nxt
+    ? `Seated “${placed.label}” in ${pocket.label}. Next up: “${pose.residues.find((r) => r.id === nxt).label}”.`
+    : `Seated “${placed.label}” in ${pocket.label}. Hold still if heat is under the threshold.`;
   renderInteractControls();
 }
 
@@ -298,7 +315,10 @@ function renderInteractControls() {
     btn.addEventListener("click", () => {
       if (locked) return;
       selectedId = r.id;
-      $("afLive").textContent = `Selected “${r.label}” — drag it, or Seat in home zone / tap a zone pad.`;
+      const home = KINDS[r.kind]?.pocket;
+      $("afLive").textContent = home
+        ? `Selected “${r.label}” — drag it, press Space to seat in ${POCKETS[home].label}, or tap a zone pad.`
+        : `Selected “${r.label}”.`;
       renderInteractControls();
     });
     tray.appendChild(btn);
@@ -318,7 +338,12 @@ function renderInteractControls() {
     zones.appendChild(btn);
   }
   const seat = $("afSeatHome");
-  if (seat) seat.disabled = !selectedId || locked || !home;
+  if (seat) {
+    seat.disabled = !selectedId || locked || !home;
+    seat.textContent = home
+      ? `Seat in ${POCKETS[home].label} →`
+      : "Seat in home zone →";
+  }
 }
 
 function hitPocket(nx, ny) {
@@ -539,11 +564,37 @@ function draw() {
       ctx.stroke();
     }
     ctx.fillStyle = "#fff";
-    ctx.font = `600 ${Math.max(12, Math.floor(rr * 0.58))}px "Source Sans 3", sans-serif`;
+    ctx.font = `600 ${Math.max(12, Math.floor(rr * 0.52))}px "Source Sans 3", sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const label = r.label.length > 9 ? `${r.label.slice(0, 8)}…` : r.label;
-    ctx.fillText(label, rx, ry);
+    const full = String(r.label || "");
+    if (full.length <= 7) {
+      ctx.fillText(full, rx, ry);
+    } else {
+      // Two-line label inside the chip when possible; full caption under selected tokens.
+      const mid = Math.ceil(full.length / 2);
+      let split = full.lastIndexOf(" ", mid);
+      if (split < 2) split = mid;
+      const a = full.slice(0, split).trim();
+      const b = full.slice(split).trim();
+      const fs = Math.max(10, Math.floor(rr * 0.42));
+      ctx.font = `600 ${fs}px "Source Sans 3", sans-serif`;
+      ctx.fillText(a.slice(0, 8), rx, ry - fs * 0.55);
+      ctx.fillText(b.slice(0, 9), rx, ry + fs * 0.55);
+    }
+    if (selectedId === r.id || hoverId === r.id) {
+      const tag = full;
+      ctx.font = `600 ${Math.max(12, Math.floor(w * 0.014))}px "Source Sans 3", sans-serif`;
+      const tw = ctx.measureText(tag).width + 14;
+      const th = Math.max(18, Math.floor(w * 0.018));
+      const tx = rx - tw / 2;
+      const ty = ry + rr + 8;
+      ctx.fillStyle = "rgba(8, 22, 18, 0.78)";
+      ctx.fillRect(tx, ty, tw, th);
+      ctx.fillStyle = "#f4fff8";
+      ctx.textBaseline = "middle";
+      ctx.fillText(tag, rx, ty + th / 2);
+    }
   }
 
   // Side heat thermometer
@@ -756,12 +807,22 @@ function loadStructure(id, seed = "play") {
   $("afTitle").textContent = s.title;
   $("afStory").textContent = s.blurb;
   $("afGoal").textContent = s.goal;
+  const paper = $("afPaperNote");
+  if (paper) {
+    if (s.paper_demo && s.paper_note) {
+      paper.innerHTML = `${esc(s.paper_note)} <a href="${esc(s.paper_demo)}">Open Paper Demos →</a>`;
+    } else {
+      paper.textContent = "";
+    }
+  }
   $("afFeedback").hidden = true;
   $("afNext").hidden = true;
   $("afLive").textContent =
-    "Drag tokens toward their zones, or tap a token below and Seat in home zone. Zones glow when they match.";
+    "Drag tokens toward their zones, or tap a token below and Seat in home zone. Press Space to seat the selection. Zones glow when they match.";
   hoverId = null;
   seatFlash = null;
+  // Start with the first token that is still off its home zone.
+  selectedId = nextOffHomeToken(null) || pose.residues[0]?.id || null;
   renderMissionList();
   renderInteractControls();
   refreshResearchHud();
@@ -1046,6 +1107,24 @@ function boot() {
 
   document.addEventListener("keydown", (event) => {
     if (!selectedId || locked) return;
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      const bead = pose.residues.find((r) => r.id === selectedId);
+      const home = KINDS[bead?.kind]?.pocket;
+      if (home) seatSelected(home);
+      return;
+    }
+    if (event.key === "Tab") {
+      event.preventDefault();
+      const nxt = nextOffHomeToken(selectedId) || pose.residues[0]?.id;
+      if (nxt) {
+        selectedId = nxt;
+        renderInteractControls();
+        const bead = pose.residues.find((r) => r.id === selectedId);
+        $("afLive").textContent = `Selected “${bead.label}”. Space seats it home.`;
+      }
+      return;
+    }
     const step = event.shiftKey ? 0.03 : 0.012;
     let dx = 0;
     let dy = 0;

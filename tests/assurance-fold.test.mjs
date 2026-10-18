@@ -12,8 +12,11 @@ import {
   listStructures,
   moveResidue,
   rateFoldLock,
+  seatInPocket,
   softMagnetPose,
   wigglePose,
+  POCKETS,
+  KINDS,
 } from "../public/assurance-fold-core.mjs";
 
 test("structures expose continuous spatial search spaces", () => {
@@ -25,6 +28,8 @@ test("structures expose continuous spatial search spaces", () => {
     assert.ok(s.blurb.length > 40, s.id);
     assert.ok(s.threshold > 0);
     assert.ok(s.hold_ms >= 1000);
+    assert.ok(String(s.paper_demo || "").startsWith("paper-demos.html"), s.id);
+    assert.ok(String(s.paper_note || "").length > 20, s.id);
   }
 });
 
@@ -38,6 +43,21 @@ test("soft magnet pulls near-pocket beads without teleporting", () => {
   const rating = rateFoldLock({ energy: 2, threshold: 9, actionCount: 12, hints: 0, comboMax: 4 });
   assert.equal(rating.stars, 3);
   assert.equal(rating.issues_accept, false);
+});
+
+test("seatInPocket parks tokens without stacking on occupants", () => {
+  let pose = initialPose("fold-spark-start", "seat");
+  const traps = pose.residues.filter((r) => KINDS[r.kind].pocket === "reject");
+  assert.ok(traps.length >= 1);
+  pose = seatInPocket(pose, traps[0].id, "reject");
+  const first = pose.residues.find((r) => r.id === traps[0].id);
+  const rej = POCKETS.reject;
+  assert.ok(Math.hypot(first.x - rej.x, first.y - rej.y) <= rej.r + 0.001);
+  if (traps.length > 1) {
+    pose = seatInPocket(pose, traps[1].id, "reject");
+    const second = pose.residues.find((r) => r.id === traps[1].id);
+    assert.ok(Math.hypot(first.x - second.x, first.y - second.y) > 0.02);
+  }
 });
 
 test("ideal poses are stable and never issue accept", () => {

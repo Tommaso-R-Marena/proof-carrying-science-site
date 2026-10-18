@@ -45,6 +45,8 @@ export const STRUCTURES = Object.freeze([
     title: "Spark start",
     blurb: "A short warm-up. Put the ACCEPT trap in Reject, keep the open claim in Science-open, and let the board cool when everything sits where it belongs.",
     goal: "Hold heat at or below 9 for 1.2 seconds. Three stars means a short path with no Shake.",
+    paper_demo: "paper-demos.html#fold",
+    paper_note: "Related reading: Foldit / Ioannidis in Paper Demos (practice board — not Lean ACCEPT).",
     threshold: 9,
     hold_ms: 1200,
     residues: [
@@ -66,6 +68,8 @@ export const STRUCTURES = Object.freeze([
     title: "PKPD honesty board",
     blurb: "A computational pharmacokinetics package that also carries an open biology claim. Keep replay and artifacts with computational work; leave biology in Science-open, not under Authority.",
     goal: "Hold heat at or below 8 for 1.5 seconds without scientific overclaim.",
+    paper_demo: "paper-demos.html#penguins",
+    paper_note: "Same honesty pattern as the penguins package: computation can PASS while biology stays OPEN.",
     threshold: 8,
     hold_ms: 1500,
     residues: [
@@ -87,6 +91,8 @@ export const STRUCTURES = Object.freeze([
     title: "Tamper storm",
     blurb: "Integrity already failed. Move the failed check and the merge/regulatory traps into Reject. Keep limitations visible and the adequacy claim in Science-open.",
     goal: "Hold heat at or below 10 for 1.5 seconds after the traps are buried.",
+    paper_demo: "paper-demos.html#penguins",
+    paper_note: "Paper Demos show a real negative-control style story: signatures and dimensions can hold while science stays open.",
     threshold: 10,
     hold_ms: 1500,
     residues: [
@@ -109,6 +115,8 @@ export const STRUCTURES = Object.freeze([
     title: "Signatures ≠ clinics",
     blurb: "Signatures and unit checks can sit near Authority. Clinical adequacy cannot. Leave the clinical claim in Science-open and put the “SAFE DRUG” trap in Reject.",
     goal: "Hold heat at or below 9 for 1.5 seconds with no clinical token in Authority.",
+    paper_demo: "paper-demos.html#fold",
+    paper_note: "RFC 8032 authenticity ≠ clinical truth — see Paper Demos / Evidence Atlas.",
     threshold: 9,
     hold_ms: 1500,
     residues: [
@@ -130,6 +138,8 @@ export const STRUCTURES = Object.freeze([
     title: "Adversarial nest",
     blurb: "An adversarial package mixes ACCEPT language next to a computational PASS. Pull those traps into Reject and keep the real-world claim open until the board cools.",
     goal: "Hold heat at or below 11 for 1.8 seconds after the traps are isolated.",
+    paper_demo: "paper-demos.html#bridge",
+    paper_note: "Held-out practice board. Real Lean receipts live in Paper Demos — this board never issues ACCEPT.",
     threshold: 11,
     hold_ms: 1800,
     residues: [
@@ -262,6 +272,31 @@ export function softMagnetPose(pose, residueId) {
   const nx = r.x + (home.x - r.x) * strength;
   const ny = r.y + (home.y - r.y) * strength;
   return moveResidue(pose, residueId, nx, ny);
+}
+
+/**
+ * Place a token into a named zone without stacking on occupants.
+ * Pure geometry helper — does not grade or issue ACCEPT.
+ */
+export function seatInPocket(pose, residueId, pocketName) {
+  if (!pose?.residues?.some((r) => r.id === residueId)) {
+    throw new Error("Unknown residue");
+  }
+  const pocket = POCKETS[pocketName];
+  if (!pocket) throw new Error("Unknown pocket");
+  const occupants = pose.residues.filter((r) => {
+    if (r.id === residueId) return false;
+    return dist(r, pocket) <= pocket.r;
+  });
+  const n = occupants.length;
+  const angle = n === 0 ? -0.4 : (n * 2.1) % (Math.PI * 2);
+  const rad = n === 0 ? 0 : Math.min(pocket.r * 0.55, 0.04 + n * 0.012);
+  return moveResidue(
+    pose,
+    residueId,
+    pocket.x + Math.cos(angle) * rad,
+    pocket.y + Math.sin(angle) * rad
+  );
 }
 
 /**

@@ -174,11 +174,20 @@ body.assurance-fold-page {
   margin: 0 0 0.35rem;
 }
 .af-goal {
-  margin: 0.55rem 0 0.75rem;
+  margin: 0.55rem 0 0.55rem;
   padding: 0.65rem 0.8rem;
   background: var(--af-ok-bg);
   border-left: 4px solid var(--af-ok);
 }
+.af-paper-note {
+  margin: 0 0 0.75rem;
+  color: var(--af-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 48rem;
+}
+.af-paper-note a { color: var(--af-accent); font-weight: 700; }
+.af-paper-note:empty { display: none; }
 
 .af-play-stage {
   display: grid;
