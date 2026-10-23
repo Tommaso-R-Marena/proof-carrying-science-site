@@ -142,7 +142,8 @@ const server = http.createServer((req, res) => {
     assert.equal(await failed.locator('#fiWitness').isDisabled(), true);
     await unavailable.close();
     fs.writeFileSync(path.join(output, 'browser-results.json'), JSON.stringify({rows, no_javascript_fallback:true,
-      unavailable_checker_fails_closed:true, kernel_executed_in_browser:false, production_authority:false}, null, 2) + '\n');
+      browser_version:browser.version(), unavailable_checker_fails_closed:true,
+      kernel_executed_in_browser:false, production_authority:false}, null, 2) + '\n');
     console.log(JSON.stringify({viewports:rows.length, passed:true, evidence:output}));
   } finally {await browser.close(); await new Promise(resolve => server.close(resolve));}
 })().catch(error => {console.error(error); server.close(); process.exitCode = 1;});

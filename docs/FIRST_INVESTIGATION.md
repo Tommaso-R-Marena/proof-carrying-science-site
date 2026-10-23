@@ -52,6 +52,9 @@ Playwright browser. Set `PCS_CHROMIUM` to an existing executable or run
 `npx --no-install playwright install --with-deps chromium`. Screenshots, actual
 downloaded files and machine-readable results are retained in
 `PCS_FIRST_EVIDENCE_DIR` (default `/tmp/pcs-first-investigation-browser`).
+CI uses the hosted runner's installed Chromium/Chrome, as the existing protected
+browser gate does, and records its actual version. A missing executable fails the
+job; the browser tests are never replaced by static checks or skipped.
 
 The formal runner checks the reviewed Linux x86_64 Lean 4.28.0 executable hash,
 compiles both possible counterexample downloads, audits the exact theorem's

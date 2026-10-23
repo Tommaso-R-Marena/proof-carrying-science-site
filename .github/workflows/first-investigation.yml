@@ -31,11 +31,16 @@ jobs:
           node-version: '22.23.3'
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: node --test tests/first-investigation.test.mjs tests/arena-experience.test.mjs
-      - run: npx --no-install playwright install --with-deps chromium
       - name: Actual four-width beginner journey, local files, downloads and stale-read attacks
         env:
           PCS_FIRST_EVIDENCE_DIR: ${{ runner.temp }}/first-investigation
-        run: npm run test:first-investigation:browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PCS_CHROMIUM="$(command -v chromium || command -v google-chrome)"
+          test -x "$PCS_CHROMIUM"
+          "$PCS_CHROMIUM" --version
+          npm run test:first-investigation:browser
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
