@@ -6,6 +6,18 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
+## Start with one investigation
+
+`public/experience.html` is the beginner entry point: change two fictional facts,
+check whether a rewrite changes a rule, and download evidence someone else can
+recheck. It needs no account or project upload. The evidence uses the existing
+PCS witness format; a separate Python checker or Lean 4.28 can check the result.
+The browser always distinguishes its calculation from an actual Lean run.
+
+For a local preview, run `python3 -m http.server 8788 --bind 127.0.0.1 --directory public`
+and open `http://127.0.0.1:8788/experience.html`. The account service is not needed
+for this lesson. See [the implementation and validation notes](docs/FIRST_INVESTIGATION.md).
+
 ## What is real
 
 The site uses a deliberately small Cloudflare Worker + D1 backend only for the AI Safety Commons account/coordination layer. Scientific package inspection, project mapping, claim drafting, and verifier/browser tooling remain local-first and do not upload selected scientific files to the Commons database.
