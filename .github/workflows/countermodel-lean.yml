@@ -57,12 +57,15 @@ jobs:
           set -euo pipefail
           node scripts/verify_countermodel_lean.mjs | tee countermodel-lean-results.log
           test "$(grep -c '^LEAN_KERNEL_VERIFIED' countermodel-lean-results.log)" -eq 7
+          node scripts/verify_first_investigation.mjs | tee first-investigation-lean-results.json
           echo "COUNTERMODEL_LEAN_EXACT_SHA_PASS=$(git rev-parse HEAD)"
       - name: Retain formal test log
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: countermodel-lean-${{ github.run_id }}-${{ github.run_attempt }}
-          path: countermodel-lean-results.log
+          path: |
+            countermodel-lean-results.log
+            first-investigation-lean-results.json
           if-no-files-found: ignore
           retention-days: 14

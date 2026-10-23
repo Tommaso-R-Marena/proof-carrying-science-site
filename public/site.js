@@ -59,11 +59,11 @@
       return details;
     };
 
-    addLink(links, "experience.html", "What PCS does", "nav-primary-link");
+    addLink(links, "experience.html", "Start here", "nav-primary-link");
     addMenu("Try PCS", [
       {heading:"SEE IT IN ACTION",links:[
         ["live-demo.html","Break a claim · live checks and evidence"],
-        ["experience.html","Two-minute plain-English tour"],
+        ["experience.html","What PCS does · your first investigation"],
         ["research-preview.html","Run a small check"],
         ["package-inspector.html","Inspect a PCS evidence package"],
         ["guided-submission.html?demo=1","Walk through a submission"]
