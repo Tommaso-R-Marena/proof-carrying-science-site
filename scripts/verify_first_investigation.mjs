@@ -21,7 +21,7 @@ try {
     const proof = proofFor(makeWorld(used, permission));
     const file = join(dir, `case-${Number(used)}-${Number(permission)}.lean`);
     writeFileSync(file, proof.lean_source + '\n#print axioms PCSArenaCountermodel.exhibited_meaning_difference\n');
-    const r = spawnSync(lean, ['-j1', '-M512', file], {encoding: 'utf8', timeout: 60000});
+    const r = spawnSync(lean, ['-j1', '-M2048', file], {encoding: 'utf8', timeout: 60000});
     if (r.error || r.status !== 0) throw Error('Lean rejected the actual download: ' + (r.error?.message || r.stdout + r.stderr));
     const match = /'PCSArenaCountermodel.exhibited_meaning_difference' (?:depends on axioms: \[([^\]]*)\]|does not depend on any axioms)/.exec(r.stdout);
     if (!match) throw Error('Missing exact theorem assumption audit.');
@@ -31,7 +31,7 @@ try {
       proof_sha256: createHash('sha256').update(proof.lean_source).digest('hex')});
   }
   const bad = join(dir, 'False.lean'); writeFileSync(bad, 'import Std\ntheorem false_control : (0 : Nat) = 1 := by decide\n');
-  const r = spawnSync(lean, ['-j1', '-M512', bad], {encoding: 'utf8', timeout: 60000});
+  const r = spawnSync(lean, ['-j1', '-M2048', bad], {encoding: 'utf8', timeout: 60000});
   if (r.error || r.status === 0 || !r.stdout.includes('is false')) throw Error('The deliberate false-proof control was not correctly rejected.');
   console.log(JSON.stringify({format: 'pcs-first-investigation-lean-v1', results,
     false_proof_rejected: true, production_authority: false}, null, 2));
