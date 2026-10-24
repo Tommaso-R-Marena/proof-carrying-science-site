@@ -235,3 +235,7 @@ Contributor artifacts can be staged in isolated GitHub PRs, checked through Lean
 ## Production promotion after Commons acceptance
 
 Accepted contributions are initially archived, not deployed. The Owner can now use a separately audited production promotion queue requiring source-byte matching, narrow path maps, fresh Lean/PCS or site CI checks, exact-SHA approval and a second Owner merge. See [Production Promotion Workflow](docs/PRODUCTION_PROMOTION_WORKFLOW.md).
+
+### Visual World Builder
+
+Open [`public/world-builder.html`](public/world-builder.html) for a visual, account-free route into seven finite-logic puzzles: characters, keys, doors, signal arrows and read-only move replay. Tested rounds stay in a private notebook; optional adult donation reuses the existing authenticated replay/export/training pipeline. See [reproduction, data format and research limits](docs/WORLD_BUILDER.md).

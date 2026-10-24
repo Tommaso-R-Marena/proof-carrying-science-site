@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import sys
+from world_builder_boundary import review_world_builder
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -1409,6 +1410,12 @@ NETWORKED_COMMONS_JS = {
 }
 for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
     text = js.read_text(encoding="utf-8")
+
+    if js.name == "world-builder.mjs":
+        # One reviewed opt-in POST, typed snapshot, no redirects/persistence.
+        # Keep the default local-only rule for every other unreviewed client.
+        errors.extend(review_world_builder(text))
+        continue
 
     # Reviewed Omega downloads are a closed anonymous GET-only static asset
     # allowlist. Project text and actions never enter a request body or URL.

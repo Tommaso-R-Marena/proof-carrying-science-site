@@ -76,6 +76,46 @@ async function cleanup(){
  if(erased.deleted!==3)throw Error('Self-service deletion failed');
  const empty=await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json();if(empty.entries.length!==0)throw Error('Withdrawn rows remained exportable');
  report.self_service_deletion_and_empty_export=true;
+ // The visual entry must feed the same real Worker/D1/owner training path.
+ // These are explicitly scripted fixtures, never evidence of human learning.
+ await page.goto(base+'/world-builder.html',{waitUntil:'networkidle'});
+ await page.locator('#wbCheck').click();
+ await page.locator('#wbWorld [data-fact=P][data-character="0"]').click();await page.locator('#wbCheck').click();
+ await page.locator('#wbShare > summary').click();
+ async function donateVisual(){
+  await page.locator('#wbAdult').check();await page.locator('#wbConsent').check();
+  const reply=page.waitForResponse(r=>r.url().endsWith('/api/arena/countermodel/donate'));
+  await page.locator('#wbDonate').click();const response=await reply,data=await response.json();
+  if(response.status()!==200)throw Error('Visual session was not accepted by the real Worker');
+  await page.locator('#wbShareStatus').filter({hasText:/recorded/}).waitFor();
+  return data;
+ }
+ if((await donateVisual()).recorded!==true)throw Error('Visual finite replay was not stored');
+ if((await donateVisual()).recorded!==false)throw Error('Visual duplicate counted as another participant');
+ await page.locator('#wbHint').click();await page.locator('#wbCheck').click();
+ if((await donateVisual()).recorded!==true)throw Error('Visual assisted session was not stored');
+ await page.getByRole('button',{name:/^Puzzle 5:/}).click();
+ if(await page.locator('#wbConsent').isChecked())throw Error('Visual consent silently carried into another round');
+ await page.locator('#wbAdd').click();await page.locator('#wbWorld [data-fact=P][data-character="0"]').click();await page.locator('#wbCheck').click();
+ if((await donateVisual()).recorded!==true)throw Error('Visual held-out choices were not stored');
+ const visualExport=await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json();
+ if(visualExport.entries.length!==3||JSON.stringify(visualExport).includes(email)||JSON.stringify(visualExport).includes(userId))throw Error('Visual owner export identity boundary failed');
+ const visualModel=trainCountermodelSearchPolicy(visualExport),visualEvaluation=evaluateCountermodelSearchPolicy(visualModel,visualExport);
+ if(visualModel.training.examples!==3||visualEvaluation.examples!==3)throw Error('Visual data training/evaluation or assistance boundary failed');
+ const unassistedExport={...visualExport,entries:visualExport.entries.filter(e=>!e.replay.hints)};
+ if(JSON.stringify(trainCountermodelSearchPolicy(unassistedExport))!==JSON.stringify(visualModel))throw Error('Visual clues contaminated fitting');
+ const trainingReplay=visualExport.entries.find(e=>e.session.mission_id==='implication-flip'&&!e.replay.hints).replay;
+ if(trainingReplay.steps.filter(s=>s.received_checker_response&&!s.counterexample).length!==1)throw Error('Visual failed check disappeared from real storage');
+ report.visual_world_builder={actual_d1_insert:true,deduplicated:true,failed_check_retained:true,
+  assisted_excluded:true,held_out_excluded_from_fitting:true,training:visualModel.training,evaluation:visualEvaluation};
+ report.visual_world_builder.model_digest_sha256=visualModel.model_digest_sha256;
+ report.visual_world_builder.data_origin='synthetic fixture account and scripted UI choices; no human data or adoption result';
+ fs.writeFileSync(output+'.synthetic-world-builder-export.json',JSON.stringify(visualExport,null,2)+'\n');
+ fs.writeFileSync(output+'.synthetic-world-builder-model.json',JSON.stringify(visualModel,null,2)+'\n');
+ const visualErase=await context.request.post(base+'/api/arena/countermodel/erase',{headers:{Origin:base},data:{}});
+ if(visualErase.status()!==200||(await visualErase.json()).deleted!==3)throw Error('Visual research rows did not withdraw');
+ if((await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json()).entries.length)throw Error('Visual withdrawn data remained exportable');
+ report.visual_world_builder.withdrawal_verified=true;
  fixture(`UPDATE users SET role='contributor',is_owner=0 WHERE id='${userId}' AND email='${email}'`);
  const removed=await context.request.post(base+'/api/account/delete',{headers:{Origin:base},data:{password,confirmation:'DELETE'}});if(removed.status()!==200)throw Error('Fixture account cleanup failed');
  userId=null;report.synthetic_account_deleted=true;
