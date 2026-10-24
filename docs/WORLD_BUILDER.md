@@ -139,3 +139,7 @@ study measuring independent completion, understanding of evidence limits, and
 held-out search behavior, with preregistered ablations before claims of model gains.
 
 An independent Python replay also checked all 8 actual browser-exported episodes (27 actions), including pre-action worlds and per-action outcomes. Its checker file is byte-identical to protected PCS core `fabc704efdbda4c8822881366e4db3d3e31f066a`.
+
+## Toolchain dependency audit
+
+The protected dependency audit identified three undici advisories in the existing Miniflare dependency: GHSA-4qv8-2p9j-2685, GHSA-f72v-6w45-q472 and GHSA-xjj6-f33q-929c. A narrow override pins undici 7.30.1 under exactly Miniflare 5.20261006.1-alpha, keeping Wrangler 4.149.0 and the existing browser version pinned. The lockfile includes the published tarball integrity. The resulting dependency audit reports zero known findings; this is not a general security proof. The release gate and actual local Worker/D1 flow are rerun with the patched, isolated installation.
