@@ -25,6 +25,12 @@ const server=http.createServer((req,res)=>{
   await p.goto(base+'/arena.html');await p.getByRole('link',{name:'Play World Builder →',exact:true}).click();
   await p.locator('#wbApp[data-ready=true]').waitFor();await p.locator('#wbPlay').click();
   assert.equal(await p.locator('#wbTitle').evaluate(e=>e.getBoundingClientRect().top>=0),true,'start keeps the puzzle and rules in view');
+  // A sticky mobile bar previously covered the rules at some scroll positions.
+  for(const scroll of [0,400,850]){
+   await p.evaluate(y=>window.scrollTo(0,y),scroll);
+   const covered=await p.evaluate(()=>{const bar=document.querySelector('.wb-controls').getBoundingClientRect();return ['#wbPuzzle','.wb-rules','#wbBoard'].filter(s=>{const r=document.querySelector(s).getBoundingClientRect();return Math.min(bar.right,r.right)-Math.max(bar.left,r.left)>3&&Math.min(bar.bottom,r.bottom)-Math.max(bar.top,r.top)>3;});});
+   assert.deepEqual(covered,[],'control bar must not cover the puzzle while scrolling');
+  }
   await p.screenshot({path:path.join(output,`start-${width}.png`),fullPage:true});
   assert.equal(await p.locator('#wbWitness').isDisabled(),true);
   await p.locator('#wbCheck').click();assert.match(await p.locator('#wbFeedback').innerText(),/rules agree/);
@@ -108,7 +114,7 @@ const server=http.createServer((req,res)=>{
   }
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
-  rows.push({width,all_seven_puzzles:true,keyboard:true,visual_replay:true,failed_and_assisted_rounds_preserved:true,actual_downloads:true,automatic_uploads:0,denied_snapshot_race:true,read_only_file_replay:true,imported_moves_never_donated:true,malformed_files_rejected:4,stale_file_reads_invalidated:true});await ctx.close();
+  rows.push({width,all_seven_puzzles:true,keyboard:true,visual_replay:true,controls_never_cover_rules_or_board:true,failed_and_assisted_rounds_preserved:true,actual_downloads:true,automatic_uploads:0,denied_snapshot_race:true,read_only_file_replay:true,imported_moves_never_donated:true,malformed_files_rejected:4,stale_file_reads_invalidated:true});await ctx.close();
  }
  const nojs=await browser.newContext({javaScriptEnabled:false}),p=await nojs.newPage();await p.goto(base+'/world-builder.html');assert.match(await p.locator('noscript').innerText(),/needs JavaScript/);assert.equal(await p.locator('#wbCheck').isDisabled(),true);await nojs.close();
  const missing=await browser.newContext();await missing.route('**/world-builder.mjs',r=>r.abort());const failed=await missing.newPage();await failed.goto(base+'/world-builder.html');assert.equal(await failed.locator('#wbCheck').isDisabled(),true);assert.equal(await failed.locator('#wbDonate').isDisabled(),true);await missing.close();
