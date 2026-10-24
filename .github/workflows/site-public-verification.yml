@@ -170,6 +170,7 @@ jobs:
             omega-adaptive-python-results.log
             browser-results.json.omega-*
             browser-research-results.json
+            browser-research-results.json.synthetic-world-builder-*.json
             browser-learning-results.json
             browser-learning-results.json.model-*.json
             browser-learning-results.json.trace-*.json
