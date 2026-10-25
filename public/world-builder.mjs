@@ -235,6 +235,7 @@ $('wbCoachShow').addEventListener('click',async()=>{
 });
 $('wbCoachBack').addEventListener('click',()=>{coachFrame=Math.max(0,coachFrame-1);renderCoach();});
 $('wbCoachNext').addEventListener('click',()=>{if(coach){coachFrame=Math.min(coach.actions.length,coachFrame+1);renderCoach();}});
+$('wbCoachReturn').addEventListener('click',()=>{resumePlay();$('wbCoach').open=false;render();$('wbBoard').focus({preventScroll:true});$('wbBoard').scrollIntoView({block:'start',behavior:'instant'});});
 $('wbCoachDownload').addEventListener('click',()=>{if(coach)download('pcs-checked-route.json',coach);});
 $('wbBack').addEventListener('click',()=>{if(playback){frame=Math.max(0,frame-1);renderPlayback();}});
 $('wbForward').addEventListener('click',()=>{if(playback){frame=Math.min(playback.steps.length,frame+1);renderPlayback();}});

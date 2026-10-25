@@ -18,6 +18,7 @@
       "coach_actions_never_player_data": true,
       "failed_search_opt_in_snapshot": true,
       "stale_coach_cancelled": true,
+      "coach_returns_focus_to_player_world": true,
       "imported_moves_never_donated": true,
       "malformed_files_rejected": 4,
       "stale_file_reads_invalidated": true
@@ -37,6 +38,7 @@
       "coach_actions_never_player_data": true,
       "failed_search_opt_in_snapshot": true,
       "stale_coach_cancelled": true,
+      "coach_returns_focus_to_player_world": true,
       "imported_moves_never_donated": true,
       "malformed_files_rejected": 4,
       "stale_file_reads_invalidated": true
@@ -56,6 +58,7 @@
       "coach_actions_never_player_data": true,
       "failed_search_opt_in_snapshot": true,
       "stale_coach_cancelled": true,
+      "coach_returns_focus_to_player_world": true,
       "imported_moves_never_donated": true,
       "malformed_files_rejected": 4,
       "stale_file_reads_invalidated": true
@@ -75,6 +78,7 @@
       "coach_actions_never_player_data": true,
       "failed_search_opt_in_snapshot": true,
       "stale_coach_cancelled": true,
+      "coach_returns_focus_to_player_world": true,
       "imported_moves_never_donated": true,
       "malformed_files_rejected": 4,
       "stale_file_reads_invalidated": true

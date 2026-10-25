@@ -113,7 +113,8 @@ An optional coach records a real clue before revealing a route from the current
 world. It shows illustrated, read-only example frames; proposed actions never enter
 the player notebook. Every world edit/navigation invalidates the example, and delayed
 results cannot overwrite a new round. It awards no stars, issues no proof verdict,
-and never applies moves automatically. Explicit player actions and requested tests
+and never applies moves automatically. A direct return control closes the example
+and restores keyboard focus to the player board without erasing assistance. Explicit player actions and requested tests
 are still required. Entire clue-assisted episodes remain excluded from fitting.
 
 `pcs-finite-search-route-v1` certificates include complete-state integer potentials,
