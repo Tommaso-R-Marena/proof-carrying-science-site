@@ -1,4 +1,5 @@
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
+import {SEARCH_RESEARCH_CONSENT,SEARCH_RESEARCH_FORMAT,normalizeResearchSession} from '../public/search-research-core.mjs';
 import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
 import {submitJob,pollJob,cancelJob} from './lean-job-service.js';
 import {AuditJournal} from './lean-job-journal.js';
@@ -4138,12 +4139,40 @@ async function eraseCountermodelSessions(env,user){
   return json({ok:true,deleted:Number(out.meta?.changes||0),
     caveat:"Active rows removed; previous offline exports and backups may have separate retention."});
 }
+async function donateSearchResearch(request,env,user){
+  await rateLimit(request,env,"countermodel-search-donation",10,60);
+  if(!Number(user.email_verified))throw new ApiError(403,"Verify your PCS email before sharing research.","email_verification_required");
+  const body=await readBody(request);
+  if(!body||Object.keys(body).sort().join(',')!=="adult_confirmation,consent_training,session"||body.adult_confirmation!==true||body.consent_training!==true)
+    throw new ApiError(400,"Explicit adult opt-in and a typed tested round are required.","search_consent_required");
+  let entry;try{entry=normalizeResearchSession(body.session);}catch(e){throw new ApiError(400,String(e.message).slice(0,120),"invalid_search_round");}
+  const recent=await env.COMMONS_DB.prepare("SELECT COUNT(*) AS n FROM countermodel_research_sessions WHERE user_id=? AND created_at>=?").bind(user.id,new Date(Date.now()-86400000).toISOString()).first();
+  if(Number(recent?.n||0)>=8)throw new ApiError(429,"Daily optional research limit reached. Your notebook stays available.","countermodel_daily_limit");
+  const {session,replay}=entry,digest=await sha256Hex(JSON.stringify(session));
+  const out=await env.COMMONS_DB.prepare("INSERT OR IGNORE INTO countermodel_research_sessions (id,user_id,mission_id,game_version,session_digest,session_json,replay_json,actions_count,checked_count,found_countermodel,consent_version,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
+    .bind(crypto.randomUUID(),user.id,session.mission_id,COUNTERMODEL_VERSION,digest,JSON.stringify(session),JSON.stringify(replay),session.actions.length,replay.checks,replay.final_verified?1:0,SEARCH_RESEARCH_CONSENT,nowIso()).run();
+  return json({ok:true,recorded:Number(out.meta?.changes||0)>0,
+    outcome:replay.final_verified?'checked_counterexample':'tested_search_without_final_counterexample',
+    consent_version:SEARCH_RESEARCH_CONSENT,lean_kernel_checked:false,
+    message:"Finite search choices replayed; this does not issue a scientific or Lean verdict."});
+}
+async function exportSearchResearch(request,env,admin){
+  if(!isOwner(admin))throw new ApiError(403,"Owner authority required for research export.","owner_required");
+  const raw=new URL(request.url).searchParams.get('offset')||'0';
+  if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid bounded offset.","bad_research_offset");
+  const rows=await env.COMMONS_DB.prepare("SELECT session_json,replay_json FROM countermodel_research_sessions WHERE consent_version=? ORDER BY created_at,id LIMIT 21 OFFSET ?").bind(SEARCH_RESEARCH_CONSENT,Number(raw)).all();
+  const entries=(rows.results||[]).slice(0,20).map(row=>({session:JSON.parse(row.session_json),replay:JSON.parse(row.replay_json)}));
+  return json({format:SEARCH_RESEARCH_FORMAT,consent_version:SEARCH_RESEARCH_CONSENT,
+    entries,next_offset:(rows.results||[]).length>20?Number(raw)+20:null,
+    privacy:"No account IDs, emails, IP addresses or timestamps in this owner-only export.",
+    limitations:["Includes tested searches that ended without a checked counterexample; never treat all rows as solved proofs.","Consent and human/assistance provenance cannot be authenticated offline.","Seven public missions; no blind generalization claim. Withdrawal does not automatically recall prior exports."]});
+}
 async function exportCountermodelSessions(request,env,admin){
   if(!isOwner(admin))throw new ApiError(403,"Owner authority required for optional research data.","owner_required");
   const raw=new URL(request.url).searchParams.get("offset")||"0";
   if(!/^(0|[1-9][0-9]{0,5})$/.test(raw))throw new ApiError(400,"Invalid bounded offset.","bad_research_offset");
   const rows=await env.COMMONS_DB.prepare(
-    "SELECT session_json,replay_json FROM countermodel_research_sessions ORDER BY created_at,id LIMIT 21 OFFSET ?"
+    "SELECT session_json,replay_json FROM countermodel_research_sessions WHERE consent_version='pcs-countermodel-adult-optin-v1' AND found_countermodel=1 ORDER BY created_at,id LIMIT 21 OFFSET ?"
   ).bind(Number(raw)).all();
   const entries=(rows.results||[]).slice(0,20).map(row=>({
     session:JSON.parse(row.session_json),replay:JSON.parse(row.replay_json)
@@ -4440,6 +4469,7 @@ async function handleApi(request, env) {
     if (method==="GET" && path==="/api/admin/arena/storage") return adminArenaStorage(env,admin);
     if (method==="GET" && path==="/api/admin/arena/safety-lab/dataset") return exportSafetyForgeSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/countermodel/dataset") return exportCountermodelSessions(request,env,admin);
+    if (method==="GET" && path==="/api/admin/arena/countermodel/search-dataset") return exportSearchResearch(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/forge-duel/dataset") return exportForgeDuelSessions(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/prooflab/dataset") return exportProofLabDataset(request,env,admin);
     if (method==="GET" && path==="/api/admin/arena/meaning/dataset") return meaningExport(request,env,admin);
@@ -4538,6 +4568,7 @@ async function handleApi(request, env) {
   if (method==="POST" && path==="/api/arena/forge-duel/erase") return eraseForgeDuelSessions(env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/donate") return donateSafetyForgeSession(request,env,user);
   if (method==="POST" && path==="/api/arena/countermodel/donate") return donateCountermodelSession(request,env,user);
+  if (method==="POST" && path==="/api/arena/countermodel/search-donate") return donateSearchResearch(request,env,user);
   if (method==="POST" && path==="/api/arena/countermodel/erase") return eraseCountermodelSessions(env,user);
   if (method==="POST" && path==="/api/arena/safety-lab/erase") return eraseSafetyForgeSessions(env,user);
   if (method==="POST" && path==="/api/arena/proof-order/attempt") return donateProofQuestAttempt(request,env,user);
