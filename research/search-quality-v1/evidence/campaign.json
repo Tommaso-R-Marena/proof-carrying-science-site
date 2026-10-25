@@ -4,7 +4,7 @@
   "sources": [
     {
       "path": "public/search-route-core.mjs",
-      "sha256": "70be4190383a63db513bc219608e3eb2c39fdd9fd80c7a2f7266f1c1a36540a2"
+      "sha256": "82385f707dcb7a1d687af1b87b09375c7d5f7899dbf3592c1f7e2b2cd0583878"
     },
     {
       "path": "public/search-research-core.mjs",

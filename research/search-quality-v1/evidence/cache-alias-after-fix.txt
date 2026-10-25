@@ -1,0 +1,16 @@
+✔ all 1,480 finite states and 13,220 graph edges match actual native replay (3835.068804ms)
+✔ seven complete certificates agree with an independent Python forward BFS from every state (370.717262ms)
+✔ forged lower bounds, witnesses, identities, worlds and authority fail closed in both checkers (544.941462ms)
+✔ quality labels telescope, retain failed searches and never leak future results into inputs (7.675159ms)
+✔ v2 export is replay validated, duplicate bounded, paginated, and kept distinct from v1 solved-only data (6.533066ms)
+✔ permuted JSON keys normalize to a replayable research record; only eligible successes fit the unchanged model (9.802418ms)
+✔ large real-format export parses per record without weakening strict duplicate or complexity checks (786.241938ms)
+✔ mutating a returned certificate cannot poison the private source graph or later routes (7.472263ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5672.196691

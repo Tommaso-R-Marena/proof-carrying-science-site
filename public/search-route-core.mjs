@@ -65,7 +65,7 @@ async function distances(g){
 }
 export async function routeCertificate(id,start){
  await verifyRuleset();const g=await graph(id),d=await distances(g);let i=worldIndex(id,start);const actions=[];
- while(d[i]){const edge=g.edges[i].find(e=>d[e.to]===d[i]-1);if(!edge)throw Error('Distance certificate construction failed');actions.push(edge.action);i=edge.to;}
+ while(d[i]){const edge=g.edges[i].find(e=>d[e.to]===d[i]-1);if(!edge)throw Error('Distance certificate construction failed');actions.push(structuredClone(edge.action));i=edge.to;}
  const c={format:ROUTE_FORMAT,mission_id:id,ruleset_sha256:SEARCH_RULESET_SHA256,graph_sha256:g.graph_sha256,
   cost_model:COST,state_count:g.count,start_world:structuredClone(start),potentials:d,actions,
   goal_world:worldFromIndex(id,i),minimum_edits:actions.length,lean_kernel_checked:false,pcs_authoritative:false};

@@ -61,6 +61,18 @@ All seven complete certificates and the independently checked campaign are in
 `evidence/`. Source digests bind that campaign to its exact implementations.
 Certificates remain explicitly non-authoritative and not kernel-checked.
 
+### Adversarial cache-mutation finding
+
+A returned route originally reused the internal cached action object. Mutating a
+returned action index to 9 caused the next otherwise-valid route request to fail.
+The regression test was run against that implementation and failed with
+`Not a legal world edit`; copying each action at the certificate-output boundary
+then made it pass. The malformed certificate itself is rejected both before and
+after the fix. This was an API aliasing/availability defect, not evidence of a
+false Lean proof or a participant attack. Returned artifacts now share no action
+objects with the private source graph. Host/compiler behavior remains trusted;
+this does not establish an immutable JavaScript security boundary.
+
 ## Research data and negative controls
 
 The new v2 route accepts an adult's explicit donation of their own **tested**

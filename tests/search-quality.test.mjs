@@ -92,3 +92,12 @@ test('large real-format export parses per record without weakening strict duplic
  for(const bad of [raw.replace('"entries":','"entries":[],"entries":'),raw.replace('"version":','"version":"forged","version":'),raw.replace('"next_offset":null','"next_offset":null,"next_offset":0'),'{"entries":[],"format":"x","entries":[]}'])assert.throws(()=>readSearchResearch(bad));
  const batch=await collectSearchResearch(()=>({...document(records),next_offset:20}));assert.equal(batch.next_offset,20);assert.equal(batch.entries.length,20);
 });
+
+test('mutating a returned certificate cannot poison the private source graph or later routes',async()=>{
+ const first=await routeCertificate('implication-flip',initialWorld()),hash=first.graph_sha256;
+ first.actions[0].i=9;
+ await assert.rejects(verifyRouteCertificate(first));
+ const second=await routeCertificate('implication-flip',initialWorld());
+ assert.equal(second.graph_sha256,hash);assert.equal((await verifyRouteCertificate(second)).minimum_edits,1);
+ assert.deepEqual(second.actions,[{type:'toggle',p:'P',i:0}]);
+});
