@@ -1213,6 +1213,20 @@
     finally{button.disabled=false;}
   });
 
+  let searchExportOffset=0;
+  $("#adminSearchExport")?.addEventListener("click",async()=>{
+    const button=$("#adminSearchExport"),status=$("#adminSearchExportMessage");button.disabled=true;
+    status.textContent="Replaying tested searches, including unfinished rounds…";
+    try{
+      const {collectSearchResearch}=await import("./search-research-core.mjs");
+      const doc=await collectSearchResearch(offset=>api("/api/admin/arena/countermodel/search-dataset?offset="+offset),{startOffset:searchExportOffset});
+      const url=URL.createObjectURL(new Blob([JSON.stringify(doc,null,2)+"\n"],{type:"application/json"}));
+      const a=document.createElement("a");a.href=url;a.download="pcs-tested-search-research-v2.json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      status.textContent=`Exported ${doc.entries.length} independently replayed tested searches. Failed and assisted rounds remain explicit; run the offline quality analyzer before model preparation.`+(doc.next_offset===null?" End of export; next click starts again.":" More rounds are available; click again for the next batch.");
+      searchExportOffset=doc.next_offset===null?0:doc.next_offset;
+    }catch(e){status.textContent="Search export unavailable: "+e.message;}finally{button.disabled=false;}
+  });
+
   $("#adminCountermodelExport")?.addEventListener("click",async()=>{
     const button=$("#adminCountermodelExport"),status=$("#adminCountermodelExportMessage");
     button.disabled=true;status.textContent="Rechecking consented Countermodel research pages…";

@@ -23,7 +23,7 @@ function fakeEnv({user=adult,admin=null,changes=1,records=[]}={}){
    if(sql.includes('UPDATE admin_sessions SET last_seen_at'))return {meta:{changes:1}};
    throw Error('Unexpected mutation '+sql);
   },async all(){
-   if(sql.includes('FROM countermodel_research_sessions ORDER BY')){state.exposed=true;return {results:records};}
+   if(sql.includes("FROM countermodel_research_sessions WHERE consent_version='pcs-countermodel-adult-optin-v1' AND found_countermodel=1 ORDER BY")||sql.includes('FROM countermodel_research_sessions WHERE consent_version=? ORDER BY')){state.exposed=true;return {results:records};}
    throw Error('Unexpected query '+sql);
   }
  };}};}};
@@ -68,4 +68,24 @@ test('same logical action sequence has same digest regardless of JSON key orderi
  assert.equal((await hit(original,'/api/arena/countermodel/donate',a)).status,200);
  assert.equal((await hit(permuted,'/api/arena/countermodel/donate',b)).status,200);
  assert.equal(original.state.sha,permuted.state.sha);
+});
+
+test('versioned search route accepts genuinely replayed failures without relaxing original solved-only route',async()=>{
+ const failed={...valid(),session:{...choices(),actions:[{type:'check'}]}};
+ const ctx=fakeEnv();const r=await hit(ctx,'/api/arena/countermodel/search-donate',failed);
+ assert.equal(r.status,200,JSON.stringify(r.body));assert.equal(r.body.outcome,'tested_search_without_final_counterexample');assert.equal(r.body.lean_kernel_checked,false);
+ assert.equal((await hit(fakeEnv(),'/api/arena/countermodel/donate',failed)).status,400);
+ for(const mutate of [v=>v.adult_confirmation=false,v=>v.consent_training=false,v=>v.outcome='success',v=>v.session.actions=[],v=>v.session.actions=[{type:'check',verified:true}]]){
+  const bad=structuredClone(failed);mutate(bad);const ctx=fakeEnv();assert.equal((await hit(ctx,'/api/arena/countermodel/search-donate',bad)).status,400);assert.equal(ctx.state.writes,0);
+ }
+ assert.equal((await hit(fakeEnv({user:null}),'/api/arena/countermodel/search-donate',failed,{cookie:''})).status,401);
+ assert.equal((await hit(fakeEnv({user:{...adult,email_verified:0}}),'/api/arena/countermodel/search-donate',failed)).status,403);
+ assert.equal((await hit(fakeEnv(),'/api/arena/countermodel/search-donate',failed,{origin:'https://hostile.example'})).status,403);
+});
+test('search export is owner-only, typed and deidentified',async()=>{
+ const path='/api/admin/arena/countermodel/search-dataset';
+ for(const admin of [null,{...adult,role:'admin',is_owner:0},{...adult,role:'admin',is_owner:1}]){
+  const ctx=fakeEnv({admin});const r=await worker.fetch(new Request(ORIGIN+path,{headers:{cookie:'pcs_admin_session=fixture'}}),ctx.env);assert.equal(r.status,admin?.is_owner?200:admin?403:401);
+  if(r.status===200){const b=await r.json();assert.equal(b.format,'pcs-countermodel-search-optin-v2');assert.deepEqual(b.entries,[]);assert.equal(b.next_offset,null);}
+ }
 });

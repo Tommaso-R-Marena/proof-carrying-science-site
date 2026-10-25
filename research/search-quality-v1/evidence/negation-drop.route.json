@@ -1,0 +1,132 @@
+{
+  "format": "pcs-finite-search-route-v1",
+  "mission_id": "negation-drop",
+  "ruleset_sha256": "d3b02eb4eb39976fd3179a44ef1b6bffd17a8f4a271b1bd7cddb97eb71276df2",
+  "graph_sha256": "3de72bcb9fe4bfb6e65038f01b239d4fca809b451571263fe3b68ec466710000",
+  "cost_model": "one per world edit; tests and clues excluded",
+  "state_count": 84,
+  "start_world": {
+    "n": 1,
+    "P": [
+      false
+    ],
+    "Q": [
+      false
+    ],
+    "R": [
+      [
+        false
+      ]
+    ]
+  },
+  "potentials": [
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0
+  ],
+  "actions": [
+    {
+      "type": "toggle",
+      "p": "P",
+      "i": 0
+    }
+  ],
+  "goal_world": {
+    "n": 1,
+    "P": [
+      true
+    ],
+    "Q": [
+      false
+    ],
+    "R": [
+      [
+        false
+      ]
+    ]
+  },
+  "minimum_edits": 1,
+  "lean_kernel_checked": false,
+  "pcs_authoritative": false
+}

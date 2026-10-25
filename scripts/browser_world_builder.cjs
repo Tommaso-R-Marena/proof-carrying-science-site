@@ -80,7 +80,7 @@ const server=http.createServer((req,res)=>{
   await p.locator('#wbShare > summary').click();await p.locator('#wbAdult').check();assert.equal(await p.locator('#wbDonate').isDisabled(),true);await p.locator('#wbConsent').check();assert.equal(await p.locator('#wbDonate').isEnabled(),true);
   // An intentionally denied response tests UI snapshotting, not real authorization.
   let release,received;const held=new Promise(r=>received=r);
-  await ctx.route('**/api/arena/countermodel/donate',async route=>{const body=route.request().postDataJSON();await new Promise(r=>{release=()=>r();received(body);});await route.fulfill({status:401,contentType:'application/json',body:'{"error":"authentication_required"}'});});
+  await ctx.route('**/api/arena/countermodel/search-donate',async route=>{const body=route.request().postDataJSON();await new Promise(r=>{release=()=>r();received(body);});await route.fulfill({status:401,contentType:'application/json',body:'{"error":"authentication_required"}'});});
   await p.locator('#wbDonate').click();const sent=await held;assert.deepEqual(Object.keys(sent).sort(),['adult_confirmation','consent_training','session']);assert.equal(replayCountermodelSession(sent.session).final_verified,true);
   await p.locator('#wbRestart').click();assert.equal(await p.locator('#wbConsent').isChecked(),false);release();await p.locator('#wbShareStatus').filter({hasText:'Sharing did not complete'}).waitFor();
   assert.match(await p.locator('#wbShareStatus').innerText(),/Sign in and verify/);assert.equal(await p.locator('#wbDonate').isDisabled(),true);
@@ -107,6 +107,26 @@ const server=http.createServer((req,res)=>{
   await p.locator('#wbFile').setInputFiles({name:'slow.json',mimeType:'application/json',buffer:Buffer.from('{}')});await p.waitForFunction(()=>typeof window.finishOldNotebook==='function');
   await p.locator('#wbClear').click();await p.evaluate(()=>window.finishOldNotebook(new TextEncoder().encode('{}').buffer));await p.waitForTimeout(50);
   assert.equal(await p.locator('#wbLoadStatus').getAttribute('data-state'),'idle');assert.equal(await p.locator('#wbFile').inputValue(),'');assert.equal(await p.locator('#wbViewImported').isDisabled(),true);
+  // Failed tested rounds can be explicitly shared; no successful verdict is invented.
+  await ctx.unroute('**/api/arena/countermodel/search-donate');let failedRequest;
+  await ctx.route('**/api/arena/countermodel/search-donate',async r=>{failedRequest=r.request().postDataJSON();await r.fulfill({status:401,contentType:'application/json',body:'{"error":"authentication_required"}'});});
+  await p.locator('#wbCheck').click();await p.locator('#wbAdult').check();await p.locator('#wbConsent').check();await p.locator('#wbDonate').click();
+  await p.locator('#wbShareStatus').filter({hasText:'Sharing did not complete'}).waitFor();assert.equal(replayCountermodelSession(failedRequest.session).final_verified,false);assert.equal(failedRequest.session.actions.length,1);
+  await p.locator('#wbCoach > summary').click();await p.locator('#wbCoachShow').click();await p.locator('#wbCoachResult:not([hidden])').waitFor();
+  assert.match(await p.locator('#wbStats').innerText(),/1 clues/);assert.match(await p.locator('#wbCoachStatus').innerText(),/1 world edit/);
+  assert.equal(await p.locator('#wbWitness').isDisabled(),true);await p.locator('#wbCoachNext').click();assert.equal(await p.locator('#wbCoachWorld .wb-character').getAttribute('data-key'),'true');
+  pending=p.waitForEvent('download');await p.locator('#wbCoachDownload').click();d=await pending;const certificate=JSON.parse(fs.readFileSync(await d.path(),'utf8'));
+  const {verifyRouteCertificate}=await import('../public/search-route-core.mjs');assert.equal((await verifyRouteCertificate(certificate)).minimum_edits,1);
+  pending=p.waitForEvent('download');await p.locator('#wbDownload').click();d=await pending;const coached=readNotebook(fs.readFileSync(await d.path(),'utf8'));
+  assert.deepEqual(coached.sessions[0].actions,[{type:'check'},{type:'hint'}],'example moves never masquerade as player actions');
+  if(width===1440)fs.writeFileSync(path.join(output,'coach-route.json'),JSON.stringify(certificate,null,2));
+  await p.locator('#wbCoachReturn').click();assert.equal(await p.locator('#wbCoach').getAttribute('open'),null);assert.equal(await p.locator('#wbBoard').evaluate(e=>e===document.activeElement),true);assert.match(await p.locator('#wbStats').innerText(),/1 clues/);assert.equal(await p.locator('#wbWorld .wb-character').getAttribute('data-key'),'false','coach return never applies example moves');
+  await p.locator('#wbWorld [data-fact=P][data-character="0"]').click();assert.equal(await p.locator('#wbCoachResult').isHidden(),true,'returning and editing invalidate the coach snapshot');
+  await p.locator('#wbClear').click();
+  // Slow route construction must never reappear in another puzzle.
+  await p.getByRole('button',{name:/^Puzzle 6:/}).click();await p.evaluate(()=>{document.getElementById('wbCoachShow').click();document.querySelector('[data-wb-focus="mission-0"]').click();});
+  await p.waitForTimeout(150);assert.equal(await p.locator('#wbCoachResult').isHidden(),true);assert.match(await p.locator('#wbStats').innerText(),/0 clues/);
+  assert.equal(await p.locator('#wbClear').isDisabled(),true);
   if(width===1440){
    await p.evaluate(()=>{document.getElementById('wbClear').click();for(let round=0;round<20;round++){for(let j=0;j<=round;j++)document.getElementById('wbCheck').click();if(round<19)document.getElementById('wbRestart').click();}document.getElementById('wbRestart').click();});
    assert.match(await p.locator('#wbFeedback').innerText(),/Twenty rounds are ready/);
@@ -114,7 +134,7 @@ const server=http.createServer((req,res)=>{
   }
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
-  rows.push({width,all_seven_puzzles:true,keyboard:true,visual_replay:true,controls_never_cover_rules_or_board:true,failed_and_assisted_rounds_preserved:true,actual_downloads:true,automatic_uploads:0,denied_snapshot_race:true,read_only_file_replay:true,imported_moves_never_donated:true,malformed_files_rejected:4,stale_file_reads_invalidated:true});await ctx.close();
+  rows.push({width,all_seven_puzzles:true,keyboard:true,visual_replay:true,controls_never_cover_rules_or_board:true,failed_and_assisted_rounds_preserved:true,actual_downloads:true,automatic_uploads:0,denied_snapshot_race:true,read_only_file_replay:true,visual_coach_assistance_recorded:true,coach_actions_never_player_data:true,failed_search_opt_in_snapshot:true,stale_coach_cancelled:true,coach_returns_focus_to_player_world:true,imported_moves_never_donated:true,malformed_files_rejected:4,stale_file_reads_invalidated:true});await ctx.close();
  }
  const nojs=await browser.newContext({javaScriptEnabled:false}),p=await nojs.newPage();await p.goto(base+'/world-builder.html');assert.match(await p.locator('noscript').innerText(),/needs JavaScript/);assert.equal(await p.locator('#wbCheck').isDisabled(),true);await nojs.close();
  const missing=await browser.newContext();await missing.route('**/world-builder.mjs',r=>r.abort());const failed=await missing.newPage();await failed.goto(base+'/world-builder.html');assert.equal(await failed.locator('#wbCheck').isDisabled(),true);assert.equal(await failed.locator('#wbDonate').isDisabled(),true);await missing.close();

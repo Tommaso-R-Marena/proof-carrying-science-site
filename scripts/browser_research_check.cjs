@@ -41,6 +41,9 @@ async function cleanup(){
  fixture(`UPDATE users SET email_verified=1 WHERE id='${userId}' AND email='${email}'`);
  const first=await donate(200);if(first.recorded!==true)throw Error('Verified session not actually stored');
  const duplicate=await donate(200);if(duplicate.recorded!==false)throw Error('Duplicate donation counted as new data');
+ const cross=await context.request.post(base+'/api/arena/countermodel/search-donate',{headers:{Origin:base},data:{adult_confirmation:true,consent_training:true,session:{version:'pcs-countermodel-lab-v1',mission_id:'implication-flip',actions:[{type:'toggle',p:'P',i:0},{type:'check'}]}}});
+ if(cross.status()!==200||(await cross.json()).recorded!==false)throw Error('Cross-consent duplicate was silently relabeled');
+ report.cross_consent_duplicate_preserves_original_record=true;
  report.real_d1_insert_and_deduplication=true;
  await page.goto(base+'/arena-countermodel.html?mission=quantifier-switch',{waitUntil:'networkidle'});
  await page.locator('#cmAdd').click();await page.locator('#cmWorld button').first().click();await page.locator('#cmCheck').click();
@@ -84,12 +87,16 @@ async function cleanup(){
  await page.locator('#wbShare > summary').click();
  async function donateVisual(){
   await page.locator('#wbAdult').check();await page.locator('#wbConsent').check();
-  const reply=page.waitForResponse(r=>r.url().endsWith('/api/arena/countermodel/donate'));
+  const reply=page.waitForResponse(r=>r.url().endsWith('/api/arena/countermodel/search-donate'));
   await page.locator('#wbDonate').click();const response=await reply,data=await response.json();
   if(response.status()!==200)throw Error('Visual session was not accepted by the real Worker');
   await page.locator('#wbShareStatus').filter({hasText:/recorded/}).waitFor();
   return data;
  }
+ // Store an actual failed tested round, independently of the successful trajectory.
+ await page.locator('#wbRestart').click();await page.locator('#wbCheck').click();
+ if((await donateVisual()).recorded!==true)throw Error('Failed tested round was not actually stored');
+ await page.locator('#wbWorld [data-fact=P][data-character="0"]').click();await page.locator('#wbCheck').click();
  if((await donateVisual()).recorded!==true)throw Error('Visual finite replay was not stored');
  if((await donateVisual()).recorded!==false)throw Error('Visual duplicate counted as another participant');
  await page.locator('#wbHint').click();await page.locator('#wbCheck').click();
@@ -98,23 +105,30 @@ async function cleanup(){
  if(await page.locator('#wbConsent').isChecked())throw Error('Visual consent silently carried into another round');
  await page.locator('#wbAdd').click();await page.locator('#wbWorld [data-fact=P][data-character="0"]').click();await page.locator('#wbCheck').click();
  if((await donateVisual()).recorded!==true)throw Error('Visual held-out choices were not stored');
- const visualExport=await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json();
- if(visualExport.entries.length!==3||JSON.stringify(visualExport).includes(email)||JSON.stringify(visualExport).includes(userId))throw Error('Visual owner export identity boundary failed');
- const visualModel=trainCountermodelSearchPolicy(visualExport),visualEvaluation=evaluateCountermodelSearchPolicy(visualModel,visualExport);
+ const legacy=await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json();
+ if(legacy.entries.length)throw Error('V2 searches leaked into the legacy solved-only export');
+ await page.goto(base+'/admin.html',{waitUntil:'networkidle'});await page.locator('#adminDashboard').waitFor();
+ const v2download=page.waitForEvent('download');await page.locator('#adminSearchExport').click();
+ const visualExport=JSON.parse(fs.readFileSync(await (await v2download).path(),'utf8'));
+ if(visualExport.entries.length!==4||JSON.stringify(visualExport).includes(email)||JSON.stringify(visualExport).includes(userId))throw Error('Visual owner export identity boundary failed');
+ const {trainSearchResearch}=await import('../scripts/train_search_research.mjs');
+ const trained=await trainSearchResearch(visualExport),visualModel=trained.model,visualEvaluation=trained.evaluation;
  if(visualModel.training.examples!==3||visualEvaluation.examples!==3)throw Error('Visual data training/evaluation or assistance boundary failed');
  const unassistedExport={...visualExport,entries:visualExport.entries.filter(e=>!e.replay.hints)};
- if(JSON.stringify(trainCountermodelSearchPolicy(unassistedExport))!==JSON.stringify(visualModel))throw Error('Visual clues contaminated fitting');
- const trainingReplay=visualExport.entries.find(e=>e.session.mission_id==='implication-flip'&&!e.replay.hints).replay;
+ if(JSON.stringify((await trainSearchResearch(unassistedExport)).model)!==JSON.stringify(visualModel))throw Error('Visual clues contaminated fitting');
+ const trainingReplay=visualExport.entries.find(e=>e.session.mission_id==='implication-flip'&&!e.replay.hints&&e.replay.final_verified).replay;
  if(trainingReplay.steps.filter(s=>s.received_checker_response&&!s.counterexample).length!==1)throw Error('Visual failed check disappeared from real storage');
- report.visual_world_builder={actual_d1_insert:true,deduplicated:true,failed_check_retained:true,
+ if(trained.quality.summary.tested_rounds!==4||trained.quality.summary.unfinished_rounds!==1||trained.intake.unfinished_excluded_from_behavior_cloning!==1)throw Error('Failed-search quality/intake accounting failed');
+ report.visual_world_builder={actual_d1_insert:true,failed_tested_round_stored:true,legacy_export_unchanged:true,quality:trained.quality.summary,intake:trained.intake,deduplicated:true,failed_check_retained:true,
   assisted_excluded:true,held_out_excluded_from_fitting:true,training:visualModel.training,evaluation:visualEvaluation};
  report.visual_world_builder.model_digest_sha256=visualModel.model_digest_sha256;
  report.visual_world_builder.data_origin='synthetic fixture account and scripted UI choices; no human data or adoption result';
  fs.writeFileSync(output+'.synthetic-world-builder-export.json',JSON.stringify(visualExport,null,2)+'\n');
+ fs.writeFileSync(output+'.synthetic-world-builder-quality.json',JSON.stringify(trained.quality,null,2)+'\n');
  fs.writeFileSync(output+'.synthetic-world-builder-model.json',JSON.stringify(visualModel,null,2)+'\n');
  const visualErase=await context.request.post(base+'/api/arena/countermodel/erase',{headers:{Origin:base},data:{}});
- if(visualErase.status()!==200||(await visualErase.json()).deleted!==3)throw Error('Visual research rows did not withdraw');
- if((await (await context.request.get(base+'/api/admin/arena/countermodel/dataset')).json()).entries.length)throw Error('Visual withdrawn data remained exportable');
+ if(visualErase.status()!==200||(await visualErase.json()).deleted!==4)throw Error('Visual research rows did not withdraw');
+ if((await (await context.request.get(base+'/api/admin/arena/countermodel/search-dataset')).json()).entries.length)throw Error('Visual withdrawn data remained exportable');
  report.visual_world_builder.withdrawal_verified=true;
  fixture(`UPDATE users SET role='contributor',is_owner=0 WHERE id='${userId}' AND email='${email}'`);
  const removed=await context.request.post(base+'/api/account/delete',{headers:{Origin:base},data:{password,confirmation:'DELETE'}});if(removed.status()!==200)throw Error('Fixture account cleanup failed');
