@@ -9,10 +9,11 @@ import re
 def review_world_builder(text: str) -> list[str]:
     errors = []
     guards = [
+        "return allSessions().find(s=>JSON.stringify(s)===value)||null;",
         "$('wbDonate').addEventListener('click',async()=>{",
-        "if(busy||playbackImported||!view.checked?.final_verified||view.edits<1||!$('wbAdult').checked||!$('wbConsent').checked)return;",
-        "const snapshot=structuredClone(active),identity=JSON.stringify(snapshot);busy=true;",
-        "fetch('/api/arena/countermodel/donate',{method:'POST',credentials:'same-origin',redirect:'error',signal:AbortSignal.timeout(15000),",
+        "if(busy||playbackImported||!selected||!$('wbAdult').checked||!$('wbConsent').checked)return;",
+        "const snapshot=structuredClone(selected),identity=JSON.stringify(snapshot);busy=true;",
+        "fetch('/api/arena/countermodel/search-donate',{method:'POST',credentials:'same-origin',redirect:'error',signal:AbortSignal.timeout(15000),",
         "body:JSON.stringify({adult_confirmation:true,consent_training:true,session:snapshot})",
     ]
     for guard in guards:

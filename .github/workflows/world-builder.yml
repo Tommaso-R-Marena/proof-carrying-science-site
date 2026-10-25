@@ -3,6 +3,11 @@ on:
   pull_request:
     paths:
       - 'public/world-builder*'
+      - 'public/search-*.mjs'
+      - 'research/search-quality-v1/**'
+      - 'scripts/*search*'
+      - 'src/worker.js'
+      - 'tests/search-quality.test.mjs'
       - 'public/countermodel-*.mjs'
       - 'public/arena.html'
       - 'public/experience.html'
@@ -34,7 +39,7 @@ jobs:
         with:
           python-version: '3.12.14'
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run test:world-builder
+      - run: npm run test:world-builder && npm run test:search-quality
       - name: Actual visual play, replay and downloads at four widths
         env:
           PCS_WORLD_BUILDER_OUTPUT: ${{ runner.temp }}/world-builder
@@ -47,6 +52,9 @@ jobs:
         run: |
           set -euo pipefail
           source scripts/activate_lean_428.sh
+          node scripts/search_quality_campaign.mjs "$RUNNER_TEMP/world-builder/search-quality"
+          node scripts/verify_search_distance_lean.mjs | tee "$RUNNER_TEMP/world-builder/search-distance-lean.json"
+          python3 scripts/verify_search_route.py "$RUNNER_TEMP/world-builder/coach-route.json"
           node scripts/verify_world_builder_downloads.mjs "$RUNNER_TEMP/world-builder" | tee "$RUNNER_TEMP/world-builder/lean-results.json"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()

@@ -3,12 +3,15 @@ import {plainMission, inverseWorldEdit, renderRelationMap} from './countermodel-
 import {replayCountermodelSession, exportLeanCountermodel, findMinimalCountermodel} from './countermodel-core.mjs';
 import {explainWorld,mastery} from './countermodel-expedition.mjs';
 
+import {routeCertificate,editWorld} from './search-route-core.mjs';
+
 const $ = id => document.getElementById(id);
 await verifyRuleset(); // Controls stay disabled if the reviewed semantics do not match.
 const el = (tag, text, cls) => {const e=document.createElement(tag); if(text!==undefined)e.textContent=text; if(cls)e.className=cls; return e;};
 let active = newSession(MISSIONS[0]), saved = [], undo = [], solved = new Set(), busy = false;
 let playback = null, frame = 0;
 let imported = [], playbackImported = false, fileGeneration = 0, loadingFile = false;
+let coach=null,coachFrame=0,coachGeneration=0,coachLoading=false,shareIdentity=null;
 const earned = new Map();
 const character = i => `Character ${i+1}`;
 const plain = text => text.replace(/agent/gi, s => s[0]==='A'?'Character':'character').replace(/relates to/g,'sends a signal to').replace(/relate to/g,'send a signal to').replace(/partners/g,'signal recipients');
@@ -24,6 +27,7 @@ function archive() {
  try {const next=allSessions();if(next.length>=20)throw Error('Twenty rounds are ready to save. Download the notebook, then clear it before starting another round.');saved=next;return true;} catch(e) {feedback(e.message,'miss');return false;}
 }
 function resumePlay(){
+ coachGeneration++;coachLoading=false;coach=null;$('wbCoachResult').hidden=true;$('wbCoachStatus').textContent='Optional. Try your own ideas first.';
  fileGeneration++;loadingFile=false;
  if(playbackImported){$('wbAdult').checked=false;$('wbConsent').checked=false;}
  playbackImported=false;$('wbReplayPanel').hidden=true;
@@ -108,7 +112,8 @@ function render() {
  renderWorld(view.world,m.kind==='relation');
  $('wbAdd').disabled=view.world.n>=3||active.actions.length>=119;$('wbRemove').disabled=view.world.n<=1||active.actions.length>=119;
  $('wbUndo').disabled=!undo.length||active.actions.length>=119;$('wbCheck').disabled=active.actions.length>=120;
- $('wbHint').disabled=view.hints>=3||active.actions.length>=119;$('wbRestart').disabled=false;
+ $('wbHint').disabled=view.hints>=3||active.actions.length>=119;
+ $('wbCoachShow').disabled=coachLoading||view.hints>=3||active.actions.length>=119;$('wbRestart').disabled=false;
  $('wbStats').textContent=`${view.edits} moves · ${view.checks} tests · ${view.hints} clues${view.hints?' · assisted round':''}`;
  $('wbWin').hidden=!win;
  $('wbWinDetail').textContent=win?`${view.world.n===view.checked.minimum_domain_size?'A smallest possible world.':'Can you find a smaller world?'} ${view.hints?'Clues were used; this stays marked as assisted.':'No clues used in this round.'}`:'';
@@ -123,8 +128,17 @@ function render() {
  $('wbNotebookSummary').textContent=`${records.length} tested rounds · ${tests} tests · ${failed} unsuccessful tests retained. Up to 20 rounds; no identifiers or free-text answers.`;
  $('wbDownload').disabled=!records.length;$('wbReplay').disabled=!view.checks;$('wbClear').disabled=!records.length&&!active.actions.length&&!imported.length&&!loadingFile;
  $('wbFile').disabled=false;$('wbImportedRound').disabled=!imported.length;$('wbViewImported').disabled=!imported.length;
- $('wbSharePreview').textContent=playbackImported?'Saved-file replay is read-only and cannot be donated. Return to your live round to play and share your own choices.':win&&view.edits?`Current playing round (${m.name}): ${view.edits} moves, ${view.checks} tests, ${view.hints} clues. The failed tests and revisions in this round are included. ${view.hints?'Assisted: excluded from unassisted fitting.':'No recorded clues; human independence cannot be authenticated.'}`:'Find and test a difference, with at least one move, to enable donation. You can always save unfinished rounds privately.';
- $('wbDonate').disabled=busy||playbackImported||!win||view.edits<1||!$('wbAdult').checked||!$('wbConsent').checked;
+ const prior=$('wbShareRound').value;
+ const options=$('wbShareRound');options.replaceChildren();
+ for(const [i,s]of records.entries()){const r=checkedRounds[i],o=el('option',`${i+1}. ${missionFor(s.mission_id).name} · ${r.final_verified?'difference tested':'unfinished search'} · ${r.checks} tests${r.hints?' · assisted':''}`);o.value=JSON.stringify(s);options.append(o);}
+ if([...options.options].some(o=>o.value===prior))options.value=prior;else options.selectedIndex=options.options.length-1;
+ options.disabled=!records.length||playbackImported;
+ const selected=selectedRound();
+ const identity=selected?JSON.stringify(selected):null;
+ if(identity!==shareIdentity){$('wbAdult').checked=false;$('wbConsent').checked=false;shareIdentity=identity;}
+ const r=selected?replayCountermodelSession(selected):null;
+ $('wbSharePreview').textContent=playbackImported?'Saved-file replay is read-only and cannot be donated. Return to your live round to share your own choices.':r?`Selected own round: ${r.edits} moves, ${r.checks} tests, ${r.hints} clues. ${r.final_verified?'A difference was tested.':'No final difference was tested; failed searches are valuable, too.'} ${r.hints?'Assisted: excluded from unassisted fitting.':'Human independence cannot be authenticated.'}`:'Test a world to enable sharing. Failed searches are welcome.';
+ $('wbDonate').disabled=busy||playbackImported||!selected||!$('wbAdult').checked||!$('wbConsent').checked;
  renderExplanation(view);
  if(focus)document.querySelector(`[data-wb-focus="${CSS.escape(focus)}"]`)?.focus({preventScroll:true});
  else if(edgeFocus)document.querySelector(`[data-cm-focus="${CSS.escape(edgeFocus)}"]`)?.focus({preventScroll:true});
@@ -136,7 +150,7 @@ $('wbCheck').addEventListener('click',()=>{
    active=addAction(active,{type:'check'});const r=sessionView(active).checked;
    if(r.final_verified){solved.add(active.mission_id);const goals=mastery(active),prior=earned.get(active.mission_id)||{};for(const k of ['minimal','independent','precise'])prior[k]||=goals[k];earned.set(active.mission_id,prior);feedback(`Difference found. The original rule is ${r.final_verdict.left?'true':'false'}; the rewrite is ${r.final_verdict.right?'true':'false'}. Your world shows that they mean different things.`,'win');}
    else feedback('The rules agree in this world. That is useful feedback, not a dead end. Change a fact or add a character, then try again.','miss');
-   $('wbReplayPanel').hidden=true;render();
+   $('wbShareRound').value='';$('wbReplayPanel').hidden=true;render();
  }catch(e){feedback(e.message,'miss');}
 });
 $('wbAdd').addEventListener('click',()=>act({type:'add'}));$('wbRemove').addEventListener('click',()=>act({type:'remove'}));
@@ -200,19 +214,45 @@ function renderPlayback(){
   root.append(el('p','Recorded signals: '+(signals.join(', ')||'none')));
  }
 }
+function renderCoach(){
+ if(!coach)return;
+ let world=coach.start_world;for(const a of coach.actions.slice(0,coachFrame))world=editWorld(coach.mission_id,world,a);
+ const root=$('wbCoachWorld');root.replaceChildren();const relation=missionFor(coach.mission_id).kind==='relation';root.dataset.kind=relation?'relation':'unary';
+ for(let i=0;i<world.n;i++){const card=el('div',undefined,'wb-character');card.append(el('h4',character(i)));avatar(card,i,world,relation);if(!relation)card.append(el('p',`Key: ${world.P[i]?'yes':'no'} · Door: ${world.Q[i]?'opens':'does not open'}`));root.append(card);}
+ if(relation){const signals=[];for(let i=0;i<world.n;i++)for(let j=0;j<world.n;j++)if(world.R[i][j])signals.push(`${i+1} → ${j+1}`);const map=el('div',undefined,'wb-relations');renderRelationMap(document,map,world,()=>{});labelSignals(map,world.n);map.querySelector('marker').id='wbCoachArrow';map.querySelectorAll('[marker-end]').forEach(e=>e.setAttribute('marker-end','url(#wbCoachArrow)'));map.querySelectorAll('[tabindex]').forEach(e=>{e.removeAttribute('tabindex');e.removeAttribute('role');e.removeAttribute('aria-pressed');});map.querySelector('svg').style.pointerEvents='none';root.append(map,el('p','Example signals: '+(signals.join(', ')||'none')));}
+ $('wbCoachFrame').textContent=`Example ${coachFrame} of ${coach.actions.length}`;$('wbCoachBack').disabled=!coachFrame;$('wbCoachNext').disabled=coachFrame===coach.actions.length;
+ const a=coach.actions[coachFrame-1];$('wbCoachMove').textContent=!a?'Start: your world when you requested this clue.':a.type==='add'?'Example: add a character.':a.type==='remove'?'Example: remove the last character.':a.type==='toggle'?`Example: toggle ${a.p==='P'?'key':'door'} for Character ${a.i+1}.`:`Example: toggle signal ${a.i+1} → ${a.j+1}.`;
+ $('wbCoachResult').hidden=false;
+}
+$('wbCoachShow').addEventListener('click',async()=>{
+ if(coachLoading||sessionView(active).hints>=3||active.actions.length>=119)return;
+ let generation;
+ try{
+  resumePlay();active=addAction(active,{type:'hint'});const snapshot=structuredClone(active);generation=++coachGeneration;coachLoading=true;render();$('wbCoachStatus').textContent='Checking all finite worlds. Clue recorded; this round is assisted.';
+  const c=await routeCertificate(snapshot.mission_id,sessionView(snapshot).world);if(generation!==coachGeneration)return;
+  coach=c;coachFrame=0;coachLoading=false;render();renderCoach();$('wbCoachStatus').textContent=`A shortest example uses ${c.minimum_edits} world edit(s). ${c.state_count} states checked. Your actual moves are unchanged. Test your own world after editing.`;
+ }catch(e){if(generation!==coachGeneration)return;coachLoading=false;render();$('wbCoachStatus').textContent='Route unavailable: '+e.message;}
+});
+$('wbCoachBack').addEventListener('click',()=>{coachFrame=Math.max(0,coachFrame-1);renderCoach();});
+$('wbCoachNext').addEventListener('click',()=>{if(coach){coachFrame=Math.min(coach.actions.length,coachFrame+1);renderCoach();}});
+$('wbCoachDownload').addEventListener('click',()=>{if(coach)download('pcs-checked-route.json',coach);});
 $('wbBack').addEventListener('click',()=>{if(playback){frame=Math.max(0,frame-1);renderPlayback();}});
 $('wbForward').addEventListener('click',()=>{if(playback){frame=Math.min(playback.steps.length,frame+1);renderPlayback();}});
 $('wbClear').addEventListener('click',()=>{resumePlay();saved=[];imported=[];playback=null;solved.clear();earned.clear();active=newSession(MISSIONS[0]);undo=[];$('wbAdult').checked=false;$('wbConsent').checked=false;$('wbFile').value='';$('wbImportedRound').replaceChildren();$('wbLoadStatus').dataset.state='idle';$('wbLoadStatus').textContent='No saved notebook opened.';feedback('Local notebook cleared. This does not delete previously donated server records; use the full lab’s deletion control for those.');render();});
 for(const id of ['wbAdult','wbConsent'])$(id).addEventListener('change',render);
+function selectedRound(){
+ const value=$('wbShareRound').value;return allSessions().find(s=>JSON.stringify(s)===value)||null;
+}
+$('wbShareRound').addEventListener('change',()=>{$('wbAdult').checked=false;$('wbConsent').checked=false;render();});
 $('wbDonate').addEventListener('click',async()=>{
- const view=sessionView(active);
- if(busy||playbackImported||!view.checked?.final_verified||view.edits<1||!$('wbAdult').checked||!$('wbConsent').checked)return;
- const snapshot=structuredClone(active),identity=JSON.stringify(snapshot);busy=true;render();$('wbShareStatus').textContent='Sending this snapshot for independent server replay…';
+ const selected=selectedRound();
+ if(busy||playbackImported||!selected||!$('wbAdult').checked||!$('wbConsent').checked)return;
+ const snapshot=structuredClone(selected),identity=JSON.stringify(snapshot);busy=true;render();$('wbShareStatus').textContent='Sending this snapshot for independent server replay…';
  try{
-   const r=await fetch('/api/arena/countermodel/donate',{method:'POST',credentials:'same-origin',redirect:'error',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json'},body:JSON.stringify({adult_confirmation:true,consent_training:true,session:snapshot})});
+   const r=await fetch('/api/arena/countermodel/search-donate',{method:'POST',credentials:'same-origin',redirect:'error',signal:AbortSignal.timeout(15000),headers:{'content-type':'application/json'},body:JSON.stringify({adult_confirmation:true,consent_training:true,session:snapshot})});
    const data=await r.json();if(!r.ok)throw Error(r.status===401?'Sign in and verify your PCS email before sharing.':String(data.message||data.error||'Server rejected the snapshot.').slice(0,200));
    if(typeof data.recorded!=='boolean')throw Error('The server returned an unrecognized response.');
-   $('wbShareStatus').textContent=(JSON.stringify(active)===identity?'This round: ':'Earlier round snapshot: ')+(data.recorded?'recorded by the server after finite replay.':'already recorded; no duplicate stored.');
+   $('wbShareStatus').textContent=(JSON.stringify(selectedRound())===identity?'This round: ':'Earlier round snapshot: ')+(data.recorded?'recorded by the server after finite replay.':'already recorded; no duplicate stored.');
  }catch(e){$('wbShareStatus').textContent=`Sharing did not complete: ${e.message}. Your local notebook is still available.`;}
  finally{busy=false;render();}
 });

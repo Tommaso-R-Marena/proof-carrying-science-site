@@ -1,0 +1,137 @@
+{
+  "format": "pcs-real-browser-research-pipeline-v1",
+  "data_origin": "synthetic test account and scripted choices; no real participant data",
+  "email_verification": "local fixture; outbound email not tested",
+  "production": "not exercised",
+  "unverified_email_denied": true,
+  "cross_consent_duplicate_preserves_original_record": true,
+  "real_d1_insert_and_deduplication": true,
+  "dataset_stats": {
+    "episodes": 2,
+    "training": 1,
+    "evaluation": 1,
+    "assisted": 0
+  },
+  "fitted_model_training": {
+    "epochs": 48,
+    "examples": 2,
+    "episodes": 1,
+    "task_ids": [
+      "implication-flip"
+    ],
+    "action_counts": [
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "held_out_evaluation": {
+    "metric": "held_out_demonstrated_action_top1_agreement",
+    "examples": 3,
+    "model_correct": 2,
+    "model_accuracy": 0.6666666666666666,
+    "training_action_prior_correct": 1,
+    "uniform_random_expected_correct": 0.5357142857142857,
+    "evaluation_task_ids": [
+      "quantifier-switch"
+    ],
+    "authority": "NONE",
+    "interpretation": "Agreement with replayed participant choices, not solution rate, safety, or proof quality",
+    "limitations": [
+      "Evaluation families are excluded from fitting but public and small",
+      "No evaluation evidence when examples=0"
+    ]
+  },
+  "model_digest_sha256": "ebc297dfb9f43955c95679196c69a4af4ed69c9c39c56d4bbace020692063c4f",
+  "imported_model_assistance_replayed_and_excluded": true,
+  "self_service_deletion_and_empty_export": true,
+  "visual_world_builder": {
+    "actual_d1_insert": true,
+    "failed_tested_round_stored": true,
+    "legacy_export_unchanged": true,
+    "quality": {
+      "tested_rounds": 4,
+      "final_checked_counterexamples": 3,
+      "unfinished_rounds": 1,
+      "assisted_excluded": 1,
+      "evaluation_rounds": 1,
+      "unsuccessful_checks": 3,
+      "edits": 4,
+      "edit_surplus": 0
+    },
+    "intake": {
+      "version": "pcs-countermodel-search-optin-v2",
+      "tested_rounds": 4,
+      "unfinished_excluded_from_behavior_cloning": 1,
+      "note": "Unfinished searches remain in the quality report; all assisted episodes and evaluation families are excluded from fitting by the original fitter."
+    },
+    "deduplicated": true,
+    "failed_check_retained": true,
+    "assisted_excluded": true,
+    "held_out_excluded_from_fitting": true,
+    "training": {
+      "epochs": 48,
+      "examples": 3,
+      "episodes": 1,
+      "task_ids": [
+        "implication-flip"
+      ],
+      "action_counts": [
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "evaluation": {
+      "metric": "held_out_demonstrated_action_top1_agreement",
+      "examples": 3,
+      "model_correct": 1,
+      "model_accuracy": 0.3333333333333333,
+      "training_action_prior_correct": 1,
+      "uniform_random_expected_correct": 0.5357142857142857,
+      "evaluation_task_ids": [
+        "quantifier-switch"
+      ],
+      "authority": "NONE",
+      "interpretation": "Agreement with replayed participant choices, not solution rate, safety, or proof quality",
+      "limitations": [
+        "Evaluation families are excluded from fitting but public and small",
+        "No evaluation evidence when examples=0"
+      ]
+    },
+    "model_digest_sha256": "f6020ceff2e69d06f5410a7ebbd06630c2a44d28cbcd9f913a4335ff12610f7c",
+    "data_origin": "synthetic fixture account and scripted UI choices; no human data or adoption result",
+    "withdrawal_verified": true
+  },
+  "synthetic_account_deleted": true
+}

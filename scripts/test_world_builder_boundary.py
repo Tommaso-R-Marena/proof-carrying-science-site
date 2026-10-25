@@ -11,7 +11,7 @@ class WorldBuilderBoundary(unittest.TestCase):
 
     def test_external_or_other_same_origin_targets_are_rejected(self):
         for target in ["https://example.invalid/upload", "/api/arena/other", "//example.invalid"]:
-            self.assertTrue(review_world_builder(SOURCE.replace("/api/arena/countermodel/donate", target)))
+            self.assertTrue(review_world_builder(SOURCE.replace("/api/arena/countermodel/search-donate", target)))
 
     def test_consent_snapshot_and_timeout_removal_are_rejected(self):
         for token in ["playbackImported||", "!$('wbAdult').checked||", "!$('wbConsent').checked", "redirect:'error',",

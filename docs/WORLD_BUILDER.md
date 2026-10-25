@@ -37,8 +37,9 @@ strict 131,072-byte import budget even for twenty full relation trajectories.
 ## Research data path
 
 The unchanged `countermodel-core.mjs` evaluator and `pcs-countermodel-lab-v1`
-actions/version remain the authority for finite replay. No production verifier,
-formula, Lean module, database schema or Worker route is changed. This does not
+actions/version remain the authority for finite replay. The version-2 search
+donation/export routes below reuse the existing table; no database migration or
+production scientific-verification authority is changed. This does not
 integrate the separate draft Assurance Fold work.
 
 Local notebook format: `pcs-world-builder-notebook-v1`. It contains UI version,
@@ -68,36 +69,75 @@ success-selection biases remain.
 
 Research donation is a separate click with two initially unchecked confirmations:
 age 18+ and consent to PCS research/model development. A verified-email account is
-required. The new UI sends only the existing three-field payload to the existing
-same-origin `/api/arena/countermodel/donate` endpoint. It snapshots the exact round,
-refuses redirects, times out after 15 seconds, prevents concurrent submissions,
-and distinguishes delayed responses for an earlier snapshot. A static review gate
-permits only this single opt-in fetch; mutation controls reject alternate targets,
-missing consent/snapshot/timeout guards, extra network APIs and persistence. That
-static gate is a review tripwire, not a proof against arbitrary malicious JavaScript.
+required. The UI now lets the player select one of their own tested rounds, including
+failed and unfinished searches. It sends only the three-field opt-in payload to
+`/api/arena/countermodel/search-donate`, snapshots that exact selected round,
+refuses redirects, times out after 15 seconds, and prevents concurrent submissions.
+Changing the selection clears consent. Imported notebooks cannot donate. A static
+review gate permits only this single opt-in fetch and checks snapshot/consent guards;
+it is a review tripwire, not a proof against arbitrary malicious JavaScript.
 
-The unchanged Worker independently replays before D1 insertion, deduplicates,
-requires a final checked counterexample and at least one edit, and provides
-self-service deletion and owner-only deidentified exports. Unsolved standalone
-rounds can be saved locally but cannot be donated through this existing endpoint.
-Failed checks before a final discovery remain in donated trajectories. The server
-does not authenticate which UI or person generated a trace. Account linkage,
-self-attested consent/age and exported-data retention limitations remain explicit.
+The Worker independently replays, canonicalizes typed actions and their replay,
+and stores the actual outcome with consent `pcs-countermodel-search-adult-optin-v2`.
+It requires at least one requested test. No client verdict or score is accepted.
+Deduplication uses the same account/session digest across versions; an identical
+old donation retains its original consent. The verified-email, origin, rate and daily
+limits remain, as do self-service withdrawal and account deletion.
 
-Owners can export through Admin Center and use the existing real fitter:
+The owner-only `/api/admin/arena/countermodel/search-dataset` export uses
+`pcs-countermodel-search-optin-v2`. Admin Center downloads and replays bounded pages,
+without account identifiers or timestamps. The legacy donation endpoint and trainer
+keep their success-only contract. The legacy export explicitly selects original-v1
+consent and successful rows, so failed v2 rounds cannot poison it.
 
 ```sh
+node scripts/analyze_search_research.mjs owner-search-export.json quality.json
+node scripts/train_search_research.mjs owner-search-export.json model.json evaluation.json
+# Original v1 exports retain their original trainer:
 node scripts/train_countermodel_search_policy.mjs owner-export.json model.json evaluation.json
 ```
 
-A local notebook is not an owner consent export and is deliberately not accepted
-as one by this trainer. Do not treat scripted CI fixtures as human training data.
+The v2 trainer retains failures in quality analysis but fits behavioral cloning only
+on completed, unassisted training-family rounds, using the unchanged numerical fitter.
+Its report explicitly counts exclusions. A file with no eligible fitting data fails
+instead of inventing examples. Input has an 8 MiB document budget and each bounded replay retains the shared
+30,000-node strict-parser budget; duplicate keys are rejected both in the envelope
+and each replay. Admin Center exports 20-round batches and keeps the cursor for
+the next click, so larger datasets do not require one unbounded download. A local notebook is not a consent
+export and is deliberately not accepted as one by either trainer. Do not treat scripted CI fixtures as human training data.
 No Aristotle proof-generation traces are collected, exported or used for fitting.
+
+## Visual shortest-route coach and research labels
+
+An optional coach records a real clue before revealing a route from the current
+world. It shows illustrated, read-only example frames; proposed actions never enter
+the player notebook. Every world edit/navigation invalidates the example, and delayed
+results cannot overwrite a new round. It awards no stars, issues no proof verdict,
+and never applies moves automatically. Explicit player actions and requested tests
+are still required. Entire clue-assisted episodes remain excluded from fitting.
+
+`pcs-finite-search-route-v1` certificates include complete-state integer potentials,
+a source-graph digest, an exact start, a legal path and its goal. Both verifiers
+reconstruct every registered edge; a client cannot omit a shortcut. JavaScript
+checks local goal/edge/descent criteria without rerunning shortest-path search.
+The independent stdlib Python checker additionally runs forward BFS from every state.
+The generic Lean theorem and its limitations are in
+[the search-quality research report](../research/search-quality-v1/REPORT.md).
+No Lean kernel runs in the browser, and concrete codec/graph correspondence is
+exhaustively tested, not formally proved.
+
+Quality reports keep pre-action observations separate from post-action oracle labels.
+They record remaining world-edit distance and nonnegative edit regret, preserving
+failed checks and unfinished rounds. Distance counts fully informed edits, excluding
+tests/clues; it does not measure optimal human learning, motivation or intelligence.
+Zero remaining edits can coexist with no requested successful test. These negative
+controls are retained as independently replayable evidence.
 
 ## Validation and scope
 
 ```sh
 npm run test:world-builder
+npm run test:search-quality
 npm run test:world-builder:browser
 source scripts/activate_lean_428.sh
 node scripts/verify_world_builder_downloads.mjs /tmp/pcs-world-builder-browser
@@ -121,12 +161,14 @@ with the exact reviewed Lean 4.28.0 executable. It compares them against the wit
 bytes, audits the exact theorem closure, and actually rejects a false theorem.
 Observed standard dependencies: none for assumption-loss; `propext` for implication
 and negation; `propext` and `Quot.sound` for the other four. This reuses the existing
-finite countermodel theorem generator; no new general mathematical theorem is
-claimed. The browser never says Lean ran there or that PCS authority was granted.
+finite countermodel theorem generator; the new abstract distance theorems are audited separately. The browser never says Lean ran there or that PCS authority was granted.
 
 The protected real-browser research test additionally uses the actual Worker and
 disposable local D1: scripted visual choices → finite replay → deduplicated storage
-→ owner export → genuine numerical model fitting → held-out evaluation → withdrawal.
+→ separate versioned owner export → quality analysis → genuine numerical model fitting
+→ held-out evaluation → withdrawal. It verifies that a standalone failed tested round
+is stored and excluded from solved behavioral cloning, and that original-v1 exports
+remain unchanged.
 The fixture explicitly marks its data synthetic. Its tiny evaluation obtained 1/3
 move agreement, equal to the training-action-prior baseline (1/3); it establishes
 that the pipeline works, not an improved model or evidence about real participants.

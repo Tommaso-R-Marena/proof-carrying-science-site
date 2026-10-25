@@ -1,0 +1,749 @@
+{
+  "format": "pcs-search-quality-campaign-v1",
+  "data_origin": "exhaustive finite puzzle graphs and scripted synthetic choices; not human evidence",
+  "sources": [
+    {
+      "path": "public/search-route-core.mjs",
+      "sha256": "70be4190383a63db513bc219608e3eb2c39fdd9fd80c7a2f7266f1c1a36540a2"
+    },
+    {
+      "path": "public/search-research-core.mjs",
+      "sha256": "b0ad030b0d06da2a98986e6634a145cb2fe7be8d070b31faecbfb12151c0b11c"
+    },
+    {
+      "path": "scripts/verify_search_route.py",
+      "sha256": "4cef67fd8e15568294bf7b03a7c7f27df9312372b92ee7980544ee487cef70d7"
+    },
+    {
+      "path": "research/search-quality-v1/DistanceCertificate.lean",
+      "sha256": "388048925da5488482a5bfb2229967974dfc2a37bee854ad8e4f713e83e837c3"
+    }
+  ],
+  "routes": [
+    {
+      "mission_id": "implication-flip",
+      "minimum_edits": 1,
+      "states_checked": 84,
+      "edges_checked": 556,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    },
+    {
+      "mission_id": "negation-drop",
+      "minimum_edits": 1,
+      "states_checked": 84,
+      "edges_checked": 556,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    },
+    {
+      "mission_id": "connective-swap",
+      "minimum_edits": 1,
+      "states_checked": 84,
+      "edges_checked": 556,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    },
+    {
+      "mission_id": "assumption-loss",
+      "minimum_edits": 0,
+      "states_checked": 84,
+      "edges_checked": 556,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    },
+    {
+      "mission_id": "quantifier-switch",
+      "minimum_edits": 2,
+      "states_checked": 84,
+      "edges_checked": 556,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    },
+    {
+      "mission_id": "quantifier-scope",
+      "minimum_edits": 3,
+      "states_checked": 530,
+      "edges_checked": 5220,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    },
+    {
+      "mission_id": "variable-capture",
+      "minimum_edits": 3,
+      "states_checked": 530,
+      "edges_checked": 5220,
+      "kernel_checked": false,
+      "pcs_authoritative": false
+    }
+  ],
+  "independent_python": {
+    "independent_python_checks": [
+      {
+        "mission_id": "implication-flip",
+        "states": 84,
+        "edges": 556,
+        "minimum_edits": 1
+      },
+      {
+        "mission_id": "negation-drop",
+        "states": 84,
+        "edges": 556,
+        "minimum_edits": 1
+      },
+      {
+        "mission_id": "connective-swap",
+        "states": 84,
+        "edges": 556,
+        "minimum_edits": 1
+      },
+      {
+        "mission_id": "assumption-loss",
+        "states": 84,
+        "edges": 556,
+        "minimum_edits": 0
+      },
+      {
+        "mission_id": "quantifier-switch",
+        "states": 84,
+        "edges": 556,
+        "minimum_edits": 2
+      },
+      {
+        "mission_id": "quantifier-scope",
+        "states": 530,
+        "edges": 5220,
+        "minimum_edits": 3
+      },
+      {
+        "mission_id": "variable-capture",
+        "states": 530,
+        "edges": 5220,
+        "minimum_edits": 3
+      }
+    ],
+    "kernel_checked": false,
+    "pcs_authority": false
+  },
+  "counterexamples": [
+    {
+      "name": "edit_detour",
+      "session": {
+        "version": "pcs-countermodel-lab-v1",
+        "mission_id": "implication-flip",
+        "actions": [
+          {
+            "type": "check"
+          },
+          {
+            "type": "toggle",
+            "p": "P",
+            "i": 0
+          },
+          {
+            "type": "toggle",
+            "p": "P",
+            "i": 0
+          },
+          {
+            "type": "check"
+          },
+          {
+            "type": "toggle",
+            "p": "P",
+            "i": 0
+          },
+          {
+            "type": "check"
+          }
+        ]
+      },
+      "analysis": {
+        "format": "pcs-search-quality-analysis-v1",
+        "mission_id": "implication-flip",
+        "graph_sha256": "773c25d39ce423d993c21f85efc2e34a5d4e68b96e6ff8a57b5a2adfdab199cf",
+        "split": "training",
+        "final_checked_counterexample": true,
+        "ever_checked_counterexample": true,
+        "checks": 3,
+        "hints": 0,
+        "edits": 3,
+        "initial_edit_lower_bound": 1,
+        "final_remaining_edits": 0,
+        "edit_surplus": 2,
+        "rows": [
+          {
+            "index": 0,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": null,
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "check"
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 1,
+              "edit_cost": 0,
+              "edit_regret": 0,
+              "counterexample": false,
+              "response_seen": true
+            }
+          },
+          {
+            "index": 1,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": true,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "toggle",
+              "p": "P",
+              "i": 0
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 0,
+              "edit_cost": 1,
+              "edit_regret": 0,
+              "counterexample": true,
+              "response_seen": false
+            }
+          },
+          {
+            "index": 2,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  true
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": true,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "toggle",
+              "p": "P",
+              "i": 0
+            },
+            "derived_labels": {
+              "remaining_edits_before": 0,
+              "remaining_edits_after": 1,
+              "edit_cost": 1,
+              "edit_regret": 2,
+              "counterexample": false,
+              "response_seen": false
+            }
+          },
+          {
+            "index": 3,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": true,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "check"
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 1,
+              "edit_cost": 0,
+              "edit_regret": 0,
+              "counterexample": false,
+              "response_seen": true
+            }
+          },
+          {
+            "index": 4,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": true,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "toggle",
+              "p": "P",
+              "i": 0
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 0,
+              "edit_cost": 1,
+              "edit_regret": 0,
+              "counterexample": true,
+              "response_seen": false
+            }
+          },
+          {
+            "index": 5,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  true
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": true,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "check"
+            },
+            "derived_labels": {
+              "remaining_edits_before": 0,
+              "remaining_edits_after": 0,
+              "edit_cost": 0,
+              "edit_regret": 0,
+              "counterexample": true,
+              "response_seen": true
+            }
+          }
+        ],
+        "interpretation": "Fully informed minimum world edits, not optimal human learning or total search cost",
+        "kernel_checked": false,
+        "pcs_authoritative": false
+      }
+    },
+    {
+      "name": "computed_counterexample_without_requested_test",
+      "session": {
+        "version": "pcs-countermodel-lab-v1",
+        "mission_id": "implication-flip",
+        "actions": [
+          {
+            "type": "check"
+          },
+          {
+            "type": "toggle",
+            "p": "P",
+            "i": 0
+          }
+        ]
+      },
+      "analysis": {
+        "format": "pcs-search-quality-analysis-v1",
+        "mission_id": "implication-flip",
+        "graph_sha256": "773c25d39ce423d993c21f85efc2e34a5d4e68b96e6ff8a57b5a2adfdab199cf",
+        "split": "training",
+        "final_checked_counterexample": false,
+        "ever_checked_counterexample": false,
+        "checks": 1,
+        "hints": 0,
+        "edits": 1,
+        "initial_edit_lower_bound": 1,
+        "final_remaining_edits": 0,
+        "edit_surplus": 0,
+        "rows": [
+          {
+            "index": 0,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": null,
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "check"
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 1,
+              "edit_cost": 0,
+              "edit_regret": 0,
+              "counterexample": false,
+              "response_seen": true
+            }
+          },
+          {
+            "index": 1,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": true,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "toggle",
+              "p": "P",
+              "i": 0
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 0,
+              "edit_cost": 1,
+              "edit_regret": 0,
+              "counterexample": true,
+              "response_seen": false
+            }
+          }
+        ],
+        "interpretation": "Fully informed minimum world edits, not optimal human learning or total search cost",
+        "kernel_checked": false,
+        "pcs_authoritative": false
+      }
+    },
+    {
+      "name": "success_invalidated_by_edit",
+      "session": {
+        "version": "pcs-countermodel-lab-v1",
+        "mission_id": "implication-flip",
+        "actions": [
+          {
+            "type": "toggle",
+            "p": "P",
+            "i": 0
+          },
+          {
+            "type": "check"
+          },
+          {
+            "type": "toggle",
+            "p": "P",
+            "i": 0
+          }
+        ]
+      },
+      "analysis": {
+        "format": "pcs-search-quality-analysis-v1",
+        "mission_id": "implication-flip",
+        "graph_sha256": "773c25d39ce423d993c21f85efc2e34a5d4e68b96e6ff8a57b5a2adfdab199cf",
+        "split": "training",
+        "final_checked_counterexample": false,
+        "ever_checked_counterexample": true,
+        "checks": 1,
+        "hints": 0,
+        "edits": 2,
+        "initial_edit_lower_bound": 1,
+        "final_remaining_edits": 1,
+        "edit_surplus": 2,
+        "rows": [
+          {
+            "index": 0,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  false
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": null,
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "toggle",
+              "p": "P",
+              "i": 0
+            },
+            "derived_labels": {
+              "remaining_edits_before": 1,
+              "remaining_edits_after": 0,
+              "edit_cost": 1,
+              "edit_regret": 0,
+              "counterexample": true,
+              "response_seen": false
+            }
+          },
+          {
+            "index": 1,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  true
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": null,
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "check"
+            },
+            "derived_labels": {
+              "remaining_edits_before": 0,
+              "remaining_edits_after": 0,
+              "edit_cost": 0,
+              "edit_regret": 0,
+              "counterexample": true,
+              "response_seen": true
+            }
+          },
+          {
+            "index": 2,
+            "input": {
+              "world": {
+                "n": 1,
+                "P": [
+                  true
+                ],
+                "Q": [
+                  false
+                ],
+                "R": [
+                  [
+                    false
+                  ]
+                ]
+              },
+              "previous_check": {
+                "world": {
+                  "n": 1,
+                  "P": [
+                    true
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "R": [
+                    [
+                      false
+                    ]
+                  ]
+                },
+                "source_true": false,
+                "proposal_true": true
+              },
+              "assistance_seen": false
+            },
+            "action": {
+              "type": "toggle",
+              "p": "P",
+              "i": 0
+            },
+            "derived_labels": {
+              "remaining_edits_before": 0,
+              "remaining_edits_after": 1,
+              "edit_cost": 1,
+              "edit_regret": 2,
+              "counterexample": false,
+              "response_seen": false
+            }
+          }
+        ],
+        "interpretation": "Fully informed minimum world edits, not optimal human learning or total search cost",
+        "kernel_checked": false,
+        "pcs_authoritative": false
+      }
+    }
+  ],
+  "limitations": [
+    "Lean proves the abstract potential criterion, not concrete JS/Python correspondence.",
+    "All seven missions are public; no blind model or human evaluation.",
+    "Fully informed edit distance excludes tests and clues; it is not a measure of human intelligence."
+  ],
+  "kernel_checked": false,
+  "pcs_authoritative": false
+}
