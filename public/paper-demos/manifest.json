@@ -1,0 +1,63 @@
+{
+  "format": "pcs-paper-demos-manifest-v1",
+  "generated_at_utc": "2026-10-17T23:20:41Z",
+  "lean_version_line": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+  "pcs_core": "/agent/repos/proof-carrying-science",
+  "issues_accept": false,
+  "pcs_scientific_authority": false,
+  "demos": [
+    {
+      "id": "countermodel-lab-witnesses",
+      "kind": "lean_kernel",
+      "status": "verified",
+      "atlas_links": [
+        "peng-2011",
+        "lean4"
+      ],
+      "receipt": "paper-demos/countermodel-lean-receipt.json",
+      "play": "arena-countermodel.html"
+    },
+    {
+      "id": "bridge-tutorial-transitivity",
+      "kind": "lean_kernel",
+      "status": "verified",
+      "atlas_links": [
+        "lean4",
+        "mathlib4"
+      ],
+      "receipt": "paper-demos/bridge-tutorial-lean-receipt.json",
+      "play": "bridge-builder.html"
+    },
+    {
+      "id": "palmer-penguins-scientific-workflow-v2",
+      "kind": "pcs_package_replay",
+      "status": "lean_authority_ACCEPT_scientific_OPEN",
+      "atlas_links": [
+        "zenodo-3960218",
+        "peng-2011"
+      ],
+      "receipt": "paper-demos/penguins-package-receipt.json",
+      "play": "scientific-workflow-v2.html"
+    },
+    {
+      "id": "assurance-fold-claim-board",
+      "kind": "spatial_training_game",
+      "status": "practice_only_no_lean_accept",
+      "atlas_links": [
+        "foldit-cooper-2010",
+        "ioannidis-2005",
+        "rfc8032"
+      ],
+      "receipt": null,
+      "play": "assurance-fold.html",
+      "note": "Assurance Fold never calls Lean and never issues ACCEPT. It trains claim-lane honesty; Paper Demos show the real PCS paths."
+    }
+  ],
+  "receipt_files": [
+    "paper-demos/countermodel-lean-receipt.json",
+    "paper-demos/bridge-tutorial-lean-receipt.json",
+    "paper-demos/penguins-package-receipt.json"
+  ],
+  "walkthrough_page": "paper-demos.html",
+  "meaning": "Manifest of fresh local checks used by the Paper Demos walkthrough. Each demo states its own authority boundary; none issues scientific ACCEPT."
+}

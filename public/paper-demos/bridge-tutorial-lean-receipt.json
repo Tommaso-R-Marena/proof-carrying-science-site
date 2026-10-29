@@ -1,0 +1,22 @@
+{
+  "format": "pcs-paper-demo-lean-receipt-v1",
+  "demo_id": "bridge-tutorial-transitivity",
+  "atlas_links": [
+    "lean4",
+    "mathlib4"
+  ],
+  "paper_motivation": "Lean 4 is the kernel PCS uses for typed proof-action checks. This receipt re-runs the Bridge Builder tutorial proof on a fresh local kernel.",
+  "statement": "For all propositions A, B and C, if ((A implies B) and (B implies C)) then (A implies C).",
+  "goal_sha256": "8e9e4e8049488eb3a23d3ffaf231f63673786f5236345437bdb189e1183f4194",
+  "action_count": 8,
+  "status": "verified",
+  "kernel_axioms": [],
+  "elapsed_seconds": 0.516,
+  "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+  "lean_version": "4.28.0",
+  "pcs_authority": false,
+  "pcs_scientific_authority": false,
+  "issues_accept": false,
+  "checked_at_utc": "2026-10-17T23:20:41Z",
+  "meaning": "Fresh local Lean 4.28.0 kernel verification of the Bridge Builder tutorial. Educational math only \u2014 not a scientific ACCEPT."
+}

@@ -1,0 +1,109 @@
+body.evidence-atlas-page {
+  background:
+    radial-gradient(circle at 10% 0%, #dcece6 0%, transparent 42%),
+    linear-gradient(180deg, #f8fbf9 0%, #eef4f1 55%, #e5eee9 100%);
+}
+.ea-hero {
+  margin: 1.2rem 0 1.4rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #b7c7bf;
+}
+.ea-hero h1 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(1.85rem, 3.3vw, 2.55rem);
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+  margin: 0.35rem 0 0.55rem;
+}
+.ea-pill {
+  color: #0c5c4a;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+}
+.ea-disclaimer {
+  background: #fff4e5;
+  border-left: 4px solid #c47b16;
+  color: #5c3b00;
+  padding: 0.75rem 0.9rem;
+  max-width: 54rem;
+}
+.ea-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.ea-toolbar select {
+  font: inherit;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #b7c7bf;
+  background: #fff;
+}
+.ea-list {
+  display: grid;
+  gap: 0.85rem;
+}
+.ea-card {
+  background: #fbfdfc;
+  border: 1px solid #b7c7bf;
+  padding: 0.95rem 1rem;
+  animation: ea-in 0.35s ease both;
+}
+.ea-card h2 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 1.25rem;
+  margin: 0.2rem 0 0.35rem;
+}
+.ea-meta {
+  color: #3d534b;
+  font-size: 0.95rem;
+}
+.ea-kind {
+  display: inline-block;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 0.75rem;
+  border: 1px solid #b7c7bf;
+  padding: 0.1rem 0.4rem;
+  background: #eef3f0;
+}
+.ea-why { margin: 0.55rem 0; }
+.ea-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.ea-links a {
+  display: inline-block;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid #0c5c4a;
+  color: #0c5c4a;
+  text-decoration: none;
+  font-weight: 650;
+}
+.ea-links a:hover,
+.ea-links a:focus-visible {
+  background: #e5f3ee;
+  outline: 2px solid #0b57d0;
+  outline-offset: 1px;
+}
+.ea-surfaces {
+  margin-top: 0.55rem;
+  color: #3d534b;
+  font-size: 0.9rem;
+}
+.ea-static-links {
+  line-height: 1.7;
+  max-width: 52rem;
+}
+@keyframes ea-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ea-card { animation: none; }
+}
+@media (max-width: 700px) {
+  .ea-hero h1 { max-width: none; }
+}

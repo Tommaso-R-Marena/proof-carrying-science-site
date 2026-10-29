@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evidence Atlas · Proof-Carrying Science</title>
+<meta name="description" content="Curated real studies, repositories, standards, and supplementary materials that motivate PCS demos and Assurance Fold—with DOI and journal links.">
+<link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/evidence-atlas.html">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="evidence-atlas.css">
+</head>
+<body class="commons-page evidence-atlas-page">
+<div class="topbar commons-topbar"><div class="shell"><span>Evidence Atlas · real papers, repos, and supplements behind PCS demos</span><a href="assurance-fold.html">Play Assurance Fold</a></div></div>
+<div class="shell">
+<nav aria-label="Primary">
+  <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
+  <div class="navlinks">
+    <a href="evidence-atlas.html">Evidence Atlas</a>
+    <a href="assurance-fold.html">Assurance Fold</a>
+    <a href="validation.html">Validation</a>
+    <a href="trust.html">Trust Center</a>
+    <a href="arena.html">Arena</a>
+  </div>
+</nav>
+<main>
+<header class="ea-hero">
+  <span class="ea-pill">EVIDENCE ATLAS</span>
+  <h1>The papers and repos we actually point at.</h1>
+  <p>When a demo on this site leans on someone else’s work—a journal article, a GitHub repository, a standards document, a Zenodo record—it should send you to that source, not a vague paraphrase. Each card below has a short note on why it is here and which PCS page it relates to.</p>
+  <p class="ea-disclaimer" role="status"><strong>Please read this plainly:</strong> these links are reviewed navigation targets. Opening a DOI does not mean PCS verified the paper, replicated the study, or treats a citation as Lean proof or clinical authority. The site <strong>does not treat bibliography as Lean proof</strong>.</p>
+</header>
+
+<section class="ea-toolbar" aria-label="Filter sources">
+  <label for="eaFilter">Show</label>
+  <select id="eaFilter">
+    <option value="all">All kinds</option>
+    <option value="study">Studies / journals</option>
+    <option value="repository">Repositories</option>
+    <option value="standard">Standards</option>
+    <option value="supplement">Supplements / data</option>
+  </select>
+  <a class="button primary" href="paper-demos.html">Run Paper Demos →</a>
+  <a class="button secondary" href="assurance-fold.html">Play Assurance Fold →</a>
+</section>
+
+<section id="eaList" class="ea-list" aria-live="polite"></section>
+
+<section class="section" aria-labelledby="eaStaticTitle">
+  <h2 id="eaStaticTitle">Direct links (also loaded into the interactive list)</h2>
+  <ul class="ea-static-links">
+    <li><a href="https://doi.org/10.1038/nature09304" rel="noopener noreferrer" target="_blank">Cooper et al., Nature 2010 — Foldit (doi:10.1038/nature09304)</a></li>
+    <li><a href="https://www.nature.com/articles/nature09304" rel="noopener noreferrer" target="_blank">Nature article page — Foldit</a></li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2956414/" rel="noopener noreferrer" target="_blank">PMC full text — Foldit</a></li>
+    <li><a href="https://doi.org/10.1038/nsmb.2119" rel="noopener noreferrer" target="_blank">Khatib et al., Nat Struct Mol Biol 2011 — Foldit structure (doi:10.1038/nsmb.2119)</a></li>
+    <li><a href="https://doi.org/10.1371/journal.pmed.0020124" rel="noopener noreferrer" target="_blank">Ioannidis, PLoS Med 2005 (doi:10.1371/journal.pmed.0020124)</a></li>
+    <li><a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124" rel="noopener noreferrer" target="_blank">PLOS Medicine article page — Ioannidis 2005</a></li>
+    <li><a href="https://doi.org/10.1126/science.1213847" rel="noopener noreferrer" target="_blank">Peng, Science 2011 — reproducible research (doi:10.1126/science.1213847)</a></li>
+    <li><a href="https://doi.org/10.1126/science.aac4716" rel="noopener noreferrer" target="_blank">Open Science Collaboration, Science 2015 (doi:10.1126/science.aac4716)</a></li>
+    <li><a href="https://github.com/Tommaso-R-Marena/proof-carrying-science" rel="noopener noreferrer" target="_blank">PCS reference repository</a></li>
+    <li><a href="https://github.com/leanprover/lean4" rel="noopener noreferrer" target="_blank">Lean 4 repository</a></li>
+    <li><a href="https://github.com/leanprover-community/mathlib4" rel="noopener noreferrer" target="_blank">mathlib4 repository</a></li>
+    <li><a href="https://www.rfc-editor.org/rfc/rfc8032" rel="noopener noreferrer" target="_blank">RFC 8032 — EdDSA / Ed25519</a></li>
+    <li><a href="https://doi.org/10.5281/zenodo.3960218" rel="noopener noreferrer" target="_blank">Zenodo 10.5281/zenodo.3960218</a></li>
+  </ul>
+</section>
+</main>
+<footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="evidence-atlas.html">Evidence Atlas</a><a href="assurance-fold.html">Assurance Fold</a><a href="validation.html">Validation</a></div><div class="footercol"><strong>Trust</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a></div></div></footer>
+</div>
+<script src="site.js"></script>
+<script type="module" src="evidence-atlas.js"></script>
+</body></html>

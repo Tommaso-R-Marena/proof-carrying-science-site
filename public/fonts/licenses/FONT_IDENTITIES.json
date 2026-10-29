@@ -1,0 +1,50 @@
+{
+  "scope": "Embedded font metadata and current upstream OFL notices; not a finding of provenance equivalence to an upstream release",
+  "fonts": {
+    "SourceSerif4-SemiBold.woff2": {
+      "sha256": "f2b7e1cf1d277b7608231868135648f8ad8e2b58d8e97ca088bee15dc357bee7",
+      "embedded_metadata": {
+        "0": "\u00a9 2014 - 2021 Adobe Systems Incorporated (http://www.adobe.com/), with Reserved Font Name \u2018Source\u2019.",
+        "1": "Source Serif 4 SemiBold",
+        "14": "http://scripts.sil.org/OFL"
+      },
+      "license": "licenses/Source-Serif-OFL.md"
+    },
+    "SourceSans3-SemiBold.woff2": {
+      "sha256": "14527d193b0e30bc32ef931549a246cdfd286573bb12869b7e052b8101a39d38",
+      "embedded_metadata": {
+        "0": "\u00a9 2023 Adobe (http://www.adobe.com/), with Reserved Font Name \u2018Source\u2019",
+        "1": "Source Sans 3 ExtraLight SemiBold",
+        "14": "http://scripts.sil.org/OFL"
+      },
+      "license": "licenses/Source-Sans-OFL.md"
+    },
+    "SourceSans3-Regular.woff2": {
+      "sha256": "0f73f35e08cde0a2f10c109c6e01d71459d97e4099ecd9a50f1b6c0209e4de2b",
+      "embedded_metadata": {
+        "0": "\u00a9 2023 Adobe (http://www.adobe.com/), with Reserved Font Name \u2018Source\u2019",
+        "1": "Source Sans 3 ExtraLight",
+        "14": "http://scripts.sil.org/OFL"
+      },
+      "license": "licenses/Source-Sans-OFL.md"
+    },
+    "IbmPlexMono-Regular.woff2": {
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7",
+      "embedded_metadata": {
+        "0": "Copyright 2017 IBM Corp. All rights reserved.",
+        "1": "IBM Plex Mono",
+        "14": "http://scripts.sil.org/OFL"
+      },
+      "license": "licenses/IBM-Plex-OFL.txt"
+    },
+    "IbmPlexMono-Medium.woff2": {
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22",
+      "embedded_metadata": {
+        "0": "Copyright 2017 IBM Corp. All rights reserved.",
+        "1": "IBM Plex Mono Medium",
+        "14": "http://scripts.sil.org/OFL"
+      },
+      "license": "licenses/IBM-Plex-OFL.txt"
+    }
+  }
+}
