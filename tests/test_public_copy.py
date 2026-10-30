@@ -1,9 +1,11 @@
 """Keep editorial improvements from changing source-bound historical evidence."""
+import ast
 import hashlib
 import importlib.util
 import json
 from pathlib import Path
 import unittest
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('public_copy', ROOT/'scripts/check_public_copy.py')
@@ -29,6 +31,18 @@ class PublicCopyTests(unittest.TestCase):
             result = copy.review_copy(name, raw)
             self.assertIn('qualified_source_changed', {x['rule'] for x in result['issues']})
             self.assertEqual(result['preserved_qualified_findings'], [])
+
+    def test_live_health_html_markers_match_the_actual_shipped_pages(self):
+        tree = ast.parse((ROOT/'scripts/check_live_site.py').read_text())
+        checks = next(ast.literal_eval(node.value) for node in tree.body
+                      if isinstance(node, ast.Assign) and
+                      any(isinstance(t, ast.Name) and t.id == 'CHECKS' for t in node.targets))
+        for url, content_type, marker in checks:
+            if content_type != 'text/html':
+                continue
+            source = ROOT/'public'/(urlsplit(url).path.lstrip('/') or 'index.html')
+            with self.subTest(page=url):
+                self.assertTrue(marker in source.read_text(), f'{url}: live health marker is stale')
 
     def test_every_existing_local_qualification_binding_still_matches(self):
         # The complete hosted gate separately binds these to the independent core.

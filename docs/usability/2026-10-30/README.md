@@ -96,13 +96,24 @@ receipt. The source checker and both original qualification receipts are unchang
 The copy audit now discloses the retained parenthetical only when the complete
 page matches the exact qualified hash. Any edit invalidates that exception.
 
-Four Python regression tests cover ordinary prose, the explicit exception, edited
-page rejection and all seven existing local qualification source bindings. These
+Five Python regression tests cover ordinary prose, the explicit exception, edited
+page rejection, all seven existing local qualification source bindings, and live
+health markers for the actual shipped HTML. These
 checks now run in the quick release gate too. The independent source check passed
 against the actual pinned core checkout; calibration export verification rechecked
 22 archived hull receipts, each with 386 theorem identities. This is a recheck of
 existing evidence, not a new physical experiment. Earlier browser reports are kept
 at their original revisions and do not imply that this failed source gate passed.
+
+## Stable production health markers
+
+The new marker regression reproduced two stale headline checks in the live health
+script, for account and dependency-map pages. Those checks now identify their
+stable DOM elements instead of exact editorial wording. Every HTML marker is
+checked against the actual shipped page without making network calls. HTTP,
+content type, security headers, API semantics and status-JSON checks remain intact.
+The regression failed on both old markers before the two corrections and passed
+afterward. The five-test quick suite now includes this check.
 
 ## Remaining validation
 
