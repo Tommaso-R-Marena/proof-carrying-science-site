@@ -14,7 +14,14 @@ const server = http.createServer((req, res) => {
     res.statusCode = 503; res.setHeader('Content-Type', 'application/json');
     return res.end('{"error":"offline test"}');
   }
-  const file = path.resolve(root, '.' + (name === '/' ? '/index.html' : name));
+  // Match the observed production asset handling: .html redirects to clean URLs.
+  if (name.endsWith('.html')) {
+    res.statusCode = 308;
+    res.setHeader('Location', name === '/index.html' ? '/' : name.slice(0,-5));
+    return res.end();
+  }
+  const asset = name === '/' ? '/index.html' : path.extname(name) ? name : name + '.html';
+  const file = path.resolve(root, '.' + asset);
   if (!file.startsWith(root + path.sep)) {res.statusCode = 403; return res.end();}
   try {
     res.setHeader('Content-Type', ({'.html':'text/html', '.mjs':'text/javascript', '.js':'text/javascript',
@@ -66,6 +73,9 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       assert.equal(await p.locator('main').evaluate(e => e === document.activeElement), true);
       const primaryActionBottom = await start.evaluate(e => e.getBoundingClientRect().bottom + scrollY);
       await start.click(); await p.locator('#firstInvestigation[data-ready=true]').waitFor();
+      assert.equal(new URL(p.url()).pathname, '/experience');
+      assert.equal(await p.locator('.nav-primary-link').getAttribute('aria-current'), 'page');
+      assert.equal(await p.getByRole('navigation',{name:'Breadcrumb'}).isVisible(), true);
       await p.getByRole('link', {name:'Start my first investigation ↓', exact:true}).click();
       assert.equal(await p.locator('#fiHint').getAttribute('open'), null);
       await p.locator('#fiHint summary').click();
@@ -124,6 +134,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
         suggested_example_marked_assisted:true,real_ai_conclusion_rejected:true,
         first_visual_puzzle_completed:true,sample_package_exact_sha256:true,
         inspection_does_not_establish_authority:true,research_bookmarks_preserved:true,
+        clean_url_current_page_and_breadcrumbs:true,
         overflow:false,unexpected_writes:writes.length,external_requests:external.length});
       await context.close();
     }

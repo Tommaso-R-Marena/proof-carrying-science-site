@@ -7,7 +7,9 @@
   // Navigation labels reflect sessions; authorization always remains on the server.
   const accountLinks = [];
   const adminLinks = [];
-  const currentPath = location.pathname.split("/").pop() || "index.html";
+  // Cloudflare serves clean URLs; local static previews also accept .html.
+  const currentName = location.pathname.replace(/\/+$/, "").split("/").pop() || "index.html";
+  const currentPath = currentName.endsWith(".html") ? currentName : currentName + ".html";
   const matchPage = (href) => href.split("#")[0].split("?")[0] === currentPath;
 
   document.querySelectorAll(".navlinks").forEach((links) => {

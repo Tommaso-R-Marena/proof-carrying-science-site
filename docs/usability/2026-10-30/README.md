@@ -4,7 +4,10 @@ The previous release's first investigation worked in automated tests, but that
 was not evidence that a newcomer could find a useful starting point. This review
 started from protected site commit `54f216582d545a4341bbfc1b6dfd23ca6a18d002`.
 There were **zero human participants**. The [machine-readable record](review.json)
-contains the source-bound browser results, baseline measurements and copy audit.
+contains the initial source-bound browser results, baseline measurements and copy audit.
+It is preserved at its original implementation revision. The subsequent
+[clean-URL review](clean-url-review.json) binds the final navigation fix and
+records its separate browser checks.
 
 ## Changes
 
@@ -64,6 +67,20 @@ The browser script starts its own loopback server, rejects external requests and
 writes, and refuses an existing results file. Set `PCS_CHROMIUM` when Chromium is
 not at `/usr/bin/chromium`. CI uploads screenshots and results from fresh runs;
 the new journeys also run inside the protected `site-full-gate`.
+
+## Production URL defect found during the review
+
+A read-only live request showed that Cloudflare redirects `experience.html` to
+`experience`. The previous shared navigation compared that clean path against
+`.html` filenames, so its current-page marker and breadcrumb were absent. The
+fix normalizes both URL forms before matching page links.
+
+The new beginner suite serves the observed clean-URL redirects and checks the
+current-page marker and breadcrumb at all four widths. The original browser suite
+still tests file URLs. A separate Chromium negative control served the exact old
+`site.js` at `/experience`: it had no marker and zero breadcrumbs; the new source
+had the page marker and one breadcrumb. The clean-URL record includes both source
+hashes. No remote verifier or kernel verdict was substituted in this UI test.
 
 ## Remaining validation
 
