@@ -128,3 +128,17 @@ The proposed human study has not run. Full scientific verification still require
 a technical reviewer and command-line setup. The browser examples provide
 learning and inspection utility, not a claim that end-to-end PCS is already
 accessible to every nontechnical user.
+
+## Expanded-summary contrast follow-up
+
+Visual review after PR #124 found that the three-step diagram in the expanded
+research catalogue retained pale text from its earlier dark-hero placement. The
+browser regression measured 1.10:1 body contrast and 2.09:1 label contrast on its
+light background. It failed before the CSS correction. The diagram now uses dark
+text, opaque light cards, 14 px body text and 12 px labels. Rendered minimum
+contrast is 6.72:1 at all four tested widths. The browser suite computes contrast
+from actual foreground and composited background colors and requires 4.5:1.
+
+The [contrast review](contrast-review.json) binds the CSS and records all 12
+repeated browser journeys. This is a check of this diagram, not a claim of full
+site accessibility or a human usability study. No human participants were tested.
