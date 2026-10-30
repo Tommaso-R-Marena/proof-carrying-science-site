@@ -1,0 +1,123 @@
+{
+  "format": "pcs-evidence-atlas-v1",
+  "disclaimer": "Curated external sources that motivate PCS demos and Assurance Fold. Linking does not imply endorsement, clinical validity, or that PCS has replicated each study. Inspection of a link is not Lean authority.",
+  "issues_accept": false,
+  "entries": [
+    {
+      "id": "foldit-cooper-2010",
+      "kind": "study",
+      "title": "Predicting protein structures with a multiplayer online game",
+      "authors": "Cooper, Khatib, Treuille, Baker, Popović, et al.",
+      "venue": "Nature 466, 756–760 (2010)",
+      "doi": "10.1038/nature09304",
+      "url": "https://doi.org/10.1038/nature09304",
+      "also": "https://www.nature.com/articles/nature09304",
+      "pmc": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2956414/",
+      "why": "Classic citizen-science result: humans explore hard configuration spaces under an objective score. Listed as related research on human search—not a claim that Assurance Fold is protein folding.",
+      "pcs_surface": ["assurance-fold.html", "arena.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#fold"
+    },
+    {
+      "id": "ioannidis-2005",
+      "kind": "study",
+      "title": "Why Most Published Research Findings Are False",
+      "authors": "John P. A. Ioannidis",
+      "venue": "PLoS Medicine 2(8): e124 (2005)",
+      "doi": "10.1371/journal.pmed.0020124",
+      "url": "https://doi.org/10.1371/journal.pmed.0020124",
+      "also": "https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124",
+      "why": "Motivates separating computational or statistical 'PASS' language from empirical truth. PCS keeps scientific adequacy explicitly open.",
+      "pcs_surface": ["assurance-fold.html", "trust.html", "validation.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#fold"
+    },
+    {
+      "id": "peng-2011",
+      "kind": "study",
+      "title": "Reproducible Research in Computational Science",
+      "authors": "Roger D. Peng",
+      "venue": "Science 334(6060): 1226–1227 (2011)",
+      "doi": "10.1126/science.1213847",
+      "url": "https://doi.org/10.1126/science.1213847",
+      "why": "Classic argument for linking claims to the exact computational trail reviewers can rerun—the PCS packaging problem.",
+      "pcs_surface": ["package-inspector.html", "live-demo.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#countermodel"
+    },
+    {
+      "id": "nosek-2015-reproducibility",
+      "kind": "study",
+      "title": "Estimating the reproducibility of psychological science",
+      "authors": "Open Science Collaboration",
+      "venue": "Science 349(6251): aac4716 (2015)",
+      "doi": "10.1126/science.aac4716",
+      "url": "https://doi.org/10.1126/science.aac4716",
+      "why": "Large-scale empirical reminder that published claims need independent replay—not vibes.",
+      "pcs_surface": ["validation.html", "researcher-pilots.html"]
+    },
+    {
+      "id": "pcs-github",
+      "kind": "repository",
+      "title": "Proof-Carrying Science reference implementation",
+      "authors": "Tommaso R. Marena et al.",
+      "venue": "GitHub",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science",
+      "why": "Open-core PCS checker, Lean artifacts, certificates, and independent-eval harnesses.",
+      "pcs_surface": ["architecture.html", "mvp.html"]
+    },
+    {
+      "id": "lean4",
+      "kind": "repository",
+      "title": "Lean 4 theorem prover",
+      "authors": "Lean FRO / leanprover",
+      "venue": "GitHub",
+      "url": "https://github.com/leanprover/lean4",
+      "why": "Kernel-checked formal authority stack referenced by PCS Lean gates.",
+      "pcs_surface": ["trust.html", "bridge-builder.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#bridge"
+    },
+    {
+      "id": "mathlib4",
+      "kind": "repository",
+      "title": "mathlib4",
+      "authors": "leanprover-community",
+      "venue": "GitHub",
+      "url": "https://github.com/leanprover-community/mathlib4",
+      "why": "Shared formal library appearing in PCS trust-boundary discussions (TCB / rebuild cost).",
+      "pcs_surface": ["trust.html", "architecture.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#bridge"
+    },
+    {
+      "id": "rfc8032",
+      "kind": "standard",
+      "title": "Edwards-Curve Digital Signature Algorithm (EdDSA) — RFC 8032",
+      "authors": "IETF",
+      "venue": "RFC Editor",
+      "url": "https://www.rfc-editor.org/rfc/rfc8032",
+      "why": "Signature authenticity lane for PCS packages (cryptographic validity ≠ scientific adequacy).",
+      "pcs_surface": ["assurance-fold.html", "package-inspector.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#fold"
+    },
+    {
+      "id": "zenodo-3960218",
+      "kind": "supplement",
+      "title": "Zenodo record 3960218 (workflow / data badge used in PCS scientific-workflow materials)",
+      "authors": "See Zenodo record metadata",
+      "venue": "Zenodo",
+      "doi": "10.5281/zenodo.3960218",
+      "url": "https://doi.org/10.5281/zenodo.3960218",
+      "why": "Example of content-addressed supplementary research artifacts the site already references in scientific-workflow docs.",
+      "pcs_surface": ["live-demo.html", "scientific-workflow-v2.html", "paper-demos.html"],
+      "demo_run": "paper-demos.html#penguins"
+    },
+    {
+      "id": "rosalind-franklin-foldit-followon",
+      "kind": "study",
+      "title": "Crystal structure of a monomeric retroviral protease solved by protein folding game players",
+      "authors": "Khatib, DiMaio, Cooper, Baker, et al.",
+      "venue": "Nature Structural & Molecular Biology 18, 1175–1177 (2011)",
+      "doi": "10.1038/nsmb.2119",
+      "url": "https://doi.org/10.1038/nsmb.2119",
+      "why": "Follow-on citizen-science payoff—players contributed to a solved structure. Listed as related research on useful human search signal, with honest non-claims.",
+      "pcs_surface": ["assurance-fold.html", "arena.html"]
+    }
+  ]
+}

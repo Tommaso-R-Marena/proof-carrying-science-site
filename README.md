@@ -18,6 +18,64 @@ For a local preview, run `python3 -m http.server 8788 --bind 127.0.0.1 --directo
 and open `http://127.0.0.1:8788/experience.html`. The account service is not needed
 for this lesson. See [the implementation and validation notes](docs/FIRST_INVESTIGATION.md).
 
+## Visual games and independently checked demonstrations
+
+- Open [Assurance Fold](public/assurance-fold.html) to drag claim tokens into
+  evidence lanes, see immediate visual feedback and keep a local notebook. Its
+  stars/rewards are practice results; it never issues scientific ACCEPT or Lean
+  authority. Session exports are explicit and do not auto-upload.
+- Use [Paper Demos](public/paper-demos.html) to inspect the separately scoped Lean
+  countermodels, Bridge tutorial and Palmer Penguins package receipts. Published
+  receipt dates/identities describe their original local checks; the writer can
+  generate a fresh independent result without overwriting those records.
+- The [Evidence Atlas](public/evidence-atlas.html) links primary studies and source
+  repositories. A citation motivates an experiment; it does not certify PCS or
+  establish a paper's general claim in a different domain.
+
+See [Assurance Fold documentation](docs/ASSURANCE_FOLD_V1.md). The deterministic
+export/replay path recomputes rewards and rejects caller-supplied scores. Assisted,
+held-out and synthetic-bootstrap data stay labeled; a game score does not grant
+account privileges, reviewer authority, model safety or scientific acceptance.
+
+Current core research, including the separate 72-call public-study Qwen evaluation,
+is documented in the [PCS core research guide](https://github.com/Tommaso-R-Marena/proof-carrying-science/blob/main/research/README.md).
+That research is not a website inference service. Its synthetic-tool results must
+not be presented as general model safety or an external design-partner pilot.
+
+## Check and reproduce
+
+Use Node 22.23.3 and a SQLite-capable Python 3.12/3.13. From this repository root:
+
+```sh
+npm ci --ignore-scripts --no-audit --no-fund
+bash scripts/cloudflare_build.sh
+```
+
+This is the complete local build/test gate, including a Worker dry run. It does
+not deploy. Hosted `site-full-gate` additionally runs independent core comparisons,
+actual Lean/browser checks and real-browser account/mobile tests. Its
+[PR #120 checks](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/pull/120)
+are the source of truth for current qualification and merge state.
+
+For fresh Paper Demos evidence, activate the pinned Lean 4.28.0 toolchain, provide
+the PCS checkout expected by the script, then use a new output directory:
+
+```sh
+python3 scripts/run_paper_demos_kernel.py --output /tmp/new-paper-demos
+```
+
+The script refuses an existing destination and verifies exact package/authority
+flags, inputs and compiler identity. Never replace historical published receipts
+with a fabricated positive result. See the [receipt review](docs/PR120_INTEGRATION_REVIEW_V11.md)
+for its original local qualification and remaining trust boundaries.
+
+Only `public/` is static asset content. The Worker and D1 configuration provide
+the account/coordination backend; static HTTP preview does not emulate that API.
+Merging to protected main can trigger the repository-linked Cloudflare build.
+Deployment success and live runtime health must be checked separately from CI.
+The existing Workers hostname remains canonical; no custom-domain purchase or
+branding/legal approval is implied.
+
 ## What is real
 
 The site uses a deliberately small Cloudflare Worker + D1 backend only for the AI Safety Commons account/coordination layer. Scientific package inspection, project mapping, claim drafting, and verifier/browser tooling remain local-first and do not upload selected scientific files to the Commons database.
@@ -38,7 +96,9 @@ The site uses a deliberately small Cloudflare Worker + D1 backend only for the A
 - **Public-good funding model** — proposed PCS Safety Bounty Fund, grant/donation/sponsorship/commercial cross-subsidy model, funding firewall, and explicit rule that sponsorship cannot purchase a green result.
 - **Organization access model** — broad free public-interest/community participation with paid enterprise value for private deployment, scale, governance, and support; final licensing structure remains subject to legal review.
 
-- **Completed Result Anatomy** — educational v0.6 result walkthrough showing `valid`, claim status, and `accepted` as separate axes, using the real verifier/receipt field names while explicitly labeling scenario values as illustrative rather than a live verification.\n- **Guided Submission** — beginner-first five-step flow (`Project → Claim → Review → Prepare → Ready`) that reuses the exact browser Project Mapper engine, keeps files local, maps human intent only to supported typed claim templates, renders plain-language explanations from the formal predicate, progressively discloses the exact machine contract, and stops honestly at the authoritative CLI confirmation/signing boundary.\n- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.6/v2 theorem boundary with explicit remaining contracts, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
+- **Completed Result Anatomy** — educational v0.6 result walkthrough showing `valid`, claim status, and `accepted` as separate axes, using the real verifier/receipt field names while explicitly labeling scenario values as illustrative rather than a live verification.
+- **Guided Submission** — beginner-first five-step flow (`Project → Claim → Review → Prepare → Ready`) that reuses the exact browser Project Mapper engine, keeps files local, maps human intent only to supported typed claim templates, renders plain-language explanations from the formal predicate, progressively discloses the exact machine contract, and stops honestly at the authoritative CLI confirmation/signing boundary.
+- **Trust Center** — distinguishes the legacy PCS 0.5 browser fixture, the machine-checked v0.6/v2 theorem boundary with explicit remaining contracts, the merged v0.6 executable mainline, executed cross-machine/runtime evidence, and explicit non-claims.
 - **Machine-readable trust state** — `public/status.json` mirrors the released checker/proof/parity/preview state and is cross-checked against the shipped browser fixture by the deployment gate.
 - **Security contact** — `public/.well-known/security.txt` provides a standard disclosure/contact path.
 - **Responsive shared navigation** — dependency-free mobile menu and small shared UI helpers in `site.js`.
@@ -60,7 +120,7 @@ The site uses a deliberately small Cloudflare Worker + D1 backend only for the A
 
 The browser verifier is a functional demonstration, not the production PCS Python verifier. Its built-in signing key is explicitly demo-only.
 
-The strongest current machine-checked theorem stack targets the exact v0.6/v2 representation. For canonical STORED archives, `PCS.V2.Frontier.pcs_frontier_archive_acceptance_sound` starts from accepted raw archive bytes and reaches `HighAssurance` with a single explicit theorem hypothesis: `NoForgery` for the Lean Ed25519 trust anchor. Lean proves SHA-256 equal to an independent FIPS 180-4 specification, proves canonical ZIP decoding, and independently replays all six built-in checks; the separate Mathlib bridge gives `pkpd_reference_match` a real-valued analytic-model meaning. Python-only acceptance remains non-authoritative. Remaining boundaries include Ed25519 unforgeability and independent RFC 8032/SHA-512 correspondence, workflow-front-end semantics, environment meaning beyond `EnvFacts`, external validators, legacy non-canonical ZIPs, and operational runtime/toolchain components. The frontier layer is integrated on the model `main` branch and checked by Lean 4.28 gates.
+The strongest current machine-checked theorem stack targets the exact v0.6/v2 representation. For canonical STORED archives, `PCS.V2.Frontier.pcs_frontier_archive_acceptance_sound` starts from accepted raw archive bytes and reaches `HighAssurance` with a single explicit theorem hypothesis: `NoForgery` for the Lean Ed25519 trust anchor. Lean proves SHA-256 equal to an independent FIPS 180-4 specification, proves canonical ZIP decoding, and independently replays all six built-in checks; the separate Mathlib bridge gives `pkpd_reference_match` a real-valued analytic-model meaning. Python-only acceptance remains non-authoritative. Remaining boundaries include Ed25519 unforgeability and independent RFC 8032/SHA-512 correspondence, workflow-front-end semantics, environment meaning beyond `EnvFacts`, external validators, legacy non-canonical ZIPs, and operational runtime/toolchain components. The frontier layer is integrated on the PCS core `main` branch and checked by Lean 4.28 gates.
 
 ## Repository layout
 

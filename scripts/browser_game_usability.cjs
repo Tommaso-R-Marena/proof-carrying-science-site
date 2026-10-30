@@ -3,7 +3,7 @@ const {chromium}=require('playwright'),fs=require('node:fs');
 const assert=require('node:assert/strict');
 const base=process.env.PCS_BROWSER_BASE_URL||'http://127.0.0.1:8788';
 if(!['127.0.0.1','localhost','[::1]'].includes(new URL(base).hostname))throw Error('Game checks require an isolated loopback server');
-const pages=['arena-countermodel','arena-proof-quest','arena-safety-forge','prooflab','meaning-forge','semantic-gauntlet','forge-duel','semantic-repair-lab','semantic-multistep-lab','repair-model-lab','intervention-lab'];
+const pages=['assurance-fold','arena-countermodel','arena-proof-quest','arena-safety-forge','prooflab','meaning-forge','semantic-gauntlet','forge-duel','semantic-repair-lab','semantic-multistep-lab','repair-model-lab','intervention-lab'];
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.PCS_CHROMIUM||'/usr/bin/chromium',args:['--no-sandbox']});
  const rows=[];

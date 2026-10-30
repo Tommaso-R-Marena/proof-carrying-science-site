@@ -1,0 +1,64 @@
+/* Local readable fonts for Lean receipts and game UI — no CDN runtime load. */
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/IbmPlexMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/IbmPlexMono-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/SourceSans3-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/SourceSans3-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/SourceSerif4-SemiBold.woff2") format("woff2");
+}
+
+.pcs-lean-print,
+.pd-panel pre,
+.af-feedback code,
+.af-research-status,
+.af-energy-readout,
+.pd-callout code {
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Mono", "SF Mono", Consolas, Menlo, monospace;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+  font-variant-ligatures: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pcs-lean-print,
+.pd-panel pre {
+  color: #142033;
+  background: #f4f7fb;
+  border: 1px solid #c5d0db;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  max-height: none;
+  overflow: auto;
+  tab-size: 2;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
