@@ -64,7 +64,7 @@
     "test:search-quality": "node --test tests/search-quality.test.mjs",
     "test:assurance-fold": "node --test tests/assurance-fold.test.mjs tests/evidence-atlas.test.mjs tests/assurance-fold-learning.test.mjs tests/paper-demos.test.mjs",
     "verify:paper-demos": "python3 scripts/run_paper_demos_kernel.py",
-    "test:copy": "python3 scripts/check_public_copy.py",
+    "test:copy": "python3 -m unittest discover -s tests -p test_public_copy.py && python3 scripts/check_public_copy.py",
     "test:browser:beginner": "node scripts/browser_beginner_journey.cjs"
   },
   "devDependencies": {

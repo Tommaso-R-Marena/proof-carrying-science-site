@@ -1,0 +1,437 @@
+{
+  "format": "pcs-qualified-copy-restoration-v1",
+  "failed_head": "7040ab86676b19b848d82de15912b7273dc7f6e5",
+  "failed_run": 41058207458,
+  "failed_job": 124075263415,
+  "failure": "Executed local qualification source differs: public/calibration-lab.html",
+  "restoration": "Restore exact historical HTML bytes. Leave all qualification receipts and the independent source checker unchanged.",
+  "qualified_html_sha256": "91e25f22b22f0a787a09b1e39c3555c7324068d76874f059639166db678d6e32",
+  "copy_audit": {
+    "format": "pcs-public-copy-audit-v1",
+    "html_pages": 66,
+    "issues": 0,
+    "preserved_qualified_findings": 1,
+    "pages": [
+      {
+        "file": "public/404.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/account.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/admin-login.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/admin.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/architecture.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/arena-countermodel.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/arena-proof-quest.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/arena-safety-forge.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/arena.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/assurance-fold.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 4
+      },
+      {
+        "file": "public/bridge-builder.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/calibration-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [
+          {
+            "line": 15,
+            "rule": "prose_em_dash",
+            "text": "prediction function\u2014including nonlinear predictors\u2014over unrestricted coefficients in the declared polynomial family at this fixed design. Extra priors, measurements or average-case goals change the problem."
+          }
+        ],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/claim-invalidation-v1.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/claim-review.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/commons.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/contact.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/contribute.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/contributors.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/demo.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 7
+      },
+      {
+        "file": "public/evaluation-firewall.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/evidence-atlas.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/experience.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/forge-duel.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/fund.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/governance.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/guided-submission.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/index.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/intake.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/intervention-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/lean-learning-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/live-demo.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/meaning-forge.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/memory-workshop.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/model-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/mvp.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/omega-workspace.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/organizations.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/package-inspector.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 7
+      },
+      {
+        "file": "public/paper-demos.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/privacy.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/project-builder.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/projects.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/prooflab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/reasoning-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/repair-model-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/research-preview.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/research-updates.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/research.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/researcher-pilots.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/result-anatomy.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/reviewer-desk.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/roles.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/scientific-workflow-v2.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/semantic-audit.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/semantic-gauntlet.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/semantic-multistep-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/semantic-repair-lab.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/task-graph.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/tasks.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/transport-workflow-v3.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/trust-explorer.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/trust.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/validation-registry.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/validation.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/workboard.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/world-builder.html",
+        "issues": [],
+        "preserved_qualified_findings": [],
+        "placeholder_dashes": 0
+      }
+    ],
+    "human_comprehension_tested": false,
+    "authorship_detection": false
+  },
+  "source_verification": {
+    "independent_core_sha": "fabc704efdbda4c8822881366e4db3d3e31f066a",
+    "documents": 4,
+    "all_existing_local_source_bindings": 7,
+    "passed": true
+  },
+  "calibration_reproduction": {
+    "hulls": 22,
+    "receipts": 22,
+    "names_per_receipt": 386,
+    "artifact_sha256": "4b53e9a38d283da4e60577b031ceb9ebfd5b6b844308b0956696eb80aa965924",
+    "archived_evidence_rechecked": true,
+    "new_physical_experiment": false
+  },
+  "copy_regression_tests": 4,
+  "human_participants": 0
+}

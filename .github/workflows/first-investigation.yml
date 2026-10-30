@@ -13,6 +13,7 @@ on:
       - 'scripts/browser_beginner_journey.cjs'
       - 'scripts/check_public_copy.py'
       - 'tests/first-investigation.test.mjs'
+      - 'tests/test_public_copy.py'
       - 'package*.json'
       - '.github/workflows/first-investigation.yml'
   workflow_dispatch:

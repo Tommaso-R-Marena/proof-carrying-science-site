@@ -8,6 +8,7 @@ empty result placeholders are not prose.
 from __future__ import annotations
 
 import argparse
+import hashlib
 from html.parser import HTMLParser
 import json
 from pathlib import Path
@@ -20,6 +21,14 @@ CANNED = re.compile(
     r"a testament to|revolutionize your)\b", re.I,
 )
 PROSE_DASH = re.compile(r"\w\s*—\s*\w", re.UNICODE)
+
+
+# This exact page is bound by docs/evidence/website-research-sync-v1/
+# calibration-browser.json. Preserve its paired mathematical parenthetical;
+# never rehash the historical receipt just to pass an editorial check.
+QUALIFIED_COPY = {
+    'public/calibration-lab.html': '91e25f22b22f0a787a09b1e39c3555c7324068d76874f059639166db678d6e32',
+}
 
 
 class CopyReader(HTMLParser):
@@ -57,24 +66,39 @@ class CopyReader(HTMLParser):
             self.check(data)
 
 
+def review_copy(name, raw):
+    reader = CopyReader()
+    reader.feed(raw.decode('utf-8'))
+    issues, preserved = list(reader.problems), []
+    if name in QUALIFIED_COPY:
+        if hashlib.sha256(raw).hexdigest() != QUALIFIED_COPY[name]:
+            issues.append({'line': 1, 'rule': 'qualified_source_changed',
+                           'text': 'Restore the exact source-bound page; do not rewrite its historical receipt.'})
+        else:
+            preserved, issues = issues, []
+    return {'file': name, 'issues': issues, 'preserved_qualified_findings': preserved,
+            'placeholder_dashes': reader.placeholder_dashes}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true", help="Emit the complete audit")
     args = parser.parse_args()
     rows = []
     for path in sorted((ROOT / 'public').rglob('*.html')):
-        reader = CopyReader()
-        reader.feed(path.read_text(encoding='utf-8'))
-        rows.append({'file': str(path.relative_to(ROOT)), 'issues': reader.problems,
-                     'placeholder_dashes': reader.placeholder_dashes})
+        rows.append(review_copy(str(path.relative_to(ROOT)), path.read_bytes()))
     report = {'format': 'pcs-public-copy-audit-v1', 'html_pages': len(rows),
-              'issues': sum(len(row['issues']) for row in rows), 'pages': rows,
+              'issues': sum(len(row['issues']) for row in rows),
+              'preserved_qualified_findings': sum(len(row['preserved_qualified_findings']) for row in rows),
+              'pages': rows,
               'human_comprehension_tested': False, 'authorship_detection': False}
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        print(f"Public copy: {report['html_pages']} HTML pages, {report['issues']} issues; no human comprehension claim")
+        print(f"Public copy: {report['html_pages']} HTML pages, {report['issues']} issues, {report['preserved_qualified_findings']} disclosed qualified-source finding; no human comprehension claim")
         for row in rows:
+            for finding in row['preserved_qualified_findings']:
+                print(f"Preserved exact qualified source: {row['file']}:{finding['line']}: {finding['rule']}")
             for issue in row["issues"]:
                 print(f"{row['file']}:{issue['line']}: {issue['rule']}: {issue['text']}")
     return int(bool(report['issues']))

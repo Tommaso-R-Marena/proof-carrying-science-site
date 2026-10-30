@@ -7,7 +7,9 @@ There were **zero human participants**. The [machine-readable record](review.jso
 contains the initial source-bound browser results, baseline measurements and copy audit.
 It is preserved at its original implementation revision. The subsequent
 [clean-URL review](clean-url-review.json) binds the final navigation fix and
-records its separate browser checks.
+records its separate browser checks. The
+[qualified-copy restoration](qualified-copy-review.json) records a source-binding
+failure caught by the full gate and the exact restoration that followed.
 
 ## Changes
 
@@ -24,12 +26,15 @@ step when it is completed. A shared skip link lets keyboard users bypass the
 navigation. This changes presentation; the rules, witness format and authority
 remain unchanged. No gameplay uploads or new analytics were added.
 
-The copy pass removes prose em dashes from authored HTML, shortens introductory
+The copy pass rewrites heavy use of prose em dashes in authored HTML, shortens introductory
 text and rewrites canned transitions in the result reader and game feedback.
-Empty-result placeholders remain. The copy check covers all 66 HTML pages,
+Empty-result placeholders remain. One paired mathematical parenthetical remains
+on the exact source-bound calibration page, with its finding and source hash
+explicitly disclosed. The copy check covers all 66 HTML pages,
 including descriptions and accessible labels. It flags selected phrases and
 prose em dashes; it is not an authorship detector or a readability assessment.
-Code, mathematical displays and historical evidence are outside this check.
+Code and mathematical displays are outside this editorial check. Historical
+evidence and its source bindings are preserved.
 
 ## What was tested
 
@@ -81,6 +86,23 @@ still tests file URLs. A separate Chromium negative control served the exact old
 `site.js` at `/experience`: it had no marker and zero breadcrumbs; the new source
 had the page marker and one breadcrumb. The clean-URL record includes both source
 hashes. No remote verifier or kernel verdict was substituted in this UI test.
+
+## Preserve qualified source when editing copy
+
+The first full hosted gate on `7040ab8` rejected the punctuation edit to
+`calibration-lab.html`: that page is one of five inputs bound to its published
+browser qualification. Restore the exact page rather than changing the historical
+receipt. The source checker and both original qualification receipts are unchanged.
+The copy audit now discloses the retained parenthetical only when the complete
+page matches the exact qualified hash. Any edit invalidates that exception.
+
+Four Python regression tests cover ordinary prose, the explicit exception, edited
+page rejection and all seven existing local qualification source bindings. These
+checks now run in the quick release gate too. The independent source check passed
+against the actual pinned core checkout; calibration export verification rechecked
+22 archived hull receipts, each with 386 theorem identities. This is a recheck of
+existing evidence, not a new physical experiment. Earlier browser reports are kept
+at their original revisions and do not imply that this failed source gate passed.
 
 ## Remaining validation
 

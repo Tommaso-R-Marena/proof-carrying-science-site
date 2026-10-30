@@ -28,7 +28,9 @@ expand on demand. A full scientific verification still needs technical setup.
 screen widths, including an evidence download and a fresh-page recheck. It needs
 no account service and writes no data to PCS. `npm run test:copy` checks all public
 HTML prose for em-dash-heavy writing and selected canned phrases. It does not
-infer authorship or measure human comprehension. Both run in protected CI.
+infer authorship or measure human comprehension. A source-bound calibration page
+keeps one explicitly disclosed, hash-pinned parenthetical. Four Python checks
+also preserve all existing qualification bindings. Both run in protected CI.
 
 See the [usability review and remaining human-study gap](docs/usability/2026-10-30/README.md).
 No newcomer participants have been observed yet; automated task completion is
