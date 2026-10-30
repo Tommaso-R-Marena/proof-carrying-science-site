@@ -1402,3 +1402,9 @@ body.demo-revamp{background:linear-gradient(180deg,#f4f7fb 0,#f8fafc 520px,#f7f9
 }
 .pcs-skip{position:absolute;left:12px;top:0;transform:translateY(-150%);z-index:10000;background:#fff;color:#12364d;padding:14px 20px;border:3px solid #b36516;border-radius:8px;font-weight:700}
 .pcs-skip:focus{transform:none}
+
+/* The expanded catalogue has a light background, unlike the original hero. */
+.home-research .hero-plain-flow>div{background:#f5f8fb;border-color:#cbdde9}
+.home-research .hero-plain-flow small{color:#385c70;font-size:12px;line-height:1.4}
+.home-research .hero-plain-flow strong{color:#172c44;font-size:14px;line-height:1.5}
+.home-research .hero-plain-flow>span{color:#385c70}

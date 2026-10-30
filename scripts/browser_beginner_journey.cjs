@@ -125,6 +125,29 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       await p.goto(base + '/#product');
       assert.equal(await p.locator('#homeResearch').getAttribute('open'), '');
       assert.equal(await p.locator('#product').isVisible(), true);
+      const contrast = await p.locator('#homeResearch .hero-plain-flow').evaluate(root => {
+        const rgba = s => {const a=s.match(/[\d.]+/g).map(Number);return [...a.slice(0,3),a[3]??1];};
+        const background = el => {
+          if (!el) return [255,255,255];
+          const c=rgba(getComputedStyle(el).backgroundColor);
+          if(c[3]===1)return c.slice(0,3);
+          const behind=background(el.parentElement);
+          return c.slice(0,3).map((v,i)=>v*c[3]+behind[i]*(1-c[3]));
+        };
+        const luminance = rgb => {
+          const c=rgb.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
+          return .2126*c[0]+.7152*c[1]+.0722*c[2];
+        };
+        return [...root.querySelectorAll('small,strong')].map(el=>{
+          const style=getComputedStyle(el),bg=background(el),fg=rgba(style.color);
+          const l1=luminance(fg.slice(0,3).map((v,i)=>v*fg[3]+bg[i]*(1-fg[3]))),l2=luminance(bg);
+          return {tag:el.tagName,ratio:(Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05),font_px:parseFloat(style.fontSize)};
+        });
+      });
+      assert.equal(contrast.length,6);
+      assert.ok(contrast.every(c=>c.ratio>=4.5),'expanded summary text needs 4.5:1 contrast: '+JSON.stringify(contrast));
+      assert.ok(contrast.every(c=>c.font_px>=(c.tag==='SMALL'?12:14)),'summary text must be readable at its rendered size');
+      await p.locator('#homeResearch .hero-plain-flow').screenshot({path:path.join(output,`expanded-summary-${width}.png`)});
       await p.goto(base + '/#%E0%A4%A'); // malformed escapes cannot break navigation
       assert.equal(await p.locator('[data-beginner-path]').count(), 3);
       assert.deepEqual(errors, []); assert.deepEqual(writes, []); assert.deepEqual(external, []);
@@ -135,6 +158,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
         first_visual_puzzle_completed:true,sample_package_exact_sha256:true,
         inspection_does_not_establish_authority:true,research_bookmarks_preserved:true,
         clean_url_current_page_and_breadcrumbs:true,
+        expanded_summary_min_contrast:Math.min(...contrast.map(c=>c.ratio)),
         overflow:false,unexpected_writes:writes.length,external_requests:external.length});
       await context.close();
     }
