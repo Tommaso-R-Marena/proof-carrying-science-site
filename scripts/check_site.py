@@ -252,7 +252,7 @@ if result_anatomy_js.exists():
         "summaryFormal",
         "summaryReplay",
         "summaryTrusted",
-        "Bottom line:",
+        "Broader scientific interpretations require separate evidence.",
     ]:
         if required_text not in script_value:
             errors.append(f"result-anatomy.js: scenario semantics drift: {required_text}")
@@ -262,22 +262,22 @@ index_page = ROOT / "index.html"
 if index_page.exists():
     index_text = index_page.read_text(encoding="utf-8")
     for required_text in [
-        "PCS helps you show <em>why</em> a result should be trusted—not just say “trust me.”",
+        "Check the evidence.<br>See what <em>holds up.</em>",
         "Crowdsource the work. Never the truth.",
         "L2 opens general paid-task eligibility",
         "L4 is the review-authority threshold",
         "Say exactly what you claim",
         "Attach the exact evidence",
         "Let someone else verify it",
-        "not a magic “safe” button",
-        "does make evidence easier to inspect and replay",
-        "tamper-evident lab notebook for important computational claims",
-        "What exact claim are you making?",
-        "What exact evidence supports it?",
+        "A green result never proves universal AI safety.",
+        "what remains unknown.",
+        "Start with something useful to you.",
+        "Understand how a check works",
+        "Look inside a shared result",
         "Start from your role",
         "What are you here to do?",
         "I have a computation or result to submit.",
-        "I received a PCS package—or need to understand one.",
+        "I received a PCS package. How do I read it?",
         "I have a .pcs.zip →",
         "I need to understand a result",
         'href="package-inspector.html#inspectorDrop"',
@@ -335,7 +335,7 @@ for pilot_file, required_tokens in {
         'id="pilotDraftForm"', 'id="pilotDraftResult"',
         'src="researcher-pilot-ui.js"', 'href="research-preview.html"',
         "PCS core, website and CertiForge source are public",
-        "a genuinely external scientific pilot and live production signing service remain separate validation steps",
+        "an external scientific pilot and live production signing service remain separate validation steps",
     ],
     "researcher-pilot-core.mjs": [
         "pcs-independent-pilot-draft-v1", "signed:false",
@@ -714,7 +714,7 @@ commons_contracts = {
         "integrated into the core repository and independently rebuilt",
     ],
     "account.html": [
-        "Your level is earned here—not self-declared.",
+        "Build your contributor record.",
         "Every new account starts at L0.",
         "Two ways to qualify for higher-trust work.",
         "Variable competency evaluation",
@@ -812,7 +812,7 @@ task_graph_page = ROOT / "task-graph.html"
 task_graph_js = ROOT / "task-graph.js"
 if task_graph_page.exists():
     value = task_graph_page.read_text(encoding="utf-8")
-    for required_text in ["What unlocks what—and exactly why?","ALL, ANY, and AT_LEAST",'id="taskGraphPrograms"','src="task-graph.js"']:
+    for required_text in ["Which tasks depend on others? Why?","ALL, ANY, and AT_LEAST",'id="taskGraphPrograms"','src="task-graph.js"']:
         if required_text not in value:
             errors.append(f"task-graph.html: dependency-graph contract drift: {required_text}")
 if task_graph_js.exists():
@@ -1225,7 +1225,7 @@ if guided_page.exists():
         "PCS does not turn arbitrary prose directly into a trusted formal claim.",
         "Describe what you want to check",
         "How to decide which claim to include",
-        "Discovery confidence is only a file/template matching signal",
+        "Discovery confidence measures how well the files match a template.",
         "Supported claim proposals",
         "State boundary",
         "This browser action stops at a reviewed draft.",
@@ -1248,7 +1248,7 @@ if guided_page.exists():
         "ACCEPTED",
         "Where you are",
         "Nothing has been verified, executed, signed, or accepted.",
-        "Here is what PCS found—and what it still does not know.",
+        "What PCS found and what still needs checking.",
         "STATIC DISCOVERY ONLY",
         "1 · Found locally",
         "2 · PCS proposed",
@@ -1528,7 +1528,7 @@ if inspector_page.exists():
         "the delivered <code>.pcs.zip</code>",
         "<code>trust.json</code> is used by the authoritative CLI",
         "Step 1 · Start here",
-        "Open the delivered PCS v0.6 bundle",
+        "Choose your package or try the sample",
         "Reviewer snapshot · actual loaded package",
         "1 · Browser integrity",
         "2 · Claim result",

@@ -73,7 +73,7 @@ test("tour uses the actual local evaluator and shows both pass and failure examp
   assert.equal(evaluateTrace(examples.trace_fail).verdict,"FAIL");
   assert.equal(evaluateModel(examples.model_pass).verdict,"PASS");
   const experience=read("public/experience.html"),js=read("public/experience.js");
-  assert.match(experience,/What if a claim/);
+  assert.match(experience,/Did the assistant/);
   assert.match(experience,/not the executable Lean authority/);
   assert.match(js,/evaluateTrace\(input\)/);
   assert.match(js,/evaluateModel\(input\)/);

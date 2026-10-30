@@ -74,7 +74,7 @@
   </div>
 
   <section class="section-tight" id="task-curation">
-    <div class="section-heading-row"><div><div class="kicker">Marketplace publication</div><h2>Only publish work PCS genuinely needs.</h2></div><p>The marketplace is default-deny. Draft, paused, satisfied, or retired work is not publicly startable—even by direct API ID. Publication changes are Founder/Owner-only and audit-logged.</p></div>
+    <div class="section-heading-row"><div><div class="kicker">Marketplace publication</div><h2>Only publish work PCS needs.</h2></div><p>The marketplace is default-deny. Draft, paused, satisfied, or retired work is not publicly startable, including by direct API ID. Publication changes are Founder/Owner-only and audit-logged.</p></div>
     <div class="boundary"><strong>Rule</strong><span>A useful idea is not automatically a public task. Publish only when PCS has a concrete need, finish line, verification rule, and capacity to review the output.</span></div>
     <details class="admin-create-task">
       <summary>Create a new bounded task draft</summary>
@@ -110,7 +110,7 @@
 
   <section class="section-tight" id="dependency-editor">
     <div class="section-heading-row"><div><div class="kicker">Dependency graph editor</div><h2>Make prerequisites explicit enough to audit.</h2></div><p>Edges say what accepted artifact flows downstream; gate groups define ALL / ANY / AT_LEAST(k) unlock logic. Hard-edge cycles are rejected server-side and every graph change is audit-logged.</p></div>
-    <div class="boundary"><strong>Design rule</strong><span>Use a hard dependency only when downstream work is genuinely unsafe or meaningless without the accepted upstream output. Use informative edges for useful context that should not block parallel work.</span></div>
+    <div class="boundary"><strong>Design rule</strong><span>Use a hard dependency only when downstream work is unsafe or meaningless without the accepted upstream output. Use informative edges for useful context that should not block parallel work.</span></div>
 
     <div class="admin-graph-editor">
       <form id="adminDependencyGroupForm" class="admin-graph-form">
@@ -289,7 +289,7 @@
   <section class="section-tight admin-history-section" id="audit-log">
   <details class="admin-audit-disclosure" id="adminAuditDatabaseDisclosure">
     <summary><span>Browse complete audit database</span><small>Search all events and load older pages on demand. Every record is kept in D1.</small></summary>
-    <div class="section-heading-row"><div><div class="kicker">Immutable audit archive</div><h2>Append-only, hash-chained operational history.</h2></div><p>Application/database rules reject updates and deletions to this archive. Each event commits to the previous event hash. Infrastructure owners could still destroy the underlying database itself, so this is tamper-evident and application-immutable—not physically indestructible.</p></div>
+    <div class="section-heading-row"><div><div class="kicker">Immutable audit archive</div><h2>Append-only, hash-chained operational history.</h2></div><p>Application/database rules reject updates and deletions to this archive. Each event commits to the previous event hash. Infrastructure owners could still destroy the underlying database itself, so this is tamper-evident and protected from application-level changes. It is not physically indestructible.</p></div>
     <div id="auditIntegrityPanel" class="audit-integrity-panel"></div>
     <div class="admin-audit-controls"><label>Search entire archive <input id="adminAuditSearch" class="textinput" type="search" maxlength="100" placeholder="action, actor, subject, detail"></label><label>Records per page <select class="selectinput" id="adminAuditPageSize"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></label><button class="button secondary" id="refreshAuditButton" type="button">Refresh + verify chain</button></div>
     <div id="adminAuditList" class="admin-audit-list"></div>

@@ -224,7 +224,7 @@ function renderReviewerSnapshot(x){
     detail="Package validity, claim decisions, and receiver acceptance remain separate axes even when they are shown together here.";
     nextTitle=authority.reviewer_accepted?"Review the exact claims and their scope.":"Review why receiver policy rejected an otherwise valid package.";
     nextDetail=authority.reviewer_accepted
-      ?"Confirm what each typed claim actually establishes—and what remains outside its scope."
+      ?"Check what each claim establishes and what remains outside its scope."
       :"The scientific replay may be fine; acceptance can fail because the receiver requires stronger or different evidence.";
     nextHref=authority.reviewer_accepted?"#assurance-explorer":"#receipt-review";
     nextLabel=authority.reviewer_accepted?"Review claims + scope →":"Review policy + receipt →";

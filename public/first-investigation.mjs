@@ -64,6 +64,7 @@ $('fiCheck').addEventListener('click', () => {
     (checked.prediction_correct ? ' Your prediction matched the calculation.' : ' The calculation differs from your prediction; use the two rule cards to see why.');
   $('fiResult').dataset.state = checked.counterexample ? 'found' : 'same';
   render();
+  $('fiResult').focus();
 });
 $('fiScope').addEventListener('change', () => { understood = false; $('fiScopeFeedback').textContent = ''; render(); });
 $('fiUnderstand').addEventListener('click', () => {
@@ -73,6 +74,7 @@ $('fiUnderstand').addEventListener('click', () => {
     'Exactly. You found a concrete example where the rules disagree. You can now carry these facts to another checker. This does not establish the behavior of a real AI.' :
     'Look again: you checked one fictional tool call and two statements. The evidence establishes a difference in meaning; it does not establish what a real AI will do.';
   render();
+  $(understood ? 'fiCarryTitle' : 'fiScopeFeedback').focus();
 });
 
 function download(name, raw, type) {
