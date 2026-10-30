@@ -21,7 +21,7 @@
 <body class="home-revamp">
 <div class="topbar">
   <div class="shell">
-    <span>PCS · Make important claims easier to check, reproduce, and challenge</span>
+    <span>PCS · Check the evidence behind a claim</span>
     <a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a>
   </div>
 </div>
@@ -52,32 +52,16 @@
   <div class="hero-revamp-grid">
     <div class="hero-revamp-copy">
       <div class="eyebrow">A clearer way to check important claims</div>
-      <h1>PCS helps you show <em>why</em> a result should be trusted—not just say “trust me.”</h1>
-      <p class="hero-lead"><strong>In plain English:</strong> you make a specific claim. PCS keeps that claim tied to the exact files and checks behind it, reruns the checks a reviewer can rerun, and reports what passed, what failed, and what is still unknown.</p>
+      <h1>Check the evidence.<br>See what <em>holds up.</em></h1>
+      <p class="hero-lead">Someone says a result is correct or an AI follows a rule. PCS helps you examine the evidence and see what still needs checking.</p>
+      <div class="actions beginner-actions"><a class="button primary button-lg" href="experience.html">Start here · try your first check →</a><a class="button hero-secondary button-lg" href="world-builder.html">Try a visual puzzle</a></div>
+      <p class="beginner-caption">No account, coding or download needed to try it.</p>
 
-      <div class="hero-plain-flow" aria-label="PCS in three simple steps">
-        <div><small>1 · Say exactly what you claim</small><strong>“This result satisfies this check.”</strong></div>
-        <span aria-hidden="true">→</span>
-        <div><small>2 · Attach the exact evidence</small><strong>Files, assumptions, and checks stay together.</strong></div>
-        <span aria-hidden="true">→</span>
-        <div><small>3 · Let someone else verify it</small><strong>They can rerun the checks and see the limits.</strong></div>
-      </div>
 
-      <div class="actions">
-        <a class="button primary button-lg" href="experience.html">Start here · try your first check →</a>
-        <a class="button hero-secondary button-lg" href="arena.html">Play a game and help research</a>
-        <a class="button hero-secondary button-lg" href="assurance-fold.html">Play Assurance Fold</a>
-        <a class="button hero-secondary button-lg" href="tasks.html">Help with a real task</a>
-      </div>
-      <div class="hero-proof-row" aria-label="What PCS is and is not">
-        <span><i></i> not a magic “safe” button</span>
-        <span><i></i> does not turn weak evidence into truth</span>
-        <span><i></i> does make evidence easier to inspect and replay</span>
-        <span><i></i> clearly marks what remains unproven</span>
-      </div>
+
     </div>
 
-    <div class="assurance-console" aria-label="Illustrative PCS assurance console">
+    <details class="assurance-console home-sample"><summary>What would a result tell me?</summary>
       <div class="console-top">
         <div><span class="console-dot"></span><span class="console-dot"></span><span class="console-dot"></span></div>
         <strong>PCS / example review</strong>
@@ -99,22 +83,28 @@
         <div><small>CLAIM</small><strong>COMPUTATIONALLY_SUPPORTED</strong></div>
         <div><small>POLICY</small><strong>ACCEPTED</strong></div>
       </div>
-      <p>Illustrative result only—not a freshly executed Lean verification. See the <a href="research-preview.html">runnable browser checks</a> and the <a href="result-anatomy.html">independent reviewer workflow</a>. A green result never proves universal AI safety.</p>
-    </div>
+      <p>This is an illustration. It has not run a proof check. See the <a href="research-preview.html">runnable browser checks</a> and the <a href="result-anatomy.html">independent reviewer workflow</a>. A green result never proves universal AI safety.</p>
+    </details>
   </div>
 </section>
 
 <section class="pcs-frontdoor pcs-plain-explainer" aria-label="PCS explained without jargon">
-  <div><span>PCS IN ONE MINUTE</span><h2>Think of it like a tamper-evident lab notebook for important computational claims.</h2>
-  <p>Suppose someone says an AI system obeyed a safety rule, or a scientific model produced a result. A screenshot or a green checkmark is easy to misunderstand. PCS asks: <strong>What exact claim are you making? What exact evidence supports it? Can another person rerun the relevant checks? What assumptions are still being trusted?</strong></p></div>
+  <div><span>WHAT WOULD YOU LIKE TO DO?</span><h2>Start with something useful to you.</h2><p>You can test an example, play a puzzle or look inside a shared result. Each path explains what was checked and what remains unknown.</p></div>
   <div class="pcs-frontdoor-grid">
-    <a href="experience.html"><strong>“I have no technical background.”</strong><small>See a visual example with ordinary language →</small></a>
-    <a href="package-inspector.html"><strong>“I received a PCS result.”</strong><small>Inspect what is actually inside the evidence package →</small></a>
-    <a href="assurance-fold.html"><strong>“I want to play.”</strong><small>Try Assurance Fold →</small></a>
-    <a href="arena.html"><strong>“I want to help.”</strong><small>Play research games or choose a real contribution task →</small></a>
+    <a href="experience.html" data-beginner-path="learn"><strong>Understand how a check works</strong><small>Test two simple rules and save an example that shows the difference. Three short steps.</small></a>
+    <a href="package-inspector.html" data-beginner-path="inspect"><strong>Look inside a shared result</strong><small>Open a PCS package, or load the sample. Your files stay on your device.</small></a>
+    <a href="world-builder.html" data-beginner-path="play"><strong>Solve a visual puzzle</strong><small>Build a world with keys and doors. Find where two rules disagree. No background needed.</small></a>
   </div>
-  <p class="pcs-plain-bottom"><strong>The key idea:</strong> PCS does not decide reality for you. It makes a bounded claim and its evidence harder to separate, easier to rerun, and harder to overstate.</p>
+  <p class="pcs-plain-bottom"><a href="arena.html">Browse all games</a> · <a href="experience.html#fiReader">Reopen a first-investigation evidence file</a> · <a href="tasks.html">Find a contribution task</a></p>
 </section>
+<details class="home-research" id="homeResearch"><summary>Research tools, results and technical details</summary>
+      <div class="hero-plain-flow" aria-label="PCS in three simple steps">
+        <div><small>1 · Say exactly what you claim</small><strong>“This result satisfies this check.”</strong></div>
+        <span aria-hidden="true">→</span>
+        <div><small>2 · Attach the exact evidence</small><strong>Files, assumptions, and checks stay together.</strong></div>
+        <span aria-hidden="true">→</span>
+        <div><small>3 · Let someone else verify it</small><strong>They can rerun the checks and see the limits.</strong></div>
+      </div>
 <section class="section preview-home-onramp" aria-labelledby="previewHomeTitle">
   <div class="kicker">No login · no upload · local calculation</div>
   <h2 id="previewHomeTitle">Start with a result you can make fail.</h2>
@@ -160,7 +150,7 @@
   <div class="commons-home-banner">
     <div>
       <div class="kicker">Independent technical evaluations welcome</div>
-      <h2 id="pilotHomeTitle">Try to reproduce—or break—a bounded PCS claim.</h2>
+      <h2 id="pilotHomeTitle">Try to reproduce a PCS claim. Report what fails.</h2>
       <p>We are seeking researchers to test exact-version reproductions, negative controls and trust assumptions. The public browser tools are ready to examine now; a sensitive-data pilot requires a separate agreed review process.</p>
     </div>
     <a class="button primary" href="researcher-pilots.html">Plan a research pilot →</a>
@@ -177,7 +167,7 @@
     <a class="button primary" href="commons.html">Enter the Commons →</a>
   </div>
   <div class="commons-home-grid">
-    <a href="contribute.html"><span>CONTRIBUTE</span><strong>No expertise? Start at L0.</strong><small>Learn by doing one useful, reviewable task.</small></a>
+    <a href="contribute.html"><span>CONTRIBUTE</span><strong>New to PCS? Find a first task.</strong><small>Learn by doing one useful, reviewable task.</small></a>
     <a href="tasks.html"><span>WORK</span><strong>Volunteer or paid is visible up front.</strong><small>L2 opens general paid-task eligibility; L4 is the review-authority threshold.</small></a>
     <a href="fund.html"><span>FUND</span><strong>Commercial success should subsidize public safety work.</strong><small>Grants and large organizational users can support infrastructure and a Safety Bounty Fund.</small></a>
   </div>
@@ -204,7 +194,7 @@
       <span>01</span>
       <div class="rail-icon">C</div>
       <h3>Claim</h3>
-      <p>Human language is mapped to a supported typed predicate. The predicate—not prose—is authoritative.</p>
+      <p>A claim is written as a precise mathematical statement. Verification checks that statement. A reviewer must confirm that it captures the intended meaning.</p>
     </article>
     <div class="rail-arrow">→</div>
     <article>
@@ -261,7 +251,7 @@
         <span>REVIEWER</span>
         <div><i>1</i><b>Verify</b></div><em>→</em><div><i>2</i><b>Interpret</b></div><em>→</em><div><i>3</i><b>Decide</b></div>
       </div>
-      <h3>I received a PCS package—or need to understand one.</h3>
+      <h3>I received a PCS package. How do I read it?</h3>
       <p>Choose the path that matches what you actually have. A real <code>.pcs.zip</code> goes to local inspection first; the educational walkthrough explains how to interpret validity, claim status, trust boundaries, and policy.</p>
       <div class="role-card-actions">
         <a class="button primary" href="package-inspector.html#inspectorDrop">I have a .pcs.zip →</a>
@@ -280,7 +270,7 @@
   <div class="product-console-grid">
     <a class="product-console-card flagship" href="package-inspector.html">
       <span>NEW · REVIEWER TOOL</span><h3>PCS Package Inspector</h3>
-      <p>Drop a real v0.6 <code>.pcs.zip</code>. Re-hash exact members, compare manifest bindings, inspect typed claims and normalized decisions, and attach a verifier receipt—all locally.</p>
+      <p>Drop a real v0.6 <code>.pcs.zip</code>. Re-hash exact members, compare manifest bindings, inspect typed claims and normalized decisions, and attach a verifier receipt. All inspection stays on your device.</p>
       <strong>Inspect a package →</strong>
     </a>
     <a class="product-console-card" href="trust-explorer.html">
@@ -302,7 +292,7 @@
       <div class="kicker">Interactive product tour</div>
       <h2>Three demos, each with one job.</h2>
     </div>
-    <p>The old site asked one demo to explain everything. The new flow separates onboarding, result interpretation, and adversarial transparency.</p>
+    <p>Choose a walkthrough for preparing a project, reading a result or testing a damaged package.</p>
   </div>
 
   <div class="demo-gallery-grid">
@@ -403,11 +393,12 @@
   </div>
 </section>
 
+</details>
 <section class="section final-cta" id="research">
   <div>
     <div class="kicker">AI safety first · domain-general by design</div>
-    <h2>Start with one bounded claim that matters—and let more people help verify it.</h2>
-    <p>PCS is not trying to “prove arbitrary AI safety” or arbitrary science. The immediate focus is bounded, high-consequence AI-safety claims where exact replay, formal semantics, adversarial testing, provenance, and independent review can create real assurance. The same kernel is intended to support additional computational disciplines through explicit domain adapters.</p>
+    <h2>Have a research result you want someone else to check?</h2>
+    <p>Use the guided example to see what files a review needs. Preparing a project draft is free and local. Running the full verifier currently requires technical setup.</p>
   </div>
   <div class="final-cta-actions">
     <a class="button primary button-lg" href="contribute.html">Contribute to AI safety</a>
@@ -423,7 +414,7 @@
   <div class="footergrid">
     <div class="footerbrand">
       <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
-      <p>AI-safety-first assurance infrastructure for the common good, with a domain-general scientific core.</p>
+      <p>Check a claim, examine its evidence and understand its limits.</p>
     </div>
     <div class="footercol"><strong>Product</strong><a href="guided-submission.html">Try PCS</a><a href="result-anatomy.html">Result anatomy</a><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a></div>
     <div class="footercol"><strong>Trust & contact</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="privacy.html">Privacy</a><a href="contact.html">Design-partner inquiry</a><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div>

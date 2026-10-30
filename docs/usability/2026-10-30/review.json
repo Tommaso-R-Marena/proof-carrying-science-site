@@ -1,0 +1,967 @@
+{
+  "format": "pcs-beginner-ux-review-v1",
+  "baseline_commit": "54f216582d545a4341bbfc1b6dfd23ca6a18d002",
+  "human_participants": 0,
+  "scope": "Automated browser task completion and editorial audit; not a comprehension study or a PCS authority receipt.",
+  "baseline_browser_first_investigation": {
+    "viewports": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "passed": true
+  },
+  "baseline_layout": [
+    {
+      "page": "index",
+      "width": 390,
+      "height": 16063,
+      "visibleMainWords": 1766,
+      "heroLinks": 6
+    },
+    {
+      "page": "experience",
+      "width": 390,
+      "height": 3184,
+      "visibleMainWords": 302,
+      "heroLinks": 2,
+      "firstControlTop": 1882.78125
+    },
+    {
+      "page": "arena",
+      "width": 390,
+      "height": 11548,
+      "visibleMainWords": 1310,
+      "heroLinks": 0
+    },
+    {
+      "page": "index",
+      "width": 1440,
+      "height": 8922,
+      "visibleMainWords": 1778,
+      "heroLinks": 6
+    },
+    {
+      "page": "experience",
+      "width": 1440,
+      "height": 2191,
+      "visibleMainWords": 302,
+      "heroLinks": 2,
+      "firstControlTop": 1370.296875
+    },
+    {
+      "page": "arena",
+      "width": 1440,
+      "height": 7012,
+      "visibleMainWords": 1310,
+      "heroLinks": 0
+    }
+  ],
+  "baseline_copy_issues": [
+    {
+      "file": "public/account.html",
+      "line": 17,
+      "rule": "prose_em_dash",
+      "text": "Your level is earned here\u2014not self-declared."
+    },
+    {
+      "file": "public/admin.html",
+      "line": 77,
+      "rule": "prose_em_dash",
+      "text": "The marketplace is default-deny. Draft, paused, satisfied, or retired work is not publicly startable\u2014even by direct API ID. Publication changes are Founder/Owner-only and audit-logged."
+    },
+    {
+      "file": "public/admin.html",
+      "line": 292,
+      "rule": "prose_em_dash",
+      "text": "Application/database rules reject updates and deletions to this archive. Each event commits to the previous event hash. Infrastructure owners could still destroy the underlying database itself, so this is tamper-evident and application-immu"
+    },
+    {
+      "file": "public/arena-countermodel.html",
+      "line": 28,
+      "rule": "prose_em_dash",
+      "text": "After explicit opt-in from an email-verified account and adult self-attestation: mission and checker version, bounded move sequence, independently recomputed world states, hints and feedback-exposure flags, finite-model outcomes, and consen"
+    },
+    {
+      "file": "public/arena-safety-forge.html",
+      "line": 4,
+      "rule": "prose_em_dash",
+      "text": "Safety Forge \u00b7 PCS Arena \u2014 Experiment with AI safety"
+    },
+    {
+      "file": "public/arena-safety-forge.html",
+      "line": 52,
+      "rule": "prose_em_dash",
+      "text": "This is a fictional, finite-state agent\u2014not a real robot."
+    },
+    {
+      "file": "public/arena.html",
+      "line": 16,
+      "rule": "prose_em_dash",
+      "text": "Play a real search problem\u2014not a disguised quiz."
+    },
+    {
+      "file": "public/arena.html",
+      "line": 17,
+      "rule": "prose_em_dash",
+      "text": "Arena games work when players explore a difficult space\u2014not answer trivia\u2014and leave behind attempts researchers can study. Each PCS game has a concrete objective, many possible attempts, an independent checker, and a clear record of what a "
+    },
+    {
+      "file": "public/arena.html",
+      "line": 45,
+      "rule": "prose_em_dash",
+      "text": "Your placements and nudges, optional Shake/coach help flags, auto-saved notebooks when you lock, and engine-replayed steps you can export for later model work\u2014all local unless you download a file"
+    },
+    {
+      "file": "public/arena.html",
+      "line": 53,
+      "rule": "prose_em_dash",
+      "text": "Watch a learned numerical repair policy explore two semantic edits, rechecking each proposal with the finite checker. Compare model rankings against random, original-order, and simple symbolic baselines\u2014with honest limits."
+    },
+    {
+      "file": "public/arena.html",
+      "line": 79,
+      "rule": "prose_em_dash",
+      "text": "Find the exact world that breaks a mistranslation\u2014or show agreement within a finite bound."
+    },
+    {
+      "file": "public/assurance-fold.html",
+      "line": 5,
+      "rule": "prose_em_dash",
+      "text": "Arrange claim tokens on a live board, bring the heat down, and lock a calm layout. A local PCS Arena game that records what you tried\u2014without calling that a scientific ACCEPT."
+    },
+    {
+      "file": "public/assurance-fold.html",
+      "line": 31,
+      "rule": "prose_em_dash",
+      "text": "Each mission is a scrambled evidence package: authority checks, computational results, scientific claims that are still open, overclaim traps, and the limitations that keep the story honest. Drag the tokens into the matching zones. The numb"
+    },
+    {
+      "file": "public/assurance-fold.html",
+      "line": 81,
+      "rule": "prose_em_dash",
+      "text": "Tokens \u2014 tap to select"
+    },
+    {
+      "file": "public/assurance-fold.html",
+      "line": 85,
+      "rule": "prose_em_dash",
+      "text": "Zones \u2014 seat the selected token"
+    },
+    {
+      "file": "public/assurance-fold.html",
+      "line": 107,
+      "rule": "prose_em_dash",
+      "text": "Nothing leaves your machine unless you click an export button and save a file. That export can include step-by-step transitions for reinforcement learning, and pairs of nearby moves ranked by which one left the board cooler\u2014useful if someon"
+    },
+    {
+      "file": "public/assurance-fold.html",
+      "line": 131,
+      "rule": "prose_em_dash",
+      "text": "When you want the kernel-checked and package-replayed side of the story\u2014Palmer Penguins with Lean-authoritative dimensions, Countermodel Lab witnesses compiled by Lean 4.28, Bridge Builder on a fresh kernel\u2014open Paper Demos. The Evidence At"
+    },
+    {
+      "file": "public/calibration-lab.html",
+      "line": 15,
+      "rule": "prose_em_dash",
+      "text": "prediction function\u2014including nonlinear predictors\u2014over unrestricted coefficients in the declared polynomial family at this fixed design. Extra priors, measurements or average-case goals change the problem."
+    },
+    {
+      "file": "public/claim-invalidation-v1.html",
+      "line": 9,
+      "rule": "prose_em_dash",
+      "text": "PCS already computes conservative invalidation over declared dependencies. The open research problem is to make that semantics precise enough to review, adversarially test, and ultimately prove in Lean\u2014without pretending the graph can revea"
+    },
+    {
+      "file": "public/claim-invalidation-v1.html",
+      "line": 51,
+      "rule": "prose_em_dash",
+      "text": "The final Lean theorem states exactly what follows\u2014and what does not."
+    },
+    {
+      "file": "public/claim-review.html",
+      "line": 34,
+      "rule": "prose_em_dash",
+      "text": "See exactly what PCS can close\u2014and what still keeps the parent claim open."
+    },
+    {
+      "file": "public/commons.html",
+      "line": 108,
+      "rule": "prose_em_dash",
+      "text": "Verified contributors can enter the general paid marketplace. Payment is tied to the task\u2014not secretly to rank."
+    },
+    {
+      "file": "public/contributors.html",
+      "line": 19,
+      "rule": "prose_em_dash",
+      "text": "Every account begins at L0. The live backend\u2014not a profile dropdown\u2014stores the verified level. For task-specific competence, contributors may take a fresh generated evaluation or submit evidence/application for manual review. Auto-scoring i"
+    },
+    {
+      "file": "public/contributors.html",
+      "line": 46,
+      "rule": "prose_em_dash",
+      "text": "A difficult reproduction that matches\u2014or falsifies\u2014the claim."
+    },
+    {
+      "file": "public/contributors.html",
+      "line": 60,
+      "rule": "prose_em_dash",
+      "text": "Recognize careful replication that confirms exact conditions\u2014or exposes why reproduction fails."
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 5,
+      "rule": "prose_em_dash",
+      "text": "Curated real studies, repositories, standards, and supplementary materials that motivate PCS demos and Assurance Fold\u2014with DOI and journal links."
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 29,
+      "rule": "prose_em_dash",
+      "text": "When a demo on this site leans on someone else\u2019s work\u2014a journal article, a GitHub repository, a standards document, a Zenodo record\u2014it should send you to that source, not a vague paraphrase. Each card below has a short note on why it is her"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 51,
+      "rule": "prose_em_dash",
+      "text": "Cooper et al., Nature 2010 \u2014 Foldit (doi:10.1038/nature09304)"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 52,
+      "rule": "prose_em_dash",
+      "text": "Nature article page \u2014 Foldit"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 53,
+      "rule": "prose_em_dash",
+      "text": "PMC full text \u2014 Foldit"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 54,
+      "rule": "prose_em_dash",
+      "text": "Khatib et al., Nat Struct Mol Biol 2011 \u2014 Foldit structure (doi:10.1038/nsmb.2119)"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 56,
+      "rule": "prose_em_dash",
+      "text": "PLOS Medicine article page \u2014 Ioannidis 2005"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 57,
+      "rule": "prose_em_dash",
+      "text": "Peng, Science 2011 \u2014 reproducible research (doi:10.1126/science.1213847)"
+    },
+    {
+      "file": "public/evidence-atlas.html",
+      "line": 62,
+      "rule": "prose_em_dash",
+      "text": "RFC 8032 \u2014 EdDSA / Ed25519"
+    },
+    {
+      "file": "public/experience.html",
+      "line": 105,
+      "rule": "prose_em_dash",
+      "text": "What did we establish\u2014and what is still open?"
+    },
+    {
+      "file": "public/experience.html",
+      "line": 109,
+      "rule": "prose_em_dash",
+      "text": "A genuine Lean-checked assurance result is about specified predicates and trusted boundaries\u2014not a blanket declaration that an AI system or scientific theory is true."
+    },
+    {
+      "file": "public/guided-submission.html",
+      "line": 98,
+      "rule": "prose_em_dash",
+      "text": "For example: one script or notebook, the input it reads, the output you want checked, and\u2014when available\u2014a lockfile or environment declaration."
+    },
+    {
+      "file": "public/guided-submission.html",
+      "line": 146,
+      "rule": "prose_em_dash",
+      "text": "Here is what PCS found\u2014and what it still does not know."
+    },
+    {
+      "file": "public/guided-submission.html",
+      "line": 190,
+      "rule": "prose_em_dash",
+      "text": "The typed predicate\u2014not your prose\u2014is what later verification evaluates."
+    },
+    {
+      "file": "public/guided-submission.html",
+      "line": 211,
+      "rule": "prose_em_dash",
+      "text": "Discovery confidence is only a file/template matching signal\u2014it is not confidence that the scientific claim is true."
+    },
+    {
+      "file": "public/guided-submission.html",
+      "line": 227,
+      "rule": "prose_em_dash",
+      "text": "This is the contract PCS is preparing\u2014not yet a PASS. Check that the artifacts, formal claim meaning, workflow, and environment match what you intend."
+    },
+    {
+      "file": "public/index.html",
+      "line": 55,
+      "rule": "prose_em_dash",
+      "text": "a result should be trusted\u2014not just say \u201ctrust me.\u201d"
+    },
+    {
+      "file": "public/index.html",
+      "line": 102,
+      "rule": "prose_em_dash",
+      "text": "Illustrative result only\u2014not a freshly executed Lean verification. See the"
+    },
+    {
+      "file": "public/index.html",
+      "line": 163,
+      "rule": "prose_em_dash",
+      "text": "Try to reproduce\u2014or break\u2014a bounded PCS claim."
+    },
+    {
+      "file": "public/index.html",
+      "line": 207,
+      "rule": "prose_em_dash",
+      "text": "Human language is mapped to a supported typed predicate. The predicate\u2014not prose\u2014is authoritative."
+    },
+    {
+      "file": "public/index.html",
+      "line": 264,
+      "rule": "prose_em_dash",
+      "text": "I received a PCS package\u2014or need to understand one."
+    },
+    {
+      "file": "public/index.html",
+      "line": 283,
+      "rule": "prose_em_dash",
+      "text": ". Re-hash exact members, compare manifest bindings, inspect typed claims and normalized decisions, and attach a verifier receipt\u2014all locally."
+    },
+    {
+      "file": "public/index.html",
+      "line": 409,
+      "rule": "prose_em_dash",
+      "text": "Start with one bounded claim that matters\u2014and let more people help verify it."
+    },
+    {
+      "file": "public/live-demo.html",
+      "line": 18,
+      "rule": "prose_em_dash",
+      "text": "Play seven Countermodel Lab missions or repair a bounded agent policy in Safety Forge. Optional donations from email-verified adults include choices, revisions and checker feedback\u2014not just a score. The server replays every donated session."
+    },
+    {
+      "file": "public/meaning-forge.html",
+      "line": 18,
+      "rule": "prose_em_dash",
+      "text": "One changed symbol can reverse a scientific claim. Read an English or Lean statement, tune six meaning controls, and repair the translation. Each move changes a structured proposition\u2014not merely a cosmetic answer."
+    },
+    {
+      "file": "public/meaning-forge.html",
+      "line": 81,
+      "rule": "prose_em_dash",
+      "text": "What Meaning Forge verifies\u2014and what it does not"
+    },
+    {
+      "file": "public/package-inspector.html",
+      "line": 11,
+      "rule": "prose_em_dash",
+      "text": "Inspect a PCS v0.6 scientific assurance package locally\u2014no upload required."
+    },
+    {
+      "file": "public/package-inspector.html",
+      "line": 55,
+      "rule": "prose_em_dash",
+      "text": "Your receiver-owned trust profile and policy stay outside the package. The compiled authority\u2014not this page\u2014can establish authoritative"
+    },
+    {
+      "file": "public/package-inspector.html",
+      "line": 130,
+      "rule": "prose_em_dash",
+      "text": "What this browser established\u2014and what it did not."
+    },
+    {
+      "file": "public/package-inspector.html",
+      "line": 137,
+      "rule": "prose_em_dash",
+      "text": "This graph is built from the actual certificate IDs, workflow edges, evidence references, normalized decision index, and\u2014when attached\u2014the verifier receipt."
+    },
+    {
+      "file": "public/paper-demos.html",
+      "line": 28,
+      "rule": "prose_em_dash",
+      "text": "Watch PCS work on real papers and data\u2014then see exactly what it does not claim."
+    },
+    {
+      "file": "public/paper-demos.html",
+      "line": 29,
+      "rule": "prose_em_dash",
+      "text": "These walkthroughs use published sources and machine-checked artifacts: a signed Palmer Penguins package with Lean-authoritative dimensional replay, Countermodel Lab theorems compiled by Lean 4.28, and a Bridge Builder proof re-checked on a"
+    },
+    {
+      "file": "public/prooflab.html",
+      "line": 76,
+      "rule": "prose_em_dash",
+      "text": "A real proof has a precise scope. Suggest an attack worth investigating\u2014without confusing a hypothesis with a verified counterexample."
+    },
+    {
+      "file": "public/research-preview.html",
+      "line": 24,
+      "rule": "prose_em_dash",
+      "text": "See what gets checked\u2014and what remains unproved."
+    },
+    {
+      "file": "public/research-preview.html",
+      "line": 72,
+      "rule": "prose_em_dash",
+      "text": "Use the real local-first project mapper to inspect files and prepare typed claims. This creates a draft\u2014not a PASS."
+    },
+    {
+      "file": "public/research.html",
+      "line": 10,
+      "rule": "prose_em_dash",
+      "text": "The research goal is to make a large assurance problem decomposable without making the final conclusion depend on the honesty, seniority, or popularity of the people\u2014or AI systems\u2014who propose its parts."
+    },
+    {
+      "file": "public/research.html",
+      "line": 41,
+      "rule": "prose_em_dash",
+      "text": "The actual authority binary and signed package path should refine the same semantics used in the theorem\u2014not a disconnected toy model."
+    },
+    {
+      "file": "public/research.html",
+      "line": 62,
+      "rule": "prose_em_dash",
+      "text": "Claims about exact sequences, structures, scores, simulations, and analysis artifacts\u2014with external biological correspondence explicit."
+    },
+    {
+      "file": "public/researcher-pilots.html",
+      "line": 114,
+      "rule": "prose_em_dash",
+      "text": "PCS has not yet certified this end-to-end independent research pilot system. Private or sensitive research can be evaluated through an explicit separate arrangement\u2014not through this static page."
+    },
+    {
+      "file": "public/result-anatomy.html",
+      "line": 164,
+      "rule": "prose_em_dash",
+      "text": "This is the clean positive case\u2014but its scope is still the exact typed claim, evidence, assumptions, and reviewer policy."
+    },
+    {
+      "file": "public/reviewer-desk.html",
+      "line": 14,
+      "rule": "prose_em_dash",
+      "text": "Review the human interpretation\u2014not a game score."
+    },
+    {
+      "file": "public/semantic-multistep-lab.html",
+      "line": 40,
+      "rule": "prose_em_dash",
+      "text": "What this experiment does\u2014and does not\u2014establish"
+    },
+    {
+      "file": "public/semantic-repair-lab.html",
+      "line": 7,
+      "rule": "prose_em_dash",
+      "text": "The proposal sounds convincing\u2014but does it say the same thing? Explore exact edits, discover a counterexample, and repair the proposed formula without changing the source claim. Every checker decision uses actual enumerated first-order mode"
+    },
+    {
+      "file": "public/task-graph.html",
+      "line": 13,
+      "rule": "prose_em_dash",
+      "text": "What unlocks what\u2014and exactly why?"
+    },
+    {
+      "file": "public/tasks.html",
+      "line": 21,
+      "rule": "prose_em_dash",
+      "text": "Use the Maximum time filter. Marketing and outreach work is welcome when it has a specific deliverable, approved messaging, and verifiable evidence\u2014not mass unsolicited posting or guessed conversion numbers."
+    },
+    {
+      "file": "public/tasks.html",
+      "line": 91,
+      "rule": "prose_em_dash",
+      "text": "Volunteer, funded bounty, paid review, or specialist contract\u2014disclosed before work begins."
+    },
+    {
+      "file": "public/tasks.html",
+      "line": 105,
+      "rule": "prose_em_dash",
+      "text": "Ordinary tasks are not a points grind. PCS can use challenge-specific scoring only when a result is objectively checkable or independently validated\u2014similar in spirit to scientific puzzle systems. Research quality, falsification, and diffic"
+    },
+    {
+      "file": "public/tasks.html",
+      "line": 110,
+      "rule": "prose_em_dash",
+      "text": "Qualification can be demonstrated or reviewed\u2014never self-declared."
+    },
+    {
+      "file": "public/trust-explorer.html",
+      "line": 21,
+      "rule": "prose_em_dash",
+      "text": "Meaning beyond this subset\u2014such as broader lockfile/reconstruction semantics\u2014remains explicit."
+    },
+    {
+      "file": "public/world-builder.html",
+      "line": 26,
+      "rule": "prose_em_dash",
+      "text": "New rounds keep your tested attempts in this tab\u2014including unfinished searches and failed tests. Nothing is uploaded automatically. Reloading clears this notebook."
+    }
+  ],
+  "current_copy": {
+    "format": "pcs-public-copy-audit-v1",
+    "html_pages": 66,
+    "issues": 0,
+    "pages": [
+      {
+        "file": "public/404.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/account.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/admin-login.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/admin.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/architecture.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/arena-countermodel.html",
+        "issues": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/arena-proof-quest.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/arena-safety-forge.html",
+        "issues": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/arena.html",
+        "issues": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/assurance-fold.html",
+        "issues": [],
+        "placeholder_dashes": 4
+      },
+      {
+        "file": "public/bridge-builder.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/calibration-lab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/claim-invalidation-v1.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/claim-review.html",
+        "issues": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/commons.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/contact.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/contribute.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/contributors.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/demo.html",
+        "issues": [],
+        "placeholder_dashes": 7
+      },
+      {
+        "file": "public/evaluation-firewall.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/evidence-atlas.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/experience.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/forge-duel.html",
+        "issues": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/fund.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/governance.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/guided-submission.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/index.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/intake.html",
+        "issues": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/intervention-lab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/lean-learning-lab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/live-demo.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/meaning-forge.html",
+        "issues": [],
+        "placeholder_dashes": 1
+      },
+      {
+        "file": "public/memory-workshop.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/model-lab.html",
+        "issues": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/mvp.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/omega-workspace.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/organizations.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/package-inspector.html",
+        "issues": [],
+        "placeholder_dashes": 7
+      },
+      {
+        "file": "public/paper-demos.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/privacy.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/project-builder.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/projects.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/prooflab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/reasoning-lab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/repair-model-lab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/research-preview.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/research-updates.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/research.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/researcher-pilots.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/result-anatomy.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/reviewer-desk.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/roles.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/scientific-workflow-v2.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/semantic-audit.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/semantic-gauntlet.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/semantic-multistep-lab.html",
+        "issues": [],
+        "placeholder_dashes": 3
+      },
+      {
+        "file": "public/semantic-repair-lab.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/task-graph.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/tasks.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/transport-workflow-v3.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/trust-explorer.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/trust.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/validation-registry.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/validation.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/workboard.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      },
+      {
+        "file": "public/world-builder.html",
+        "issues": [],
+        "placeholder_dashes": 0
+      }
+    ],
+    "human_comprehension_tested": false,
+    "authorship_detection": false
+  },
+  "current_browser": {
+    "format": "pcs-beginner-journey-browser-v1",
+    "real_human_participants": 0,
+    "browser_version": "151.0.7922.173",
+    "production_authority_executed": false,
+    "rows": [
+      {
+        "width": 320,
+        "height": 900,
+        "homepage_visible_words": 238,
+        "primary_action_bottom": 623.46875,
+        "primary_action_in_initial_view": true,
+        "keyboard_skip_and_check": true,
+        "focused_feedback": true,
+        "learning_export_and_fresh_reopen": true,
+        "suggested_example_marked_assisted": true,
+        "real_ai_conclusion_rejected": true,
+        "first_visual_puzzle_completed": true,
+        "sample_package_exact_sha256": true,
+        "inspection_does_not_establish_authority": true,
+        "research_bookmarks_preserved": true,
+        "overflow": false,
+        "unexpected_writes": 0,
+        "external_requests": 0
+      },
+      {
+        "width": 390,
+        "height": 900,
+        "homepage_visible_words": 238,
+        "primary_action_bottom": 476.75,
+        "primary_action_in_initial_view": true,
+        "keyboard_skip_and_check": true,
+        "focused_feedback": true,
+        "learning_export_and_fresh_reopen": true,
+        "suggested_example_marked_assisted": true,
+        "real_ai_conclusion_rejected": true,
+        "first_visual_puzzle_completed": true,
+        "sample_package_exact_sha256": true,
+        "inspection_does_not_establish_authority": true,
+        "research_bookmarks_preserved": true,
+        "overflow": false,
+        "unexpected_writes": 0,
+        "external_requests": 0
+      },
+      {
+        "width": 768,
+        "height": 900,
+        "homepage_visible_words": 238,
+        "primary_action_bottom": 433.34375,
+        "primary_action_in_initial_view": true,
+        "keyboard_skip_and_check": true,
+        "focused_feedback": true,
+        "learning_export_and_fresh_reopen": true,
+        "suggested_example_marked_assisted": true,
+        "real_ai_conclusion_rejected": true,
+        "first_visual_puzzle_completed": true,
+        "sample_package_exact_sha256": true,
+        "inspection_does_not_establish_authority": true,
+        "research_bookmarks_preserved": true,
+        "overflow": false,
+        "unexpected_writes": 0,
+        "external_requests": 0
+      },
+      {
+        "width": 1440,
+        "height": 900,
+        "homepage_visible_words": 238,
+        "primary_action_bottom": 485.1875,
+        "primary_action_in_initial_view": true,
+        "keyboard_skip_and_check": true,
+        "focused_feedback": true,
+        "learning_export_and_fresh_reopen": true,
+        "suggested_example_marked_assisted": true,
+        "real_ai_conclusion_rejected": true,
+        "first_visual_puzzle_completed": true,
+        "sample_package_exact_sha256": true,
+        "inspection_does_not_establish_authority": true,
+        "research_bookmarks_preserved": true,
+        "overflow": false,
+        "unexpected_writes": 0,
+        "external_requests": 0
+      }
+    ],
+    "source_sha256": {
+      "index.html": "033e007d67f8e5cda70c6c2ade44036abd4b0c3d1f0b2bf04ceb6b8fac6edbce",
+      "experience.html": "508380eadb42b71d688c04e92398bee606e6322e39a0a24c3a918494a77232cc",
+      "first-investigation.mjs": "bf5a7c45efb3ffa5c0ce6126e0200e4179b02eb77053b6371dccbe7f75d84f0b",
+      "first-investigation.css": "cf0b2097b8a8f413b81b3940f65c40486d0657d925d8b61b5d6463130d6a4716",
+      "world-builder.html": "54b3f9b71eb2193835ef7929790967481ee341c9731bdc3f65bb23bfbbf64894",
+      "world-builder.mjs": "4fa5beb5c0d05f0671c82205aac27fbfc5904d9eaec127707a1925ed6f9eabec",
+      "package-inspector.html": "9687c96e188c597240ec560fd2e63c7d8cde1e4cb074a14a7289d729cdd77c3a",
+      "package-inspector.js": "a9e5b260d8a06470df08c70a15aad62a9ffcfd5298cd2fcfe01d82a9d2e00c5f",
+      "site.js": "27ca8a03b4872d815021c22674f431bc78b42076d96db19fef6638228b5af9b7",
+      "styles.css": "b841428bc87741a95e325fb19769ff1a7a5a40e7c35189432806449c3d7aa317"
+    },
+    "no_javascript_navigation": true
+  },
+  "validation": {
+    "node_tests": {
+      "passed": 477,
+      "failed": 0,
+      "skipped": 0
+    },
+    "complete_release_gate_exit_code": 0,
+    "existing_first_investigation_viewports": 4,
+    "game_tour_configurations": 48,
+    "game_keyboard_undo_worlds": 4
+  },
+  "limits": [
+    "No observed human participants or measured learning gains.",
+    "Predefined browser tasks do not establish that newcomers discover the controls unaided.",
+    "A full scientific verification still requires a technical reviewer and CLI setup.",
+    "An editorial phrase check does not identify AI authorship.",
+    "No actual screen reader, user satisfaction, or long-term retention study was performed."
+  ]
+}

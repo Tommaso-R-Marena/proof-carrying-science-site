@@ -168,7 +168,7 @@ $('wbProof').addEventListener('click',()=>{const v=sessionView(active);if(v.chec
 $('wbDownload').addEventListener('click',()=>{try{download('pcs-world-builder-notebook.json',JSON.stringify(notebook(allSessions()))+'\n');}catch(e){feedback(e.message,'miss');}});
 function showPlayback(session,fromFile=false){
  try{const r=replayCountermodelSession(session),list=$('wbTimeline');list.replaceChildren();
- for(const s of r.steps){const a=s.action;let text=a.type==='check'?`Test: original ${s.source_true?'true':'false'}, rewrite ${s.proposal_true?'true':'false'} — ${s.counterexample?'difference found':'rules agree'}.`:a.type==='hint'?'A clue was viewed (assistance recorded).':a.type==='toggle'?`${character(a.i)}: toggled ${a.p==='P'?'has a key':'opens the door'}.`:a.type==='toggle_relation'?`Toggled signal ${a.i+1} → ${a.j+1}.`:a.type==='add'?'Added a character.':'Removed the last character.';list.append(el('li',text));}
+ for(const s of r.steps){const a=s.action;let text=a.type==='check'?`Test: original ${s.source_true?'true':'false'}, rewrite ${s.proposal_true?'true':'false'} · ${s.counterexample?'difference found':'rules agree'}.`:a.type==='hint'?'A clue was viewed (assistance recorded).':a.type==='toggle'?`${character(a.i)}: toggled ${a.p==='P'?'has a key':'opens the door'}.`:a.type==='toggle_relation'?`Toggled signal ${a.i+1} → ${a.j+1}.`:a.type==='add'?'Added a character.':'Removed the last character.';list.append(el('li',text));}
  playback=r;playbackImported=fromFile;frame=0;
  $('wbReplayTitle').textContent=(fromFile?'Saved-file round (read-only): ':'Your live round: ')+missionFor(session.mission_id).name;
  renderPlayback();render();$('wbReplayPanel').hidden=false;

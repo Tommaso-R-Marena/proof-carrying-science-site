@@ -146,7 +146,7 @@ function nowMs() {
 function record(action) {
   if (locked && action.type !== "lock") return;
   if (actions.length >= 400) {
-    $("afLive").textContent = "You’ve made 400 moves on this board — export what you have, or reshuffle and start fresh.";
+    $("afLive").textContent = "You’ve made 400 moves on this board. Export what you have, or reshuffle and start fresh.";
     return;
   }
   actions.push({ ...action, t_ms: nowMs() });
@@ -317,7 +317,7 @@ function renderInteractControls() {
       selectedId = r.id;
       const home = KINDS[r.kind]?.pocket;
       $("afLive").textContent = home
-        ? `Selected “${r.label}” — drag it, press Space to seat in ${POCKETS[home].label}, or tap a zone pad.`
+        ? `Selected “${r.label}”. Drag it, press Space to seat in ${POCKETS[home].label}, or tap a zone pad.`
         : `Selected “${r.label}”.`;
       renderInteractControls();
     });
@@ -368,7 +368,7 @@ function updateHud(grade) {
     ? Math.min(1, (performance.now() - holdStarted) / getStructure(pose.structure_id).hold_ms)
     : 0;
   $("afEnergyMeta").textContent = grade.stable
-    ? `Cool enough — keep it there ${(hold * 100).toFixed(0)}% · combo ${combo}`
+    ? `Cool enough. Keep it there ${(hold * 100).toFixed(0)}% · combo ${combo}`
     : `Still warm · lowest so far ${bestEnergy === Infinity ? "—" : bestEnergy} · combo ${combo}`;
   $("afScore").textContent = String(grade.score + Math.min(40, combo * 2));
   $("afComponents").textContent =
@@ -735,14 +735,14 @@ function finalizeLock(grade) {
   box.dataset.tone = "ok";
   box.innerHTML = `<strong>${esc(rating.label)} · ${"★".repeat(rating.stars)}${"☆".repeat(3 - rating.stars)}</strong>
     <p>Heat <code>${grade.energy}</code> · score <code>${grade.score}</code> · longest combo <code>${comboMax}</code>${esc(summaryLine)} · issues_accept <code>false</code></p>
-    <p>${isPb ? "New personal best — your ghost outline will remember this layout." : "Board locked."} A notebook of this run was saved in the tab (${actions.length} actions).${
+    <p>${isPb ? "New personal best! Your best-layout outline is saved." : "Board locked."} A notebook of this run was saved in the tab (${actions.length} actions).${
       nextId && isUnlocked(nextId) ? ` Next up: <em>${esc(getStructure(nextId).title)}</em>.` : ""
     }</p>
     <p>${esc(grade.meaning)}</p>
     <p>Want the real kernel / package trail this board is practicing for? Open <a href="paper-demos.html">Paper Demos</a> (penguins Lean authority, Countermodel witnesses, Bridge Builder).</p>`;
   $("afNext").hidden = false;
   if ($("afAgain")) $("afAgain").hidden = false;
-  $("afLive").textContent = `${rating.label}. Notebook saved — play again, next mission, or Paper Demos.`;
+  $("afLive").textContent = `${rating.label}. Notebook saved. Play again, try the next mission or open Paper Demos.`;
   boardFlash = 1;
   for (let i = 0; i < 22; i++) {
     spawnSpark(0.5 + (Math.random() - 0.5) * 0.25, 0.45 + (Math.random() - 0.5) * 0.25, "#7dffc4", 1);
@@ -778,7 +778,7 @@ function tick() {
 
 function loadStructure(id, seed = "play") {
   if (!isUnlocked(id)) {
-    $("afLive").textContent = "That board is still locked — finish the earlier campaign missions first.";
+    $("afLive").textContent = "That board is still locked. Finish the earlier campaign missions first.";
     return;
   }
   pose = initialPose(id, seed);
@@ -850,7 +850,7 @@ function bindCanvas() {
       dragging = hit.id;
       lastSampled = performance.now();
       canvas.setPointerCapture?.(event.pointerId);
-      $("afLive").textContent = `Moving “${hit.label}” — it belongs in the ${KINDS[hit.kind].label.toLowerCase()} zone`;
+      $("afLive").textContent = `Moving “${hit.label}”. It belongs in the ${KINDS[hit.kind].label.toLowerCase()} zone`;
       renderInteractControls();
       return;
     }
@@ -918,7 +918,7 @@ function bindCanvas() {
 
 function saveNotebook() {
   if (!actions.length) {
-    $("afLive").textContent = "Nothing to save yet — move a few tokens first.";
+    $("afLive").textContent = "Nothing to save yet. Move a few tokens first.";
     return;
   }
   try {
@@ -939,7 +939,7 @@ function saveNotebook() {
 
 function exportRlDataset() {
   if (!notebooks.length) {
-    $("afLive").textContent = "Lock a board first — notebooks save automatically when you lock.";
+    $("afLive").textContent = "Lock a board first. This saves a notebook automatically.";
     return;
   }
   try {
@@ -997,7 +997,7 @@ function fitCoach() {
     });
     download(`assurance-fold-coach-${Date.now()}.json`, JSON.stringify(coachModel, null, 2));
     refreshResearchHud();
-    $("afLive").textContent = `Local coach fitted on ${fitted.training.examples} placements. Suggestions only — not authority.`;
+    $("afLive").textContent = `Local coach fitted on ${fitted.training.examples} placements. These suggestions have not passed formal verification.`;
   } catch (err) {
     $("afLive").textContent = `Fit failed: ${err.message}`;
   }
@@ -1050,7 +1050,7 @@ function boot() {
     record({ type: "wiggle", seed });
     combo = 0;
     onEnergyDrop(before, after, { x: 0.5, y: 0.45 });
-    $("afLive").textContent = `Shake ×${hintsUsed} — this run counts as assisted; combo reset.`;
+    $("afLive").textContent = `Shake ×${hintsUsed}. This run counts as assisted; combo reset.`;
     spawnSpark(0.5, 0.45, "#c47b16", 12);
     renderInteractControls();
   });
@@ -1073,7 +1073,7 @@ function boot() {
           .slice(0, 6)
           .map((t) => `<li><code>${esc(t.type)}</code>${t.a ? ` · ${esc(t.a)}` : ""}${t.b ? `↔${esc(t.b)}` : ""}</li>`)
           .join("")}</ul>`
-      : "<p>No major tensions — hold still while the board stays cool.</p>";
+      : "<p>No major tensions. Hold still while the board stays cool.</p>";
     box.innerHTML = `<strong>${grade.stable ? "Board is cool enough" : "Still too hot"}</strong>
       <p>Heat <code>${grade.energy}</code> / <code>${grade.threshold}</code> · combo <code>${combo}</code> · issues_accept <code>false</code></p>
       ${tensions}`;

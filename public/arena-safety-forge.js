@@ -370,7 +370,7 @@ function selectSeed(nextSeed){
   $("forgeTracePlayer").hidden=true;
   hintExposed=false;oracleExposed=false;repairFeedbackExposed=false;
   $("forgeWorldIcon").textContent=mission.icon;$("forgeMissionTitle").textContent=mission.name;
-  $("forgeMissionStory").textContent=mission.story+" Shortcut risk: "+mission.shortcut_risk+"; budget: "+mission.risk_budget+". Report: "+(mission.report_sensitive?"sensitive — permission matters":"public telemetry — no personal consent needed")+". Each seed has its own rules.";
+  $("forgeMissionStory").textContent=mission.story+" Shortcut risk: "+mission.shortcut_risk+"; budget: "+mission.risk_budget+". Report: "+(mission.report_sensitive?"sensitive: permission matters":"public telemetry: no personal consent needed")+". Each seed has its own rules.";
   $("forgeMissionGoal").textContent=mission.mission;
   $("forgeSeed").textContent=String(seed);
   $("forgeTabRepair").textContent="🛠️ 2 · Repair it";
@@ -413,7 +413,7 @@ $("forgeShareRecipe").addEventListener("click",async()=>{
     url.searchParams.set("seed",String(seed));
     url.searchParams.set("guards",[...shield].sort().join(","));
     await navigator.clipboard.writeText(url.href);
-    output.textContent="Your exact editable guard recipe was copied. Others can remix it and run the checker—sharing is not verification.";
+    output.textContent="Your exact editable guard recipe was copied. Others can remix it and run the checker. Sharing does not verify the recipe.";
   }catch(error){output.textContent="Unable to copy; try again or share the challenge URL.";}
 });
 $("forgeResetAttack").addEventListener("click",()=>resetAttack());
@@ -473,7 +473,7 @@ if(qs.has("guards")&&importedGuardIds.length<=GUARDS.length&&
   shield=new Set(importedGuardIds);
   repairFeedbackExposed=true;
   showMode("repair");renderGuards();
-  $("forgeVerification").textContent="Remixed Shield Duel recipe loaded. Its result is NOT yet verified here—run the full checker.";
+  $("forgeVerification").textContent="Remixed Shield Duel recipe loaded. Its result has not been verified here. Run the full checker.";
   addLog("🧪 Imported a duel recipe for this exact mission seed. Modify, test and improve it.");
 }
 renderBadges();

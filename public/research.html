@@ -7,7 +7,7 @@
 <div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="architecture.html">Architecture</a></div></nav>
 <main>
 <p class="boundary"><a href="calibration-lab.html">New: exact calibration on real measurements</a> · <a href="research-updates.html">Protected Aristotle, transport and trace integrations</a>. Inspect the executed evidence and its explicit scientific limits.</p>
-<section class="pagehead commons-pagehead"><div class="kicker">Research architecture</div><h1>Distributed contributors should not require distributed trust.</h1><p>The research goal is to make a large assurance problem decomposable without making the final conclusion depend on the honesty, seniority, or popularity of the people—or AI systems—who propose its parts.</p></section>
+<section class="pagehead commons-pagehead"><div class="kicker">Research architecture</div><h1>Distributed contributors should not require distributed trust.</h1><p>The research goal is to make a large assurance problem decomposable without making the final conclusion depend on the honesty, seniority, or popularity of the people or AI systems proposing its parts.</p></section>
 
 <section class="research-thesis">
 <div><span>RESEARCH THESIS</span><h2>Domain-specific meaning should plug into a domain-independent assurance kernel.</h2><p>PCS separates a typed domain claim, a committed computational world, a proof-obligation graph, local validators, and the rules that allow valid leaves to imply their parents. This is the architecture needed for both cross-domain science and distributed AI-safety work.</p></div>
@@ -38,7 +38,7 @@ scoped root assurance
 <article><b>01</b><div><h3>Domain adapter soundness</h3><p>A domain can inherit PCS assurance when it supplies local semantics-preservation and validator-soundness obligations rather than assuming the desired conclusion.</p></div></article>
 <article><b>02</b><div><h3>Obligation-graph soundness</h3><p>Accepted finite graphs reject cycles, missing dependencies, unsupported leaves, and unresolved obligations; sound local rules compose toward the root.</p></div></article>
 <article><b>03</b><div><h3>Untrusted proposer non-authority</h3><p>Human or AI proposal strategies may be arbitrary. Proposal authority alone cannot manufacture assurance if deterministic checks remain authoritative.</p></div></article>
-<article><b>04</b><div><h3>Executable end-to-end refinement</h3><p>The actual authority binary and signed package path should refine the same semantics used in the theorem—not a disconnected toy model.</p></div></article>
+<article><b>04</b><div><h3>Executable end-to-end refinement</h3><p>The actual authority binary and signed package path should refine the same semantics used in the theorem. A proof of a disconnected toy model is insufficient.</p></div></article>
 <article><b>05</b><div><h3>External-world transfer is explicit</h3><p>Proofs over committed bytes do not automatically become claims about a deployed system, a patient, a protein, or the physical world. Data correspondence is a separate premise.</p></div></article>
 </div>
 <div class="commons-policy-note"><strong>Status note:</strong><span>The public site describes this research program and existing PCS v0.6 trust architecture. New Aristotle-generated generic-domain / AI-safety formal results should be integrated into the core repository and independently rebuilt before this page is upgraded to claim those specific theorems as released PCS results.</span></div>
@@ -59,7 +59,7 @@ scoped root assurance
 <div class="section-heading-row"><div><div class="kicker">Cross-domain ambition</div><h2>AI safety is the wedge. The kernel should remain scientific infrastructure.</h2></div></div>
 <div class="grid3">
 <article class="card"><div class="num">AI SAFETY</div><h3>Agents, policies, evaluations</h3><p>Trace invariants, authorization, evaluator binding, resource budgets, reproducibility, and red-team evidence.</p></article>
-<article class="card"><div class="num">BIOLOGY</div><h3>Computational biology</h3><p>Claims about exact sequences, structures, scores, simulations, and analysis artifacts—with external biological correspondence explicit.</p></article>
+<article class="card"><div class="num">BIOLOGY</div><h3>Computational biology</h3><p>Claims about exact sequences, structures, scores, simulations, and analysis artifacts, with external biological correspondence explicit.</p></article>
 <article class="card"><div class="num">SCIENCE</div><h3>Other computational disciplines</h3><p>New adapters can contribute local semantics without modifying the core idea that proofs, replay, evidence, and trust boundaries stay separate.</p></article>
 </div>
 </section>

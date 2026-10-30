@@ -6,7 +6,7 @@
 <body class="commons-page"><div class="topbar commons-topbar"><div class="shell"><span>Public research program · Claim Invalidation v1</span><a href="tasks.html">Open marketplace</a></div></div>
 <div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="research.html">Research</a><a class="button dark" href="tasks.html?task=INV-001">Start at L0</a></div></nav>
 <main>
-<section class="pagehead commons-pagehead"><div class="kicker">First public PCS Commons research program</div><h1>Which claims must reopen when evidence changes?</h1><p>PCS already computes conservative invalidation over declared dependencies. The open research problem is to make that semantics precise enough to review, adversarially test, and ultimately prove in Lean—without pretending the graph can reveal dependencies that were never represented.</p></section>
+<section class="pagehead commons-pagehead"><div class="kicker">First public PCS Commons research program</div><h1>Which claims must reopen when evidence changes?</h1><p>PCS already computes conservative invalidation over declared dependencies. The open research problem is to make that semantics precise enough to review, adversarially test, and ultimately prove in Lean. The graph cannot reveal dependencies that were never represented.</p></section>
 
 <section class="research-thesis">
 <div><span>REAL CORE OBLIGATION</span><h2>Reachability should force reopening. Non-impact requires more.</h2><p>If a changed artifact reaches workflow outputs, evidence, and a claim through declared dependency edges, that claim must be reconsidered. But the converse is stronger: saying an unreachable claim remains valid is sound only when the dependency graph is complete.</p></div>
@@ -48,7 +48,7 @@ unless dependency completeness is explicit
 </section>
 
 <section class="commons-two-col">
-<div class="panel"><div class="kicker">What success means</div><h2>Conservative invalidation becomes reviewable and formal.</h2><ul class="commons-checklist"><li>Declared downstream impact is deterministic and adversarially tested.</li><li>The dependency-completeness premise is explicit rather than hidden.</li><li>Independent review attacks both false negatives and false positives.</li><li>The final Lean theorem states exactly what follows—and what does not.</li></ul></div>
+<div class="panel"><div class="kicker">What success means</div><h2>Conservative invalidation becomes reviewable and formal.</h2><ul class="commons-checklist"><li>Declared downstream impact is deterministic and adversarially tested.</li><li>The dependency-completeness premise is explicit rather than hidden.</li><li>Independent review attacks both false negatives and false positives.</li><li>The final Lean theorem states what follows and which assumptions it needs.</li></ul></div>
 <div class="panel"><div class="kicker">What this does not claim</div><h2>PCS cannot infer invisible dependencies.</h2><ul class="commons-checklist"><li>A graph cannot prove it contains every dependency merely by being internally consistent.</li><li>Unreachable does not mean unaffected without a completeness premise.</li><li>Contributor consensus does not close an obligation.</li><li>A compiling theorem does not justify stronger prose than its exact statement.</li></ul></div>
 </section>
 

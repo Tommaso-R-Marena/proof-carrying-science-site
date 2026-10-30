@@ -18,6 +18,25 @@ For a local preview, run `python3 -m http.server 8788 --bind 127.0.0.1 --directo
 and open `http://127.0.0.1:8788/experience.html`. The account service is not needed
 for this lesson. See [the implementation and validation notes](docs/FIRST_INVESTIGATION.md).
 
+## Beginner usability and copy checks
+
+The homepage offers three short routes: learn how a check works, inspect a shared
+package, or play World Builder. The research catalogue and illustrative console
+expand on demand. A full scientific verification still needs technical setup.
+
+`npm run test:browser:beginner` completes all three routes in Chromium at four
+screen widths, including an evidence download and a fresh-page recheck. It needs
+no account service and writes no data to PCS. `npm run test:copy` checks all public
+HTML prose for em-dash-heavy writing and selected canned phrases. It does not
+infer authorship or measure human comprehension. A source-bound calibration page
+keeps one explicitly disclosed, hash-pinned parenthetical. Five Python checks
+also preserve existing qualification bindings and keep live health markers aligned
+with the shipped HTML. Both run in protected CI.
+
+See the [usability review and remaining human-study gap](docs/usability/2026-10-30/README.md).
+No newcomer participants have been observed yet; automated task completion is
+not evidence of independent human adoption.
+
 ## Visual games and independently checked demonstrations
 
 - Open [Assurance Fold](public/assurance-fold.html) to drag claim tokens into
@@ -53,9 +72,9 @@ bash scripts/cloudflare_build.sh
 
 This is the complete local build/test gate, including a Worker dry run. It does
 not deploy. Hosted `site-full-gate` additionally runs independent core comparisons,
-actual Lean/browser checks and real-browser account/mobile tests. Its
-[PR #120 checks](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/pull/120)
-are the source of truth for current qualification and merge state.
+actual Lean/browser checks and real-browser account/mobile tests. The checks on the PR being reviewed are the source of truth for its qualification.
+[PR #120](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/pull/120)
+records the preceding integration.
 
 For fresh Paper Demos evidence, activate the pinned Lean 4.28.0 toolchain, provide
 the PCS checkout expected by the script, then use a new output directory:

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Safety Forge · PCS Arena — Experiment with AI safety</title>
+<title>Safety Forge · PCS Arena · Experiment with AI safety</title>
 <meta name="description" content="Foldit-inspired AI safety game: test toy agents, find policy loopholes, and build independently evaluated safety shields. No account to play.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/arena-safety-forge.html">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml"><meta name="robots" content="index,follow">
@@ -49,7 +49,7 @@
  </div>
  <div class="forge-lab-layout">
   <aside class="forge-side-card">
-    <h3>🤖 Agent dashboard</h3><p class="forge-small">This is a fictional, finite-state agent—not a real robot.</p>
+    <h3>🤖 Agent dashboard</h3><p class="forge-small">This is a fictional, finite-state agent. It does not model a real robot.</p>
     <div class="forge-agent" aria-hidden="true"><div class="forge-agent-face">🤖</div><div class="forge-agent-glow"></div></div>
     <div class="forge-meter-label"><strong>Risk meter</strong><span id="forgeRisk">0 / 3</span></div>
     <div class="forge-risk-track"><div id="forgeRiskFill"></div></div>
@@ -82,7 +82,7 @@
      <button id="forgeVictoryNext" type="button" class="button primary forge-victory-next" hidden>🎲 Play another world →</button>
      <div id="forgeCheckerPath" class="forge-checker-path" hidden></div>
      <div class="forge-investigation">
-       <div class="forge-investigation-title"><span class="forge-overline">REPLAYABLE RESEARCH NOTEBOOK</span><h4>Turn trial-and-error into a useful search trajectory.</h4><p>The strongest sessions contain a blind counterexample, several genuinely different repairs, and at least one improvement after feedback. That sequence is much more useful for model training than a single final answer.</p></div>
+       <div class="forge-investigation-title"><span class="forge-overline">REPLAYABLE RESEARCH NOTEBOOK</span><h4>Turn trial-and-error into a useful search trajectory.</h4><p>The strongest sessions contain a blind counterexample, several different repairs, and at least one improvement after feedback. That sequence is much more useful for model training than a single final answer.</p></div>
        <div id="forgeStrategyBoard" class="forge-strategy-board" aria-live="polite"><p>Run your first full check to see a comparison.</p></div>
        <div class="forge-theater">
          <div class="forge-theater-top"><div><span class="forge-overline">TRACE THEATER</span><h4>Watch the exact steps that make or break a policy.</h4></div></div>

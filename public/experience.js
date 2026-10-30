@@ -65,8 +65,8 @@ function run(){
     const li=document.createElement("li");
     li.dataset.ok=String(step.passed);
     li.textContent=mode==="trace"
-      ?"Action #"+step.action+" · declared risk +"+step.increment+" · total "+step.cumulative_risk+" — "+(step.passed?"within the rule":"VIOLATION")
-      :"t="+step.time_h+" h · model "+step.predicted.toFixed(4)+" · supplied "+step.observed.toFixed(4)+" mg/L — "+(step.passed?"within tolerance":"MISMATCH");
+      ?"Action #"+step.action+" · declared risk +"+step.increment+" · total "+step.cumulative_risk+" · "+(step.passed?"within the rule":"VIOLATION")
+      :"t="+step.time_h+" h · model "+step.predicted.toFixed(4)+" · supplied "+step.observed.toFixed(4)+" mg/L · "+(step.passed?"within tolerance":"MISMATCH");
     root.appendChild(li);
   }
   $("xpCopy").disabled=false;

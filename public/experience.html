@@ -13,16 +13,16 @@
 <nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Play Arena</a><a href="guided-submission.html">Guided submission</a><a href="trust.html">Trust Center</a><a class="button dark" href="account.html">Account</a></div></nav>
 <main>
 <section class="xp-hero">
-  <div class="xp-hero-content"><span class="xp-eyebrow"><span class="xp-dot"></span> INTERACTIVE / HANDS ON / FREE</span>
-    <h1>What if a claim of <em>“safe”</em> had to survive an actual test?</h1>
-    <p>Try one small investigation: test a rule, find a surprising example, and take away evidence someone else can check. No coding or logic background needed.</p>
+  <div class="xp-hero-content"><span class="xp-eyebrow"><span class="xp-dot"></span> TRY A RULE CHECK</span>
+    <h1>Did the assistant <em>change the rule?</em></h1>
+    <p>Test whether an assistant changed a rule. You will find a concrete example and can save it for someone else to recheck. No coding or logic background needed.</p>
     <div class="xp-actions"><a class="button primary" href="#firstInvestigation">Start my first investigation ↓</a><a class="button secondary" href="#fiReader">I have an evidence file</a></div>
-    <div class="xp-hero-trust"><span>✓ No sign-in</span><span>✓ No project upload</span><span>✓ Genuine input-dependent calculations</span></div>
+    <div class="xp-hero-trust"><span>✓ No sign-in</span><span>✓ No project upload</span><span>✓ Runs on your device</span></div>
     <small class="xp-honesty">This is an educational JavaScript demonstration. It is not the executable Lean authority, a signed PCS certificate, or evidence of deployed-AI safety.</small>
   </div>
 </section>
 <section class="fi-section" id="firstInvestigation" aria-labelledby="fiTitle">
- <span class="xp-kicker">YOUR FIRST INVESTIGATION · ABOUT THREE MINUTES</span>
+ <span class="xp-kicker">YOUR FIRST INVESTIGATION · THREE SHORT STEPS</span>
  <h2 id="fiTitle">Can you spot the rule that changed?</h2>
  <p class="fi-lead">An assistant rewrites a safety rule. The words look similar, but do they allow the same actions? Your job is to find <strong>one example where the two rules disagree</strong>.</p>
  <ol class="fi-progress" aria-label="Investigation progress"><li data-fi-step="1" aria-current="step" class="current">1 · Build and predict</li><li data-fi-step="2">2 · Check the meaning</li><li data-fi-step="3">3 · Carry the evidence</li></ol>
@@ -33,22 +33,24 @@
   <article class="fi-card"><span class="fi-label">THE ASSISTANT'S REWRITE</span><h3>If a tool has permission, it must be used.</h3><p>This rule requires use when permission exists. Does it say what happens without permission?</p><p id="fiProposal" class="fi-rule-status">Not checked</p></article>
  </div>
  <h3>1. Set the two facts. Then make a prediction.</h3>
- <p>Each button switches between yes and no. These are fictional facts about a single tool call.</p>
+ <p>Each button switches between yes and no. These are fictional facts about one action, such as an assistant opening a file.</p>
  <div class="fi-controls fi-facts" role="group" aria-label="Facts about the tool call"><button class="button secondary" id="fiUsed" type="button" aria-pressed="false" disabled>Tool used: no</button><button class="button secondary" id="fiPermission" type="button" aria-pressed="false" disabled>Permission granted: no</button></div>
+ <details id="fiHint"><summary>Need a starting point?</summary><p>Try setting “Tool used” to yes and leaving “Permission granted” at no. Read each rule again: does it forbid that action? Make your own prediction, then check it. This is a suggested example, not an independent discovery.</p></details>
  <label for="fiPrediction">Which rule do you expect to reject this example?</label>
  <select id="fiPrediction" disabled><option value="">Choose your prediction…</option><option value="intended">Only my intended rule</option><option value="proposal">Only the assistant's rewrite</option><option value="both">Both rules</option><option value="neither">Neither rule</option></select>
  <div class="fi-controls"><button class="button primary" id="fiCheck" type="button" disabled>Check this example</button><button class="button secondary" id="fiReset" type="button" disabled>Start again</button></div>
- <p id="fiResult" class="fi-status" role="status" aria-live="polite" data-state="pending">Choose the facts and make a prediction. Nothing has been checked yet.</p>
+ <p id="fiResult" tabindex="-1" class="fi-status" role="status" aria-live="polite" data-state="pending">Choose the facts and make a prediction. Nothing has been checked yet.</p>
  <div class="fi-scope" id="fiMeaningPanel" hidden>
   <h3>2. What does your finding establish?</h3>
   <p>A <dfn>counterexample</dfn> is a concrete example that contradicts a claim. Here, it shows that the rewrite changed the rule's meaning.</p>
   <label for="fiScope">After finding a difference, what can you conclude?</label>
   <select id="fiScope" disabled><option value="">Choose a conclusion…</option><option value="meaning">These two rules have different meanings</option><option value="real-ai">A real AI has acted without permission</option><option value="every-world">The rules disagree in every possible example</option></select>
   <div class="fi-controls"><button class="button secondary" id="fiUnderstand" type="button" disabled>Check my conclusion</button></div>
-  <p id="fiScopeFeedback" role="status" aria-live="polite"></p>
+  <p id="fiScopeFeedback" tabindex="-1" role="status" aria-live="polite"></p>
  </div>
- <div id="fiCarryPanel" hidden><h3>3. Carry the evidence. Let someone else recheck it.</h3>
+ <div id="fiCarryPanel" hidden><h3 id="fiCarryTitle" tabindex="-1">3. Save your example so someone else can recheck it.</h3>
  <p>Your evidence file contains the rule identifier and the exact fictional facts. Another checker can recompute the result from those facts. It does not have to trust a recorded “PASS”.</p>
+ <p><a href="#fiReader">Already have a first-investigation file? Open it below.</a> You can also reopen your download here to check it again.</p>
  <div class="fi-controls"><button class="button primary" id="fiWitness" type="button" disabled>Download my evidence file</button><button class="button secondary" id="fiProof" type="button" disabled>Download Lean proof source</button></div>
  <p class="fi-boundary"><strong>What ran:</strong> the existing finite logic checker in your browser. <strong>What did not run:</strong> the Lean kernel or the production PCS verifier. The Lean download is source that still needs compilation. This example makes no claim about a real AI's behavior.</p>
  <details id="fiReplay"><summary>What is in the download? How can a technical reviewer check it?</summary>
@@ -102,17 +104,17 @@
  </div>
 </section>
 <section id="xpLayers" class="xp-section" aria-labelledby="xpLayersTitle">
- <div class="xp-section-heading"><div><span class="xp-kicker">02 / THE ASSURANCE LADDER</span><h2 id="xpLayersTitle">What did we establish—and what is still open?</h2><p>Every check needs a clear scope. These layers are deliberately separate so that a simulation result can never masquerade as a proof of real-world safety.</p></div></div>
+ <div class="xp-section-heading"><div><span class="xp-kicker">02 / THE ASSURANCE LADDER</span><h2 id="xpLayersTitle">What passed? What remains unknown?</h2><p>Every check needs a clear scope. These layers are deliberately separate so that a simulation result can never masquerade as a proof of real-world safety.</p></div></div>
  <div class="xp-ladder">
   <article><span class="xp-ladder-no">1</span><div><span>IN THE BROWSER</span><h3>Check the supplied numbers and actions</h3><p id="xpLayerCheck">The result will depend on the example you run above.</p></div><strong id="xpLayerStatus" class="xp-layer-flag">NOT RUN</strong></article>
   <article><span class="xp-ladder-no">2</span><div><span>REAL PCS PACKAGE VERIFICATION</span><h3>Bind exact evidence and independently replay it</h3><p>PCS's separate v0.6 verifier checks exact packaged artifacts, signed bindings, and supported replay contracts. This browser lab does not execute those production checks. <a href="mvp.html">See how v0.6 verification runs ↗</a></p></div><strong class="xp-layer-flag neutral">NOT TESTED HERE</strong></article>
-  <article><span class="xp-ladder-no">3</span><div><span>LEAN AND EXPLICIT ASSUMPTIONS</span><h3>Ask what formal reasoning actually certifies</h3><p>A genuine Lean-checked assurance result is about specified predicates and trusted boundaries—not a blanket declaration that an AI system or scientific theory is true. <a href="trust-explorer.html">Inspect the trust boundaries ↗</a></p></div><strong class="xp-layer-flag neutral">SEPARATE AUTHORITY</strong></article>
+  <article><span class="xp-ladder-no">3</span><div><span>LEAN AND EXPLICIT ASSUMPTIONS</span><h3>Ask what formal reasoning actually certifies</h3><p>Lean checks a precise mathematical statement under stated assumptions. That does not establish that an AI is safe or that a scientific theory is true. <a href="trust-explorer.html">Inspect the trust boundaries ↗</a></p></div><strong class="xp-layer-flag neutral">SEPARATE AUTHORITY</strong></article>
   <article><span class="xp-ladder-no">4</span><div><span>HUMAN DECISION</span><h3>Let a reviewer decide whether the evidence suffices</h3><p>Reproducing a computational result and accepting it for a real decision are different actions. Unsupported claims remain OPEN or rejected. <a href="result-anatomy.html">Understand a review verdict ↗</a></p></div><strong class="xp-layer-flag neutral">REVIEW NEEDED</strong></article>
  </div>
  <details class="xp-limits"><summary>What does PCS <em>not</em> claim here?</summary><p id="xpBoundary">This demo does not verify source-code execution, a trusted sensor, signed data, Lean 4 proof objects, the scientific adequacy of a model, or real-world agent behavior.</p></details>
 </section>
 <section id="xpPaths" class="xp-section xp-paths" aria-labelledby="xpPathsTitle">
- <div class="xp-section-heading"><div><span class="xp-kicker">03 / YOUR NEXT MOVE</span><h2 id="xpPathsTitle">Pick your route into PCS.</h2><p>Whether you are new to logic or already run an AI-safety lab, there is a clear place to start.</p></div></div>
+ <div class="xp-section-heading"><div><span class="xp-kicker">03 / YOUR NEXT MOVE</span><h2 id="xpPathsTitle">Pick your route into PCS.</h2><p>Choose a game, prepare a project draft or examine the evidence behind PCS.</p></div></div>
  <div class="xp-path-grid">
   <article><span class="xp-path-icon">🎮</span><h3>I want to play and learn</h3><p>Find surprising counterexamples in fictional robots, design better shields, and solve proof-order mysteries. No account required.</p><a href="arena-safety-forge.html" class="button primary">Play Safety Forge →</a><a href="arena-proof-quest.html">Try beginner Proof Quest ↗</a><a href="forge-duel.html">Compete in Shield Duel ↗</a><a href="prooflab.html">Explore real Lean theorem missions ↗</a></article>
   <article><span class="xp-path-icon">🔬</span><h3>I have scientific work</h3><p>Explore typed claims, evidence requirements, and how to prepare a reviewable project without uploading your files here.</p><a href="guided-submission.html?demo=1" class="button primary">Try a guided submission →</a><a href="package-inspector.html">Inspect package structure ↗</a></article>

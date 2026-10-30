@@ -32,3 +32,10 @@
 .fi-more{margin:24px 0 50px;border-top:1px solid #c8dbe5;padding-top:22px}
 .fi-section :focus-visible,.fi-more>summary:focus-visible{outline:3px solid #b36516;outline-offset:4px}
 @media(max-width:650px){.fi-grid,.fi-next{grid-template-columns:1fr}.fi-card{padding:17px}.fi-controls>*{flex:1 1 180px}.fi-progress{gap:6px}.fi-progress li{padding:8px 10px;font-size:.8rem}.fi-scope{padding:15px}}
+.fi-status:focus,.fi-scope [tabindex]:focus,#fiCarryTitle:focus{outline:3px solid #b36516;outline-offset:4px;scroll-margin:24px}
+@media(max-width:650px){
+ .experience-page .xp-hero{padding:26px 20px;margin-bottom:20px}
+ .experience-page .xp-hero h1{font-size:34px;line-height:1.15}
+ .fi-card p{margin:8px 0;line-height:1.5}
+ .fi-grid{gap:10px;margin:16px 0}
+}

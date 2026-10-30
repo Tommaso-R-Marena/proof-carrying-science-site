@@ -7,7 +7,9 @@
   // Navigation labels reflect sessions; authorization always remains on the server.
   const accountLinks = [];
   const adminLinks = [];
-  const currentPath = location.pathname.split("/").pop() || "index.html";
+  // Cloudflare serves clean URLs; local static previews also accept .html.
+  const currentName = location.pathname.replace(/\/+$/, "").split("/").pop() || "index.html";
+  const currentPath = currentName.endsWith(".html") ? currentName : currentName + ".html";
   const matchPage = (href) => href.split("#")[0].split("?")[0] === currentPath;
 
   document.querySelectorAll(".navlinks").forEach((links) => {
@@ -81,8 +83,9 @@
       ]}
     ]);
     addMenu("Play & help", [
-      {heading:"PLAY — NO BACKGROUND REQUIRED",links:[
-        ["arena.html","PCS Arena · choose a game"],
+      {heading:"PLAY WITHOUT AN ACCOUNT",links:[
+        ["world-builder.html","World Builder · start with keys and doors"],
+        ["arena.html","PCS Arena · browse all games"],
         ["assurance-fold.html","Assurance Fold · arrange claims until the board cools"],
         ["paper-demos.html","Paper Demos · real data + Lean receipts"],
         ["evidence-atlas.html","Evidence Atlas · real papers, repos, supplements"],
@@ -144,7 +147,7 @@
   // Browse the actual site map without sending a search query to any server.
   // An offline-first command palette works on desktop, keyboard and mobile.
   const siteShortcuts=[
-    ["Start here","experience.html","A two-minute interactive tour","Explore"],
+    ["Start here","experience.html","Test a rule and save evidence in three steps","Explore"],
     ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
     ["Assurance Fold","assurance-fold.html","Arrange claim tokens and cool the board","Play"],
     ["Paper Demos","paper-demos.html","Penguins package replay and fresh Lean receipts","Try PCS"],
@@ -250,6 +253,33 @@
       event.preventDefault();openQuick();
     }
   });
+
+  const content = document.querySelector("main");
+  if (content) {
+    if (!content.id) content.id = "pcsMain";
+    if (!content.hasAttribute("tabindex")) content.tabIndex = -1;
+    const skip = document.createElement("a");
+    skip.className = "pcs-skip";
+    skip.href = "#" + content.id;
+    skip.textContent = "Skip to content";
+    skip.addEventListener("click", () => content.focus());
+    document.body.prepend(skip);
+  }
+
+  // Keep bookmarked research sections reachable when their catalogue is folded.
+  const revealSection = () => {
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (_) { return; }
+    const target = document.getElementById(id);
+    if (!target) return;
+    let opened = false;
+    for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+      if (parent.tagName === "DETAILS" && !parent.open) { parent.open = true; opened = true; }
+    }
+    if (opened) requestAnimationFrame(() => target.scrollIntoView({block:"start"}));
+  };
+  addEventListener("hashchange", revealSection);
+  revealSection();
 
   // Native, accessible breadcrumbs help readers return to the right collection.
   const breadcrumbParents={

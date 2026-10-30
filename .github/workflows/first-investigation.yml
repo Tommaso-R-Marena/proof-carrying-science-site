@@ -4,12 +4,16 @@ on:
     paths:
       - 'public/first-investigation*'
       - 'public/experience*'
-      - 'public/index.html'
+      - 'public/*.html'
+      - 'public/styles.css'
       - 'public/site.js'
       - 'public/countermodel-core.mjs'
       - 'public/omega-core.mjs'
       - 'scripts/browser_first_investigation.cjs'
+      - 'scripts/browser_beginner_journey.cjs'
+      - 'scripts/check_public_copy.py'
       - 'tests/first-investigation.test.mjs'
+      - 'tests/test_public_copy.py'
       - 'package*.json'
       - '.github/workflows/first-investigation.yml'
   workflow_dispatch:
@@ -31,6 +35,7 @@ jobs:
           node-version: '22.23.3'
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: node --test tests/first-investigation.test.mjs tests/arena-experience.test.mjs
+      - run: npm run test:copy
       - name: Actual four-width beginner journey, local files, downloads and stale-read attacks
         env:
           PCS_FIRST_EVIDENCE_DIR: ${{ runner.temp }}/first-investigation
@@ -41,6 +46,7 @@ jobs:
           test -x "$PCS_CHROMIUM"
           "$PCS_CHROMIUM" --version
           npm run test:first-investigation:browser
+          PCS_BEGINNER_OUTPUT="$PCS_FIRST_EVIDENCE_DIR/beginner-journeys" npm run test:browser:beginner
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

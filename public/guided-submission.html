@@ -95,7 +95,7 @@
     <div class="guided-onramp-copy">
       <span class="guided-onramp-kicker">A good first PCS project</span>
       <h3 id="guidedOnrampTitle">Usually 2–4 files are enough to learn whether PCS fits.</h3>
-      <p>For example: one script or notebook, the input it reads, the output you want checked, and—when available—a lockfile or environment declaration.</p>
+      <p>For example: one script or notebook, the input it reads, the output you want checked, and a lockfile or environment declaration if available.</p>
     </div>
     <div class="guided-onramp-grid">
       <div><span>1</span><strong>Code</strong><small>Script or notebook that expresses the computation.</small></div>
@@ -143,7 +143,7 @@
     <div class="guided-discovery-brief-head">
       <div>
         <span class="guided-discovery-brief-kicker">Local discovery complete</span>
-        <h3>Here is what PCS found—and what it still does not know.</h3>
+        <h3>What PCS found and what still needs checking.</h3>
       </div>
       <span class="chip open">STATIC DISCOVERY ONLY</span>
     </div>
@@ -187,7 +187,7 @@
     <div class="claim-translation-live-grid">
       <div><small>Your words</small><strong id="guidedClaimWords">Describe the scientific check above.</strong><span>Used only to find a supported template.</span></div>
       <div><small>PCS interprets this as</small><strong id="guidedClaimMeaning">No formal meaning selected yet.</strong><span id="guidedClaimMeaningScope">PCS will not infer unsupported semantics.</span></div>
-      <div><small>Authoritative check</small><strong id="guidedClaimExact">No typed predicate yet.</strong><span>The typed predicate—not your prose—is what later verification evaluates.</span></div>
+      <div><small>Authoritative check</small><strong id="guidedClaimExact">No typed predicate yet.</strong><span>Later verification evaluates this precise statement. Check that it matches what you mean.</span></div>
     </div>
   </section>
   <details class="guided-supported-claims">
@@ -208,7 +208,7 @@
   </div>
   <div class="guided-claim-decision-note">
     <strong>How to decide which claim to include</strong>
-    <span>Approve a proposal only when its plain-language meaning, literal verifier fields, and scope boundary all match what you intend. <b>Discovery confidence is only a file/template matching signal—it is not confidence that the scientific claim is true.</b></span>
+    <span>Approve a proposal only when its plain-language meaning, literal verifier fields, and scope boundary all match what you intend. <b>Discovery confidence measures how well the files match a template. It does not measure whether the scientific claim is true.</b></span>
   </div>
   <div id="guidedClaims" class="guided-claim-list" aria-label="Supported claim proposals"></div>
   <div id="guidedNoClaims" class="guided-empty" hidden>
@@ -224,7 +224,7 @@
 
 <section class="guided-stage" data-guided-stage="3" hidden>
   <div class="guided-stage-head">
-    <div><span class="guided-stage-number">03</span><h2>Review what PCS found</h2><p>This is the contract PCS is preparing—not yet a PASS. Check that the artifacts, formal claim meaning, workflow, and environment match what you intend.</p></div>
+    <div><span class="guided-stage-number">03</span><h2>Review what PCS found</h2><p>This is the contract PCS is preparing. It has not passed verification. Check that the artifacts, formal claim meaning, workflow, and environment match what you intend.</p></div>
     <span class="chip pending">REVIEW</span>
   </div>
   <section class="guided-review-gate" id="guidedReviewGate" aria-live="polite" aria-atomic="true">

@@ -1,0 +1,138 @@
+{
+  "format": "pcs-beginner-journey-browser-v1",
+  "real_human_participants": 0,
+  "browser_version": "151.0.7922.173",
+  "production_authority_executed": false,
+  "rows": [
+    {
+      "width": 320,
+      "height": 900,
+      "homepage_visible_words": 238,
+      "primary_action_bottom": 623.46875,
+      "primary_action_in_initial_view": true,
+      "keyboard_skip_and_check": true,
+      "focused_feedback": true,
+      "learning_export_and_fresh_reopen": true,
+      "suggested_example_marked_assisted": true,
+      "real_ai_conclusion_rejected": true,
+      "first_visual_puzzle_completed": true,
+      "sample_package_exact_sha256": true,
+      "inspection_does_not_establish_authority": true,
+      "research_bookmarks_preserved": true,
+      "clean_url_current_page_and_breadcrumbs": true,
+      "overflow": false,
+      "unexpected_writes": 0,
+      "external_requests": 0
+    },
+    {
+      "width": 390,
+      "height": 900,
+      "homepage_visible_words": 238,
+      "primary_action_bottom": 476.75,
+      "primary_action_in_initial_view": true,
+      "keyboard_skip_and_check": true,
+      "focused_feedback": true,
+      "learning_export_and_fresh_reopen": true,
+      "suggested_example_marked_assisted": true,
+      "real_ai_conclusion_rejected": true,
+      "first_visual_puzzle_completed": true,
+      "sample_package_exact_sha256": true,
+      "inspection_does_not_establish_authority": true,
+      "research_bookmarks_preserved": true,
+      "clean_url_current_page_and_breadcrumbs": true,
+      "overflow": false,
+      "unexpected_writes": 0,
+      "external_requests": 0
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "homepage_visible_words": 238,
+      "primary_action_bottom": 433.34375,
+      "primary_action_in_initial_view": true,
+      "keyboard_skip_and_check": true,
+      "focused_feedback": true,
+      "learning_export_and_fresh_reopen": true,
+      "suggested_example_marked_assisted": true,
+      "real_ai_conclusion_rejected": true,
+      "first_visual_puzzle_completed": true,
+      "sample_package_exact_sha256": true,
+      "inspection_does_not_establish_authority": true,
+      "research_bookmarks_preserved": true,
+      "clean_url_current_page_and_breadcrumbs": true,
+      "overflow": false,
+      "unexpected_writes": 0,
+      "external_requests": 0
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "homepage_visible_words": 238,
+      "primary_action_bottom": 485.1875,
+      "primary_action_in_initial_view": true,
+      "keyboard_skip_and_check": true,
+      "focused_feedback": true,
+      "learning_export_and_fresh_reopen": true,
+      "suggested_example_marked_assisted": true,
+      "real_ai_conclusion_rejected": true,
+      "first_visual_puzzle_completed": true,
+      "sample_package_exact_sha256": true,
+      "inspection_does_not_establish_authority": true,
+      "research_bookmarks_preserved": true,
+      "clean_url_current_page_and_breadcrumbs": true,
+      "overflow": false,
+      "unexpected_writes": 0,
+      "external_requests": 0
+    }
+  ],
+  "source_sha256": {
+    "index.html": "033e007d67f8e5cda70c6c2ade44036abd4b0c3d1f0b2bf04ceb6b8fac6edbce",
+    "experience.html": "508380eadb42b71d688c04e92398bee606e6322e39a0a24c3a918494a77232cc",
+    "first-investigation.mjs": "bf5a7c45efb3ffa5c0ce6126e0200e4179b02eb77053b6371dccbe7f75d84f0b",
+    "first-investigation.css": "cf0b2097b8a8f413b81b3940f65c40486d0657d925d8b61b5d6463130d6a4716",
+    "world-builder.html": "54b3f9b71eb2193835ef7929790967481ee341c9731bdc3f65bb23bfbbf64894",
+    "world-builder.mjs": "4fa5beb5c0d05f0671c82205aac27fbfc5904d9eaec127707a1925ed6f9eabec",
+    "package-inspector.html": "9687c96e188c597240ec560fd2e63c7d8cde1e4cb074a14a7289d729cdd77c3a",
+    "package-inspector.js": "a9e5b260d8a06470df08c70a15aad62a9ffcfd5298cd2fcfe01d82a9d2e00c5f",
+    "site.js": "5cdfb744a8b717b66c3a2ca9c53ab140c0289ec6c5443a1fb88d79abc72a00a0",
+    "styles.css": "b841428bc87741a95e325fb19769ff1a7a5a40e7c35189432806449c3d7aa317"
+  },
+  "no_javascript_navigation": true,
+  "previous_implementation_commit": "12e6aa392f2e21ca94181a3532ff49e319889ab7",
+  "production_path_observation": {
+    "requested_url": "https://proof-carrying-science-site.marenatommaso.workers.dev/experience.html",
+    "final_url": "https://proof-carrying-science-site.marenatommaso.workers.dev/experience",
+    "status": 200,
+    "observation": "Read-only GET with PCS-usability-check/1.0 user agent; no authorization verdict"
+  },
+  "negative_control": {
+    "format": "pcs-clean-url-navigation-negative-control-v1",
+    "human_participants": 0,
+    "fixture": "Exact source served in Chromium at the production clean path; no authority executed",
+    "rows": [
+      {
+        "revision": "54f216582d545a4341bbfc1b6dfd23ca6a18d002",
+        "site_js_sha256": "1d6c5d8d768124a6760101047c2513a2a6f4c0f6e84edbdd196256ae70a78f11",
+        "url_path": "/experience",
+        "current_page_marker": null,
+        "breadcrumb_count": 0
+      },
+      {
+        "revision": "working-tree",
+        "site_js_sha256": "5cdfb744a8b717b66c3a2ca9c53ab140c0289ec6c5443a1fb88d79abc72a00a0",
+        "url_path": "/experience",
+        "current_page_marker": "page",
+        "breadcrumb_count": 1
+      }
+    ]
+  },
+  "file_url_regression": {
+    "original_first_investigation_widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "passed": true
+  }
+}

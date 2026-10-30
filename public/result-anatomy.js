@@ -5,7 +5,7 @@
     accepted:{
       badge:"VALID + ACCEPTED",
       title:"The exact package verified, the claim is computationally supported, and this reviewer accepts that support level.",
-      subtitle:"This is the clean positive case—but its scope is still the exact typed claim, evidence, assumptions, and reviewer policy.",
+      subtitle:"This example passes. Its scope is limited to the exact typed claim, evidence, assumptions and reviewer policy.",
       valid:true,accepted:true,claim:"COMPUTATIONALLY_SUPPORTED",
       axes:["pass","pass","pass"],
       means:"The delivered package passed the PCS v0.6 verification chain; all declared computational evidence required by this claim passed; and the receiver's explicit policy accepts that support level.",
@@ -30,7 +30,7 @@
       subtitle:"A valid PCS package can truthfully carry FALSIFIED_OR_CHECK_FAILED.",
       valid:true,accepted:false,claim:"FALSIFIED_OR_CHECK_FAILED",
       axes:["pass","fail","warn"],
-      means:"The bytes, signatures, replay process, and normalized decisions are internally valid—and at least one required scientific check failed, so the claim does not receive the requested support.",
+      means:"The bytes, signatures, replay process, and normalized decisions are internally valid. At least one required scientific check failed, so the claim does not receive the requested support.",
       not:"The PCS system malfunctioned merely because the claim failed. Correctly preserving a falsification is successful assurance behavior.",
       next:"Inspect the failed evidence object and determine whether the scientific claim, data, code, or assumptions need revision.",
       inspect:{href:"#scientific-replay-stage",label:"Inspect scientific replay →",title:"Inspect the failed replay stage first.",why:"The package is valid, so the actionable question is which required scientific check failed and what that failure says about the claim, data, code, or assumptions."}
@@ -43,7 +43,7 @@
       axes:["fail","neutral","warn"],
       means:"At least one required verifier stage failed, so PCS refuses to certify that these bytes are the authenticated, replay-consistent package being claimed.",
       not:"The underlying scientific hypothesis is necessarily false. Package invalidity and scientific falsification are different failure modes.",
-      next:"Identify the failed verifier stage—canonical bytes, signature, package binding, environment/workflow replay, scientific replay, or normalized decisions—then rerun after remediation.",
+      next:"Find the failed stage: canonical bytes, signature, package binding, environment/workflow replay, scientific replay or normalized decisions. Fix it and rerun the verifier.",
       inspect:{href:"#verification-chain",label:"Inspect verification chain →",title:"Diagnose the package failure before reading the claim.",why:"An invalid package blocks downstream claim interpretation. Start with the verifier stage that failed, then remediate and rerun."}
     }
   };
@@ -109,22 +109,22 @@
       formal.textContent="No downstream PCS assurance is established because the package verification chain failed.";
       replay.textContent="At least one required integrity, authentication, replay, or normalized-decision stage failed.";
       trusted.textContent="The underlying scientific hypothesis remains outside what this invalid run can establish.";
-      bottom.textContent="Bottom line: INVALID PACKAGE means stop before interpreting the scientific claim.";
+      bottom.textContent="An invalid package cannot support a conclusion about its scientific claim.";
     }else if(s.claim==="FALSIFIED_OR_CHECK_FAILED"){
       formal.textContent="PCS formally preserves the replay-derived negative decision for this exact typed claim.";
       replay.textContent="The package and required checks replayed coherently, and at least one required scientific check failed.";
-      trusted.textContent="Why the scientific check failed—and whether the model/data assumptions are adequate—still requires domain judgment.";
-      bottom.textContent="Bottom line: the assurance system worked, but the requested claim support did not.";
+      trusted.textContent="A domain expert must assess why the scientific check failed and whether the model and data assumptions are adequate.";
+      bottom.textContent="The package records a failed check. The requested claim is not supported.";
     }else if(!s.accepted){
       formal.textContent="PCS establishes the verified computational claim status independently of reviewer policy.";
       replay.textContent="The exact package and declared required checks passed fresh verification.";
       trusted.textContent="Whether that support is sufficient for this use case remains a receiver-owned policy decision.";
-      bottom.textContent="Bottom line: verified computation and organizational acceptance are deliberately separate.";
+      bottom.textContent="The computation passed verification. The receiving organization decides whether that is sufficient.";
     }else{
       formal.textContent="PCS establishes the decision relationship for the exact typed predicate, evidence, and policy inputs.";
       replay.textContent="The delivered bytes, supported checks, environment/workflow bindings, and normalized decisions passed fresh verification.";
       trusted.textContent="Runtime/platform behavior, cryptographic implementations, unsupported scientific semantics, and domain adequacy remain explicit trust boundaries.";
-      bottom.textContent="Bottom line: this is strong assurance for the declared computational claim—not a proof of every broader scientific interpretation.";
+      bottom.textContent="The result supports the declared computational claim. Broader scientific interpretations require separate evidence.";
     }
     const url=new URL(window.location.href);url.searchParams.set("scenario",name);history.replaceState(null,"",url);
   }
