@@ -1,4 +1,4 @@
-import PCS.V2.Csv
+import StackSafe
 
 /-! Scoped frontend to the unchanged, kernel-proved PCS CSV checker.
 The local host binds source-file snapshots and extracted ID images. This
@@ -16,7 +16,7 @@ def main (args : List String) : IO UInt32 := do
         return (2 : UInt32)
       let l := left.data.toList
       let r := right.data.toList
-      match PCS.V2.Csv.parseCsv l, PCS.V2.Csv.parseCsv r with
+      match PCSFiles.parseSafe l, PCSFiles.parseSafe r with
       | some (lh, lr), some (rh, rr) =>
         let key := "id".toUTF8.data.toList
         let imageOK := fun rows : List (List (List UInt8)) =>
@@ -26,7 +26,7 @@ def main (args : List String) : IO UInt32 := do
         if lh != [key] || rh != [key] || !imageOK lr || !imageOK rr then
           IO.println "REJECT:invalid_image"
           return (2 : UInt32)
-        if PCS.V2.Csv.csvDisjointB l r "id".toUTF8.data.toList then
+        if PCSFiles.disjointSafe l r "id".toUTF8.data.toList then
           IO.println "DISJOINT"
         else
           IO.println "OVERLAP"

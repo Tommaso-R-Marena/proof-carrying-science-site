@@ -50,6 +50,14 @@ must match the independent Python computation. Binary/dependency digests and
 derived snapshots are checked before and after execution. No caller can select
 the checker program or supply an affirmative verdict.
 
+The frontend's `StackSafe.lean` adds five kernel-checked theorems:
+`PCSFiles.splitSafe_eq`, `mapOptSafe_eq`, `parseSafe_eq`, `disjointSafe_eq` and
+`disjointSafe_iff`. They prove tail-recursive splitting/optional mapping and a
+hash-set membership implementation equal to the original mathematical functions,
+including the full `CsvDisjoint` equivalence. Hash collisions do not authorize
+false matches: the verified set checks exact equality. No core source is changed.
+All ten frontend/core theorem dependencies are audited during every package build.
+
 Lean establishes disjointness for the derived ID-list CSV bytes. The relationship
 between original RFC CSVs and those images is implementation correspondence,
 supported by differential/adversarial tests, not a general Lean theorem about

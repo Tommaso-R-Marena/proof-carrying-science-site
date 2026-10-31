@@ -18,7 +18,7 @@ def request(a,b,columns=None):
 
 def main():
     assets=Path(sys.argv[1]).resolve();checker=LocalChecker(assets);positive=negative=0
-    started=time.monotonic()
+    started=time.monotonic(); scaling=[]
     universe=['001','1','é','😀']
     subsets=[list(x) for size in range(1,5) for x in itertools.combinations(universe,size)]
     for a in subsets:
@@ -27,6 +27,16 @@ def main():
             r=checker.verify(request(left,right));expected='DISJOINT' if set(a).isdisjoint(b) else 'OVERLAP'
             assert r['lean_verdict']==expected and r['scientific_acceptance'] is False
             positive+=1
+    # Reproduce the recursive-parser stack failure and worst common-prefix
+    # comparisons at the public row/ID limits. All successful cases run Lean.
+    for n,width in [(500,256),(5000,50),(5000,256)]:
+        a=('id\n'+'\n'.join('a'*(width-6)+str(i).zfill(6) for i in range(n))+'\n').encode()
+        b=('id\n'+'\n'.join('a'*(width-6)+str(i+n).zfill(6) for i in range(n))+'\n').encode()
+        t=time.monotonic();r=checker.verify(request(a,b));assert r['lean_verdict']=='DISJOINT';positive+=1
+        scaling.append({'rows_per_file':n,'id_bytes':width,'seconds':round(time.monotonic()-t,3),'verdict':r['lean_verdict']})
+    # A match late in the second file must still be found at maximum size.
+    b=('id\n'+'\n'.join('b'*250+str(i).zfill(6) for i in range(4999))+'\n'+'a'*250+'004999\n').encode()
+    assert checker.verify(request(a,b))['lean_verdict']=='OVERLAP';positive+=1
     quoted=request(b'id,note\r\n"a,b","one\r\ntwo"\r\n001,ok\r\n',b'other\n"a,b"\n001\n')
     assert checker.verify(quoted)['summary']['shared_ids']==2;positive+=1
     for bad in [b'',b'\xff',b'id\n',b'id,id\na,b',b'id\nx,y',b'id\n"x',b'id\nx"y',b'id\na\0',b'id\rfoo',b'id\n \n']:
@@ -54,7 +64,7 @@ def main():
             c.request(method,path,body=body,headers=headers or {});r=c.getresponse();data=r.read();c.close();return r.status,data
         token={'X-PCS-Session':server.token,'Content-Type':'application/json','Origin':server.origin}
         status,data=call('POST','/api/check-files',canonical(valid),token);assert status==200 and json.loads(data)['lean_verdict']=='DISJOINT';positive+=1
-        for headers in [{},{**token,'Origin':'https://attacker.invalid'},{**token,'Host':'attacker.invalid'},{**token,'X-PCS-Session':'f'*64}]:
+        for headers in [{},{**token,'Origin':'https://attacker.invalid'},{**token,'Host':'attacker.invalid'},{**token,'X-PCS-Session':'f'*64},{**token,'X-PCS-Session':'é'*64}]:
             status,_=call('POST','/api/check-files',canonical(valid),headers);assert status==403;negative+=1
         assert call('OPTIONS','/api/check-files',headers={'Origin':'https://attacker.invalid'})[0]==403;negative+=1
         assert call('GET','/../../checker-manifest.json')[0]==404;negative+=1
@@ -66,7 +76,7 @@ def main():
         try:assert call('POST','/api/check-files',canonical(valid),token)[0]==429;negative+=1
         finally:server.check_slot.release()
         server.shutdown();thread.join(5)
-    print(json.dumps({'format':'pcs-file-check-native-tests-v1','actual_lean_positive_checks':positive,'negative_controls':negative,'seconds':round(time.monotonic()-started,3),'mock_positive_verdicts':0,'immutable_host_security_proved':False}))
+    print(json.dumps({'format':'pcs-file-check-native-tests-v1','actual_lean_positive_checks':positive,'negative_controls':negative,'seconds':round(time.monotonic()-started,3),'scaling':scaling,'mock_positive_verdicts':0,'immutable_host_security_proved':False}))
 
 
 if __name__=='__main__':main()

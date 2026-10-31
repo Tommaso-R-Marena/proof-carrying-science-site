@@ -56,16 +56,17 @@ def main():
         t.extractall(snapshot,filter='data')
     frontend = out/'frontend'
     frontend.mkdir()
-    for name in ['Main.lean','Audit.lean']:
+    for name in ['Main.lean','Audit.lean','StackSafe.lean']:
         shutil.copy2(ROOT/'desktop/lean'/name,frontend/name)
     (frontend/'lean-toolchain').write_text('leanprover/lean4:v4.28.0\n')
-    (frontend/'lakefile.toml').write_text('name = "PCSFiles"\nversion = "1.0.0"\n\n[[require]]\nname = "PCS"\npath = "../core/formal"\n\n[[lean_exe]]\nname = "pcs-files-checker"\nroot = "Main"\n')
+    (frontend/'lakefile.toml').write_text('name = "PCSFiles"\nversion = "1.0.0"\n\n[[lean_lib]]\nname = "StackSafe"\n\n[[require]]\nname = "PCS"\npath = "../core/formal"\n\n[[lean_exe]]\nname = "pcs-files-checker"\nroot = "Main"\n')
     run(['lake','build','pcs-files-checker'],cwd=frontend)
     audit = subprocess.check_output(['lake','env','lean','Audit.lean'],cwd=frontend,text=True)
     if any(x in audit for x in ['sorryAx','Lean.ofReduceBool','Lean.trustCompiler']):
         raise ValueError('Unexpected axiom in checker audit.')
-    names = ['parseCsv_sound','parseCsv_complete','csvTable_unique','csvDisjointB_iff','csvRun_sound']
-    if not all(('PCS.V2.Csv.'+n) in audit for n in names):
+    names = ['PCS.V2.Csv.'+n for n in ['parseCsv_sound','parseCsv_complete','csvTable_unique','csvDisjointB_iff','csvRun_sound']]
+    names += ['PCSFiles.'+n for n in ['splitSafe_eq','mapOptSafe_eq','parseSafe_eq','disjointSafe_eq','disjointSafe_iff']]
+    if not all(n in audit for n in names):
         raise ValueError('Incomplete checker theorem audit.')
     (out/'axioms.log').write_text(audit)
     bundle = out/'bundle'
@@ -88,16 +89,25 @@ def main():
                 'binary_sha256':hashlib.sha256((bundle/binary).read_bytes()).hexdigest(),
                 'dependent_files_sha256':dependencies,
                 'source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in
-                    [ROOT/'desktop/app.py',ROOT/'desktop/file_check.py',ROOT/'desktop/lean/Main.lean',*(ROOT/'public'/x for x in public)]},
-                'theorems':['PCS.V2.Csv.'+n for n in names],'code_signed':False,
+                    [ROOT/'desktop/app.py',ROOT/'desktop/file_check.py',ROOT/'desktop/lean/Main.lean',ROOT/'desktop/lean/StackSafe.lean',ROOT/'desktop/lean/Audit.lean',*(ROOT/'public'/x for x in public)]},
+                'theorems':names,'code_signed':False,
                 'host_refinement_proved':False,'production_scientific_authority':False}
     (bundle/'checker-manifest.json').write_bytes(canonical(manifest))
     (out/'BUILD.json').write_text(json.dumps(manifest,indent=2)+'\n')
     if args.package:
+        packaged = out/'packaged-assets'
+        packaged.mkdir()
+        shutil.copy2(bundle/'checker-manifest.json',packaged/'checker-manifest.json')
+        shutil.copytree(bundle/'public',packaged/'public')
+        # Prevent PyInstaller's Mach-O rewriting from changing the exact native
+        # executable bytes. The runtime extracts and checks every original pin.
+        with zipfile.ZipFile(packaged/'native-payload.zip','w',compression=zipfile.ZIP_DEFLATED) as z:
+            for name in [binary,*dependencies]:
+                z.write(bundle/name,name)
         app_name = 'PCS File Checker'
         run([sys.executable,'-m','PyInstaller','--clean','--noconfirm','--onefile','--name',app_name,
              '--paths',ROOT/'desktop','--distpath',out/'dist','--workpath',out/'pyinstaller','--specpath',out,
-             '--add-data',str(bundle)+os.pathsep+'.',ROOT/'desktop/app.py'],cwd=ROOT)
+             '--add-data',str(packaged)+os.pathsep+'.',ROOT/'desktop/app.py'],cwd=ROOT)
         executable = out/'dist'/(app_name+('.exe' if sys.platform=='win32' else ''))
         clean_env = dict(os.environ)
         for key in ['PYTHONPATH','LD_LIBRARY_PATH','DYLD_LIBRARY_PATH']:

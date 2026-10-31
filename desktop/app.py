@@ -1,6 +1,10 @@
 """Portable loopback UI. No caller-selected programs, paths, origins or verdicts."""
 from __future__ import annotations
 import argparse
+from contextlib import contextmanager
+import shutil
+import tempfile
+import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hmac
 import json
@@ -17,8 +21,33 @@ MAX_REQUEST = 5_700_000
 PUBLIC_FILES = {'check-my-files.html', 'file-check.css', 'file-check.mjs', 'file-check-core.mjs', 'file-check-local.mjs', 'logo-mark.svg'}
 
 
+@contextmanager
 def application_assets():
-    return Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent/'bundle'))
+    base = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent/'bundle'))
+    payload = base/'native-payload.zip'
+    if not payload.is_file():
+        yield base
+        return
+    # Keep original native bytes inside an opaque archive: packagers may rewrite
+    # and ad-hoc-sign Mach-O DATA entries. Never accept a changed checker pin.
+    manifest = json.loads((base/'checker-manifest.json').read_bytes())
+    names = {manifest['binary'], *manifest.get('dependent_files_sha256', {})}
+    if any(Path(n).name != n or n in {'.', '..'} for n in names):
+        raise ValueError('Invalid packaged native paths.')
+    with tempfile.TemporaryDirectory(prefix='pcs-file-checker-runtime-') as tmp:
+        assets = Path(tmp)
+        shutil.copy2(base/'checker-manifest.json', assets/'checker-manifest.json')
+        shutil.copytree(base/'public', assets/'public')
+        with zipfile.ZipFile(payload) as z:
+            entries = z.infolist()
+            if len(entries) != len(names) or {x.filename for x in entries} != names or sum(x.file_size for x in entries) > 1_000_000_000:
+                raise ValueError('Invalid packaged native payload.')
+            for entry in entries:
+                path = assets/entry.filename
+                path.write_bytes(z.read(entry))
+                path.chmod(0o700 if entry.filename == manifest['binary'] else 0o600)
+        LocalChecker(assets)  # Verify original binary/dependency pins before use.
+        yield assets
 
 
 class AppServer(ThreadingHTTPServer):
@@ -125,8 +154,12 @@ def main():
     parser = argparse.ArgumentParser(description='PCS File Checker: choose CSV files in your browser; all checks stay local.')
     parser.add_argument('--self-test', action='store_true', help='Run a real bundled-checker smoke test without opening a browser.')
     args = parser.parse_args()
-    assets = application_assets()
-    if args.self_test:
+    with application_assets() as assets:
+        run_app(assets, args.self_test)
+
+
+def run_app(assets, self_test):
+    if self_test:
         import base64, hashlib
         raw = [b'id\n001\n002\n', b'id\n003\n']
         request = {'columns': [0, 0], 'files': [{'name': f'{i}.csv', 'data_base64': base64.b64encode(x).decode(), 'sha256': hashlib.sha256(x).hexdigest()} for i, x in enumerate(raw)]}
