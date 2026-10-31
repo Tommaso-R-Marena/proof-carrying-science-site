@@ -11,6 +11,8 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'desktop'))
 from file_check import parse_csv,analyze,extracted_csv,canonical,strict_json,LocalChecker
+sys.path.insert(0,str(ROOT/'scripts'))
+from file_check_boundary import review_file_check_transport
 
 
 class CSVTests(unittest.TestCase):
@@ -42,6 +44,12 @@ class CSVTests(unittest.TestCase):
         checker=object.__new__(LocalChecker)
         for request in [{},{'files':[],'columns':[],'verifier':'/attacker'}, {'files':[],'columns':[]}]:
             with self.assertRaises(ValueError):checker.verify(request)
+
+    def test_loopback_source_review_is_narrow(self):
+        source=(ROOT/'public/file-check-local.mjs').read_text()
+        self.assertEqual(review_file_check_transport(source),[])
+        for old,new in [("location.hostname!=='127.0.0.1'",'false'),("'/api/check-files'","'https://attacker.invalid/'"),('requireLocal(session);',''),("redirect:'error'","redirect:'follow'"),('size>16384','size>99999999')]:
+            with self.subTest(old=old):self.assertTrue(review_file_check_transport(source.replace(old,new)))
 
 
 if __name__=='__main__':unittest.main()

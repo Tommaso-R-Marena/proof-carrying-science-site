@@ -2,11 +2,6 @@ name: PCS Portable File Checker
 on:
   workflow_call:
   workflow_dispatch:
-    inputs:
-      publish:
-        description: Publish version 1.0.0 from protected main after all platform tests pass
-        type: boolean
-        default: false
 permissions:
   contents: read
 concurrency:
@@ -69,28 +64,3 @@ jobs:
             ${{ runner.temp }}/pcs-files-build/axioms.log
             ${{ runner.temp }}/pcs-files-browser/results.json
           if-no-files-found: error
-  publish:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main' }}
-    needs: packages
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ github.sha }}
-          persist-credentials: false
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          pattern: pcs-files-*
-          path: release-files
-      - name: Publish the tested platform archives without overwriting a release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          test '${{ needs.packages.result }}' = success
-          test "$(git rev-parse HEAD)" = '${{ github.sha }}'
-          mapfile -t packages < <(find release-files -name '*.zip' -o -name '*.sha256')
-          test "${#packages[@]}" -eq 8
-          gh release create pcs-files-v1.0.0 "${packages[@]}" --target '${{ github.sha }}' --title 'PCS File Checker 1.0.0' --notes-file desktop/RELEASE_NOTES.md

@@ -56,3 +56,16 @@ test('independent brute-force oracle agrees over all pairs of finite ID subsets'
   assert.equal(got.disjoint,a.every(x=>!b.includes(x)));
  }
 });
+test('local transport refuses production origins and forged sessions before any request',async()=>{
+ const {connectLocal,checkLocally}=await import('../public/file-check-local.mjs');
+ const saved={location:globalThis.location,fetch:globalThis.fetch};let calls=0;
+ globalThis.fetch=async()=>{calls++;throw Error('No request may be made');};
+ try{
+  globalThis.location={hostname:'proof-carrying-science-site.marenatommaso.workers.dev',protocol:'https:',origin:'https://proof-carrying-science-site.marenatommaso.workers.dev',hash:'#session='+'a'.repeat(64)};
+  await assert.rejects(connectLocal());await assert.rejects(checkLocally({origin:location.origin,token:'a'.repeat(64)},{},new AbortController().signal));
+  globalThis.location={hostname:'127.0.0.1',protocol:'http:',origin:'http://127.0.0.1:9000',hash:''};
+  await assert.rejects(checkLocally({origin:'http://127.0.0.1:9001',token:'a'.repeat(64)},{},new AbortController().signal));
+  await assert.rejects(checkLocally({origin:location.origin,token:'invalid'},{},new AbortController().signal));
+  assert.equal(calls,0);
+ }finally{if(saved.location===undefined)delete globalThis.location;else globalThis.location=saved.location;globalThis.fetch=saved.fetch;}
+});
