@@ -8,7 +8,7 @@ Live preview:
 
 ## Check your own CSV files
 
-Open [Check my files](public/check-my-files.html) to find exact shared IDs in two
+Open [Check my files](https://proof-carrying-science-site.marenatommaso.workers.dev/check-my-files) to find exact shared IDs in two
 CSV exports. Choose the ID column in each, inspect matching line numbers and
 within-file repeats, save a reusable check, and compare the next run's counts.
 Files stay on the device. Saved checks contain settings and aggregate previous

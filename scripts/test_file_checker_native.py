@@ -4,6 +4,7 @@
 Every positive verdict below executes the bundled Lean checker. No mock verifier
 is used for a positive case. Tests deliberately fail if the bundle is absent.
 """
+import errno
 import base64,hashlib,http.client,itertools,json,os,random,shutil,subprocess,sys,tempfile,threading,time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -70,6 +71,12 @@ def main():
         except ValueError:negative+=1
         else:raise AssertionError('Changed checker accepted')
     with AppServer(assets) as server:
+        try:
+            duplicate=AppServer(assets,port=server.server_port)
+        except OSError as exc:
+            assert exc.errno==errno.EADDRINUSE;negative+=1
+        else:
+            duplicate.server_close();raise AssertionError('Conflicting app address accepted')
         thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
         def call(method,path,body=None,headers=None):
             c=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=40)

@@ -1,6 +1,7 @@
 """Portable loopback UI. No caller-selected programs, paths, origins or verdicts."""
 from __future__ import annotations
 import argparse
+import errno
 from contextlib import contextmanager
 import shutil
 import tempfile
@@ -17,6 +18,7 @@ import webbrowser
 
 from file_check import LocalChecker, SCOPE, canonical, strict_json
 
+DEFAULT_PORT = 49381  # Stable loopback origin keeps explicitly saved browser recipes reachable.
 MAX_REQUEST = 5_700_000
 PUBLIC_FILES = {'check-my-files.html', 'file-check.css', 'file-check.mjs', 'file-check-core.mjs', 'file-check-local.mjs', 'logo-mark.svg'}
 
@@ -53,12 +55,12 @@ def application_assets():
 class AppServer(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, assets):
+    def __init__(self, assets, *, port=0):
         self.assets = Path(assets).resolve()
         self.checker = LocalChecker(self.assets)
         self.token = secrets.token_hex(32)
         self.check_slot = threading.BoundedSemaphore(1)
-        super().__init__(('127.0.0.1', 0), Handler)
+        super().__init__(('127.0.0.1', port), Handler)
         self.origin = f'http://127.0.0.1:{self.server_port}'
 
 
@@ -166,7 +168,16 @@ def run_app(assets, self_test):
         assert LocalChecker(assets).verify(request)['lean_verdict'] == 'DISJOINT'
         print('PASS: packaged app executed the real bundled Lean CSV checker')
         return
-    with AppServer(assets) as server:
+    try:
+        server = AppServer(assets, port=DEFAULT_PORT)
+    except OSError as exc:
+        if exc.errno != errno.EADDRINUSE:
+            raise
+        print('PCS File Checker could not open its local address. Another copy may already be running. Return to its browser tab, or close the other copy and open this app again.')
+        if sys.stdin.isatty():
+            input('Press Enter to close this window. ')
+        raise SystemExit(1) from None
+    with server:
         url = server.origin+'/check-my-files.html#session='+server.token
         opened = webbrowser.open(url, new=1)
         print('PCS File Checker is open in your browser. Files stay on this computer. Close this window to stop the local checker.')
