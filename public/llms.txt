@@ -56,3 +56,5 @@ AI assistance is permitted, but higher-trust submissions require disclosure, ind
 - /research-updates.html: all protected Aristotle (#109), all-time transport (#115), recorded trace (#116) and calibration (#118) integrations since the previous website core pin. Draft #117 is excluded.
 - /calibration-lab.html: exact browser recalculation of all 22 source hull groups from 308 archived CC BY 4.0 yacht observations; 154 held out, 21 distinct response curves. Recorded protected-CI Lean evidence is downloadable; the browser does not run Lean. Physical validity, actual measurement precision, generalization and external review remain OPEN.
 - The site retains its existing canonical Workers hostname and intentional index/follow posture; no new domain, trademark clearance, model promotion or scientific acceptance is implied.
+
+- [Check my files](https://proof-carrying-science-site.marenatommaso.workers.dev/check-my-files.html): local CSV ID overlap, saved workflows, private replay and a bundled Lean checker.

@@ -5,6 +5,7 @@ import json
 import re
 import sys
 from world_builder_boundary import review_world_builder
+from file_check_boundary import review_file_check_transport
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -18,6 +19,11 @@ PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
 # Owner-reviewed external navigation targets only (never script/src). Used for
 # Evidence Atlas / journal DOIs / upstream repos. Adding a URL requires review.
 ALLOWED_EXTERNAL_HREFS = {
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/tag/pcs-files-v1.0.0",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v1.0.0/PCS-File-Checker-windows-x64.zip",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v1.0.0/PCS-File-Checker-macos-arm64.zip",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v1.0.0/PCS-File-Checker-macos-x64.zip",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v1.0.0/PCS-File-Checker-linux-x64.zip",
     "https://github.com/Tommaso-R-Marena/proof-carrying-science",
     "https://github.com/leanprover/lean4",
     "https://github.com/leanprover-community/mathlib4",
@@ -1603,6 +1609,9 @@ NETWORKED_COMMONS_JS = {
 }
 for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
     text = js.read_text(encoding="utf-8")
+    if js.name == "file-check-local.mjs":
+        errors.extend(review_file_check_transport(text))
+        continue
 
     if js.name == "world-builder.mjs":
         # One reviewed opt-in POST, typed snapshot, no redirects/persistence.

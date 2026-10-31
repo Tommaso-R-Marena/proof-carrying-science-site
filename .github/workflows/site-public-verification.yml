@@ -11,8 +11,10 @@ concurrency:
   group: pcs-public-site-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  portable-file-checker:
+    uses: ./.github/workflows/file-checker.yml
   site-full-gate:
-    needs: lean-learning-browser
+    needs: [lean-learning-browser, portable-file-checker]
     if: ${{ always() && github.event.repository.private == false }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -38,7 +40,10 @@ jobs:
       - name: Require actual Lean browser execution
         env:
           LEAN_BROWSER_RESULT: ${{ needs.lean-learning-browser.result }}
-        run: test "$LEAN_BROWSER_RESULT" = success
+          FILE_CHECKER_RESULT: ${{ needs.portable-file-checker.result }}
+        run: |
+          test "$LEAN_BROWSER_RESULT" = success
+          test "$FILE_CHECKER_RESULT" = success
       - name: Frozen dependencies and complete website gate
         run: |
           set -euo pipefail
