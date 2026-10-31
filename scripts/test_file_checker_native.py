@@ -19,6 +19,18 @@ def request(a,b,columns=None):
 def main():
     assets=Path(sys.argv[1]).resolve();checker=LocalChecker(assets);positive=negative=0
     started=time.monotonic(); scaling=[]
+    # Exercise the native image boundary directly, independently of the host
+    # reader. Reject unsupported images and missing arguments without a verdict.
+    with tempfile.TemporaryDirectory(prefix='pcs-native-images-') as tmp:
+        left,right=Path(tmp)/'left.csv',Path(tmp)/'right.csv';right.write_bytes(b'id\n62\n')
+        malformed=[b'id\nzz\n',b'id\nA1\n',b'id\n0\n',b'other\n61\n',b'id\n\n',
+                   b'id\n'+b'61'*257+b'\n',b'id\n'+b'61\n'*5001,b'id\n61,62\n',
+                   b'id\n61\0\n',b'id\n"61"\n',b'id\n'+b'61\n'*866668]
+        for raw in malformed:
+            left.write_bytes(raw);r=subprocess.run([str(checker.binary),str(left),str(right)],capture_output=True,timeout=30)
+            assert r.returncode==2 and r.stdout.startswith(b'REJECT:') and not r.stderr;negative+=1
+        r=subprocess.run([str(checker.binary)],capture_output=True,timeout=30)
+        assert r.returncode==2 and r.stdout==b'REJECT:bad_arity\n';negative+=1
     universe=['001','1','é','😀']
     subsets=[list(x) for size in range(1,5) for x in itertools.combinations(universe,size)]
     for a in subsets:

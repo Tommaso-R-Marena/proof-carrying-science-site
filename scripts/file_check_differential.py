@@ -21,6 +21,7 @@ def main():
         add(a,b)
     for bad in [b'',b'\xff',b'id\n',b'id,id\na,b',b'id\nx,y',b'id\n"x',b'id\nx"y',b'id\n"x"z',b'id\ra',b'id\na\0',b'id\n"a\rb"',b'id\n \n',b'id\n'+b'x'*257]:add(bad,b'id\na\n')
     actual=json.loads(subprocess.check_output(['node',str(ROOT/'scripts/file_check_differential.mjs')],input=json.dumps(cases).encode(),cwd=ROOT))
+    assert len(actual)==len(cases), "Differential runner omitted cases"
     positives=0
     for i,(c,j) in enumerate(zip(cases,actual)):
         try:
@@ -29,6 +30,7 @@ def main():
         except (ValueError,UnicodeError,csv.Error):p={'accepted':False}
         assert p==j,(i,p,j)
         positives+=p['accepted']
+    assert positives==240 and len(cases)==253, 'The fixed corpus was not fully exercised'
     print(json.dumps({'format':'pcs-file-check-differential-v1','seed':20261031,'cases':len(cases),'valid_pairs':positives,'all_python_javascript_results_and_extraction_bytes_equal':True,'kernel_proof_of_host_refinement':False}))
 
 
