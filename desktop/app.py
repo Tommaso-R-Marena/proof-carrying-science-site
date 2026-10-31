@@ -12,6 +12,7 @@ import json
 import mimetypes
 from pathlib import Path
 import secrets
+import socket
 import sys
 import threading
 import webbrowser
@@ -54,6 +55,15 @@ def application_assets():
 
 class AppServer(ThreadingHTTPServer):
     daemon_threads = True
+    allow_reuse_address = sys.platform != 'win32'
+    allow_reuse_port = False
+
+    def server_bind(self):
+        # Windows SO_REUSEADDR can let a second listener take the same address.
+        # Use the OS exclusive-bind mode; this is not an immutable host root.
+        if sys.platform == 'win32':
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
 
     def __init__(self, assets, *, port=0):
         self.assets = Path(assets).resolve()

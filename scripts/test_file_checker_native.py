@@ -94,8 +94,16 @@ def main():
         server.check_slot.acquire()
         try:assert call('POST','/api/check-files',canonical(valid),token)[0]==429;negative+=1
         finally:server.check_slot.release()
+        previous_port,previous_token=server.server_port,server.token
         server.shutdown();thread.join(5)
-    print(json.dumps({'format':'pcs-file-check-native-tests-v1','actual_lean_positive_checks':positive,'negative_controls':negative,'seconds':round(time.monotonic()-started,3),'scaling':scaling,'mock_positive_verdicts':0,'immutable_host_security_proved':False}))
+    # The same address is available after close, with a different capability.
+    with AppServer(assets,port=previous_port) as server:
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        assert server.token!=previous_token
+        assert call('GET','/api/session',headers={'X-PCS-Session':previous_token})[0]==403;negative+=1
+        assert call('GET','/api/session',headers={'X-PCS-Session':server.token})[0]==200
+        server.shutdown();thread.join(5)
+    print(json.dumps({'format':'pcs-file-check-native-tests-v1','actual_lean_positive_checks':positive,'negative_controls':negative,'seconds':round(time.monotonic()-started,3),'same_address_restart':True,'scaling':scaling,'mock_positive_verdicts':0,'immutable_host_security_proved':False}))
 
 
 if __name__=='__main__':main()
