@@ -61,14 +61,14 @@ def main():
     (frontend/'lean-toolchain').write_text('leanprover/lean4:v4.28.0\n')
     (frontend/'lakefile.toml').write_text('name = "PCSFiles"\nversion = "1.0.0"\n\n[[lean_lib]]\nname = "StackSafe"\n\n[[require]]\nname = "PCS"\npath = "../core/formal"\n\n[[lean_exe]]\nname = "pcs-files-checker"\nroot = "Main"\n')
     run(['lake','build','pcs-files-checker'],cwd=frontend)
-    audit = subprocess.check_output(['lake','env','lean','Audit.lean'],cwd=frontend,text=True)
+    audit = subprocess.check_output(['lake','env','lean','Audit.lean'],cwd=frontend,text=True,encoding='utf-8')
     if any(x in audit for x in ['sorryAx','Lean.ofReduceBool','Lean.trustCompiler']):
         raise ValueError('Unexpected axiom in checker audit.')
     names = ['PCS.V2.Csv.'+n for n in ['parseCsv_sound','parseCsv_complete','csvTable_unique','csvDisjointB_iff','csvRun_sound']]
     names += ['PCSFiles.'+n for n in ['splitSafe_eq','mapOptSafe_eq','parseSafe_eq','disjointSafe_eq','disjointSafe_iff']]
     if not all(n in audit for n in names):
         raise ValueError('Incomplete checker theorem audit.')
-    (out/'axioms.log').write_text(audit)
+    (out/'axioms.log').write_text(audit,encoding='utf-8')
     bundle = out/'bundle'
     (bundle/'public').mkdir(parents=True)
     binary = 'pcs-files-checker.exe' if sys.platform=='win32' else 'pcs-files-checker'
