@@ -21,6 +21,10 @@ service-account-*.json
 .ssh/
 .wrangler/
 node_modules/
+__pycache__/
+*.pyc
+desktop/bundle/
+desktop/build/
 .cache/
 .security-audit/
 *.tfstate

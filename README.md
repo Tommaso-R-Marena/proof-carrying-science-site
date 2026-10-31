@@ -6,6 +6,33 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
+## Check your own CSV files
+
+Open [Check my files](public/check-my-files.html) to find exact shared IDs in two
+CSV exports. Choose the ID column in each, inspect matching line numbers and
+within-file repeats, save a reusable check, and compare the next run's counts.
+Files stay on the device. Saved checks contain settings and aggregate previous
+counts, never CSV contents or matching IDs. Readable reports omit IDs by default;
+embedding input CSVs in a replay requires an explicit choice.
+
+The portable **PCS File Checker** opens the same interface locally and bundles
+the native Lean CSV checker. Users do not install Python, Rust or Lean and do not
+type terminal commands. It checks derived strict CSV images of the selected UTF-8
+ID lists against core commit `f20f3cab2938f2e085f137185e88f4700d5da2ed`.
+The original CSV parser, extraction/binding implementation, compiler and operating
+system remain explicit assumptions. It grants no PCS scientific acceptance.
+Imported receipts cannot produce a live confirmation; a recipient recomputes from
+the original files. See [the user guide and trust boundary](docs/CHECK_MY_FILES.md).
+
+`npm run test:file-check` runs parser, privacy/export and Python/JavaScript
+correspondence checks. `npm run test:browser:file-check` completes the own-file,
+save/reuse, report, replay and hostile-import journeys at four widths. Supplying
+`PCS_FILE_CHECK_BUNDLE` adds actual local Lean confirmations. Protected site CI
+requires the portable-checker workflow, which builds and tests native packages on
+Linux, Windows and both Mac architectures and runs real authorization controls.
+The apps do not have publisher code-signing certificates; their release manifests
+are byte/provenance records, not an immutable trust root or external validation.
+
 ## Start with one investigation
 
 `public/experience.html` is the beginner entry point: change two fictional facts,

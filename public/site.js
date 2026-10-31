@@ -62,6 +62,7 @@
     };
 
     addLink(links, "experience.html", "Start here", "nav-primary-link");
+    addLink(links, "check-my-files.html", "Check my files");
     addMenu("Try PCS", [
       {heading:"SEE IT IN ACTION",links:[
         ["live-demo.html","Break a claim · live checks and evidence"],
@@ -147,6 +148,7 @@
   // Browse the actual site map without sending a search query to any server.
   // An offline-first command palette works on desktop, keyboard and mobile.
   const siteShortcuts=[
+    ["Check my files","check-my-files.html","Find shared IDs in your own CSV exports and save a reusable check","Use PCS"],
     ["Start here","experience.html","Test a rule and save evidence in three steps","Explore"],
     ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
     ["Assurance Fold","assurance-fold.html","Arrange claim tokens and cool the board","Play"],
@@ -283,6 +285,7 @@
 
   // Native, accessible breadcrumbs help readers return to the right collection.
   const breadcrumbParents={
+    "check-my-files.html":["Use PCS","Check my files"],
     "experience.html":["Start here"],
     "arena.html":["Play Arena"],"arena-proof-quest.html":["Play Arena","Proof Quest"],
     "assurance-fold.html":["Play Arena","Assurance Fold"],

@@ -14,7 +14,7 @@
     "test:safety:forge": "node --test tests/safety-forge.test.mjs tests/safety-forge-dataset.test.mjs tests/safety-forge-worker.test.mjs",
     "test:safety:benchmark": "node --test tests/safety-forge-benchmark.test.mjs",
     "ci:syntax": "find public src scripts tests -type f \\( -name '*.js' -o -name '*.mjs' \\) -print0 | xargs -0 -r -n1 node --check",
-    "ci:zero-minutes": "npm run test:calibration && npm run test:d1-forward && npm run test:email && npm run ci:syntax && npm run test:email && npm run test:lean-research && npm run verify:release && npm run test:submissions && npm run test:task-code && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:assurance-fold && npm run test:arena:onboarding && npm run test:search-quality && npm run test:arena:experience && npm run test:arena:duel && npm run test:countermodel && npm run test:meaning-forge && npm run test:prooflab && npm run test:account-ui && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run test:semantic-gauntlet && npm run test:evaluation-firewall && npm run test:semantic-repair && npm run deploy:dry-run && npm run test:pcs-integration && npm run test:learned-repair && npm run test:multistep-repair && npm run test:live-demo && npm run test:omega && npm run test:conditional && npm run test:intervention",
+    "ci:zero-minutes": "npm run test:file-check && npm run test:calibration && npm run test:d1-forward && npm run test:email && npm run ci:syntax && npm run test:email && npm run test:lean-research && npm run verify:release && npm run test:submissions && npm run test:task-code && npm run test:promotions && npm run test:preview && npm run test:pilots && npm run test:quest && npm run test:assurance-fold && npm run test:arena:onboarding && npm run test:search-quality && npm run test:arena:experience && npm run test:arena:duel && npm run test:countermodel && npm run test:meaning-forge && npm run test:prooflab && npm run test:account-ui && npm run test:admin:audit && npm run test:catalog && npm run test:quest:dataset && npm run test:safety:forge && npm run test:safety:benchmark && npm run test:semantic-gauntlet && npm run test:evaluation-firewall && npm run test:semantic-repair && npm run deploy:dry-run && npm run test:pcs-integration && npm run test:learned-repair && npm run test:multistep-repair && npm run test:live-demo && npm run test:omega && npm run test:conditional && npm run test:intervention",
     "test:arena:onboarding": "node --test tests/arena-onboarding.test.mjs",
     "test:admin:audit": "node --test tests/admin-audit-pagination.test.mjs",
     "test:arena:experience": "node --test tests/arena-experience.test.mjs tests/arena-lab-tools.test.mjs tests/countermodel-visual.test.mjs tests/first-investigation.test.mjs tests/world-builder.test.mjs && python3 scripts/test_world_builder_boundary.py",
@@ -65,7 +65,9 @@
     "test:assurance-fold": "node --test tests/assurance-fold.test.mjs tests/evidence-atlas.test.mjs tests/assurance-fold-learning.test.mjs tests/paper-demos.test.mjs",
     "verify:paper-demos": "python3 scripts/run_paper_demos_kernel.py",
     "test:copy": "python3 -m unittest discover -s tests -p test_public_copy.py && python3 scripts/check_public_copy.py",
-    "test:browser:beginner": "node scripts/browser_beginner_journey.cjs"
+    "test:browser:beginner": "node scripts/browser_beginner_journey.cjs",
+    "test:file-check": "node --test tests/file-check.test.mjs && python3 -m unittest discover -s tests -p test_file_checker.py -v && python3 scripts/file_check_differential.py",
+    "test:browser:file-check": "node scripts/browser_file_check.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",
