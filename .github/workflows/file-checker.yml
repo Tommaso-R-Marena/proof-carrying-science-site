@@ -49,6 +49,7 @@ jobs:
         if: runner.os == 'Linux'
         env:
           PCS_FILE_CHECK_BUNDLE: ${{ runner.temp }}/pcs-files-build/bundle
+          PCS_FILE_CHECK_EXECUTABLE: ${{ runner.temp }}/pcs-files-build/dist/PCS File Checker
           PCS_FILE_CHECK_BROWSER_OUTPUT: ${{ runner.temp }}/pcs-files-browser
         run: |
           npm ci --ignore-scripts --no-audit --no-fund
