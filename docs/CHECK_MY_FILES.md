@@ -31,7 +31,13 @@ Applications lack publisher code-signing certificates. OS confirmation may be
 required. The provided SHA-256 and BUILD records identify the release bytes and
 source version; they do not independently authenticate a publisher. Do not disable
 OS security protections. Mac archives label Apple silicon and Intel separately.
-The Linux package targets x64 Ubuntu 24.04.
+The Linux package targets x64 Ubuntu 24.04. The app uses the same local address
+(`127.0.0.1:49381`) across launches so explicitly saved recipes remain reachable.
+Each launch creates a fresh capability; old capabilities are rejected. Only one
+app instance can occupy that address. If it is busy, return to the existing app
+or close the other copy and try again. Browser history belongs to this local
+origin and browser profile; clearing browser storage or changing profiles removes
+access to it. Download a reusable check to transfer it between browsers.
 
 ## Formal and implementation boundary
 

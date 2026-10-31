@@ -2,6 +2,8 @@ Check two CSV exports for shared IDs without installing Python, Rust or Lean.
 
 Download the ZIP for your operating system, extract it, and open **PCS File Checker**. The app opens a private local browser page. Choose your CSV files and the ID column in each. Keep the app window open while checking; close it to stop the local checker. Use **Run the local Lean check** to independently confirm the extracted ID lists.
 
+The local address stays stable across launches so saved checks remain available in the same browser profile; each launch rotates its authentication capability. A second app instance fails clearly if the address is already occupied. Download a reusable check to move between browsers.
+
 The browser workflow shows exact matching lines, repeated IDs within each file, saved checks and changes from previous counts. Reports omit IDs by default. Replay files include CSV contents only when you explicitly choose that option. Imported receipts cannot authorize a new result: rechecking uses the original file hashes and fresh computation.
 
 Limits: two UTF-8 CSVs, each up to 2 MiB and 5,000 data rows; 128 columns; IDs up to 256 UTF-8 bytes. Quoted fields, escaped quotes, LF/CRLF and UTF-8 BOM are supported. IDs compare exactly, including case, leading zeros and spaces. Blank IDs are rejected. The CSVs may use different column headings.

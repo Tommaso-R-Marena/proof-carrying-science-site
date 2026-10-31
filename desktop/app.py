@@ -1,6 +1,7 @@
 """Portable loopback UI. No caller-selected programs, paths, origins or verdicts."""
 from __future__ import annotations
 import argparse
+import errno
 from contextlib import contextmanager
 import shutil
 import tempfile
@@ -11,12 +12,14 @@ import json
 import mimetypes
 from pathlib import Path
 import secrets
+import socket
 import sys
 import threading
 import webbrowser
 
 from file_check import LocalChecker, SCOPE, canonical, strict_json
 
+DEFAULT_PORT = 49381  # Stable loopback origin keeps explicitly saved browser recipes reachable.
 MAX_REQUEST = 5_700_000
 PUBLIC_FILES = {'check-my-files.html', 'file-check.css', 'file-check.mjs', 'file-check-core.mjs', 'file-check-local.mjs', 'logo-mark.svg'}
 
@@ -52,14 +55,26 @@ def application_assets():
 
 class AppServer(ThreadingHTTPServer):
     daemon_threads = True
+    allow_reuse_address = sys.platform != 'win32'
+    allow_reuse_port = False
 
-    def __init__(self, assets):
+    def server_bind(self):
+        # Windows SO_REUSEADDR can let a second listener take the same address.
+        # Use the OS exclusive-bind mode; this is not an immutable host root.
+        if sys.platform == 'win32':
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+    def __init__(self, assets, *, port=0):
         self.assets = Path(assets).resolve()
         self.checker = LocalChecker(self.assets)
         self.token = secrets.token_hex(32)
         self.check_slot = threading.BoundedSemaphore(1)
-        super().__init__(('127.0.0.1', 0), Handler)
+        super().__init__(('127.0.0.1', port), Handler)
         self.origin = f'http://127.0.0.1:{self.server_port}'
+        # A new document URL also refreshes a browser that reuses an old tab.
+        # This public navigation nonce is separate from the secret capability.
+        self.launch_url = f'{self.origin}/check-my-files.html?launch={secrets.token_hex(16)}#session={self.token}'
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -102,7 +117,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.error(403, 'Open the app using its local session link.')
             return self.send(200, canonical({'format': 'pcs-file-check-session-v1', 'scope': SCOPE,
                                             'checker_sha256': self.server.checker.manifest['binary_sha256']}))
-        name = 'check-my-files.html' if self.path == '/' else self.path.removeprefix('/')
+        path = self.path.partition('?')[0]
+        name = 'check-my-files.html' if path == '/' else path.removeprefix('/')
         if name not in PUBLIC_FILES:
             return self.error(404, 'Not found.')
         try:
@@ -166,8 +182,17 @@ def run_app(assets, self_test):
         assert LocalChecker(assets).verify(request)['lean_verdict'] == 'DISJOINT'
         print('PASS: packaged app executed the real bundled Lean CSV checker')
         return
-    with AppServer(assets) as server:
-        url = server.origin+'/check-my-files.html#session='+server.token
+    try:
+        server = AppServer(assets, port=DEFAULT_PORT)
+    except OSError as exc:
+        if exc.errno != errno.EADDRINUSE:
+            raise
+        print('PCS File Checker could not open its local address. Another copy may already be running. Return to its browser tab, or close the other copy and open this app again.')
+        if sys.stdin.isatty():
+            input('Press Enter to close this window. ')
+        raise SystemExit(1) from None
+    with server:
+        url = server.launch_url
         opened = webbrowser.open(url, new=1)
         print('PCS File Checker is open in your browser. Files stay on this computer. Close this window to stop the local checker.')
         if not opened:
