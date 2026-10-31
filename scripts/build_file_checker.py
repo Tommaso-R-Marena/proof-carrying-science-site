@@ -88,7 +88,7 @@ def main():
                 'lean_toolchain':'leanprover/lean4:v4.28.0','binary':binary,
                 'binary_sha256':hashlib.sha256((bundle/binary).read_bytes()).hexdigest(),
                 'dependent_files_sha256':dependencies,
-                'source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in
+                'source_sha256':{p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in
                     [ROOT/'desktop/app.py',ROOT/'desktop/file_check.py',ROOT/'desktop/lean/Main.lean',ROOT/'desktop/lean/StackSafe.lean',ROOT/'desktop/lean/Audit.lean',*(ROOT/'public'/x for x in public)]},
                 'theorems':names,'code_signed':False,
                 'host_refinement_proved':False,'production_scientific_authority':False}
