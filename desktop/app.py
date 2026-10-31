@@ -115,7 +115,9 @@ class Handler(BaseHTTPRequestHandler):
                 self.send(200, canonical(result))
             finally:
                 self.server.check_slot.release()
-        except (ValueError, OSError, UnicodeError, RecursionError, OverflowError):
+        except ValueError as exc:
+            self.error(400, str(exc)[:240])
+        except (OSError, UnicodeError, RecursionError, OverflowError):
             self.error(400, 'The file check could not complete. Check the CSV format, file identities and ID columns, then try again.')
 
 
