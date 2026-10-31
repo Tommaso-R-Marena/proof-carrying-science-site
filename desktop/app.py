@@ -62,6 +62,9 @@ class AppServer(ThreadingHTTPServer):
         self.check_slot = threading.BoundedSemaphore(1)
         super().__init__(('127.0.0.1', port), Handler)
         self.origin = f'http://127.0.0.1:{self.server_port}'
+        # A new document URL also refreshes a browser that reuses an old tab.
+        # This public navigation nonce is separate from the secret capability.
+        self.launch_url = f'{self.origin}/check-my-files.html?launch={secrets.token_hex(16)}#session={self.token}'
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -104,7 +107,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.error(403, 'Open the app using its local session link.')
             return self.send(200, canonical({'format': 'pcs-file-check-session-v1', 'scope': SCOPE,
                                             'checker_sha256': self.server.checker.manifest['binary_sha256']}))
-        name = 'check-my-files.html' if self.path == '/' else self.path.removeprefix('/')
+        path = self.path.partition('?')[0]
+        name = 'check-my-files.html' if path == '/' else path.removeprefix('/')
         if name not in PUBLIC_FILES:
             return self.error(404, 'Not found.')
         try:
@@ -178,7 +182,7 @@ def run_app(assets, self_test):
             input('Press Enter to close this window. ')
         raise SystemExit(1) from None
     with server:
-        url = server.origin+'/check-my-files.html#session='+server.token
+        url = server.launch_url
         opened = webbrowser.open(url, new=1)
         print('PCS File Checker is open in your browser. Files stay on this computer. Close this window to stop the local checker.')
         if not opened:
