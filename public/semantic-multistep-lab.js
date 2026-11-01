@@ -1,3 +1,4 @@
+import {verifiedRepairModel} from './repair-model-integrity.mjs';
 import {getGauntletTask} from './semantic-gauntlet-core.mjs';
 import {makeMultiStepRequest,searchBestFirstRepair,replayBestFirstRepair} from './semantic-multistep-core.mjs';
 const $=id=>document.getElementById(id);
@@ -19,7 +20,7 @@ async function initialize(){
  try{
   const [m,c]=await Promise.all([fetch('repair-policy-model-v1.json'),fetch('multistep-challenges-v1.json')]);
   if(!m.ok||!c.ok)throw Error('Missing versioned research assets');
-  model=await m.json();pack=await c.json();
+  model=await verifiedRepairModel(await m.json());pack=await c.json();
   if(model.format!=='pcs-learned-semantic-repair-policy-v1'||
      model.authority!=='NONE_UNTRUSTED_PROPOSALS_ONLY'||!Array.isArray(model.weights)||model.weights.length!==384||
      model.weights.some(x=>!Number.isFinite(x))||pack.format!==expected||

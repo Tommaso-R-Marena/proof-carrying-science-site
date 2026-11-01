@@ -56,7 +56,7 @@ jobs:
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
           fetch-depth: 0
-          ref: fabc704efdbda4c8822881366e4db3d3e31f066a
+          ref: f20f3cab2938f2e085f137185e88f4700d5da2ed
           path: .ci-components/pcs
           persist-credentials: false
       - name: Cross-check game semantics with the independent Python core
@@ -205,7 +205,7 @@ jobs:
         with:
           repository: Tommaso-R-Marena/proof-carrying-science
           fetch-depth: 0
-          ref: fabc704efdbda4c8822881366e4db3d3e31f066a
+          ref: f20f3cab2938f2e085f137185e88f4700d5da2ed
           path: .ci-components/lean-prover
           persist-credentials: false
       - name: Pinned CPU backend and actual four-width proof play
@@ -214,14 +214,20 @@ jobs:
           set -euo pipefail
           export WRANGLER_SEND_METRICS=false
           npm ci --ignore-scripts --no-audit --no-fund
+          python3 scripts/check_research_release_sources.py --core .ci-components/lean-prover
+          python3 scripts/check_model_capabilities.py
           npm run test:lean-research
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
+          PCS_MODEL_WIRING_OUTPUT="$RUNNER_TEMP/model-wiring-browser.json" npm run test:browser:model-wiring
           # Production UI recovery runs in Chromium against explicit loopback provider fixtures.
           PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
           PCS_SCIENCE_BROWSER_OUTPUT="$RUNNER_TEMP/scientific-workflow-browser.json" npm run test:browser:scientific-workflow
           npm run test:browser:transport-workflow
           PCS_CALIBRATION_BROWSER_OUTPUT="$RUNNER_TEMP/calibration-browser.json" npm run test:browser:calibration
           source .ci-components/lean-prover/scripts/activate_lean_428.sh
+          node scripts/replay_website_model_families.mjs
+          lean docs/evidence/model-wiring-v1/learned-chain.lean > "$RUNNER_TEMP/model-wiring-chain.log"
+          grep -F "'pcs_model_wiring_chain' does not depend on any axioms" "$RUNNER_TEMP/model-wiring-chain.log"
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"

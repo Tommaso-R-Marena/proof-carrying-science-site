@@ -73,7 +73,19 @@ test('actual Worker/D1 rejects absent provider before proof admission',async()=>
 
 test('dedicated proof-dispatch credential is preferred without replacing existing website credential',async()=>{const scoped={...env,PCS_LEAN_GITHUB_TOKEN:'test-only-scoped-actions-token'};const calls=[];const transport=async(url,options)=>{calls.push(options.headers.Authorization);if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA}});if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});if(url.endsWith('/dispatches'))return response(null,204);return response(repository);};assert.equal((await dispatch(scoped,body,transport)).status,'queued');assert.ok(calls.every(h=>h==='Bearer test-only-scoped-actions-token'));assert.equal(scoped.PCS_GITHUB_TOKEN,env.PCS_GITHUB_TOKEN);});
 
-test('real Worker availability exposes configuration only, without credentials or authority',async()=>{const q=quotaEnv(1);let r=await worker.fetch(new Request(origin+'/api/lean-research/status'),q.env);assert.equal((await r.json()).status,'unavailable');r=await worker.fetch(new Request(origin+'/api/lean-research/status'),{...q.env,PCS_LEAN_GITHUB_TOKEN:'test-only-proof-scope'});const configured=await r.json();assert.equal(configured.status,'configured');assert.equal(configured.pcs_authority,false);assert.doesNotMatch(JSON.stringify(configured),/test-only-proof-scope/);assert.equal(q.state.calls,0);});
+test('Worker availability checks actual pinned provider metadata and bounds its public budget',async()=>{
+ const q=quotaEnv(1), original=globalThis.fetch;let gets=0;
+ globalThis.fetch=async url=>{gets++;if(url.endsWith('/git/ref/heads/main'))return response({object:{sha:CORE_SHA}});if(url.endsWith('/actions/workflows/pcs-lean-public.yml'))return response({state:'active',path:'.github/workflows/pcs-lean-public.yml'});return response(repository);};
+ try{
+  assert.equal((await (await worker.fetch(new Request(origin+'/api/lean-research/status'),q.env)).json()).status,'unavailable');
+  const scoped={...q.env,PCS_LEAN_GITHUB_TOKEN:'test-only-proof-scope'};
+  const r=await worker.fetch(new Request(origin+'/api/lean-research/status'),scoped), ready=await r.json();
+  assert.equal(ready.status,'configured');assert.equal(ready.readiness,'ready');assert.equal(ready.pcs_authority,false);assert.equal(gets,3);
+  assert.doesNotMatch(JSON.stringify(ready),/test-only-proof-scope/);assert.equal(q.state.calls,2);
+  await worker.fetch(new Request(origin+'/api/lean-research/status'),scoped);assert.equal(gets,3);assert.equal(q.state.calls,4);
+  const denied=quotaEnv(241);const failed=await worker.fetch(new Request(origin+'/api/lean-research/status'),{...denied.env,PCS_LEAN_GITHUB_TOKEN:'test-only'});assert.equal(failed.status,429);assert.equal(gets,3);
+ }finally{globalThis.fetch=original;}
+});
 
 test('optional operational evidence is source-correlated, ordered and never authorizes training',async()=>{
  const q=await queued(),p=await verifyTicket(env,q.ticket,1000000),r=record(p);

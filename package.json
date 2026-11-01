@@ -42,7 +42,7 @@
     "test:browser:layout": "node scripts/browser_layout_check.cjs",
     "test:conditional": "node --test tests/conditional-reasoning.test.mjs",
     "test:intervention": "node --test tests/intervention.test.mjs",
-    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs tests/lean-job-client.test.mjs tests/lean-job-journal.test.mjs tests/lean-admission.test.mjs && npm run test:bridge && npm run test:platform-governance && npm run test:scientific-workflow && npm run test:transport-workflow",
+    "test:lean-research": "node --test tests/lean-research.test.mjs tests/lean-research-runtime.test.mjs tests/checked-reuse.test.mjs tests/lean-job-client.test.mjs tests/lean-job-journal.test.mjs tests/lean-admission.test.mjs && npm run test:bridge && npm run test:platform-governance && npm run test:scientific-workflow && npm run test:transport-workflow && npm run test:model-wiring",
     "test:browser:checked-reuse": "node scripts/browser_checked_reuse.cjs",
     "test:bridge": "node --test tests/bridge-builder.test.mjs tests/bridge-builder-worker.test.mjs tests/memory-workshop.test.mjs && python3 tests/test_bridge_migration.py",
     "test:browser:bridge": "node scripts/browser_bridge_builder.cjs",
@@ -70,7 +70,9 @@
     "test:browser:file-check": "node scripts/browser_file_check.cjs",
     "test:change-review": "node --test tests/change-review.test.mjs && python3 -m unittest discover -s tests -p test_change_review.py -v && python3 -m unittest discover -s tests -p test_usability_sessions.py -v",
     "test:browser:change-review": "node scripts/browser_change_review.cjs",
-    "test:publication": "python3 -m unittest discover -s tests -p test_file_checker_publication.py -v && python3 -m unittest discover -s tests -p test_git_snapshot.py -v"
+    "test:publication": "python3 -m unittest discover -s tests -p test_file_checker_publication.py -v && python3 -m unittest discover -s tests -p test_git_snapshot.py -v",
+    "test:model-wiring": "node --test tests/lean-readiness.test.mjs tests/repair-model-integrity.test.mjs tests/model-capabilities.test.mjs",
+    "test:browser:model-wiring": "node scripts/browser_model_wiring.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

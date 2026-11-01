@@ -775,6 +775,6 @@
     "production_migration_required": false,
     "pcs_authority": false,
     "automatic_promotion": false,
-    "current_verification_core_sha": "fabc704efdbda4c8822881366e4db3d3e31f066a"
+    "current_verification_core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed"
   }
 }

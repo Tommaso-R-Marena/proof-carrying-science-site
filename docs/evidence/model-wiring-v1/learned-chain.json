@@ -1,0 +1,28 @@
+{
+  "format": "pcs-hosted-owner-qualification-v1",
+  "case": "learned-chain",
+  "source_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "tracked_source_sha256": "125a41845cab7cc274a9c5f4e878f1487879211bd5feff9aeb1ff0949f576f4b",
+  "lean_version": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+  "resources": {
+    "wall_seconds": 48.977357245996245,
+    "child_user_cpu_seconds": 28.958728999999998,
+    "child_system_cpu_seconds": 17.035314,
+    "cumulative_largest_child_rss_kib": 2525984
+  },
+  "capability_benchmark": false,
+  "automatic_training": false,
+  "pcs_authority": false,
+  "status": "verified",
+  "model": "verified-memory-v1",
+  "mode": "learned",
+  "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+  "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+  "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+  "proof_source_sha256": "92071dee18b06991cef8c99b91acca6b82864a5b81858bd9da989a46a28660a6",
+  "kernel_axioms": [],
+  "independent_replay_status": "verified",
+  "expansions": 12,
+  "lean_invocations": 13,
+  "boundary": "Fresh local real-weight proof search and fresh independent Lean replay. Not a held-out benchmark, production Worker submission or universal safety claim."
+}

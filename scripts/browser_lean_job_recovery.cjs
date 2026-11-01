@@ -7,7 +7,7 @@ const fixture={submits:[],cancels:0,polls:0,failDispatchReply:true,terminal:fals
 const core=fs.readFileSync(path.resolve(__dirname,'../src/lean-research.js'),'utf8').match(/export const CORE_SHA = "([0-9a-f]{40})"/)[1],request_id='a'.repeat(32);
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://127.0.0.1');
- if(url.pathname==='/api/lean-research/status'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({status:'configured',pcs_authority:false}));}
+ if(url.pathname==='/api/lean-research/status'){res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({status:'configured',readiness:'ready',pcs_authority:false}));}
  if(req.method==='POST'){
   let data='';req.on('data',chunk=>data+=chunk);req.on('end',()=>{
    res.setHeader('Content-Type','application/json');

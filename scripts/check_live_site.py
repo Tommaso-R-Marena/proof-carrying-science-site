@@ -13,6 +13,9 @@ BASE = "https://proof-carrying-science-site.marenatommaso.workers.dev"
 TIMEOUT = 15
 
 CHECKS = [
+    ("/capabilities.html", "text/html", "What actually runs?"),
+    ("/model-capabilities.json", "application/json", "pcs-website-model-inventory-v1"),
+    ("/repair-model-integrity.mjs", "javascript", "verifiedRepairModel"),
     ("/", "text/html", "Proof-Carrying Science"),
     ("/live-demo.html", "text/html", "ldWitness"),
     ("/omega-workspace.html", "text/html", "Omega Research Workspace"),

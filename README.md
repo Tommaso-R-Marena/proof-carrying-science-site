@@ -6,6 +6,17 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
+## Models and actual execution
+
+Open [What actually runs?](https://proof-carrying-science-site.marenatommaso.workers.dev/capabilities)
+to distinguish trained browser models, fresh public Lean proof jobs, exact tools,
+recorded proof states and recorded real-weight LLM experiments. The public job
+uses selected frozen PCS policies; Qwen experiments are recorded/local research,
+not a hosted general inference service. Browser repair demos verify their pinned
+weights before inference, and each proposed repair still needs a finite check.
+
+See [the execution audit and reproduction](docs/MODEL_CAPABILITY_WIRING_V1.md).
+
 ## Review recurring exports
 
 Open [What changed?](https://proof-carrying-science-site.marenatommaso.workers.dev/review-changes)

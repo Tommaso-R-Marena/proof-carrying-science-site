@@ -1,3 +1,4 @@
+import {leanReadiness} from './lean-readiness.js';
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
 import {SEARCH_RESEARCH_CONSENT,SEARCH_RESEARCH_FORMAT,normalizeResearchSession} from '../public/search-research-core.mjs';
 import {dispatch as dispatchLeanResearch,poll as pollLeanResearch,validatePublicStatement,CORE_SHA as LEAN_CORE_SHA} from "./lean-research.js";
@@ -4363,7 +4364,12 @@ async function handleApi(request, env) {
   const method=request.method;
 
   if(method==="GET" && path==="/api/lean-research/status"){
-    return json({status:env.PCS_LEAN_GITHUB_TOKEN?"configured":"unavailable",core_sha:LEAN_CORE_SHA,lifecycle:'pcs-public-lean-lifecycle-v1',idempotency:'same request body, key and client scope',pcs_authority:false});
+    if(env.PCS_LEAN_GITHUB_TOKEN){
+      await rateLimit(request,env,"public-lean-status-client",60,60);
+      const globalStatus=new Request(request.url,{headers:{"CF-Connecting-IP":"PCS_PUBLIC_LEAN_STATUS_GLOBAL"}});
+      await rateLimit(globalStatus,env,"public-lean-status-global",240,60);
+    }
+    return json({...await leanReadiness(env),lifecycle:'pcs-public-lean-lifecycle-v1',idempotency:'same request body, key and client scope'});
   }
   if(method==="POST" && path==="/api/lean-research/submit"){
     const body=await readBody(request);
