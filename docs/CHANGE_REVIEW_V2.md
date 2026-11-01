@@ -104,9 +104,9 @@ and observation remain required before claiming the workflow is easier.
 
 ## Local qualification findings (2026-11-01)
 
-The full website gate passed 520 JavaScript and 69 Python tests, with no failures
+The full website gate passed 520 JavaScript and 76 Python tests, with no failures
 or skipped Node tests. The native compatibility suite retained all 231 actual
-checks and 40 negative controls. Four additional real native calls and 24 negative
+checks and 40 negative controls. Six additional real native calls and 24 negative
 controls exercised change-request admission, arbitrary-verifier refusal, duplicate
 IDs, scope ambiguity, and changes to snapshots/binary bytes after the real child
 returned. Tampering controls never fabricate an affirmative verifier result.
@@ -132,3 +132,12 @@ The Linux job also runs both browser suites using the actual packaged executable
 The release publisher checks the source closure of all four archives before
 publication. Run links and qualified source identities belong to the corresponding
 PR/release records, rather than being inferred from these development runs.
+
+Deployment also requires public metadata for all four advertised ZIPs and their
+checksum files. Both the manual deploy script and the configured automatic
+Cloudflare deploy command apply this check. Before a new release is published,
+a deployment is held and the existing live version remains active. Retry the
+same qualified source after publication. This availability check does not replace
+archive qualification or claim a signature or Lean verdict. Seven focused metadata
+tests cover missing platforms/checksums, unfinished uploads, drafts, wrong tags,
+foreign URLs and ambiguous metadata.

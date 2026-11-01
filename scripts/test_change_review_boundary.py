@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +28,17 @@ def main():
     assert receipt['accepted'] is True and receipt['original_csv_decoding_proved'] is True
     assert receipt['summary']['added'] == 1
     checks += 1
+    # Every advertised dimension at once; order changes must not invent edits.
+    headings = ['id', *('v'+str(i) for i in range(127))]
+    rows = ['a'*250+str(i).zfill(6)+','*127 for i in range(5000)]
+    def wide_raw(rs):
+        return (','.join(headings)+'\n'+'\n'.join(rs)+'\n').encode()
+    wide = request([wide_raw(rows), wide_raw(rows[::-1])])
+    started = time.monotonic()
+    large = checker.review(wide)
+    assert large['accepted'] and large['summary']['same'] == 5000 and large['summary']['compared_columns'] == 127
+    checks += 1
+    scaling_seconds = round(time.monotonic()-started, 3)
     attacks = [dict(valid, verifier='substitute'), dict(valid, mode='other'), dict(valid, columns=[True, 0]),
                dict(valid, columns=[999, 0]), dict(valid, compare_headers=['v', 'v']),
                dict(valid, compare_headers=['id']), dict(valid, compare_headers=['missing']),
@@ -87,6 +99,9 @@ def main():
             assert set(r) == set(receipt) and r['summary'] == receipt['summary']
             assert all(k not in r for k in ['rows', 'values', 'ids', 'files', 'data_base64'])
             checks += 1
+            status, large = post(canonical(wide))
+            assert status == 200 and large['accepted'] and large['summary']['same'] == 5000
+            checks += 1
             for attack in attacks:
                 status, _ = post(canonical(attack))
                 assert status == 400
@@ -95,7 +110,7 @@ def main():
             server.shutdown()
             thread.join(5)
     print(json.dumps({'format': 'pcs-change-boundary-tests-v2', 'actual_native_checks': checks,
-                      'negative_controls': negative, 'post_check_snapshot_and_binary_mutation_refused': True,
+                      'negative_controls': negative, 'max_dimensions': {'rows_per_file': 5000, 'columns': 128, 'id_bytes': 256, 'seconds': scaling_seconds, 'also_passed_authenticated_http': True}, 'post_check_snapshot_and_binary_mutation_refused': True,
                       'mock_affirmative_verdicts': 0, 'immutable_host_security_proved': False}))
 
 
