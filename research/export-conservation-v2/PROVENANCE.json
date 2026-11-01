@@ -1,0 +1,22 @@
+{
+  "format": "pcs-public-export-provenance-v2",
+  "dataset": "Iris",
+  "creator": "R. A. Fisher",
+  "publisher": "UC Irvine Machine Learning Repository",
+  "doi": "10.24432/C56C76",
+  "source_url": "https://archive.ics.uci.edu/static/public/53/data.csv",
+  "repository_url": "https://archive.ics.uci.edu/dataset/53/iris",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "retrieved_utc": "2026-11-01",
+  "source_sha256": "daaeb5e3e889d07fbdd44544f5a39fe2372a07172e25899d577be0ad74df9e65",
+  "source_data_rows": 150,
+  "transformations": [
+    "Retain all published field strings.",
+    "Add source_row_id using the ordinal in this fixed source snapshot.",
+    "Previous export uses the first 100 rows; new export uses all 150 in reverse order."
+  ],
+  "identity_assumption": "Ordinal IDs are only stable within this frozen snapshot, not across future publisher reorderings.",
+  "publisher_warning": "UCI notes discrepancies from Fisher\u2019s original article in observations 35 and 38. Values are preserved, not scientifically validated.",
+  "scientific_acceptance": false
+}

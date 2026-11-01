@@ -20,7 +20,7 @@ export async function connectLocal() {
   const response=await fetch('/api/session',{headers:{'X-PCS-Session':session.token},credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(5000)});
   const value=await readBounded(response);
   if(value.format!=='pcs-file-check-session-v1'||value.scope!==SCOPE||!/^[a-f0-9]{64}$/.test(value.checker_sha256))throw Error('Local session unavailable.');
-  return Object.freeze({...session,checkerHash:value.checker_sha256});
+  return Object.freeze({...session,checkerHash:value.checker_sha256,capabilities:Array.isArray(value.capabilities)?Object.freeze(value.capabilities.filter(x=>typeof x==='string')):Object.freeze([])});
 }
 export async function checkLocally(session,request,signal) {
   requireLocal(session);

@@ -1,13 +1,38 @@
-Check two CSV exports for shared IDs without installing Python, Rust or Lean.
+Check original CSV files and review recurring exports without programming setup.
 
-Download the ZIP for your operating system, extract it, and open **PCS File Checker**. The app opens a private local browser page. Choose your CSV files and the ID column in each. Keep the app window open while checking; close it to stop the local checker. Use **Run the local Lean check** to independently confirm the extracted ID lists.
+Version 2 adds a proved byte-level decoder for the bounded PCS UTF-8 CSV dialect,
+exact added/removed/edited record review, selectable preservation rules, private
+reusable settings and redacted reports. The original-file conservation theorem
+ensures previous selected records remain unchanged when additions are allowed
+and removals/edits are forbidden. Source-line metadata and every decoded cell must
+agree with the independent host reader. The old derived-list frontend is retained
+for compatibility; old imported receipts cannot authorize a fresh result.
 
-The local address stays stable across launches so saved checks remain available in the same browser profile; each launch rotates its authentication capability. A second app instance fails clearly if the address is already occupied. Download a reusable check to move between browsers.
+Extract your platform ZIP and open PCS File Checker. Choose What changed? to
+review exports, or Check my files to inspect shared IDs. The stable loopback
+address retains saved settings in the same browser profile; each launch rotates
+its capability and refreshes reused tabs. CSV contents and live confirmations are
+not restored from saved settings. Close the app window to stop its local server.
 
-The browser workflow shows exact matching lines, repeated IDs within each file, saved checks and changes from previous counts. Reports omit IDs by default. Replay files include CSV contents only when you explicitly choose that option. Imported receipts cannot authorize a new result: rechecking uses the original file hashes and fresh computation.
+A public Iris example preserves 100 existing observations while adding 50 from
+the same frozen UCI publication. Deliberately edited/missing-record controls are
+flagged. This does not validate source measurements or claim model accuracy.
+The optional local usability study is ready for actual volunteers; automated
+sessions are labeled and excluded from human findings.
 
-Limits: two UTF-8 CSVs, each up to 2 MiB and 5,000 data rows; 128 columns; IDs up to 256 UTF-8 bytes. Quoted fields, escaped quotes, LF/CRLF and UTF-8 BOM are supported. IDs compare exactly, including case, leading zeros and spaces. Blank IDs are rejected. The CSVs may use different column headings.
+Limits: two UTF-8 CSVs up to 2 MiB and 5,000 data rows each, 128 columns, selected
+IDs up to 256 UTF-8 bytes. Original-byte decoding covers quoted/escaped fields,
+LF/CRLF and embedded line breaks. Invalid/ambiguous inputs fail closed. Change
+review requires unique IDs and explicitly selected shared value columns.
 
-The app reuses the existing kernel-proved PCS CSV checker from core commit `f20f3cab2938f2e085f137185e88f4700d5da2ed`. It checks derived strict CSV images of the selected UTF-8 ID lists. Five new kernel-checked equivalence theorems justify stack-safe parsing and hash-set lookup without changing the existing disjointness specification. CSV decoding, column selection, compilation and host execution remain implementation assumptions. The bounded Python/JavaScript differential tests are correspondence evidence, not a general refinement theorem. This does not issue a signed PCS scientific certificate or establish scientific validity.
+Core dependencies are pinned to f20f3cab2938f2e085f137185e88f4700d5da2ed and Lean
+4.28.0. Compilation, host execution, file binding and the intended meaning of IDs
+and columns remain assumptions. No scientific acceptance, general AI-safety
+result, signed certificate or immutable host root is established.
 
-These portable applications do not have publisher code-signing certificates. Your operating system may request confirmation. Do not disable operating-system security protections. The adjacent `.sha256` file identifies each release archive's bytes; a hash is not an independent authentication guarantee. Build identities and the actual Lean axiom audit are included in each ZIP. Linux builds target x64 on Ubuntu 24.04; the Mac archives identify Apple silicon or Intel explicitly.
+Apps lack publisher code signing. Normal OS confirmation may be needed; do not
+disable OS protections. SHA-256 sidecars identify archive bytes; source identities
+and actual theorem audits are included. The release validates all four archives
+and their exact Git source closure before publication. Historical releases are
+not overwritten. Linux targets x64 Ubuntu 24.04; Mac packages identify Apple
+silicon or Intel separately.

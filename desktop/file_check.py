@@ -137,7 +137,7 @@ def analyze(left, right, columns):
 def extracted_csv(table, column):
     ids_for(table, column)
     # Injective UTF-8-to-lowercase-hex mapping prevents CSV quoting ambiguities.
-    # The native checker receives and parses these exact derived CSV bytes.
+    # Retained for v1 replay identities; v2 native checks receive original CSV bytes.
     return ('id\n'+'\n'.join(r[column].encode('utf-8').hex() for r in table['rows'])+'\n').encode('ascii')
 
 
@@ -165,7 +165,7 @@ class LocalChecker:
     def verify(self, request):
         if type(request) is not dict or set(request) != {'files', 'columns'} or type(request['files']) is not list or len(request['files']) != 2:
             raise ValueError('The local checker accepts exactly two file snapshots and two ID columns.')
-        tables, identities, extracted = [], [], []
+        tables, identities, extracted, raws = [], [], [], []
         for item in request['files']:
             if type(item) is not dict or set(item) != {'name', 'data_base64', 'sha256'} or not isinstance(item['name'], str) or len(item['name']) > 255 or not isinstance(item['data_base64'], str) or len(item['data_base64']) > ((MAX_BYTES+2)//3)*4:
                 raise ValueError('Malformed file snapshot.')
@@ -178,33 +178,44 @@ class LocalChecker:
             digest = sha(raw)
             if type(item['sha256']) is not str or not re.fullmatch('[a-f0-9]{64}', item['sha256']) or not hmac.compare_digest(digest, item['sha256']):
                 raise ValueError('A file changed before checking. Choose it again.')
+            raws.append(raw)
             tables.append(parse_csv(raw))
             identities.append(digest)
         result = analyze(*tables, request['columns'])
         for t, c in zip(tables, request['columns']):
             extracted.append(extracted_csv(t, c))
-        self.check_pin()
-        with tempfile.TemporaryDirectory(prefix='pcs-file-check-') as temporary:
-            folder = Path(temporary)
-            paths = [folder/'left.csv', folder/'right.csv']
-            for path, raw in zip(paths, extracted):
-                path.write_bytes(raw)
-            try:
-                done = subprocess.run([str(self.binary), *(str(x) for x in paths)], cwd=folder,
-                                      stdin=subprocess.DEVNULL, capture_output=True, timeout=30, check=False)
-            except (OSError, subprocess.TimeoutExpired) as exc:
-                raise ValueError('The local Lean checker did not complete. No confirmation was recorded.') from exc
-            for path, raw in zip(paths, extracted):
-                if path.read_bytes() != raw:
-                    raise ValueError('The extracted ID bytes changed during checking.')
-        self.check_pin()
+        from change_review import native_original
+        original=native_original(self,raws,tables,request['columns'])
         expected = b'DISJOINT\n' if result['disjoint'] else b'OVERLAP\n'
-        if done.returncode != 0 or done.stderr or done.stdout != expected:
-            raise ValueError('The Lean result did not match the independent CSV calculation. No confirmation was recorded.')
-        return {'format': 'pcs-file-check-local-receipt-v1', 'scope': SCOPE,
-                'authority': 'local-lean-derived-id-lists', 'input_sha256': identities,
+        return {'format': 'pcs-file-check-local-receipt-v2', 'scope': SCOPE,
+                'authority': 'local-lean-original-csv-v2', **original, 'input_sha256': identities,
                 'columns': request['columns'], 'summary': result['summary'],
                 'extracted_sha256': [sha(x) for x in extracted],
                 'lean_verdict': expected.decode().strip(), 'checker_sha256': self.manifest['binary_sha256'],
                 'core_commit': CORE_COMMIT, 'scientific_acceptance': False,
                 'host_refinement_proved': False, 'signed_receipt': False}
+
+
+    def review(self, request):
+        from change_review import compare,native_original,validate_rules,SCOPE as REVIEW_SCOPE
+        if type(request) is not dict or set(request)!={'mode','files','columns','compare_headers','rules'} or request['mode']!='changes':
+            raise ValueError('Unsupported change-review request.')
+        # Reuse the original overlap transport's strict snapshot admission,
+        # but never authorize a review by an overlap verdict.
+        files=request['files'];columns=request['columns']
+        if type(files) is not list or len(files)!=2:raise ValueError('Choose two file snapshots.')
+        tables=[];raws=[];digests=[]
+        for item in files:
+            if type(item) is not dict or set(item)!={'name','data_base64','sha256'} or type(item['name']) is not str or len(item['name'])>255 or type(item['data_base64']) is not str or len(item['data_base64'])>((MAX_BYTES+2)//3)*4:
+                raise ValueError('Malformed file snapshot.')
+            try:raw=base64.b64decode(item['data_base64'],validate=True)
+            except (ValueError,binascii.Error) as exc:raise ValueError('Malformed file snapshot.') from exc
+            digest=sha(raw)
+            if base64.b64encode(raw).decode()!=item['data_base64'] or type(item['sha256']) is not str or not re.fullmatch('[a-f0-9]{64}',item['sha256']) or not hmac.compare_digest(digest,item['sha256']):raise ValueError('A file identity did not match.')
+            raws.append(raw);tables.append(parse_csv(raw));digests.append(digest)
+        result=compare(*tables,columns,request['compare_headers'],request['rules'])
+        proof=native_original(self,raws,tables,columns,request['compare_headers'],request['rules'])
+        return {'format':'pcs-change-review-local-receipt-v2','scope':REVIEW_SCOPE,'authority':'local-lean-original-csv-v2',**proof,
+                'input_sha256':digests,'columns':columns,'comparison_sha256':sha(canonical({'headers':request['compare_headers'],'rules':request['rules']})),
+                'summary':result['summary'],'accepted':result['accepted'],'checker_sha256':self.manifest['binary_sha256'],'core_commit':CORE_COMMIT,
+                'host_refinement_proved':False,'signed_receipt':False,'scientific_acceptance':False}

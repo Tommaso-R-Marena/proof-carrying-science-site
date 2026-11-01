@@ -58,3 +58,6 @@ AI assistance is permitted, but higher-trust submissions require disclosure, ind
 - The site retains its existing canonical Workers hostname and intentional index/follow posture; no new domain, trademark clearance, model promotion or scientific acceptance is implied.
 
 - [Check my files](https://proof-carrying-science-site.marenatommaso.workers.dev/check-my-files.html): local CSV ID overlap, saved workflows, private replay and a bundled Lean checker.
+
+- [What changed?](https://proof-carrying-science-site.marenatommaso.workers.dev/review-changes.html): private added/removed/edited export review; original CSV grammar and conservation rules proved in Lean.
+- [Optional workflow study](https://proof-carrying-science-site.marenatommaso.workers.dev/usability-study.html): consent-based local task records; automated records are excluded from human claims.

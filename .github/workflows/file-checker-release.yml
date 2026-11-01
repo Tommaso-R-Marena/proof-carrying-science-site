@@ -1,6 +1,9 @@
 name: Publish PCS File Checker
 on:
   workflow_dispatch:
+concurrency:
+  group: pcs-file-checker-release-${{ github.ref }}
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:
@@ -31,4 +34,15 @@ jobs:
           test "$(git rev-parse HEAD)" = '${{ github.sha }}'
           mapfile -t packages < <(find release-files -name '*.zip' -o -name '*.sha256')
           test "${#packages[@]}" -eq 8
-          gh release create pcs-files-v1.0.0 "${packages[@]}" --target '${{ github.sha }}' --title 'PCS File Checker 1.0.0' --notes-file desktop/RELEASE_NOTES.md
+          version="$(cat desktop/VERSION)"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          tag="pcs-files-v$version"
+          python scripts/check_file_checker_release.py release-files --commit '${{ github.sha }}' --version "$version"
+          if gh api "repos/${{ github.repository }}/git/ref/tags/$tag" > /dev/null 2>&1; then
+            echo 'The release tag already exists; historical tags must not be overwritten.' >&2
+            exit 1
+          fi
+          gh api 'repos/${{ github.repository }}/git/refs' -f "ref=refs/tags/$tag" -f 'sha=${{ github.sha }}' > /dev/null
+          gh release create "$tag" "${packages[@]}" --verify-tag --draft --target '${{ github.sha }}' --title "PCS File Checker $version" --notes-file desktop/RELEASE_NOTES.md
+          test "$(gh api "repos/${{ github.repository }}/git/ref/tags/$tag" --jq .object.sha)" = '${{ github.sha }}'
+          gh release edit "$tag" --draft=false
