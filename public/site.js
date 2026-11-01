@@ -110,6 +110,7 @@
     addMenu("Trust & research", [
       {heading:"WHAT PCS CAN AND CANNOT CLAIM",links:[
         ["trust.html","Trust Center"],
+        ["capabilities.html","What actually runs · models and tools"],
         ["validation.html","Validation evidence"],
         ["trust-explorer.html","Interactive trust explorer"],
         ["result-anatomy.html","Read a result correctly"]

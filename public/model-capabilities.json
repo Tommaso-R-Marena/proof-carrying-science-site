@@ -1,0 +1,493 @@
+{
+  "automatic_training": false,
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "execution_sources": {
+    ".github/workflows/pcs-lean-public.yml": "41309bca2134670e9f6d316d072d910e7e68f1304d9ebb0df1862897ca0c1ab6",
+    "pcs/experimental/prover/__init__.py": "9e2fbacd5b9303d0d65210695ed1d989962132e51a5af3db1a3c2100e9ebf36c",
+    "pcs/experimental/prover/abstraction_environment.py": "bccab6d146d643ae5ca4eee2ea8f78a922f45ea97f7bddae7d23f024dab0e257",
+    "pcs/experimental/prover/abstraction_experiment.py": "ef7eb3ba93c4649412e82cd990acc8f83fc787360770afa5260f75736cdbfaac",
+    "pcs/experimental/prover/abstraction_repair_v2.py": "8460921f5540ec97c3b89ddcc61dc96cc87637797c5d306b3bb1bfd22737cec1",
+    "pcs/experimental/prover/abstraction_v4.py": "5d73741a370931557e6e6621f0bfd2c439e96625933b639debcc138833f03159",
+    "pcs/experimental/prover/abstraction_v4_diagnostic.py": "fd218eb10ed318f497af32e8cc4c780a15a957261c8490aa2f6588e7eaa862d8",
+    "pcs/experimental/prover/abstraction_v4_experiment.py": "21b3296c2a3d1233eb65d58ae238a0de04ed73c64c9e70ee0d542172011ae278",
+    "pcs/experimental/prover/benchmark_mathlib_v4.py": "8436b86d2c49dd8892b58276383389a9310b9f5621471de556ca0dd3624f90f7",
+    "pcs/experimental/prover/bridge_catalog.py": "bd3c47322cc9827c24899162825c108c3081ed67ffa8a9e4af03293b16983019",
+    "pcs/experimental/prover/bridge_data.py": "634ae01573f14e61b7b879eb9db8e400f6bc726daa2fb8d29d6b131496cb0529",
+    "pcs/experimental/prover/checkpoint_transfer_v2.py": "c00c4d14360b812f7a594631c905bb89cd7f1cef2f8839d382c3b54fcb293c0f",
+    "pcs/experimental/prover/cli.py": "3408d45177e82ac454aae9da7d775c3cbed5b132f040b915d4745b4311e9df0d",
+    "pcs/experimental/prover/corpus.py": "41d5dfa60ce50d310d56321cc214f63df2199e7b1a15d2f0327fca52b256ce23",
+    "pcs/experimental/prover/dag_diagnostics_v3.py": "bfcce9bba004aa336cf062a065d38b354a9b1278caccbe249191ce1c261dbe25",
+    "pcs/experimental/prover/dag_experiment_v3.py": "f714db78fdc49d8679f444fe0aec10db6b07cdd72dc55ee663d3b923ebcd5382",
+    "pcs/experimental/prover/dag_policy_v3.py": "ea13276671d0b851b75f345a2ebad5ba964a3803761c91ce392827a5c95c5dc7",
+    "pcs/experimental/prover/dag_rl_v3.py": "b26dd983684e939e6840720171dec0504f2e353e4c878628f6a6ee6b8d513fc9",
+    "pcs/experimental/prover/data.py": "e05e63c9662a1ee07d891dbd94048c9a12345f96ead9a4f90ad8194d4c6ebeba",
+    "pcs/experimental/prover/discovery.py": "c8ebf411cdf75dc9226829180f8876f371ad992612812b36897641cdacfda245",
+    "pcs/experimental/prover/environment.py": "9dfe9bdb5b1844e0dc183a000ddb089b1d48696068b3bb1ca6407bbbdc76c0d2",
+    "pcs/experimental/prover/evidence_journal_v4.py": "dbfb13cd16ab747542c32eb793b063813d97c943a0f16b3cde092ff89af9e578",
+    "pcs/experimental/prover/evidence_storage.py": "d54fdc43db29841d4eb0677a98a2d3460d56e39de1d56a1c9bcca950f87855cd",
+    "pcs/experimental/prover/experiment.py": "4d78d1ec1e9da9692da6bf8c6573daad25850a5855780481713a5f64bd280da5",
+    "pcs/experimental/prover/external_probes.py": "ce96687183f2387668788053a37a9e95e0e429f527e41343e88a97d5ebcab0ec",
+    "pcs/experimental/prover/feedback_cycle.py": "57cb58750cbe03413a60dffec6c3805c4b0ee798085a441559e960cc661aabea",
+    "pcs/experimental/prover/formalization_model.py": "647a24c5c6831d6b7b693270b9f038a8c412a6a9478ea6d37ba090e82dedfa68",
+    "pcs/experimental/prover/grounded_model.py": "b9313f9223f409cd1a8c1dfc093fcf8f62a323e39318d3c80a62985b9d649d6b",
+    "pcs/experimental/prover/hosted_qualification.py": "1025f731f9bf9a5153a74f9e2e91e6afe168ab79e199ca47367d8402ce57330f",
+    "pcs/experimental/prover/hybrid.py": "25f3b5555bd1d59dca4931ed869b6a0da755cd50e7958023c6219f21607f268e",
+    "pcs/experimental/prover/hybrid_cli.py": "f703df7c4d30bbae5c93fbbf3c5d904901df29f735b124fbcda879bd3010bb07",
+    "pcs/experimental/prover/induction_corpus.py": "4b1374ab75f414919fe91b3798e91cbc6891ba8aa79e64c233726c85edfd2bb0",
+    "pcs/experimental/prover/induction_environment.py": "93850b42dc91b89cc27ba85d872ae0f9f4d384a0d8ef6e0de5362c263aced001",
+    "pcs/experimental/prover/induction_ir.py": "35cc763a415e9fe86244fb695096099b1af22c77de1f3d32c1e3ece7d5a57533",
+    "pcs/experimental/prover/induction_language.py": "1a0e0230eb7f268c999fdcb5d55f5aa88c321e8055442d53ea7a44be6194e757",
+    "pcs/experimental/prover/ir.py": "13c856dabb653148ceb1fd77cdac7c4a3f26abebbca4e3f6c08fd5902c6c853c",
+    "pcs/experimental/prover/job_observability.py": "4d61513c862390b1a65c45c0c9063b9c916b1ba63aa588749b480cfc6ca31b05",
+    "pcs/experimental/prover/language.py": "065b27117af33f9df19273af8b2e4cb45cbfe39429f1415037ed99f6fd0ba4c0",
+    "pcs/experimental/prover/library.py": "fa66f39f11c1c07155becacccc2e57a52c413d11e01ea7af33eacd402ab364d6",
+    "pcs/experimental/prover/mathematical_evidence.py": "f3e2f5d6f16f2e285ae37063e7451d80a8ea14ebb34870157def53aba7c296f8",
+    "pcs/experimental/prover/mathlib_cli_v4.py": "299e8905fc11ed2ffca696883a463360cf7ab0c2cc218652cdd8d0f77ccd86e0",
+    "pcs/experimental/prover/mathlib_environment_v4.py": "dd0bce05bffe0d22bae6329222fca7492fcea45015456529ae5cc122d7915ea3",
+    "pcs/experimental/prover/mathlib_retrieval.py": "5f17e43c3cbe3103eb58adef03d9db015722d6115bde93bd5909c17d1086b5e6",
+    "pcs/experimental/prover/memory_catalog.py": "99354b6ccc3a4c60cd5d50162fc636cea4a68a5db8ddeba6b57e5020e894992b",
+    "pcs/experimental/prover/memory_cli.py": "c70be650c135bbebf596108afad58349844fb93086b74153ed57b4af3a57db7c",
+    "pcs/experimental/prover/memory_corpus.py": "8e4d55171e1a2217762607a05db707a81bed4d900b701ae9827c9e16f29dc478",
+    "pcs/experimental/prover/memory_cost.py": "c754f7ad9073d9f45ac4815190f54998f1d03945efac4f218a3f705136737047",
+    "pcs/experimental/prover/memory_discovery.py": "fcafd5eaa59968a78847aa59746f012b68ff64d1d347028775f94355c19bd6e2",
+    "pcs/experimental/prover/memory_environment.py": "dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8",
+    "pcs/experimental/prover/memory_evaluation_recovery.py": "91fcfe6b58c52040bf29e2834b797209e0a6fb0cf070b46d787c299afd146a69",
+    "pcs/experimental/prover/memory_evaluation_worker.py": "b9bd6246063734b1bcde2cd96120e81c0d4db82947ff855f25bfeaf83de5ebf8",
+    "pcs/experimental/prover/memory_experiment.py": "3094fbef63bbfe201297f5618313e188f9042a91a9f00eb9dfadb207cc08cacb",
+    "pcs/experimental/prover/memory_falsify.py": "e664c5552a6380829f49bb1f3598383c2a2cf5b1fc093d3994be7060d55f47fa",
+    "pcs/experimental/prover/memory_feedback.py": "d75f703422d0e8996715ecc72cf0d260ba0c703b84a533149d56e1ed167918f4",
+    "pcs/experimental/prover/memory_model.py": "08afd0164bb1614d4b1b9b41b26166a6187be6612be06bb28079e3479191f2ac",
+    "pcs/experimental/prover/memory_parallel_recovery.py": "4267b456f73e70bcb20ef8b93387a38258271c7f4683776573bd177e58bbfdb6",
+    "pcs/experimental/prover/memory_recording.py": "22d2cb96faf2ad5261e82f3e805565ffe40fe558f9aef77473b4721689ff9760",
+    "pcs/experimental/prover/memory_resume.py": "71948dc26bf7b1729aaf41fc7215360cad7b3f855d763df4967200e1b7bfa83e",
+    "pcs/experimental/prover/memory_search.py": "ba3189ee038f12e6badb71fe601759ea27a745508f02aed4537859ebfdad4977",
+    "pcs/experimental/prover/memory_wire.py": "0c61c02499c63f97532631fcde3f1787936c78c46fd6a5c5ea153219ef6d400f",
+    "pcs/experimental/prover/model.py": "946e7fce49ba674fe199ad2c2e1acf947e85642132656290b2d09ec53ba2cf4b",
+    "pcs/experimental/prover/optimization.py": "c7a95d3b9746036dbd780ca19c10f50a6986c3614e405f84e9de55bc6be2ab42",
+    "pcs/experimental/prover/pooled_hybrid_evaluation.py": "5a41109879a9cf917cf98638b96ac06248b6e9f18ad08c6e3e9fd7bb2334b49b",
+    "pcs/experimental/prover/portfolio.py": "89a027516eb6dd18dc7b9fcf0293397315933534936196265709a7327ab678fa",
+    "pcs/experimental/prover/premise_experiment_v4.py": "c92bce4c8673525e7a8c257f5d3d8d39d726fda92815e840e55550e051844580",
+    "pcs/experimental/prover/premise_learning_v4.py": "7c928d8a89fe45dd943128f089bafc9a326d7ad02e1cd5ac1d9df878b75df93f",
+    "pcs/experimental/prover/premise_policy_v4.py": "2833935b2210632c093b0f75242b0f95e5d225c0b8e67477fd918998819dc2da",
+    "pcs/experimental/prover/promotion.py": "eb8187432309f93495584236638924963a56513c849dd69604766a4277fa29e4",
+    "pcs/experimental/prover/prospective_hybrid.py": "9009e3a42e41d3af4411d5c06ccd5f0280be724f48a0e61579cd3c0caadcd503",
+    "pcs/experimental/prover/public_job.py": "0aedfa0e6f3560f0e9c158533b60fcf01f02edd3691b09de9be781cc240e0a96",
+    "pcs/experimental/prover/public_transport.py": "177011de1b3561f65f5d6ebdf1115f372fc9e68f4449991db06a9786f4ba4830",
+    "pcs/experimental/prover/research.py": "104db039fc26f4244b60277264143600b234be67e048d0c723c8cb66ccf6d084",
+    "pcs/experimental/prover/reuse_corpus.py": "3114eb86036fa4c14953b8f33557185c88d091912fdc6cebed4d2f8cceb40727",
+    "pcs/experimental/prover/reuse_evaluate.py": "8e81bf79495f4f36038934de1e690786f2edbb7ea4b942305825c52f8105c79b",
+    "pcs/experimental/prover/reuse_experiment.py": "b5032f033748a86fde4f32b073e5d58ccd4e84374e3e06c2b78d382eb16aec99",
+    "pcs/experimental/prover/reuse_model.py": "e330532d13a651ed88469d9eae95fb67f3bbc3e0f269e5bfc79e0fa750676f88",
+    "pcs/experimental/prover/reuse_prospective.py": "d03089f40397c4c3ad897b037c0e066d45351a6881b52767535a69b7d0869efa",
+    "pcs/experimental/prover/reuse_refine.py": "4a02bb7060bd54ed8b44afd043b9ae07389783873271827847753fe7a9d5cce2",
+    "pcs/experimental/prover/server.py": "04cb20f50705085042e6de766509b24621d4e828d9ad95a4979b2eca3482c6c2",
+    "pcs/experimental/prover/state_graph.py": "eb5e43ae908a5d0bd5c6920e5b4e7370e718ec76f1f744e2f14281c75b673c9b"
+  },
+  "format": "pcs-website-model-inventory-v1",
+  "hosted_families": [
+    "checked-reuse-v2",
+    "induction-abstraction-v2",
+    "verified-memory-v1",
+    "prospective-hybrid-v2"
+  ],
+  "hosted_general_llm_inference": false,
+  "hybrid_checkpoint_family": "verified-memory-v1",
+  "models": [
+    {
+      "family": "lean-learning-v2",
+      "id": "untrained-17",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/untrained-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "8d54eb68fdefc5b21b1f80064c4adddaa3e9a4ee5407065f451085daf75b5e28"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "graph-17",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/graph-17.json",
+      "pcs_authority": false,
+      "selected": true,
+      "sha256": "3c8252a55fe3944a8e7113b9a6f365686f1ed30eb9c1c57a453ce0d1b5cc2f1e"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "bag-17",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/bag-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "aa5ed5198c4e49703cd88ad446d67c6f7cdd980d6e9de7b7e66d0734b184f8f4"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "rl1-17",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/rl1-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "94405da060dd72cdc1abe0a3f28a865bdf815e65a7a449991ec181766f16c28e"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "rl2-17",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/rl2-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "cc983374540d3a0b5fbb0f872adf3864c6a6b2a0fd237b1f1057415fcbb16e92"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "untrained-31",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/untrained-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "0c2d3712cec179e7839e8c542983ede2a8895f4ac1258c96c708fd1f6c7d7006"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "graph-31",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/graph-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "c027efa5776742ffa058a69b9d115d6f2e80b2e343621aaf0e83b7c79957ebd0"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "bag-31",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/bag-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "3380a492b250a1735ab819e258407453c5037ab6800b73b11359e101b5f7090f"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "rl1-31",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/rl1-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "56af645143aa71e0c961efea37f87e622f1e19a851162edfa928a770631d9724"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "rl2-31",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/rl2-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "2baa003344795c40e0587eac7a045550ac6712ebd7292b3d8a4da8daf6d0d724"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "untrained-47",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/untrained-47.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "6fa432aa6f5e7e2ec82851c2903d0ad2389306921a903e2f55ff4ada032992f0"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "graph-47",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/graph-47.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "03b805a3c7ec5b49b798c322380c7a1db5912892c9a0673360f198ccf297c360"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "bag-47",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/bag-47.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "cd674239d0cbe81938b4cdbc9fe09131e3dda857281027cbde4e8592b6f48ad3"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "rl1-47",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/rl1-47.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "e2de40abe99a207b6ef66014b0813f58aded53d95353782b8571d9fc57ac1648"
+    },
+    {
+      "family": "lean-learning-v2",
+      "id": "rl2-47",
+      "parameters": 10419,
+      "path": "research/lean-learning-v2/rl2-47.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "1ebf009d3d9776d8b4527318d84f8b87fad6bba5aad17667b5dd5ecf018c1618"
+    },
+    {
+      "family": "checked-reuse-v2",
+      "id": "parent",
+      "parameters": 11620,
+      "path": "research/checked-reuse-v2/parent.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "f86cae83f9d850cf6282157214680d3912e1584a95845d024e8666013d24902c"
+    },
+    {
+      "family": "checked-reuse-v2",
+      "id": "refined-17",
+      "parameters": 11620,
+      "path": "research/checked-reuse-v2/refined-17.json",
+      "pcs_authority": false,
+      "selected": true,
+      "sha256": "f43d037ecad0c7aa7424c578a4bdc1c467c0eab57fa88252d7b87937632ba652"
+    },
+    {
+      "family": "checked-reuse-v2",
+      "id": "refined-31",
+      "parameters": 11620,
+      "path": "research/checked-reuse-v2/refined-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "f74515276d281ed48dacd56b8c205453cf7e3ff1b9a7b7d427a4ddc7d959bef0"
+    },
+    {
+      "family": "checked-reuse-v2",
+      "id": "refined-47",
+      "parameters": 11620,
+      "path": "research/checked-reuse-v2/refined-47.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "dbcac3d6f6a1d6442b7274983490153310e3f82208a2ec16f311764d9c06cc16"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "untrained-17",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/untrained-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "e4785f2a2a1445958cae78944fca41940ea1ab8aacbd94564d73d3376c57a16d"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "graph-17",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/graph-17.json",
+      "pcs_authority": false,
+      "selected": true,
+      "sha256": "6ed5e1f6cfdeb01f1554eaba9f406acc4b11ad1143bd526274b3a7a171776e5b"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "bag-17",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/bag-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "bab1db09e8498f7cf7d4057358c3164879569f926522f0b85f51cb069d635900"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "ungrounded-17",
+      "parameters": 11620,
+      "path": "research/induction-abstraction-v2/ungrounded-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "7697f1633a23406aa4e2505102e67f4c5838af1dd249da62b3f553e185348433"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "rl1-17",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/rl1-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "431e1a46247f3ed0cf79db71e2a5cfb3ee63d4009d86ea838c4f472db39fcd82"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "rl2-17",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/rl2-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "0b8e20cd797f3597ebb9218af5ca1b082d310ff9ec4b06ada3c68860e7d4f867"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "untrained-31",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/untrained-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "a8109c1371db85491549fb340bab2527cb45248c291c0793ac649d17116b2863"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "graph-31",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/graph-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "c29d83d03e8ce95b990dfd80be68a29dba639600d4a03c4877e08406a7879022"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "bag-31",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/bag-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "fe8005f5296a5118140fb4f802472bf62375026167923617a92a9945c35a3290"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "ungrounded-31",
+      "parameters": 11620,
+      "path": "research/induction-abstraction-v2/ungrounded-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "eea1e4cb6baf0fd92308a2b09e679df810bcef9ae105abb0655547b0b3248f4f"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "rl1-31",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/rl1-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "f4c527f7eff035bac4ad446deb8acf7a50c742817d8b8fa571f6864dcf41695d"
+    },
+    {
+      "family": "induction-abstraction-v2",
+      "id": "rl2-31",
+      "parameters": 12924,
+      "path": "research/induction-abstraction-v2/rl2-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "67557963b839fda6717b80503c31c04f323471f38e20702097d9e5b2b7213805"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "untrained-17",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/untrained-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "c3d337f3a9b1bc6764736391cadf8064100f5d457e315b0ea51467e09502b182"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "supervised-17",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/supervised-17.json",
+      "pcs_authority": false,
+      "selected": true,
+      "sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "bag-17",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/bag-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "9b6a1b3870389c642e89ebfc72fc829040dade5d4b2b917c1c89182f47c72c49"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "rl1-17",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/rl1-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "bed18058256f7f5e58444bcf33ef8324c33b2e824ab119374b034601c37ac7da"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "rl2-17",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/rl2-17.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "15e453e17074f90031facad6a24669d53e14945f8e95db478581d7c6dd3e0866"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "untrained-31",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/untrained-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "5ffdf5c779f7f64944d24afd45da5068e35f6e41b4a636ad3b85f52cd26ebaf5"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "supervised-31",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/supervised-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "5ab2b3824378812919a93ed5648239173ebb58dbfd35b9c45d274f6b049fb213"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "bag-31",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/bag-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "13ddc45d4d963d71a1ed4c47c6ea20daaf4d1443dd7a97b1e337bfc0d319c1af"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "rl1-31",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/rl1-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "f12b9146ce1dc6ea30e819aaa54f05cee05a8a13a8d4cd19155c4ea93850ad67"
+    },
+    {
+      "family": "verified-memory-v1",
+      "id": "rl2-31",
+      "parameters": 14773,
+      "path": "research/verified-memory-v1/rl2-31.json",
+      "pcs_authority": false,
+      "selected": false,
+      "sha256": "d60a97b3d762d0cf5c9e4255e3fdd8798c737a8b951ec2ac22e21cf657dd1280"
+    }
+  ],
+  "pcs_authority": false,
+  "registry_sources": [
+    {
+      "library_sha256": null,
+      "path": "research/lean-learning-v2/registry.json",
+      "selected": "graph-17",
+      "sha256": "923ed1e13bb97f249921585d605b03537f6f01bf3f06dbed59eec2a76b1bd2ba"
+    },
+    {
+      "library_sha256": "8ef9c2b65cb5ae3ce03e13cf45dd3a7840fc151765992900ab092c838f3db9df",
+      "path": "research/checked-reuse-v2/registry.json",
+      "selected": "refined-17",
+      "sha256": "7cd32586f9bbec6e40f43241635f02066369e2f0f8784fba0ce33681e1056417"
+    },
+    {
+      "library_sha256": "9f7849a25d4d80150b888fd346b5f26f793aa0dd11dd6e1266bff09123662609",
+      "path": "research/induction-abstraction-v2/registry.json",
+      "selected": "graph-17",
+      "sha256": "2697c3b02e18084b4caef1536dba54399dfa6c31ea38b52e24a4a25f5000a8c7"
+    },
+    {
+      "library_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+      "path": "research/verified-memory-v1/registry.json",
+      "selected": "supervised-17",
+      "sha256": "ce59604b57ed256abae3581fa131d60f0d7bbf3bf5821986a21b95ca19014cd5"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What runs in PCS · Models, tools and evidence</title>
+<meta name="description" content="See which PCS tools run trained models, which perform exact calculations, and which show recorded research. Inspect model identities and try each supported workflow.">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="capabilities.css"></head>
+<body><header class="nav"><a class="brand" href="index.html">Proof-Carrying Science</a><div class="navlinks"><a href="experience.html">Start here</a><a href="trust.html">Trust Center</a></div></header>
+<main class="container capability-page"><h1>What actually runs?</h1>
+<p>PCS has several engines. Some tools use trained models to propose an answer. Others calculate an exact result or show an earlier experiment. A model proposal still needs its own check.</p>
+<div class="capability-start"><a class="button primary" href="repair-model-lab.html">Try the browser model</a><a class="button secondary" href="lean-learning-lab.html">Request a fresh proof</a><a class="button secondary" href="check-my-files.html">Check your files</a></div>
+<p>The website does not offer general Qwen chat or fresh open-weight LLM generation. Those weight experiments have <a href="research-updates.html">recorded results and reproduction instructions</a>. There is no automatic model training or promotion from playing a game.</p>
+<label for="capabilityFilter">Show tools</label><select id="capabilityFilter"><option value="all">All tools and execution modes</option><option value="models">Trained models and proof jobs</option><option value="recorded">Recorded experiments and proof states</option></select>
+<p id="capabilityCount" role="status">Loading the execution map.</p><div id="capabilityCards" class="capability-grid"></div>
+<section aria-labelledby="modelsTitle"><h2 id="modelsTitle">Which proof-search weights?</h2>
+<p id="modelStatus" role="status">Loading the source-bound model inventory. This does not run inference.</p>
+<div id="selectedModels" class="capability-grid"></div>
+<details><summary>All frozen checkpoints, including comparison models</summary><p>Selected policies are wired to the public proof job. Other checkpoints support local experiments and recorded comparisons; listing one here does not make it a hosted choice.</p><div class="model-table"><table><thead><tr><th>Family / model</th><th>Use</th><th>Weight SHA-256</th></tr></thead><tbody id="allModels"></tbody></table></div></details>
+<p><a href="model-capabilities.json">Download the source and weight inventory</a> · <a href="https://github.com/Tommaso-R-Marena/proof-carrying-science">Core implementation</a></p></section>
+<section><h2>How to read a result</h2><p>Look for the actual execution mode, model or winning baseline, source revision, scope, assumptions, and downloadable evidence. The public proof service rechecks its approved source before dispatch. Its status is an observation, not a reservation or a proof.</p><p>Browser code delivery, the host, GitHub execution, the Lean toolchain and implementation correspondence remain trust dependencies. A successful formal check proves its encoded statement under its listed assumptions. It does not by itself establish English intent, empirical validity or general AI safety.</p><a href="result-anatomy.html">Read a verification result</a></section>
+</main><script src="site.js"></script><script type="module" src="capabilities.mjs"></script></body></html>

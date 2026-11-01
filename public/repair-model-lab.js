@@ -1,3 +1,4 @@
+import {verifiedRepairModel} from './repair-model-integrity.mjs';
 import {GAUNTLET_TASKS,getGauntletTask} from './semantic-gauntlet-core.mjs';
 import {listRepairMoves,finiteRepairCheck} from './semantic-repair-core.mjs';
 import {rankRepairMoves,POLICY_DIM} from './semantic-repair-policy.mjs';
@@ -67,9 +68,9 @@ $('pmExport').addEventListener('click',()=>{
 (async()=>{
  try{
   const r=await fetch('./repair-policy-model-v1.json',{cache:'no-store'});if(!r.ok)throw Error('Model unavailable');
-  const raw=await r.json();if(raw.format!=='pcs-learned-semantic-repair-policy-v1'||raw.weights?.length!==POLICY_DIM||
+  const raw=await verifiedRepairModel(await r.json());if(raw.format!=='pcs-learned-semantic-repair-policy-v1'||raw.weights?.length!==POLICY_DIM||
    raw.provenance?.evaluation_labels_used_for_training!==false||raw.training?.training_task_ids?.some(id=>getGauntletTask(id)?.split!=='training'))
    throw Error('Model provenance is invalid');
-  model=raw;filter();$('pmRun').disabled=false;$('pmOriginal').disabled=false;
+  model=raw;$('pmIdentity').textContent='Verified weight snapshot: '+model.model_digest_sha256;filter();$('pmRun').disabled=false;$('pmOriginal').disabled=false;
  }catch(err){$('pmStatus').textContent='Model could not be loaded. No candidate has been verified.';}
 })();
