@@ -214,6 +214,7 @@ jobs:
           set -euo pipefail
           export WRANGLER_SEND_METRICS=false
           npm ci --ignore-scripts --no-audit --no-fund
+          python3 scripts/check_research_release_sources.py --core .ci-components/lean-prover
           python3 scripts/check_model_capabilities.py
           npm run test:lean-research
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"

@@ -6,8 +6,10 @@ The audit found a concrete service defect: the public proof receiver required
 configuration without checking dispatch readiness. The browser consequently
 offered submissions that the receiver's exact-source gate would reject.
 
-The receiver and protected browser qualification now use the current reviewed
-core. Prover sources and the four frozen model directories are identical between
+The receiver, current-service revision fields in the published status and
+research manifest, and protected browser qualification now use the current
+reviewed core. Historical capability revisions, report bytes and evidence
+receipts are unchanged. Prover sources and the four frozen model directories are identical between
 those revisions. The public workflow differs only in its pinned checkout action.
 The previous approved revision remains eligible for existing signed tickets
 during their original lifetime. Exact revision equality is retained; new core
