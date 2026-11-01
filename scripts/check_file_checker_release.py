@@ -1,5 +1,5 @@
 """Verify every publishable archive, its source closure, tag and checksum bytes."""
-import argparse, hashlib, json, re, zipfile
+import argparse, hashlib, json, re, zipfile, subprocess
 from pathlib import Path
 
 def require(condition, message):
@@ -21,6 +21,9 @@ def main():
                     'file-check-core.mjs','file-check-local.mjs','change-review-core.mjs','review-changes.html',
                     'review-changes.mjs','usability-core.mjs','usability-study.html','usability-study.mjs',
                     'example-iris-previous.csv','example-iris-new.csv','logo-mark.svg'])}
+    require(re.fullmatch('[a-f0-9]{40}', a.commit), 'Expected exact committed source')
+    expected_hashes = {name:hashlib.sha256(subprocess.check_output(
+        ['git','cat-file','blob',a.commit+':'+name],cwd=root)).hexdigest() for name in source_files}
     for f in files:
         sidecar = f.with_name(f.name + '.sha256')
         text = sidecar.read_bytes().decode('ascii')
@@ -28,7 +31,7 @@ def main():
         require(hashlib.sha256(f.read_bytes()).hexdigest() == text[:64], 'Release archive qualification failed.')
         with zipfile.ZipFile(f) as z:
             m = json.loads(z.read('BUILD.json'))
-            require(m['version'] == a.version and m['site_commit'] == a.commit and (m['core_commit'] == 'f20f3cab2938f2e085f137185e88f4700d5da2ed') and (m['development_build'] is False) and (m['source_snapshot'] == 'git-archive'), 'Release archive qualification failed.')
+            require(m['version'] == a.version and m['site_commit'] == a.commit and (m['core_commit'] == 'f20f3cab2938f2e085f137185e88f4700d5da2ed') and (m['development_build'] is False) and (m['source_snapshot'] == 'git-blobs'), 'Release archive qualification failed.')
             require(m['production_scientific_authority'] is False and m['host_refinement_proved'] is False and (m['code_signed'] is False), 'Release archive qualification failed.')
             require({'original-csv-decoding-v2', 'original-csv-change-review-v2'} <= set(m['capabilities']), 'Release archive qualification failed.')
             require('PCSFiles.Review.original_conservative_extension' in m['theorems'] and 'PCSFiles.OriginalCsv.decode_iff' in m['theorems'], 'Release archive qualification failed.')
@@ -37,7 +40,7 @@ def main():
             require(set(m['source_sha256']) == source_files, 'Incomplete source closure')
             for name, digest in m['source_sha256'].items():
                 require(not Path(name).is_absolute() and '..' not in Path(name).parts and name==Path(name).as_posix(), 'Unsafe source path')
-                require(hashlib.sha256((root / name).read_bytes()).hexdigest() == digest, (f.name, name))
+                require(expected_hashes[name] == digest, (f.name, name))
     print(json.dumps({'format': 'pcs-four-platform-release-qualification-v2', 'archives': 4, 'exact_git_source_hashes_match_on_all_platforms': True, 'source_commit': a.commit, 'version': a.version}))
 if __name__ == '__main__':
     main()

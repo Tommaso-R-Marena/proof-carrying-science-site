@@ -44,6 +44,8 @@ save/reuse, report, replay and hostile-import journeys at four widths. Supplying
 `PCS_FILE_CHECK_BUNDLE` adds actual local Lean confirmations. Protected site CI
 requires the portable-checker workflow, which builds and tests native packages on
 Linux, Windows and both Mac architectures and runs real authorization controls.
+Native builds read unfiltered Git blobs, and protected CI compares the exact source
+closure of all four real platform archives before allowing integration.
 The apps do not have publisher code-signing certificates; their release manifests
 are byte/provenance records, not an immutable trust root or external validation.
 
