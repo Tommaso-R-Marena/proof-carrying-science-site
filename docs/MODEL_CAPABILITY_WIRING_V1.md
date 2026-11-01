@@ -30,7 +30,9 @@ recorded research and contribution services.
 
 `public/model-capabilities.json` inventories all 41 frozen checkpoints in the four
 supported core families, selected models, registry digests, weight digests and
-80 execution source files. The hybrid portfolio shares verified-memory weights.
+80 execution source files. It also binds the five frozen browser model files: the
+repair ranker plus Omega bag, graph, bandit and nonlinear checkpoints. The hybrid
+portfolio shares verified-memory weights.
 Protected CI checks this inventory against the exact core checkout and actual
 checkpoint bytes. Listing a comparison checkpoint does not expose a new hosted
 model choice. The public job's closed family/action interface is unchanged.

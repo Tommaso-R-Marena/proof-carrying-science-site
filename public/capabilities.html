@@ -10,6 +10,7 @@
 <p>The website does not offer general Qwen chat or fresh open-weight LLM generation. Those weight experiments have <a href="research-updates.html">recorded results and reproduction instructions</a>. There is no automatic model training or promotion from playing a game.</p>
 <label for="capabilityFilter">Show tools</label><select id="capabilityFilter"><option value="all">All tools and execution modes</option><option value="models">Trained models and proof jobs</option><option value="recorded">Recorded experiments and proof states</option></select>
 <p id="capabilityCount" role="status">Loading the execution map.</p><div id="capabilityCards" class="capability-grid"></div>
+<section><h2>Models that run in your browser</h2><p>The repair ranker and four Omega checkpoints use real numerical weights. Optional game coaches are fitted locally from your saved choices and have their own identities; they are not these frozen research checkpoints.</p><div id="browserModels" class="capability-grid"></div></section>
 <section aria-labelledby="modelsTitle"><h2 id="modelsTitle">Which proof-search weights?</h2>
 <p id="modelStatus" role="status">Loading the source-bound model inventory. This does not run inference.</p>
 <div id="selectedModels" class="capability-grid"></div>

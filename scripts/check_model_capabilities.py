@@ -44,7 +44,15 @@ def inventory(core):
                                     '.github/workflows/pcs-lean-public.yml'], cwd=core, text=True).splitlines()
     tracked = paths + [r['path'] for r in registries] + [m['path'] for m in models]
     subprocess.run(['git', 'diff', '--exit-code', 'HEAD', '--', *tracked], cwd=core, check=True, stdout=subprocess.DEVNULL)
-    return {'format': 'pcs-website-model-inventory-v1', 'core_revision': revision,
+    browser_models = []
+    for name in ('repair-policy-model-v1.json', 'omega/bag-v1.json', 'omega/graph-v1.json',
+                 'omega/bandit-v1.json', 'omega/nonlinear-v2.json'):
+        raw = (ROOT/'public'/name).read_bytes()
+        model = json.loads(raw)
+        browser_models.append({'path': name, 'file_sha256': digest(raw),
+                               'model_digest': model.get('model_digest_sha256', model.get('model_sha256')),
+                               'pcs_authority': False})
+    return {'format': 'pcs-website-model-inventory-v1', 'browser_models': browser_models, 'core_revision': revision,
             'registry_sources': registries, 'models': models,
             'execution_sources': {p: digest((core/p).read_bytes()) for p in sorted(paths)},
             'hosted_families': ['checked-reuse-v2', 'induction-abstraction-v2', 'verified-memory-v1', 'prospective-hybrid-v2'],

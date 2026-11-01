@@ -22,7 +22,7 @@ const server=http.createServer((req,res)=>{
    const errors=[];page.on('pageerror',e=>errors.push(e.message));
    await page.goto(base+'/capabilities.html');await page.locator('#modelStatus').filter({hasText:'41 frozen checkpoints'}).waitFor();
    assert.equal(await page.locator('#allModels tr').count(),41);
-   await page.selectOption('#capabilityFilter','models');assert.equal(await page.locator('#capabilityCards article').count(),4);
+   await page.selectOption('#capabilityFilter','models');assert.equal(await page.locator('#capabilityCards article').count(),5);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
    await page.goto(base+'/repair-model-lab.html');await page.locator('#pmRun:enabled').waitFor();
    await page.selectOption('#pmCase','implication-reversal-1');await page.locator('#pmRun').click();await page.locator('#pmStatus').filter({hasText:'learned edit order'}).waitFor();

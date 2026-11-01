@@ -1,5 +1,37 @@
 {
   "automatic_training": false,
+  "browser_models": [
+    {
+      "file_sha256": "7639bd301b206a75a3fcf6705fd4c13f409fc93428a11fb532412280fff04def",
+      "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+      "path": "repair-policy-model-v1.json",
+      "pcs_authority": false
+    },
+    {
+      "file_sha256": "e300e3891a621d4ea916d30e9c897e2356a266e7abb194181c606d7125e1115f",
+      "model_digest": "1873d0292d9214143037cb1c47833354759c2f27bb1e929618e8cf9793b7bd72",
+      "path": "omega/bag-v1.json",
+      "pcs_authority": false
+    },
+    {
+      "file_sha256": "623d00ffca5d918f7460cc102931f34b60a90960ef3507fc6bbe1ce19fcfc081",
+      "model_digest": "7f1c0fa1f0cfff106f452bf37bb0b572af8fc53be482ba4532053ab7e5485ea1",
+      "path": "omega/graph-v1.json",
+      "pcs_authority": false
+    },
+    {
+      "file_sha256": "e521c97dc0a2507326bc84466761219334abc1f7429249c3e4eeab48d3a3d96b",
+      "model_digest": "d9b3cfce0860a21c71d7285d0d8e0bd42a3c068d31ab8c63dc12ba9781bcb1de",
+      "path": "omega/bandit-v1.json",
+      "pcs_authority": false
+    },
+    {
+      "file_sha256": "0737e4cc7e297b9dbee29714cea664d29b819cf22b39f0d980292fbc7544e0b4",
+      "model_digest": "184226e002bb41a5a99be3534a098b03944a6275a2d49d784a0bcbd1aa2a0e1a",
+      "path": "omega/nonlinear-v2.json",
+      "pcs_authority": false
+    }
+  ],
   "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
   "execution_sources": {
     ".github/workflows/pcs-lean-public.yml": "41309bca2134670e9f6d316d072d910e7e68f1304d9ebb0df1862897ca0c1ab6",

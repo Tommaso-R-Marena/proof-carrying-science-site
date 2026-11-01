@@ -19,6 +19,9 @@ try{
  if(!response.ok)throw Error('Inventory unavailable');
  const inventory=await response.json();
  if(inventory.format!=='pcs-website-model-inventory-v1'||!/^[0-9a-f]{40}$/.test(inventory.core_revision)||!Array.isArray(inventory.models)||inventory.pcs_authority!==false)throw Error('Invalid model inventory');
+ for(const m of inventory.browser_models){
+  const card=element('article',''),link=element('a',m.path);card.className='capability-card';link.href=m.path;card.append(link,element('p','Model identity:'),element('code',m.model_digest));$('browserModels').append(card);
+ }
  const base='https://github.com/Tommaso-R-Marena/proof-carrying-science/blob/'+inventory.core_revision+'/';
  $('modelStatus').textContent=inventory.models.length+' frozen checkpoints in four families. Approved public executor source: '+inventory.core_revision+'. The hybrid portfolio shares the verified-memory weights and can finish before neural ranking is needed.';
  for(const m of inventory.models){

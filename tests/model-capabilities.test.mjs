@@ -18,6 +18,8 @@ test('advertised execution paths resolve and distinguish hosted models, replay a
  assert.equal(CAPABILITIES.find(c=>c.page==='research-updates.html').mode,'recorded');
 });
 test('model inventory and protected browser qualification use the current exact executor',()=>{
+ for(const m of inventory.browser_models){const bytes=readFileSync(new URL('public/'+m.path,root));assert.equal(createHash('sha256').update(bytes).digest('hex'),m.file_sha256);}
+ assert.equal(inventory.browser_models.length,5);
  assert.equal(inventory.core_revision,CORE_SHA);assert.equal(inventory.models.length,41);
  assert.equal(inventory.hosted_general_llm_inference,false);assert.equal(inventory.automatic_training,false);
  assert.equal(inventory.pcs_authority,false);
