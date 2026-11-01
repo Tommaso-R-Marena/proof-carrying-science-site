@@ -21,15 +21,3 @@ export const CAPABILITIES=[
 ];
 
 export const MODE_LABELS={hosted:'Fresh public proof job','browser-model':'Real model in your browser',browser:'Live browser calculation',native:'Downloaded verifier',replay:'Recorded states + optional fresh check',recorded:'Recorded research',service:'Website service'};
-
-export function executionSummary(evidence){
- const r=evidence?.result||{}, search=r.search||{};
- if(evidence?.actions_sha256)return 'Your exact typed actions were checked. This is not model-generated proof search.';
- const winner=search.winning_component||search.portfolio?.selected_stage;
- const checkpoint=r.checkpoint_sha256;
- return ['Executor: '+(r.model||evidence?.model_family||'identity unavailable'),
-   winner?'Winning component: '+winner:null,
-   checkpoint?'Reported checkpoint: '+checkpoint:null,
-   evidence?.core_sha?'Source: '+evidence.core_sha:null,
-   'Inspect the full evidence for attempts, scope and kernel assumptions. Hosted execution remains a trust dependency.'].filter(Boolean).join('. ');
-}

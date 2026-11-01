@@ -1,8 +1,9 @@
+import {executionSummary} from '../public/lean-job-client.mjs';
 import test from 'node:test';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
-import {CAPABILITIES,MODE_LABELS,executionSummary} from '../public/capability-catalog.mjs';
+import {CAPABILITIES,MODE_LABELS} from '../public/capability-catalog.mjs';
 import {CORE_SHA} from '../src/lean-research.js';
 const root=new URL('../',import.meta.url);
 const inventory=JSON.parse(readFileSync(new URL('public/model-capabilities.json',root)));

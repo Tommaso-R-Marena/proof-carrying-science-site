@@ -78,6 +78,35 @@ and rejected altered weights in both model demos. The inventory rendered all
 fixtures test that configuration alone cannot enable submission; those fixtures
 are not real hosted authorization evidence. There were no human participants.
 
+## Full public-job family probe
+
+A fresh local run of the actual public-job entrypoint, followed by the website
+receiver and independent Lean compilation, used the same authored conjunction
+swap in every family. This probe is operational evidence, not a benchmark:
+
+| Selected family | Result | Expansions | Independent axiom audit |
+| --- | --- | --- | --- |
+| Checked reuse | verified, learned reuse stage | 4 | empty |
+| Grounded induction | unknown | 20 | no proof claimed |
+| Verified memory | verified | 12 | empty |
+| Hybrid | verified, ordinary Std winner | 1 | `propext` |
+
+The induction model's previous-policy and symbolic comparisons proved the goal.
+Its `unknown` result remains in the original logs. A successful process exit is
+not proof success. The hybrid result is attributed to ordinary Lean tactics;
+it does not establish a neural gain. `propext` is disclosed, not erased.
+All four raw local result logs and request bindings are preserved under
+`docs/evidence/model-wiring-v1/public-families/`. The replay script validates
+receipt bindings, recompiles every verified result and comparison, and compares
+the exact independently printed axiom lists. It does not repeat inference or
+attest GitHub execution.
+
+Protected CI caught an integration defect during development: the local Lean
+server correctly refused a newly imported display module outside its explicit
+asset list. The helper now lives in the already supported job-client module.
+The strict local server allowlist and core code are unchanged. The original
+failed CI run is retained; the repaired real-browser gate must pass before merge.
+
 ## Reproduce
 
 ```sh
@@ -90,6 +119,7 @@ npm run verify:release
 python3 scripts/check_model_capabilities.py --core /path/to/exact/core
 PCS_CHROMIUM=/usr/bin/chromium npm run test:browser:model-wiring
 lean docs/evidence/model-wiring-v1/learned-chain.lean
+node scripts/replay_website_model_families.mjs
 # From the exact core checkout, with its locked CPU dependencies and Lean 4.28:
 python -m pcs.experimental.prover.hosted_qualification --case learned-chain
 ```

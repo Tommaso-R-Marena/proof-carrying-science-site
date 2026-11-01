@@ -27,3 +27,15 @@ export class PendingLeanJob {
   clear(){this.memory=null;try{this.storage?.removeItem(STORAGE_KEY);}catch{this.persistent=false;}}
 }
 export function tabJobStore(){let storage;try{storage=globalThis.sessionStorage;}catch{}return new PendingLeanJob(storage);}
+
+export function executionSummary(evidence){
+ const r=evidence?.result||{}, search=r.search||{};
+ if(evidence?.actions_sha256)return 'Your exact typed actions were checked. This is not model-generated proof search.';
+ const winner=search.winning_component||search.portfolio?.selected_stage;
+ const checkpoint=r.checkpoint_sha256;
+ return ['Family: '+(evidence?.model_family||'checked-reuse-v2'),'Executor: '+(r.model||evidence?.model_family||'identity unavailable'),
+   winner?'Winning component: '+winner:null,
+   checkpoint?'Reported checkpoint: '+checkpoint:null,
+   evidence?.core_sha?'Source: '+evidence.core_sha:null,
+   'Inspect the full evidence for attempts, scope and kernel assumptions. Hosted execution remains a trust dependency.'].filter(Boolean).join('. ');
+}

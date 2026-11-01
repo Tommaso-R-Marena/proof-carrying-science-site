@@ -1,5 +1,4 @@
-import {executionSummary} from './capability-catalog.mjs';
-import {tabJobStore} from './lean-job-client.mjs';
+import {tabJobStore,executionSummary} from './lean-job-client.mjs';
 const pendingJob=tabJobStore();
 const $ = id => document.getElementById(id);
 const local = location.protocol === 'http:' && (location.port === '8766' || location.port === '8769') && ['127.0.0.1', 'localhost'].includes(location.hostname);

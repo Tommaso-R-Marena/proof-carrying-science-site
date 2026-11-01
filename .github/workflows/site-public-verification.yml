@@ -224,6 +224,7 @@ jobs:
           npm run test:browser:transport-workflow
           PCS_CALIBRATION_BROWSER_OUTPUT="$RUNNER_TEMP/calibration-browser.json" npm run test:browser:calibration
           source .ci-components/lean-prover/scripts/activate_lean_428.sh
+          node scripts/replay_website_model_families.mjs
           lean docs/evidence/model-wiring-v1/learned-chain.lean > "$RUNNER_TEMP/model-wiring-chain.log"
           grep -F "'pcs_model_wiring_chain' does not depend on any axioms" "$RUNNER_TEMP/model-wiring-chain.log"
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
