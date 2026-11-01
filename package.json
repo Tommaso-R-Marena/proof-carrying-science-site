@@ -70,7 +70,7 @@
     "test:browser:file-check": "node scripts/browser_file_check.cjs",
     "test:change-review": "node --test tests/change-review.test.mjs && python3 -m unittest discover -s tests -p test_change_review.py -v && python3 -m unittest discover -s tests -p test_usability_sessions.py -v",
     "test:browser:change-review": "node scripts/browser_change_review.cjs",
-    "test:publication": "python3 -m unittest discover -s tests -p test_file_checker_publication.py -v"
+    "test:publication": "python3 -m unittest discover -s tests -p test_file_checker_publication.py -v && python3 -m unittest discover -s tests -p test_git_snapshot.py -v"
   },
   "devDependencies": {
     "playwright": "1.64.0",

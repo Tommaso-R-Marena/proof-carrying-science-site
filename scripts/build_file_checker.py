@@ -7,7 +7,6 @@ OS code signing is not supplied. SHA-256 manifests identify bytes, not an author
 from __future__ import annotations
 import argparse
 import hashlib
-import io
 import json
 import os
 from pathlib import Path
@@ -16,12 +15,12 @@ import re
 import shutil
 import subprocess
 import sys
-import tarfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'desktop'))
 from file_check import CORE_COMMIT, SCOPE, canonical
+from git_snapshot import materialize
 
 
 def run(args, cwd=None, **kw):
@@ -48,26 +47,15 @@ def main():
             raise ValueError('Release builds require clean committed website sources.')
     source = ROOT
     if not args.development:
-        # All release frontend/app/page bytes come from the recorded Git object,
-        # including on Windows checkouts with automatic newline conversion.
+        # Read raw committed blobs. Even git archive applies core.autocrlf,
+        # so an archive is not an exact byte snapshot on every host.
         source = out/'site-source'
-        source.mkdir()
-        site_archive = subprocess.check_output(['git','archive',site_commit,'desktop','public'],cwd=ROOT)
-        with tarfile.open(fileobj=io.BytesIO(site_archive)) as t:
-            if any(not (m.name in {'desktop','public'} or m.name.startswith(('desktop/','public/'))) or not (m.isfile() or m.isdir()) for m in t.getmembers()):
-                raise ValueError('Unexpected website source archive member.')
-            t.extractall(source,filter='data')
+        materialize(ROOT, site_commit, ['desktop', 'public'], source)
     release_version=(source/'desktop/VERSION').read_text(encoding='ascii').strip()
     if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+',release_version):raise ValueError('Invalid app release version.')
-    # Copy from immutable Git objects, excluding caches, working-tree files and
-    # untracked module substitutions. The core repository is never rewritten.
-    archive = subprocess.check_output(['git','archive',CORE_COMMIT,'formal'],cwd=args.core)
+    # The core repository is never rewritten or read through its working tree.
     snapshot = out/'core'
-    snapshot.mkdir()
-    with tarfile.open(fileobj=io.BytesIO(archive)) as t:
-        if any(not (m.name == 'formal' or m.name.startswith('formal/')) or not (m.isfile() or m.isdir()) for m in t.getmembers()):
-            raise ValueError('Unexpected core archive member.')
-        t.extractall(snapshot,filter='data')
+    materialize(args.core, CORE_COMMIT, ['formal'], snapshot)
     frontend = out/'frontend'
     frontend.mkdir()
     for name in ['Main.lean','Audit.lean','StackSafe.lean','OriginalCsv.lean','Review.lean']:
@@ -103,7 +91,7 @@ def main():
         shutil.copy2(source/'public'/name,bundle/'public'/name)
     manifest = {'format':'pcs-files-checker-build-v1','version':release_version,'scope':SCOPE,
                 'capabilities':[SCOPE,'original-csv-change-review-v2','original-csv-decoding-v2'],
-                'core_commit':CORE_COMMIT,'site_commit':site_commit,'development_build':args.development,'source_snapshot':'working-tree-development' if args.development else 'git-archive',
+                'core_commit':CORE_COMMIT,'site_commit':site_commit,'development_build':args.development,'source_snapshot':'working-tree-development' if args.development else 'git-blobs',
                 'lean_toolchain':'leanprover/lean4:v4.28.0','binary':binary,
                 'binary_sha256':hashlib.sha256((bundle/binary).read_bytes()).hexdigest(),
                 'dependent_files_sha256':dependencies,

@@ -32,7 +32,8 @@ result, signed certificate or immutable host root is established.
 
 Apps lack publisher code signing. Normal OS confirmation may be needed; do not
 disable OS protections. SHA-256 sidecars identify archive bytes; source identities
-and actual theorem audits are included. The release validates all four archives
-and their exact Git source closure before publication. Historical releases are
+and actual theorem audits are included. Protected CI and the release publisher validate all four archives
+and their exact raw Git source closure. Snapshots bypass checkout/archive newline
+conversion and export filters. Historical releases are
 not overwritten. Linux targets x64 Ubuntu 24.04; Mac packages identify Apple
 silicon or Intel separately.

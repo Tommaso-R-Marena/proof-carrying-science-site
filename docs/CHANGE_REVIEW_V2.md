@@ -91,9 +91,9 @@ actual published observations with explicit source hashes, license, transformati
 and identity assumptions. Artificial corruption/removal controls are labeled.
 No new measurements or model-accuracy findings are claimed.
 
-Release frontend/app/page source bytes come from a Git archive on every platform,
-including Windows; newline-converted working files cannot silently change build
-source identities. All four archives, sidecar digests, source hashes, source
+Release frontend/app/page and core source bytes come directly from Git blobs
+on every platform, including Windows. Checkout, archive, EOL conversion and
+export filters cannot silently change build source identities. All four archives, sidecar digests, source hashes, source
 commit, theorem audit and nonproduction trust flags are checked before a draft
 release becomes public. Existing tags/releases are never overwritten.
 
@@ -148,3 +148,23 @@ remains strict. Multi-command portable CI steps use fail-fast Bash on every OS,
 so a later successful command cannot mask an earlier failed test. Local brand
 navigation retains the capability in a fragment; tutorial links open the hosted
 lesson in another tab rather than requesting an unbundled local page.
+
+## Source-snapshot reconciliation
+
+The first v2 publication was correctly blocked by the four-platform source gate:
+Windows recorded CRLF bytes for `desktop/VERSION`, whereas the committed blob
+contains LF. Independent reproduction found that `git archive` itself applies
+`core.autocrlf`; archiving a commit alone does not establish raw-blob identity.
+No v2 release was published and the deployment guard retained the existing site.
+
+The builder now enumerates regular source blobs with `git ls-tree`, reads their
+unfiltered bytes with `git cat-file --batch`, checks each Git blob object ID, and
+writes a fresh snapshot. It applies the same rule to the pinned core. Links,
+submodules, malformed paths, missing roots and existing destinations reject.
+Actual four-platform archive/source qualification is now part of protected PR CI,
+before merge, as well as the publication gate. Mathematical statements and runtime
+admission rules are unchanged. The original failed run remains historical evidence.
+
+The source-snapshot follow-up passed the full local gate with 520 JavaScript and
+84 Python tests, including eight real-Git regressions. These add to the unchanged
+native, semantic, browser, published-data and theorem-audit requirements.

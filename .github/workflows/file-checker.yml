@@ -44,6 +44,7 @@ jobs:
           python -m unittest discover -s tests -p test_file_checker.py -v
           python -m unittest discover -s tests -p test_change_review.py -v
           python -m unittest discover -s tests -p test_usability_sessions.py -v
+          python -m unittest discover -s tests -p test_git_snapshot.py -v
           python scripts/file_check_differential.py
       - name: Build actual native checker, audit theorem dependencies and package app
         run: python scripts/build_file_checker.py --core .ci-components/file-check-core --output "${{ runner.temp }}/pcs-files-build" --package
@@ -84,3 +85,18 @@ jobs:
             ${{ runner.temp }}/pcs-files-browser/*.json
             ${{ runner.temp }}/pcs-files-build/public-data-experiment.json
           if-no-files-found: error
+
+  qualify-packages:
+    needs: packages
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: pcs-files-*
+          path: qualified-files
+      - name: Require exact source closure across all four real platform archives
+        run: python scripts/check_file_checker_release.py qualified-files --commit '${{ github.sha }}' --version "$(cat desktop/VERSION)"
