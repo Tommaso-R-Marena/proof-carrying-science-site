@@ -6,6 +6,20 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
+## Review recurring exports
+
+Open [What changed?](https://proof-carrying-science-site.marenatommaso.workers.dev/review-changes)
+to compare previous/new CSV exports, inspect added/removed/edited records and
+protect existing selected values while allowing new records. Version 2 of the
+portable app lets Lean decode the original files directly; users need no language
+toolchains or terminal commands. Reports and reusable settings preserve privacy
+by default. The public Iris example demonstrates checks on published observations.
+
+See [the exact contract, proofs and reproduction](docs/CHANGE_REVIEW_V2.md).
+The [optional newcomer study](docs/NEWCOMER_STUDY_V1.md) provides consent-based local
+task records and separate observer analysis. Automated tests are not human results;
+no human study has been completed by implementing these tools.
+
 ## Check your own CSV files
 
 Open [Check my files](https://proof-carrying-science-site.marenatommaso.workers.dev/check-my-files) to find exact shared IDs in two
@@ -17,10 +31,10 @@ embedding input CSVs in a replay requires an explicit choice.
 
 The portable **PCS File Checker** opens the same interface locally and bundles
 the native Lean CSV checker. Users do not install Python, Rust or Lean and do not
-type terminal commands. It checks derived strict CSV images of the selected UTF-8
-ID lists against core commit `f20f3cab2938f2e085f137185e88f4700d5da2ed`.
-The original CSV parser, extraction/binding implementation, compiler and operating
-system remain explicit assumptions. It grants no PCS scientific acceptance.
+type terminal commands. Version 2 decodes original CSV snapshots in Lean and checks the selected
+IDs against core mathematical dependencies at commit `f20f3cab2938f2e085f137185e88f4700d5da2ed`.
+The bounded byte grammar and original-file decisions are proved. File binding,
+compilation, host execution and intended column meaning remain assumptions. It grants no PCS scientific acceptance.
 Imported receipts cannot produce a live confirmation; a recipient recomputes from
 the original files. See [the user guide and trust boundary](docs/CHECK_MY_FILES.md).
 

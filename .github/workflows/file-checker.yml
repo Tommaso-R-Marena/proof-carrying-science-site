@@ -38,13 +38,26 @@ jobs:
           python -m pip install --require-hashes -r desktop/requirements-build.lock
       - name: Browser/Python semantics and malformed input tests
         run: |
-          node --test tests/file-check.test.mjs
+          node --test tests/file-check.test.mjs tests/change-review.test.mjs
           python -m unittest discover -s tests -p test_file_checker.py -v
+          python -m unittest discover -s tests -p test_change_review.py -v
+          python -m unittest discover -s tests -p test_usability_sessions.py -v
           python scripts/file_check_differential.py
-      - name: Build actual native checker, audit existing theorems and package app
+      - name: Build actual native checker, audit theorem dependencies and package app
         run: python scripts/build_file_checker.py --core .ci-components/file-check-core --output "${{ runner.temp }}/pcs-files-build" --package
       - name: Real Lean authorization and local request boundary
-        run: python scripts/test_file_checker_native.py "${{ runner.temp }}/pcs-files-build/bundle"
+        run: |
+          python scripts/test_file_checker_native.py "${{ runner.temp }}/pcs-files-build/bundle"
+          python scripts/test_change_review_boundary.py "${{ runner.temp }}/pcs-files-build/bundle"
+      - name: Original byte grammar and conservation policy differentials
+        shell: bash
+        run: |
+          binary='${{ runner.temp }}/pcs-files-build/bundle/pcs-files-checker'
+          if [ '${{ runner.os }}' = Windows ]; then binary="$binary.exe"; fi
+          python scripts/test_original_csv_native.py "$binary"
+          python scripts/test_change_review_native.py "$binary"
+      - name: Real published-data conservation and labeled corruption controls
+        run: python scripts/run_public_export_experiment.py "${{ runner.temp }}/pcs-files-build/bundle" > "${{ runner.temp }}/pcs-files-build/public-data-experiment.json"
       - name: Linux browser task completion including real local Lean confirmation
         if: runner.os == 'Linux'
         env:
@@ -55,6 +68,8 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npx playwright install --with-deps chromium
           PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_file_check.cjs
+          PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_change_review.cjs
+          python scripts/analyze_usability_sessions.py "${{ runner.temp }}/pcs-files-browser/study-automated-session.json" > "${{ runner.temp }}/pcs-files-browser/study-analysis.json"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: pcs-files-${{ runner.os }}-${{ runner.arch }}
@@ -63,5 +78,6 @@ jobs:
             ${{ runner.temp }}/pcs-files-build/*.sha256
             ${{ runner.temp }}/pcs-files-build/BUILD.json
             ${{ runner.temp }}/pcs-files-build/axioms.log
-            ${{ runner.temp }}/pcs-files-browser/results.json
+            ${{ runner.temp }}/pcs-files-browser/*.json
+            ${{ runner.temp }}/pcs-files-build/public-data-experiment.json
           if-no-files-found: error

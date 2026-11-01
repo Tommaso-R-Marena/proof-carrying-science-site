@@ -20,8 +20,8 @@ import webbrowser
 from file_check import LocalChecker, SCOPE, canonical, strict_json
 
 DEFAULT_PORT = 49381  # Stable loopback origin keeps explicitly saved browser recipes reachable.
-MAX_REQUEST = 5_700_000
-PUBLIC_FILES = {'check-my-files.html', 'file-check.css', 'file-check.mjs', 'file-check-core.mjs', 'file-check-local.mjs', 'logo-mark.svg'}
+MAX_REQUEST = 6_500_000
+PUBLIC_FILES = {'file-check.mjs', 'file-check-local.mjs', 'review-changes.mjs', 'review-changes.html', 'usability-study.html', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg', 'file-check.css', 'check-my-files.html', 'file-check-core.mjs', 'usability-core.mjs', 'change-review-core.mjs', 'usability-study.mjs'}
 
 
 @contextmanager
@@ -116,7 +116,8 @@ class Handler(BaseHTTPRequestHandler):
             if not self.authorized():
                 return self.error(403, 'Open the app using its local session link.')
             return self.send(200, canonical({'format': 'pcs-file-check-session-v1', 'scope': SCOPE,
-                                            'checker_sha256': self.server.checker.manifest['binary_sha256']}))
+                                            'checker_sha256': self.server.checker.manifest['binary_sha256'],
+                                            'capabilities':self.server.checker.manifest.get('capabilities',[])}))
         path = self.path.partition('?')[0]
         name = 'check-my-files.html' if path == '/' else path.removeprefix('/')
         if name not in PUBLIC_FILES:
@@ -129,7 +130,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.error(503, 'Bundled page changed. Download a fresh app.')
         except OSError:
             return self.error(503, 'Bundled page unavailable. Download a fresh app.')
-        content_type = {'.mjs': 'text/javascript; charset=utf-8', '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml'}[Path(name).suffix]
+        content_type = {'.mjs': 'text/javascript; charset=utf-8', '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.csv': 'text/csv; charset=utf-8'}[Path(name).suffix]
         self.send(200, raw, content_type)
 
     do_HEAD = do_GET
@@ -156,7 +157,8 @@ class Handler(BaseHTTPRequestHandler):
                 raw = self.rfile.read(size)
                 if len(raw) != size:
                     raise ValueError('The request was incomplete.')
-                result = self.server.checker.verify(strict_json(raw))
+                payload = strict_json(raw)
+                result = self.server.checker.review(payload) if type(payload) is dict and payload.get('mode')=='changes' else self.server.checker.verify(payload)
                 self.send(200, canonical(result))
             finally:
                 self.server.check_slot.release()
@@ -179,7 +181,12 @@ def run_app(assets, self_test):
         import base64, hashlib
         raw = [b'id\n001\n002\n', b'id\n003\n']
         request = {'columns': [0, 0], 'files': [{'name': f'{i}.csv', 'data_base64': base64.b64encode(x).decode(), 'sha256': hashlib.sha256(x).hexdigest()} for i, x in enumerate(raw)]}
-        assert LocalChecker(assets).verify(request)['lean_verdict'] == 'DISJOINT'
+        checker = LocalChecker(assets)
+        if checker.verify(request)['lean_verdict'] != 'DISJOINT':
+            raise ValueError('Packaged overlap self-test failed.')
+        request.update(mode='changes', compare_headers=[], rules={'allow_added': True, 'allow_removed': True, 'allow_changed': False})
+        if checker.review(request)['accepted'] is not True:
+            raise ValueError('Packaged change-review self-test failed.')
         print('PASS: packaged app executed the real bundled Lean CSV checker')
         return
     try:

@@ -1,4 +1,13 @@
-# Check my files
+# Check my files, version 2
+
+For current original-byte decoding, recurring-export review, exact theorem names
+and trust limits, see [CHANGE_REVIEW_V2.md](CHANGE_REVIEW_V2.md). Version 2 passes
+original CSV snapshots to the proved native decoder. Version 1's derived-image
+contract is retained below as historical compatibility context; it must not be
+confused with an original-file decoding proof. Old receipts never grant new live
+confirmation merely by being imported.
+
+# Version 1 compatibility and basic workflow
 
 The first complete own-data workflow checks whether two selected ID columns share
 any exact values. It is useful for inspecting dataset splits and reconciling file
@@ -41,7 +50,7 @@ access to it. Download a reusable check to transfer it between browsers.
 
 ## Formal and implementation boundary
 
-The native frontend imports the unchanged PCS `PCS.V2.Csv` module from exact core
+Version 1's native frontend imports the unchanged PCS `PCS.V2.Csv` module from exact core
 commit `f20f3cab2938f2e085f137185e88f4700d5da2ed`. Build-time Git archives exclude
 working files, caches and untracked module substitutions. The build independently
 elaborates and audits `parseCsv_sound`, `parseCsv_complete`, `csvTable_unique`,

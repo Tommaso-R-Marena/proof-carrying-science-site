@@ -63,6 +63,7 @@
 
     addLink(links, "experience.html", "Start here", "nav-primary-link");
     addLink(links, "check-my-files.html", "Check my files");
+    addLink(links, "review-changes.html", "What changed?");
     addMenu("Try PCS", [
       {heading:"SEE IT IN ACTION",links:[
         ["live-demo.html","Break a claim · live checks and evidence"],
@@ -148,6 +149,8 @@
   // Browse the actual site map without sending a search query to any server.
   // An offline-first command palette works on desktop, keyboard and mobile.
   const siteShortcuts=[
+    ["What changed?","review-changes.html","Compare recurring exports with rules and original-file Lean checks","Use PCS"],
+    ["Try the workflows","usability-study.html","Optional private newcomer task study; no human results asserted","Use PCS"],
     ["Check my files","check-my-files.html","Find shared IDs in your own CSV exports and save a reusable check","Use PCS"],
     ["Start here","experience.html","Test a rule and save evidence in three steps","Explore"],
     ["Live PCS demo","live-demo.html","Find a counterexample, replay it and export checkable evidence","Try PCS"],
@@ -285,6 +288,8 @@
 
   // Native, accessible breadcrumbs help readers return to the right collection.
   const breadcrumbParents={
+    "review-changes.html":["Use PCS","What changed?"],
+    "usability-study.html":["Use PCS","Try the workflows"],
     "check-my-files.html":["Use PCS","Check my files"],
     "experience.html":["Start here"],
     "arena.html":["Play Arena"],"arena-proof-quest.html":["Play Arena","Proof Quest"],

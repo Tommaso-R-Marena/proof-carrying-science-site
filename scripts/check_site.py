@@ -19,6 +19,13 @@ PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
 # Owner-reviewed external navigation targets only (never script/src). Used for
 # Evidence Atlas / journal DOIs / upstream repos. Adding a URL requires review.
 ALLOWED_EXTERNAL_HREFS = {
+    "https://archive.ics.uci.edu/dataset/53/iris",
+    "https://creativecommons.org/licenses/by/4.0/",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/tag/pcs-files-v2.0.0",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.0.0/PCS-File-Checker-windows-x64.zip",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.0.0/PCS-File-Checker-macos-arm64.zip",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.0.0/PCS-File-Checker-macos-x64.zip",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.0.0/PCS-File-Checker-linux-x64.zip",
     "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/tag/pcs-files-v1.0.0",
     "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v1.0.0/PCS-File-Checker-windows-x64.zip",
     "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v1.0.0/PCS-File-Checker-macos-arm64.zip",
