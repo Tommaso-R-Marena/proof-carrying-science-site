@@ -29,7 +29,7 @@ def main():
     cases.extend([b'',b'\xff',b'key\n\x80',b'key\n\xc0\xaf',b'key\n\xed\xa0\x80',b'key\na\0',b'\xef\xbb\xbfkey\na',b'\xef\xbb\xbf\xef\xbb\xbfkey\na',b'id,id\na,b',b'id,n\n"",x\n'])
     started=time.monotonic()
     with tempfile.TemporaryDirectory() as d:
-        path=Path(d)/'cases.txt';path.write_text('\n'.join(x.hex() or '-' for x in cases)+'\n')
+        path=Path(d)/'cases.txt';path.write_bytes(('\n'.join(x.hex() or '-' for x in cases)+'\n').encode('ascii'))
         r=subprocess.run([str(exe),'decode-batch',str(path)],capture_output=True,timeout=120,check=True)
     assert not r.stderr;runs=r.stdout.decode().splitlines();assert len(runs)==len(cases)
     node=subprocess.run(['node',str(ROOT/'scripts/original_csv_javascript.mjs')],input=json.dumps([raw.hex() for raw in cases]).encode(),capture_output=True,timeout=60,check=True)

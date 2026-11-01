@@ -22,7 +22,7 @@ def main():
    col='1' if selected else '-';cases.append('|'.join([encoded(a).hex(),encoded(b).hex(),'0','0',col,col]));expected.append(','.join(map(str,[added,removed,changed,same]))+';'+''.join(decisions))
  started=time.monotonic()
  with tempfile.TemporaryDirectory() as tmp:
-  p=Path(tmp)/'cases';p.write_text('\n'.join(cases)+'\n');r=subprocess.run([exe,'review-batch',p],capture_output=True,timeout=90,check=True)
+  p=Path(tmp)/'cases';p.write_bytes(('\n'.join(cases)+'\n').encode('ascii'));r=subprocess.run([exe,'review-batch',p],capture_output=True,timeout=90,check=True)
  assert not r.stderr;actual=r.stdout.decode().splitlines();assert len(actual)==len(expected)
  for i,(a,b) in enumerate(zip(actual,expected)):assert a==b,(i,a,b)
  print(json.dumps({'format':'pcs-change-native-policy-v2','table_pairs_and_scopes':len(cases),'policy_configurations':count,'all_compiled_counts_and_rules_match_independent_sets':True,'conservative_extension_controls':True,'seconds':round(time.monotonic()-started,3),'mock_affirmative_verdicts':0}))

@@ -141,3 +141,10 @@ same qualified source after publication. This availability check does not replac
 archive qualification or claim a signature or Lean verdict. Seven focused metadata
 tests cover missing platforms/checksums, unfinished uploads, drafts, wrong tags,
 foreign URLs and ambiguous metadata.
+
+Cross-platform qualification caught Windows text-mode newline conversion in the
+hex batch test files. They now write exact ASCII/LF bytes; the native protocol
+remains strict. Multi-command portable CI steps use fail-fast Bash on every OS,
+so a later successful command cannot mask an earlier failed test. Local brand
+navigation retains the capability in a fragment; tutorial links open the hosted
+lesson in another tab rather than requesting an unbundled local page.
