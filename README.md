@@ -77,36 +77,43 @@ closure of all four real platform archives before allowing integration.
 The apps do not have publisher code-signing certificates; their release manifests
 are byte/provenance records, not an immutable trust root or external validation.
 
-## Start with one investigation
+## Understand PCS in one minute
 
-`public/experience.html` is the beginner entry point: change two fictional facts,
-check whether a rewrite changes a rule, and download evidence someone else can
-recheck. It needs no account or project upload. The evidence uses the existing
-PCS witness format; a separate Python checker or Lean 4.28 can check the result.
-The browser always distinguishes its calculation from an actual Lean run.
+The homepage and [Start here](https://proof-carrying-science-site.marenatommaso.workers.dev/experience)
+explain PCS as checking specific rules in data and calculations, showing the result,
+and saving evidence someone else can recheck. The first navigation has three choices:
+Start here, Check my files, and Explore research.
+
+The introduction uses the **same CSV parser and ID checker as the file tool**.
+Check two fictional lists, see the shared ID and exact lines, and save a readable
+report or a recheck file containing the original example CSVs. Opening that file
+in Check my files recalculates the result. Changing the sample clears the result
+and disables exports until a fresh check completes. This is a browser calculation;
+it does not run Lean or establish a scientific or AI-safety claim.
+
+The earlier rule-change investigation, generated proof-source downloads, games,
+package inspection and research catalogue remain available through optional sections
+and existing deep links. Technical details are not prerequisites for the first task.
+See [the implementation and validation notes](docs/ONE_MINUTE_START.md).
 
 For a local preview, run `python3 -m http.server 8788 --bind 127.0.0.1 --directory public`
-and open `http://127.0.0.1:8788/experience.html`. The account service is not needed
-for this lesson. See [the implementation and validation notes](docs/FIRST_INVESTIGATION.md).
+and open `http://127.0.0.1:8788/experience.html`. The account service is not needed.
 
 ## Beginner usability and copy checks
 
-The homepage offers three short routes: learn how a check works, inspect a shared
-package, or play World Builder. The research catalogue and illustrative console
-expand on demand. A full scientific verification still needs technical setup.
+`npm run test:browser:beginner` checks the homepage, the actual one-minute example,
+readable and replay-file downloads, fresh receiving in the file checker, changed-input
+invalidation, the optional rule investigation, games and package inspection in
+Chromium at four widths. It also checks keyboard operation, no-JavaScript navigation
+and failure when the introduction module is unavailable. No data is written to PCS.
+`npm run test:copy` checks all public HTML prose for em-dash-heavy writing and selected
+canned phrases. One source-bound calibration parenthetical remains explicitly
+disclosed and hash-pinned. Both checks run in protected CI.
 
-`npm run test:browser:beginner` completes all three routes in Chromium at four
-screen widths, including an evidence download and a fresh-page recheck. It needs
-no account service and writes no data to PCS. `npm run test:copy` checks all public
-HTML prose for em-dash-heavy writing and selected canned phrases. It does not
-infer authorship or measure human comprehension. A source-bound calibration page
-keeps one explicitly disclosed, hash-pinned parenthetical. Five Python checks
-also preserve existing qualification bindings and keep live health markers aligned
-with the shipped HTML. Both run in protected CI.
-
-See the [usability review and remaining human-study gap](docs/usability/2026-10-30/README.md).
-No newcomer participants have been observed yet; automated task completion is
-not evidence of independent human adoption.
+These are automated engineering checks. They do not establish that a newcomer
+understands PCS within a minute. No human participants or comprehension results are
+claimed. The [optional usability study](docs/usability/2026-10-30/README.md) remains
+the route to evaluating that goal with actual people.
 
 ## Visual games and independently checked demonstrations
 

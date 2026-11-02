@@ -43,7 +43,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
   const browser = await chromium.launch({executablePath:process.env.PCS_CHROMIUM || '/usr/bin/chromium', args:['--no-sandbox']});
   const report = {format:'pcs-beginner-journey-browser-v1', real_human_participants:0,
     browser_version:browser.version(), production_authority_executed:false, rows:[],
-    source_sha256:Object.fromEntries(['index.html','experience.html','first-investigation.mjs',
+    source_sha256:Object.fromEntries(['index.html','experience.html','file-check-core.mjs','file-check.mjs','one-minute-core.mjs','one-minute.mjs','one-minute.css','first-investigation.mjs',
       'first-investigation.css','world-builder.html','world-builder.mjs','package-inspector.html',
       'package-inspector.js','site.js','styles.css'].map(name => [name, sha(fs.readFileSync(path.join(root,name)))]))};
   try {
@@ -58,7 +58,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
         return route.continue();
       });
       const p = await context.newPage(); await p.goto(base + '/');
-      const start = p.getByRole('link', {name:'Start here · try your first check →', exact:true});
+      const start = p.getByRole('link', {name:'Try a 1-minute example', exact:true});
       assert.equal(await inView(start), true, 'the first action must be visible without scrolling');
       assert.equal(await p.locator('#homeResearch').getAttribute('open'), null);
       assert.equal(await p.locator('.home-sample').getAttribute('open'), null);
@@ -72,10 +72,55 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       await p.keyboard.press('Enter');
       assert.equal(await p.locator('main').evaluate(e => e === document.activeElement), true);
       const primaryActionBottom = await start.evaluate(e => e.getBoundingClientRect().bottom + scrollY);
-      await start.click(); await p.locator('#firstInvestigation[data-ready=true]').waitFor();
+      await start.click(); await p.locator('#firstInvestigation[data-ready=true]').waitFor({state:'attached'});
+      // The first task is an actual file check, not a prerequisite logic quiz.
+      await p.locator('#minuteExamplePanel[data-ready=true]').waitFor();
+      assert.equal(await p.locator('#ruleInvestigation').getAttribute('open'),null);
+      assert.equal(await p.locator('#minuteResults').isHidden(),true);
+      assert.equal(await p.locator('#minuteReport').isDisabled(),true);
+      const introductionWords=await p.locator('.minute-intro').evaluate(e=>e.innerText.trim().split(/\s+/).length);
+      assert.ok(introductionWords<=260,'keep the initial explanation short: '+introductionWords);
+      assert.equal(await p.locator('nav.pcs-nav-ready .navlinks>a').count(),3);
+      await p.screenshot({path:path.join(output,`one-minute-${width}.png`),fullPage:true});
+      await p.locator('#minuteCheck').focus();await p.keyboard.press('Enter');
+      await p.locator('#minuteResults:not([hidden])').waitFor();
+      assert.equal(await p.locator('#minuteOutcome').innerText(),'1 shared ID found');
+      assert.equal(await p.locator('.minute-match').count(),2);
+      assert.equal(await p.locator('#minuteOutcome').evaluate(e=>e===document.activeElement),true);
+      const readableDownload=p.waitForEvent('download');await p.locator('#minuteReport').click();
+      const readable=fs.readFileSync(await(await readableDownload).path(),'utf8');
+      assert.match(readable,/Browser calculation. No local Lean check was run/);
+      assert.match(readable,/<td>103<\/td><td>4<\/td><td>2<\/td>/);
+      const replayDownload=p.waitForEvent('download');await p.locator('#minuteReplay').click();
+      const replayBytes=fs.readFileSync(await(await replayDownload).path());
+      assert.equal(JSON.parse(replayBytes).local_receipt,null);
+      const receiving=await context.newPage();await receiving.goto(base+'/check-my-files');
+      await receiving.locator('#openDocument').setInputFiles({name:'example-recheck.json',mimeType:'application/json',buffer:replayBytes});
+      await receiving.locator('#check:not([disabled])').waitFor();await receiving.locator('#check').click();
+      await receiving.locator('#result:not([hidden])').waitFor();
+      assert.match(await receiving.locator('#verdict').innerText(),/1 shared ID found/);
+      assert.match(await receiving.locator('#status').innerText(),/Replay matched the original files and counts/);
+      assert.equal(await noOverflow(receiving),true);await receiving.close();
+      await p.locator('#minuteChange').click();
+      assert.equal(await p.locator('#minuteResults').isHidden(),true);
+      assert.equal(await p.locator('#minuteReport').isDisabled(),true);
+      assert.equal(await p.locator('#minuteReplay').isDisabled(),true);
+      await p.locator('#minuteCheck').click();
+      await p.locator('#minuteResults:not([hidden])').waitFor();
+      assert.equal(await p.locator('#minuteOutcome').innerText(),'No shared IDs found');
+      assert.equal(await p.locator('.minute-match').count(),0);
+      const cleanDownload=p.waitForEvent('download');await p.locator('#minuteReplay').click();
+      const cleanBytes=fs.readFileSync(await(await cleanDownload).path());
+      const cleanReader=await context.newPage();await cleanReader.goto(base+'/check-my-files');
+      await cleanReader.locator('#openDocument').setInputFiles({name:'separate-recheck.json',mimeType:'application/json',buffer:cleanBytes});
+      await cleanReader.locator('#check:not([disabled])').waitFor();await cleanReader.locator('#check').click();
+      await cleanReader.locator('#result:not([hidden])').waitFor();assert.match(await cleanReader.locator('#verdict').innerText(),/No shared IDs found/);
+      await cleanReader.close();
+      await p.screenshot({path:path.join(output,`one-minute-result-${width}.png`),fullPage:true});
       assert.equal(new URL(p.url()).pathname, '/experience');
       assert.equal(await p.locator('.nav-primary-link').getAttribute('aria-current'), 'page');
       assert.equal(await p.getByRole('navigation',{name:'Breadcrumb'}).isVisible(), true);
+      await p.locator('#ruleInvestigation>summary').click();
       await p.getByRole('link', {name:'Start my first investigation ↓', exact:true}).click();
       assert.equal(await p.locator('#fiHint').getAttribute('open'), null);
       await p.locator('#fiHint summary').click();
@@ -106,14 +151,17 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       assert.equal(await reader.locator('#fiWitness').isDisabled(), true);
       await reader.screenshot({path:path.join(output,`reopened-evidence-${width}.png`)});
       assert.equal(await noOverflow(reader), true); await reader.close();
-      await p.goto(base + '/'); await p.locator('[data-beginner-path=play]').click();
+      await p.goto(base + '/'); await p.locator('[data-beginner-path=research]').click();
+      await p.locator('#homeResearch a[href="arena.html"]').first().click();
+      await p.locator('main a[href="world-builder.html"]').first().click();
       await p.locator('#wbApp[data-ready=true]').waitFor(); await p.locator('#wbPlay').click();
       await p.locator('#wbCheck').click(); assert.match(await p.locator('#wbFeedback').innerText(), /rules agree/);
       await p.locator('#wbWorld [data-fact=P][data-character="0"]').click();
       await p.locator('#wbCheck').click(); assert.match(await p.locator('#wbFeedback').innerText(), /Difference found/);
       assert.equal(await p.locator('#wbStars [data-earned=true]').count(), 3);
       assert.equal(await noOverflow(p), true);
-      await p.goto(base + '/'); await p.locator('[data-beginner-path=inspect]').click();
+      await p.goto(base + '/'); await p.locator('[data-beginner-path=research]').click();
+      await p.locator('#homeResearch a[href="package-inspector.html"]').first().click();
       await p.getByRole('button', {name:'Try a sample package',exact:true}).click();
       await p.locator('#inspectorSummary').waitFor();
       assert.match(await p.locator('#inspectorReviewSnapshotTitle').innerText(), /Authoritative verification is still required/);
@@ -153,6 +201,8 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       assert.deepEqual(errors, []); assert.deepEqual(writes, []); assert.deepEqual(external, []);
       report.rows.push({width,height:900,homepage_visible_words:visibleWords,
         primary_action_bottom:primaryActionBottom,primary_action_in_initial_view:true,
+        one_minute_introduction_words:introductionWords,actual_CSV_example_and_changed_inputs:true,
+        readable_report_and_two_fresh_independent_reopens:true,stale_sample_export_invalidated:true,
         keyboard_skip_and_check:true,focused_feedback:true,learning_export_and_fresh_reopen:true,
         suggested_example_marked_assisted:true,real_ai_conclusion_rejected:true,
         first_visual_puzzle_completed:true,sample_package_exact_sha256:true,
@@ -164,9 +214,16 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
     }
     const fallback = await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});
     const p = await fallback.newPage(); await p.goto(base + '/');
-    assert.equal(await inView(p.getByRole('link',{name:'Start here · try your first check →',exact:true})),true);
+    assert.equal(await inView(p.getByRole('link',{name:'Try a 1-minute example',exact:true})),true);
     await p.locator('#homeResearch>summary').click(); assert.equal(await p.locator('#product').isVisible(),true);
+    await p.getByRole('link',{name:'Try a 1-minute example',exact:true}).click();
+    assert.equal(await p.locator('#minuteCheck').isDisabled(),true);assert.equal(await p.locator('#minuteRows0 tr').count(),3);
+    assert.match(await p.locator('noscript').first().innerText(),/needs JavaScript/);
     await fallback.close(); report.no_javascript_navigation=true;
+    const unavailable=await browser.newContext();await unavailable.route('**/one-minute.mjs',route=>route.abort());
+    const failed=await unavailable.newPage();await failed.goto(base+'/experience');
+    assert.equal(await failed.locator('#minuteCheck').isDisabled(),true);assert.equal(await failed.locator('#minuteReport').isDisabled(),true);
+    assert.equal(await failed.locator('#minuteResults').isHidden(),true);await unavailable.close();report.unavailable_intro_fails_closed=true;
     fs.writeFileSync(resultPath, JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({passed:true,completed_journeys:report.rows.length*3,
       human_participants:0,evidence:output}));

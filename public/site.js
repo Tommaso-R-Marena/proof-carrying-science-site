@@ -26,6 +26,13 @@
       parent.appendChild(anchor);
       return anchor;
     };
+    // The first visit has three choices. Full tool menus remain on tool pages.
+    if (["index.html", "experience.html"].includes(currentPath)) {
+      addLink(links, "experience.html", "Start here", "nav-primary-link");
+      addLink(links, "check-my-files.html", "Check my files");
+      addLink(links, "research.html", "Explore research");
+      return;
+    }
     const addMenu = (title, sections, ariaLabel = title) => {
       const details = document.createElement("details");
       details.className = "navmore";
@@ -280,7 +287,7 @@
     const target = document.getElementById(id);
     if (!target) return;
     let opened = false;
-    for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+    for (let parent = target; parent; parent = parent.parentElement) {
       if (parent.tagName === "DETAILS" && !parent.open) { parent.open = true; opened = true; }
     }
     if (opened) requestAnimationFrame(() => target.scrollIntoView({block:"start"}));
