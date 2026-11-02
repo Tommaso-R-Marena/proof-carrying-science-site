@@ -1,0 +1,3952 @@
+{
+  "format": "pcs-proof-workbench-catalog-v1",
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "entries": [
+    {
+      "id": "combine",
+      "title": "Reorder two requirements",
+      "statement": "For all propositions U and V, if (U and V) then (V and U).",
+      "meaning": "If both requirements hold, their order does not change what follows.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "U",
+            "type": "Prop"
+          },
+          {
+            "name": "V",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "op": "implies",
+          "left": {
+            "op": "and",
+            "left": {
+              "op": "var",
+              "name": "U"
+            },
+            "right": {
+              "op": "var",
+              "name": "V"
+            }
+          },
+          "right": {
+            "op": "and",
+            "left": {
+              "op": "var",
+              "name": "V"
+            },
+            "right": {
+              "op": "var",
+              "name": "U"
+            }
+          }
+        }
+      },
+      "lean": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (V ∧ U))",
+      "goal_sha256": "71063638cec3d1ad363683139fcc1640c4141c123a2223282c500c0f606f6ce2"
+    },
+    {
+      "id": "reuse",
+      "title": "Keep a fact while reusing a conjunction",
+      "statement": "For all propositions U and V, if (U and V) then (U and (U and V)).",
+      "meaning": "Use one established fact twice while keeping the original pair.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "U",
+            "type": "Prop"
+          },
+          {
+            "name": "V",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "op": "implies",
+          "left": {
+            "op": "and",
+            "left": {
+              "op": "var",
+              "name": "U"
+            },
+            "right": {
+              "op": "var",
+              "name": "V"
+            }
+          },
+          "right": {
+            "op": "and",
+            "left": {
+              "op": "var",
+              "name": "U"
+            },
+            "right": {
+              "op": "and",
+              "left": {
+                "op": "var",
+                "name": "U"
+              },
+              "right": {
+                "op": "var",
+                "name": "V"
+              }
+            }
+          }
+        }
+      },
+      "lean": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+      "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0"
+    },
+    {
+      "id": "chain",
+      "title": "Connect two rules",
+      "statement": "For all propositions P, Q and R, if ((P implies Q) and (Q implies R)) then (P implies R).",
+      "meaning": "Assume the two rules. Does the first condition imply the final one?",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          },
+          {
+            "name": "R",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "op": "implies",
+          "left": {
+            "op": "and",
+            "left": {
+              "op": "implies",
+              "left": {
+                "op": "var",
+                "name": "P"
+              },
+              "right": {
+                "op": "var",
+                "name": "Q"
+              }
+            },
+            "right": {
+              "op": "implies",
+              "left": {
+                "op": "var",
+                "name": "Q"
+              },
+              "right": {
+                "op": "var",
+                "name": "R"
+              }
+            }
+          },
+          "right": {
+            "op": "implies",
+            "left": {
+              "op": "var",
+              "name": "P"
+            },
+            "right": {
+              "op": "var",
+              "name": "R"
+            }
+          }
+        }
+      },
+      "lean": "∀ (P : Prop) (Q : Prop) (R : Prop), (((P → Q) ∧ (Q → R)) → (P → R))",
+      "goal_sha256": "dddc8d0f9282272c39328fa42588dfa76b9fe001a3b1b7a4737e616eb086cd54"
+    },
+    {
+      "id": "insufficient",
+      "title": "Check an insufficient requirement",
+      "statement": "For all propositions P and Q, if (P or Q) then P.",
+      "meaning": "An alternative requirement may be too weak. A failed search alone cannot refute it.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "op": "implies",
+          "left": {
+            "op": "or",
+            "left": {
+              "op": "var",
+              "name": "P"
+            },
+            "right": {
+              "op": "var",
+              "name": "Q"
+            }
+          },
+          "right": {
+            "op": "var",
+            "name": "P"
+          }
+        }
+      },
+      "lean": "∀ (P : Prop) (Q : Prop), ((P ∨ Q) → P)",
+      "goal_sha256": "7df357017f33c7bb7f8b843d777570644b5df0808c9b9cc9eda2f4d403c6ee23"
+    },
+    {
+      "id": "length",
+      "title": "Count joined lists",
+      "statement": "For all lists of natural numbers xs and ys, the length of (xs appended to ys) equals (the length of xs + the length of ys).",
+      "meaning": "The length of two lists joined together is the sum of their lengths.",
+      "recommended_family": "induction-abstraction-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "xs",
+            "type": "NatList"
+          },
+          {
+            "name": "ys",
+            "type": "NatList"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "length",
+            "arg": {
+              "op": "append",
+              "left": {
+                "op": "var",
+                "name": "xs"
+              },
+              "right": {
+                "op": "var",
+                "name": "ys"
+              }
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "length",
+              "arg": {
+                "op": "var",
+                "name": "xs"
+              }
+            },
+            "right": {
+              "op": "length",
+              "arg": {
+                "op": "var",
+                "name": "ys"
+              }
+            }
+          }
+        }
+      },
+      "lean": "∀ (xs : List Nat) (ys : List Nat), ((List.length (xs ++ ys)) = ((List.length xs) + (List.length ys)))",
+      "goal_sha256": "223ccdf08174616848aa6bae4e1a9557ddfdb595fb29fe6de21c6affe301d2eb"
+    },
+    {
+      "id": "reverse",
+      "title": "Reverse a list twice",
+      "statement": "For all lists of natural numbers xs, the reversal of (the reversal of xs) equals xs.",
+      "meaning": "Investigate a concrete list identity under the mathematical list model.",
+      "recommended_family": "induction-abstraction-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "xs",
+            "type": "NatList"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "reverse",
+            "arg": {
+              "op": "reverse",
+              "arg": {
+                "op": "var",
+                "name": "xs"
+              }
+            }
+          },
+          "right": {
+            "op": "var",
+            "name": "xs"
+          }
+        }
+      },
+      "lean": "∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs)",
+      "goal_sha256": "8048200ef1d11426d60cd7d65efc9ae50c73e8b8ff6534a786400a9d80f62650"
+    },
+    {
+      "id": "offset-0-0",
+      "title": "Compare offsets 0 and 0",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "4afe8b1e31b282fc4750becf983cd7b60198618336de98bb4f8b8e43b9cb20a0"
+    },
+    {
+      "id": "offset-0-1",
+      "title": "Compare offsets 0 and 1",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "2b5c5d41e524f191c1c64321d41de5743abf02eeefb0c64056eb7b05ff4f1ce2"
+    },
+    {
+      "id": "offset-0-2",
+      "title": "Compare offsets 0 and 2",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "f685c094fdca137daf609a7d820410f0de32746b8550df182cb0821cb6b27d8f"
+    },
+    {
+      "id": "offset-0-3",
+      "title": "Compare offsets 0 and 3",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "346224fc059d4d5fa8a359ce7da134aa9125867f89538ddce370b2722288060c"
+    },
+    {
+      "id": "offset-0-4",
+      "title": "Compare offsets 0 and 4",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "195aeb836eb5a1fd2c15c38eeb4ccb8aeebc3c0977f9ecb2384b49471a1030c3"
+    },
+    {
+      "id": "offset-0-5",
+      "title": "Compare offsets 0 and 5",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "4a50f81a6e6637ab9942ea00fd7a9acc7509e6dc4a2da77ecb4330a34e420688"
+    },
+    {
+      "id": "offset-0-6",
+      "title": "Compare offsets 0 and 6",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "90578c4046285a8ba08880f0ab79cadb1e9ec36899ca23f5105f3e4463461c04"
+    },
+    {
+      "id": "offset-0-7",
+      "title": "Compare offsets 0 and 7",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "ac4103286d7905ee15d07cf7265ebfef5a8b1927a0fa7f75bda4091d7c4cbc56"
+    },
+    {
+      "id": "offset-0-8",
+      "title": "Compare offsets 0 and 8",
+      "statement": "For all natural numbers n, (n + 0) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (0 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "68afc5aff5e572a5fe0d287ed5cb49e463043f005661faec6d48634dc240b35a"
+    },
+    {
+      "id": "offset-1-0",
+      "title": "Compare offsets 1 and 0",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "fa5fc101c63f074a67ffbde295ae4954641d4cb7867b6e8c5b8953884cd215b9"
+    },
+    {
+      "id": "offset-1-1",
+      "title": "Compare offsets 1 and 1",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "04d77a939c066ada8c23b9fd9889c5705c66a7e8ed469d0d5727f09b8ad020db"
+    },
+    {
+      "id": "offset-1-2",
+      "title": "Compare offsets 1 and 2",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "f0b95b3b5cca596cbb8286d0831e4a9cdb1ba7c3e502bc8edf47408ef0246356"
+    },
+    {
+      "id": "offset-1-3",
+      "title": "Compare offsets 1 and 3",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "dcaa8d16a337853a5565a1ddf22032f484d5cbdd5a27b4b3224ee1e3331e11ec"
+    },
+    {
+      "id": "offset-1-4",
+      "title": "Compare offsets 1 and 4",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "3019f7fd18de9c69946b232143ff26e21056c52d4f7412abe2367b8424eb9a8c"
+    },
+    {
+      "id": "offset-1-5",
+      "title": "Compare offsets 1 and 5",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "4ec8ff50e0cc102f294ccef372875df9a288a797b56466ace6c68c591b74f083"
+    },
+    {
+      "id": "offset-1-6",
+      "title": "Compare offsets 1 and 6",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "cbcd8a616df8529df85bf36c1e3c2e09efa701fe677c1e9453dab5b75ee34168"
+    },
+    {
+      "id": "offset-1-7",
+      "title": "Compare offsets 1 and 7",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "3a57cc339c1ed6da837b41bb6dd80fc269cd7ca5f3bce7de4e2b7afec87d5c7b"
+    },
+    {
+      "id": "offset-1-8",
+      "title": "Compare offsets 1 and 8",
+      "statement": "For all natural numbers n, (n + 1) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (1 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "db560290b56b6a7a4fb60487a703c2dc06f9197e51af7ea6820d8b0e8b75a734"
+    },
+    {
+      "id": "offset-2-0",
+      "title": "Compare offsets 2 and 0",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "e6a39490dad175be671f61c64c6309e7ace28376fd21f820ff5747a5fd718d6b"
+    },
+    {
+      "id": "offset-2-1",
+      "title": "Compare offsets 2 and 1",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "89d524a2614af6e2798e3b29d2e60a024de721060177deab91ea896925596f41"
+    },
+    {
+      "id": "offset-2-2",
+      "title": "Compare offsets 2 and 2",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "fce9f5db0b7e399d3ddfc74419a862cdd170e3733b7f2b378d41ff080cec6acc"
+    },
+    {
+      "id": "offset-2-3",
+      "title": "Compare offsets 2 and 3",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "b62eb490cf415783ad558979d3bda0a807d8a844510bcc25c3d59b02b8a55908"
+    },
+    {
+      "id": "offset-2-4",
+      "title": "Compare offsets 2 and 4",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "0acfa2e3aa10b2b0442e86648d5245292326a0ebf9c3bbf27d84510bfe527d05"
+    },
+    {
+      "id": "offset-2-5",
+      "title": "Compare offsets 2 and 5",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "7077e01b5b35c9d9bf4a6b7ff0e7340d0459e1e2a0cc5825df37907f276d6bbe"
+    },
+    {
+      "id": "offset-2-6",
+      "title": "Compare offsets 2 and 6",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "72b3ecb41252f76988f1d5a8dac77a3f04456da7dec2798ed3a55a99fb31b053"
+    },
+    {
+      "id": "offset-2-7",
+      "title": "Compare offsets 2 and 7",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "7d2a5e2be4a776b6792f6af50a71ed0f4aeb3f78bf41bb9728b6699b27738cb8"
+    },
+    {
+      "id": "offset-2-8",
+      "title": "Compare offsets 2 and 8",
+      "statement": "For all natural numbers n, (n + 2) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (2 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "2f5575c9f18beaaeb97ffb6f934d6222a01767d6b0b33efb2ecbfdb883bc2fe2"
+    },
+    {
+      "id": "offset-3-0",
+      "title": "Compare offsets 3 and 0",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "c0ac84bdb8744eee1c98e720650f276ba8c6e1cf9ac3f29b236ed15b42f38a52"
+    },
+    {
+      "id": "offset-3-1",
+      "title": "Compare offsets 3 and 1",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "759c80bb9ec1d5bdf86fadb84e0ac007b76534067c5cf1c17869718eaed5e38d"
+    },
+    {
+      "id": "offset-3-2",
+      "title": "Compare offsets 3 and 2",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "77cb1bc894e3e97ff0cf18fef727af2cc2793aa1ec93ebd53fbbdcb40230f81e"
+    },
+    {
+      "id": "offset-3-3",
+      "title": "Compare offsets 3 and 3",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "db91c8202ae09efdf47914237e1528626410c79b9605903293ffe6dbca73e2b1"
+    },
+    {
+      "id": "offset-3-4",
+      "title": "Compare offsets 3 and 4",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "f9e96686daa8206e6cfb51e1a8cf5bd42aa5b9c88604583eb3111cd3d6c5961c"
+    },
+    {
+      "id": "offset-3-5",
+      "title": "Compare offsets 3 and 5",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "56eb6bc741f638121e16c590c66688e61302212232aa2f16f5c0660705fcfd6c"
+    },
+    {
+      "id": "offset-3-6",
+      "title": "Compare offsets 3 and 6",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "ccd064f9b6eec2523841323a253286d027c47ed2e659ede3bde16f78ed31de76"
+    },
+    {
+      "id": "offset-3-7",
+      "title": "Compare offsets 3 and 7",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "2a4f8904119bf26efdfe766cab7e7f866a288e83775d436c212a6d0767edf698"
+    },
+    {
+      "id": "offset-3-8",
+      "title": "Compare offsets 3 and 8",
+      "statement": "For all natural numbers n, (n + 3) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (3 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "81b900a0643e0136f90dfd16eb2af484c596190313138cd3503e8ae22cdf6ac6"
+    },
+    {
+      "id": "offset-4-0",
+      "title": "Compare offsets 4 and 0",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "57b1bbd5984e21dac60948efb6c8e813b3d3fcdd3bca49c063fe34e19d0277b9"
+    },
+    {
+      "id": "offset-4-1",
+      "title": "Compare offsets 4 and 1",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "056a15460b8d549950395796925f169228f441246aa99b7d9971b50d419954fc"
+    },
+    {
+      "id": "offset-4-2",
+      "title": "Compare offsets 4 and 2",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "456391cd6014e1443b43f0d2db911d5a4cb2e54d7064de8228d49b1a91ed2faa"
+    },
+    {
+      "id": "offset-4-3",
+      "title": "Compare offsets 4 and 3",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "74c4011959214dd21f43ac0e9873a45fc27a8d3df03caadf70f19ce4ac75fdbe"
+    },
+    {
+      "id": "offset-4-4",
+      "title": "Compare offsets 4 and 4",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "288a2a2986ffebd83d1bb519ee0aae7ad23ba6321ffb12d93776e7de2646f8e7"
+    },
+    {
+      "id": "offset-4-5",
+      "title": "Compare offsets 4 and 5",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "1ea69fd4b80817b4591beda3e1c68c1fdf3fc4dd3003f7426beae3b7d8dd8b8c"
+    },
+    {
+      "id": "offset-4-6",
+      "title": "Compare offsets 4 and 6",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "c435244513f0e4a346b4af17bd7a933007fed2b4c1981bc27698c402a98aee5f"
+    },
+    {
+      "id": "offset-4-7",
+      "title": "Compare offsets 4 and 7",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "f6676085df7d1b0a6b42274ecd6abe95227821866d3df3f46bda635010ea769e"
+    },
+    {
+      "id": "offset-4-8",
+      "title": "Compare offsets 4 and 8",
+      "statement": "For all natural numbers n, (n + 4) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (4 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "7a40e86cf6b3f56e7b3d0d99139fcb9fee4f1e534920cde7efffeb7cbb63539b"
+    },
+    {
+      "id": "offset-5-0",
+      "title": "Compare offsets 5 and 0",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "1f3257896cc9be82a5b6ac51378db5ffba2183c9842cfb9cd90193b749130087"
+    },
+    {
+      "id": "offset-5-1",
+      "title": "Compare offsets 5 and 1",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "955c6fa837157c66e21387a214f2a63ecfdc5e99876d5cb48d4dfeb8c5877928"
+    },
+    {
+      "id": "offset-5-2",
+      "title": "Compare offsets 5 and 2",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "dd0fbebc878452779e851665987857337aa684a70b871bc33552eec399e4d35d"
+    },
+    {
+      "id": "offset-5-3",
+      "title": "Compare offsets 5 and 3",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "fc202c0a110ae862b0af7c658f563f26a066ad776c0724596e53eb5f20573dfe"
+    },
+    {
+      "id": "offset-5-4",
+      "title": "Compare offsets 5 and 4",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "6cae186c402dd25067770b209e4514bb246543c2a0caa4d688ce8ac57e832818"
+    },
+    {
+      "id": "offset-5-5",
+      "title": "Compare offsets 5 and 5",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "93136da244c1fd191892f697634cc1802493acc7df95478f37f9b807c67b37bd"
+    },
+    {
+      "id": "offset-5-6",
+      "title": "Compare offsets 5 and 6",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "f920fffec05f73fb0a1768bfe72ddb4d15de1dd2290a67495580e160a0de4930"
+    },
+    {
+      "id": "offset-5-7",
+      "title": "Compare offsets 5 and 7",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "ff130e5657caca3afc4eed2d0f1e66d0b7afcb38dcf7ab4dcd151b62bdd0f332"
+    },
+    {
+      "id": "offset-5-8",
+      "title": "Compare offsets 5 and 8",
+      "statement": "For all natural numbers n, (n + 5) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (5 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "d41a644e1cc4ea65e2382eaffdbdb17c41b081afb3f6d6e53b972e79f5ab615d"
+    },
+    {
+      "id": "offset-6-0",
+      "title": "Compare offsets 6 and 0",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "498de9c646cb3954fa555f00e7538d566fac0c74ef173bdc6fa9af177d222f26"
+    },
+    {
+      "id": "offset-6-1",
+      "title": "Compare offsets 6 and 1",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "17a236d122af0d4c25bcc1b3a8eff20db337ebe1d44cb5018fafac06f10e13f3"
+    },
+    {
+      "id": "offset-6-2",
+      "title": "Compare offsets 6 and 2",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "5c62443f80a0874fedf923990d5d4102fba4d34a388401f4616b4ddd1863aae0"
+    },
+    {
+      "id": "offset-6-3",
+      "title": "Compare offsets 6 and 3",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "54d7e8b60d65639617d65300ff3a7b88b1cced8f2206258fdeecb6bef33fcf40"
+    },
+    {
+      "id": "offset-6-4",
+      "title": "Compare offsets 6 and 4",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "7f2217d952b6fb748e95ce39ea1edbfca677fc84ab38f6340f34b5923a12d2cf"
+    },
+    {
+      "id": "offset-6-5",
+      "title": "Compare offsets 6 and 5",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "0e8877e3563edc702490f983a1481b28e1b69a816f736f9250baf2fd5a920f0d"
+    },
+    {
+      "id": "offset-6-6",
+      "title": "Compare offsets 6 and 6",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "584416a3890f6953f77fd14c16edc94955ae526ba79d7f3fd3c43720767a479a"
+    },
+    {
+      "id": "offset-6-7",
+      "title": "Compare offsets 6 and 7",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "4641a822b7de70aa6ef994da73cc7c424918b96dce642887497d70b321722fd4"
+    },
+    {
+      "id": "offset-6-8",
+      "title": "Compare offsets 6 and 8",
+      "statement": "For all natural numbers n, (n + 6) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (6 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "df97aacec270b40d8e1a13bc07a64a87cf8c6b7eb9b14de35a3eafa963a938df"
+    },
+    {
+      "id": "offset-7-0",
+      "title": "Compare offsets 7 and 0",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "7d3230f8d7f28b113cf3c84f7b5aedc6f71fea4a185e2564f06b5b8eb19d541b"
+    },
+    {
+      "id": "offset-7-1",
+      "title": "Compare offsets 7 and 1",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "3a1b2f1effae13e4c545e7c03b4403603a114e2599d34a1f8aea2a7fad111fc7"
+    },
+    {
+      "id": "offset-7-2",
+      "title": "Compare offsets 7 and 2",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "33cb2599a3ba2f10421bae0f70bb59fc6009a19d5973ef0a26fed93da6823ab4"
+    },
+    {
+      "id": "offset-7-3",
+      "title": "Compare offsets 7 and 3",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "f5688681a3815ac4d80fc6b96dd05bcfe967372cd5da02a9dc547a4c0bc1b337"
+    },
+    {
+      "id": "offset-7-4",
+      "title": "Compare offsets 7 and 4",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "7c1cddf11c05ef6dd8528fff047846144e56009e7968d23392e71cd359a8d2cf"
+    },
+    {
+      "id": "offset-7-5",
+      "title": "Compare offsets 7 and 5",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "53b158d24c4f17dad7fb709409842e081a8a2ce69316091c53c2ceee306024fc"
+    },
+    {
+      "id": "offset-7-6",
+      "title": "Compare offsets 7 and 6",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "1f45aa6227bf3a22df6a295ba98531280290d70be19eed0e2dc6ab91a9d89469"
+    },
+    {
+      "id": "offset-7-7",
+      "title": "Compare offsets 7 and 7",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "9d90ae543510977912047e82797d61452dd18e601f37207f6a57fe4161e71e59"
+    },
+    {
+      "id": "offset-7-8",
+      "title": "Compare offsets 7 and 8",
+      "statement": "For all natural numbers n, (n + 7) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (7 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "43ef2a138f482aaad2c8cce983b6783835c8c5c725bb644e3159f0404486d2bf"
+    },
+    {
+      "id": "offset-8-0",
+      "title": "Compare offsets 8 and 0",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 0).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 0,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (0 : Nat)))",
+      "goal_sha256": "26904a3e30408f2abf98a040f67f59fc53d5c15fd8933c0ecd08b68f155a0003"
+    },
+    {
+      "id": "offset-8-1",
+      "title": "Compare offsets 8 and 1",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 1).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 1,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (1 : Nat)))",
+      "goal_sha256": "9b565969246c2d715fde1c0bbcca443d1272845c8872242b2bb9806b8d01589c"
+    },
+    {
+      "id": "offset-8-2",
+      "title": "Compare offsets 8 and 2",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 2).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 2,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (2 : Nat)))",
+      "goal_sha256": "f20179db3dbc41501dcf5e12f526d095927be5e1c35f5065002a609c22b412af"
+    },
+    {
+      "id": "offset-8-3",
+      "title": "Compare offsets 8 and 3",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 3).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 3,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (3 : Nat)))",
+      "goal_sha256": "47979a163de7fc46ce39d510365497e778ce7083850f5b689f09d99e43b56be8"
+    },
+    {
+      "id": "offset-8-4",
+      "title": "Compare offsets 8 and 4",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 4).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 4,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (4 : Nat)))",
+      "goal_sha256": "0a2648d9c4c6c2c847db370f35fbba09b2baa3ae83b39d731738eaa9381eb1d8"
+    },
+    {
+      "id": "offset-8-5",
+      "title": "Compare offsets 8 and 5",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 5).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 5,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (5 : Nat)))",
+      "goal_sha256": "e7f41fe684607c410c7be4ea5f2a0d7e9159436b37bb2a8b56b18d51da22957a"
+    },
+    {
+      "id": "offset-8-6",
+      "title": "Compare offsets 8 and 6",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 6).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 6,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (6 : Nat)))",
+      "goal_sha256": "ae2d1ac2e662b4cccb66d95feca2f97985414a004e0f225fa201c03936abf88d"
+    },
+    {
+      "id": "offset-8-7",
+      "title": "Compare offsets 8 and 7",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 7).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "verified-memory-v1",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 7,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (7 : Nat)))",
+      "goal_sha256": "beada1d073f0051df635330b08007a6466ad91e2a538279b0d500aa3b37bb93d"
+    },
+    {
+      "id": "offset-8-8",
+      "title": "Compare offsets 8 and 8",
+      "statement": "For all natural numbers n, (n + 8) equals (n + 8).",
+      "meaning": "Check equality for every natural number, rather than a few numerical examples.",
+      "recommended_family": "prospective-hybrid-v2",
+      "goal": {
+        "format": "pcs-math-ir-v1",
+        "binders": [
+          {
+            "name": "n",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "op": "eq",
+          "left": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          },
+          "right": {
+            "op": "add",
+            "left": {
+              "op": "var",
+              "name": "n"
+            },
+            "right": {
+              "op": "number",
+              "value": 8,
+              "type": "Nat"
+            }
+          }
+        }
+      },
+      "lean": "∀ (n : Nat), ((n + (8 : Nat)) = (n + (8 : Nat)))",
+      "goal_sha256": "d0eaa6953dd074be6c49589fb0821eea9282fdcbbdf3fbd6ccc0da99250d0a9b"
+    }
+  ],
+  "browser_preview_runs_Lean": false,
+  "semantic_authorization": false,
+  "pcs_authority": false,
+  "catalog_sha256": "c93380c850239bd989933bd77cfa2c0e5c232903782e4eff8adcdacad777507a"
+}

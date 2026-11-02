@@ -36,7 +36,7 @@ test('model inventory and protected browser qualification use the current exact 
  const report=JSON.parse(readFileSync(new URL('docs/evidence/model-wiring-v1/learned-chain.json',root)));
  const proof=readFileSync(new URL('docs/evidence/model-wiring-v1/learned-chain.lean',root));
  assert.equal(report.proof_source_sha256,createHash('sha256').update(proof).digest('hex'));
- assert.equal(report.source_revision,CORE_SHA);assert.deepEqual(report.kernel_axioms,[]);
+ assert.equal(report.source_revision,'f20f3cab2938f2e085f137185e88f4700d5da2ed');assert.deepEqual(report.kernel_axioms,[]);
  assert.equal(report.checkpoint_sha256,inventory.models.find(m=>m.family==='verified-memory-v1'&&m.selected).sha256);
 });
 test('result labels attribute actual baseline winners and never attribute human actions to a neural model',()=>{

@@ -1,0 +1,26 @@
+{
+  "case": "case-12",
+  "method": "frozen_neural",
+  "goal_sha256": "b42d902ff626d3312a7f9cdfd4570dc13cddc5488805366d17abee9b9ed03724",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "search_status": "unknown",
+  "receipt": null,
+  "expansions": 32,
+  "stages": [
+    {
+      "component": "frozen_neural",
+      "status": "unknown",
+      "expansions": 32
+    }
+  ],
+  "budget_reason": null,
+  "setup_seconds": 19.97464806700009,
+  "setup_lean_attempts": 19,
+  "search_lean_attempts": 33,
+  "search_seconds": 3.032904377003433,
+  "total_search_phase_seconds": 23.00755302500329,
+  "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+  "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+  "model_training": false,
+  "pcs_authority": false
+}

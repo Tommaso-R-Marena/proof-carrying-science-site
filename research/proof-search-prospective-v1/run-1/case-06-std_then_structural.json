@@ -1,0 +1,143 @@
+{
+  "case": "case-06",
+  "method": "std_then_structural",
+  "goal_sha256": "caa190a4eded3aceb1103324b3c36a9403703fc6c91c5ee66d257b70106e699a",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "search_status": "verified",
+  "receipt": {
+    "format": "pcs-std-baseline-proof-v1",
+    "goal_sha256": "caa190a4eded3aceb1103324b3c36a9403703fc6c91c5ee66d257b70106e699a",
+    "statement": "\u2200 (P : Prop) (Q : Prop), ((P \u2227 Q) \u2192 ((P \u2227 P) \u2227 Q))",
+    "proof": "  repeat intro\n  simp_all",
+    "kernel": {
+      "axioms": [
+        "propext"
+      ],
+      "expression": {
+        "children": [
+          {
+            "children": [],
+            "kind": "sort",
+            "value": "0"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "kind": "sort",
+                "value": "0"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "And:[]"
+                          },
+                          {
+                            "children": [],
+                            "kind": "bound",
+                            "value": "1"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      },
+                      {
+                        "children": [],
+                        "kind": "bound",
+                        "value": "0"
+                      }
+                    ],
+                    "kind": "application",
+                    "value": ""
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "And:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "constant",
+                                    "value": "And:[]"
+                                  },
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "2"
+                                  }
+                                ],
+                                "kind": "application",
+                                "value": ""
+                              },
+                              {
+                                "children": [],
+                                "kind": "bound",
+                                "value": "2"
+                              }
+                            ],
+                            "kind": "application",
+                            "value": ""
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      },
+                      {
+                        "children": [],
+                        "kind": "bound",
+                        "value": "1"
+                      }
+                    ],
+                    "kind": "application",
+                    "value": ""
+                  }
+                ],
+                "kind": "forall",
+                "value": "a._@._internal._hyg.0"
+              }
+            ],
+            "kind": "forall",
+            "value": "Q"
+          }
+        ],
+        "kind": "forall",
+        "value": "P"
+      },
+      "format": "pcs-lean-kernel-v1"
+    },
+    "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+    "pcs_scientific_authority": false
+  },
+  "expansions": 1,
+  "stages": [
+    {
+      "component": "ordinary_Std",
+      "status": "verified",
+      "expansions": 1
+    }
+  ],
+  "budget_reason": null,
+  "setup_seconds": 18.437903853991884,
+  "setup_lean_attempts": 19,
+  "search_lean_attempts": 1,
+  "search_seconds": 0.8140163440111792,
+  "total_search_phase_seconds": 19.25192103999143,
+  "checkpoint_sha256": null,
+  "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+  "model_training": false,
+  "pcs_authority": false
+}

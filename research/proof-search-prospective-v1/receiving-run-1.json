@@ -1,0 +1,449 @@
+{
+  "format": "pcs-study-independent-receiving-v1",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "cases": 14,
+  "methods": 3,
+  "independently_compiled_proofs": 27,
+  "fresh_inference": false,
+  "physical_resource_claims_independently_attested": false,
+  "metrics": {
+    "frozen_neural": {
+      "cases": 14,
+      "verified": 8,
+      "search_lean_attempts": 248
+    },
+    "same_memory_structural": {
+      "cases": 14,
+      "verified": 8,
+      "search_lean_attempts": 224
+    },
+    "std_then_structural": {
+      "cases": 14,
+      "verified": 11,
+      "search_lean_attempts": 50
+    }
+  },
+  "rows": [
+    {
+      "case": "case-01",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 18,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-01",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 14,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-01",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-02",
+      "method": "frozen_neural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 10,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-02",
+      "method": "same_memory_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 10,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-02",
+      "method": "std_then_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 13,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-03",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [],
+      "search_lean_attempts": 6,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-03",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [],
+      "search_lean_attempts": 6,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-03",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-04",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 18,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-04",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 14,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-04",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-05",
+      "method": "frozen_neural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 10,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-05",
+      "method": "same_memory_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 10,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-05",
+      "method": "std_then_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 13,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-06",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [],
+      "search_lean_attempts": 22,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-06",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [],
+      "search_lean_attempts": 22,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-06",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-07",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 18,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-07",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 14,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-07",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-08",
+      "method": "frozen_neural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 10,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-08",
+      "method": "same_memory_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 10,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-08",
+      "method": "std_then_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 13,
+      "authored_control": "negative"
+    },
+    {
+      "case": "case-09",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [],
+      "search_lean_attempts": 30,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-09",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [],
+      "search_lean_attempts": 30,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-09",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-10",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 18,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-10",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 14,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-10",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-11",
+      "method": "frozen_neural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 33,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-11",
+      "method": "same_memory_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 33,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-11",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-12",
+      "method": "frozen_neural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 33,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-12",
+      "method": "same_memory_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 33,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-12",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-13",
+      "method": "frozen_neural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 6,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-13",
+      "method": "same_memory_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 6,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-13",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-14",
+      "method": "frozen_neural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 16,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-14",
+      "method": "same_memory_structural",
+      "status": "unknown",
+      "independent_proof_replayed": false,
+      "axioms": null,
+      "search_lean_attempts": 8,
+      "authored_control": "positive"
+    },
+    {
+      "case": "case-14",
+      "method": "std_then_structural",
+      "status": "verified",
+      "independent_proof_replayed": true,
+      "axioms": [
+        "propext"
+      ],
+      "search_lean_attempts": 1,
+      "authored_control": "positive"
+    }
+  ],
+  "pcs_authority": false
+}

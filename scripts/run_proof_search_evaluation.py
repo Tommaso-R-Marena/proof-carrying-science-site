@@ -5,6 +5,7 @@ This program does not train, select checkpoints, or grant PCS authority.
 """
 import argparse,hashlib,json,os,signal,subprocess,sys,time
 from pathlib import Path
+from verify_proof_search_study import final_status
 ROOT=Path(__file__).resolve().parents[1]
 PROTOCOL=ROOT/'research/proof-search-prospective-v1/protocol.json'
 class SearchBudgetExceeded(Exception):pass
@@ -110,7 +111,7 @@ def run(core,out):
    if row.get('search_status')=='verified':
     rp=out/(case['id']+'-'+method+'-replay.json')
     replay=process(['--core',str(core),'--child',case['id'],'--method',method,'--replay',str(dest),'--output',str(rp)],p['budget']['independent_replay_wall_seconds'],rp)
-   row['independent_replay']=replay;row['status']='verified' if replay and replay.get('status')=='verified' else ('replay_failed' if row.get('search_status')=='verified' else row.get('status',row.get('search_status','execution_failed')))
+   row['independent_replay']=replay;row['status']=final_status(row,replay)
    # Search receipt retained exactly; mutable summary is written separately.
    rows.append(row);print(json.dumps({k:row.get(k) for k in ['case','method','status','search_lean_attempts','expansions']}),flush=True)
  summary={'format':'pcs-prospective-proof-search-results-v1','runner_sha256':runner_sha,'runner_commit':runner_commit,'core_revision':p['core_revision'],'protocol_sha256':sha,'protocol_freeze_commit':freeze_revision,'site_implementation':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'rows':rows,

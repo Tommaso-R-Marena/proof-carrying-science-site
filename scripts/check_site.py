@@ -19,6 +19,9 @@ PRODUCTION_HOST = "proof-carrying-science-site.marenatommaso.workers.dev"
 # Owner-reviewed external navigation targets only (never script/src). Used for
 # Evidence Atlas / journal DOIs / upstream repos. Adding a URL requires review.
 ALLOWED_EXTERNAL_HREFS = {
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/tree/main/research/proof-search-prospective-v1",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/blob/main/docs/PROOF_WORKBENCH_V1.md",
+    "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/blob/main/docs/PROOF_WORKBENCH_PILOT_V1.md",
     "https://archive.ics.uci.edu/dataset/53/iris",
     "https://creativecommons.org/licenses/by/4.0/",
     "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/tag/pcs-files-v2.0.0",
@@ -1642,6 +1645,18 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
         for asset in expected:
             if not (ROOT / asset).is_file():
                 errors.append(f"omega-workspace.js: missing reviewed static asset {asset}")
+        continue
+
+    if js.name == "proof-workbench.mjs":
+        for guard in ["const PATHS=new Set(['proof-workbench-catalog.json','proof-workbench-example.json','/api/lean-research/status','/api/lean-research/submit','/api/lean-research/result','/api/lean-research/cancel'])",
+                      "if(!PATHS.has(path))", "fetch(path,{credentials:'omit',redirect:'error'",
+                      "Idempotency-Key", "pending.begin(body)", "pending.bind(request)",
+                      "makeReport(catalog,target", "validateReport", "if(!request)",
+                      "if(!resume&&(!ready||!$('wbPublishConsent').checked))return"]:
+            if guard not in text:
+                errors.append(f"{js.name}: reviewed proof-workbench boundary missing: {guard}")
+        if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
+            errors.append(f"{js.name}: unreviewed network target")
         continue
 
     if js.name == "lean-learning-lab.mjs":

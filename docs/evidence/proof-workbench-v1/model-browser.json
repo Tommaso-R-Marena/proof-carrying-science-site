@@ -1,0 +1,32 @@
+{
+  "format": "pcs-model-wiring-browser-v1",
+  "real_human_participants": 0,
+  "hosted_authorization_exercised": false,
+  "rows": [
+    {
+      "width": 320,
+      "real_model_inference": "Bounded repair found \u00b7 1 finite checker calls \u00b7 learned edit order.",
+      "tampered_weights_rejected": true,
+      "inventory_models": 41
+    },
+    {
+      "width": 390,
+      "real_model_inference": "Bounded repair found \u00b7 1 finite checker calls \u00b7 learned edit order.",
+      "tampered_weights_rejected": true,
+      "inventory_models": 41
+    },
+    {
+      "width": 768,
+      "real_model_inference": "Bounded repair found \u00b7 1 finite checker calls \u00b7 learned edit order.",
+      "tampered_weights_rejected": true,
+      "inventory_models": 41
+    },
+    {
+      "width": 1440,
+      "real_model_inference": "Bounded repair found \u00b7 1 finite checker calls \u00b7 learned edit order.",
+      "tampered_weights_rejected": true,
+      "inventory_models": 41
+    }
+  ],
+  "configuration_only_does_not_enable_submit": true
+}

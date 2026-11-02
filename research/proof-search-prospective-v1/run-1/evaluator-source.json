@@ -1,0 +1,7 @@
+{
+  "runner_commit": "e7197109331cd6f3e55ccd8a04d4d1704edaff2f",
+  "runner_sha256": "937190fa43b848abbcb5fb16a54e457a50b6918ee12ab28ffb4c2b40c148248f",
+  "protocol_freeze_commit": "f3549c3",
+  "output": "/tmp/pcs-prospective-eval-v1",
+  "model_or_protocol_tuning": false
+}

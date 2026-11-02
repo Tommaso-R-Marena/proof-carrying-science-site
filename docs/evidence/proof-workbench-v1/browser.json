@@ -1,0 +1,54 @@
+{
+  "format": "pcs-proof-workbench-browser-v1",
+  "transport": "explicit loopback provider with actual archived proof; not fresh authorization",
+  "fresh_authorization_exercised": false,
+  "real_human_participants": 0,
+  "rows": [
+    {
+      "width": 320,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    }
+  ],
+  "recovery": {
+    "same_idempotency_key_after_uncertain_submit": true,
+    "acknowledged_ticket_poll_only": true,
+    "changed_meaning_requires_reconfirmation": true,
+    "private_context_excluded": true
+  }
+}

@@ -6,6 +6,23 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
+## Check a mathematical claim
+
+Open the [guided proof workbench](https://proof-carrying-science-site.marenatommaso.workers.dev/proof-workbench),
+choose a supported question, review its exact meaning, and explicitly choose
+whether to publish a real proof job. Save a readable offline result, evidence
+JSON and Lean source. A free recorded example needs no publication. Private
+context stays on the page. Imported results are sender reports until independently
+replayed. This supports 87 controlled mathematical forms, not arbitrary English.
+
+The [prospective comparison](research/proof-search-prospective-v1/README.md) found
+no learned advantage: 8/14 questions solved by the frozen learned policy and
+11/14 by the stronger symbolic baseline, repeated twice with fresh proof replay.
+See [the workbench trust boundary](docs/PROOF_WORKBENCH_V1.md) and
+[optional beginner pilot](docs/PROOF_WORKBENCH_PILOT_V1.md). No actual human study
+has been completed. Scheduled source-drift automation proposes draft review PRs;
+it never merges or promotes models.
+
 ## Models and actual execution
 
 Open [What actually runs?](https://proof-carrying-science-site.marenatommaso.workers.dev/capabilities)

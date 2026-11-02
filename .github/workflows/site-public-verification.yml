@@ -11,10 +11,12 @@ concurrency:
   group: pcs-public-site-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  proof-workbench-research:
+    uses: ./.github/workflows/proof-workbench-research.yml
   portable-file-checker:
     uses: ./.github/workflows/file-checker.yml
   site-full-gate:
-    needs: [lean-learning-browser, portable-file-checker]
+    needs: [lean-learning-browser, portable-file-checker, proof-workbench-research]
     if: ${{ always() && github.event.repository.private == false }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -40,10 +42,12 @@ jobs:
       - name: Require actual Lean browser execution
         env:
           LEAN_BROWSER_RESULT: ${{ needs.lean-learning-browser.result }}
+          WORKBENCH_RESEARCH_RESULT: ${{ needs.proof-workbench-research.result }}
           FILE_CHECKER_RESULT: ${{ needs.portable-file-checker.result }}
         run: |
           test "$LEAN_BROWSER_RESULT" = success
           test "$FILE_CHECKER_RESULT" = success
+          test "$WORKBENCH_RESEARCH_RESULT" = success
       - name: Frozen dependencies and complete website gate
         run: |
           set -euo pipefail
@@ -218,6 +222,7 @@ jobs:
           python3 scripts/check_model_capabilities.py
           npm run test:lean-research
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
+          PCS_WORKBENCH_BROWSER_OUTPUT="$RUNNER_TEMP/workbench-browser.json" npm run test:browser:workbench
           PCS_MODEL_WIRING_OUTPUT="$RUNNER_TEMP/model-wiring-browser.json" npm run test:browser:model-wiring
           # Production UI recovery runs in Chromium against explicit loopback provider fixtures.
           PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
@@ -231,6 +236,8 @@ jobs:
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
+          python scripts/export_proof_workbench_catalog.py --core .ci-components/lean-prover
+          python scripts/check_proof_workbench_catalog_lean.py --core .ci-components/lean-prover
           python -m pcs.experimental.prover.bridge_catalog --verify public/bridge-builder-catalog.json
           python -m pcs.experimental.prover.memory_catalog --verify public/memory-workshop-catalog.json
           python -m pcs.experimental.prover.server --models .ci-components/lean-prover/research/lean-learning-v2 --reuse-models .ci-components/lean-prover/research/checked-reuse-v2 --abstraction-models .ci-components/lean-prover/research/induction-abstraction-v2 --memory-models .ci-components/lean-prover/research/verified-memory-v1 --public public > "$RUNNER_TEMP/lean-lab.log" 2>&1 &

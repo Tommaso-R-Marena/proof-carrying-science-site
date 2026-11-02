@@ -1,0 +1,38 @@
+name: PCS proof source drift and review proposals
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pcs-source-sync-main
+  cancel-in-progress: false
+jobs:
+  propose:
+    if: github.repository == 'Tommaso-R-Marena/proof-carrying-science-site' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - name: Read protected candidate Git data, without executing candidate code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Tommaso-R-Marena/proof-carrying-science
+          ref: main
+          fetch-depth: 0
+          path: .ci-components/source-candidate
+          persist-credentials: false
+      - name: Detect drift and open a draft review proposal
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/propose_core_sync.py --core .ci-components/source-candidate --publish
