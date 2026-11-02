@@ -2,6 +2,8 @@ name: PCS First Investigation
 on:
   pull_request:
     paths:
+      - 'public/one-minute*'
+      - 'tests/one-minute.test.mjs'
       - 'public/first-investigation*'
       - 'public/experience*'
       - 'public/*.html'
@@ -34,7 +36,7 @@ jobs:
         with:
           node-version: '22.23.3'
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: node --test tests/first-investigation.test.mjs tests/arena-experience.test.mjs
+      - run: node --test tests/one-minute.test.mjs tests/first-investigation.test.mjs tests/arena-experience.test.mjs
       - run: npm run test:copy
       - name: Actual four-width beginner journey, local files, downloads and stale-read attacks
         env:

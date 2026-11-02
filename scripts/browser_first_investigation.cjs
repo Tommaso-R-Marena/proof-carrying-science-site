@@ -35,7 +35,8 @@ const server = http.createServer((req, res) => {
       });
       const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message));
       assert.equal((await page.goto(base + '/')).status(), 200);
-      await page.getByRole('link', {name:'Start here · try your first check →', exact:true}).click();
+      await page.getByRole('link', {name:'Try a 1-minute example', exact:true}).click();
+      await page.locator('#ruleInvestigation>summary').click();
       await page.locator('#firstInvestigation[data-ready=true]').waitFor();
       assert.equal(await page.locator('#fiCheck').isDisabled(), true);
       assert.equal(await page.locator('#fiWitness').isDisabled(), true);
@@ -132,11 +133,11 @@ const server = http.createServer((req, res) => {
     }
     const context = await browser.newContext({javaScriptEnabled:false});
     const page = await context.newPage(); await page.goto(base + '/experience.html');
-    assert.match(await page.locator('noscript').innerText(), /needs JavaScript/);
+    assert.match(await page.locator('noscript').first().innerText(), /needs JavaScript/);
     assert.equal(await page.locator('#fiWitness').isDisabled(), true); await context.close();
     const unavailable = await browser.newContext();
     await unavailable.route('**/first-investigation.mjs', route => route.abort());
-    const failed = await unavailable.newPage(); await failed.goto(base + '/experience.html');
+    const failed = await unavailable.newPage(); await failed.goto(base + '/experience.html#firstInvestigation');
     assert.equal(await failed.locator('#fiUsed').isDisabled(), true);
     assert.equal(await failed.locator('#fiLoadNote').isVisible(), true);
     assert.equal(await failed.locator('#fiWitness').isDisabled(), true);

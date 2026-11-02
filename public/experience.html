@@ -1,20 +1,39 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Start Here · Explore Proof-Carrying Science</title>
-<meta name="description" content="Explore a clear interactive PCS walkthrough: break a synthetic AI safety claim, inspect the evidence, and understand exactly what formal assurance does and does not establish. Free, local, no account.">
+<title>What is PCS? Try a one-minute example</title>
+<meta name="description" content="PCS checks specific rules in data and calculations. Try two example lists, see the matching IDs, and save a report. No account or technical experience needed.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/experience.html">
 <meta name="robots" content="index,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="experience.css"><link rel="stylesheet" href="first-investigation.css">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="experience.css"><link rel="stylesheet" href="first-investigation.css"><link rel="stylesheet" href="one-minute.css">
 </head><body class="experience-page">
-<div class="topbar"><div class="shell"><span>PCS · Your first investigation · No account · No uploads</span><a href="privacy.html">How PCS handles data</a></div></div>
+
 <div class="shell">
-<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Play Arena</a><a href="guided-submission.html">Guided submission</a><a href="trust.html">Trust Center</a><a class="button dark" href="account.html">Account</a></div></nav>
+<nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="check-my-files.html">Check my files</a><a href="research.html">Explore research</a></div></nav>
 <main>
+<section class="minute-intro" aria-labelledby="minuteTitle">
+ <span class="minute-kicker">PCS IN ONE MINUTE</span>
+ <h1 id="minuteTitle">Check your work.<br>Keep the evidence.</h1>
+ <p>PCS checks specific rules in data and calculations. It shows what passed, what needs attention, and how someone else can check the same result.</p>
+ <ol class="minute-steps" aria-label="How to use PCS"><li><strong>1. Pick a question</strong><span>For example: do two lists share an ID?</span></li><li><strong>2. Run the check</strong><span>See the result and the rows to review.</span></li><li><strong>3. Save the report</strong><span>Keep it or share it for someone to recheck.</span></li></ol>
+ <section class="minute-demo" id="minuteExamplePanel" aria-labelledby="minuteQuestion">
+  <h2 id="minuteQuestion">Try it: do these lists share an ID?</h2>
+  <p>Two groups should be separate. Each person has an ID number. Does any ID appear in both?</p>
+  <p class="minute-limit">Made-up example. No files needed.</p>
+  <div class="minute-lists"><table><caption>Group A</caption><thead><tr><th scope="col">ID</th><th scope="col">Name</th></tr></thead><tbody id="minuteRows0"><tr><td>101</td><td>Alex</td></tr><tr><td>102</td><td>Jordan</td></tr><tr><td>103</td><td>Sam</td></tr></tbody></table><table><caption>Group B</caption><thead><tr><th scope="col">ID</th><th scope="col">Name</th></tr></thead><tbody id="minuteRows1"><tr><td>103</td><td>Sam</td></tr><tr><td>104</td><td>Robin</td></tr><tr><td>105</td><td>Casey</td></tr></tbody></table></div>
+  <div class="minute-actions"><button class="button primary" id="minuteCheck" type="button" disabled>Check these lists</button><button class="button secondary" id="minuteChange" type="button" disabled>Try lists with no shared IDs</button></div>
+  <p class="minute-status" id="minuteStatus" role="status" aria-live="polite">Loading the example checker. If the button stays disabled, reload this page.</p><p id="minuteExample" class="minute-limit">Example 1 of 2.</p>
+  <section class="minute-result" id="minuteResults" hidden aria-labelledby="minuteOutcome"><h3 id="minuteOutcome" tabindex="-1">No result yet</h3><p id="minuteDetail"></p><p class="minute-limit">This checks matching IDs only. It does not check whether the names or other details are correct. Calculated in this browser.</p><div class="minute-actions"><button class="button primary" id="minuteReport" type="button" disabled>Save a readable report</button><button class="button secondary" id="minuteReplay" type="button" disabled>Save files for a recheck</button></div><p>Open the readable report on your device. To check the result again, open the recheck file in <a href="check-my-files.html#openDocument">Check my files</a> and select “Check for shared IDs”.</p></section>
+  <details><summary>How does this relate to the rest of PCS?</summary><p>This example uses the same CSV checker as “Check my files”. A CSV is a spreadsheet saved as a simple text file. Everything here runs on your device.</p><p>The wider PCS project also studies checks for scientific calculations, mathematical proofs and AI systems. Each tool explains exactly what it checks. This browser example does not run Lean, the mathematical proof checker, or establish that an AI is safe.</p></details>
+  <noscript><p>The interactive example needs JavaScript to run on your device. The tables above are still readable. <a href="check-my-files.html">Open the file checker</a> to see its instructions and downloadable app.</p></noscript>
+ </section>
+ <section class="minute-next" aria-labelledby="minuteNext"><h2 id="minuteNext">Ready to try your own work?</h2><p>Choose two spreadsheet exports with an ID column. The file checker explains how.</p><div class="minute-actions"><a class="button primary" href="check-my-files.html">Check my own files</a><a class="button secondary" href="research.html">Explore the research</a></div><p class="minute-limit">No account is needed for these local file checks.</p></section>
+</section>
+<details class="minute-more" id="ruleInvestigation"><summary>Optional: explore rule changes, games and technical details</summary>
 <section class="xp-hero">
   <div class="xp-hero-content"><span class="xp-eyebrow"><span class="xp-dot"></span> TRY A RULE CHECK</span>
-    <h1>Did the assistant <em>change the rule?</em></h1>
+    <h2>Did the assistant <em>change the rule?</em></h2>
     <p>Test whether an assistant changed a rule. You will find a concrete example and can save it for someone else to recheck. No coding or logic background needed.</p>
     <div class="xp-actions"><a class="button primary" href="#firstInvestigation">Start my first investigation ↓</a><a class="button secondary" href="#fiReader">I have an evidence file</a></div>
     <div class="xp-hero-trust"><span>✓ No sign-in</span><span>✓ No project upload</span><span>✓ Runs on your device</span></div>
@@ -123,5 +142,6 @@
  <div class="xp-last-cta"><div><strong>Want to help build the system itself?</strong><p>Browse concrete needed tasks, from community outreach to Lean verification. Responsibility and authority are earned through review.</p></div><a class="button secondary" href="tasks.html">Find work that matters →</a></div>
 </section>
 </details>
-</main><footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Make claims checkable, keep boundaries visible.</p></div><div class="footercol"><strong>Try</strong><a href="arena.html">Arena</a><a href="guided-submission.html">Guided submission</a><a href="research-preview.html">Editable JSON lab</a></div><div class="footercol"><strong>Trust</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="index.html">Home</a></div></div></footer>
-</div><script src="site.js"></script><script type="module" src="experience.js"></script><script type="module" src="first-investigation.mjs"></script></body></html>
+</details>
+</main><footer class="minute-footer"><p>Proof-Carrying Science</p><p><a href="index.html">Home</a> · <a href="check-my-files.html">Check my files</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p></footer>
+</div><script src="site.js"></script><script type="module" src="one-minute.mjs"></script><script type="module" src="experience.js"></script><script type="module" src="first-investigation.mjs"></script></body></html>

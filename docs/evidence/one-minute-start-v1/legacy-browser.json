@@ -1,0 +1,53 @@
+{
+  "rows": [
+    {
+      "width": 320,
+      "keyboard": true,
+      "actual_downloads": true,
+      "stale_edits_invalidated": true,
+      "reset_invalidates_reader": true,
+      "delayed_reads_invalidated": true,
+      "rejected_files": 4,
+      "old_lab_preserved": true,
+      "scroll": 320
+    },
+    {
+      "width": 390,
+      "keyboard": true,
+      "actual_downloads": true,
+      "stale_edits_invalidated": true,
+      "reset_invalidates_reader": true,
+      "delayed_reads_invalidated": true,
+      "rejected_files": 4,
+      "old_lab_preserved": true,
+      "scroll": 390
+    },
+    {
+      "width": 768,
+      "keyboard": true,
+      "actual_downloads": true,
+      "stale_edits_invalidated": true,
+      "reset_invalidates_reader": true,
+      "delayed_reads_invalidated": true,
+      "rejected_files": 4,
+      "old_lab_preserved": true,
+      "scroll": 768
+    },
+    {
+      "width": 1440,
+      "keyboard": true,
+      "actual_downloads": true,
+      "stale_edits_invalidated": true,
+      "reset_invalidates_reader": true,
+      "delayed_reads_invalidated": true,
+      "rejected_files": 4,
+      "old_lab_preserved": true,
+      "scroll": 1440
+    }
+  ],
+  "no_javascript_fallback": true,
+  "browser_version": "151.0.7922.173",
+  "unavailable_checker_fails_closed": true,
+  "kernel_executed_in_browser": false,
+  "production_authority": false
+}

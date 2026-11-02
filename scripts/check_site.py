@@ -278,7 +278,7 @@ index_page = ROOT / "index.html"
 if index_page.exists():
     index_text = index_page.read_text(encoding="utf-8")
     for required_text in [
-        "Check the evidence.<br>See what <em>holds up.</em>",
+        "Check your work.<br>Keep the <em>evidence.</em>",
         "Crowdsource the work. Never the truth.",
         "L2 opens general paid-task eligibility",
         "L4 is the review-authority threshold",
@@ -286,10 +286,10 @@ if index_page.exists():
         "Attach the exact evidence",
         "Let someone else verify it",
         "A green result never proves universal AI safety.",
-        "what remains unknown.",
-        "Start with something useful to you.",
-        "Understand how a check works",
-        "Look inside a shared result",
+        "what needs attention",
+        "find a shared ID in two lists.",
+        "Try a 1-minute example",
+        "Check my files",
         "Start from your role",
         "What are you here to do?",
         "I have a computation or result to submit.",
