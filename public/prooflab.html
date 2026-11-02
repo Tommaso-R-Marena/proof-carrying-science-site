@@ -6,20 +6,12 @@
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/prooflab.html">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="prooflab.css">
-<link rel="stylesheet" href="game-guide.css"></head><body class="prooflab-page">
+<link rel="stylesheet" href="game-guide.css"></head><body data-simple-game="true" class="prooflab-page">
 <div class="topbar"><div class="shell"><span>PCS ARENA / PROOFLAB · source-grounded, human-guided reasoning</span><a href="privacy.html">Privacy and research consent ↗</a></div></div>
 <div class="shell">
 <nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="arena.html">Arena</a><a href="forge-duel.html">Shield Duel</a><a href="tasks.html">Contribute</a><a class="button dark" href="account.html">Account</a></div></nav>
 <main>
-<section class="pl-hero">
-  <div><span class="pl-overline">THE REAL-THEOREM LAB / SEASON 01</span>
-  <h1>PROOF<span>LAB</span><small>Choose the next investigation. Learn from every wrong turn.</small></h1>
-  <p>Each round gives you a small set of plausible things to inspect next around an actual source-pinned PCS theorem. Choose one, explain why, and discover whether its prerequisites were really in place. The candidate set is reconstructed by the server, so an opt-in trace becomes controlled next-step planning data rather than a loose click log.</p>
-  <div class="pl-hero-buttons"><a href="#plGame" class="pl-main-cta">Enter the lab <span>↘</span></a><a href="#plHow" class="pl-ghost-cta">How the science works ↗</a></div>
-  <div class="pl-hero-trust"><span>✓ Free · no login to play</span><span>✓ Real source-pinned theorem targets</span><span>✓ No auto-upload</span></div>
-  </div>
-  <div class="pl-schematic" aria-hidden="true"><div class="pl-schematic-core">THEOREM <small>CLAIM</small></div><div class="pl-schematic-connectors"><span>Premises</span><span>Evidence</span><span>Challenges</span></div><div class="pl-schematic-result">LEAN AUTHORITY <strong>separate check</strong></div></div>
-</section>
+<header class="game-intro-compact"><p class="game-intro-name">ProofLab · PCS games</p><h1>Choose what to check next.</h1><p>Pick a card, see whether it is ready, and build an investigation.</p></header><noscript><p class="game-guide-note">This game needs JavaScript to play. You can still <a href="arena.html">choose a game</a> or <a href="experience.html">read what PCS does</a>.</p></noscript>
 <section class="pl-metrics" aria-label="Benchmark and local progress">
   <div><strong>40</strong><span>Actual Lean targets indexed</span></div>
   <div><strong>22</strong><span>Public training missions</span></div>
@@ -109,6 +101,16 @@
 </div>
 <div class="pl-heldout"><span>🔒 THE BENCHMARK FIREWALL</span><p>22 training tasks are public. Eight validation and ten evaluation theorem targets remain withheld. All originate in one PCS repository, so <strong>cross-project generalization remains untested</strong>. Private validation is needed before claiming research progress.</p></div>
 </section>
+
+<details class="game-background" id="gameBackground"><summary>About ProofLab and its research</summary><section class="pl-hero">
+  <div><span class="pl-overline">THE REAL-THEOREM LAB / SEASON 01</span>
+  <h2>PROOF<span>LAB</span><small>Choose the next investigation. Learn from every wrong turn.</small></h2>
+  <p>Each round gives you a small set of plausible things to inspect next around an actual source-pinned PCS theorem. Choose one, explain why, and discover whether its prerequisites were really in place. The candidate set is reconstructed by the server, so an opt-in trace becomes controlled next-step planning data rather than a loose click log.</p>
+  <div class="pl-hero-buttons"><a href="#plGame" class="pl-main-cta">Enter the lab <span>↘</span></a><a href="#plHow" class="pl-ghost-cta">How the science works ↗</a></div>
+  <div class="pl-hero-trust"><span>✓ Free · no login to play</span><span>✓ Real source-pinned theorem targets</span><span>✓ No auto-upload</span></div>
+  </div>
+  <div class="pl-schematic" aria-hidden="true"><div class="pl-schematic-core">THEOREM <small>CLAIM</small></div><div class="pl-schematic-connectors"><span>Premises</span><span>Evidence</span><span>Challenges</span></div><div class="pl-schematic-result">LEAN AUTHORITY <strong>separate check</strong></div></div>
+</section></details>
 </main>
 <footer><div class="footergrid"><div class="footerbrand"><a href="index.html" class="brand"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Bring human exploration and independently checked science together.</p></div><div class="footercol"><strong>Play</strong><a href="arena.html">Arena</a><a href="arena-proof-quest.html">Proof Quest</a><a href="forge-duel.html">Shield Duel</a></div><div class="footercol"><strong>Understand</strong><a href="trust.html">Trust Center</a><a href="privacy.html">Privacy</a><a href="experience.html">Start here</a></div></div></footer>
 </div><script src="site.js"></script><script type="module" src="prooflab.js"></script><script type="module" src="game-guide.mjs"></script></body></html>

@@ -1,0 +1,427 @@
+{
+  "format": "pcs-game-usability-browser-v1",
+  "guides": [
+    {
+      "game": "world-builder",
+      "path": "/world-builder.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "bridge-builder",
+      "path": "/bridge-builder.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "memory-workshop",
+      "path": "/memory-workshop.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "assurance-fold",
+      "path": "/assurance-fold.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-countermodel",
+      "path": "/arena-countermodel.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-proof-quest",
+      "path": "/arena-proof-quest.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-safety-forge",
+      "path": "/arena-safety-forge.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "prooflab",
+      "path": "/prooflab.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "meaning-forge",
+      "path": "/meaning-forge.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-gauntlet",
+      "path": "/semantic-gauntlet.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "forge-duel",
+      "path": "/forge-duel.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-repair-lab",
+      "path": "/semantic-repair-lab.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-multistep-lab",
+      "path": "/semantic-multistep-lab.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "repair-model-lab",
+      "path": "/repair-model-lab.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "intervention-lab",
+      "path": "/intervention-lab.html",
+      "width": 320,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "world-builder",
+      "path": "/world-builder.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "bridge-builder",
+      "path": "/bridge-builder.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "memory-workshop",
+      "path": "/memory-workshop.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "assurance-fold",
+      "path": "/assurance-fold.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-countermodel",
+      "path": "/arena-countermodel.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-proof-quest",
+      "path": "/arena-proof-quest.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-safety-forge",
+      "path": "/arena-safety-forge.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "prooflab",
+      "path": "/prooflab.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "meaning-forge",
+      "path": "/meaning-forge.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-gauntlet",
+      "path": "/semantic-gauntlet.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "forge-duel",
+      "path": "/forge-duel.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-repair-lab",
+      "path": "/semantic-repair-lab.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-multistep-lab",
+      "path": "/semantic-multistep-lab.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "repair-model-lab",
+      "path": "/repair-model-lab.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "intervention-lab",
+      "path": "/intervention-lab.html",
+      "width": 390,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "world-builder",
+      "path": "/world-builder.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "bridge-builder",
+      "path": "/bridge-builder.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "memory-workshop",
+      "path": "/memory-workshop.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "assurance-fold",
+      "path": "/assurance-fold.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-countermodel",
+      "path": "/arena-countermodel.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-proof-quest",
+      "path": "/arena-proof-quest.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-safety-forge",
+      "path": "/arena-safety-forge.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "prooflab",
+      "path": "/prooflab.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "meaning-forge",
+      "path": "/meaning-forge.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-gauntlet",
+      "path": "/semantic-gauntlet.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "forge-duel",
+      "path": "/forge-duel.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-repair-lab",
+      "path": "/semantic-repair-lab.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-multistep-lab",
+      "path": "/semantic-multistep-lab.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "repair-model-lab",
+      "path": "/repair-model-lab.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "intervention-lab",
+      "path": "/intervention-lab.html",
+      "width": 768,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "world-builder",
+      "path": "/world-builder.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "bridge-builder",
+      "path": "/bridge-builder.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "memory-workshop",
+      "path": "/memory-workshop.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "assurance-fold",
+      "path": "/assurance-fold.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-countermodel",
+      "path": "/arena-countermodel.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-proof-quest",
+      "path": "/arena-proof-quest.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "arena-safety-forge",
+      "path": "/arena-safety-forge.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "prooflab",
+      "path": "/prooflab.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "meaning-forge",
+      "path": "/meaning-forge.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-gauntlet",
+      "path": "/semantic-gauntlet.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "forge-duel",
+      "path": "/forge-duel.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-repair-lab",
+      "path": "/semantic-repair-lab.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "semantic-multistep-lab",
+      "path": "/semantic-multistep-lab.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "repair-model-lab",
+      "path": "/repair-model-lab.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    },
+    {
+      "game": "intervention-lab",
+      "path": "/intervention-lab.html",
+      "width": 1440,
+      "three_steps": true,
+      "escape_closes": true
+    }
+  ],
+  "keyboard_and_undo_worlds": 4,
+  "unexpected_writes": 0
+}
