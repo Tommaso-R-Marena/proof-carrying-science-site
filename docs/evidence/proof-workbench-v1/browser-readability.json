@@ -1,0 +1,67 @@
+{
+  "format": "pcs-proof-workbench-browser-v1",
+  "transport": "explicit loopback provider with actual archived proof; not fresh authorization",
+  "fresh_authorization_exercised": false,
+  "real_human_participants": 0,
+  "rows": [
+    {
+      "width": 320,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "exact_statement_contrast": 16.74077676052159,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "exact_statement_contrast": 16.74077676052159,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "exact_statement_contrast": 16.74077676052159,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "unsupported_not_published": true,
+      "recorded_not_presented_as_fresh": true,
+      "offline_evidence_matches": true,
+      "exact_statement_contrast": 16.74077676052159,
+      "file_scheme_tested": false,
+      "network_disabled_during_offline_download": true,
+      "study_automation_excluded": true,
+      "overflow": false
+    }
+  ],
+  "recovery": {
+    "same_idempotency_key_after_uncertain_submit": true,
+    "acknowledged_ticket_poll_only": true,
+    "changed_meaning_requires_reconfirmation": true,
+    "edited_claim_clears_visible_result": true,
+    "rejected_import_clears_visible_result": true,
+    "private_context_excluded": true
+  },
+  "source_sha256": {
+    "public/proof-workbench.css": "6f4bc78e97c20d8b6d201f0e9d0905aea9d4e65e3894ecef76051a52c76b3b99",
+    "public/proof-workbench.mjs": "30c4a76392640c89684f7f6a1e75e6cb8fb4ec3915968f93600489776c2e2468",
+    "public/proof-workbench-core.mjs": "fb25d7a3742b2c3bb654bba0fe0837532536dfa5d2dd7d6589e4d53669e8fac8",
+    "public/proof-workbench.html": "ce2e98658c5b68ea4d89926acc9aa4827402da24cd7b22507c44c949dc7783cd",
+    "scripts/browser_proof_workbench.cjs": "512f9facae562a4209b7e423613a8577bb7066cd5b2015af7587f152c5802c3b"
+  }
+}

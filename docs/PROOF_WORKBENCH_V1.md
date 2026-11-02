@@ -91,7 +91,7 @@ axioms. There is no learned unique-solve gain. Read the full protocol, raw recor
 setup-counter disclosure and source provenance in
 [the prospective study](../research/proof-search-prospective-v1/README.md).
 
-Local verification includes 532 complete Node tests with zero failures or skips,
+Local verification includes 533 complete Node tests with zero failures or skips,
 nine new Python tool tests, all 87 preview types actually elaborated by Lean,
 strict source checks and actual report replay. The receiving adversarial campaign
 rejects producer Lean commands, producer library substitution and a
@@ -125,3 +125,20 @@ and never checks out or executes archived producer code. Self-contained bare-Git
 rejection without depending on checkout depth. A required full-history receiving
 integration test additionally reconstructs the actual original evaluator in a
 fresh bare repository with those old objects absent. Historical result files remain byte-identical.
+
+Live mobile inspection found the exact-statement preview had inherited pale text
+from the global dark code-block theme. Its measured contrast was 1.12:1. The
+scoped light-panel foreground now measures 16.74:1 at all four tested widths;
+the browser gate requires at least 4.5:1 for this normal-sized text. Editing a
+claim or rejecting an imported report clears the previous visual result, identity,
+job link and downloads. An unresolved offline report disables its Lean-source
+download. These are automated accessibility and state checks, not human study
+results. Original evidence files are retained alongside the new readability run.
+
+The deployed workbench submitted actual public job 41372284199 through the
+frozen learned memory policy. Its report and qualification are archived in
+`docs/evidence/proof-workbench-v1/live-model-*`. Independent typed-action replay
+and standalone Lean compilation succeeded with no axioms. Source assets matched
+website revision `0f01989e9cf6275e55c24110ab1a921d02f4549c`; private context was
+excluded. This is an execution qualification on a supported example, not a new
+held-out sample, model advantage or independently attested neural computation.
