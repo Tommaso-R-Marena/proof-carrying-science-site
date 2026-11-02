@@ -39,6 +39,7 @@ jobs:
           python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results research/proof-search-prospective-v1/run-2 > receiving-run-2.json
           python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --negative-controls > receiving-controls.json
           python scripts/replay_proof_workbench.py --core .ci-components/frozen-study public/proof-workbench-example.json > workbench-receiving.json
+          python scripts/replay_proof_workbench.py --core .ci-components/frozen-study docs/evidence/proof-workbench-v1/live-model-report.json > live-workbench-receiving.json
           python scripts/proof_workbench_adversarial.py --core .ci-components/frozen-study
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
@@ -47,4 +48,5 @@ jobs:
           path: |
             receiving-*.json
             workbench-receiving.json
+            live-workbench-receiving.json
           retention-days: 14

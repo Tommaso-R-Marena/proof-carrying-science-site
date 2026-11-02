@@ -24,13 +24,18 @@ function controls(){
  $('wbSave').disabled=!report||busy;$('wbEvidence').disabled=!report||busy;$('wbLean').disabled=!report||busy||!proofSource(report);
  if(!pending.persistent)$('wbRecovery').textContent='Tab storage is unavailable. Keep this page open: reloading will lose recovery metadata. A saved request never proves a claim.';
 }
+function clearResult(message='No result for the current question.'){
+ report=null;
+ $('wbOutcome').textContent=message;$('wbOutcome').removeAttribute('data-state');$('wbAttribution').textContent='';$('wbIdentity').textContent='No execution identity.';$('wbAxioms').textContent='No proof assumptions reported.';$('wbRaw').textContent='No current evidence.';
+ $('wbJob').hidden=true;$('wbJob').removeAttribute('href');
+}
 function choose(selected){
  if(busy)return;entry=selected;report=null;$('wbMeaningConsent').checked=false;$('wbPublishConsent').checked=false;
  $('wbClaim').value=selected?.statement||$('wbClaim').value;$('wbMeaning').textContent=selected?.meaning||'This text is outside the supported workbench forms. No mathematical input has been sent.';
  $('wbFormal').textContent=selected?.lean||'No recognized mathematical statement.';
  if(selected)$('wbStrategy').value=selected.recommended_family;
  $('wbRecognition').textContent=selected?'Recognized. Review the exact mathematical statement below.':'Use a supplied form or open the advanced lab for broader supported language.';
- $('wbOutcome').textContent='No result for the current question.';$('wbOutcome').removeAttribute('data-state');$('wbAttribution').textContent='';$('wbIdentity').textContent='No execution identity.';$('wbAxioms').textContent='No proof assumptions reported.';$('wbRaw').textContent='No current evidence.';
+ clearResult();
  for(const button of $('wbCases').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.case===selected?.id));
  step(selected?2:1);controls();if(selected)event('claim-chosen');
 }
@@ -84,7 +89,7 @@ async function execute(resume=false){
  finally{busy=false;controls();}
 }
 $('wbRecognize').addEventListener('click',()=>choose(recognize($('wbClaim').value,catalog)));
-$('wbClaim').addEventListener('input',()=>{if(busy)return;entry=null;report=null;$('wbMeaningConsent').checked=false;$('wbPublishConsent').checked=false;$('wbFormal').textContent='Edited text has not been recognized or checked.';$('wbOutcome').textContent='The question changed; earlier results do not apply.';step(1);controls();});
+$('wbClaim').addEventListener('input',()=>{if(busy)return;choose(null);$('wbFormal').textContent='Edited text has not been recognized or checked.';$('wbOutcome').textContent='The question changed; earlier results do not apply.';});
 $('wbMeaningConsent').addEventListener('change',()=>{if($('wbMeaningConsent').checked)event('meaning-confirmed');controls();});
 $('wbPublishConsent').addEventListener('change',controls);
 $('wbStrategy').addEventListener('change',()=>{$('wbPublishConsent').checked=false;controls();});
@@ -97,7 +102,7 @@ $('wbEvidence').addEventListener('click',()=>{if(report){save('pcs-proof-result.
 $('wbLean').addEventListener('click',()=>{if(report&&proofSource(report)){save('pcs-proof-result.lean',proofSource(report),'text/plain');event('proof-exported');}});
 $('wbReplay').addEventListener('toggle',()=>{if($('wbReplay').open)event('replay-instructions-opened');});
 $('wbExample').addEventListener('click',async()=>{if(busy)return;try{const example=await validateReport(await api('proof-workbench-example.json'),catalog);choose(catalog.entries.find(e=>e.id===example.entry_id));showReport(example);notice('This is a recorded real-model result. No new public request was submitted.');}catch(error){notice('Recorded example unavailable: '+error.message);}});
-$('wbImport').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>12*1024*1024)throw Error('Evidence file exceeds the size limit.');const value=await validateReport(JSON.parse(await file.text()),catalog);choose(catalog.entries.find(e=>e.id===value.entry_id));showReport(value,{imported:true});notice('Opened a recorded report locally. Independent replay has not run here.');}catch(error){report=null;$('wbOutcome').textContent='Report rejected: '+error.message;controls();}});
+$('wbImport').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>12*1024*1024)throw Error('Evidence file exceeds the size limit.');const value=await validateReport(JSON.parse(await file.text()),catalog);choose(catalog.entries.find(e=>e.id===value.entry_id));showReport(value,{imported:true});notice('Opened a recorded report locally. Independent replay has not run here.');}catch(error){clearResult('Report rejected: '+error.message);controls();}});
 controls();
 try{
  catalog=await validateCatalog(await api('proof-workbench-catalog.json'));

@@ -15,3 +15,11 @@ provider evidence is not rewritten or replaced by the portable projection.
 
 No human study results have been collected. Study exports are opt-in local
 usability data, not automatic model training authorization.
+
+`browser-readability.json` adds measured contrast (16.74:1), stale-result clearing
+and rejected-import checks without replacing the earlier browser record.
+`contrast-before.json` is the actual pre-fix live measurement. The live
+`live-model-report.json` and `live-model-qualification.json` retain public job
+41372284199 and its source-bound independent replay. No private ticket or context
+is included. Receiving CI replays this actual proof report as well as the
+recorded public example. Human participants remain zero.

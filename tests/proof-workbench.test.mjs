@@ -36,3 +36,11 @@ test('proof UI keeps public consent separate, has fixed routes and acknowledged-
  assert.ok(js.includes('if(!request)'));assert.ok(js.includes('Idempotency-Key'));assert.ok(js.includes('pending.bind(request)'));assert.ok(js.includes('Sender-reported outcome'));assert.ok(js.includes("$('wbStrategy').value=JSON.parse(saved.body_json).model_family"));
  assert.doesNotMatch(js,/wbContext\)\.value|wbContext'\)\.value/);
 });
+
+test('an unresolved offline report cannot offer a nonexistent Lean proof download',async()=>{
+ const e=structuredClone(record.evidence);
+ for(const role of ['result','strong_baseline','previous','baseline'])if(e[role]){e[role].status='unknown';if(e[role].search)e[role].search.receipt=null;}
+ const unknown=await makeReport(catalog,entry,{core_sha:record.source_revision,request_id:record.request_id,model_family:record.requested_family},e);
+ assert.equal(unknown.outcome,'unresolved');assert.equal(proofSource(unknown),null);
+ assert.match(await shareHtml(unknown),/<button id="save-lean" disabled>/);
+});

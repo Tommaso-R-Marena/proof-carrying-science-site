@@ -1,0 +1,26 @@
+{
+  "format": "pcs-live-guided-proof-qualification-v1",
+  "request_id": "7e4a39587433eff713dfa0c4e15acb34",
+  "run_url": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/41372284199",
+  "source_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+  "model_mode": "learned",
+  "outcome": "proved",
+  "report_sha256": "0b2e58b874414b617a6055ac826588dd7da7fd13b707399bfa84b379bd8f27f4",
+  "axioms": [],
+  "actual_public_submissions": 1,
+  "private_context_excluded": true,
+  "matching_deployed_source_assets": 4,
+  "independent_typed_action_replay": true,
+  "standalone_Lean_compilation": true,
+  "human_participants": 0,
+  "physical_neural_execution_independently_attested": false,
+  "pcs_authority": false,
+  "website_revision": "0f01989e9cf6275e55c24110ab1a921d02f4549c",
+  "source_sha256": {
+    "public/proof-workbench.mjs": "5048bab25d1fbcf725ddf474c504907cc160fa71430ea48bf823940170e5a79f",
+    "public/proof-workbench-core.mjs": "cc48ff6b0df2dd46a5f7d0c4e926614dcb35eb3ab4af941de847604e9f85a45b",
+    "public/proof-workbench-catalog.json": "0690016a529ad7ab6a0946b2347c2b137228eab3167031a29ebac3b7a612fda1",
+    "public/proof-workbench-pilot.mjs": "4a31f636f56f781b620069d3c580d53032aafb4f142cb8c9bc65d5078eb3efd8"
+  }
+}
