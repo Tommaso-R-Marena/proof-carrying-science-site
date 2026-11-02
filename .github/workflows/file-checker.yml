@@ -74,7 +74,7 @@ jobs:
           PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_file_check.cjs
           PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_change_review.cjs
           python scripts/analyze_usability_sessions.py "${{ runner.temp }}/pcs-files-browser/study-automated-session.json" > "${{ runner.temp }}/pcs-files-browser/study-analysis.json"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: pcs-files-${{ runner.os }}-${{ runner.arch }}
           path: |
