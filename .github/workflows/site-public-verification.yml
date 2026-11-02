@@ -162,7 +162,7 @@ jobs:
           node scripts/verify_learning_downloads.mjs --core .ci-components/pcs --input browser-learning-results.json | tee learning-download-results.log
           PCS_RESEARCH_DB_STATE="$RUNNER_TEMP/site-state" PCS_RESEARCH_OUTPUT="$PWD/browser-research-results.json" npm run test:browser:research
           python scripts/security_campaign.py --static --base-url http://127.0.0.1:8788
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: ${{ always() }}
         with:
           name: public-site-${{ github.run_id }}-${{ github.run_attempt }}

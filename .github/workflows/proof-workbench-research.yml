@@ -41,7 +41,7 @@ jobs:
           python scripts/replay_proof_workbench.py --core .ci-components/frozen-study public/proof-workbench-example.json > workbench-receiving.json
           python scripts/replay_proof_workbench.py --core .ci-components/frozen-study docs/evidence/proof-workbench-v1/live-model-report.json > live-workbench-receiving.json
           python scripts/proof_workbench_adversarial.py --core .ci-components/frozen-study
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: independent-receiving-${{ github.run_id }}-${{ github.run_attempt }}

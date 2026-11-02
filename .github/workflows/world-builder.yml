@@ -56,7 +56,7 @@ jobs:
           node scripts/verify_search_distance_lean.mjs | tee "$RUNNER_TEMP/world-builder/search-distance-lean.json"
           python3 scripts/verify_search_route.py "$RUNNER_TEMP/world-builder/coach-route.json"
           node scripts/verify_world_builder_downloads.mjs "$RUNNER_TEMP/world-builder" | tee "$RUNNER_TEMP/world-builder/lean-results.json"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: world-builder-evidence
