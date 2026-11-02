@@ -34,6 +34,7 @@ jobs:
           python -m pip install --require-hashes -r .ci-components/frozen-study/requirements-build.lock -r .ci-components/frozen-study/requirements-dev.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/frozen-study
           python scripts/check_proof_search_artifacts.py
+          python scripts/check_proof_provenance_recovery.py
           python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results research/proof-search-prospective-v1/run-1 > receiving-run-1.json
           python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results research/proof-search-prospective-v1/run-2 > receiving-run-2.json
           python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --negative-controls > receiving-controls.json

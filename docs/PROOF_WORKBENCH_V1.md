@@ -121,6 +121,7 @@ axiom has been introduced.
 Original protocol/evaluator Git objects are retained in a hash-bound data-only
 bundle, because the host enforces linear-history merges. Receiving CI imports
 those objects, verifies the original commit/source hashes and protocol ancestry,
-and never checks out or executes archived producer code. Real bare-Git tests
-verify recovery when the old objects are absent and fail closed when the trusted
-parent is missing. Historical result files remain byte-identical.
+and never checks out or executes archived producer code. Self-contained bare-Git unit fixtures test data-only restoration and missing-parent
+rejection without depending on checkout depth. A required full-history receiving
+integration test additionally reconstructs the actual original evaluator in a
+fresh bare repository with those old objects absent. Historical result files remain byte-identical.

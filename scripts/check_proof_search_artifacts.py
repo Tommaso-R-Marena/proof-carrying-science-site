@@ -3,15 +3,15 @@
 import hashlib,json,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];STUDY=ROOT/'research/proof-search-prospective-v1'
-def restore_provenance(repo=ROOT):
+def restore_git_bundle(repo,bundle,expected):
  # Import Git objects only. Never check out or execute archived producer code.
- # The bundle's SHA-256 is checked by the artifact closure before this call.
- bundle=STUDY/'original-source.bundle'
- expected='8d872cc6dc401dc3b1ebd7e228ab9cab45752b2a refs/pcs-provenance/prospective-evaluation-v1'
  heads=subprocess.check_output(['git','bundle','list-heads',str(bundle)],cwd=repo,text=True).strip()
  if heads!=expected:raise ValueError('Unexpected archived provenance ref')
  subprocess.run(['git','bundle','verify',str(bundle)],cwd=repo,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
  subprocess.run(['git','bundle','unbundle',str(bundle)],cwd=repo,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+def restore_provenance(repo=ROOT):
+ # The bundle's SHA-256 is checked by the artifact closure before this call.
+ restore_git_bundle(repo,STUDY/'original-source.bundle','8d872cc6dc401dc3b1ebd7e228ab9cab45752b2a refs/pcs-provenance/prospective-evaluation-v1')
  frozen=subprocess.check_output(['git','show','f3549c30921ea2e1527b10d9f43bb0700e10ff39:research/proof-search-prospective-v1/protocol.json'],cwd=repo)
  if frozen!=(STUDY/'protocol.json').read_bytes():raise ValueError('Original protocol commit bytes differ')
 def check():

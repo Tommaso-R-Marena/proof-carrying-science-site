@@ -36,17 +36,23 @@ class ReceivingStatusTests(unittest.TestCase):
   self.assertEqual(study.final_status({'search_status':'unknown'},{'status':'verified'}),'unknown')
 
 class ProvenanceTests(unittest.TestCase):
- def test_original_git_objects_restore_after_linear_integration(self):
+ def test_data_only_git_object_restore_without_repository_history(self):
   archive=module('check_proof_search_artifacts')
   with tempfile.TemporaryDirectory() as tmp:
-   subprocess.run(['git','init','--bare','-q',tmp],check=True)
-   subprocess.run(['git','fetch','--depth=1',str(ROOT),'7ee63e4b99a332330d3b94d6ce00f83dde7bebfb'],cwd=tmp,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
-   original='e7197109331cd6f3e55ccd8a04d4d1704edaff2f:scripts/run_proof_search_evaluation.py'
-   absent=subprocess.run(['git','cat-file','-e',original],cwd=tmp,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
-   self.assertNotEqual(absent.returncode,0)
-   archive.restore_provenance(Path(tmp))
-   source=subprocess.check_output(['git','show',original],cwd=tmp)
-   self.assertEqual(hashlib.sha256(source).hexdigest(),'937190fa43b848abbcb5fb16a54e457a50b6918ee12ab28ffb4c2b40c148248f')
+   folder=Path(tmp);source=folder/'source';repo=folder/'receiver';source.mkdir()
+   subprocess.run(['git','init','-q',str(source)],check=True);(source/'base.txt').write_text('explicit Git fixture, no authority verdicts\n')
+   def commit():
+    subprocess.run(['git','add','.'],cwd=source,check=True)
+    subprocess.run(['git','-c','user.name=Synthetic Git fixture','-c','user.email=fixture@example.test','commit','-qm','data-only provenance fixture'],cwd=source,check=True)
+    return subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip()
+   base=commit();subprocess.run(['git','init','--bare','-q',str(repo)],check=True)
+   subprocess.run(['git','fetch','--depth=1',str(source),base],cwd=repo,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+   original=b'raise RuntimeError("producer archive must never be executed")\n';(source/'evaluator.py').write_bytes(original);head=commit();ref='refs/pcs-provenance/test-data'
+   subprocess.run(['git','update-ref',ref,head],cwd=source,check=True);bundle=folder/'test.bundle'
+   subprocess.run(['git','bundle','create',str(bundle),ref,'^'+base],cwd=source,check=True)
+   missing=subprocess.run(['git','cat-file','-e',head+':evaluator.py'],cwd=repo,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE);self.assertNotEqual(missing.returncode,0)
+   archive.restore_git_bundle(repo,bundle,head+' '+ref)
+   self.assertEqual(subprocess.check_output(['git','show',head+':evaluator.py'],cwd=repo),original)
  def test_missing_trusted_parent_fails_closed(self):
   archive=module('check_proof_search_artifacts')
   with tempfile.TemporaryDirectory() as tmp:
