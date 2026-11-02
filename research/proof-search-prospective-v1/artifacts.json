@@ -2,6 +2,7 @@
   "format": "pcs-prospective-artifact-closure-v1",
   "files": {
     "negative-controls.json": "638bf03b10bb30a17d153c270e2a70ebf3937dc92551736a733dc27d7d28e863",
+    "original-source.bundle": "ed2de7b0e39cb4dd33c11bc52cf00ec256c39983656ed783d740b718358e3396",
     "protocol.json": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
     "protocol.sha256": "4214c89f54825a3a1b06060430a34a9c25d1413b6aad9ea669ed2da6f1a7fea0",
     "receiving-run-1.json": "ac505f92f6ca1161a9586180f982715674f22eb4ac256b9346209bf1177d69e1",

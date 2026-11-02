@@ -35,6 +35,24 @@ class ReceivingStatusTests(unittest.TestCase):
   self.assertEqual(study.final_status({'search_status':'verified'},None),'replay_failed')
   self.assertEqual(study.final_status({'search_status':'unknown'},{'status':'verified'}),'unknown')
 
+class ProvenanceTests(unittest.TestCase):
+ def test_original_git_objects_restore_after_linear_integration(self):
+  archive=module('check_proof_search_artifacts')
+  with tempfile.TemporaryDirectory() as tmp:
+   subprocess.run(['git','init','--bare','-q',tmp],check=True)
+   subprocess.run(['git','fetch','--depth=1',str(ROOT),'7ee63e4b99a332330d3b94d6ce00f83dde7bebfb'],cwd=tmp,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+   original='e7197109331cd6f3e55ccd8a04d4d1704edaff2f:scripts/run_proof_search_evaluation.py'
+   absent=subprocess.run(['git','cat-file','-e',original],cwd=tmp,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+   self.assertNotEqual(absent.returncode,0)
+   archive.restore_provenance(Path(tmp))
+   source=subprocess.check_output(['git','show',original],cwd=tmp)
+   self.assertEqual(hashlib.sha256(source).hexdigest(),'937190fa43b848abbcb5fb16a54e457a50b6918ee12ab28ffb4c2b40c148248f')
+ def test_missing_trusted_parent_fails_closed(self):
+  archive=module('check_proof_search_artifacts')
+  with tempfile.TemporaryDirectory() as tmp:
+   subprocess.run(['git','init','--bare','-q',tmp],check=True)
+   with self.assertRaises(subprocess.CalledProcessError):archive.restore_provenance(Path(tmp))
+
 class SyncTests(unittest.TestCase):
  def fixture(self,folder):
   core=folder/'core';site=folder/'site';core.mkdir();site.mkdir()

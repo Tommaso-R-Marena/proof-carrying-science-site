@@ -92,7 +92,7 @@ setup-counter disclosure and source provenance in
 [the prospective study](../research/proof-search-prospective-v1/README.md).
 
 Local verification includes 532 complete Node tests with zero failures or skips,
-seven new Python tool tests, all 87 preview types actually elaborated by Lean,
+nine new Python tool tests, all 87 preview types actually elaborated by Lean,
 strict source checks and actual report replay. The receiving adversarial campaign
 rejects producer Lean commands, producer library substitution and a
 producer-selected fake Python core without executing their marker writes.
@@ -117,3 +117,10 @@ neural execution, host integrity, compilation and intended user meaning remain
 outside the theorem guarantee. No new scientific acceptance authority, production
 self-modification, general English proving, model promotion or new Lean library
 axiom has been introduced.
+
+Original protocol/evaluator Git objects are retained in a hash-bound data-only
+bundle, because the host enforces linear-history merges. Receiving CI imports
+those objects, verifies the original commit/source hashes and protocol ancestry,
+and never checks out or executes archived producer code. Real bare-Git tests
+verify recovery when the old objects are absent and fail closed when the trusted
+parent is missing. Historical result files remain byte-identical.

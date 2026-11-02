@@ -25,6 +25,16 @@ scientific authority is introduced by this experiment.
 
 `run-1/` and `run-2/` preserve original raw JSON, summaries and per-run evaluator
 source provenance. `artifacts.json` binds the complete JSON/protocol closure.
+The SHA-256-bound `original-source.bundle` retains the original Git commit,
+tree and blob objects for the protocol and both evaluator versions. The receiving
+checker imports these objects without checking out or executing producer code,
+then still verifies the exact original source bytes with `git show` and checks
+protocol/evaluator ancestry. This survives the repository's squash-only integration
+policy without weakening the original source gate or rewriting historical results.
+A full clone must include the trusted parent commit
+`7ee63e4b99a332330d3b94d6ce00f83dde7bebfb` (use `git fetch --unshallow` for a
+shallow clone). Missing prerequisites and a changed bundle fail closed.
+
 The original evaluator was `e7197109331cd6f3e55ccd8a04d4d1704edaff2f`.
 Instrumentation at `8d872cc6dc401dc3b1ebd7e228ab9cab45752b2a` adds separate
 compiler/wire/physical setup counters; it does not change the algorithm or caps.

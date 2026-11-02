@@ -3,18 +3,31 @@
 import hashlib,json,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];STUDY=ROOT/'research/proof-search-prospective-v1'
+def restore_provenance(repo=ROOT):
+ # Import Git objects only. Never check out or execute archived producer code.
+ # The bundle's SHA-256 is checked by the artifact closure before this call.
+ bundle=STUDY/'original-source.bundle'
+ expected='8d872cc6dc401dc3b1ebd7e228ab9cab45752b2a refs/pcs-provenance/prospective-evaluation-v1'
+ heads=subprocess.check_output(['git','bundle','list-heads',str(bundle)],cwd=repo,text=True).strip()
+ if heads!=expected:raise ValueError('Unexpected archived provenance ref')
+ subprocess.run(['git','bundle','verify',str(bundle)],cwd=repo,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+ subprocess.run(['git','bundle','unbundle',str(bundle)],cwd=repo,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+ frozen=subprocess.check_output(['git','show','f3549c30921ea2e1527b10d9f43bb0700e10ff39:research/proof-search-prospective-v1/protocol.json'],cwd=repo)
+ if frozen!=(STUDY/'protocol.json').read_bytes():raise ValueError('Original protocol commit bytes differ')
 def check():
  manifest=json.loads((STUDY/'artifacts.json').read_text())
- actual={p.relative_to(STUDY).as_posix() for p in STUDY.rglob('*.json') if p.name!='artifacts.json'}|{'protocol.sha256'}
+ actual={p.relative_to(STUDY).as_posix() for p in STUDY.rglob('*') if p.is_file() and p.relative_to(STUDY).as_posix() not in {'artifacts.json','README.md'}}
  if set(manifest['files'])!=actual:raise ValueError('Study artifact closure differs')
  for name,sha in manifest['files'].items():
   if hashlib.sha256((STUDY/name).read_bytes()).hexdigest()!=sha:raise ValueError('Study artifact bytes changed: '+name)
+ restore_provenance()
  p=json.loads((STUDY/'protocol.json').read_text());public=json.loads((ROOT/'public/proof-search-evaluation.json').read_text());paired=[]
  if hashlib.sha256((STUDY/'protocol.json').read_bytes()).hexdigest()!=public['protocol_sha256']:raise ValueError('Protocol commitment differs')
  for run in ['run-1','run-2']:
   folder=STUDY/run;source=json.loads((folder/'evaluator-source.json').read_text())
   original=subprocess.check_output(['git','show',source['runner_commit']+':scripts/run_proof_search_evaluation.py'],cwd=ROOT)
   if hashlib.sha256(original).hexdigest()!=source['runner_sha256']:raise ValueError('Recorded evaluator source provenance differs')
+  subprocess.run(['git','merge-base','--is-ancestor',source['protocol_freeze_commit'],source['runner_commit']],cwd=ROOT,check=True)
   rows=[json.loads((folder/(c['id']+'-'+m+'.json')).read_text()) for c in p['cases'] for m in p['methods']]
   paired.append([(r['case'],r['method'],r['search_status'],r['search_lean_attempts']) for r in rows])
   for m in p['methods']:
