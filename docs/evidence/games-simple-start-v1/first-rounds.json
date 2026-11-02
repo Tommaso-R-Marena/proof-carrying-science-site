@@ -1,0 +1,54 @@
+{
+  "format": "pcs-games-first-round-browser-v1",
+  "data_origin": "scripted synthetic choices; not human research data",
+  "human_participants": 0,
+  "rows": [
+    {
+      "width": 320,
+      "chooser_initial_words": 177,
+      "guide_did_not_mutate_game_state": true,
+      "world_agreement_and_counterexample": true,
+      "quest_wrong_order_then_completed_round": true,
+      "forge_real_failure_overblock_and_repair": true,
+      "no_automatic_donation": true,
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "chooser_initial_words": 177,
+      "guide_did_not_mutate_game_state": true,
+      "world_agreement_and_counterexample": true,
+      "quest_wrong_order_then_completed_round": true,
+      "forge_real_failure_overblock_and_repair": true,
+      "no_automatic_donation": true,
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "chooser_initial_words": 177,
+      "guide_did_not_mutate_game_state": true,
+      "world_agreement_and_counterexample": true,
+      "quest_wrong_order_then_completed_round": true,
+      "forge_real_failure_overblock_and_repair": true,
+      "no_automatic_donation": true,
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "chooser_initial_words": 177,
+      "guide_did_not_mutate_game_state": true,
+      "world_agreement_and_counterexample": true,
+      "quest_wrong_order_then_completed_round": true,
+      "forge_real_failure_overblock_and_repair": true,
+      "no_automatic_donation": true,
+      "keyboard": true,
+      "overflow": false
+    }
+  ],
+  "missing_game_module_fails_closed": true,
+  "no_javascript_explanation": true,
+  "status": "PASS"
+}

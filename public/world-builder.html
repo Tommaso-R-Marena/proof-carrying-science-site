@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>World Builder · Play with meaning · PCS</title><meta name="description" content="Build a tiny world with characters, keys, doors and arrows. Find where two rules disagree. Free visual puzzles, optional replayable research sharing.">
-<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="world-builder.css"></head>
-<body><div class="shell wb-shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><a href="arena.html">All games</a></nav>
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="world-builder.css"><link rel="stylesheet" href="game-guide.css"></head>
+<body data-simple-game="true"><div class="shell wb-shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><a href="arena.html">All games</a></nav>
 <main id="wbApp">
-<header class="wb-intro"><div class="kicker">PLAY · DISCOVER · UNDERSTAND</div><h1>A tiny world.<br>A surprising difference.</h1><p>Two rules sound alike. Can you build a world where one is true and the other is false?</p><a class="button primary" href="#wbPuzzle" id="wbPlay">Let’s build a world →</a><p class="wb-fine">No account to play. Your moves stay in this tab unless you download or explicitly share them.</p></header>
+<header class="game-intro-compact"><p class="game-intro-name">World Builder · PCS games</p><h1>Find where two rules disagree.</h1><p>Play with keys, doors and simple yes/no switches.</p></header>
 <section class="wb-game" aria-label="World Builder puzzle">
 <div class="wb-topline"><h2>World Builder</h2><span id="wbProgress">0 of 7 discovered</span></div>
 <div id="wbPath" class="wb-path" role="group" aria-label="Choose a puzzle"></div>
@@ -30,4 +30,6 @@
 </section>
 <section class="wb-next"><h2>What would you like to explore next?</h2><a href="bridge-builder.html"><strong>Build a mathematical bridge →</strong><span>Connect proof steps across a river.</span></a><a href="arena-safety-forge.html"><strong>Find a bot failure, then repair it →</strong><span>Explore a bounded safety simulation.</span></a><a href="experience.html"><strong>Understand what PCS checks →</strong><span>A guided first investigation.</span></a></section>
 <noscript><p>This interactive world needs JavaScript. You can still <a href="trust.html">read what PCS can and cannot establish</a>.</p></noscript>
-</main><footer><p>Play is practice. Evidence has a scope. <a href="trust.html">Trust &amp; research</a> · <a href="privacy.html">Privacy</a></p></footer></div><script src="site.js"></script><script type="module" src="world-builder.mjs"></script></body></html>
+
+<details class="game-background" id="gameBackground"><summary>About World Builder and its research</summary><header class="wb-intro"><div class="kicker">PLAY · DISCOVER · UNDERSTAND</div><h2>A tiny world.<br>A surprising difference.</h2><p>Two rules sound alike. Can you build a world where one is true and the other is false?</p><a class="button primary" href="#wbPuzzle" id="wbPlay">Let’s build a world →</a><p class="wb-fine">No account to play. Your moves stay in this tab unless you download or explicitly share them.</p></header></details>
+</main><footer><p>Play is practice. Evidence has a scope. <a href="trust.html">Trust &amp; research</a> · <a href="privacy.html">Privacy</a></p></footer></div><script src="site.js"></script><script type="module" src="world-builder.mjs"></script><script type="module" src="game-guide.mjs"></script></body></html>

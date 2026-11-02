@@ -117,6 +117,22 @@ the route to evaluating that goal with actual people.
 
 ## Visual games and independently checked demonstrations
 
+The [game chooser](https://proof-carrying-science-site.marenatommaso.workers.dev/arena)
+starts with three visual options: World Builder (keys and doors), Proof Quest
+(step cards), and Safety Forge (a fictional bot). More games and technical research
+are separate optional sections. Fifteen game and lab pages explain the goal and
+first move, with a direct play action and optional three-step help.
+
+The navigation guide only scrolls and focuses controls. It does not play, reveal
+answers, count as a hint, modify scores, change game engines, or submit data.
+Original tutorials, research explanations and all existing controls remain
+available. Actual hints and coaches still use each game's existing assistance
+tracking. See [implementation and validation](docs/GAMES_SIMPLE_START.md).
+`npm run test:browser:games-start` completes real first rounds at four widths;
+`npm run test:browser:usability` exercises all fifteen guides and the existing
+keyboard/replay campaign. These are scripted tests, not a human usability study.
+
+
 - Open [Assurance Fold](public/assurance-fold.html) to drag claim tokens into
   evidence lanes, see immediate visual feedback and keep a local notebook. Its
   stars/rewards are practice results; it never issues scientific ACCEPT or Lean

@@ -23,7 +23,7 @@ const server=http.createServer((req,res)=>{
   await ctx.route('**/*',r=>{const q=r.request();if(new URL(q.url()).origin!==base){external.push(q.url());return r.abort();}if(!['GET','HEAD'].includes(q.method()))writes.push(q.url());return r.continue();});
   const p=await ctx.newPage();p.on('pageerror',e=>errors.push(e.message));
   await p.goto(base+'/arena.html');await p.getByRole('link',{name:'Play World Builder →',exact:true}).click();
-  await p.locator('#wbApp[data-ready=true]').waitFor();await p.locator('#wbPlay').click();
+  await p.locator('#wbApp[data-ready=true]').waitFor();await p.locator('#gameGuideQuickPlay').click();
   assert.equal(await p.locator('#wbTitle').evaluate(e=>e.getBoundingClientRect().top>=0),true,'start keeps the puzzle and rules in view');
   // A sticky mobile bar previously covered the rules at some scroll positions.
   for(const scroll of [0,400,850]){

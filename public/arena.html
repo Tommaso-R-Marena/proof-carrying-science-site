@@ -1,19 +1,28 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PCS Arena · Scientific Challenges</title>
-<meta name="description" content="PCS Arena hosts verifier-gated scientific challenges with local, meaningful leaderboards rather than global task-count points.">
+<title>PCS games · Pick a puzzle</title>
+<meta name="description" content="Choose a visual puzzle, learn the first move, and play without an account. Explore rules, order steps, or test a fictional bot.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/arena.html">
-<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+<meta name="robots" content="index,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="games-start.css">
 </head><body class="commons-page">
 <div class="topbar commons-topbar"><div class="shell"><span>PCS games · Play, test an idea, try again</span><a href="tasks.html">Needed work</a></div></div>
 <div class="shell">
 <nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="tasks.html">Tasks</a><a href="roles.html">Roles</a><a href="task-graph.html">Dependency graph</a><a href="arena.html">Arena</a><a href="account.html">Account</a></div></nav>
 <main>
+<header class="games-welcome"><p class="games-kicker">PCS GAMES</p><h1>Pick a puzzle. Try an idea.</h1><p>Make a move, see what happens, and try again. Start with one of these three games. No account or coding needed.</p></header>
+<section class="games-starters" aria-label="Choose your first game">
+ <article><div class="games-picture keys" aria-hidden="true"><span>🗝️</span><span>🚪</span></div><p class="games-level">START HERE · WORLD BUILDER</p><h2>Play with keys and doors</h2><p>Flip a switch. Find an example where two rules disagree.</p><p class="games-first">Your first move: tap a key or door switch.</p><a class="button primary" href="world-builder.html">Play World Builder →</a></article>
+ <article><div class="games-picture steps" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div><p class="games-level">PUT THINGS IN ORDER · PROOF QUEST</p><h2>Build a path from step cards</h2><p>Put each step after the things it needs. See what you can fix.</p><p class="games-first">Your first move: tap a card to place it.</p><a class="button primary" href="arena-proof-quest.html">Play Proof Quest →</a></article>
+ <article><div class="games-picture bot" aria-hidden="true"><span>🤖</span><span>🛡️</span></div><p class="games-level">TRY A SIMULATION · SAFETY FORGE</p><h2>Find a bot’s mistake</h2><p>Try actions, find a broken rule, then improve the bot’s safeguards.</p><p class="games-first">Your first move: choose an action for the bot.</p><a class="button primary" href="arena-safety-forge.html">Play Safety Forge →</a></article>
+</section>
+<p class="games-boundary">These are reasoning games and bounded simulations. A game win does not prove that a real AI is safe. Your play is not automatically shared.</p>
+<details class="games-more" id="arenaMore"><summary>More games</summary><div class="games-extra-grid"><article><p class="games-level">Assurance Fold</p><h2>Sort the evidence cards</h2><p>Put cards into categories and bring the board’s heat down.</p><a class="button secondary" href="assurance-fold.html">Play Assurance Fold</a></article><article><p class="games-level">Shield Duel</p><h2>Choose a robot plan</h2><p>Compare two plans, make a choice, and see what each one does.</p><a class="button secondary" href="forge-duel.html">Play Shield Duel</a></article><article><p class="games-level">Meaning Forge</p><h2>Repair a sentence</h2><p>Change a few words so a proposed sentence matches its target.</p><a class="button secondary" href="meaning-forge.html">Play Meaning Forge</a></article><article><p class="games-level">Bridge Builder</p><h2>Connect facts to a goal</h2><p>Choose step cards to build a mathematical bridge.</p><a class="button secondary" href="bridge-builder.html">Play Bridge Builder</a></article><article><p class="games-level">Memory Workshop</p><h2>Reuse a checked rule</h2><p>Use rules from your toolbox to connect the facts to the goal.</p><a class="button secondary" href="memory-workshop.html">Play Memory Workshop</a></article><article><p class="games-level">Countermodel Lab</p><h2>Make two rules disagree</h2><p>Turn facts on or off and look for a different answer. Uses logic notation.</p><a class="button secondary" href="arena-countermodel.html">Play Countermodel Lab</a></article><article><p class="games-level">ProofLab</p><h2>Choose what to check next</h2><p>Build an investigation by choosing steps whose starting facts are ready.</p><a class="button secondary" href="prooflab.html">Play ProofLab</a></article><article><p class="games-level">Semantic Gauntlet</p><h2>Spot a changed meaning</h2><p>Test a translation by building an example. For players comfortable with logic.</p><a class="button secondary" href="semantic-gauntlet.html">Play Semantic Gauntlet</a></article></div></details>
+<details class="games-more" id="arenaAdvanced"><summary>Technical labs, research and leaderboards</summary>
 <section class="section" aria-labelledby="visualPlayTitle"><div class="commons-home-banner"><div><div class="kicker">NEW HERE? START WITH A VISUAL PUZZLE</div><h2 id="visualPlayTitle">A key. A door. Two rules that disagree.</h2><p>Build a tiny world by tapping characters, keys, doors and arrows. Test your idea, discover the difference, and replay your search as pictures. No logic notation or account needed.</p><p>Your wrong turns stay in a private notebook. Optional adult research sharing uses independent server replay.</p></div><a class="button primary" href="world-builder.html">Play World Builder →</a></div></section>
 <section class="pagehead commons-pagehead arena-plain-head">
 <div class="kicker">PCS ARENA · PLAY SOMETHING THAT PRODUCES USEFUL RESEARCH SIGNAL</div>
-<h1>Find a puzzle you want to solve.</h1>
+<h2>Find a puzzle you want to solve.</h2>
 <p>Start with World Builder if you are new: tap a key or a door, then test whether two rules agree. The other games let you sort evidence, repair a simulated robot or connect proof steps. No account is needed to play.</p>
 <div class="arena-plain-rules" aria-label="What makes PCS Arena research useful">
  <div><strong>1 · Explore</strong><span>There are many possible moves, policies, or investigation paths.</span></div>
@@ -34,6 +43,7 @@
   <p>Compare 240 finite-logic challenges under predicate renaming, binder renaming and source/target reversal. Re-run all model predictions locally, measure countermodel validity, false-equivalence errors and calibration, and inspect reports privately. This public benchmark is not a blind or Lean proof evaluation.</p></div>
   <a class="button primary" href="evaluation-firewall.html">Evaluate model results →</a></div>
 </section>
+
 
 <section class="section arena-game-select" aria-labelledby="arenaChoose">
  <div class="section-heading-row"><div><div class="kicker">CHOOSE YOUR GAME</div><h2 id="arenaChoose">Pick a game that matches what you want to practice.</h2></div><p>For a first game, try <a href="world-builder.html">World Builder</a>. To sort evidence on a board, choose <a href="assurance-fold.html">Assurance Fold</a>. The <a href="evidence-atlas.html">Evidence Atlas</a> links to the studies behind these tools.</p></div>
@@ -158,6 +168,7 @@
 <p id="arenaEntryMessage" class="form-message" aria-live="polite"></p>
 </form>
 </dialog>
+</details>
 </main>
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Scientific competition where verification controls the leaderboard.</p></div><div class="footercol"><strong>Arena</strong><a href="arena.html">Challenges</a><a href="task-graph.html">Dependency graph</a></div><div class="footercol"><strong>Contribute</strong><a href="tasks.html">Needed tasks</a><a href="roles.html">Ongoing roles</a></div></div></footer>
 </div><script src="site.js"></script><script src="arena.js"></script></body></html>

@@ -27,7 +27,7 @@ CHECKS = [
     ("/tasks.html", "text/html", "Only work PCS actually needs should be here."),
     ("/roles.html", "text/html", "Some useful work is a responsibility, not a ticket."),
     ("/task-graph.html", "text/html", 'id="taskGraphPrograms"'),
-    ("/arena.html", "text/html", "PCS Arena · Scientific Challenges"),
+    ("/arena.html", "text/html", "PCS games · Pick a puzzle"),
     ("/api/system/status", "application/json", '"request_sla":"1–2 business days"'),
     ("/api/tasks", "application/json", '"tasks"'),
     ("/api/roles", "application/json", '"roles"'),

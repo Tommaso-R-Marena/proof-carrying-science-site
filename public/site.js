@@ -33,6 +33,12 @@
       addLink(links, "research.html", "Explore research");
       return;
     }
+    if (["arena.html","world-builder.html","assurance-fold.html","arena-proof-quest.html","arena-safety-forge.html","forge-duel.html","prooflab.html","meaning-forge.html","arena-countermodel.html","bridge-builder.html","memory-workshop.html","semantic-gauntlet.html","semantic-repair-lab.html","semantic-multistep-lab.html","repair-model-lab.html"].includes(currentPath)) {
+      addLink(links, "arena.html", "All games", "nav-primary-link");
+      addLink(links, "experience.html", "What is PCS?");
+      addLink(links, "research.html", "Explore research");
+      return;
+    }
     const addMenu = (title, sections, ariaLabel = title) => {
       const details = document.createElement("details");
       details.className = "navmore";

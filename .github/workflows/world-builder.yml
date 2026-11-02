@@ -2,6 +2,12 @@ name: PCS Visual World Builder
 on:
   pull_request:
     paths:
+      - 'public/game-guide*'
+      - 'public/games-start.css'
+      - 'public/arena-proof-quest.html'
+      - 'public/arena-safety-forge.html'
+      - 'scripts/browser_games_first_round.cjs'
+      - 'tests/games-simple-start.test.mjs'
       - 'public/world-builder*'
       - 'public/search-*.mjs'
       - 'research/search-quality-v1/**'
@@ -39,7 +45,7 @@ jobs:
         with:
           python-version: '3.12.14'
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run test:world-builder && npm run test:search-quality
+      - run: npm run test:world-builder && npm run test:search-quality && node --test tests/games-simple-start.test.mjs
       - name: Actual visual play, replay and downloads at four widths
         env:
           PCS_WORLD_BUILDER_OUTPUT: ${{ runner.temp }}/world-builder
@@ -48,6 +54,7 @@ jobs:
           export PCS_CHROMIUM="$(command -v chromium || command -v google-chrome)"
           test -x "$PCS_CHROMIUM"
           npm run test:world-builder:browser
+          PCS_GAMES_START_OUTPUT="$PCS_WORLD_BUILDER_OUTPUT/first-rounds" npm run test:browser:games-start
       - name: Compile all seven actual browser proof downloads and reject false control
         run: |
           set -euo pipefail

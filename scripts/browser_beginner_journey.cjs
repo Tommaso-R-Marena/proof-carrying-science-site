@@ -154,7 +154,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       await p.goto(base + '/'); await p.locator('[data-beginner-path=research]').click();
       await p.locator('#homeResearch a[href="arena.html"]').first().click();
       await p.locator('main a[href="world-builder.html"]').first().click();
-      await p.locator('#wbApp[data-ready=true]').waitFor(); await p.locator('#wbPlay').click();
+      await p.locator('#wbApp[data-ready=true]').waitFor(); await p.locator('#gameGuideQuickPlay').click();
       await p.locator('#wbCheck').click(); assert.match(await p.locator('#wbFeedback').innerText(), /rules agree/);
       await p.locator('#wbWorld [data-fact=P][data-character="0"]').click();
       await p.locator('#wbCheck').click(); assert.match(await p.locator('#wbFeedback').innerText(), /Difference found/);
