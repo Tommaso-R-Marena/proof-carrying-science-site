@@ -1,0 +1,1421 @@
+{
+  "budget": {
+    "action_expansions": 32,
+    "beam": 4,
+    "case_wall_seconds_including_setup": 120,
+    "depth": 18,
+    "independent_replay_wall_seconds": 90,
+    "search_lean_attempts": 64
+  },
+  "cache": "shared prewarmed compiled trusted modules; fresh environment and observation cache per case/method",
+  "case_count": 14,
+  "cases": [
+    {
+      "authored_control": "positive",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          },
+          {
+            "name": "b",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 2
+              }
+            },
+            "op": "eq",
+            "right": {
+              "left": {
+                "name": "b",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 2
+              }
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 0
+              }
+            },
+            "op": "eq",
+            "right": {
+              "name": "b",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "70a3b2da0c1d1f24fc07287751bddaaf632f9b08d72008688245b5a181fd657a",
+      "id": "case-01",
+      "outer_alpha_sha256": "826559b6a5576b000779526d77776b8b6495b4433e7c142595744a4389bb1791",
+      "statement": "For all natural numbers a and b, if (a + 2) equals (b + 2) then (a + 0) equals b."
+    },
+    {
+      "authored_control": "negative",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "a",
+              "op": "var"
+            },
+            "op": "add",
+            "right": {
+              "op": "number",
+              "type": "Nat",
+              "value": 2
+            }
+          },
+          "op": "eq",
+          "right": {
+            "left": {
+              "name": "a",
+              "op": "var"
+            },
+            "op": "add",
+            "right": {
+              "op": "number",
+              "type": "Nat",
+              "value": 3
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "d9c40d3ed2a6e34863784bf82c5e2ff29b2cb8c6b00b39361d4f10359f53632e",
+      "id": "case-02",
+      "outer_alpha_sha256": "30ba619ae862f7d19a56dcf3a8dd2f0abc861dd2f2be6a17eefe7276edef80c6",
+      "statement": "For all natural numbers a, (a + 2) equals (a + 3)."
+    },
+    {
+      "authored_control": "positive",
+      "family": "logic",
+      "goal": {
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "P",
+              "op": "var"
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "name": "P",
+              "op": "var"
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "77972b1a0b31079687fa2f92e26845a6e6dd8894cfcb2520033b55380a82f508",
+      "id": "case-03",
+      "outer_alpha_sha256": "42bdf3d02f037f2c2b19cab5f18488e896ca0fb2ca7ec72b14a601d50c01c030",
+      "statement": "For all propositions P and Q, if (P and Q) then (P and Q)."
+    },
+    {
+      "authored_control": "positive",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          },
+          {
+            "name": "b",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 3
+              }
+            },
+            "op": "eq",
+            "right": {
+              "left": {
+                "name": "b",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 3
+              }
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 0
+              }
+            },
+            "op": "eq",
+            "right": {
+              "name": "b",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "8355d520a024b7cfb8d30b2e3b5f786252e5736fa7c8c1da89a8cf4c47329978",
+      "id": "case-04",
+      "outer_alpha_sha256": "0ab57723d38703554afb12ebb158a6dbf8fb0b4b9b418db3c9a520f59476c736",
+      "statement": "For all natural numbers a and b, if (a + 3) equals (b + 3) then (a + 0) equals b."
+    },
+    {
+      "authored_control": "negative",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "a",
+              "op": "var"
+            },
+            "op": "add",
+            "right": {
+              "op": "number",
+              "type": "Nat",
+              "value": 3
+            }
+          },
+          "op": "eq",
+          "right": {
+            "left": {
+              "name": "a",
+              "op": "var"
+            },
+            "op": "add",
+            "right": {
+              "op": "number",
+              "type": "Nat",
+              "value": 4
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "a290a0797c2400b8bc2f6b3c7d02311d4aac0617bc59f8ad813814bb4f3e22ae",
+      "id": "case-05",
+      "outer_alpha_sha256": "42601732f657e712a1f678da44812cbd621cc8b3c0022cd9f57e55eb5079fc3a",
+      "statement": "For all natural numbers a, (a + 3) equals (a + 4)."
+    },
+    {
+      "authored_control": "positive",
+      "family": "logic",
+      "goal": {
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "P",
+              "op": "var"
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "name": "P",
+                "op": "var"
+              },
+              "op": "and",
+              "right": {
+                "name": "P",
+                "op": "var"
+              }
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "caa190a4eded3aceb1103324b3c36a9403703fc6c91c5ee66d257b70106e699a",
+      "id": "case-06",
+      "outer_alpha_sha256": "9cade508c3d5bff295f60669e81b6af285eff315d6f6ec1c5ec4ffca48598cf7",
+      "statement": "For all propositions P and Q, if (P and Q) then ((P and P and Q))."
+    },
+    {
+      "authored_control": "positive",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          },
+          {
+            "name": "b",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 4
+              }
+            },
+            "op": "eq",
+            "right": {
+              "left": {
+                "name": "b",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 4
+              }
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 0
+              }
+            },
+            "op": "eq",
+            "right": {
+              "name": "b",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "2277fba68f5d19b83eb406daea55388d85b0a39003b3dc2b6ed3458319ffaf04",
+      "id": "case-07",
+      "outer_alpha_sha256": "cff7e7f7f549f61931630c467ce5af453ebae3a2c9d97d018eab2ed0ebbc8752",
+      "statement": "For all natural numbers a and b, if (a + 4) equals (b + 4) then (a + 0) equals b."
+    },
+    {
+      "authored_control": "negative",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "a",
+              "op": "var"
+            },
+            "op": "add",
+            "right": {
+              "op": "number",
+              "type": "Nat",
+              "value": 4
+            }
+          },
+          "op": "eq",
+          "right": {
+            "left": {
+              "name": "a",
+              "op": "var"
+            },
+            "op": "add",
+            "right": {
+              "op": "number",
+              "type": "Nat",
+              "value": 5
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "9c1b6e9871320bb906cda7b98162ff99545e427c62b7b1a377751808f46c8bc1",
+      "id": "case-08",
+      "outer_alpha_sha256": "a4d306da3ee5ff89ff1ae0d1dca863a1ef81b38b9762513e58ab7282b3225b15",
+      "statement": "For all natural numbers a, (a + 4) equals (a + 5)."
+    },
+    {
+      "authored_control": "positive",
+      "family": "logic",
+      "goal": {
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "P",
+              "op": "var"
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "left": {
+                  "name": "P",
+                  "op": "var"
+                },
+                "op": "and",
+                "right": {
+                  "name": "P",
+                  "op": "var"
+                }
+              },
+              "op": "and",
+              "right": {
+                "name": "P",
+                "op": "var"
+              }
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "5570b81da4fdb9078f9a5a202fe21023b579476a785db5e2b21dd04de46d7103",
+      "id": "case-09",
+      "outer_alpha_sha256": "f09a71c9421da54b39c5583b01dc87f6e48f4dae3e5f798ada6cc4c8d1d0c4cb",
+      "statement": "For all propositions P and Q, if (P and Q) then (((P and P and P and Q)))."
+    },
+    {
+      "authored_control": "positive",
+      "family": "arithmetic",
+      "goal": {
+        "binders": [
+          {
+            "name": "a",
+            "type": "Nat"
+          },
+          {
+            "name": "b",
+            "type": "Nat"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 5
+              }
+            },
+            "op": "eq",
+            "right": {
+              "left": {
+                "name": "b",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 5
+              }
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "name": "a",
+                "op": "var"
+              },
+              "op": "add",
+              "right": {
+                "op": "number",
+                "type": "Nat",
+                "value": 0
+              }
+            },
+            "op": "eq",
+            "right": {
+              "name": "b",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "42556af664dc4ff8241680897663a92f3ef14d7a26ea1161e48fa3f4bc524749",
+      "id": "case-10",
+      "outer_alpha_sha256": "7bad1555e2a2f83ba468f2ef2dd591c5d603301495b2fee309a2df2805865e06",
+      "statement": "For all natural numbers a and b, if (a + 5) equals (b + 5) then (a + 0) equals b."
+    },
+    {
+      "authored_control": "positive",
+      "family": "logic",
+      "goal": {
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "P",
+              "op": "var"
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "left": {
+                  "left": {
+                    "name": "P",
+                    "op": "var"
+                  },
+                  "op": "and",
+                  "right": {
+                    "name": "P",
+                    "op": "var"
+                  }
+                },
+                "op": "and",
+                "right": {
+                  "name": "P",
+                  "op": "var"
+                }
+              },
+              "op": "and",
+              "right": {
+                "name": "P",
+                "op": "var"
+              }
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "840b3427ae21806786209f22cdc0ed76aa18ac7c018cde38800142960c00cd74",
+      "id": "case-11",
+      "outer_alpha_sha256": "3f2bf41261852bcd6a33d318151a149802906a03cc8d2d7735d2e7d6fafd4902",
+      "statement": "For all propositions P and Q, if (P and Q) then ((((P and P and P and P and Q))))."
+    },
+    {
+      "authored_control": "positive",
+      "family": "logic",
+      "goal": {
+        "binders": [
+          {
+            "name": "P",
+            "type": "Prop"
+          },
+          {
+            "name": "Q",
+            "type": "Prop"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "name": "P",
+              "op": "var"
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "left": {
+                  "left": {
+                    "left": {
+                      "name": "P",
+                      "op": "var"
+                    },
+                    "op": "and",
+                    "right": {
+                      "name": "P",
+                      "op": "var"
+                    }
+                  },
+                  "op": "and",
+                  "right": {
+                    "name": "P",
+                    "op": "var"
+                  }
+                },
+                "op": "and",
+                "right": {
+                  "name": "P",
+                  "op": "var"
+                }
+              },
+              "op": "and",
+              "right": {
+                "name": "P",
+                "op": "var"
+              }
+            },
+            "op": "and",
+            "right": {
+              "name": "Q",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "b42d902ff626d3312a7f9cdfd4570dc13cddc5488805366d17abee9b9ed03724",
+      "id": "case-12",
+      "outer_alpha_sha256": "8d34533b390e49dc37e51419c81235ff22abbff658186b68e4081fe3ff55f07c",
+      "statement": "For all propositions P and Q, if (P and Q) then (((((P and P and P and P and P and Q)))))."
+    },
+    {
+      "authored_control": "positive",
+      "family": "lists",
+      "goal": {
+        "binders": [
+          {
+            "name": "xs",
+            "type": "NatList"
+          },
+          {
+            "name": "ys",
+            "type": "NatList"
+          }
+        ],
+        "body": {
+          "left": {
+            "arg": {
+              "arg": {
+                "left": {
+                  "name": "xs",
+                  "op": "var"
+                },
+                "op": "append",
+                "right": {
+                  "name": "ys",
+                  "op": "var"
+                }
+              },
+              "op": "reverse"
+            },
+            "op": "reverse"
+          },
+          "op": "eq",
+          "right": {
+            "left": {
+              "name": "xs",
+              "op": "var"
+            },
+            "op": "append",
+            "right": {
+              "name": "ys",
+              "op": "var"
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "454b85cbea76e8d0877ca194ee8d8a4c694fa90eae6c1c3be58438262237e041",
+      "id": "case-13",
+      "outer_alpha_sha256": "8e2fb5b0773d798a0e927b57c94922cced47f1ae9da352c72642bdc12b371c10",
+      "statement": "For all lists of natural numbers xs and ys, the reversal of (the reversal of (xs appended to ys)) equals (xs appended to ys)."
+    },
+    {
+      "authored_control": "positive",
+      "family": "lists",
+      "goal": {
+        "binders": [
+          {
+            "name": "xs",
+            "type": "NatList"
+          },
+          {
+            "name": "ys",
+            "type": "NatList"
+          }
+        ],
+        "body": {
+          "left": {
+            "left": {
+              "arg": {
+                "name": "xs",
+                "op": "var"
+              },
+              "op": "reverse"
+            },
+            "op": "eq",
+            "right": {
+              "arg": {
+                "name": "ys",
+                "op": "var"
+              },
+              "op": "reverse"
+            }
+          },
+          "op": "implies",
+          "right": {
+            "left": {
+              "left": {
+                "name": "xs",
+                "op": "var"
+              },
+              "op": "append",
+              "right": {
+                "name": "xs",
+                "op": "var"
+              }
+            },
+            "op": "eq",
+            "right": {
+              "left": {
+                "name": "ys",
+                "op": "var"
+              },
+              "op": "append",
+              "right": {
+                "name": "ys",
+                "op": "var"
+              }
+            }
+          }
+        },
+        "format": "pcs-math-ir-v1"
+      },
+      "goal_sha256": "8dac14c4ca49fdda4459b83a923e5987d75830b426363280b3864b66d2bd80b6",
+      "id": "case-14",
+      "outer_alpha_sha256": "52111f59820c2110624bfab4996dfaf81185e0461ea81878551cc1a17303aac7",
+      "statement": "For all lists of natural numbers xs and ys, if (the reversal of xs) equals (the reversal of ys) then (xs appended to xs) equals (ys appended to ys)."
+    }
+  ],
+  "checkpoint": {
+    "architecture": "graph",
+    "checkpoint": "supervised-17.json",
+    "id": "supervised-17",
+    "parameters": 14773,
+    "sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57"
+  },
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "corpus_sources": [
+    {
+      "path": "research/lean-learning-v2/SHA256.json",
+      "sha256": "8588f3763ba90dfa8a31ceaa15a3a53cc384ec63438c92bce2d12014da8199f7"
+    },
+    {
+      "path": "research/lean-learning-v2/bag-17.json",
+      "sha256": "aa5ed5198c4e49703cd88ad446d67c6f7cdd980d6e9de7b7e66d0734b184f8f4"
+    },
+    {
+      "path": "research/lean-learning-v2/bag-31.json",
+      "sha256": "3380a492b250a1735ab819e258407453c5037ab6800b73b11359e101b5f7090f"
+    },
+    {
+      "path": "research/lean-learning-v2/bag-47.json",
+      "sha256": "cd674239d0cbe81938b4cdbc9fe09131e3dda857281027cbde4e8592b6f48ad3"
+    },
+    {
+      "path": "research/lean-learning-v2/data-manifest.json",
+      "sha256": "b8939a63213861b8fc5ee03171f615fcfaf8b9a8df68ecbda3a5d5c40ab0743c"
+    },
+    {
+      "path": "research/lean-learning-v2/end-to-end.json",
+      "sha256": "fd4b883bee09b2d169df5d818d0b1064c09cb68518c90bc0c70594f654110636"
+    },
+    {
+      "path": "research/lean-learning-v2/feedback-generation.json",
+      "sha256": "d775bd1c4fa3345f73c7b57dc69ebf5f03b954245a77cc9ff98b4063f08f52d6"
+    },
+    {
+      "path": "research/lean-learning-v2/feedback-protocol.json",
+      "sha256": "3a11079cf030f228cf74ec2759b86b469c2f347c17770eb9e2560ad7729f04a9"
+    },
+    {
+      "path": "research/lean-learning-v2/formalization-evaluation.json",
+      "sha256": "65fef92ab0c2557774a469310c99b066c6f8608e02bbb7c898c2ffd64f6a9305"
+    },
+    {
+      "path": "research/lean-learning-v2/formalization-training.json",
+      "sha256": "5ede7a64ea7460963f1e9ce345c06d89503a0fd1c1d068a2a78d5987c1916bad"
+    },
+    {
+      "path": "research/lean-learning-v2/formalization.json",
+      "sha256": "6f5ad926f3f833cd1d98c13c5e358dec83d8a83642f8704b109ab6ffea53a739"
+    },
+    {
+      "path": "research/lean-learning-v2/graph-17.json",
+      "sha256": "3c8252a55fe3944a8e7113b9a6f365686f1ed30eb9c1c57a453ce0d1b5cc2f1e"
+    },
+    {
+      "path": "research/lean-learning-v2/graph-31.json",
+      "sha256": "c027efa5776742ffa058a69b9d115d6f2e80b2e343621aaf0e83b7c79957ebd0"
+    },
+    {
+      "path": "research/lean-learning-v2/graph-47.json",
+      "sha256": "03b805a3c7ec5b49b798c322380c7a1db5912892c9a0673360f198ccf297c360"
+    },
+    {
+      "path": "research/lean-learning-v2/premise-catalog.json",
+      "sha256": "d21fabcdd00e9e22a1aed593e8a4fc784934511ab76d2024d5e1c817e44f9e3a"
+    },
+    {
+      "path": "research/lean-learning-v2/protocol.json",
+      "sha256": "6613b3d21f7a69b2e224cf43ee3c01b54072b6ae23d6d76e9a5603b81189fe1f"
+    },
+    {
+      "path": "research/lean-learning-v2/registry.json",
+      "sha256": "923ed1e13bb97f249921585d605b03537f6f01bf3f06dbed59eec2a76b1bd2ba"
+    },
+    {
+      "path": "research/lean-learning-v2/rl1-17.json",
+      "sha256": "94405da060dd72cdc1abe0a3f28a865bdf815e65a7a449991ec181766f16c28e"
+    },
+    {
+      "path": "research/lean-learning-v2/rl1-31.json",
+      "sha256": "56af645143aa71e0c961efea37f87e622f1e19a851162edfa928a770631d9724"
+    },
+    {
+      "path": "research/lean-learning-v2/rl1-47.json",
+      "sha256": "e2de40abe99a207b6ef66014b0813f58aded53d95353782b8571d9fc57ac1648"
+    },
+    {
+      "path": "research/lean-learning-v2/rl2-17.json",
+      "sha256": "cc983374540d3a0b5fbb0f872adf3864c6a6b2a0fd237b1f1057415fcbb16e92"
+    },
+    {
+      "path": "research/lean-learning-v2/rl2-31.json",
+      "sha256": "2baa003344795c40e0587eac7a045550ac6712ebd7292b3d8a4da8daf6d0d724"
+    },
+    {
+      "path": "research/lean-learning-v2/rl2-47.json",
+      "sha256": "1ebf009d3d9776d8b4527318d84f8b87fad6bba5aad17667b5dd5ecf018c1618"
+    },
+    {
+      "path": "research/lean-learning-v2/runtime-source-manifest.json",
+      "sha256": "f0d3282a13094be55683923c0b216fba01cf292cb841a01138c752b5d05ec512"
+    },
+    {
+      "path": "research/lean-learning-v2/source-manifest.json",
+      "sha256": "f42ade34d59f9b68566e4207bd4c7bd48dafb52de1a587904cbdad37758755e3"
+    },
+    {
+      "path": "research/lean-learning-v2/summary.json",
+      "sha256": "7494353af9a2440e04b271117e41e57b434708c420adf26acb674669e0d202c5"
+    },
+    {
+      "path": "research/lean-learning-v2/supervised-training.json",
+      "sha256": "8b47207a973200242d62c018ae086e5bdf77e5c61950f7f6e34f77acb685cb60"
+    },
+    {
+      "path": "research/lean-learning-v2/tasks.json",
+      "sha256": "3ebaa978f51f73e66fc8876964fd3702b66fce970e050ae6df743f895aa659fe"
+    },
+    {
+      "path": "research/lean-learning-v2/untrained-17.json",
+      "sha256": "8d54eb68fdefc5b21b1f80064c4adddaa3e9a4ee5407065f451085daf75b5e28"
+    },
+    {
+      "path": "research/lean-learning-v2/untrained-31.json",
+      "sha256": "0c2d3712cec179e7839e8c542983ede2a8895f4ac1258c96c708fd1f6c7d7006"
+    },
+    {
+      "path": "research/lean-learning-v2/untrained-47.json",
+      "sha256": "6fa432aa6f5e7e2ec82851c2903d0ad2389306921a903e2f55ff4ada032992f0"
+    },
+    {
+      "path": "research/checked-reuse-v2/EVIDENCE_SHA256.json",
+      "sha256": "d41505af09b37868d19c4aeceae6ab7d705acac9cfd50f1e6b48772bf494e9c0"
+    },
+    {
+      "path": "research/checked-reuse-v2/SHA256.json",
+      "sha256": "91ddc10c511d3db8e535b1634d9e246f9d9f3c295c45a847d6b4a281f9aab412"
+    },
+    {
+      "path": "research/checked-reuse-v2/independent-final-replay.json",
+      "sha256": "5972076e82e362f5d1a7593fc146b3633752ec8923c1b946bd9959a9b2ea0668"
+    },
+    {
+      "path": "research/checked-reuse-v2/library.json",
+      "sha256": "acd3db257eea62dccf8995a8503230359f37829ab4c595d07c139ac66abb0dfa"
+    },
+    {
+      "path": "research/checked-reuse-v2/parent.json",
+      "sha256": "f86cae83f9d850cf6282157214680d3912e1584a95845d024e8666013d24902c"
+    },
+    {
+      "path": "research/checked-reuse-v2/protocol.json",
+      "sha256": "27f8bd79ff18f6c4338694360c018bbf288971ff2e9a77265011c45d4d75a693"
+    },
+    {
+      "path": "research/checked-reuse-v2/refined-17.json",
+      "sha256": "f43d037ecad0c7aa7424c578a4bdc1c467c0eab57fa88252d7b87937632ba652"
+    },
+    {
+      "path": "research/checked-reuse-v2/refined-31.json",
+      "sha256": "f74515276d281ed48dacd56b8c205453cf7e3ff1b9a7b7d427a4ddc7d959bef0"
+    },
+    {
+      "path": "research/checked-reuse-v2/refined-47.json",
+      "sha256": "dbcac3d6f6a1d6442b7274983490153310e3f82208a2ec16f311764d9c06cc16"
+    },
+    {
+      "path": "research/checked-reuse-v2/registry.json",
+      "sha256": "7cd32586f9bbec6e40f43241635f02066369e2f0f8784fba0ce33681e1056417"
+    },
+    {
+      "path": "research/checked-reuse-v2/runtime-source-manifest.json",
+      "sha256": "9e918eac3dd0a2d5e6e418d57521db977a5a7dd4d6f9210fdb1b211d0f48d954"
+    },
+    {
+      "path": "research/checked-reuse-v2/runtime-validation.json",
+      "sha256": "df7c34bff5572753ee05d4395a72be295d11be119f0f91fde00ae3fa0d74b91a"
+    },
+    {
+      "path": "research/checked-reuse-v2/source-manifest.json",
+      "sha256": "a51ad49a3a066b1cb66cf714ad8dd85b57e03d455aad6fbd59cc20733e127831"
+    },
+    {
+      "path": "research/checked-reuse-v2/summary.json",
+      "sha256": "55ca1b95258dca8343d738dcc178cfd63a671bcd7cce0792282f788ee8fe963d"
+    },
+    {
+      "path": "research/checked-reuse-v2/tasks.json",
+      "sha256": "0b05ab481a19949769533fc23a806d3f2a3172038e9412453a834bee2a78a6c1"
+    },
+    {
+      "path": "research/checked-reuse-v2/training-trajectories.json",
+      "sha256": "a5e0f5c6c3b2af98e58f6e96b3ee74793bf88822b17f061b24b5528573713dce"
+    },
+    {
+      "path": "research/checked-reuse-v2/training.json",
+      "sha256": "e06da5d3fbe56251a958a6469bd05c44ebb7946da1e694e9f7537014854910ce"
+    },
+    {
+      "path": "research/induction-abstraction-v2/COST_AUDIT.json",
+      "sha256": "61d0f76a96bcc6f599e24c06a221176cdd346c1ddb77dd5cf77dfe3d44fae72a"
+    },
+    {
+      "path": "research/induction-abstraction-v2/EVIDENCE_SHA256.json",
+      "sha256": "caeac8f15469e3ade4a0f6a60e56db5ca0bc7a4aaf89a4c118af0f16cb94556a"
+    },
+    {
+      "path": "research/induction-abstraction-v2/bag-17.json",
+      "sha256": "bab1db09e8498f7cf7d4057358c3164879569f926522f0b85f51cb069d635900"
+    },
+    {
+      "path": "research/induction-abstraction-v2/bag-31.json",
+      "sha256": "fe8005f5296a5118140fb4f802472bf62375026167923617a92a9945c35a3290"
+    },
+    {
+      "path": "research/induction-abstraction-v2/catalog.json",
+      "sha256": "3e581919db1521a1caa4eb168253075882cd65ee934f85760c6ec305c55d213f"
+    },
+    {
+      "path": "research/induction-abstraction-v2/discovery.json",
+      "sha256": "d0b26472427a5528fa32f7b674c3f24e0fe9fdd76d48f774849218dfee92f3b2"
+    },
+    {
+      "path": "research/induction-abstraction-v2/explicit-feedback/candidate.json",
+      "sha256": "ba28096a3686fab5e13706633c4de19de886af8b130c2ebe5c6f8580a7a25469"
+    },
+    {
+      "path": "research/induction-abstraction-v2/explicit-feedback/report.json",
+      "sha256": "185aacfd6ac3a7d9153acf1d44cbd5f651f1e2fd16596cbd4785c2e9d104b2a3"
+    },
+    {
+      "path": "research/induction-abstraction-v2/external-protocol.json",
+      "sha256": "fc9babf347d286b05a9a602ce026a729ce050f72016452c8b5084352a7324404"
+    },
+    {
+      "path": "research/induction-abstraction-v2/external-results.json",
+      "sha256": "dd3ba522acbe6e035780b7cd969db2f5693a5fa9aa16e5bf33c39744c51a89fb"
+    },
+    {
+      "path": "research/induction-abstraction-v2/graph-17.json",
+      "sha256": "6ed5e1f6cfdeb01f1554eaba9f406acc4b11ad1143bd526274b3a7a171776e5b"
+    },
+    {
+      "path": "research/induction-abstraction-v2/graph-31.json",
+      "sha256": "c29d83d03e8ce95b990dfd80be68a29dba639600d4a03c4877e08406a7879022"
+    },
+    {
+      "path": "research/induction-abstraction-v2/independent-final-replay.json",
+      "sha256": "a423d63f5a58af32b9405168e0b2b389f56fcea60871ffcf204ea4b1b4f8fc5d"
+    },
+    {
+      "path": "research/induction-abstraction-v2/library.json",
+      "sha256": "43b24731ee536e0dd8a3d85143d32995b0c4dabaed38d913c7bd32fc89395bb9"
+    },
+    {
+      "path": "research/induction-abstraction-v2/protocol.json",
+      "sha256": "bad6cb855dab1a1c1eec7438dd8cb9e87699cbe955fb25cd653b87299e570638"
+    },
+    {
+      "path": "research/induction-abstraction-v2/registry.json",
+      "sha256": "2697c3b02e18084b4caef1536dba54399dfa6c31ea38b52e24a4a25f5000a8c7"
+    },
+    {
+      "path": "research/induction-abstraction-v2/research-plan.json",
+      "sha256": "b9998e6349b66dc7d483be99aa8d4830cb4a261ea67b46e5494c7e7a8709c61f"
+    },
+    {
+      "path": "research/induction-abstraction-v2/rl1-17.json",
+      "sha256": "431e1a46247f3ed0cf79db71e2a5cfb3ee63d4009d86ea838c4f472db39fcd82"
+    },
+    {
+      "path": "research/induction-abstraction-v2/rl1-31.json",
+      "sha256": "f4c527f7eff035bac4ad446deb8acf7a50c742817d8b8fa571f6864dcf41695d"
+    },
+    {
+      "path": "research/induction-abstraction-v2/rl2-17.json",
+      "sha256": "0b8e20cd797f3597ebb9218af5ca1b082d310ff9ec4b06ada3c68860e7d4f867"
+    },
+    {
+      "path": "research/induction-abstraction-v2/rl2-31.json",
+      "sha256": "67557963b839fda6717b80503c31c04f323471f38e20702097d9e5b2b7213805"
+    },
+    {
+      "path": "research/induction-abstraction-v2/source-manifest.json",
+      "sha256": "25d455a15f20100c770e3dc014f3727109196b1dde70020997d9e97f98f0f11f"
+    },
+    {
+      "path": "research/induction-abstraction-v2/summary.json",
+      "sha256": "8e3c8ff466a5127d6f613dfceb1cfa8b01ca4965ff196b8c2106fcf8e5de3470"
+    },
+    {
+      "path": "research/induction-abstraction-v2/tasks.json",
+      "sha256": "b171e7a7fc6ee198fe79924c269db11ff6b0d26c7624549b566a592f2ba0ef3a"
+    },
+    {
+      "path": "research/induction-abstraction-v2/ungrounded-17.json",
+      "sha256": "7697f1633a23406aa4e2505102e67f4c5838af1dd249da62b3f553e185348433"
+    },
+    {
+      "path": "research/induction-abstraction-v2/ungrounded-31.json",
+      "sha256": "eea1e4cb6baf0fd92308a2b09e679df810bcef9ae105abb0655547b0b3248f4f"
+    },
+    {
+      "path": "research/induction-abstraction-v2/untrained-17.json",
+      "sha256": "e4785f2a2a1445958cae78944fca41940ea1ab8aacbd94564d73d3376c57a16d"
+    },
+    {
+      "path": "research/induction-abstraction-v2/untrained-31.json",
+      "sha256": "a8109c1371db85491549fb340bab2527cb45248c291c0793ac649d17116b2863"
+    },
+    {
+      "path": "research/verified-memory-v1/EVIDENCE_SHA256.json",
+      "sha256": "6fe643bc75f3c83a4b34ad2429cc622e67fd895bc4d6e4d8b622bbc96eef090b"
+    },
+    {
+      "path": "research/verified-memory-v1/SERIALIZATION_RECOVERY.json",
+      "sha256": "335efd6f2dad3ff1a9b0012c0c26ec068b147f02d1aef6df4c787a53f5b8472a"
+    },
+    {
+      "path": "research/verified-memory-v1/all-memory-library.json",
+      "sha256": "25dcb4470a2efa2a8e3a663b4ba1a7f07d10498856f294e1989f5ec1014200bd"
+    },
+    {
+      "path": "research/verified-memory-v1/bag-17.json",
+      "sha256": "9b6a1b3870389c642e89ebfc72fc829040dade5d4b2b917c1c89182f47c72c49"
+    },
+    {
+      "path": "research/verified-memory-v1/bag-31.json",
+      "sha256": "13ddc45d4d963d71a1ed4c47c6ea20daaf4d1443dd7a97b1e337bfc0d319c1af"
+    },
+    {
+      "path": "research/verified-memory-v1/candidate-pool.json",
+      "sha256": "8f93815eda9227a07b079ca7e364a4b66bf4ad63cb77a468ddcc05d24eff479a"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluation-recovery-journal.json",
+      "sha256": "a2c73f3a39d9a33f187971b348515f6e449adb33c74bba3eab4b73c12e9c629b"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/all_verified_memory.worker.json",
+      "sha256": "95065b51ce2d3f8a85ec2c271123bad9911f4fb6966b04e99a2b5d29a3abb80a"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/bag-17.worker.json",
+      "sha256": "5fede9160bcc389cd0e85e35cee0f10dfc0fb29986bf8d17fbc9edd84f9e4cf8"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/bag-31.worker.json",
+      "sha256": "e2ab9ba741a22ffe53572a5e9e3ea0a1b73bb884d756b5a1f9b7db81b26a45fa"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/bounded_Std_simp_omega_grind.json",
+      "sha256": "8deeb1b23c6dab6146db1796c4405b8d0ae97d23e6c0fa1463113d5aec6627ac"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/bounded_Std_simp_omega_grind.worker.json",
+      "sha256": "7d8237bd1a52c22a8dec73967abdb8d481483e606b559506ae2e19815062b206"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/checked_successor_beam.worker.json",
+      "sha256": "d82594e4956f040b7c576441baec4a111f1baa0b00d940cee275889487b44667"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/grounded_std_structural.worker.json",
+      "sha256": "7e9839a3ce1a36166f1dabd5ff7c472da9d841606cfc3f66b91408b87faf02b8"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/lexical_retrieval.worker.json",
+      "sha256": "924778068f65632a78b1fc629d65a9a67322190441439461825843ff8ca112c9"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/original_symbolic.worker.json",
+      "sha256": "7928212f9b8ea20ca3b6f9ee37c82a05cba59bd79ca38681bb23af1522994802"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/rl1-17.worker.json",
+      "sha256": "e38203abf8baf197cf0f0cdc73e2428fe3efa37e1dea2083b0f5285ba849219a"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/rl1-31.worker.json",
+      "sha256": "beb985466fffc36d89e141439bce2f3283a2d9a0f44ea2c03cfc764d2c8311d0"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/rl2-17.worker.json",
+      "sha256": "e5ae0e1d94f3c2d01aa902b29a2c59be37203c64f7194c0f73c3c75db8d54645"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/rl2-31.worker.json",
+      "sha256": "d13d86075932bee55e9609ee00530531742348a37d41938877569cf4d5c612dc"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/selected_memory_structural.worker.json",
+      "sha256": "b3af367efd8fbdf812e2ade00ec0af7704633647964827f23105f7db110e5fdd"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/supervised-17.worker.json",
+      "sha256": "8d3b0a691cf126b56f054c65131b3ccf29084a64c3376f2383e20d9cbeb2c606"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/supervised-31.worker.json",
+      "sha256": "8588426b66ba3387d4accc5c36be4bfd33323de053cccfd53e361351acd71cb1"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/untrained-17.worker.json",
+      "sha256": "6ef63659f6e923b086e7ba102bed3087e16f637a9ebfcf227a3e2ee383750f18"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/final/untrained-31.worker.json",
+      "sha256": "677713469af212c5a0bfe6f67cbd72de997acdf6b1abffc848caf66b03f4a557"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/selection/bag-31.worker.json",
+      "sha256": "2b1f86c4da1b1b82bf17e9be467be3cbdb7f991cd032e5d6fed78eed4113339f"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/selection/bounded_Std_simp_omega_grind.json",
+      "sha256": "76649a228bfc24bd36be806983a8b6af9867ac6da180da7b5b17a30bf996a1ac"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/selection/bounded_Std_simp_omega_grind.worker.json",
+      "sha256": "f657805f20fe5a7fe1aa14ad3b06909618043b34ff107f82fd29519b828c0959"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/selection/rl1-31.worker.json",
+      "sha256": "5e8a424a3147d76913bbd014ff089678b3476120303c7f52d75a535f6086dbdf"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/selection/rl2-31.worker.json",
+      "sha256": "69c27209e0db8fd721d037c984bbbad635e707ab2bcf892783f2844ffef42600"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations/selection/supervised-31.worker.json",
+      "sha256": "95ef28e131a4f96a3241fb40e37926302aaf66fec01319f6b189122a81885236"
+    },
+    {
+      "path": "research/verified-memory-v1/evaluations.json",
+      "sha256": "c4eb5ba625d6accf944052ff383084651810993f028b5640dcf80b3d60e7c840"
+    },
+    {
+      "path": "research/verified-memory-v1/independent-final-replay.json",
+      "sha256": "47fc94631bfb0f790e2c0d9611a49567cf2c7b0435bf08dd5f44b9b5cfb35155"
+    },
+    {
+      "path": "research/verified-memory-v1/initial-protocol.json",
+      "sha256": "33e754a64f18f79835ae0343fc68d2c08d5c76ee03a4031b5aee7909b943d79f"
+    },
+    {
+      "path": "research/verified-memory-v1/initial-tasks.json",
+      "sha256": "307e9b54e90fe02ace16dd7685deee3913bcd48183f7c7ddcc7da0cfbbb1bc4e"
+    },
+    {
+      "path": "research/verified-memory-v1/library.json",
+      "sha256": "f8424160e91b205abd5e2983cb77ae2a8853be171ff8c827dd1b104725da3f0f"
+    },
+    {
+      "path": "research/verified-memory-v1/protocol.json",
+      "sha256": "521579e62f7a388af13610934365d7915bad4b67bf96f5fb3e8bba024a5508c2"
+    },
+    {
+      "path": "research/verified-memory-v1/recovery-executed-source-manifest.json",
+      "sha256": "4f1d8ead3e0c0b38564813a97f4cfe53ddd473a353c40e5c4872c1330caed3d1"
+    },
+    {
+      "path": "research/verified-memory-v1/recovery-source-manifest.json",
+      "sha256": "058dc6ef2d6958b1ff81f095c3a63d3bf0425dfaa5992566fce575203fd1c0c1"
+    },
+    {
+      "path": "research/verified-memory-v1/registry.json",
+      "sha256": "ce59604b57ed256abae3581fa131d60f0d7bbf3bf5821986a21b95ca19014cd5"
+    },
+    {
+      "path": "research/verified-memory-v1/rl-stage-1-17.json",
+      "sha256": "916c99e2be6b3d8e06b716659a3b01046dbd651efefc7a0c3273932599587a91"
+    },
+    {
+      "path": "research/verified-memory-v1/rl-stage-1-31.json",
+      "sha256": "bb90bf892f8b16249951f03e0677679ee70167f27f09cad5c7cba63cee3f5b5b"
+    },
+    {
+      "path": "research/verified-memory-v1/rl-stage-2-17.json",
+      "sha256": "d55680c521170f690d2cfc69bda3735cc67906e98471fe02803e8d34fc5cfaab"
+    },
+    {
+      "path": "research/verified-memory-v1/rl-stage-2-31.json",
+      "sha256": "fc1a8c14507e3b1ace3425e39e720a11f8d73beb622a62e8ea0fde0b10000b21"
+    },
+    {
+      "path": "research/verified-memory-v1/rl1-17.json",
+      "sha256": "bed18058256f7f5e58444bcf33ef8324c33b2e824ab119374b034601c37ac7da"
+    },
+    {
+      "path": "research/verified-memory-v1/rl1-31.json",
+      "sha256": "f12b9146ce1dc6ea30e819aaa54f05cee05a8a13a8d4cd19155c4ea93850ad67"
+    },
+    {
+      "path": "research/verified-memory-v1/rl2-17.json",
+      "sha256": "15e453e17074f90031facad6a24669d53e14945f8e95db478581d7c6dd3e0866"
+    },
+    {
+      "path": "research/verified-memory-v1/rl2-31.json",
+      "sha256": "d60a97b3d762d0cf5c9e4255e3fdd8798c737a8b951ec2ac22e21cf657dd1280"
+    },
+    {
+      "path": "research/verified-memory-v1/selected-memory.json",
+      "sha256": "06a9af6660415bb2c824ecf89321e2a31cc96bd63965eb91b477aa6d64605814"
+    },
+    {
+      "path": "research/verified-memory-v1/source-manifest.json",
+      "sha256": "dc70fbe26bdb0151ed588c304cbcef442cb54a2ad2d82d546ddb088a078e8029"
+    },
+    {
+      "path": "research/verified-memory-v1/summary.json",
+      "sha256": "71b553e29ee71553134ff1a49ae1faaab8f0587a4efee4b19a7747f5e3b916f1"
+    },
+    {
+      "path": "research/verified-memory-v1/supervised-17.json",
+      "sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57"
+    },
+    {
+      "path": "research/verified-memory-v1/supervised-31.json",
+      "sha256": "5ab2b3824378812919a93ed5648239173ebb58dbfd35b9c45d274f6b049fb213"
+    },
+    {
+      "path": "research/verified-memory-v1/supervised-stage-17.json",
+      "sha256": "d14cce42a113047d305bd04398faf5decbe1f49e1c9901151d20b9137f8c30a4"
+    },
+    {
+      "path": "research/verified-memory-v1/supervised-stage-31.json",
+      "sha256": "56fdf255f5f2763b003a862b435c79d51f41a6cf79876b451581f6c5f2ce1384"
+    },
+    {
+      "path": "research/verified-memory-v1/tasks.json",
+      "sha256": "75f1414270475da89df4b960b3e1076168e13273b569e2e7a717f63378a8c4b5"
+    },
+    {
+      "path": "research/verified-memory-v1/training-progress.json",
+      "sha256": "7de3d5db9d8f6303de46a0624899566c503848863ceb1fae9754ba61c31ff6a8"
+    },
+    {
+      "path": "research/verified-memory-v1/untrained-17.json",
+      "sha256": "c3d337f3a9b1bc6764736391cadf8064100f5d457e315b0ea51467e09502b182"
+    },
+    {
+      "path": "research/verified-memory-v1/untrained-31.json",
+      "sha256": "5ffdf5c779f7f64944d24afd45da5068e35f6e41b4a636ad3b85f52cd26ebaf5"
+    },
+    {
+      "path": "research/verified-memory-v1/utility-stage-17.json",
+      "sha256": "2bdc0e255876230103bc1f0289b12c6579a7b4e95bba7076c806b130eee3fccd"
+    },
+    {
+      "path": "research/verified-memory-v1/utility-stage-31.json",
+      "sha256": "421b543b07fe38223939db9f8b44a5432e6afcd22a0e50a96ad9e2e4e38cdd12"
+    }
+  ],
+  "format": "pcs-prospective-proof-search-protocol-v1",
+  "known_outer_alpha_goals": 139,
+  "limitations": [
+    "authored prospective cases, not independently blind",
+    "outer-binder-alpha disjointness does not establish conceptual novelty or exclusion from all historical data",
+    "equal external wall/call caps do not equate tactic internal work to one neural proposal",
+    "no fitting or checkpoint selection against these cases",
+    "negative controls are authored expectations, not axioms"
+  ],
+  "methods": [
+    "frozen_neural",
+    "same_memory_structural",
+    "std_then_structural"
+  ],
+  "pcs_authority": false,
+  "selection": "first supported outer-binder-alpha-disjoint candidates in frozen generator order; no search used in selection",
+  "success": "fresh independently replayed proof; unknown, timeout and rejected replay remain failures",
+  "training_authorized": false,
+  "unsupported_candidate_count": 0
+}

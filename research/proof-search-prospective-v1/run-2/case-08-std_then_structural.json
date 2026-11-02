@@ -1,0 +1,35 @@
+{
+  "case": "case-08",
+  "method": "std_then_structural",
+  "goal_sha256": "9c1b6e9871320bb906cda7b98162ff99545e427c62b7b1a377751808f46c8bc1",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "search_status": "unknown",
+  "receipt": null,
+  "expansions": 12,
+  "stages": [
+    {
+      "component": "ordinary_Std",
+      "status": "unknown",
+      "expansions": 3
+    },
+    {
+      "component": "std_then_structural",
+      "status": "unknown",
+      "expansions": 9
+    }
+  ],
+  "budget_reason": null,
+  "setup_seconds": 18.220279880988528,
+  "setup_lean_attempts": 19,
+  "setup_compiler_attempts": 18,
+  "setup_wire_requests": 2,
+  "setup_physical_attempts": 20,
+  "search_physical_attempts": 13,
+  "search_lean_attempts": 13,
+  "search_seconds": 3.022310902000754,
+  "total_search_phase_seconds": 21.24259131398867,
+  "checkpoint_sha256": null,
+  "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+  "model_training": false,
+  "pcs_authority": false
+}

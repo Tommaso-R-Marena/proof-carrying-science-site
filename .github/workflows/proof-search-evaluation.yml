@@ -1,0 +1,40 @@
+name: PCS manual frozen neural study reproduction
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fresh-evaluation:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Tommaso-R-Marena/proof-carrying-science
+          ref: f20f3cab2938f2e085f137185e88f4700d5da2ed
+          path: .ci-components/frozen-study
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Actual frozen CPU policies, hard budgets and fresh independent replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          source .ci-components/frozen-study/scripts/activate_lean_428.sh
+          python -m pip install --require-hashes -r .ci-components/frozen-study/requirements-build.lock -r .ci-components/frozen-study/requirements-dev.lock -r .ci-components/frozen-study/requirements-prover.lock
+          python -m pip install --no-deps --no-build-isolation -e .ci-components/frozen-study
+          python scripts/run_proof_search_evaluation.py --core .ci-components/frozen-study --out "$RUNNER_TEMP/fresh-evaluation"
+          python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results "$RUNNER_TEMP/fresh-evaluation" > "$RUNNER_TEMP/fresh-evaluation/receiving.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: fresh-frozen-policy-study-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/fresh-evaluation/
+          retention-days: 14

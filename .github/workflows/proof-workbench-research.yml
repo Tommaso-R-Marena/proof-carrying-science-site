@@ -1,0 +1,50 @@
+name: PCS frozen proof study independent replay
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  receiving-replay:
+    if: github.event.repository.private == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      # Historical evidence is qualified against its frozen source, independently
+      # of the current public dispatch pin. Never rewrite old receipts on upgrade.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Tommaso-R-Marena/proof-carrying-science
+          ref: f20f3cab2938f2e085f137185e88f4700d5da2ed
+          path: .ci-components/frozen-study
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check artifacts and independently compile every positive and negative receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          source .ci-components/frozen-study/scripts/activate_lean_428.sh
+          python -m pip install --require-hashes -r .ci-components/frozen-study/requirements-build.lock -r .ci-components/frozen-study/requirements-dev.lock
+          python -m pip install --no-deps --no-build-isolation -e .ci-components/frozen-study
+          python scripts/check_proof_search_artifacts.py
+          python scripts/check_proof_provenance_recovery.py
+          python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results research/proof-search-prospective-v1/run-1 > receiving-run-1.json
+          python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results research/proof-search-prospective-v1/run-2 > receiving-run-2.json
+          python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --negative-controls > receiving-controls.json
+          python scripts/replay_proof_workbench.py --core .ci-components/frozen-study public/proof-workbench-example.json > workbench-receiving.json
+          python scripts/proof_workbench_adversarial.py --core .ci-components/frozen-study
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: independent-receiving-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            receiving-*.json
+            workbench-receiving.json
+          retention-days: 14

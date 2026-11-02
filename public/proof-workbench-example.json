@@ -1,0 +1,1769 @@
+{
+  "format": "pcs-proof-workbench-report-v1",
+  "provider_evidence_sha256": "0f31968295f6235f9597c00c043971b34dea377fe929c2c7e267b0afb0512483",
+  "catalog_sha256": "c93380c850239bd989933bd77cfa2c0e5c232903782e4eff8adcdacad777507a",
+  "entry_id": "reuse",
+  "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+  "statement": "For all propositions U and V, if (U and V) then (U and (U and V)).",
+  "formal_statement": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+  "source_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "request_id": "b669d9932dac24cf0a0638cfbf18bfc7",
+  "requested_family": "verified-memory-v1",
+  "run_url": "https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/41323524383",
+  "execution_mode": "recorded_example",
+  "created_at": "2026-11-02T00:01:59.099Z",
+  "outcome": "proved",
+  "selected_role": "result",
+  "interpretation_confirmed": true,
+  "evidence": {
+    "format": "pcs-public-lean-result-v1",
+    "request_id": "b669d9932dac24cf0a0638cfbf18bfc7",
+    "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+    "source_sha256": "7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780",
+    "model_family": "verified-memory-v1",
+    "source_license": "CC0-1.0",
+    "automatic_training_authorization": false,
+    "projection": "pcs-workbench-evidence-projection-v1",
+    "result": {
+      "status": "verified",
+      "pcs_authority": false,
+      "model": "verified-memory-v1",
+      "mode": "learned",
+      "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+      "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+      "primitive_catalog_sha256": "a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554",
+      "formalization": {
+        "status": "supported",
+        "source": "For all propositions U and V, if (U and V) then (U and (U and V)).",
+        "source_sha256": "7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780",
+        "candidates": [
+          {
+            "ir": {
+              "format": "pcs-math-ir-v1",
+              "binders": [
+                {
+                  "name": "U",
+                  "type": "Prop"
+                },
+                {
+                  "name": "V",
+                  "type": "Prop"
+                }
+              ],
+              "body": {
+                "op": "implies",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "V"
+                  }
+                },
+                "right": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "and",
+                    "left": {
+                      "op": "var",
+                      "name": "U"
+                    },
+                    "right": {
+                      "op": "var",
+                      "name": "V"
+                    }
+                  }
+                }
+              }
+            },
+            "lean": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+            "interpretation_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+            "score": null
+          }
+        ],
+        "semantic_authorization": false,
+        "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+      },
+      "cost": {
+        "all_Lean_execution_attempts": 33,
+        "compiler_attempts": 20,
+        "worker_request_attempts": 13,
+        "cold_wall_seconds": 16.69573383300002
+      },
+      "search": {
+        "status": "verified",
+        "receipt": {
+          "format": "pcs-prover-proof-v1",
+          "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+          "statement": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+          "actions": [
+            {
+              "kind": "intro",
+              "argument": "h0"
+            },
+            {
+              "kind": "intro",
+              "argument": "h1"
+            },
+            {
+              "kind": "intro",
+              "argument": "h2"
+            },
+            {
+              "kind": "constructor",
+              "argument": null
+            },
+            {
+              "kind": "exact",
+              "argument": "h2.1"
+            },
+            {
+              "kind": "exact",
+              "argument": "h2"
+            }
+          ],
+          "proof": "  intro h0\n  intro h1\n  intro h2\n  constructor\n  exact h2.1\n  exact h2",
+          "kernel": {
+            "axioms": [],
+            "expression": {
+              "children": [
+                {
+                  "children": [],
+                  "kind": "sort",
+                  "value": "0"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "kind": "sort",
+                      "value": "0"
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [],
+                              "kind": "bound",
+                              "value": "0"
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "2"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "kind": "constant",
+                                      "value": "And:[]"
+                                    },
+                                    {
+                                      "children": [],
+                                      "kind": "bound",
+                                      "value": "2"
+                                    }
+                                  ],
+                                  "kind": "application",
+                                  "value": ""
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        }
+                      ],
+                      "kind": "forall",
+                      "value": "a._@._internal._hyg.0"
+                    }
+                  ],
+                  "kind": "forall",
+                  "value": "V"
+                }
+              ],
+              "kind": "forall",
+              "value": "U"
+            },
+            "format": "pcs-lean-kernel-v1"
+          },
+          "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+          "adapter_sha256": "08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c",
+          "pcs_scientific_authority": false,
+          "library_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+          "library": {
+            "entries": [
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2 h3 h4",
+                    "kind": "induct_nat"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "nat",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h4",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "nat",
+                    "kind": "normalize"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "q0",
+                      "type": "NatFn"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "body": {
+                        "left": {
+                          "arg": {
+                            "arg": {
+                              "name": "q2",
+                              "op": "var"
+                            },
+                            "op": "succ"
+                          },
+                          "fn": {
+                            "name": "q0",
+                            "op": "var"
+                          },
+                          "op": "apply"
+                        },
+                        "op": "eq",
+                        "right": {
+                          "left": {
+                            "arg": {
+                              "name": "q2",
+                              "op": "var"
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          },
+                          "op": "add",
+                          "right": {
+                            "op": "number",
+                            "type": "Nat",
+                            "value": 1
+                          }
+                        }
+                      },
+                      "name": "q2",
+                      "op": "forall",
+                      "type": "Nat"
+                    },
+                    "op": "implies",
+                    "right": {
+                      "body": {
+                        "left": {
+                          "arg": {
+                            "name": "q2",
+                            "op": "var"
+                          },
+                          "fn": {
+                            "name": "q0",
+                            "op": "var"
+                          },
+                          "op": "apply"
+                        },
+                        "op": "eq",
+                        "right": {
+                          "left": {
+                            "arg": {
+                              "op": "number",
+                              "type": "Nat",
+                              "value": 0
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          },
+                          "op": "add",
+                          "right": {
+                            "name": "q2",
+                            "op": "var"
+                          }
+                        }
+                      },
+                      "name": "q2",
+                      "op": "forall",
+                      "type": "Nat"
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              },
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2 h3 h4",
+                    "kind": "induct_nat"
+                  },
+                  {
+                    "argument": "h1.2",
+                    "kind": "apply"
+                  },
+                  {
+                    "argument": "h4",
+                    "kind": "exact"
+                  },
+                  {
+                    "argument": "h1.1",
+                    "kind": "exact"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "q0",
+                      "type": "NatPred"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "left": {
+                        "arg": {
+                          "op": "number",
+                          "type": "Nat",
+                          "value": 0
+                        },
+                        "fn": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "apply"
+                      },
+                      "op": "and",
+                      "right": {
+                        "body": {
+                          "left": {
+                            "arg": {
+                              "name": "q3",
+                              "op": "var"
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          },
+                          "op": "implies",
+                          "right": {
+                            "arg": {
+                              "arg": {
+                                "name": "q3",
+                                "op": "var"
+                              },
+                              "op": "succ"
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          }
+                        },
+                        "name": "q3",
+                        "op": "forall",
+                        "type": "Nat"
+                      }
+                    },
+                    "op": "implies",
+                    "right": {
+                      "body": {
+                        "arg": {
+                          "name": "q2",
+                          "op": "var"
+                        },
+                        "fn": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "apply"
+                      },
+                      "name": "q2",
+                      "op": "forall",
+                      "type": "Nat"
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              },
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h0 h2 h3 h4",
+                    "kind": "induct_list"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h4",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "q0",
+                      "type": "NatList"
+                    },
+                    {
+                      "name": "q1",
+                      "type": "NatList"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "arg": {
+                        "left": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "append",
+                        "right": {
+                          "name": "q1",
+                          "op": "var"
+                        }
+                      },
+                      "op": "length"
+                    },
+                    "op": "eq",
+                    "right": {
+                      "left": {
+                        "arg": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "length"
+                      },
+                      "op": "add",
+                      "right": {
+                        "arg": {
+                          "name": "q1",
+                          "op": "var"
+                        },
+                        "op": "length"
+                      }
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              },
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h2 h3 h4 h5",
+                    "kind": "induct_list"
+                  },
+                  {
+                    "argument": "h1 h2 h6",
+                    "kind": "induct_nat"
+                  },
+                  {
+                    "argument": "h6",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h5",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "v0",
+                      "type": "NatList"
+                    },
+                    {
+                      "name": "v1",
+                      "type": "Nat"
+                    },
+                    {
+                      "name": "v2",
+                      "type": "NatList"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "arg": {
+                        "left": {
+                          "head": {
+                            "name": "v1",
+                            "op": "var"
+                          },
+                          "op": "cons",
+                          "tail": {
+                            "name": "v2",
+                            "op": "var"
+                          }
+                        },
+                        "op": "append",
+                        "right": {
+                          "name": "v0",
+                          "op": "var"
+                        }
+                      },
+                      "op": "length"
+                    },
+                    "op": "eq",
+                    "right": {
+                      "left": {
+                        "arg": {
+                          "head": {
+                            "name": "v1",
+                            "op": "var"
+                          },
+                          "op": "cons",
+                          "tail": {
+                            "name": "v2",
+                            "op": "var"
+                          }
+                        },
+                        "op": "length"
+                      },
+                      "op": "add",
+                      "right": {
+                        "arg": {
+                          "name": "v0",
+                          "op": "var"
+                        },
+                        "op": "length"
+                      }
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              }
+            ],
+            "format": "pcs-checked-lemma-library-v1"
+          },
+          "library_declarations": "theorem PCSKnownL0 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + b) = (a + c)) → (b = c)) := by\n  intro a b c h; exact Nat.add_left_cancel h\ntheorem PCSKnownL1 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) = (b + c)) → (a = b)) := by\n  intro a b c h; exact Nat.add_right_cancel h\ntheorem PCSKnownL2 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) = (Nat.succ b)) → (a = b)) := by\n  intro a b h; exact Nat.succ.inj h\ntheorem PCSKnownL3 : ∀ (n : Nat), (¬ ((Nat.succ n) = (0 : Nat))) := by\n  intro n; exact Nat.succ_ne_zero n\ntheorem PCSKnownL4 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) ≤ (b + c)) → (a ≤ b)) := by\n  intro a b c h; exact Nat.le_of_add_le_add_right h\ntheorem PCSKnownL5 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) ≤ (Nat.succ b)) → (a ≤ b)) := by\n  intro a b h; exact Nat.succ_le_succ_iff.mp h\ntheorem PCSKnownL6 : ∀ (a : Nat) (b : Nat) (c : Nat), ((a * (b + c)) = ((a * b) + (a * c))) := by\n  intro a b c; exact Nat.left_distrib a b c\ntheorem PCSKnownL7 : ∀ (xs : List Nat), ((List.length (List.reverse xs)) = (List.length xs)) := by\n  intro xs; exact List.length_reverse\ntheorem PCSKnownL8 : ∀ (xs : List Nat) (ys : List Nat), ((List.reverse (xs ++ ys)) = ((List.reverse ys) ++ (List.reverse xs))) := by\n  intro xs ys; exact List.reverse_append\ntheorem PCSKnownL9 : ∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs) := by\n  intro xs; exact List.reverse_reverse xs\ntheorem PCSKnownL10 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ ys) = (xs ++ zs)) → (ys = zs)) := by\n  intro xs ys zs h; exact (List.append_right_inj xs).mp h\ntheorem PCSKnownL11 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ zs) = (ys ++ zs)) → (xs = ys)) := by\n  intro xs ys zs h; exact (List.append_left_inj zs).mp h\ntheorem PCSKnownL12 : ∀ (xs : List Nat) (ys : List Nat), (((List.reverse xs) = (List.reverse ys)) → (xs = ys)) := by\n  intro xs ys h; exact List.reverse_inj.mp h\ntheorem PCSReuseL0 : ∀ (q0 : Nat → Nat), ((∀ (q2 : Nat), ((q0 (Nat.succ q2)) = ((q0 q2) + (1 : Nat)))) → (∀ (q2 : Nat), ((q0 q2) = ((q0 (0 : Nat)) + q2)))) := by\n  intro h0\n  intro h1\n  intro h2\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\n  rw [h1]\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\n  rw [h4]\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\ntheorem PCSReuseL1 : ∀ (q0 : Nat → Prop), (((q0 (0 : Nat)) ∧ (∀ (q3 : Nat), ((q0 q3) → (q0 (Nat.succ q3))))) → (∀ (q2 : Nat), (q0 q2))) := by\n  intro h0\n  intro h1\n  intro h2\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\n  apply h1.2\n  exact h4\n  exact h1.1\ntheorem PCSReuseL2 : ∀ (q0 : List Nat) (q1 : List Nat), ((List.length (q0 ++ q1)) = ((List.length q0) + (List.length q1))) := by\n  intro h0\n  intro h1\n  (induction h0 using List.rec; case' cons h2 h3 h4 => skip)\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n  rw [h4]\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\ntheorem PCSReuseL3 : ∀ (v0 : List Nat) (v1 : Nat) (v2 : List Nat), ((List.length ((List.cons v1 v2) ++ v0)) = ((List.length (List.cons v1 v2)) + (List.length v0))) := by\n  intro h0\n  intro h1\n  intro h2\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n  (induction h2 using List.rec; case' cons h3 h4 h5 => skip)\n  (induction h1 using Nat.rec; case' succ h2 h6 => skip)\n  rw [h6]\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n  rw [h5]\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n",
+          "environment": "pcs-grounded-memory-v1",
+          "primitive_catalog_sha256": "a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554",
+          "memory_source_sha256": "dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8"
+        },
+        "expansions": 12
+      }
+    },
+    "previous": {
+      "status": "verified",
+      "pcs_authority": false,
+      "model": "verified-memory-v1",
+      "mode": "same_memory_structural",
+      "checkpoint_sha256": null,
+      "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+      "primitive_catalog_sha256": "a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554",
+      "formalization": {
+        "status": "supported",
+        "source": "For all propositions U and V, if (U and V) then (U and (U and V)).",
+        "source_sha256": "7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780",
+        "candidates": [
+          {
+            "ir": {
+              "format": "pcs-math-ir-v1",
+              "binders": [
+                {
+                  "name": "U",
+                  "type": "Prop"
+                },
+                {
+                  "name": "V",
+                  "type": "Prop"
+                }
+              ],
+              "body": {
+                "op": "implies",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "V"
+                  }
+                },
+                "right": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "and",
+                    "left": {
+                      "op": "var",
+                      "name": "U"
+                    },
+                    "right": {
+                      "op": "var",
+                      "name": "V"
+                    }
+                  }
+                }
+              }
+            },
+            "lean": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+            "interpretation_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+            "score": null
+          }
+        ],
+        "semantic_authorization": false,
+        "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+      },
+      "cost": {
+        "all_Lean_execution_attempts": 32,
+        "compiler_attempts": 19,
+        "worker_request_attempts": 13,
+        "cold_wall_seconds": 15.719581000000005
+      },
+      "search": {
+        "status": "verified",
+        "receipt": {
+          "format": "pcs-prover-proof-v1",
+          "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+          "statement": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+          "actions": [
+            {
+              "kind": "intro",
+              "argument": "h0"
+            },
+            {
+              "kind": "intro",
+              "argument": "h1"
+            },
+            {
+              "kind": "intro",
+              "argument": "h2"
+            },
+            {
+              "kind": "constructor",
+              "argument": null
+            },
+            {
+              "kind": "exact",
+              "argument": "h2.1"
+            },
+            {
+              "kind": "exact",
+              "argument": "h2"
+            }
+          ],
+          "proof": "  intro h0\n  intro h1\n  intro h2\n  constructor\n  exact h2.1\n  exact h2",
+          "kernel": {
+            "axioms": [],
+            "expression": {
+              "children": [
+                {
+                  "children": [],
+                  "kind": "sort",
+                  "value": "0"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "kind": "sort",
+                      "value": "0"
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [],
+                              "kind": "bound",
+                              "value": "0"
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "2"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "kind": "constant",
+                                      "value": "And:[]"
+                                    },
+                                    {
+                                      "children": [],
+                                      "kind": "bound",
+                                      "value": "2"
+                                    }
+                                  ],
+                                  "kind": "application",
+                                  "value": ""
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        }
+                      ],
+                      "kind": "forall",
+                      "value": "a._@._internal._hyg.0"
+                    }
+                  ],
+                  "kind": "forall",
+                  "value": "V"
+                }
+              ],
+              "kind": "forall",
+              "value": "U"
+            },
+            "format": "pcs-lean-kernel-v1"
+          },
+          "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+          "adapter_sha256": "08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c",
+          "pcs_scientific_authority": false,
+          "library_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+          "library": {
+            "entries": [
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2 h3 h4",
+                    "kind": "induct_nat"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "nat",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h4",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "nat",
+                    "kind": "normalize"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "q0",
+                      "type": "NatFn"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "body": {
+                        "left": {
+                          "arg": {
+                            "arg": {
+                              "name": "q2",
+                              "op": "var"
+                            },
+                            "op": "succ"
+                          },
+                          "fn": {
+                            "name": "q0",
+                            "op": "var"
+                          },
+                          "op": "apply"
+                        },
+                        "op": "eq",
+                        "right": {
+                          "left": {
+                            "arg": {
+                              "name": "q2",
+                              "op": "var"
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          },
+                          "op": "add",
+                          "right": {
+                            "op": "number",
+                            "type": "Nat",
+                            "value": 1
+                          }
+                        }
+                      },
+                      "name": "q2",
+                      "op": "forall",
+                      "type": "Nat"
+                    },
+                    "op": "implies",
+                    "right": {
+                      "body": {
+                        "left": {
+                          "arg": {
+                            "name": "q2",
+                            "op": "var"
+                          },
+                          "fn": {
+                            "name": "q0",
+                            "op": "var"
+                          },
+                          "op": "apply"
+                        },
+                        "op": "eq",
+                        "right": {
+                          "left": {
+                            "arg": {
+                              "op": "number",
+                              "type": "Nat",
+                              "value": 0
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          },
+                          "op": "add",
+                          "right": {
+                            "name": "q2",
+                            "op": "var"
+                          }
+                        }
+                      },
+                      "name": "q2",
+                      "op": "forall",
+                      "type": "Nat"
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              },
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2 h3 h4",
+                    "kind": "induct_nat"
+                  },
+                  {
+                    "argument": "h1.2",
+                    "kind": "apply"
+                  },
+                  {
+                    "argument": "h4",
+                    "kind": "exact"
+                  },
+                  {
+                    "argument": "h1.1",
+                    "kind": "exact"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "q0",
+                      "type": "NatPred"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "left": {
+                        "arg": {
+                          "op": "number",
+                          "type": "Nat",
+                          "value": 0
+                        },
+                        "fn": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "apply"
+                      },
+                      "op": "and",
+                      "right": {
+                        "body": {
+                          "left": {
+                            "arg": {
+                              "name": "q3",
+                              "op": "var"
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          },
+                          "op": "implies",
+                          "right": {
+                            "arg": {
+                              "arg": {
+                                "name": "q3",
+                                "op": "var"
+                              },
+                              "op": "succ"
+                            },
+                            "fn": {
+                              "name": "q0",
+                              "op": "var"
+                            },
+                            "op": "apply"
+                          }
+                        },
+                        "name": "q3",
+                        "op": "forall",
+                        "type": "Nat"
+                      }
+                    },
+                    "op": "implies",
+                    "right": {
+                      "body": {
+                        "arg": {
+                          "name": "q2",
+                          "op": "var"
+                        },
+                        "fn": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "apply"
+                      },
+                      "name": "q2",
+                      "op": "forall",
+                      "type": "Nat"
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              },
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h0 h2 h3 h4",
+                    "kind": "induct_list"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h4",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "q0",
+                      "type": "NatList"
+                    },
+                    {
+                      "name": "q1",
+                      "type": "NatList"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "arg": {
+                        "left": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "append",
+                        "right": {
+                          "name": "q1",
+                          "op": "var"
+                        }
+                      },
+                      "op": "length"
+                    },
+                    "op": "eq",
+                    "right": {
+                      "left": {
+                        "arg": {
+                          "name": "q0",
+                          "op": "var"
+                        },
+                        "op": "length"
+                      },
+                      "op": "add",
+                      "right": {
+                        "arg": {
+                          "name": "q1",
+                          "op": "var"
+                        },
+                        "op": "length"
+                      }
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              },
+              {
+                "actions": [
+                  {
+                    "argument": "h0",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h1",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "h2",
+                    "kind": "intro"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h2 h3 h4 h5",
+                    "kind": "induct_list"
+                  },
+                  {
+                    "argument": "h1 h2 h6",
+                    "kind": "induct_nat"
+                  },
+                  {
+                    "argument": "h6",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  },
+                  {
+                    "argument": "h5",
+                    "kind": "rewrite"
+                  },
+                  {
+                    "argument": "list",
+                    "kind": "normalize"
+                  }
+                ],
+                "goal": {
+                  "binders": [
+                    {
+                      "name": "v0",
+                      "type": "NatList"
+                    },
+                    {
+                      "name": "v1",
+                      "type": "Nat"
+                    },
+                    {
+                      "name": "v2",
+                      "type": "NatList"
+                    }
+                  ],
+                  "body": {
+                    "left": {
+                      "arg": {
+                        "left": {
+                          "head": {
+                            "name": "v1",
+                            "op": "var"
+                          },
+                          "op": "cons",
+                          "tail": {
+                            "name": "v2",
+                            "op": "var"
+                          }
+                        },
+                        "op": "append",
+                        "right": {
+                          "name": "v0",
+                          "op": "var"
+                        }
+                      },
+                      "op": "length"
+                    },
+                    "op": "eq",
+                    "right": {
+                      "left": {
+                        "arg": {
+                          "head": {
+                            "name": "v1",
+                            "op": "var"
+                          },
+                          "op": "cons",
+                          "tail": {
+                            "name": "v2",
+                            "op": "var"
+                          }
+                        },
+                        "op": "length"
+                      },
+                      "op": "add",
+                      "right": {
+                        "arg": {
+                          "name": "v0",
+                          "op": "var"
+                        },
+                        "op": "length"
+                      }
+                    }
+                  },
+                  "format": "pcs-math-ir-v1"
+                },
+                "license": "Apache-2.0",
+                "source_revision": "ed17576ef1def0715326159db9a2978a12ae56d2"
+              }
+            ],
+            "format": "pcs-checked-lemma-library-v1"
+          },
+          "library_declarations": "theorem PCSKnownL0 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + b) = (a + c)) → (b = c)) := by\n  intro a b c h; exact Nat.add_left_cancel h\ntheorem PCSKnownL1 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) = (b + c)) → (a = b)) := by\n  intro a b c h; exact Nat.add_right_cancel h\ntheorem PCSKnownL2 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) = (Nat.succ b)) → (a = b)) := by\n  intro a b h; exact Nat.succ.inj h\ntheorem PCSKnownL3 : ∀ (n : Nat), (¬ ((Nat.succ n) = (0 : Nat))) := by\n  intro n; exact Nat.succ_ne_zero n\ntheorem PCSKnownL4 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) ≤ (b + c)) → (a ≤ b)) := by\n  intro a b c h; exact Nat.le_of_add_le_add_right h\ntheorem PCSKnownL5 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) ≤ (Nat.succ b)) → (a ≤ b)) := by\n  intro a b h; exact Nat.succ_le_succ_iff.mp h\ntheorem PCSKnownL6 : ∀ (a : Nat) (b : Nat) (c : Nat), ((a * (b + c)) = ((a * b) + (a * c))) := by\n  intro a b c; exact Nat.left_distrib a b c\ntheorem PCSKnownL7 : ∀ (xs : List Nat), ((List.length (List.reverse xs)) = (List.length xs)) := by\n  intro xs; exact List.length_reverse\ntheorem PCSKnownL8 : ∀ (xs : List Nat) (ys : List Nat), ((List.reverse (xs ++ ys)) = ((List.reverse ys) ++ (List.reverse xs))) := by\n  intro xs ys; exact List.reverse_append\ntheorem PCSKnownL9 : ∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs) := by\n  intro xs; exact List.reverse_reverse xs\ntheorem PCSKnownL10 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ ys) = (xs ++ zs)) → (ys = zs)) := by\n  intro xs ys zs h; exact (List.append_right_inj xs).mp h\ntheorem PCSKnownL11 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ zs) = (ys ++ zs)) → (xs = ys)) := by\n  intro xs ys zs h; exact (List.append_left_inj zs).mp h\ntheorem PCSKnownL12 : ∀ (xs : List Nat) (ys : List Nat), (((List.reverse xs) = (List.reverse ys)) → (xs = ys)) := by\n  intro xs ys h; exact List.reverse_inj.mp h\ntheorem PCSReuseL0 : ∀ (q0 : Nat → Nat), ((∀ (q2 : Nat), ((q0 (Nat.succ q2)) = ((q0 q2) + (1 : Nat)))) → (∀ (q2 : Nat), ((q0 q2) = ((q0 (0 : Nat)) + q2)))) := by\n  intro h0\n  intro h1\n  intro h2\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\n  rw [h1]\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\n  rw [h4]\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\ntheorem PCSReuseL1 : ∀ (q0 : Nat → Prop), (((q0 (0 : Nat)) ∧ (∀ (q3 : Nat), ((q0 q3) → (q0 (Nat.succ q3))))) → (∀ (q2 : Nat), (q0 q2))) := by\n  intro h0\n  intro h1\n  intro h2\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\n  apply h1.2\n  exact h4\n  exact h1.1\ntheorem PCSReuseL2 : ∀ (q0 : List Nat) (q1 : List Nat), ((List.length (q0 ++ q1)) = ((List.length q0) + (List.length q1))) := by\n  intro h0\n  intro h1\n  (induction h0 using List.rec; case' cons h2 h3 h4 => skip)\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n  rw [h4]\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\ntheorem PCSReuseL3 : ∀ (v0 : List Nat) (v1 : Nat) (v2 : List Nat), ((List.length ((List.cons v1 v2) ++ v0)) = ((List.length (List.cons v1 v2)) + (List.length v0))) := by\n  intro h0\n  intro h1\n  intro h2\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n  (induction h2 using List.rec; case' cons h3 h4 h5 => skip)\n  (induction h1 using Nat.rec; case' succ h2 h6 => skip)\n  rw [h6]\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n  rw [h5]\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\n",
+          "environment": "pcs-grounded-memory-v1",
+          "primitive_catalog_sha256": "a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554",
+          "memory_source_sha256": "dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8"
+        },
+        "expansions": 12
+      }
+    },
+    "baseline": {
+      "status": "verified",
+      "pcs_authority": false,
+      "model": "verified-memory-v1",
+      "mode": "no_memory_structural",
+      "checkpoint_sha256": null,
+      "memory_sha256": "b58adbd22e7d594694df55973483a826e1d312040f302ebc51e70a827bc201f1",
+      "primitive_catalog_sha256": "a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554",
+      "formalization": {
+        "status": "supported",
+        "source": "For all propositions U and V, if (U and V) then (U and (U and V)).",
+        "source_sha256": "7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780",
+        "candidates": [
+          {
+            "ir": {
+              "format": "pcs-math-ir-v1",
+              "binders": [
+                {
+                  "name": "U",
+                  "type": "Prop"
+                },
+                {
+                  "name": "V",
+                  "type": "Prop"
+                }
+              ],
+              "body": {
+                "op": "implies",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "V"
+                  }
+                },
+                "right": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "and",
+                    "left": {
+                      "op": "var",
+                      "name": "U"
+                    },
+                    "right": {
+                      "op": "var",
+                      "name": "V"
+                    }
+                  }
+                }
+              }
+            },
+            "lean": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+            "interpretation_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+            "score": null
+          }
+        ],
+        "semantic_authorization": false,
+        "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+      },
+      "cost": {
+        "all_Lean_execution_attempts": 28,
+        "compiler_attempts": 15,
+        "worker_request_attempts": 13,
+        "cold_wall_seconds": 12.66755821999999
+      },
+      "search": {
+        "status": "verified",
+        "receipt": {
+          "format": "pcs-prover-proof-v1",
+          "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+          "statement": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+          "actions": [
+            {
+              "kind": "intro",
+              "argument": "h0"
+            },
+            {
+              "kind": "intro",
+              "argument": "h1"
+            },
+            {
+              "kind": "intro",
+              "argument": "h2"
+            },
+            {
+              "kind": "constructor",
+              "argument": null
+            },
+            {
+              "kind": "exact",
+              "argument": "h2.1"
+            },
+            {
+              "kind": "exact",
+              "argument": "h2"
+            }
+          ],
+          "proof": "  intro h0\n  intro h1\n  intro h2\n  constructor\n  exact h2.1\n  exact h2",
+          "kernel": {
+            "axioms": [],
+            "expression": {
+              "children": [
+                {
+                  "children": [],
+                  "kind": "sort",
+                  "value": "0"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "kind": "sort",
+                      "value": "0"
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [],
+                              "kind": "bound",
+                              "value": "0"
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "2"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "kind": "constant",
+                                      "value": "And:[]"
+                                    },
+                                    {
+                                      "children": [],
+                                      "kind": "bound",
+                                      "value": "2"
+                                    }
+                                  ],
+                                  "kind": "application",
+                                  "value": ""
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        }
+                      ],
+                      "kind": "forall",
+                      "value": "a._@._internal._hyg.0"
+                    }
+                  ],
+                  "kind": "forall",
+                  "value": "V"
+                }
+              ],
+              "kind": "forall",
+              "value": "U"
+            },
+            "format": "pcs-lean-kernel-v1"
+          },
+          "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+          "adapter_sha256": "08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c",
+          "pcs_scientific_authority": false,
+          "library_sha256": "b58adbd22e7d594694df55973483a826e1d312040f302ebc51e70a827bc201f1",
+          "library": {
+            "entries": [],
+            "format": "pcs-checked-lemma-library-v1"
+          },
+          "library_declarations": "theorem PCSKnownL0 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + b) = (a + c)) → (b = c)) := by\n  intro a b c h; exact Nat.add_left_cancel h\ntheorem PCSKnownL1 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) = (b + c)) → (a = b)) := by\n  intro a b c h; exact Nat.add_right_cancel h\ntheorem PCSKnownL2 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) = (Nat.succ b)) → (a = b)) := by\n  intro a b h; exact Nat.succ.inj h\ntheorem PCSKnownL3 : ∀ (n : Nat), (¬ ((Nat.succ n) = (0 : Nat))) := by\n  intro n; exact Nat.succ_ne_zero n\ntheorem PCSKnownL4 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) ≤ (b + c)) → (a ≤ b)) := by\n  intro a b c h; exact Nat.le_of_add_le_add_right h\ntheorem PCSKnownL5 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) ≤ (Nat.succ b)) → (a ≤ b)) := by\n  intro a b h; exact Nat.succ_le_succ_iff.mp h\ntheorem PCSKnownL6 : ∀ (a : Nat) (b : Nat) (c : Nat), ((a * (b + c)) = ((a * b) + (a * c))) := by\n  intro a b c; exact Nat.left_distrib a b c\ntheorem PCSKnownL7 : ∀ (xs : List Nat), ((List.length (List.reverse xs)) = (List.length xs)) := by\n  intro xs; exact List.length_reverse\ntheorem PCSKnownL8 : ∀ (xs : List Nat) (ys : List Nat), ((List.reverse (xs ++ ys)) = ((List.reverse ys) ++ (List.reverse xs))) := by\n  intro xs ys; exact List.reverse_append\ntheorem PCSKnownL9 : ∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs) := by\n  intro xs; exact List.reverse_reverse xs\ntheorem PCSKnownL10 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ ys) = (xs ++ zs)) → (ys = zs)) := by\n  intro xs ys zs h; exact (List.append_right_inj xs).mp h\ntheorem PCSKnownL11 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ zs) = (ys ++ zs)) → (xs = ys)) := by\n  intro xs ys zs h; exact (List.append_left_inj zs).mp h\ntheorem PCSKnownL12 : ∀ (xs : List Nat) (ys : List Nat), (((List.reverse xs) = (List.reverse ys)) → (xs = ys)) := by\n  intro xs ys h; exact List.reverse_inj.mp h\n",
+          "environment": "pcs-grounded-memory-v1",
+          "primitive_catalog_sha256": "a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554",
+          "memory_source_sha256": "dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8"
+        },
+        "expansions": 12
+      }
+    },
+    "strong_baseline": {
+      "status": "verified",
+      "pcs_authority": false,
+      "model": "bounded_Std_simp_omega_grind",
+      "formalization": {
+        "status": "supported",
+        "source": "For all propositions U and V, if (U and V) then (U and (U and V)).",
+        "source_sha256": "7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780",
+        "candidates": [
+          {
+            "ir": {
+              "format": "pcs-math-ir-v1",
+              "binders": [
+                {
+                  "name": "U",
+                  "type": "Prop"
+                },
+                {
+                  "name": "V",
+                  "type": "Prop"
+                }
+              ],
+              "body": {
+                "op": "implies",
+                "left": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "V"
+                  }
+                },
+                "right": {
+                  "op": "and",
+                  "left": {
+                    "op": "var",
+                    "name": "U"
+                  },
+                  "right": {
+                    "op": "and",
+                    "left": {
+                      "op": "var",
+                      "name": "U"
+                    },
+                    "right": {
+                      "op": "var",
+                      "name": "V"
+                    }
+                  }
+                }
+              }
+            },
+            "lean": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+            "interpretation_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+            "score": null
+          }
+        ],
+        "semantic_authorization": false,
+        "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+      },
+      "cost": {
+        "all_lean_calls": 1,
+        "lean_seconds": 0.6477246720000096,
+        "wall_seconds": 0.6483288560000062
+      },
+      "search": {
+        "status": "verified",
+        "receipt": {
+          "format": "pcs-std-baseline-proof-v1",
+          "goal_sha256": "32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0",
+          "statement": "∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))",
+          "proof": "  repeat intro\n  simp_all",
+          "kernel": {
+            "axioms": [
+              "propext"
+            ],
+            "expression": {
+              "children": [
+                {
+                  "children": [],
+                  "kind": "sort",
+                  "value": "0"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [],
+                      "kind": "sort",
+                      "value": "0"
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [],
+                              "kind": "bound",
+                              "value": "0"
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "children": [],
+                                  "kind": "constant",
+                                  "value": "And:[]"
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "2"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "children": [],
+                                      "kind": "constant",
+                                      "value": "And:[]"
+                                    },
+                                    {
+                                      "children": [],
+                                      "kind": "bound",
+                                      "value": "2"
+                                    }
+                                  ],
+                                  "kind": "application",
+                                  "value": ""
+                                },
+                                {
+                                  "children": [],
+                                  "kind": "bound",
+                                  "value": "1"
+                                }
+                              ],
+                              "kind": "application",
+                              "value": ""
+                            }
+                          ],
+                          "kind": "application",
+                          "value": ""
+                        }
+                      ],
+                      "kind": "forall",
+                      "value": "a._@._internal._hyg.0"
+                    }
+                  ],
+                  "kind": "forall",
+                  "value": "V"
+                }
+              ],
+              "kind": "forall",
+              "value": "U"
+            },
+            "format": "pcs-lean-kernel-v1"
+          },
+          "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+          "pcs_scientific_authority": false
+        },
+        "expansions": 1
+      }
+    }
+  },
+  "pcs_authority": false,
+  "physical_neural_execution_independently_attested": false,
+  "canonical_payload": "{\"catalog_sha256\":\"c93380c850239bd989933bd77cfa2c0e5c232903782e4eff8adcdacad777507a\",\"created_at\":\"2026-11-02T00:01:59.099Z\",\"entry_id\":\"reuse\",\"evidence\":{\"automatic_training_authorization\":false,\"baseline\":{\"checkpoint_sha256\":null,\"cost\":{\"all_Lean_execution_attempts\":28,\"cold_wall_seconds\":12.66755821999999,\"compiler_attempts\":15,\"worker_request_attempts\":13},\"formalization\":{\"candidates\":[{\"interpretation_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"ir\":{\"binders\":[{\"name\":\"U\",\"type\":\"Prop\"},{\"name\":\"V\",\"type\":\"Prop\"}],\"body\":{\"left\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}},\"op\":\"implies\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}}}},\"format\":\"pcs-math-ir-v1\"},\"lean\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\",\"score\":null}],\"fidelity_boundary\":\"Controlled grammar interpretation; user intent and unrestricted English equivalence unproved.\",\"semantic_authorization\":false,\"source\":\"For all propositions U and V, if (U and V) then (U and (U and V)).\",\"source_sha256\":\"7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780\",\"status\":\"supported\"},\"memory_sha256\":\"b58adbd22e7d594694df55973483a826e1d312040f302ebc51e70a827bc201f1\",\"mode\":\"no_memory_structural\",\"model\":\"verified-memory-v1\",\"pcs_authority\":false,\"primitive_catalog_sha256\":\"a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554\",\"search\":{\"expansions\":12,\"receipt\":{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":null,\"kind\":\"constructor\"},{\"argument\":\"h2.1\",\"kind\":\"exact\"},{\"argument\":\"h2\",\"kind\":\"exact\"}],\"adapter_sha256\":\"08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c\",\"environment\":\"pcs-grounded-memory-v1\",\"format\":\"pcs-prover-proof-v1\",\"goal_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"kernel\":{\"axioms\":[],\"expression\":{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"V\"}],\"kind\":\"forall\",\"value\":\"U\"},\"format\":\"pcs-lean-kernel-v1\"},\"lean\":\"Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)\",\"library\":{\"entries\":[],\"format\":\"pcs-checked-lemma-library-v1\"},\"library_declarations\":\"theorem PCSKnownL0 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + b) = (a + c)) → (b = c)) := by\\n  intro a b c h; exact Nat.add_left_cancel h\\ntheorem PCSKnownL1 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) = (b + c)) → (a = b)) := by\\n  intro a b c h; exact Nat.add_right_cancel h\\ntheorem PCSKnownL2 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) = (Nat.succ b)) → (a = b)) := by\\n  intro a b h; exact Nat.succ.inj h\\ntheorem PCSKnownL3 : ∀ (n : Nat), (¬ ((Nat.succ n) = (0 : Nat))) := by\\n  intro n; exact Nat.succ_ne_zero n\\ntheorem PCSKnownL4 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) ≤ (b + c)) → (a ≤ b)) := by\\n  intro a b c h; exact Nat.le_of_add_le_add_right h\\ntheorem PCSKnownL5 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) ≤ (Nat.succ b)) → (a ≤ b)) := by\\n  intro a b h; exact Nat.succ_le_succ_iff.mp h\\ntheorem PCSKnownL6 : ∀ (a : Nat) (b : Nat) (c : Nat), ((a * (b + c)) = ((a * b) + (a * c))) := by\\n  intro a b c; exact Nat.left_distrib a b c\\ntheorem PCSKnownL7 : ∀ (xs : List Nat), ((List.length (List.reverse xs)) = (List.length xs)) := by\\n  intro xs; exact List.length_reverse\\ntheorem PCSKnownL8 : ∀ (xs : List Nat) (ys : List Nat), ((List.reverse (xs ++ ys)) = ((List.reverse ys) ++ (List.reverse xs))) := by\\n  intro xs ys; exact List.reverse_append\\ntheorem PCSKnownL9 : ∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs) := by\\n  intro xs; exact List.reverse_reverse xs\\ntheorem PCSKnownL10 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ ys) = (xs ++ zs)) → (ys = zs)) := by\\n  intro xs ys zs h; exact (List.append_right_inj xs).mp h\\ntheorem PCSKnownL11 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ zs) = (ys ++ zs)) → (xs = ys)) := by\\n  intro xs ys zs h; exact (List.append_left_inj zs).mp h\\ntheorem PCSKnownL12 : ∀ (xs : List Nat) (ys : List Nat), (((List.reverse xs) = (List.reverse ys)) → (xs = ys)) := by\\n  intro xs ys h; exact List.reverse_inj.mp h\\n\",\"library_sha256\":\"b58adbd22e7d594694df55973483a826e1d312040f302ebc51e70a827bc201f1\",\"memory_source_sha256\":\"dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8\",\"pcs_scientific_authority\":false,\"primitive_catalog_sha256\":\"a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554\",\"proof\":\"  intro h0\\n  intro h1\\n  intro h2\\n  constructor\\n  exact h2.1\\n  exact h2\",\"statement\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\"},\"status\":\"verified\"},\"status\":\"verified\"},\"core_sha\":\"f20f3cab2938f2e085f137185e88f4700d5da2ed\",\"format\":\"pcs-public-lean-result-v1\",\"model_family\":\"verified-memory-v1\",\"previous\":{\"checkpoint_sha256\":null,\"cost\":{\"all_Lean_execution_attempts\":32,\"cold_wall_seconds\":15.719581000000005,\"compiler_attempts\":19,\"worker_request_attempts\":13},\"formalization\":{\"candidates\":[{\"interpretation_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"ir\":{\"binders\":[{\"name\":\"U\",\"type\":\"Prop\"},{\"name\":\"V\",\"type\":\"Prop\"}],\"body\":{\"left\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}},\"op\":\"implies\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}}}},\"format\":\"pcs-math-ir-v1\"},\"lean\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\",\"score\":null}],\"fidelity_boundary\":\"Controlled grammar interpretation; user intent and unrestricted English equivalence unproved.\",\"semantic_authorization\":false,\"source\":\"For all propositions U and V, if (U and V) then (U and (U and V)).\",\"source_sha256\":\"7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780\",\"status\":\"supported\"},\"memory_sha256\":\"4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234\",\"mode\":\"same_memory_structural\",\"model\":\"verified-memory-v1\",\"pcs_authority\":false,\"primitive_catalog_sha256\":\"a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554\",\"search\":{\"expansions\":12,\"receipt\":{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":null,\"kind\":\"constructor\"},{\"argument\":\"h2.1\",\"kind\":\"exact\"},{\"argument\":\"h2\",\"kind\":\"exact\"}],\"adapter_sha256\":\"08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c\",\"environment\":\"pcs-grounded-memory-v1\",\"format\":\"pcs-prover-proof-v1\",\"goal_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"kernel\":{\"axioms\":[],\"expression\":{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"V\"}],\"kind\":\"forall\",\"value\":\"U\"},\"format\":\"pcs-lean-kernel-v1\"},\"lean\":\"Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)\",\"library\":{\"entries\":[{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":\"h2 h3 h4\",\"kind\":\"induct_nat\"},{\"argument\":\"h1\",\"kind\":\"rewrite\"},{\"argument\":\"nat\",\"kind\":\"normalize\"},{\"argument\":\"h4\",\"kind\":\"rewrite\"},{\"argument\":\"nat\",\"kind\":\"normalize\"}],\"goal\":{\"binders\":[{\"name\":\"q0\",\"type\":\"NatFn\"}],\"body\":{\"left\":{\"body\":{\"left\":{\"arg\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"op\":\"succ\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"add\",\"right\":{\"op\":\"number\",\"type\":\"Nat\",\"value\":1}}},\"name\":\"q2\",\"op\":\"forall\",\"type\":\"Nat\"},\"op\":\"implies\",\"right\":{\"body\":{\"left\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"op\":\"number\",\"type\":\"Nat\",\"value\":0},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"add\",\"right\":{\"name\":\"q2\",\"op\":\"var\"}}},\"name\":\"q2\",\"op\":\"forall\",\"type\":\"Nat\"}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"},{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":\"h2 h3 h4\",\"kind\":\"induct_nat\"},{\"argument\":\"h1.2\",\"kind\":\"apply\"},{\"argument\":\"h4\",\"kind\":\"exact\"},{\"argument\":\"h1.1\",\"kind\":\"exact\"}],\"goal\":{\"binders\":[{\"name\":\"q0\",\"type\":\"NatPred\"}],\"body\":{\"left\":{\"left\":{\"arg\":{\"op\":\"number\",\"type\":\"Nat\",\"value\":0},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"and\",\"right\":{\"body\":{\"left\":{\"arg\":{\"name\":\"q3\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"implies\",\"right\":{\"arg\":{\"arg\":{\"name\":\"q3\",\"op\":\"var\"},\"op\":\"succ\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"}},\"name\":\"q3\",\"op\":\"forall\",\"type\":\"Nat\"}},\"op\":\"implies\",\"right\":{\"body\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"name\":\"q2\",\"op\":\"forall\",\"type\":\"Nat\"}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"},{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h0 h2 h3 h4\",\"kind\":\"induct_list\"},{\"argument\":\"list\",\"kind\":\"normalize\"},{\"argument\":\"h4\",\"kind\":\"rewrite\"},{\"argument\":\"list\",\"kind\":\"normalize\"}],\"goal\":{\"binders\":[{\"name\":\"q0\",\"type\":\"NatList\"},{\"name\":\"q1\",\"type\":\"NatList\"}],\"body\":{\"left\":{\"arg\":{\"left\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"append\",\"right\":{\"name\":\"q1\",\"op\":\"var\"}},\"op\":\"length\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"length\"},\"op\":\"add\",\"right\":{\"arg\":{\"name\":\"q1\",\"op\":\"var\"},\"op\":\"length\"}}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"},{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":\"list\",\"kind\":\"normalize\"},{\"argument\":\"h2 h3 h4 h5\",\"kind\":\"induct_list\"},{\"argument\":\"h1 h2 h6\",\"kind\":\"induct_nat\"},{\"argument\":\"h6\",\"kind\":\"rewrite\"},{\"argument\":\"list\",\"kind\":\"normalize\"},{\"argument\":\"h5\",\"kind\":\"rewrite\"},{\"argument\":\"list\",\"kind\":\"normalize\"}],\"goal\":{\"binders\":[{\"name\":\"v0\",\"type\":\"NatList\"},{\"name\":\"v1\",\"type\":\"Nat\"},{\"name\":\"v2\",\"type\":\"NatList\"}],\"body\":{\"left\":{\"arg\":{\"left\":{\"head\":{\"name\":\"v1\",\"op\":\"var\"},\"op\":\"cons\",\"tail\":{\"name\":\"v2\",\"op\":\"var\"}},\"op\":\"append\",\"right\":{\"name\":\"v0\",\"op\":\"var\"}},\"op\":\"length\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"head\":{\"name\":\"v1\",\"op\":\"var\"},\"op\":\"cons\",\"tail\":{\"name\":\"v2\",\"op\":\"var\"}},\"op\":\"length\"},\"op\":\"add\",\"right\":{\"arg\":{\"name\":\"v0\",\"op\":\"var\"},\"op\":\"length\"}}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"}],\"format\":\"pcs-checked-lemma-library-v1\"},\"library_declarations\":\"theorem PCSKnownL0 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + b) = (a + c)) → (b = c)) := by\\n  intro a b c h; exact Nat.add_left_cancel h\\ntheorem PCSKnownL1 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) = (b + c)) → (a = b)) := by\\n  intro a b c h; exact Nat.add_right_cancel h\\ntheorem PCSKnownL2 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) = (Nat.succ b)) → (a = b)) := by\\n  intro a b h; exact Nat.succ.inj h\\ntheorem PCSKnownL3 : ∀ (n : Nat), (¬ ((Nat.succ n) = (0 : Nat))) := by\\n  intro n; exact Nat.succ_ne_zero n\\ntheorem PCSKnownL4 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) ≤ (b + c)) → (a ≤ b)) := by\\n  intro a b c h; exact Nat.le_of_add_le_add_right h\\ntheorem PCSKnownL5 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) ≤ (Nat.succ b)) → (a ≤ b)) := by\\n  intro a b h; exact Nat.succ_le_succ_iff.mp h\\ntheorem PCSKnownL6 : ∀ (a : Nat) (b : Nat) (c : Nat), ((a * (b + c)) = ((a * b) + (a * c))) := by\\n  intro a b c; exact Nat.left_distrib a b c\\ntheorem PCSKnownL7 : ∀ (xs : List Nat), ((List.length (List.reverse xs)) = (List.length xs)) := by\\n  intro xs; exact List.length_reverse\\ntheorem PCSKnownL8 : ∀ (xs : List Nat) (ys : List Nat), ((List.reverse (xs ++ ys)) = ((List.reverse ys) ++ (List.reverse xs))) := by\\n  intro xs ys; exact List.reverse_append\\ntheorem PCSKnownL9 : ∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs) := by\\n  intro xs; exact List.reverse_reverse xs\\ntheorem PCSKnownL10 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ ys) = (xs ++ zs)) → (ys = zs)) := by\\n  intro xs ys zs h; exact (List.append_right_inj xs).mp h\\ntheorem PCSKnownL11 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ zs) = (ys ++ zs)) → (xs = ys)) := by\\n  intro xs ys zs h; exact (List.append_left_inj zs).mp h\\ntheorem PCSKnownL12 : ∀ (xs : List Nat) (ys : List Nat), (((List.reverse xs) = (List.reverse ys)) → (xs = ys)) := by\\n  intro xs ys h; exact List.reverse_inj.mp h\\ntheorem PCSReuseL0 : ∀ (q0 : Nat → Nat), ((∀ (q2 : Nat), ((q0 (Nat.succ q2)) = ((q0 q2) + (1 : Nat)))) → (∀ (q2 : Nat), ((q0 q2) = ((q0 (0 : Nat)) + q2)))) := by\\n  intro h0\\n  intro h1\\n  intro h2\\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\\n  rw [h1]\\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\\n  rw [h4]\\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\\ntheorem PCSReuseL1 : ∀ (q0 : Nat → Prop), (((q0 (0 : Nat)) ∧ (∀ (q3 : Nat), ((q0 q3) → (q0 (Nat.succ q3))))) → (∀ (q2 : Nat), (q0 q2))) := by\\n  intro h0\\n  intro h1\\n  intro h2\\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\\n  apply h1.2\\n  exact h4\\n  exact h1.1\\ntheorem PCSReuseL2 : ∀ (q0 : List Nat) (q1 : List Nat), ((List.length (q0 ++ q1)) = ((List.length q0) + (List.length q1))) := by\\n  intro h0\\n  intro h1\\n  (induction h0 using List.rec; case' cons h2 h3 h4 => skip)\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n  rw [h4]\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\ntheorem PCSReuseL3 : ∀ (v0 : List Nat) (v1 : Nat) (v2 : List Nat), ((List.length ((List.cons v1 v2) ++ v0)) = ((List.length (List.cons v1 v2)) + (List.length v0))) := by\\n  intro h0\\n  intro h1\\n  intro h2\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n  (induction h2 using List.rec; case' cons h3 h4 h5 => skip)\\n  (induction h1 using Nat.rec; case' succ h2 h6 => skip)\\n  rw [h6]\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n  rw [h5]\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n\",\"library_sha256\":\"4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234\",\"memory_source_sha256\":\"dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8\",\"pcs_scientific_authority\":false,\"primitive_catalog_sha256\":\"a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554\",\"proof\":\"  intro h0\\n  intro h1\\n  intro h2\\n  constructor\\n  exact h2.1\\n  exact h2\",\"statement\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\"},\"status\":\"verified\"},\"status\":\"verified\"},\"projection\":\"pcs-workbench-evidence-projection-v1\",\"request_id\":\"b669d9932dac24cf0a0638cfbf18bfc7\",\"result\":{\"checkpoint_sha256\":\"869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57\",\"cost\":{\"all_Lean_execution_attempts\":33,\"cold_wall_seconds\":16.69573383300002,\"compiler_attempts\":20,\"worker_request_attempts\":13},\"formalization\":{\"candidates\":[{\"interpretation_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"ir\":{\"binders\":[{\"name\":\"U\",\"type\":\"Prop\"},{\"name\":\"V\",\"type\":\"Prop\"}],\"body\":{\"left\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}},\"op\":\"implies\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}}}},\"format\":\"pcs-math-ir-v1\"},\"lean\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\",\"score\":null}],\"fidelity_boundary\":\"Controlled grammar interpretation; user intent and unrestricted English equivalence unproved.\",\"semantic_authorization\":false,\"source\":\"For all propositions U and V, if (U and V) then (U and (U and V)).\",\"source_sha256\":\"7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780\",\"status\":\"supported\"},\"memory_sha256\":\"4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234\",\"mode\":\"learned\",\"model\":\"verified-memory-v1\",\"pcs_authority\":false,\"primitive_catalog_sha256\":\"a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554\",\"search\":{\"expansions\":12,\"receipt\":{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":null,\"kind\":\"constructor\"},{\"argument\":\"h2.1\",\"kind\":\"exact\"},{\"argument\":\"h2\",\"kind\":\"exact\"}],\"adapter_sha256\":\"08a16c0625aad86952b87760235baa004bf6699095935e3b9f86a4c489e8d74c\",\"environment\":\"pcs-grounded-memory-v1\",\"format\":\"pcs-prover-proof-v1\",\"goal_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"kernel\":{\"axioms\":[],\"expression\":{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"V\"}],\"kind\":\"forall\",\"value\":\"U\"},\"format\":\"pcs-lean-kernel-v1\"},\"lean\":\"Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)\",\"library\":{\"entries\":[{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":\"h2 h3 h4\",\"kind\":\"induct_nat\"},{\"argument\":\"h1\",\"kind\":\"rewrite\"},{\"argument\":\"nat\",\"kind\":\"normalize\"},{\"argument\":\"h4\",\"kind\":\"rewrite\"},{\"argument\":\"nat\",\"kind\":\"normalize\"}],\"goal\":{\"binders\":[{\"name\":\"q0\",\"type\":\"NatFn\"}],\"body\":{\"left\":{\"body\":{\"left\":{\"arg\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"op\":\"succ\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"add\",\"right\":{\"op\":\"number\",\"type\":\"Nat\",\"value\":1}}},\"name\":\"q2\",\"op\":\"forall\",\"type\":\"Nat\"},\"op\":\"implies\",\"right\":{\"body\":{\"left\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"op\":\"number\",\"type\":\"Nat\",\"value\":0},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"add\",\"right\":{\"name\":\"q2\",\"op\":\"var\"}}},\"name\":\"q2\",\"op\":\"forall\",\"type\":\"Nat\"}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"},{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":\"h2 h3 h4\",\"kind\":\"induct_nat\"},{\"argument\":\"h1.2\",\"kind\":\"apply\"},{\"argument\":\"h4\",\"kind\":\"exact\"},{\"argument\":\"h1.1\",\"kind\":\"exact\"}],\"goal\":{\"binders\":[{\"name\":\"q0\",\"type\":\"NatPred\"}],\"body\":{\"left\":{\"left\":{\"arg\":{\"op\":\"number\",\"type\":\"Nat\",\"value\":0},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"and\",\"right\":{\"body\":{\"left\":{\"arg\":{\"name\":\"q3\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"implies\",\"right\":{\"arg\":{\"arg\":{\"name\":\"q3\",\"op\":\"var\"},\"op\":\"succ\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"}},\"name\":\"q3\",\"op\":\"forall\",\"type\":\"Nat\"}},\"op\":\"implies\",\"right\":{\"body\":{\"arg\":{\"name\":\"q2\",\"op\":\"var\"},\"fn\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"apply\"},\"name\":\"q2\",\"op\":\"forall\",\"type\":\"Nat\"}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"},{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h0 h2 h3 h4\",\"kind\":\"induct_list\"},{\"argument\":\"list\",\"kind\":\"normalize\"},{\"argument\":\"h4\",\"kind\":\"rewrite\"},{\"argument\":\"list\",\"kind\":\"normalize\"}],\"goal\":{\"binders\":[{\"name\":\"q0\",\"type\":\"NatList\"},{\"name\":\"q1\",\"type\":\"NatList\"}],\"body\":{\"left\":{\"arg\":{\"left\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"append\",\"right\":{\"name\":\"q1\",\"op\":\"var\"}},\"op\":\"length\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"name\":\"q0\",\"op\":\"var\"},\"op\":\"length\"},\"op\":\"add\",\"right\":{\"arg\":{\"name\":\"q1\",\"op\":\"var\"},\"op\":\"length\"}}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"},{\"actions\":[{\"argument\":\"h0\",\"kind\":\"intro\"},{\"argument\":\"h1\",\"kind\":\"intro\"},{\"argument\":\"h2\",\"kind\":\"intro\"},{\"argument\":\"list\",\"kind\":\"normalize\"},{\"argument\":\"h2 h3 h4 h5\",\"kind\":\"induct_list\"},{\"argument\":\"h1 h2 h6\",\"kind\":\"induct_nat\"},{\"argument\":\"h6\",\"kind\":\"rewrite\"},{\"argument\":\"list\",\"kind\":\"normalize\"},{\"argument\":\"h5\",\"kind\":\"rewrite\"},{\"argument\":\"list\",\"kind\":\"normalize\"}],\"goal\":{\"binders\":[{\"name\":\"v0\",\"type\":\"NatList\"},{\"name\":\"v1\",\"type\":\"Nat\"},{\"name\":\"v2\",\"type\":\"NatList\"}],\"body\":{\"left\":{\"arg\":{\"left\":{\"head\":{\"name\":\"v1\",\"op\":\"var\"},\"op\":\"cons\",\"tail\":{\"name\":\"v2\",\"op\":\"var\"}},\"op\":\"append\",\"right\":{\"name\":\"v0\",\"op\":\"var\"}},\"op\":\"length\"},\"op\":\"eq\",\"right\":{\"left\":{\"arg\":{\"head\":{\"name\":\"v1\",\"op\":\"var\"},\"op\":\"cons\",\"tail\":{\"name\":\"v2\",\"op\":\"var\"}},\"op\":\"length\"},\"op\":\"add\",\"right\":{\"arg\":{\"name\":\"v0\",\"op\":\"var\"},\"op\":\"length\"}}},\"format\":\"pcs-math-ir-v1\"},\"license\":\"Apache-2.0\",\"source_revision\":\"ed17576ef1def0715326159db9a2978a12ae56d2\"}],\"format\":\"pcs-checked-lemma-library-v1\"},\"library_declarations\":\"theorem PCSKnownL0 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + b) = (a + c)) → (b = c)) := by\\n  intro a b c h; exact Nat.add_left_cancel h\\ntheorem PCSKnownL1 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) = (b + c)) → (a = b)) := by\\n  intro a b c h; exact Nat.add_right_cancel h\\ntheorem PCSKnownL2 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) = (Nat.succ b)) → (a = b)) := by\\n  intro a b h; exact Nat.succ.inj h\\ntheorem PCSKnownL3 : ∀ (n : Nat), (¬ ((Nat.succ n) = (0 : Nat))) := by\\n  intro n; exact Nat.succ_ne_zero n\\ntheorem PCSKnownL4 : ∀ (a : Nat) (b : Nat) (c : Nat), (((a + c) ≤ (b + c)) → (a ≤ b)) := by\\n  intro a b c h; exact Nat.le_of_add_le_add_right h\\ntheorem PCSKnownL5 : ∀ (a : Nat) (b : Nat), (((Nat.succ a) ≤ (Nat.succ b)) → (a ≤ b)) := by\\n  intro a b h; exact Nat.succ_le_succ_iff.mp h\\ntheorem PCSKnownL6 : ∀ (a : Nat) (b : Nat) (c : Nat), ((a * (b + c)) = ((a * b) + (a * c))) := by\\n  intro a b c; exact Nat.left_distrib a b c\\ntheorem PCSKnownL7 : ∀ (xs : List Nat), ((List.length (List.reverse xs)) = (List.length xs)) := by\\n  intro xs; exact List.length_reverse\\ntheorem PCSKnownL8 : ∀ (xs : List Nat) (ys : List Nat), ((List.reverse (xs ++ ys)) = ((List.reverse ys) ++ (List.reverse xs))) := by\\n  intro xs ys; exact List.reverse_append\\ntheorem PCSKnownL9 : ∀ (xs : List Nat), ((List.reverse (List.reverse xs)) = xs) := by\\n  intro xs; exact List.reverse_reverse xs\\ntheorem PCSKnownL10 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ ys) = (xs ++ zs)) → (ys = zs)) := by\\n  intro xs ys zs h; exact (List.append_right_inj xs).mp h\\ntheorem PCSKnownL11 : ∀ (xs : List Nat) (ys : List Nat) (zs : List Nat), (((xs ++ zs) = (ys ++ zs)) → (xs = ys)) := by\\n  intro xs ys zs h; exact (List.append_left_inj zs).mp h\\ntheorem PCSKnownL12 : ∀ (xs : List Nat) (ys : List Nat), (((List.reverse xs) = (List.reverse ys)) → (xs = ys)) := by\\n  intro xs ys h; exact List.reverse_inj.mp h\\ntheorem PCSReuseL0 : ∀ (q0 : Nat → Nat), ((∀ (q2 : Nat), ((q0 (Nat.succ q2)) = ((q0 q2) + (1 : Nat)))) → (∀ (q2 : Nat), ((q0 q2) = ((q0 (0 : Nat)) + q2)))) := by\\n  intro h0\\n  intro h1\\n  intro h2\\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\\n  rw [h1]\\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\\n  rw [h4]\\n  simp only [Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add, Nat.mul_zero, Nat.zero_mul, Nat.mul_succ, Nat.succ_mul]\\ntheorem PCSReuseL1 : ∀ (q0 : Nat → Prop), (((q0 (0 : Nat)) ∧ (∀ (q3 : Nat), ((q0 q3) → (q0 (Nat.succ q3))))) → (∀ (q2 : Nat), (q0 q2))) := by\\n  intro h0\\n  intro h1\\n  intro h2\\n  (induction h2 using Nat.rec; case' succ h3 h4 => skip)\\n  apply h1.2\\n  exact h4\\n  exact h1.1\\ntheorem PCSReuseL2 : ∀ (q0 : List Nat) (q1 : List Nat), ((List.length (q0 ++ q1)) = ((List.length q0) + (List.length q1))) := by\\n  intro h0\\n  intro h1\\n  (induction h0 using List.rec; case' cons h2 h3 h4 => skip)\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n  rw [h4]\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\ntheorem PCSReuseL3 : ∀ (v0 : List Nat) (v1 : Nat) (v2 : List Nat), ((List.length ((List.cons v1 v2) ++ v0)) = ((List.length (List.cons v1 v2)) + (List.length v0))) := by\\n  intro h0\\n  intro h1\\n  intro h2\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n  (induction h2 using List.rec; case' cons h3 h4 h5 => skip)\\n  (induction h1 using Nat.rec; case' succ h2 h6 => skip)\\n  rw [h6]\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n  rw [h5]\\n  simp only [List.nil_append, List.cons_append, List.append_nil, List.length_nil, List.length_cons, Nat.add_zero, Nat.zero_add, Nat.add_succ, Nat.succ_add]\\n\",\"library_sha256\":\"4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234\",\"memory_source_sha256\":\"dff9cb7710db149c013f34ae857e5982a3fb907c041920f6660fc7677c3a0ff8\",\"pcs_scientific_authority\":false,\"primitive_catalog_sha256\":\"a3bf86a76245b60d7067d48fa2af88871cc25092c9eb19bb28caf2d3362b0554\",\"proof\":\"  intro h0\\n  intro h1\\n  intro h2\\n  constructor\\n  exact h2.1\\n  exact h2\",\"statement\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\"},\"status\":\"verified\"},\"status\":\"verified\"},\"source_license\":\"CC0-1.0\",\"source_sha256\":\"7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780\",\"strong_baseline\":{\"cost\":{\"all_lean_calls\":1,\"lean_seconds\":0.6477246720000096,\"wall_seconds\":0.6483288560000062},\"formalization\":{\"candidates\":[{\"interpretation_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"ir\":{\"binders\":[{\"name\":\"U\",\"type\":\"Prop\"},{\"name\":\"V\",\"type\":\"Prop\"}],\"body\":{\"left\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}},\"op\":\"implies\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"left\":{\"name\":\"U\",\"op\":\"var\"},\"op\":\"and\",\"right\":{\"name\":\"V\",\"op\":\"var\"}}}},\"format\":\"pcs-math-ir-v1\"},\"lean\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\",\"score\":null}],\"fidelity_boundary\":\"Controlled grammar interpretation; user intent and unrestricted English equivalence unproved.\",\"semantic_authorization\":false,\"source\":\"For all propositions U and V, if (U and V) then (U and (U and V)).\",\"source_sha256\":\"7a97312512d3f6a50dfe1912f803c37e7266f3a8b95d651d8980f23e0d638780\",\"status\":\"supported\"},\"model\":\"bounded_Std_simp_omega_grind\",\"pcs_authority\":false,\"search\":{\"expansions\":1,\"receipt\":{\"format\":\"pcs-std-baseline-proof-v1\",\"goal_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"kernel\":{\"axioms\":[\"propext\"],\"expression\":{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"},{\"children\":[{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"And:[]\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"V\"}],\"kind\":\"forall\",\"value\":\"U\"},\"format\":\"pcs-lean-kernel-v1\"},\"lean\":\"Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)\",\"pcs_scientific_authority\":false,\"proof\":\"  repeat intro\\n  simp_all\",\"statement\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\"},\"status\":\"verified\"},\"status\":\"verified\"}},\"execution_mode\":\"recorded_example\",\"formal_statement\":\"∀ (U : Prop) (V : Prop), ((U ∧ V) → (U ∧ (U ∧ V)))\",\"format\":\"pcs-proof-workbench-report-v1\",\"goal_sha256\":\"32c482536b13b79702b18fef42e3fa75bfca338471b8b78dce897830eefab0d0\",\"interpretation_confirmed\":true,\"outcome\":\"proved\",\"pcs_authority\":false,\"physical_neural_execution_independently_attested\":false,\"provider_evidence_sha256\":\"0f31968295f6235f9597c00c043971b34dea377fe929c2c7e267b0afb0512483\",\"request_id\":\"b669d9932dac24cf0a0638cfbf18bfc7\",\"requested_family\":\"verified-memory-v1\",\"run_url\":\"https://github.com/Tommaso-R-Marena/proof-carrying-science/actions/runs/41323524383\",\"selected_role\":\"result\",\"source_revision\":\"f20f3cab2938f2e085f137185e88f4700d5da2ed\",\"statement\":\"For all propositions U and V, if (U and V) then (U and (U and V)).\"}",
+  "report_sha256": "5fb984ee12bbf24d98a4c5bbb171b09b6056f1e452c5acd9e21633f016220150"
+}

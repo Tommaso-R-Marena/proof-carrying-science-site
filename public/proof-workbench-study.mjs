@@ -1,0 +1,12 @@
+import {PILOT_TASKS,beginPilot,readPilot,answerPilot,finishPilot,erasePilot,pilotSummary,pilotStorage} from './proof-workbench-pilot.mjs';
+const $=id=>document.getElementById(id),storage=pilotStorage();
+function render(){
+ const s=readPilot(storage);$('pilotStatus').textContent=s?'Local '+s.participant_kind+' session active. No human identity or timing has been verified.':'No active optional session.';
+ $('pilotQuestions').replaceChildren();
+ for(const task of PILOT_TASKS){const field=document.createElement('fieldset');field.className='wb-study-card';const legend=document.createElement('legend');legend.textContent=task.question;field.append(legend);for(const [i,text] of task.options.entries()){const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name=task.id;input.disabled=!s||s.answers.some(a=>a.task===task.id);input.checked=s?.answers.some(a=>a.task===task.id&&a.choice===i)||false;input.addEventListener('change',()=>{try{answerPilot(storage,task.id,i);render();}catch(e){$('pilotStatus').textContent=e.message;}});label.append(input,document.createTextNode(' '+text));field.append(label);}$('pilotQuestions').append(field);}
+ $('pilotSummary').textContent=s?(s.answers.length+' of 5 questions answered. '+(s.answers.length===5?pilotSummary(s).correct+' answers match the stated verification limits. ':'')+'Your record stays local until you choose to share it.'):'No answers recorded.';for(const id of ['pilotFinish','pilotExport','pilotErase'])$(id).disabled=!s;$('pilotStart').disabled=Boolean(s)||!storage;if(!storage)$('pilotStatus').textContent='Local study storage is unavailable. The ordinary workbench remains usable.';
+}
+$('pilotStart').addEventListener('click',()=>{try{beginPilot(storage,{kind:$('pilotKind').value,experience:$('pilotExperience').value,adult:$('pilotAdult').checked,consent:$('pilotConsent').checked});render();}catch(e){$('pilotStatus').textContent=e.message;}});
+$('pilotFinish').addEventListener('click',()=>{try{finishPilot(storage,$('pilotCompletion').value);render();}catch(e){$('pilotStatus').textContent=e.message;}});
+$('pilotExport').addEventListener('click',()=>{const s=readPilot(storage);if(!s)return;const url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)+'\n'],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='pcs-proof-workbench-study.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+$('pilotErase').addEventListener('click',()=>{erasePilot(storage);render();});render();

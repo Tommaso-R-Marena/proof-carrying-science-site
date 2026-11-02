@@ -1,0 +1,86 @@
+{
+  "format": "pcs-prospective-proof-search-public-v1",
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "protocol_freeze_commit": "f3549c30921ea2e1527b10d9f43bb0700e10ff39",
+  "unique_cases": 14,
+  "intended_true_cases": 11,
+  "intended_false_controls": 3,
+  "physical_search_runs": 84,
+  "replications": 2,
+  "outcomes_and_search_attempts_repeat_exactly": true,
+  "methods": {
+    "frozen_neural": {
+      "cases": 14,
+      "negative_controls_proved": 0,
+      "search_lean_attempts": 248,
+      "unknown_or_failed": 6,
+      "verified": 8
+    },
+    "same_memory_structural": {
+      "cases": 14,
+      "negative_controls_proved": 0,
+      "search_lean_attempts": 224,
+      "unknown_or_failed": 6,
+      "verified": 8
+    },
+    "std_then_structural": {
+      "cases": 14,
+      "negative_controls_proved": 0,
+      "search_lean_attempts": 50,
+      "unknown_or_failed": 3,
+      "verified": 11
+    }
+  },
+  "neural_unique_solve_gain_over_structural": 0,
+  "neural_unique_solve_gain_over_strong_baseline": 0,
+  "blind_evaluation": false,
+  "conceptual_unseen_claim": false,
+  "training_performed": false,
+  "kernel_replay_required": true,
+  "physical_neural_attestation": false,
+  "limitations": [
+    "authored prospective cases, not independently blind",
+    "outer-binder-alpha disjointness does not establish conceptual novelty or exclusion from all historical data",
+    "equal external wall/call caps do not equate tactic internal work to one neural proposal",
+    "no fitting or checkpoint selection against these cases",
+    "negative controls are authored expectations, not axioms"
+  ],
+  "setup_accounting": "Run 1 setup_lean_attempts uses the existing outer-call ledger and excludes the internal startup handshake. Run 2 separately records setup compiler/wire/physical counts. Search attempt counts match measured physical attempts. Child phase times exclude interpreter/import startup; external hard deadlines include it.",
+  "pcs_authority": false,
+  "paired_solved_cases": {
+    "frozen_neural": [
+      "case-01",
+      "case-03",
+      "case-04",
+      "case-06",
+      "case-07",
+      "case-09",
+      "case-10",
+      "case-13"
+    ],
+    "same_memory_structural": [
+      "case-01",
+      "case-03",
+      "case-04",
+      "case-06",
+      "case-07",
+      "case-09",
+      "case-10",
+      "case-13"
+    ],
+    "std_then_structural": [
+      "case-01",
+      "case-03",
+      "case-04",
+      "case-06",
+      "case-07",
+      "case-09",
+      "case-10",
+      "case-11",
+      "case-12",
+      "case-13",
+      "case-14"
+    ]
+  }
+}

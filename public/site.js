@@ -74,6 +74,7 @@
       ]},
       {heading:"FOR RESEARCHERS",links:[
         ["omega-workspace.html","Omega · inspect claims and learned search"],
+        ["proof-workbench.html","Proof Workbench · choose, check and share"],
         ["lean-learning-lab.html","Lean learning lab · real goals and trained policies"],
         ["calibration-lab.html","Calibration lab · real measurements and exact prediction limits"],
         ["research-updates.html","Verified research updates · proofs, experiments and limits"],

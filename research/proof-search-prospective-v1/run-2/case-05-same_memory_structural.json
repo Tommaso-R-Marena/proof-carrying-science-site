@@ -1,0 +1,30 @@
+{
+  "case": "case-05",
+  "method": "same_memory_structural",
+  "goal_sha256": "a290a0797c2400b8bc2f6b3c7d02311d4aac0617bc59f8ad813814bb4f3e22ae",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "search_status": "unknown",
+  "receipt": null,
+  "expansions": 9,
+  "stages": [
+    {
+      "component": "same_memory_structural",
+      "status": "unknown",
+      "expansions": 9
+    }
+  ],
+  "budget_reason": null,
+  "setup_seconds": 17.463609744008863,
+  "setup_lean_attempts": 19,
+  "setup_compiler_attempts": 18,
+  "setup_wire_requests": 2,
+  "setup_physical_attempts": 20,
+  "search_physical_attempts": 10,
+  "search_lean_attempts": 10,
+  "search_seconds": 0.2743102039967198,
+  "total_search_phase_seconds": 17.73792042900459,
+  "checkpoint_sha256": null,
+  "memory_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+  "model_training": false,
+  "pcs_authority": false
+}
