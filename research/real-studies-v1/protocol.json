@@ -1,0 +1,82 @@
+{
+  "format": "pcs-real-studies-protocol-v1",
+  "frozen_before": [
+    "PCS learned-policy search on these data claims",
+    "ResNet image inference"
+  ],
+  "prior_inspection": "Berkeley published counts and eight direct Lean arithmetic checks were inspected in a feasibility check; no blindness or novelty is claimed.",
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "berkeley": {
+    "source": "Rdatasets datasets/UCBAdmissions",
+    "reference": "Bickel et al. (1975), Berkeley admissions 1973, six largest departments",
+    "claims": [
+      "total",
+      "aggregate",
+      "department-A",
+      "department-B",
+      "department-C",
+      "department-D",
+      "department-E",
+      "department-F"
+    ],
+    "methods": [
+      "frozen_learned_memory",
+      "same_memory_structural",
+      "Std_portfolio"
+    ],
+    "search_expansions": 8,
+    "search_lean_calls": 16,
+    "beam": 2,
+    "depth": 8,
+    "external_seconds_including_setup": 60,
+    "independent_replay_required": true,
+    "no_policy_training": true,
+    "no_advantage_assumed": true
+  },
+  "iris": {
+    "source": "UCI Iris via Rdatasets",
+    "split": "within each species, every fifth source row is test; remaining rows train",
+    "classifier": "exact integer 1-nearest-neighbor on feature values in tenths; lowest source ID wins ties",
+    "contamination": "append source row 1 from training to the evaluation set",
+    "claims": "source-ID overlap and finite exact classifier replay; no population generalization claim"
+  },
+  "resnet": {
+    "weights": "torchvision ResNet18_Weights.IMAGENET1K_V1",
+    "url": "https://download.pytorch.org/models/resnet18-f37072fd.pth",
+    "published_sha256_prefix": "f37072fd",
+    "architecture": "ResNet-18, 1000 ImageNet output classes",
+    "images": [
+      "chelsea",
+      "coffee",
+      "astronaut",
+      "rocket"
+    ],
+    "image_source_version": "scikit-image v0.25.2",
+    "preprocessing": "demo-specific nearest-neighbor resize to 224x224 using floor(x*sourceWidth/224), floor(y*sourceHeight/224), RGB; Float32 divide by255, subtract Float32 ImageNet mean, divide by Float32 ImageNet std. This is not the official ImageNet accuracy recipe.",
+    "transformations": [
+      "original",
+      "integer-darken-4/5",
+      "integer-brighten-6/5-clamp255",
+      "shift-left-2-zero-fill",
+      "shift-right-2-zero-fill",
+      "center-16x16-black",
+      "integer-3x3-mean-edge-clamp"
+    ],
+    "gate": "all seven recorded logit vectors finite with exactly 1000 classes; original reference class exceeds every competing class by at least 1.0 logits in every view",
+    "float_observation": "exact binary32 bit patterns interpreted as signed integers scaled by 2^-149; mathematical checking never rounds scores",
+    "gate_scope": "finite observed views only, no truth, calibrated confidence, out-of-distribution or universal robustness guarantee",
+    "runtime_correspondence": "empirically compare PyTorch CPU, ONNX CPU and actual browser WASM; same top labels and guard outcomes required; predeclared logits atol=0.001 and rtol=0.001",
+    "controls": [
+      "explicit injected observation corruption",
+      "malformed/nonfinite/partial certificates",
+      "model-byte mutation rejection"
+    ],
+    "no_ground_truth_accuracy_claim": true,
+    "browser_images_local_only": true,
+    "training_authorized": false
+  },
+  "production_authority": false,
+  "automatic_model_promotion": false,
+  "physical_neural_attestation": false,
+  "human_participants": 0
+}
