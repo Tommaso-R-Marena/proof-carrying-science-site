@@ -59,7 +59,7 @@ def child(core,case_id,method,replay_path=None):
  try:
   # Same non-goal startup probe for every method; no study state is pre-solved.
   env._source('#pcs_probe (True) => []\n','PCS_STATE:')
-  setup=time.monotonic()-started;setup_calls=env.actual_calls;env.armed=True
+  setup=time.monotonic()-started;setup_calls=env.actual_calls;setup_compiler=env.compiler_attempts;setup_wire=getattr(env,'worker_wire_requests',0);env.armed=True
   reason=None;stages=[];result={'status':'unknown','receipt':None,'expansions':0}
   try:
    remaining=budget['action_expansions']
@@ -69,7 +69,7 @@ def child(core,case_id,method,replay_path=None):
     result=search(env,goal,model.rank if method=='frozen_neural' else structural_rank,budget=remaining,beam=budget['beam'],depth=budget['depth']);stages.append({'component':method,'status':result['status'],'expansions':result['expansions']})
   except SearchBudgetExceeded as e:reason=str(e);result={'status':'budget_exhausted','receipt':None,'expansions':None}
   return {'case':case_id,'method':method,'goal_sha256':case['goal_sha256'],'protocol_sha256':sha,'search_status':result['status'],'receipt':result.get('receipt'),'expansions':sum(s['expansions'] for s in stages) if stages else result.get('expansions'),
-   'stages':stages,'budget_reason':reason,'setup_seconds':setup,'setup_lean_attempts':setup_calls,'search_lean_attempts':env.attempts,'search_seconds':time.monotonic()-started-setup,
+   'stages':stages,'budget_reason':reason,'setup_seconds':setup,'setup_lean_attempts':setup_calls,'setup_compiler_attempts':setup_compiler,'setup_wire_requests':setup_wire,'setup_physical_attempts':setup_compiler+setup_wire,'search_physical_attempts':env.compiler_attempts-setup_compiler+getattr(env,'worker_wire_requests',0)-setup_wire,'search_lean_attempts':env.attempts,'search_seconds':time.monotonic()-started-setup,
    'total_search_phase_seconds':time.monotonic()-started,'checkpoint_sha256':entry['sha256'] if method=='frozen_neural' else None,'memory_sha256':registry['library_sha256'],'model_training':False,'pcs_authority':False}
  finally:env.close()
 
@@ -85,6 +85,9 @@ def process(arguments,timeout,output):
 
 def run(core,out):
  p,sha=protocol();bind_core(core,p)
+ runner_sha=hashlib.sha256(Path(__file__).read_bytes()).hexdigest();runner_commit=subprocess.check_output(['git','log','-1','--format=%H','--','scripts/run_proof_search_evaluation.py'],cwd=ROOT,text=True).strip()
+ committed=subprocess.check_output(['git','show',runner_commit+':scripts/run_proof_search_evaluation.py'],cwd=ROOT)
+ if hashlib.sha256(committed).hexdigest()!=runner_sha:raise ValueError('Commit the exact evaluator before running it')
  if out.exists():raise ValueError('Use a fresh output directory; evidence must not be overwritten')
  out.mkdir(parents=True)
  # Freeze/selection provenance is checked before any inference.
@@ -110,7 +113,7 @@ def run(core,out):
    row['independent_replay']=replay;row['status']='verified' if replay and replay.get('status')=='verified' else ('replay_failed' if row.get('search_status')=='verified' else row.get('status',row.get('search_status','execution_failed')))
    # Search receipt retained exactly; mutable summary is written separately.
    rows.append(row);print(json.dumps({k:row.get(k) for k in ['case','method','status','search_lean_attempts','expansions']}),flush=True)
- summary={'format':'pcs-prospective-proof-search-results-v1','core_revision':p['core_revision'],'protocol_sha256':sha,'protocol_freeze_commit':freeze_revision,'site_implementation':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'rows':rows,
+ summary={'format':'pcs-prospective-proof-search-results-v1','runner_sha256':runner_sha,'runner_commit':runner_commit,'core_revision':p['core_revision'],'protocol_sha256':sha,'protocol_freeze_commit':freeze_revision,'site_implementation':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'rows':rows,
   'metrics':{m:{'cases':sum(r['method']==m for r in rows),'verified':sum(r['method']==m and r['status']=='verified' for r in rows),'negative_controls_proved':sum(r['method']==m and r['status']=='verified' and r['authored_control']=='negative' for r in rows),'search_lean_attempts':sum(r.get('search_lean_attempts',0) for r in rows if r['method']==m),'unknown_or_failed':sum(r['method']==m and r['status']!='verified' for r in rows)} for m in p['methods']},
   'limitations':p['limitations'],'training_authorized':False,'pcs_authority':False}
  (out/'summary.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n');print(json.dumps({'metrics':summary['metrics']}),flush=True)
