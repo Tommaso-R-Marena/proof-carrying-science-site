@@ -2,3 +2,4 @@
 @media(max-width:580px){.minute-intro{margin:22px auto 0}.minute-intro h1{font-size:2rem}.minute-intro p{font-size:1rem}.minute-steps{gap:8px;margin:20px 0}.minute-steps li{padding:10px;font-size:.86rem}.minute-steps span{display:none}.minute-demo{padding:18px 14px}.minute-lists{gap:10px}.minute-lists th,.minute-lists td{padding:8px 5px}.minute-actions>.button{flex:1 1 180px}}
 
 .minute-footer{font-size:.95rem;line-height:1.8;padding:24px 0}.minute-footer a{color:#245679}
+.minute-progress{padding:10px 14px;border-radius:8px;background:#e9f2fa;font-weight:650}.minute-facts{display:grid;grid-template-columns:minmax(110px,1fr) 3fr;gap:8px 16px;line-height:1.6}.minute-facts dt{font-weight:700}.minute-facts dd{margin:0}#minuteReopen{padding:14px;border:1px solid #bccedc;border-radius:10px}#minuteRecheckFile{max-width:100%;font:inherit}@media(max-width:450px){.minute-facts{display:block}.minute-facts dd{margin-bottom:12px}}

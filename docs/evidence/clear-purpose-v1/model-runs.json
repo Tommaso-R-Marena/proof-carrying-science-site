@@ -1,0 +1,522 @@
+{
+  "format": "pcs-model-walkthrough-examples-v1",
+  "human_participants": 0,
+  "benchmark_claim": false,
+  "runs": [
+    {
+      "format": "pcs-model-walkthrough-replay-v1",
+      "task_id": "implication-reversal-1",
+      "task_version": "pcs-semantic-gauntlet-v1",
+      "domain_bound": 3,
+      "strategy": "learned",
+      "proposal_budget": 5,
+      "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+      "source": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "imp",
+          "a": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "original": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "imp",
+          "a": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "initial": {
+        "equivalent_within_bound": false,
+        "checked_models": 2,
+        "minimum_countermodel_domain": 1,
+        "countermodel": {
+          "n": 1,
+          "unary": {
+            "Q": [
+              true
+            ],
+            "T": [
+              false
+            ]
+          },
+          "binary": {}
+        },
+        "source_truth": false,
+        "candidate_truth": true
+      },
+      "attempts": [
+        {
+          "operation": "exchange_operands",
+          "path": [
+            "f"
+          ],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "imp",
+              "a": {
+                "op": "pred",
+                "name": "Q",
+                "x": "x"
+              },
+              "b": {
+                "op": "pred",
+                "name": "T",
+                "x": "x"
+              }
+            }
+          },
+          "model_score": 1.2854527666108675,
+          "checked": {
+            "equivalent_within_bound": true,
+            "checked_models": 84,
+            "minimum_countermodel_domain": null,
+            "countermodel": null,
+            "source_truth": null,
+            "candidate_truth": null
+          }
+        }
+      ],
+      "repair_found": true,
+      "scope": "EXHAUSTIVE_REGISTERED_FINITE_WORLDS_ONLY",
+      "lean_kernel_executed": false,
+      "pcs_authority": false
+    },
+    {
+      "format": "pcs-model-walkthrough-replay-v1",
+      "task_id": "implication-reversal-1",
+      "task_version": "pcs-semantic-gauntlet-v1",
+      "domain_bound": 3,
+      "strategy": "original",
+      "proposal_budget": 5,
+      "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+      "source": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "imp",
+          "a": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "original": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "imp",
+          "a": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "initial": {
+        "equivalent_within_bound": false,
+        "checked_models": 2,
+        "minimum_countermodel_domain": 1,
+        "countermodel": {
+          "n": 1,
+          "unary": {
+            "Q": [
+              true
+            ],
+            "T": [
+              false
+            ]
+          },
+          "binary": {}
+        },
+        "source_truth": false,
+        "candidate_truth": true
+      },
+      "attempts": [
+        {
+          "operation": "flip_quantifier",
+          "path": [],
+          "proposal": {
+            "op": "exists",
+            "x": "x",
+            "f": {
+              "op": "imp",
+              "a": {
+                "op": "pred",
+                "name": "T",
+                "x": "x"
+              },
+              "b": {
+                "op": "pred",
+                "name": "Q",
+                "x": "x"
+              }
+            }
+          },
+          "model_score": null,
+          "checked": {
+            "equivalent_within_bound": false,
+            "checked_models": 2,
+            "minimum_countermodel_domain": 1,
+            "countermodel": {
+              "n": 1,
+              "unary": {
+                "Q": [
+                  true
+                ],
+                "T": [
+                  false
+                ]
+              },
+              "binary": {}
+            },
+            "source_truth": false,
+            "candidate_truth": true
+          }
+        },
+        {
+          "operation": "insert_negation",
+          "path": [],
+          "proposal": {
+            "op": "not",
+            "f": {
+              "op": "forall",
+              "x": "x",
+              "f": {
+                "op": "imp",
+                "a": {
+                  "op": "pred",
+                  "name": "T",
+                  "x": "x"
+                },
+                "b": {
+                  "op": "pred",
+                  "name": "Q",
+                  "x": "x"
+                }
+              }
+            }
+          },
+          "model_score": null,
+          "checked": {
+            "equivalent_within_bound": false,
+            "checked_models": 1,
+            "minimum_countermodel_domain": 1,
+            "countermodel": {
+              "n": 1,
+              "unary": {
+                "Q": [
+                  false
+                ],
+                "T": [
+                  false
+                ]
+              },
+              "binary": {}
+            },
+            "source_truth": true,
+            "candidate_truth": false
+          }
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "and",
+              "a": {
+                "op": "pred",
+                "name": "T",
+                "x": "x"
+              },
+              "b": {
+                "op": "pred",
+                "name": "Q",
+                "x": "x"
+              }
+            }
+          },
+          "model_score": null,
+          "checked": {
+            "equivalent_within_bound": false,
+            "checked_models": 1,
+            "minimum_countermodel_domain": 1,
+            "countermodel": {
+              "n": 1,
+              "unary": {
+                "Q": [
+                  false
+                ],
+                "T": [
+                  false
+                ]
+              },
+              "binary": {}
+            },
+            "source_truth": true,
+            "candidate_truth": false
+          }
+        },
+        {
+          "operation": "replace_connective",
+          "path": [
+            "f"
+          ],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "or",
+              "a": {
+                "op": "pred",
+                "name": "T",
+                "x": "x"
+              },
+              "b": {
+                "op": "pred",
+                "name": "Q",
+                "x": "x"
+              }
+            }
+          },
+          "model_score": null,
+          "checked": {
+            "equivalent_within_bound": false,
+            "checked_models": 1,
+            "minimum_countermodel_domain": 1,
+            "countermodel": {
+              "n": 1,
+              "unary": {
+                "Q": [
+                  false
+                ],
+                "T": [
+                  false
+                ]
+              },
+              "binary": {}
+            },
+            "source_truth": true,
+            "candidate_truth": false
+          }
+        },
+        {
+          "operation": "exchange_operands",
+          "path": [
+            "f"
+          ],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "imp",
+              "a": {
+                "op": "pred",
+                "name": "Q",
+                "x": "x"
+              },
+              "b": {
+                "op": "pred",
+                "name": "T",
+                "x": "x"
+              }
+            }
+          },
+          "model_score": null,
+          "checked": {
+            "equivalent_within_bound": true,
+            "checked_models": 84,
+            "minimum_countermodel_domain": null,
+            "countermodel": null,
+            "source_truth": null,
+            "candidate_truth": null
+          }
+        }
+      ],
+      "repair_found": true,
+      "scope": "EXHAUSTIVE_REGISTERED_FINITE_WORLDS_ONLY",
+      "lean_kernel_executed": false,
+      "pcs_authority": false
+    },
+    {
+      "format": "pcs-model-walkthrough-replay-v1",
+      "task_id": "universal-existential-1",
+      "task_version": "pcs-semantic-gauntlet-v1",
+      "domain_bound": 3,
+      "strategy": "learned",
+      "proposal_budget": 5,
+      "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+      "source": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "pred",
+          "name": "Q",
+          "x": "x"
+        }
+      },
+      "original": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "pred",
+          "name": "Q",
+          "x": "x"
+        }
+      },
+      "initial": {
+        "equivalent_within_bound": false,
+        "checked_models": 4,
+        "minimum_countermodel_domain": 2,
+        "countermodel": {
+          "n": 2,
+          "unary": {
+            "Q": [
+              true,
+              false
+            ]
+          },
+          "binary": {}
+        },
+        "source_truth": false,
+        "candidate_truth": true
+      },
+      "attempts": [
+        {
+          "operation": "flip_quantifier",
+          "path": [],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "pred",
+              "name": "Q",
+              "x": "x"
+            }
+          },
+          "model_score": 1.9224707751526655,
+          "checked": {
+            "equivalent_within_bound": true,
+            "checked_models": 14,
+            "minimum_countermodel_domain": null,
+            "countermodel": null,
+            "source_truth": null,
+            "candidate_truth": null
+          }
+        }
+      ],
+      "repair_found": true,
+      "scope": "EXHAUSTIVE_REGISTERED_FINITE_WORLDS_ONLY",
+      "lean_kernel_executed": false,
+      "pcs_authority": false
+    },
+    {
+      "format": "pcs-model-walkthrough-replay-v1",
+      "task_id": "universal-existential-1",
+      "task_version": "pcs-semantic-gauntlet-v1",
+      "domain_bound": 3,
+      "strategy": "original",
+      "proposal_budget": 5,
+      "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+      "source": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "pred",
+          "name": "Q",
+          "x": "x"
+        }
+      },
+      "original": {
+        "op": "exists",
+        "x": "x",
+        "f": {
+          "op": "pred",
+          "name": "Q",
+          "x": "x"
+        }
+      },
+      "initial": {
+        "equivalent_within_bound": false,
+        "checked_models": 4,
+        "minimum_countermodel_domain": 2,
+        "countermodel": {
+          "n": 2,
+          "unary": {
+            "Q": [
+              true,
+              false
+            ]
+          },
+          "binary": {}
+        },
+        "source_truth": false,
+        "candidate_truth": true
+      },
+      "attempts": [
+        {
+          "operation": "flip_quantifier",
+          "path": [],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "pred",
+              "name": "Q",
+              "x": "x"
+            }
+          },
+          "model_score": null,
+          "checked": {
+            "equivalent_within_bound": true,
+            "checked_models": 14,
+            "minimum_countermodel_domain": null,
+            "countermodel": null,
+            "source_truth": null,
+            "candidate_truth": null
+          }
+        }
+      ],
+      "repair_found": true,
+      "scope": "EXHAUSTIVE_REGISTERED_FINITE_WORLDS_ONLY",
+      "lean_kernel_executed": false,
+      "pcs_authority": false
+    }
+  ]
+}
