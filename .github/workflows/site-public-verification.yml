@@ -229,6 +229,7 @@ jobs:
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
           PCS_WORKBENCH_BROWSER_OUTPUT="$RUNNER_TEMP/workbench-browser.json" npm run test:browser:workbench
           PCS_MODEL_WIRING_OUTPUT="$RUNNER_TEMP/model-wiring-browser.json" npm run test:browser:model-wiring
+          PCS_MODEL_HANDOFF_OUTPUT="$RUNNER_TEMP/model-handoff-browser" npm run test:browser:model-handoff
           # Production UI recovery runs in Chromium against explicit loopback provider fixtures.
           PCS_LEAN_RECOVERY_OUTPUT="$RUNNER_TEMP/lean-recovery-browser.json" npm run test:browser:lean-recovery
           PCS_SCIENCE_BROWSER_OUTPUT="$RUNNER_TEMP/scientific-workflow-browser.json" npm run test:browser:scientific-workflow
@@ -240,6 +241,10 @@ jobs:
           grep -F "'pcs_model_wiring_chain' does not depend on any axioms" "$RUNNER_TEMP/model-wiring-chain.log"
           python -m pip install --require-hashes -r .ci-components/lean-prover/requirements-build.lock -r .ci-components/lean-prover/requirements-dev.lock -r .ci-components/lean-prover/requirements-prover.lock
           python -m pip install --no-deps --no-build-isolation -e .ci-components/lean-prover
+          python scripts/replay_model_lean_chain.py docs/evidence/runtime-wiring-v1/implication-reversal-1-chain.json --core .ci-components/lean-prover
+          python scripts/replay_model_lean_chain.py docs/evidence/runtime-wiring-v1/universal-existential-1-chain.json --core .ci-components/lean-prover
+          python scripts/replay_model_lean_chain.py docs/evidence/runtime-wiring-v1/local-model-lean-chain.json --core .ci-components/lean-prover
+          python scripts/test_model_lean_replay.py --core .ci-components/lean-prover
           export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="$(command -v chromium || command -v google-chrome)"
           python scripts/export_proof_workbench_catalog.py --core .ci-components/lean-prover
           python scripts/check_proof_workbench_catalog_lean.py --core .ci-components/lean-prover
@@ -260,8 +265,26 @@ jobs:
           PYWAIT
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" node scripts/browser_lean_learning.cjs
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:checked-reuse
-          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:bridge
-          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" npm run test:browser:memory
+          # Serve the complete reviewed frontend with a separately owned real backend.
+          python scripts/serve_connected_site.py --core .ci-components/lean-prover > "$RUNNER_TEMP/connected-runtime.log" 2>&1 &
+          connected_pid=$!
+          trap 'kill "$lean_lab_pid" "$connected_pid" 2>/dev/null || true' EXIT
+          python - <<'PYCONNECTED'
+          import json,time,urllib.request
+          for attempt in range(180):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8769/api/runtime/status',timeout=2) as r:
+                      assert json.load(r)['ready'] is True
+                  break
+              except (OSError,AssertionError):time.sleep(1)
+          else:raise SystemExit('Connected Lean/model runtime did not start')
+          PYCONNECTED
+          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BRIDGE_BASE=http://127.0.0.1:8769 npm run test:browser:bridge
+          PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BRIDGE_BASE=http://127.0.0.1:8769 npm run test:browser:memory
+          PCS_ROUTE_STALE_OUTPUT="$RUNNER_TEMP/stale-route" npm run test:browser:route-stale
+          PCS_CONNECTED_OUTPUT="$RUNNER_TEMP/connected-models" npm run test:browser:connected-models
+          python scripts/replay_model_lean_chain.py "$RUNNER_TEMP/connected-models/implication-reversal-1-browser-chain.json" --core .ci-components/lean-prover
+          python scripts/replay_model_lean_chain.py "$RUNNER_TEMP/connected-models/universal-existential-1-browser-chain.json" --core .ci-components/lean-prover
           # Separate disposable D1; synthetic accounts never touch production.
           npx --no-install wrangler d1 migrations apply pcs-commons --local --persist-to "$RUNNER_TEMP/bridge-d1"
           python - <<'PYSALT'
@@ -273,7 +296,7 @@ jobs:
           PYSALT
           npx --no-install wrangler dev --local --ip 127.0.0.1 --port 8789 --persist-to "$RUNNER_TEMP/bridge-d1" --env-file "$RUNNER_TEMP/bridge-local.env" --var PUBLIC_ORIGIN:http://127.0.0.1:8789 > "$RUNNER_TEMP/bridge-worker.log" 2>&1 &
           bridge_worker_pid=$!
-          trap 'kill "$lean_lab_pid" "$bridge_worker_pid" 2>/dev/null || true' EXIT
+          trap 'kill "$lean_lab_pid" "$connected_pid" "$bridge_worker_pid" 2>/dev/null || true' EXIT
           python - <<'PYBRIDGEWAIT'
           import time, urllib.request
           for attempt in range(60):

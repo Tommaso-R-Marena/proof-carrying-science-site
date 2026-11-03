@@ -9,7 +9,8 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
  const catalog=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../public/'+(process.env.PCS_BRIDGE_CATALOG||'bridge-builder-catalog.json')),'utf8'));
  const prefix=child.execFileSync('lean',['--print-prefix'],{cwd:core,encoding:'utf8'}).trim();
  const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||'/usr/bin/chromium',headless:true});
- const rows=[];
+ const rows=[],freshChecks=[];
+ const local=['127.0.0.1','localhost'].includes(new URL(base).hostname)&&['8766','8769'].includes(new URL(base).port);
  try {
   for(const width of [320,390,768,1440]){
    const page=await browser.newPage({viewport:{width,height:1000}}),errors=[];
@@ -39,7 +40,8 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
      current=node.edges[index].next;
     }
     await page.locator('#completed').waitFor({state:'visible'});
-    if(await page.locator('#kernelCheck').isEnabled())throw Error('Proof publication consent bypass');
+    if(!local&&await page.locator('#kernelCheck').isEnabled())throw Error('Proof publication consent bypass');
+    if(local&&width===390){await page.locator('#kernelCheck:enabled').click();await page.locator('#kernelStatus').filter({hasText:'Fresh local Lean check passed'}).waitFor({timeout:120000});const event=page.waitForEvent('download');await page.locator('#downloadFreshEvidence').click();const artifact=JSON.parse(fs.readFileSync(await(await event).path()));if(artifact.execution_mode!=='fresh_local_session'||artifact.pcs_authority!==false||JSON.stringify(artifact.receipt.actions)!==JSON.stringify(receipt.actions))throw Error('Fresh local route evidence mismatch');freshChecks.push({mission:mission.id,goal_sha256:artifact.receipt.goal_sha256,axioms:artifact.receipt.kernel.axioms});}
     const [download]=await Promise.all([page.waitForEvent('download'),page.locator('#downloadProof').click()]);
     const proofFile=path.join(output,mission.id+'-'+width+'.lean');await download.saveAs(proofFile);
     const proofCheck=child.execFileSync(path.join(prefix,'bin','lean'),[proofFile],{cwd:output,encoding:'utf8',timeout:60000});
@@ -75,6 +77,7 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),chil
    }
    await page.close();
   }
+  fs.writeFileSync(path.join(output,'fresh-local-checks.json'),JSON.stringify({actual_local_Lean_checks:freshChecks.length,records:freshChecks,public_jobs_submitted:0},null,2));
   fs.writeFileSync(path.join(output,'results.json'),JSON.stringify(rows,null,2));console.log(JSON.stringify(rows));
  }finally{await browser.close();if(!process.env.PCS_BRIDGE_BROWSER_OUTPUT)fs.rmSync(output,{recursive:true,force:true});}
 })().catch(e=>{console.error(e);process.exitCode=1;});

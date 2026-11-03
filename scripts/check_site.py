@@ -1648,7 +1648,7 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
         continue
 
     if js.name == "proof-workbench.mjs":
-        for guard in ["const PATHS=new Set(['proof-workbench-catalog.json','proof-workbench-example.json','/api/lean-research/status','/api/lean-research/submit','/api/lean-research/result','/api/lean-research/cancel'])",
+        for guard in ["const PATHS=new Set(['proof-workbench-catalog.json','proof-workbench-example.json','repair-policy-model-v1.json','/api/lean-research/status','/api/lean-research/submit','/api/lean-research/result','/api/lean-research/cancel'])",
                       "if(!PATHS.has(path))", "fetch(path,{credentials:'omit',redirect:'error'",
                       "Idempotency-Key", "pending.begin(body)", "pending.bind(request)",
                       "makeReport(catalog,target", "validateReport", "if(!request)",
@@ -1683,13 +1683,32 @@ for js in sorted([*ROOT.glob("*.js"), *ROOT.glob("*.mjs")]):
         # Reviewed exact same-origin path: explicit public proof publication,
         # separately authenticated adult CC0 donation, and user-owned erasure.
         for guard in ["const BRIDGE_ROUTES=new Set(['/api/lean-research/submit','/api/lean-research/result','/api/arena/bridge-builder/donate','/api/arena/bridge-builder/erase'])",
-                      "if(!BRIDGE_ROUTES.has(path))", "credentials:'same-origin'", "redirect:'error'",
-                      "signal:AbortSignal.timeout(25000)", "!$('publicConsent').checked",
+                      "if(!(local?['/api/session','/api/step'].includes(path):BRIDGE_ROUTES.has(path)))", "credentials:'same-origin'", "redirect:'error'",
+                      "signal:AbortSignal.timeout(35000)", "!$('publicConsent').checked",
+                      "location.protocol==='http:'", "['127.0.0.1','localhost'].includes(location.hostname)", "['8766','8769'].includes(location.port)",
                       "adult_confirmation:$('adult').checked", "consent_training:$('trainingConsent').checked"]:
             if guard not in text:
                 errors.append(f"{js.name}: reviewed proof/research path missing: {guard}")
         if re.search(r"\b(fetch|XMLHttpRequest|WebSocket)\s*\(\s*(?!path\b)", text):
             errors.append(f"{js.name}: unreviewed network target")
+        continue
+
+    if js.name == "model-walkthrough.mjs":
+        # Only the source-matched loopback runtime can execute a private proof.
+        # Public handoff is navigation; the workbench retains publication consent.
+        for guard in ["location.protocol==='http:'", "['127.0.0.1','localhost'].includes(location.hostname)",
+                      "['8766','8769'].includes(location.port)", "if(local)", "LOCAL_MEMORY_CHECKPOINT",
+                      "value.format!=='pcs-connected-runtime-v1'", "value.ready!==true", "value.pcs_authority!==false",
+                      "mode:'memory-model'", "interpretation:0,budget:96", "localModelChain(h,value,runtime.core_revision)",
+                      "location.assign('proof-workbench.html#model-proof='", "validateLocalModelChain(parsed,model)"]:
+            if guard not in text:errors.append(f"{js.name}: reviewed model/Lean boundary missing: {guard}")
+        calls=re.findall(r"\bfetch\s*\(\s*['\"]([^'\"]+)['\"]",text)
+        if calls!=['/api/solve','/api/runtime/status','./repair-policy-model-v1.json']:
+            errors.append(f"{js.name}: unreviewed network targets")
+        if len(re.findall(r"\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(",text))!=3:
+            errors.append(f"{js.name}: unreviewed network primitive")
+        if text.count("credentials:'omit',redirect:'error',signal:AbortSignal.timeout(")!=2:
+            errors.append(f"{js.name}: bounded anonymous local transport changed")
         continue
 
     if js.name in NETWORKED_COMMONS_JS:

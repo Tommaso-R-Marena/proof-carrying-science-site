@@ -1,9 +1,13 @@
+import {MODEL_HANDOFF_KEY,validateModelHandoff,withModelEntry,modelLeanChain,validateModelChain,shareModelChainHtml} from './model-lean-bridge.mjs';
+import {verifiedRepairModel} from './repair-model-integrity.mjs';
 import {tabJobStore,executionSummary} from './lean-job-client.mjs';
 import {validateCatalog,recognize,publicPayload,makeReport,validateReport,selectedObservation,proofSource,shareHtml} from './proof-workbench-core.mjs';
 import {recordPilotEvent,readPilot,pilotStorage} from './proof-workbench-pilot.mjs';
 const $=id=>document.getElementById(id),pending=tabJobStore();
-const PATHS=new Set(['proof-workbench-catalog.json','proof-workbench-example.json','/api/lean-research/status','/api/lean-research/submit','/api/lean-research/result','/api/lean-research/cancel']);
-let catalog=null,entry=null,report=null,busy=false,ready=false;
+const PATHS=new Set(['proof-workbench-catalog.json','proof-workbench-example.json','repair-policy-model-v1.json','/api/lean-research/status','/api/lean-research/submit','/api/lean-research/result','/api/lean-research/cancel']);
+let catalog=null,baseCatalog=null,entry=null,report=null,busy=false,ready=false,modelHandoff=null,bridgeModel=null,importRevision=0;
+async function repairModel(){return bridgeModel||(bridgeModel=await verifiedRepairModel(await api('repair-policy-model-v1.json')));}
+async function evidenceDocument(){return modelHandoff&&report?.entry_id===modelHandoff.entry.id?modelLeanChain(modelHandoff,report):report;}
 const event=name=>{try{recordPilotEvent(sessionStorage,name,entry?.id||null);}catch{}};
 function notice(message){$('wbQueue').textContent=message;}
 async function api(path,payload=null,key=null){
@@ -30,7 +34,7 @@ function clearResult(message='No result for the current question.'){
  $('wbJob').hidden=true;$('wbJob').removeAttribute('href');
 }
 function choose(selected){
- if(busy)return;entry=selected;report=null;$('wbMeaningConsent').checked=false;$('wbPublishConsent').checked=false;
+ if(busy)return;importRevision++;entry=selected;report=null;$('wbMeaningConsent').checked=false;$('wbPublishConsent').checked=false;
  $('wbClaim').value=selected?.statement||$('wbClaim').value;$('wbMeaning').textContent=selected?.meaning||'This text is outside the supported workbench forms. No mathematical input has been sent.';
  $('wbFormal').textContent=selected?.lean||'No recognized mathematical statement.';
  if(selected)$('wbStrategy').value=selected.recommended_family;
@@ -40,7 +44,7 @@ function choose(selected){
  step(selected?2:1);controls();if(selected)event('claim-chosen');
 }
 function showReport(value,{imported=false}={}){
- report=value;const selected=selectedObservation(value.evidence),recorded=imported||value.execution_mode==='recorded_example';
+ report=value;$('wbReplayCommand').textContent=modelHandoff&&value.entry_id===modelHandoff.entry.id?'python scripts/replay_model_lean_chain.py --core /path/to/trusted/core report.json':'python scripts/replay_proof_workbench.py --core /path/to/trusted/core report.json';const selected=selectedObservation(value.evidence),recorded=imported||value.execution_mode==='recorded_example';
  const intro=recorded?'Recorded report. Sender-reported outcome: '+value.outcome+'. No new model or Lean job has run in this page. ':'';
  const descriptions={proved:'A proof was checked for the exact mathematical statement.',refuted:'Lean checked a counterexample and a proof that the statement is false.',unresolved:'The available search did not establish this statement or its negation.'};
  $('wbOutcome').textContent=recorded?intro:intro+descriptions[value.outcome];$('wbOutcome').dataset.state=recorded?'recorded':value.outcome;
@@ -97,19 +101,22 @@ $('wbOffset').addEventListener('click',()=>choose(catalog.entries.find(e=>e.id==
 $('wbRun').addEventListener('click',()=>execute());$('wbResume').addEventListener('click',()=>execute(true));
 $('wbCancel').addEventListener('click',async()=>{const saved=pending.read();if(!saved?.request?.ticket)return;try{const result=await api('/api/lean-research/cancel',{ticket:saved.request.ticket});notice(result.status==='cancellation_requested'?'Cancellation requested. Continue checking until the provider confirms it.':'Provider cancellation status: '+result.status+'.');event('cancellation-requested');}catch(error){notice('Cancellation unconfirmed: '+error.message);}controls();});
 $('wbForget').addEventListener('click',()=>{pending.clear();notice('Saved tab metadata removed. A running provider job has not been cancelled.');controls();});
-$('wbSave').addEventListener('click',async()=>{if(report){save('pcs-proof-result.html',await shareHtml(report),'text/html');event('report-exported');}});
-$('wbEvidence').addEventListener('click',()=>{if(report){save('pcs-proof-result.json',JSON.stringify(report,null,2)+'\n','application/json');event('evidence-exported');}});
+$('wbSave').addEventListener('click',async()=>{if(report){const html=modelHandoff&&report.entry_id===modelHandoff.entry.id?await shareModelChainHtml(modelHandoff,report):await shareHtml(report);save('pcs-proof-result.html',html,'text/html');event('report-exported');}});
+$('wbEvidence').addEventListener('click',async()=>{if(report){save('pcs-proof-result.json',JSON.stringify(await evidenceDocument(),null,2)+'\n','application/json');event('evidence-exported');}});
 $('wbLean').addEventListener('click',()=>{if(report&&proofSource(report)){save('pcs-proof-result.lean',proofSource(report),'text/plain');event('proof-exported');}});
 $('wbReplay').addEventListener('toggle',()=>{if($('wbReplay').open)event('replay-instructions-opened');});
 $('wbExample').addEventListener('click',async()=>{if(busy)return;try{const example=await validateReport(await api('proof-workbench-example.json'),catalog);choose(catalog.entries.find(e=>e.id===example.entry_id));showReport(example);notice('This is a recorded real-model result. No new public request was submitted.');}catch(error){notice('Recorded example unavailable: '+error.message);}});
-$('wbImport').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>12*1024*1024)throw Error('Evidence file exceeds the size limit.');const value=await validateReport(JSON.parse(await file.text()),catalog);choose(catalog.entries.find(e=>e.id===value.entry_id));showReport(value,{imported:true});notice('Opened a recorded report locally. Independent replay has not run here.');}catch(error){clearResult('Report rejected: '+error.message);controls();}});
+$('wbImport').addEventListener('change',async e=>{const token=++importRevision,file=e.target.files[0];if(!file)return;try{if(file.size>12*1024*1024)throw Error('Evidence file exceeds the size limit.');const raw=JSON.parse(await file.text());let value,nextCatalog=baseCatalog,handoff=null;if(raw?.format==='pcs-model-lean-chain-v1'){const checked=await validateModelChain(raw,baseCatalog,await repairModel());value=checked.report;nextCatalog=checked.catalog;handoff=checked.handoff;}else value=await validateReport(raw,baseCatalog);if(token!==importRevision)return;catalog=nextCatalog;modelHandoff=handoff;choose(catalog.entries.find(e=>e.id===value.entry_id));showReport(value,{imported:true});notice('Opened a recorded report locally. Independent Lean replay has not run here.');}catch(error){if(token!==importRevision)return;clearResult('Report rejected: '+error.message);controls();}});
 controls();
 try{
- catalog=await validateCatalog(await api('proof-workbench-catalog.json'));
+ catalog=baseCatalog=await validateCatalog(await api('proof-workbench-catalog.json'));
+ const hash=new URLSearchParams(location.hash.slice(1)).get('model-proof');
+ if(hash){if(!/^[0-9a-f]{64}$/.test(hash))throw Error('Malformed model handoff identity');const text=sessionStorage.getItem(MODEL_HANDOFF_KEY);if(!text||text.length>65536)throw Error('Exact model replay is unavailable in this tab');modelHandoff=await validateModelHandoff(JSON.parse(text),await repairModel());if(modelHandoff.handoff_sha256!==hash)throw Error('Model handoff identity changed');catalog=await withModelEntry(baseCatalog,modelHandoff);history.replaceState(null,'',location.pathname);}
  for(const e of catalog.entries.filter(e=>!e.id.startsWith('offset-'))){const button=document.createElement('button');button.type='button';button.dataset.case=e.id;button.textContent=e.title;button.setAttribute('aria-pressed','false');button.addEventListener('click',()=>choose(e));$('wbCases').append(button);}
  for(const id of ['wbLeft','wbRight'])for(let n=0;n<=8;n++){const option=document.createElement('option');option.value=n;option.textContent=n;$(id).append(option);}
- const saved=pending.read();choose(saved?recognize(JSON.parse(saved.body_json).statement,catalog):catalog.entries[0]);
+ const saved=pending.read();choose(saved?recognize(JSON.parse(saved.body_json).statement,catalog):modelHandoff?catalog.entries.find(e=>e.id===modelHandoff.entry.id):catalog.entries[0]);
  if(saved)$('wbStrategy').value=JSON.parse(saved.body_json).model_family||'checked-reuse-v2';
+ if(modelHandoff&&!saved)notice('The exact suggestion was reproduced using the pinned ranker. Review this separate Nat-domain claim before consenting to a public Lean job.');
  if(saved)notice('A previously consented mathematical request is saved. Review its meaning, then Resume. Reading an acknowledged ticket submits no new workflow.');
  const status=await api('/api/lean-research/status');ready=status.status==='configured'&&status.readiness==='ready'&&status.core_sha===catalog.core_revision&&status.pcs_authority===false;
  $('wbService').textContent=ready?'The approved proof service is ready. No new proof has been requested.':'Fresh proof requests are unavailable or the preview/source versions differ. Recorded examples and local replay remain usable.';

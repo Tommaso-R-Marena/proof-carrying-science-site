@@ -8,7 +8,7 @@ def require(condition, message):
 SOURCE_FILES = {'desktop/VERSION','desktop/app.py','desktop/file_check.py','desktop/change_review.py',
                     *('desktop/lean/'+n+'.lean' for n in ['Main','StackSafe','Audit','OriginalCsv','Review']),
                     *('public/'+n for n in ['check-my-files.html','file-check.css','file-check.mjs',
-                    'page-help.mjs','page-help-core.mjs','page-help.css',
+                    'science-workflow-core.mjs', 'page-help.mjs','page-help-core.mjs','page-help.css',
                     'file-check-core.mjs','file-check-local.mjs','change-review-core.mjs','review-changes.html',
                     'review-changes.mjs','usability-core.mjs','usability-study.html','usability-study.mjs',
                     'example-iris-previous.csv','example-iris-new.csv','logo-mark.svg'])}

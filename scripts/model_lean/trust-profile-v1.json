@@ -1,0 +1,22 @@
+{
+  "format": "pcs-model-lean-receiver-source-v1",
+  "sources": {
+    "public/file-check-core.mjs": "a6f3c23acee28d74bfbfd3f69bad83f92c27a6c10a5e346dae2cf00a1e3b909b",
+    "public/model-lean-bridge.mjs": "3862d028e5029d5db48ae435cf65ef10fac5b5844e3459fae4407f5e3c226840",
+    "public/model-walkthrough-core.mjs": "46db8e032f1e70d5993ca96b711318662fc56e48b99246d5f2e87ba3010d53a7",
+    "public/proof-workbench-catalog.json": "0690016a529ad7ab6a0946b2347c2b137228eab3167031a29ebac3b7a612fda1",
+    "public/proof-workbench-core.mjs": "fb25d7a3742b2c3bb654bba0fe0837532536dfa5d2dd7d6589e4d53669e8fac8",
+    "public/repair-model-integrity.mjs": "4e0ae5353bb64d28f3a304d5afb6e1c86844d2e4dde55f67f99816765afe2c6b",
+    "public/repair-policy-model-v1.json": "7639bd301b206a75a3fcf6705fd4c13f409fc93428a11fb532412280fff04def",
+    "public/research-governance-core.mjs": "a4d75f9235307164cbe1fb89a1a71b14ee3ac94a7f22207d60cb00b83c8c4972",
+    "public/semantic-gauntlet-core.mjs": "a425cd0808c705559311b6ebb4e20e67dbc78e24f52fb2dd27c080b4c793a795",
+    "public/semantic-repair-core.mjs": "89ece144647d95c0315133202c6cb93173133eadf2cae7d03b6df85c92d33136",
+    "public/semantic-repair-policy.mjs": "b281e48c6215c1d27fd5b8027156e3450679aaf7f98c3f116f6e77a52177f5e6",
+    "scripts/check_model_lean_chain.mjs": "1726db0fb1264cf2e42f09a9a40ab736c233e5a0042555d3e4ab2a47bba88d73",
+    "scripts/proof_workbench/trust-profile-v1.json": "58ee35558e5ce1fe99236b4b75b7eceb1be8336d224195f951893150f38504a4",
+    "scripts/replay_model_lean_chain.py": "6bf3dd6220ec986fe1bf5878ed0710c2f127c9449e93300b97524be9dd1b669e",
+    "scripts/replay_proof_workbench.py": "b4091c12502857e844c8aa535681b7b86eddee0dbeebc4e34eaf603cb1a02b55"
+  },
+  "pcs_authority": false,
+  "immutable_host_root_established": false
+}

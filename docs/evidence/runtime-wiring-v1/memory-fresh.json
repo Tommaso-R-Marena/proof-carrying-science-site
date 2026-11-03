@@ -1,0 +1,32 @@
+{
+  "actual_local_Lean_checks": 4,
+  "records": [
+    {
+      "mission": "memory-nat_left_cancel",
+      "goal_sha256": "2b5b5ff117347f793d4f3516f93f0a5473c1ff36bf17574bceb4e6bd245c9e8a",
+      "axioms": [
+        "propext"
+      ]
+    },
+    {
+      "mission": "memory-predicate_induction",
+      "goal_sha256": "a64ee2ab677ba0a629a75f9df322df49f962f37bef8b7c3e0ee92d21a3168575",
+      "axioms": []
+    },
+    {
+      "mission": "memory-function_unit_recurrence",
+      "goal_sha256": "f9a2fd42aaa9f1b38409b97b156ff477797b691ffd9f84657978b170c04b6868",
+      "axioms": [
+        "propext"
+      ]
+    },
+    {
+      "mission": "memory-triple_append_length",
+      "goal_sha256": "ab68f67f0e1dc631d732d86e258204f9cc6df1da9288e397fa8cf2d848a17340",
+      "axioms": [
+        "propext"
+      ]
+    }
+  ],
+  "public_jobs_submitted": 0
+}

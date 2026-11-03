@@ -1,0 +1,602 @@
+{
+  "format": "pcs-model-lean-chain-v1",
+  "handoff": {
+    "format": "pcs-model-lean-handoff-v1",
+    "model_replay": {
+      "format": "pcs-model-walkthrough-replay-v1",
+      "task_id": "implication-reversal-1",
+      "task_version": "pcs-semantic-gauntlet-v1",
+      "domain_bound": 3,
+      "strategy": "learned",
+      "proposal_budget": 5,
+      "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+      "source": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "imp",
+          "a": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          }
+        }
+      },
+      "original": {
+        "op": "forall",
+        "x": "x",
+        "f": {
+          "op": "imp",
+          "a": {
+            "op": "pred",
+            "name": "T",
+            "x": "x"
+          },
+          "b": {
+            "op": "pred",
+            "name": "Q",
+            "x": "x"
+          }
+        }
+      },
+      "initial": {
+        "equivalent_within_bound": false,
+        "checked_models": 2,
+        "minimum_countermodel_domain": 1,
+        "countermodel": {
+          "n": 1,
+          "unary": {
+            "Q": [
+              true
+            ],
+            "T": [
+              false
+            ]
+          },
+          "binary": {}
+        },
+        "source_truth": false,
+        "candidate_truth": true
+      },
+      "attempts": [
+        {
+          "operation": "exchange_operands",
+          "path": [
+            "f"
+          ],
+          "proposal": {
+            "op": "forall",
+            "x": "x",
+            "f": {
+              "op": "imp",
+              "a": {
+                "op": "pred",
+                "name": "Q",
+                "x": "x"
+              },
+              "b": {
+                "op": "pred",
+                "name": "T",
+                "x": "x"
+              }
+            }
+          },
+          "model_score": 1.2854527666108675,
+          "checked": {
+            "equivalent_within_bound": true,
+            "checked_models": 84,
+            "minimum_countermodel_domain": null,
+            "countermodel": null,
+            "source_truth": null,
+            "candidate_truth": null
+          }
+        }
+      ],
+      "repair_found": true,
+      "scope": "EXHAUSTIVE_REGISTERED_FINITE_WORLDS_ONLY",
+      "lean_kernel_executed": false,
+      "pcs_authority": false
+    },
+    "proposal_sha256": "eabe6d917ef8726feea00e275c8910bd11c92ba5edb1eb80f0443eab342b53c9",
+    "entry": {
+      "title": "Check this exact repair",
+      "id": "model-repair-implication-reversal-1-eabe6d917ef8726f",
+      "category": "Model proposal",
+      "statement": "For all predicates on natural numbers Q and T, ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+      "lean": "∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+      "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+      "recommended_family": "prospective-hybrid-v2",
+      "meaning": "Compare the intended rule with this exact reproduced repair. Proposal method: trained ranker. Interpret individuals as natural-number labels. The earlier finite check is separate. A proof concerns this mathematical interpretation, not a real assistant or AI safety."
+    },
+    "pcs_authority": false,
+    "physical_neural_execution_independently_attested": false,
+    "handoff_sha256": "4d394d96235ae2259603ddc514ce5182bc7126498d9423fa64669bad19854cbc"
+  },
+  "proof_report": {
+    "format": "pcs-proof-workbench-report-v1",
+    "provider_evidence_sha256": "8cc7fcf00227d115378a01e9f233ead24ea8fb29a47797b80f7b0f6e7cea2866",
+    "catalog_sha256": "8ff7e554dec36bcbcde6c964eeaed46e5acc5ddfa00eafc554465898efbd2101",
+    "entry_id": "model-repair-implication-reversal-1-eabe6d917ef8726f",
+    "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+    "statement": "For all predicates on natural numbers Q and T, ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+    "formal_statement": "∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+    "source_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+    "request_id": "11111111111111111111111111111111",
+    "requested_family": "prospective-hybrid-v2",
+    "run_url": null,
+    "execution_mode": "recorded_example",
+    "created_at": "2026-11-03T15:18:06.955Z",
+    "outcome": "proved",
+    "selected_role": "result",
+    "interpretation_confirmed": true,
+    "evidence": {
+      "format": "pcs-public-lean-result-v1",
+      "request_id": "11111111111111111111111111111111",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+      "model_family": "prospective-hybrid-v2",
+      "source_license": "CC0-1.0",
+      "automatic_training_authorization": false,
+      "projection": "pcs-workbench-evidence-projection-v1",
+      "result": {
+        "status": "verified",
+        "pcs_authority": false,
+        "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+        "library_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+        "formalization": {
+          "status": "supported",
+          "source": "For all predicates on natural numbers Q and T, ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+          "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+          "candidates": [
+            {
+              "ir": {
+                "format": "pcs-math-ir-v1",
+                "binders": [
+                  {
+                    "name": "Q",
+                    "type": "NatPred"
+                  },
+                  {
+                    "name": "T",
+                    "type": "NatPred"
+                  }
+                ],
+                "body": {
+                  "op": "iff",
+                  "left": {
+                    "op": "forall",
+                    "name": "x",
+                    "type": "Nat",
+                    "body": {
+                      "op": "implies",
+                      "left": {
+                        "op": "apply",
+                        "fn": {
+                          "op": "var",
+                          "name": "Q"
+                        },
+                        "arg": {
+                          "op": "var",
+                          "name": "x"
+                        }
+                      },
+                      "right": {
+                        "op": "apply",
+                        "fn": {
+                          "op": "var",
+                          "name": "T"
+                        },
+                        "arg": {
+                          "op": "var",
+                          "name": "x"
+                        }
+                      }
+                    }
+                  },
+                  "right": {
+                    "op": "forall",
+                    "name": "x",
+                    "type": "Nat",
+                    "body": {
+                      "op": "implies",
+                      "left": {
+                        "op": "apply",
+                        "fn": {
+                          "op": "var",
+                          "name": "Q"
+                        },
+                        "arg": {
+                          "op": "var",
+                          "name": "x"
+                        }
+                      },
+                      "right": {
+                        "op": "apply",
+                        "fn": {
+                          "op": "var",
+                          "name": "T"
+                        },
+                        "arg": {
+                          "op": "var",
+                          "name": "x"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "lean": "∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+              "interpretation_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+              "score": null
+            }
+          ],
+          "semantic_authorization": false,
+          "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+        },
+        "search": {
+          "status": "verified",
+          "receipt": {
+            "format": "pcs-std-baseline-proof-v1",
+            "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+            "statement": "∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))",
+            "proof": "  repeat intro\n  simp_all",
+            "kernel": {
+              "axioms": [
+                "propext"
+              ],
+              "expression": {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Nat:[]"
+                      },
+                      {
+                        "children": [],
+                        "kind": "sort",
+                        "value": "0"
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "a._@._internal._hyg.0"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Nat:[]"
+                          },
+                          {
+                            "children": [],
+                            "kind": "sort",
+                            "value": "0"
+                          }
+                        ],
+                        "kind": "forall",
+                        "value": "a._@._internal._hyg.0"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "constant",
+                                "value": "Iff:[]"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "constant",
+                                    "value": "Nat:[]"
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "2"
+                                          },
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "0"
+                                          }
+                                        ],
+                                        "kind": "application",
+                                        "value": ""
+                                      },
+                                      {
+                                        "children": [
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "2"
+                                          },
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "1"
+                                          }
+                                        ],
+                                        "kind": "application",
+                                        "value": ""
+                                      }
+                                    ],
+                                    "kind": "forall",
+                                    "value": "a._@._internal._hyg.0"
+                                  }
+                                ],
+                                "kind": "forall",
+                                "value": "x"
+                              }
+                            ],
+                            "kind": "application",
+                            "value": ""
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "constant",
+                                "value": "Nat:[]"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "0"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "1"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  }
+                                ],
+                                "kind": "forall",
+                                "value": "a._@._internal._hyg.0"
+                              }
+                            ],
+                            "kind": "forall",
+                            "value": "x"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "T"
+                  }
+                ],
+                "kind": "forall",
+                "value": "Q"
+              },
+              "format": "pcs-lean-kernel-v1"
+            },
+            "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+            "pcs_scientific_authority": false
+          },
+          "expansions": 1,
+          "winning_component": "ordinary_Std",
+          "independent_replay": {
+            "status": "verified",
+            "kernel": {
+              "axioms": [
+                "propext"
+              ],
+              "expression": {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Nat:[]"
+                      },
+                      {
+                        "children": [],
+                        "kind": "sort",
+                        "value": "0"
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "a._@._internal._hyg.0"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Nat:[]"
+                          },
+                          {
+                            "children": [],
+                            "kind": "sort",
+                            "value": "0"
+                          }
+                        ],
+                        "kind": "forall",
+                        "value": "a._@._internal._hyg.0"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "constant",
+                                "value": "Iff:[]"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "constant",
+                                    "value": "Nat:[]"
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "2"
+                                          },
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "0"
+                                          }
+                                        ],
+                                        "kind": "application",
+                                        "value": ""
+                                      },
+                                      {
+                                        "children": [
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "2"
+                                          },
+                                          {
+                                            "children": [],
+                                            "kind": "bound",
+                                            "value": "1"
+                                          }
+                                        ],
+                                        "kind": "application",
+                                        "value": ""
+                                      }
+                                    ],
+                                    "kind": "forall",
+                                    "value": "a._@._internal._hyg.0"
+                                  }
+                                ],
+                                "kind": "forall",
+                                "value": "x"
+                              }
+                            ],
+                            "kind": "application",
+                            "value": ""
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "constant",
+                                "value": "Nat:[]"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "0"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "1"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  }
+                                ],
+                                "kind": "forall",
+                                "value": "a._@._internal._hyg.0"
+                              }
+                            ],
+                            "kind": "forall",
+                            "value": "x"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "T"
+                  }
+                ],
+                "kind": "forall",
+                "value": "Q"
+              },
+              "format": "pcs-lean-kernel-v1"
+            },
+            "all_lean_calls": 1,
+            "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+            "pcs_scientific_authority": false
+          }
+        }
+      },
+      "previous": null,
+      "baseline": null
+    },
+    "pcs_authority": false,
+    "physical_neural_execution_independently_attested": false,
+    "canonical_payload": "{\"catalog_sha256\":\"8ff7e554dec36bcbcde6c964eeaed46e5acc5ddfa00eafc554465898efbd2101\",\"created_at\":\"2026-11-03T15:18:06.955Z\",\"entry_id\":\"model-repair-implication-reversal-1-eabe6d917ef8726f\",\"evidence\":{\"automatic_training_authorization\":false,\"baseline\":null,\"core_sha\":\"f20f3cab2938f2e085f137185e88f4700d5da2ed\",\"format\":\"pcs-public-lean-result-v1\",\"model_family\":\"prospective-hybrid-v2\",\"previous\":null,\"projection\":\"pcs-workbench-evidence-projection-v1\",\"request_id\":\"11111111111111111111111111111111\",\"result\":{\"checkpoint_sha256\":\"869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57\",\"formalization\":{\"candidates\":[{\"interpretation_sha256\":\"12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471\",\"ir\":{\"binders\":[{\"name\":\"Q\",\"type\":\"NatPred\"},{\"name\":\"T\",\"type\":\"NatPred\"}],\"body\":{\"left\":{\"body\":{\"left\":{\"arg\":{\"name\":\"x\",\"op\":\"var\"},\"fn\":{\"name\":\"Q\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"implies\",\"right\":{\"arg\":{\"name\":\"x\",\"op\":\"var\"},\"fn\":{\"name\":\"T\",\"op\":\"var\"},\"op\":\"apply\"}},\"name\":\"x\",\"op\":\"forall\",\"type\":\"Nat\"},\"op\":\"iff\",\"right\":{\"body\":{\"left\":{\"arg\":{\"name\":\"x\",\"op\":\"var\"},\"fn\":{\"name\":\"Q\",\"op\":\"var\"},\"op\":\"apply\"},\"op\":\"implies\",\"right\":{\"arg\":{\"name\":\"x\",\"op\":\"var\"},\"fn\":{\"name\":\"T\",\"op\":\"var\"},\"op\":\"apply\"}},\"name\":\"x\",\"op\":\"forall\",\"type\":\"Nat\"}},\"format\":\"pcs-math-ir-v1\"},\"lean\":\"∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))\",\"score\":null}],\"fidelity_boundary\":\"Controlled grammar interpretation; user intent and unrestricted English equivalence unproved.\",\"semantic_authorization\":false,\"source\":\"For all predicates on natural numbers Q and T, ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))\",\"source_sha256\":\"e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86\",\"status\":\"supported\"},\"library_sha256\":\"4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234\",\"pcs_authority\":false,\"search\":{\"expansions\":1,\"independent_replay\":{\"all_lean_calls\":1,\"goal_sha256\":\"12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471\",\"kernel\":{\"axioms\":[\"propext\"],\"expression\":{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Iff:[]\"},{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"x\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"x\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"T\"}],\"kind\":\"forall\",\"value\":\"Q\"},\"format\":\"pcs-lean-kernel-v1\"},\"pcs_scientific_authority\":false,\"status\":\"verified\"},\"receipt\":{\"format\":\"pcs-std-baseline-proof-v1\",\"goal_sha256\":\"12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471\",\"kernel\":{\"axioms\":[\"propext\"],\"expression\":{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[],\"kind\":\"sort\",\"value\":\"0\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Iff:[]\"},{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"x\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[],\"kind\":\"constant\",\"value\":\"Nat:[]\"},{\"children\":[{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"0\"}],\"kind\":\"application\",\"value\":\"\"},{\"children\":[{\"children\":[],\"kind\":\"bound\",\"value\":\"2\"},{\"children\":[],\"kind\":\"bound\",\"value\":\"1\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"a._@._internal._hyg.0\"}],\"kind\":\"forall\",\"value\":\"x\"}],\"kind\":\"application\",\"value\":\"\"}],\"kind\":\"forall\",\"value\":\"T\"}],\"kind\":\"forall\",\"value\":\"Q\"},\"format\":\"pcs-lean-kernel-v1\"},\"lean\":\"Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)\",\"pcs_scientific_authority\":false,\"proof\":\"  repeat intro\\n  simp_all\",\"statement\":\"∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))\"},\"status\":\"verified\",\"winning_component\":\"ordinary_Std\"},\"status\":\"verified\"},\"source_license\":\"CC0-1.0\",\"source_sha256\":\"e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86\"},\"execution_mode\":\"recorded_example\",\"formal_statement\":\"∀ (Q : Nat → Prop) (T : Nat → Prop), ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))\",\"format\":\"pcs-proof-workbench-report-v1\",\"goal_sha256\":\"12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471\",\"interpretation_confirmed\":true,\"outcome\":\"proved\",\"pcs_authority\":false,\"physical_neural_execution_independently_attested\":false,\"provider_evidence_sha256\":\"8cc7fcf00227d115378a01e9f233ead24ea8fb29a47797b80f7b0f6e7cea2866\",\"request_id\":\"11111111111111111111111111111111\",\"requested_family\":\"prospective-hybrid-v2\",\"run_url\":null,\"selected_role\":\"result\",\"source_revision\":\"f20f3cab2938f2e085f137185e88f4700d5da2ed\",\"statement\":\"For all predicates on natural numbers Q and T, ((∀ (x : Nat), ((Q x) → (T x))) ↔ (∀ (x : Nat), ((Q x) → (T x))))\"}",
+    "report_sha256": "fff2d86e318a4811f0bc4c68efc954542f74a63a4fa369b61e015dea474daeb7"
+  },
+  "pcs_authority": false,
+  "physical_neural_execution_independently_attested": false,
+  "chain_sha256": "4bb1c269aa9e79d33dc408b43f194aa8d7332319e5acd56ca1b8bdeaea75c11e"
+}

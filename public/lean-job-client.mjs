@@ -39,3 +39,25 @@ export function executionSummary(evidence){
    evidence?.core_sha?'Source: '+evidence.core_sha:null,
    'Inspect the full evidence for attempts, scope and kernel assumptions. Hosted execution remains a trust dependency.'].filter(Boolean).join('. ');
 }
+
+// A fresh game check must close the same theorem using the same typed route.
+// A catalog receipt and a newly returned receipt remain separate evidence.
+export async function freshRouteEvidence(evidence,request,route,mission){
+ evidence=structuredClone(evidence);request=structuredClone(request);route=structuredClone(route);mission=structuredClone(mission);
+ const hash=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value))),b=>b.toString(16).padStart(2,'0')).join('');
+ const actions=await hash(canonical(route.proof_actions));
+ if(evidence?.format!=='pcs-public-lean-result-v1'||evidence.request_id!==request.request_id||evidence.core_sha!==request.core_sha||evidence.source_sha256!==await hash(JSON.stringify(mission.statement))||evidence.actions_sha256!==actions||evidence.result?.pcs_authority!==false||evidence.automatic_training_authorization!==false||(evidence.model_family??null)!==(request.model_family??null))throw Error('Fresh proof does not match this exact route request');
+ if(evidence.result.status!=='verified')throw Error('Fresh checker did not verify this route: '+evidence.result.status);
+ const r=evidence.result.search?.receipt;validateRouteReceipt(r,route,mission);
+ return {format:'pcs-fresh-route-proof-v1',execution_mode:'fresh_public_job',request_id:request.request_id,core_sha:request.core_sha,actions_sha256:actions,receipt:r,evidence,pcs_authority:false,physical_neural_execution_independently_attested:false};
+}
+
+function validateRouteReceipt(r,route,mission){
+ const recorded=route.receipt;
+ if(!r||!recorded||r.statement!==recorded.statement||r.goal_sha256!==mission.goal_sha256||canonical(r.actions)!==canonical(route.proof_actions)||r.kernel?.format!=='pcs-lean-kernel-v1'||!Array.isArray(r.kernel.axioms)||r.kernel.axioms.some(a=>!['propext','Classical.choice','Quot.sound'].includes(a))||r.pcs_scientific_authority!==false||!r.lean?.includes('version 4.28.0,')||canonical(r.library??null)!==canonical(recorded.library??null)||r.adapter_sha256!==recorded.adapter_sha256)throw Error('Fresh theorem, actions, memory or kernel scope differs');
+}
+export function localRouteEvidence(receipt,route,mission){
+ validateRouteReceipt(receipt,route,mission);
+ return {format:'pcs-fresh-route-proof-v1',execution_mode:'fresh_local_session',core_sha:null,
+  local_backend_source_independently_attested:false,receipt:structuredClone(receipt),pcs_authority:false,physical_neural_execution_independently_attested:false};
+}

@@ -1,0 +1,75 @@
+{
+  "format": "pcs-model-lean-handoff-browser-v1",
+  "actual_model_inference": true,
+  "public_proof_jobs_submitted": 0,
+  "positive_provider_responses_substituted": false,
+  "Lean_execution_in_this_browser_campaign": false,
+  "human_participants": 0,
+  "cases": [
+    {
+      "id": "implication-reversal-1",
+      "width": 320,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "universal-existential-1",
+      "width": 320,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "implication-reversal-1",
+      "width": 390,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "universal-existential-1",
+      "width": 390,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "implication-reversal-1",
+      "width": 768,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "universal-existential-1",
+      "width": 768,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "implication-reversal-1",
+      "width": 1440,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    },
+    {
+      "id": "universal-existential-1",
+      "width": 1440,
+      "actual_reproduced_model": true,
+      "typed_Nat_meaning_previewed": true,
+      "no_auto_publication": true,
+      "unavailable_checker_fails_closed": true
+    }
+  ],
+  "status": "PASS"
+}

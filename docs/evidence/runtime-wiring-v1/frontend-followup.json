@@ -1,0 +1,13 @@
+{
+  "format": "pcs-runtime-wiring-frontend-followup-v1",
+  "previous_evidence_commit": "561ffd3d3faec29de72dadf1bae4961e763d5122",
+  "previous_source_manifest_sha256": "ccf4ff4dd9a8198b7a04668f96c6285054f8ce6d8cba285d40cd2836c714544c",
+  "reason": "Invalidate the displayed success as well as its receipt on every route edit",
+  "source_overrides": {
+    "public/bridge-builder.mjs": "9af2a246fa0006c40fd879368906b5b55b297c7ef20d904b58acec76f276a9e8"
+  },
+  "actual_fresh_Lean_checks": 2,
+  "altered_route_accepted_as_verified": false,
+  "response_bytes_changed": false,
+  "pcs_authority": false
+}

@@ -1,7 +1,7 @@
 import {SCIENCE_FILES,verifyScienceFiles,checkScienceWorkflow,recheckScienceDownload} from './science-workflow-core.mjs';
 import {parseCSV} from './file-check-core.mjs';
 const $=id=>document.getElementById(id);let inputs=null,result=null,busy=false,revision=0,readRevision=0;
-function controls(){for(const id of ['scienceCheck','scienceCase'])$(id).disabled=!inputs||busy;for(const id of ['scienceReport','scienceReplay'])$(id).disabled=!result||busy;}
+function controls(){for(const id of ['scienceCheck','scienceCase'])$(id).disabled=!inputs||busy;for(const id of ['scienceReport','scienceReplay','scienceLean'])$(id).disabled=!result||busy;}
 function clear(){revision++;result=null;$('scienceResults').hidden=true;$('scienceStage').textContent='Step 1: compare the saved observations.';controls();}
 function preview(){const names=Object.keys(SCIENCE_FILES);for(let i=0;i<2;i++){
  const t=parseCSV(inputs[i]),tbody=$('scienceRows'+i);tbody.replaceChildren();for(const row of t.rows.slice(0,3)){const tr=document.createElement('tr');for(const value of [row[0],row[1],row[5]]){const td=document.createElement('td');td.textContent=value;tr.append(td);}tbody.append(tr);}$('scienceCount'+i).textContent=t.rows.length+' observations';$('scienceFile'+i).textContent=names[i];
@@ -16,6 +16,7 @@ $('scienceCheck').onclick=async()=>{if(!inputs||busy)return;clear();const token=
  }catch(err){result=null;$('scienceResults').hidden=true;$('scienceStatus').textContent='Could not check these files. No result is confirmed. '+err.message;}finally{busy=false;controls();}};
 function save(name,raw,type){const u=URL.createObjectURL(new Blob([raw],{type})),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);}
 $('scienceReport').onclick=()=>{if(result&&!busy){save('pcs-iris-report.html',result.report_html,'text/html');$('scienceStage').textContent='Report saved. Save the recheck file to carry the original inputs too.';}};
+$('scienceLean').onclick=()=>{if(!result||busy)return;save('pcs-iris-recheck.json',result.replay_json,'application/json');$('scienceLeanSteps').open=true;$('scienceStage').textContent='Open the local app, choose What changed?, and open the recheck file. Review it and run the local Lean check on the exact same CSV bytes.';};
 $('scienceReplay').onclick=()=>{if(result&&!busy){save('pcs-iris-recheck.json',result.replay_json,'application/json');$('scienceReopen').open=true;$('scienceStage').textContent='Step 3: choose the recheck download below to calculate the result again.';}};
 $('scienceRecheckFile').onchange=async e=>{const token=++readRevision,file=e.target.files[0];$('scienceRecheckStatus').textContent='No imported result is confirmed.';if(!file)return;try{
  if(file.size>8454144)throw Error('This replay is too large.');$('scienceRecheckStatus').textContent='Reading the embedded files and comparing them again…';const r=await recheckScienceDownload(new Uint8Array(await file.arrayBuffer()));if(token!==readRevision)return;

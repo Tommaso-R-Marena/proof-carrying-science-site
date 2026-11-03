@@ -52,6 +52,11 @@ not a hosted general inference service. Browser repair demos verify their pinned
 weights before inference, and each proposed repair still needs a finite check.
 
 See [the execution audit and reproduction](docs/MODEL_CAPABILITY_WIRING_V1.md).
+The [connected-runtime integration](docs/RUNTIME_CONNECTIONS_V1.md) now carries an
+actual ranker's exact repair into Lean, supports private local model/proof runs,
+and saves fresh proof-game receipts. Its all-page execution map covers all 75
+pages. Information pages and finite browser tools retain their explicit scope;
+opening them does not imply model inference or a fresh kernel run.
 
 ## Review recurring exports
 
@@ -63,6 +68,9 @@ toolchains or terminal commands. Reports and reusable settings preserve privacy
 by default. The public Iris example demonstrates checks on published observations.
 
 See [the exact contract, proofs and reproduction](docs/CHANGE_REVIEW_V2.md).
+New native builds automatically run the original-byte Lean checker after each
+valid review, including the three published-data controls. Existing version 2.0.0
+downloads still use their explicit local-check button; their archives are unchanged.
 The [optional newcomer study](docs/NEWCOMER_STUDY_V1.md) provides consent-based local
 task records and separate observer analysis. Automated tests are not human results;
 no human study has been completed by implementing these tools.

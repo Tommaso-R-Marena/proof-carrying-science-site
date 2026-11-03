@@ -1,0 +1,30 @@
+{
+  "actual_local_Lean_checks": 4,
+  "records": [
+    {
+      "mission": "tutorial",
+      "goal_sha256": "8e9e4e8049488eb3a23d3ffaf231f63673786f5236345437bdb189e1183f4194",
+      "axioms": []
+    },
+    {
+      "mission": "cargo",
+      "goal_sha256": "651032da5ba9668679deba80a91dccb3e32b926153ea8f33dc5fed1e9394ef10",
+      "axioms": []
+    },
+    {
+      "mission": "length",
+      "goal_sha256": "223ccdf08174616848aa6bae4e1a9557ddfdb595fb29fe6de21c6affe301d2eb",
+      "axioms": [
+        "propext"
+      ]
+    },
+    {
+      "mission": "association",
+      "goal_sha256": "98fa27af38bb9bafd0ac1338e7ddd122beb83aff8c264373616af0768e4b1e1a",
+      "axioms": [
+        "propext"
+      ]
+    }
+  ],
+  "public_jobs_submitted": 0
+}
