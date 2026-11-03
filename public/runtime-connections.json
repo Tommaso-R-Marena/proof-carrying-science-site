@@ -1,0 +1,837 @@
+{
+  "format": "pcs-website-runtime-connections-v1",
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "inventory_is_execution_attestation": false,
+  "automatic_model_promotion": false,
+  "pages": [
+    {
+      "page": "404.html",
+      "kind": "navigation",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "account.html",
+      "kind": "account",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "account.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "admin-login.html",
+      "kind": "administration",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "admin-login.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "admin.html",
+      "kind": "administration",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "admin.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "architecture.html",
+      "kind": "technical reference",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "arena-countermodel.html",
+      "kind": "reasoning game",
+      "execution": "browser-model-with-finite-checker",
+      "entrypoints": [
+        "site.js",
+        "arena-countermodel.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Actual browser models or optional local coaches guide proposals. Separate finite checks run in JavaScript; no Lean kernel runs on each click."
+    },
+    {
+      "page": "arena-proof-quest.html",
+      "kind": "reasoning game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "arena-proof-quest.js",
+        "game-guide.mjs",
+        "first-visit-observer.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "arena-safety-forge.html",
+      "kind": "simulation game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "arena-safety-forge.js",
+        "game-guide.mjs",
+        "first-visit-observer.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "arena.html",
+      "kind": "game chooser",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "arena.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "assurance-fold.html",
+      "kind": "reasoning game",
+      "execution": "browser-model-with-finite-checker",
+      "entrypoints": [
+        "site.js",
+        "assurance-fold.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Actual browser models or optional local coaches guide proposals. Separate finite checks run in JavaScript; no Lean kernel runs on each click."
+    },
+    {
+      "page": "bridge-builder.html",
+      "kind": "proof game",
+      "execution": "recorded-Lean-states-with-fresh-route-check",
+      "entrypoints": [
+        "bridge-builder.mjs",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Moves replay source-bound catalog states. The local Lean server or a separately consented public job checks the exact typed route; fresh receipts are bound to that route before display or download. Clicks through a recorded catalog alone do not run a kernel."
+    },
+    {
+      "page": "calibration-lab.html",
+      "kind": "real-data research lab",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "calibration-lab.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "capabilities.html",
+      "kind": "execution guide",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "capabilities.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "check-my-files.html",
+      "kind": "local file tool",
+      "execution": "native-original-byte-Lean",
+      "entrypoints": [
+        "file-check.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The website runs a browser calculation. The downloaded app independently executes its pinned compiled Lean checker on original CSV bytes; new builds run it automatically with each review. Imported receipts are not fresh checks."
+    },
+    {
+      "page": "claim-invalidation-v1.html",
+      "kind": "research task",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website claim lookup and review service. A displayed claim status is not a new mathematical proof, independent scientific validation or model inference."
+    },
+    {
+      "page": "claim-review.html",
+      "kind": "local evidence viewer",
+      "execution": "browser-inspection-or-project-preparation",
+      "entrypoints": [
+        "site.js",
+        "claim-review.js",
+        "page-help.mjs"
+      ],
+      "scope": "These interfaces parse evidence or prepare a plan. Authoritative acceptance requires the appropriate independent core receiver; the page itself is not that authority."
+    },
+    {
+      "page": "commons.html",
+      "kind": "contributor guide",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "contact.html",
+      "kind": "contact",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "contact.js",
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "contribute.html",
+      "kind": "contributor guide",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "contributors.html",
+      "kind": "participation policy",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "demo.html",
+      "kind": "legacy demonstration",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "pcs-engine.js",
+        "pcs-reference.js",
+        "demo.js",
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "evaluation-firewall.html",
+      "kind": "local research report viewer",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "evaluation-firewall.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "evidence-atlas.html",
+      "kind": "source library",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "evidence-atlas.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "experience.html",
+      "kind": "guided scientific workflow",
+      "execution": "native-original-byte-Lean",
+      "entrypoints": [
+        "site.js",
+        "science-workflow.mjs",
+        "one-minute.mjs",
+        "experience.js",
+        "first-investigation.mjs",
+        "first-visit-observer.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The website runs a browser calculation. The downloaded app independently executes its pinned compiled Lean checker on original CSV bytes; new builds run it automatically with each review. Imported receipts are not fresh checks."
+    },
+    {
+      "page": "first-visit-study.html",
+      "kind": "optional usability practice",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "first-visit-study.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "forge-duel.html",
+      "kind": "simulation game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "forge-duel.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "fund.html",
+      "kind": "funding policy",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "governance.html",
+      "kind": "governance policy",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "guided-submission.html",
+      "kind": "local project preparation",
+      "execution": "browser-inspection-or-project-preparation",
+      "entrypoints": [
+        "site.js",
+        "project-builder.js",
+        "guided-submission.js",
+        "page-help.mjs"
+      ],
+      "scope": "These interfaces parse evidence or prepare a plan. Authoritative acceptance requires the appropriate independent core receiver; the page itself is not that authority."
+    },
+    {
+      "page": "index.html",
+      "kind": "home",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "intake.html",
+      "kind": "local planning tool",
+      "execution": "browser-inspection-or-project-preparation",
+      "entrypoints": [
+        "intake.js",
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "These interfaces parse evidence or prepare a plan. Authoritative acceptance requires the appropriate independent core receiver; the page itself is not that authority."
+    },
+    {
+      "page": "intervention-lab.html",
+      "kind": "bounded planning lab",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "intervention-lab.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "lean-learning-lab.html",
+      "kind": "advanced proof-search lab",
+      "execution": "fresh-hosted-model-and-Lean",
+      "entrypoints": [
+        "lean-learning-lab.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Fresh Lean runs require a supported typed claim, explicit publication consent, source-matched service readiness and quota. A model suggestion is not a proof."
+    },
+    {
+      "page": "live-demo.html",
+      "kind": "local reasoning demonstration",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "live-demo.js",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "meaning-forge.html",
+      "kind": "language reasoning game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "meaning-forge.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "memory-workshop.html",
+      "kind": "proof game",
+      "execution": "recorded-Lean-states-with-fresh-route-check",
+      "entrypoints": [
+        "bridge-builder.mjs",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Moves replay source-bound catalog states. The local Lean server or a separately consented public job checks the exact typed route; fresh receipts are bound to that route before display or download. Clicks through a recorded catalog alone do not run a kernel."
+    },
+    {
+      "page": "model-lab.html",
+      "kind": "synthetic scientific-model lab",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "pcs-engine.js",
+        "model-lab.js",
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "model-walkthrough.html",
+      "kind": "actual browser model demonstration",
+      "execution": "fresh-hosted-model-and-Lean",
+      "entrypoints": [
+        "model-walkthrough.mjs",
+        "first-visit-observer.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The pinned browser ranker proposes an edit and a separate finite checker tests it. Its exact Nat-predicate interpretation can be checked by the real local memory model and Lean, or by a separately consented public proof job. These mathematical and finite checks have different scopes."
+    },
+    {
+      "page": "mvp.html",
+      "kind": "technical setup guide",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "mvp.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "omega-workspace.html",
+      "kind": "local reasoning workspace",
+      "execution": "browser-model-with-finite-checker",
+      "entrypoints": [
+        "site.js",
+        "omega-workspace.js",
+        "page-help.mjs"
+      ],
+      "scope": "Actual browser models or optional local coaches guide proposals. Separate finite checks run in JavaScript; no Lean kernel runs on each click."
+    },
+    {
+      "page": "organizations.html",
+      "kind": "organization guide",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "package-inspector.html",
+      "kind": "local package inspector",
+      "execution": "browser-inspection-or-project-preparation",
+      "entrypoints": [
+        "site.js",
+        "package-inspector.js",
+        "page-help.mjs"
+      ],
+      "scope": "These interfaces parse evidence or prepare a plan. Authoritative acceptance requires the appropriate independent core receiver; the page itself is not that authority."
+    },
+    {
+      "page": "paper-demos.html",
+      "kind": "recorded scientific demonstrations",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "site.js",
+        "paper-demos.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "privacy.html",
+      "kind": "privacy policy",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "project-builder.html",
+      "kind": "advanced local project mapper",
+      "execution": "browser-inspection-or-project-preparation",
+      "entrypoints": [
+        "site.js",
+        "project-builder.js",
+        "page-help.mjs"
+      ],
+      "scope": "These interfaces parse evidence or prepare a plan. Authoritative acceptance requires the appropriate independent core receiver; the page itself is not that authority."
+    },
+    {
+      "page": "projects.html",
+      "kind": "project map",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "proof-search-results.html",
+      "kind": "recorded research results",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "proof-workbench-study.html",
+      "kind": "optional usability study",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "proof-workbench-study.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "proof-workbench.html",
+      "kind": "guided proof tool",
+      "execution": "fresh-hosted-model-and-Lean",
+      "entrypoints": [
+        "site.js",
+        "proof-workbench.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Fresh Lean runs require a supported typed claim, explicit publication consent, source-matched service readiness and quota. A model suggestion is not a proof."
+    },
+    {
+      "page": "prooflab.html",
+      "kind": "research-planning game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "prooflab.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "reasoning-lab.html",
+      "kind": "local logic lab",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "reasoning-lab.js",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "repair-model-lab.html",
+      "kind": "advanced browser model lab",
+      "execution": "browser-model-with-finite-checker",
+      "entrypoints": [
+        "repair-model-lab.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Actual browser models or optional local coaches guide proposals. Separate finite checks run in JavaScript; no Lean kernel runs on each click."
+    },
+    {
+      "page": "research-preview.html",
+      "kind": "local calculation preview",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "research-preview.js",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "research-updates.html",
+      "kind": "research archive guide",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "research.html",
+      "kind": "research overview",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "researcher-pilots.html",
+      "kind": "research collaboration guide",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "researcher-pilot-ui.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "result-anatomy.html",
+      "kind": "result-reading guide",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "site.js",
+        "result-anatomy.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "review-changes.html",
+      "kind": "local file-review tool",
+      "execution": "native-original-byte-Lean",
+      "entrypoints": [
+        "review-changes.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The website runs a browser calculation. The downloaded app independently executes its pinned compiled Lean checker on original CSV bytes; new builds run it automatically with each review. Imported receipts are not fresh checks."
+    },
+    {
+      "page": "reviewer-desk.html",
+      "kind": "restricted review tool",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "reviewer-desk.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "roles.html",
+      "kind": "participation guide",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "roles.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "scientific-workflow-v2.html",
+      "kind": "real-data scientific explorer",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "scientific-workflow-v2.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "semantic-audit.html",
+      "kind": "archived research viewer",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "semantic-audit.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "semantic-gauntlet.html",
+      "kind": "finite-logic game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "semantic-gauntlet.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "semantic-multistep-lab.html",
+      "kind": "bounded repair-search lab",
+      "execution": "browser-model-with-finite-checker",
+      "entrypoints": [
+        "semantic-multistep-lab.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Actual browser models or optional local coaches guide proposals. Separate finite checks run in JavaScript; no Lean kernel runs on each click."
+    },
+    {
+      "page": "semantic-repair-lab.html",
+      "kind": "finite repair lab",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "semantic-repair-lab.js",
+        "game-guide.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    },
+    {
+      "page": "task-graph.html",
+      "kind": "task map",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "task-graph.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "tasks.html",
+      "kind": "task marketplace",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "commons.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "transport-workflow-v3.html",
+      "kind": "synthetic scientific explorer",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "transport-workflow-v3.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "trust-explorer.html",
+      "kind": "trust guide",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "trust-explorer.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "trust.html",
+      "kind": "trust reference",
+      "execution": "information-or-navigation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Explains or links capabilities. Opening an information page makes no model or Lean execution claim."
+    },
+    {
+      "page": "usability-study.html",
+      "kind": "optional file-tool study",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "usability-study.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "validation-registry.html",
+      "kind": "recorded validation registry",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "site.js",
+        "validation-registry.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "validation.html",
+      "kind": "recorded validation results",
+      "execution": "recorded-research-or-exploratory-calculation",
+      "entrypoints": [
+        "site.js",
+        "page-help.mjs"
+      ],
+      "scope": "Recorded evidence remains historical. Exploratory calculations may run locally; viewing evidence does not execute a fresh kernel, reproduce physical model generation or validate a scientific assumption."
+    },
+    {
+      "page": "workboard.html",
+      "kind": "contributor work tracker",
+      "execution": "website-service-or-opt-in-study",
+      "entrypoints": [
+        "site.js",
+        "workboard.js",
+        "page-help.mjs"
+      ],
+      "scope": "Real website service or local consented workflow. Account checks, review actions and study records are not mathematical proof or model inference."
+    },
+    {
+      "page": "world-builder.html",
+      "kind": "visual reasoning game",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "site.js",
+        "world-builder.mjs",
+        "game-guide.mjs",
+        "first-visit-observer.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The stated finite, Boolean, planning or structural engine computes the result. A game score or JavaScript result is not a fresh Lean proof or general AI-safety guarantee."
+    }
+  ],
+  "pcs_authority": false
+}

@@ -1,0 +1,32 @@
+{
+  "format": "pcs-connected-model-browser-v1",
+  "status": "PASS",
+  "records": [
+    {
+      "id": "implication-reversal-1",
+      "file": "implication-reversal-1-browser-chain.json",
+      "actual_model_inference": true,
+      "actual_memory_model_search": true,
+      "expansions": 6,
+      "actual_Lean_kernel_check": true,
+      "axioms": [],
+      "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+      "altered_import_rejected": true
+    },
+    {
+      "id": "universal-existential-1",
+      "file": "universal-existential-1-browser-chain.json",
+      "actual_model_inference": true,
+      "actual_memory_model_search": true,
+      "expansions": 5,
+      "actual_Lean_kernel_check": true,
+      "axioms": [],
+      "goal_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+      "altered_import_rejected": true
+    }
+  ],
+  "public_jobs_submitted": 0,
+  "positive_provider_responses_substituted": false,
+  "human_participants": 0,
+  "pcs_authority": false
+}

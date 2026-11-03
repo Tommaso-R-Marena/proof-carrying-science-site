@@ -1,0 +1,539 @@
+{
+  "format": "pcs-public-lean-result-v1",
+  "request_id": "11111111111111111111111111111111",
+  "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+  "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "result": {
+    "format": "pcs-local-hybrid-loop-v1",
+    "formalization": {
+      "status": "supported",
+      "source": "For all predicates on natural numbers Q and T, ((\u2200 (x : Nat), ((Q x) \u2192 (T x))) \u2194 (\u2200 (x : Nat), ((Q x) \u2192 (T x))))",
+      "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+      "candidates": [
+        {
+          "ir": {
+            "format": "pcs-math-ir-v1",
+            "binders": [
+              {
+                "name": "Q",
+                "type": "NatPred"
+              },
+              {
+                "name": "T",
+                "type": "NatPred"
+              }
+            ],
+            "body": {
+              "op": "iff",
+              "left": {
+                "op": "forall",
+                "name": "x",
+                "type": "Nat",
+                "body": {
+                  "op": "implies",
+                  "left": {
+                    "op": "apply",
+                    "fn": {
+                      "op": "var",
+                      "name": "Q"
+                    },
+                    "arg": {
+                      "op": "var",
+                      "name": "x"
+                    }
+                  },
+                  "right": {
+                    "op": "apply",
+                    "fn": {
+                      "op": "var",
+                      "name": "T"
+                    },
+                    "arg": {
+                      "op": "var",
+                      "name": "x"
+                    }
+                  }
+                }
+              },
+              "right": {
+                "op": "forall",
+                "name": "x",
+                "type": "Nat",
+                "body": {
+                  "op": "implies",
+                  "left": {
+                    "op": "apply",
+                    "fn": {
+                      "op": "var",
+                      "name": "Q"
+                    },
+                    "arg": {
+                      "op": "var",
+                      "name": "x"
+                    }
+                  },
+                  "right": {
+                    "op": "apply",
+                    "fn": {
+                      "op": "var",
+                      "name": "T"
+                    },
+                    "arg": {
+                      "op": "var",
+                      "name": "x"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "lean": "\u2200 (Q : Nat \u2192 Prop) (T : Nat \u2192 Prop), ((\u2200 (x : Nat), ((Q x) \u2192 (T x))) \u2194 (\u2200 (x : Nat), ((Q x) \u2192 (T x))))",
+          "interpretation_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+          "score": null
+        }
+      ],
+      "semantic_authorization": false,
+      "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+    },
+    "status": "verified",
+    "training_feedback": null,
+    "pcs_authority": false,
+    "production_authority": false,
+    "automatic_training": false,
+    "automatic_promotion": false,
+    "search": {
+      "format": "pcs-attributed-hybrid-v1",
+      "status": "verified",
+      "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+      "receipt": {
+        "format": "pcs-std-baseline-proof-v1",
+        "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+        "statement": "\u2200 (Q : Nat \u2192 Prop) (T : Nat \u2192 Prop), ((\u2200 (x : Nat), ((Q x) \u2192 (T x))) \u2194 (\u2200 (x : Nat), ((Q x) \u2192 (T x))))",
+        "proof": "  repeat intro\n  simp_all",
+        "kernel": {
+          "axioms": [
+            "propext"
+          ],
+          "expression": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "kind": "constant",
+                    "value": "Nat:[]"
+                  },
+                  {
+                    "children": [],
+                    "kind": "sort",
+                    "value": "0"
+                  }
+                ],
+                "kind": "forall",
+                "value": "a._@._internal._hyg.0"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Nat:[]"
+                      },
+                      {
+                        "children": [],
+                        "kind": "sort",
+                        "value": "0"
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "a._@._internal._hyg.0"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Iff:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "constant",
+                                "value": "Nat:[]"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "0"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "1"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  }
+                                ],
+                                "kind": "forall",
+                                "value": "a._@._internal._hyg.0"
+                              }
+                            ],
+                            "kind": "forall",
+                            "value": "x"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Nat:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "2"
+                                  },
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "0"
+                                  }
+                                ],
+                                "kind": "application",
+                                "value": ""
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "2"
+                                  },
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "1"
+                                  }
+                                ],
+                                "kind": "application",
+                                "value": ""
+                              }
+                            ],
+                            "kind": "forall",
+                            "value": "a._@._internal._hyg.0"
+                          }
+                        ],
+                        "kind": "forall",
+                        "value": "x"
+                      }
+                    ],
+                    "kind": "application",
+                    "value": ""
+                  }
+                ],
+                "kind": "forall",
+                "value": "T"
+              }
+            ],
+            "kind": "forall",
+            "value": "Q"
+          },
+          "format": "pcs-lean-kernel-v1"
+        },
+        "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+        "pcs_scientific_authority": false
+      },
+      "independent_replay": {
+        "status": "verified",
+        "kernel": {
+          "axioms": [
+            "propext"
+          ],
+          "expression": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "kind": "constant",
+                    "value": "Nat:[]"
+                  },
+                  {
+                    "children": [],
+                    "kind": "sort",
+                    "value": "0"
+                  }
+                ],
+                "kind": "forall",
+                "value": "a._@._internal._hyg.0"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Nat:[]"
+                      },
+                      {
+                        "children": [],
+                        "kind": "sort",
+                        "value": "0"
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "a._@._internal._hyg.0"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Iff:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "constant",
+                                "value": "Nat:[]"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "0"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  },
+                                  {
+                                    "children": [
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "2"
+                                      },
+                                      {
+                                        "children": [],
+                                        "kind": "bound",
+                                        "value": "1"
+                                      }
+                                    ],
+                                    "kind": "application",
+                                    "value": ""
+                                  }
+                                ],
+                                "kind": "forall",
+                                "value": "a._@._internal._hyg.0"
+                              }
+                            ],
+                            "kind": "forall",
+                            "value": "x"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Nat:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "2"
+                                  },
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "0"
+                                  }
+                                ],
+                                "kind": "application",
+                                "value": ""
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "2"
+                                  },
+                                  {
+                                    "children": [],
+                                    "kind": "bound",
+                                    "value": "1"
+                                  }
+                                ],
+                                "kind": "application",
+                                "value": ""
+                              }
+                            ],
+                            "kind": "forall",
+                            "value": "a._@._internal._hyg.0"
+                          }
+                        ],
+                        "kind": "forall",
+                        "value": "x"
+                      }
+                    ],
+                    "kind": "application",
+                    "value": ""
+                  }
+                ],
+                "kind": "forall",
+                "value": "T"
+              }
+            ],
+            "kind": "forall",
+            "value": "Q"
+          },
+          "format": "pcs-lean-kernel-v1"
+        },
+        "all_lean_calls": 1,
+        "goal_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+        "pcs_scientific_authority": false
+      },
+      "winning_component": "ordinary_Std",
+      "stages": [
+        {
+          "component": "ordinary_Std",
+          "status": "verified",
+          "expansions": 1,
+          "cost": {
+            "all_lean_calls": 1,
+            "wall_seconds": 0.9198780139995506
+          }
+        }
+      ],
+      "expansions": 1,
+      "receiver_cache_records": 0,
+      "budget": 48,
+      "cost": {
+        "measured_lean_calls_excluding_legacy_memory_replay": 3,
+        "cold_wall_seconds": 6.880364901999201
+      },
+      "pcs_scientific_authority": false
+    },
+    "explanation": {
+      "statement": "For all predicates on natural numbers Q; For all predicates on natural numbers T, (for every x of type Nat, (Q applied to x implies T applied to x) if and only if for every x of type Nat, (Q applied to x implies T applied to x)).",
+      "variables": [
+        {
+          "name": "Q",
+          "type": "NatPred"
+        },
+        {
+          "name": "T",
+          "type": "NatPred"
+        }
+      ],
+      "assumptions": [],
+      "conclusion": "(for every x of type Nat, (Q applied to x implies T applied to x) if and only if for every x of type Nat, (Q applied to x implies T applied to x))",
+      "source_correspondence": {
+        "ir_sha256": "12ba2f9838b981ef1cd5f97d2c6eded222be24debfd741be6ad8e27d49a1c471",
+        "lean": "\u2200 (Q : Nat \u2192 Prop) (T : Nat \u2192 Prop), ((\u2200 (x : Nat), ((Q x) \u2192 (T x))) \u2194 (\u2200 (x : Nat), ((Q x) \u2192 (T x))))"
+      },
+      "limits": "Statement explanation only. Proof explanation is not kernel-certified English; no empirical or external grounding."
+    },
+    "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+    "library_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+    "interpretation": 0
+  },
+  "previous": null,
+  "baseline": null,
+  "source_license": "CC0-1.0",
+  "automatic_training_authorization": false,
+  "job_events": [
+    {
+      "format": "pcs-lean-job-event-v1",
+      "request_id": "11111111111111111111111111111111",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+      "sequence": 0,
+      "stage": "hybrid_portfolio",
+      "status": "started",
+      "elapsed_seconds": 0.0008662759992148494,
+      "pcs_authority": false
+    },
+    {
+      "format": "pcs-lean-job-event-v1",
+      "request_id": "11111111111111111111111111111111",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+      "sequence": 1,
+      "stage": "hybrid_portfolio",
+      "status": "finished",
+      "elapsed_seconds": 8.918069241999547,
+      "pcs_authority": false,
+      "wall_seconds": 8.917125730000407,
+      "cpu_seconds": 2.0496912000000003
+    },
+    {
+      "format": "pcs-lean-job-event-v1",
+      "request_id": "11111111111111111111111111111111",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "e8da010ca2697e18646c4aa0356e8695d2cc945ab96267802316a0fd24b22a86",
+      "sequence": 2,
+      "stage": "serialization",
+      "status": "started",
+      "elapsed_seconds": 8.918115451999256,
+      "pcs_authority": false
+    }
+  ],
+  "model_family": "prospective-hybrid-v2"
+}

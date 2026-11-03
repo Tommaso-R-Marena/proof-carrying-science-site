@@ -1,0 +1,35 @@
+{
+  "format": "pcs-model-lean-independent-replay-v1",
+  "model": {
+    "format": "pcs-model-lean-reproduction-v1",
+    "handoff_sha256": "d334027112ca2e1bc37facd26e759feb61bf621582fc1d8d9b1d50d96fb22ff4",
+    "model_digest": "1202f553597d3e946a99f38131656ee06a0ed2937ef2da2ae9aea93df33af4ee",
+    "proposal_sha256": "d789958bd4ddecc151a4e2e24d8124107b4fa4bf68a0c8b1d393bebc9627331c",
+    "goal_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+    "source_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+    "mathematical_scope": "UNARY_PREDICATES_ON_NAT",
+    "finite_check_is_separate": true,
+    "physical_neural_execution_independently_attested": false,
+    "pcs_authority": false
+  },
+  "lean": {
+    "format": "pcs-workbench-independent-replay-v1",
+    "status": "proved",
+    "goal_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+    "source_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+    "axioms": [
+      "propext"
+    ],
+    "proof_commands_regenerated": true,
+    "producer_Lean_source_executed": false,
+    "physical_neural_execution_independently_attested": false,
+    "human_intent_verified": false,
+    "scientific_validity_established": false,
+    "pcs_authority": false
+  },
+  "source_profile_sha256": "4be1726401c8f16d5d3a7cd4fe0d372b5773d2c911686df047140e90a41499cc",
+  "producer_Lean_source_executed": false,
+  "physical_neural_execution_independently_attested": false,
+  "scientific_validity_established": false,
+  "pcs_authority": false
+}

@@ -1,0 +1,50 @@
+{
+  "format": "pcs-runtime-wiring-qualification-v1",
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "Node": {
+    "passed": 581,
+    "failed": 0,
+    "skipped": 0
+  },
+  "gateway_boundary_tests": 6,
+  "full_Cloudflare_build_gate": "passed",
+  "native_build_Lean_jobs": 87,
+  "native_axiom_audit": "passed",
+  "native_browser_calls": 6,
+  "fresh_game_Lean_checks": 8,
+  "game_standalone_Lean_replays": 32,
+  "model_to_workbench_browser_flows": 8,
+  "actual_browser_ranker_to_memory_to_Lean_flows": 2,
+  "all_page_browser_visits": 150,
+  "scientific_browser_cases": 12,
+  "human_participants": 0,
+  "physical_neural_execution_independently_attested": false,
+  "production_authority_changed": false,
+  "training_or_model_promotion": false,
+  "new_theorems": [],
+  "development_findings": [
+    {
+      "finding": "Long checkpoint identity overflowed the phone layout after a real verified proof",
+      "resolution": "Dedicated wrapping style; real end-to-end campaign rerun passed"
+    },
+    {
+      "finding": "Unrelated pending route failures could overwrite a newer route status",
+      "resolution": "Revision checks on success and error paths; fresh evidence invalidated on route changes"
+    },
+    {
+      "finding": "Existing local backend serves an intentionally partial static asset set",
+      "resolution": "Separate reviewed local website gateway; exact core pin and strict core allowlist preserved"
+    },
+    {
+      "finding": "Several browser drivers tried to read status inside unopened details",
+      "resolution": "Driver now opens the same visible controls a user opens; no verdict assertion weakened"
+    }
+  ],
+  "scientific_limits": [
+    "Elementary identity repairs; no learned advantage established",
+    "Finite evaluator and Nat-predicate proof domains remain separate",
+    "Original-byte data preservation does not validate the study",
+    "No immutable host root or physical model-generation attestation"
+  ],
+  "pcs_authority": false
+}

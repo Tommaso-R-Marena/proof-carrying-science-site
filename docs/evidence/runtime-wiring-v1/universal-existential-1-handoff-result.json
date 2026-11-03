@@ -1,0 +1,371 @@
+{
+  "format": "pcs-public-lean-result-v1",
+  "request_id": "22222222222222222222222222222222",
+  "source_sha256": "bd7fed20278a2e7a90a7eb1fdf00da6ce81939c6e594220f54ca0c9e517bb042",
+  "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "result": {
+    "format": "pcs-local-hybrid-loop-v1",
+    "formalization": {
+      "status": "supported",
+      "source": "For all predicates on natural numbers Q, ((\u2200 (x : Nat), (Q x)) \u2194 (\u2200 (x : Nat), (Q x)))",
+      "source_sha256": "bd7fed20278a2e7a90a7eb1fdf00da6ce81939c6e594220f54ca0c9e517bb042",
+      "candidates": [
+        {
+          "ir": {
+            "format": "pcs-math-ir-v1",
+            "binders": [
+              {
+                "name": "Q",
+                "type": "NatPred"
+              }
+            ],
+            "body": {
+              "op": "iff",
+              "left": {
+                "op": "forall",
+                "name": "x",
+                "type": "Nat",
+                "body": {
+                  "op": "apply",
+                  "fn": {
+                    "op": "var",
+                    "name": "Q"
+                  },
+                  "arg": {
+                    "op": "var",
+                    "name": "x"
+                  }
+                }
+              },
+              "right": {
+                "op": "forall",
+                "name": "x",
+                "type": "Nat",
+                "body": {
+                  "op": "apply",
+                  "fn": {
+                    "op": "var",
+                    "name": "Q"
+                  },
+                  "arg": {
+                    "op": "var",
+                    "name": "x"
+                  }
+                }
+              }
+            }
+          },
+          "lean": "\u2200 (Q : Nat \u2192 Prop), ((\u2200 (x : Nat), (Q x)) \u2194 (\u2200 (x : Nat), (Q x)))",
+          "interpretation_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+          "score": null
+        }
+      ],
+      "semantic_authorization": false,
+      "fidelity_boundary": "Controlled grammar interpretation; user intent and unrestricted English equivalence unproved."
+    },
+    "status": "verified",
+    "training_feedback": null,
+    "pcs_authority": false,
+    "production_authority": false,
+    "automatic_training": false,
+    "automatic_promotion": false,
+    "search": {
+      "format": "pcs-attributed-hybrid-v1",
+      "status": "verified",
+      "goal_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+      "receipt": {
+        "format": "pcs-std-baseline-proof-v1",
+        "goal_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+        "statement": "\u2200 (Q : Nat \u2192 Prop), ((\u2200 (x : Nat), (Q x)) \u2194 (\u2200 (x : Nat), (Q x)))",
+        "proof": "  repeat intro\n  simp_all",
+        "kernel": {
+          "axioms": [
+            "propext"
+          ],
+          "expression": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "kind": "constant",
+                    "value": "Nat:[]"
+                  },
+                  {
+                    "children": [],
+                    "kind": "sort",
+                    "value": "0"
+                  }
+                ],
+                "kind": "forall",
+                "value": "a._@._internal._hyg.0"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Iff:[]"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Nat:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "bound",
+                                "value": "1"
+                              },
+                              {
+                                "children": [],
+                                "kind": "bound",
+                                "value": "0"
+                              }
+                            ],
+                            "kind": "application",
+                            "value": ""
+                          }
+                        ],
+                        "kind": "forall",
+                        "value": "x"
+                      }
+                    ],
+                    "kind": "application",
+                    "value": ""
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Nat:[]"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "bound",
+                            "value": "1"
+                          },
+                          {
+                            "children": [],
+                            "kind": "bound",
+                            "value": "0"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "x"
+                  }
+                ],
+                "kind": "application",
+                "value": ""
+              }
+            ],
+            "kind": "forall",
+            "value": "Q"
+          },
+          "format": "pcs-lean-kernel-v1"
+        },
+        "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+        "pcs_scientific_authority": false
+      },
+      "independent_replay": {
+        "status": "verified",
+        "kernel": {
+          "axioms": [
+            "propext"
+          ],
+          "expression": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "kind": "constant",
+                    "value": "Nat:[]"
+                  },
+                  {
+                    "children": [],
+                    "kind": "sort",
+                    "value": "0"
+                  }
+                ],
+                "kind": "forall",
+                "value": "a._@._internal._hyg.0"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Iff:[]"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "constant",
+                            "value": "Nat:[]"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "kind": "bound",
+                                "value": "1"
+                              },
+                              {
+                                "children": [],
+                                "kind": "bound",
+                                "value": "0"
+                              }
+                            ],
+                            "kind": "application",
+                            "value": ""
+                          }
+                        ],
+                        "kind": "forall",
+                        "value": "x"
+                      }
+                    ],
+                    "kind": "application",
+                    "value": ""
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "kind": "constant",
+                        "value": "Nat:[]"
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "kind": "bound",
+                            "value": "1"
+                          },
+                          {
+                            "children": [],
+                            "kind": "bound",
+                            "value": "0"
+                          }
+                        ],
+                        "kind": "application",
+                        "value": ""
+                      }
+                    ],
+                    "kind": "forall",
+                    "value": "x"
+                  }
+                ],
+                "kind": "application",
+                "value": ""
+              }
+            ],
+            "kind": "forall",
+            "value": "Q"
+          },
+          "format": "pcs-lean-kernel-v1"
+        },
+        "all_lean_calls": 1,
+        "goal_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+        "pcs_scientific_authority": false
+      },
+      "winning_component": "ordinary_Std",
+      "stages": [
+        {
+          "component": "ordinary_Std",
+          "status": "verified",
+          "expansions": 1,
+          "cost": {
+            "all_lean_calls": 1,
+            "wall_seconds": 0.949633788999563
+          }
+        }
+      ],
+      "expansions": 1,
+      "receiver_cache_records": 0,
+      "budget": 48,
+      "cost": {
+        "measured_lean_calls_excluding_legacy_memory_replay": 2,
+        "cold_wall_seconds": 2.0406608849989425
+      },
+      "pcs_scientific_authority": false
+    },
+    "explanation": {
+      "statement": "For all predicates on natural numbers Q, (for every x of type Nat, Q applied to x if and only if for every x of type Nat, Q applied to x).",
+      "variables": [
+        {
+          "name": "Q",
+          "type": "NatPred"
+        }
+      ],
+      "assumptions": [],
+      "conclusion": "(for every x of type Nat, Q applied to x if and only if for every x of type Nat, Q applied to x)",
+      "source_correspondence": {
+        "ir_sha256": "a73c89043aee2288702991c8bfc78ea151e8b7affac5460ad5a32925d15f9622",
+        "lean": "\u2200 (Q : Nat \u2192 Prop), ((\u2200 (x : Nat), (Q x)) \u2194 (\u2200 (x : Nat), (Q x)))"
+      },
+      "limits": "Statement explanation only. Proof explanation is not kernel-certified English; no empirical or external grounding."
+    },
+    "checkpoint_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+    "library_sha256": "4ff2b88d5b1f521fcf4267f6e5f383dab3de87016900f9cc4461e85681c28234",
+    "interpretation": 0
+  },
+  "previous": null,
+  "baseline": null,
+  "source_license": "CC0-1.0",
+  "automatic_training_authorization": false,
+  "job_events": [
+    {
+      "format": "pcs-lean-job-event-v1",
+      "request_id": "22222222222222222222222222222222",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "bd7fed20278a2e7a90a7eb1fdf00da6ce81939c6e594220f54ca0c9e517bb042",
+      "sequence": 0,
+      "stage": "hybrid_portfolio",
+      "status": "started",
+      "elapsed_seconds": 0.00010739100071077701,
+      "pcs_authority": false
+    },
+    {
+      "format": "pcs-lean-job-event-v1",
+      "request_id": "22222222222222222222222222222222",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "bd7fed20278a2e7a90a7eb1fdf00da6ce81939c6e594220f54ca0c9e517bb042",
+      "sequence": 1,
+      "stage": "hybrid_portfolio",
+      "status": "finished",
+      "elapsed_seconds": 3.2770649829999456,
+      "pcs_authority": false,
+      "wall_seconds": 3.2769060240007093,
+      "cpu_seconds": 1.422429618
+    },
+    {
+      "format": "pcs-lean-job-event-v1",
+      "request_id": "22222222222222222222222222222222",
+      "core_sha": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+      "source_sha256": "bd7fed20278a2e7a90a7eb1fdf00da6ce81939c6e594220f54ca0c9e517bb042",
+      "sequence": 2,
+      "stage": "serialization",
+      "status": "started",
+      "elapsed_seconds": 3.277114647000417,
+      "pcs_authority": false
+    }
+  ],
+  "model_family": "prospective-hybrid-v2"
+}
