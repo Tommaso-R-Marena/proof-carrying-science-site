@@ -1,4 +1,4 @@
-import Review
+import Evaluation
 
 #check PCS.V2.Csv.parseCsv_sound
 #check PCS.V2.Csv.parseCsv_complete
@@ -79,3 +79,33 @@ import Review
 
 #check PCSFiles.OriginalCsv.decodes_unique
 #print axioms PCSFiles.OriginalCsv.decodes_unique
+
+#check PCSFiles.Evaluation.balance
+#print axioms PCSFiles.Evaluation.balance
+
+#check PCSFiles.Evaluation.zero_regressions_iff
+#print axioms PCSFiles.Evaluation.zero_regressions_iff
+
+#check PCSFiles.Evaluation.preserves_iff
+#print axioms PCSFiles.Evaluation.preserves_iff
+
+#check PCSFiles.Evaluation.preservation_matches_mono
+#print axioms PCSFiles.Evaluation.preservation_matches_mono
+
+#check PCSFiles.Evaluation.lookup_sound
+#print axioms PCSFiles.Evaluation.lookup_sound
+
+#check PCSFiles.Evaluation.align_ids
+#print axioms PCSFiles.Evaluation.align_ids
+
+#check PCSFiles.Evaluation.align_sound
+#print axioms PCSFiles.Evaluation.align_sound
+
+#check PCSFiles.Evaluation.evaluate_iff
+#print axioms PCSFiles.Evaluation.evaluate_iff
+
+#check PCSFiles.Evaluation.original_preservation
+#print axioms PCSFiles.Evaluation.original_preservation
+
+#check PCSFiles.Evaluation.original_labels_agree
+#print axioms PCSFiles.Evaluation.original_labels_agree

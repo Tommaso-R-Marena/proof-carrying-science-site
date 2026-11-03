@@ -58,10 +58,10 @@ def main():
     materialize(args.core, CORE_COMMIT, ['formal'], snapshot)
     frontend = out/'frontend'
     frontend.mkdir()
-    for name in ['Main.lean','Audit.lean','StackSafe.lean','OriginalCsv.lean','Review.lean']:
+    for name in ['Main.lean','Audit.lean','StackSafe.lean','OriginalCsv.lean','Review.lean','Evaluation.lean']:
         shutil.copy2(source/'desktop/lean'/name,frontend/name)
     (frontend/'lean-toolchain').write_text('leanprover/lean4:v4.28.0\n')
-    (frontend/'lakefile.toml').write_text('name = "PCSFiles"\nversion = "1.0.0"\n\n[[lean_lib]]\nname = "StackSafe"\n\n[[lean_lib]]\nname = "OriginalCsv"\n\n[[lean_lib]]\nname = "Review"\n\n[[require]]\nname = "PCS"\npath = "../core/formal"\n\n[[lean_exe]]\nname = "pcs-files-checker"\nroot = "Main"\n')
+    (frontend/'lakefile.toml').write_text('name = "PCSFiles"\nversion = "1.0.0"\n\n[[lean_lib]]\nname = "StackSafe"\n\n[[lean_lib]]\nname = "OriginalCsv"\n\n[[lean_lib]]\nname = "Review"\n\n[[lean_lib]]\nname = "Evaluation"\n\n[[require]]\nname = "PCS"\npath = "../core/formal"\n\n[[lean_exe]]\nname = "pcs-files-checker"\nroot = "Main"\n')
     run(['lake','build','pcs-files-checker'],cwd=frontend)
     audit = subprocess.check_output(['lake','env','lean','Audit.lean'],cwd=frontend,text=True,encoding='utf-8')
     axiom_sets=re.findall(r'depends on axioms: \[([^]]*)\]',audit)
@@ -72,6 +72,7 @@ def main():
     names += ['PCSFiles.OriginalCsv.'+n for n in ['step_iff','run_iff','decode_iff','decodes_unique','hexSafe_eq','hexSafe_injective']]
     names += ['PCSFiles.'+n for n in ['distinctWith_iff','distinctB_iff']]
     names += ['PCSFiles.Review.'+n for n in ['entries_unique','added_iff','removed_iff','changed_iff','accepts_iff','overlap_iff','reviewCheck_iff','unique_id_eq','conservative_extension','original_conservative_extension']]
+    names += ['PCSFiles.Evaluation.'+n for n in ['balance','zero_regressions_iff','preserves_iff','preservation_matches_mono','lookup_sound','align_ids','align_sound','evaluate_iff','original_preservation','original_labels_agree']]
     if not all(n in audit for n in names):
         raise ValueError('Incomplete checker theorem audit.')
     (out/'axioms.log').write_text(audit,encoding='utf-8')
@@ -86,17 +87,17 @@ def main():
         for dll in Path(shutil.which('lean')).resolve().parent.glob('*.dll'):
             shutil.copy2(dll,bundle/dll.name)
             dependencies[dll.name] = hashlib.sha256(dll.read_bytes()).hexdigest()
-    public = ['check-my-files.html', 'file-check.css', 'file-check.mjs', 'science-workflow-core.mjs', 'page-help.mjs', 'page-help-core.mjs', 'page-help.css', 'file-check-core.mjs', 'file-check-local.mjs', 'change-review-core.mjs', 'review-changes.html', 'review-changes.mjs', 'usability-core.mjs', 'usability-study.html', 'usability-study.mjs', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg']
+    public = ['model-evaluation-core.mjs','model-evaluation.mjs','evaluation-reference.csv','evaluation-baseline.csv','evaluation-candidate.csv','evaluation-example.json', 'check-my-files.html', 'file-check.css', 'file-check.mjs', 'science-workflow-core.mjs', 'page-help.mjs', 'page-help-core.mjs', 'page-help.css', 'file-check-core.mjs', 'file-check-local.mjs', 'change-review-core.mjs', 'review-changes.html', 'review-changes.mjs', 'usability-core.mjs', 'usability-study.html', 'usability-study.mjs', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg']
     for name in public:
         shutil.copy2(source/'public'/name,bundle/'public'/name)
     manifest = {'format':'pcs-files-checker-build-v1','version':release_version,'scope':SCOPE,
-                'capabilities':[SCOPE,'original-csv-change-review-v2','original-csv-decoding-v2'],
+                'capabilities':[SCOPE,'original-csv-change-review-v2','original-csv-decoding-v2','original-csv-model-evaluation-v1'],
                 'core_commit':CORE_COMMIT,'site_commit':site_commit,'development_build':args.development,'source_snapshot':'working-tree-development' if args.development else 'git-blobs',
                 'lean_toolchain':'leanprover/lean4:v4.28.0','binary':binary,
                 'binary_sha256':hashlib.sha256((bundle/binary).read_bytes()).hexdigest(),
                 'dependent_files_sha256':dependencies,
                 'source_sha256':{p.relative_to(source).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in
-                    [source/'desktop/VERSION',source/'desktop/app.py',source/'desktop/file_check.py',source/'desktop/change_review.py',source/'desktop/lean/Main.lean',source/'desktop/lean/StackSafe.lean',source/'desktop/lean/Audit.lean',source/'desktop/lean/OriginalCsv.lean',source/'desktop/lean/Review.lean',*(source/'public'/x for x in public)]},
+                    [source/'desktop/VERSION',source/'desktop/app.py',source/'desktop/file_check.py',source/'desktop/change_review.py',source/'desktop/model_evaluation.py',source/'desktop/handoff.py',source/'desktop/lean/Main.lean',source/'desktop/lean/StackSafe.lean',source/'desktop/lean/Audit.lean',source/'desktop/lean/OriginalCsv.lean',source/'desktop/lean/Review.lean',source/'desktop/lean/Evaluation.lean',*(source/'public'/x for x in public)]},
                 'theorems':names,'code_signed':False,
                 'host_refinement_proved':False,'production_scientific_authority':False}
     (bundle/'checker-manifest.json').write_bytes(canonical(manifest))

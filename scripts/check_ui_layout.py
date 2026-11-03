@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Browser-level responsive layout regression checks for the PCS public site.
 
-This gate uses the runner's Chrome/Chromium with the pinned Playwright driver.
+This gate uses Chrome/Chromium with the pinned Playwright driver. CI installs
+the Chromium revision matched to that driver instead of the runner's changing
+preinstalled Chrome. An install or browser failure still fails the gate.
 It serves public/ locally, injects a CI-only layout probe into HTML
 responses, exercises important dynamic states, and fails on viewport overflow,
 clipped primary controls, or overlapping high-level UI regions.

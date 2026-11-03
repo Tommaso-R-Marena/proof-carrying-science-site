@@ -1,0 +1,29 @@
+{
+  "format": "pcs-file-check-native-tests-v1",
+  "actual_lean_positive_checks": 231,
+  "negative_controls": 40,
+  "seconds": 5.951,
+  "same_address_restart": true,
+  "scaling": [
+    {
+      "rows_per_file": 500,
+      "id_bytes": 256,
+      "seconds": 0.09,
+      "verdict": "DISJOINT"
+    },
+    {
+      "rows_per_file": 5000,
+      "id_bytes": 50,
+      "seconds": 0.199,
+      "verdict": "DISJOINT"
+    },
+    {
+      "rows_per_file": 5000,
+      "id_bytes": 256,
+      "seconds": 0.825,
+      "verdict": "DISJOINT"
+    }
+  ],
+  "mock_positive_verdicts": 0,
+  "immutable_host_security_proved": false
+}

@@ -1,0 +1,17 @@
+{
+  "format": "pcs-model-evaluation-native-tests-v1",
+  "exhaustive_three_case_binary_configurations": 512,
+  "cross_language_vectors": 517,
+  "actual_native_checks": 523,
+  "negative_controls": 42,
+  "aggregate_gain_regression_counterexample": {
+    "total": 3,
+    "before_matches": 1,
+    "after_matches": 2,
+    "improvements": 2,
+    "regressions": 1
+  },
+  "seconds": 10.539,
+  "mock_affirmative_verdicts": 0,
+  "human_participants": 0
+}

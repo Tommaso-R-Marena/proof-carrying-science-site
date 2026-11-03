@@ -11,10 +11,10 @@ def review_file_check_transport(text):
                   "history.replaceState(null,'',location.pathname)", 'AbortSignal.timeout(35000)']:
         if guard not in text:errors.append('file-check-local.mjs: missing reviewed loopback guard: '+guard)
     targets=re.findall(r"\bfetch\s*\(\s*['\"]([^'\"]+)['\"]",text)
-    if targets!=['/api/session','/api/check-files'] or len(re.findall(r'\bfetch\s*\(',text))!=2:
-        errors.append('file-check-local.mjs: only the two fixed loopback API targets are admitted')
-    if len(re.findall(r'\brequireLocal\(session\);',text))!=2:
-        errors.append('file-check-local.mjs: both entry points must enforce the local origin')
+    if targets!=['/api/session','/api/handoff','/api/check-files'] or len(re.findall(r'\bfetch\s*\(',text))!=3:
+        errors.append('file-check-local.mjs: only the three fixed loopback API targets are admitted')
+    if len(re.findall(r'\brequireLocal\(session\);',text))!=3:
+        errors.append('file-check-local.mjs: all three entry points must enforce the local origin')
     if re.search(r'\b(XMLHttpRequest|WebSocket|EventSource|sendBeacon)\b',text):
         errors.append('file-check-local.mjs: unreviewed network primitive')
     return errors

@@ -1,4 +1,4 @@
-import Review
+import Evaluation
 
 /-! Scoped frontend with proved original-byte CSV decoding and record checks.
 The old derived-image command remains available for compatibility.
@@ -147,8 +147,44 @@ def reviewBatch (path : String) : IO UInt32 := do
     return (0 : UInt32)
   catch _ => IO.println "REJECT:batch_read"; return (2 : UInt32)
 
+def evaluationMain (args : List String) : IO UInt32 := do
+  match args with
+  | ["evaluation", ig, lg, ib, lb, ia, la, goldPath, beforePath, afterPath] =>
+    let config := do
+      let ig ← natArg ig; let lg ← natArg lg
+      let ib ← natArg ib; let lb ← natArg lb
+      let ia ← natArg ia; let la ← natArg la
+      some (ig,lg,ib,lb,ia,la)
+    match config with
+    | none => IO.println "REJECT:invalid_columns"; return 2
+    | some (ig,lg,ib,lb,ia,la) =>
+      try
+        let g ← IO.FS.readBinFile goldPath
+        let b ← IO.FS.readBinFile beforePath
+        let a ← IO.FS.readBinFile afterPath
+        if g.size > 2097152 || b.size > 2097152 || a.size > 2097152 then
+          IO.println "REJECT:too_large"; return 2
+        let result := do
+          let gt ← decode g.data.toList
+          let bt ← decode b.data.toList
+          let aftTable ← decode a.data.toList
+          let cs ← PCSFiles.Evaluation.evaluate g.data.toList b.data.toList a.data.toList ig lg ib lb ia la
+          let wire := cs.map (fun c => "C:" ++ String.intercalate "," ([c.id,c.expected,c.before,c.after].map hexSafe))
+          let counts := [cs.length, PCSFiles.Evaluation.oldMatches cs, PCSFiles.Evaluation.newMatches cs,
+            PCSFiles.Evaluation.improvements cs, PCSFiles.Evaluation.regressions cs]
+          some ("PCS_EVAL1\nCOLS:" ++ toString ig ++ "," ++ toString lg ++ "|" ++ toString ib ++ "," ++ toString lb ++ "|" ++ toString ia ++ "," ++ toString la ++
+            "\nGOLD\n" ++ tableWire gt ++ "\nBEFORE\n" ++ tableWire bt ++ "\nAFTER\n" ++ tableWire aftTable ++
+            "\nCASES\n" ++ String.intercalate "\n" wire ++ "\nCOUNTS:" ++ String.intercalate "," (counts.map toString) ++
+            "\nRESULT:" ++ (if PCSFiles.Evaluation.preserves cs then "PRESERVED" else "REGRESSIONS") ++ "\nEND\n")
+        match result with
+        | none => IO.println "REJECT:invalid_evaluation_files_or_ID_coverage"; return 2
+        | some wire => (← IO.getStdout).putStr wire; return 0
+      catch _ => IO.println "REJECT:read_failure"; return 2
+  | _ => IO.println "REJECT:bad_arguments"; return 2
+
 def main (args : List String) : IO UInt32 :=
   match args with
+  | "evaluation" :: _ => evaluationMain args
   | [] => legacyMain []
   | ["decode-batch", path] => decodeBatch path
   | ["review-batch", path] => reviewBatch path

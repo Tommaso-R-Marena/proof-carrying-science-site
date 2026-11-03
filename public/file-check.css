@@ -2,3 +2,5 @@
 /* Keep saved names readable when the action buttons fill a narrow screen. */
 @media(max-width:480px){.saved-row{flex-wrap:wrap}.saved-row>span{flex:0 0 100%;overflow-wrap:anywhere}.saved-row>button{flex:1}}
 .result-meaning{display:grid;grid-template-columns:minmax(110px,1fr) 3fr;gap:8px 16px;line-height:1.6}.result-meaning dt{font-weight:700}.result-meaning dd{margin:0}@media(max-width:450px){.result-meaning{display:block}.result-meaning dd{margin-bottom:12px}}
+
+.evaluation-panel{padding:20px;border:1px solid #91aab8;border-radius:12px}.evaluation-panel .files{grid-template-columns:repeat(3,minmax(0,1fr))}.evaluation-panel input[type=file]{max-width:100%}.evaluation-panel input[type=text]{max-width:100%;overflow-wrap:anywhere}@media(max-width:800px){.evaluation-panel .files{grid-template-columns:1fr}}

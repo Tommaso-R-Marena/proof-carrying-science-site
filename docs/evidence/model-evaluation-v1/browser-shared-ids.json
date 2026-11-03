@@ -1,0 +1,83 @@
+{
+  "format": "pcs-check-my-files-browser-v1",
+  "human_participants": 0,
+  "rows": [
+    {
+      "width": 320,
+      "own_files": true,
+      "concurrent_file_loads": true,
+      "actionable_line_numbers": true,
+      "saved_recipe_contains_no_csv_or_ids": true,
+      "saved_recipe_reused_from_opening_screen": true,
+      "report_redacts_ids_by_default": true,
+      "fresh_replay": true,
+      "forged_counts_rejected": true,
+      "imported_receipt_cannot_authorize": true,
+      "next_week_comparison": true,
+      "blank_id_refused": true,
+      "horizontal_overflow": false,
+      "unexpected_network_writes": 0
+    },
+    {
+      "width": 390,
+      "own_files": true,
+      "concurrent_file_loads": true,
+      "actionable_line_numbers": true,
+      "saved_recipe_contains_no_csv_or_ids": true,
+      "saved_recipe_reused_from_opening_screen": true,
+      "report_redacts_ids_by_default": true,
+      "fresh_replay": true,
+      "forged_counts_rejected": true,
+      "imported_receipt_cannot_authorize": true,
+      "next_week_comparison": true,
+      "blank_id_refused": true,
+      "horizontal_overflow": false,
+      "unexpected_network_writes": 0
+    },
+    {
+      "width": 768,
+      "own_files": true,
+      "concurrent_file_loads": true,
+      "actionable_line_numbers": true,
+      "saved_recipe_contains_no_csv_or_ids": true,
+      "saved_recipe_reused_from_opening_screen": true,
+      "report_redacts_ids_by_default": true,
+      "fresh_replay": true,
+      "forged_counts_rejected": true,
+      "imported_receipt_cannot_authorize": true,
+      "next_week_comparison": true,
+      "blank_id_refused": true,
+      "horizontal_overflow": false,
+      "unexpected_network_writes": 0
+    },
+    {
+      "width": 1440,
+      "own_files": true,
+      "concurrent_file_loads": true,
+      "actionable_line_numbers": true,
+      "saved_recipe_contains_no_csv_or_ids": true,
+      "saved_recipe_reused_from_opening_screen": true,
+      "report_redacts_ids_by_default": true,
+      "fresh_replay": true,
+      "forged_counts_rejected": true,
+      "imported_receipt_cannot_authorize": true,
+      "next_week_comparison": true,
+      "blank_id_refused": true,
+      "horizontal_overflow": false,
+      "unexpected_network_writes": 0
+    }
+  ],
+  "actual_local_lean_checks": 7,
+  "accepted_local_confirmations": 3,
+  "negative_local_controls": [
+    "forged_extracted_sha256",
+    "forged_checker_sha256",
+    "forged_host_refinement_proved",
+    "stale_real_response_after_column_change"
+  ],
+  "saved_recipe_survives_app_restart": true,
+  "old_capability_revoked_after_restart": true,
+  "restart_restored_no_csv_contents": true,
+  "actual_packaged_app_restart": true,
+  "same_tab_relaunch_refreshed": true
+}

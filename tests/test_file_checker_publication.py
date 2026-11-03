@@ -4,6 +4,8 @@ import ast
 import importlib.util
 from pathlib import Path
 import unittest
+import tempfile
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('publication', Path(__file__).resolve().parents[1] / 'scripts/check_file_checker_publication.py')
 publication = importlib.util.module_from_spec(spec)
@@ -42,6 +44,27 @@ class PublicationTests(unittest.TestCase):
 
     def test_shipped_links_match_the_version_file(self):
         self.assertRegex(publication.advertised_version(), r'^[0-9]+\.[0-9]+\.[0-9]+$')
+
+    def test_staged_build_never_advertises_an_unpublished_version(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root/'desktop').mkdir()
+            (root/'public').mkdir()
+            (root/'desktop/VERSION').write_text('2.1.0\n')
+            (root/'desktop/PUBLISHED_VERSION').write_text('2.0.0\n')
+            for name in ['check-my-files.html', 'review-changes.html']:
+                (root/'public'/name).write_text('/releases/download/pcs-files-v2.0.0/example.zip')
+            with patch.object(publication, 'ROOT', root):
+                self.assertEqual(publication.advertised_version(), '2.0.0')
+                (root/'desktop/PUBLISHED_VERSION').write_text('2.1.0\n')
+                with self.assertRaises(ValueError):
+                    publication.advertised_version()
+                for name in ['check-my-files.html', 'review-changes.html']:
+                    (root/'public'/name).write_text('/releases/download/pcs-files-v2.1.0/example.zip')
+                self.assertEqual(publication.advertised_version(), '2.1.0')
+                # Merely editing links/marker cannot satisfy public availability.
+                with self.assertRaises(ValueError):
+                    publication.validate_release(metadata(), '2.1.0')
 
     def test_metadata_contract_does_not_claim_archive_verification(self):
         r = publication.validate_release(metadata(), '2.0.0')

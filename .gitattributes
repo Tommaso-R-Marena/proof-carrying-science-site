@@ -1,3 +1,8 @@
 
 # Preserve the exact published CSV snapshot, including its CRLF line endings.
 research/export-conservation-v2/iris-source.csv -text whitespace=cr-at-eol
+# These generated public snapshots have exact byte identities in their metadata.
+public/evaluation-reference.csv -text
+public/evaluation-baseline.csv -text
+public/evaluation-candidate.csv -text
+public/evaluation-example.json -text

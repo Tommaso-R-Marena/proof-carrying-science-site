@@ -1,0 +1,30 @@
+{
+  "format": "pcs-recorded-model-evaluation-example-v1",
+  "new_inference_executed": false,
+  "physical_model_generation_independently_attested": false,
+  "input_sha256": [
+    "8d8440a30305ba173e51f953260db0a0850144502055491d72e8e7e8bd048476",
+    "8d8440a30305ba173e51f953260db0a0850144502055491d72e8e7e8bd048476",
+    "50bbdac15fe3f02f509ebd07fa906129c5bc8485a24406b00bc9ec9c71101f97"
+  ],
+  "source_path": "research/proof-search-prospective-v1/run-1/summary.json",
+  "source_sha256": "fda0082e2862d6aeb2cfd47352f6f89ef06d3941463d97f0fc0437681d3c7854",
+  "original_proof_success_counts": {
+    "baseline": 11,
+    "candidate": 8,
+    "cases": 14
+  },
+  "positive_cases": 11,
+  "negative_controls": 3,
+  "core_revision": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "protocol_sha256": "719b3530c23090a82816e8b57559775e0dc9da23a88561c8a14ab4ebcccc0c68",
+  "provenance": {
+    "baseline_name": "Ordinary Lean tactics + structural search",
+    "candidate_name": "Frozen PCS learned memory policy",
+    "baseline_weights_sha256": null,
+    "candidate_weights_sha256": "869732df6ef29bac30c9878b57e5d8c7e0f1fba41231d0d10c5f1112309aee57",
+    "reference_note": "Authored expectations for 14 cases: verified on 11 positive tasks; not_verified on three negative controls. An unknown result is not a disproof; these targets are not axioms.",
+    "source_note": "Recorded prospective proof-search run 1, source f20f3cab2938f2e085f137185e88f4700d5da2ed. Authored inspectable tasks, not a blind benchmark; no inference ran when exporting these files."
+  },
+  "pcs_authority": false
+}

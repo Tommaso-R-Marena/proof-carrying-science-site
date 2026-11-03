@@ -71,9 +71,38 @@ See [the exact contract, proofs and reproduction](docs/CHANGE_REVIEW_V2.md).
 New native builds automatically run the original-byte Lean checker after each
 valid review, including the three published-data controls. Existing version 2.0.0
 downloads still use their explicit local-check button; their archives are unchanged.
+A private handoff now carries both original files, chosen columns and rules to
+the local app. No remapping is needed; a fresh check is still required.
 The [optional newcomer study](docs/NEWCOMER_STUDY_V1.md) provides consent-based local
 task records and separate observer analysis. Automated tests are not human results;
 no human study has been completed by implementing these tools.
+
+## Check a model update on your own data
+
+Use **Compare model results** inside [What changed?](public/review-changes.html).
+Choose three CSVs: reference answers, earlier outputs, and new outputs. All must
+have exactly the same unique IDs. PCS reports both gains and lost earlier
+matches; a better total alone does not pass preservation. The optional provenance
+notes and weight hashes are supplied claims, not proof of physical generation.
+
+Version 2.1 builds add an independently compiled Lean checker for the three
+original byte snapshots. The browser and Python reader independently reproduce
+every decoded cell, selected label and count. Private replays carry exact files
+and settings, and imported receipts never authorize a new result. The real
+recorded PCS example retains a negative result: 11 symbolic proofs versus eight
+learned proofs on 11 positive tasks and three negative controls. With the
+controls' distinct required outcomes, reference agreement is 14 versus 11 of 14.
+No fresh model inference runs when loading that example.
+
+See [proofs, evidence, and reproduction](docs/MODEL_EVALUATION_V1.md) and the
+[ready-to-run observed workflow pilot](docs/usability/2026-11-03/README.md).
+`npm run test:model-evaluation` runs the independent engine and recorded-source
+checks. Native CI exhaustively compares all 512 three-case binary configurations
+and runs real hostile-response and handoff controls. Reference correctness,
+dataset selection, compilation, physical model identity and host execution remain
+assumptions. This is finite evidence, not universal model safety or scientific
+acceptance. Builds use `desktop/VERSION`; public download availability is gated
+separately by `desktop/PUBLISHED_VERSION` so an unissued release is never advertised.
 
 ## Check your own CSV files
 
