@@ -29,7 +29,16 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
   await p.locator('#completed').waitFor({state:'visible'});
   assert.equal(await p.locator('#downloadFreshEvidence').isDisabled(),true);
   assert.doesNotMatch(await p.locator('#kernelStatus').innerText(),/Fresh local Lean check passed/);
-  const report={format:'pcs-stale-route-real-Lean-browser-v1',status:'PASS',actual_successful_kernel_receipts_delayed:1,changed_route_did_not_inherit_receipt:true,producer_response_bytes_changed:false,positive_verdict_fabricated:false,public_jobs_submitted:0,pcs_authority:false};
+  // An already displayed successful check must also disappear on the next edit.
+  await p.locator('#kernelCheck:enabled').click();
+  await p.locator('#kernelStatus').filter({hasText:'Fresh local Lean check passed'}).waitFor({timeout:120000});
+  assert.equal(await p.locator('#downloadFreshEvidence').isEnabled(),true);
+  await p.locator('#undo').click();
+  assert.equal(await p.locator('#downloadFreshEvidence').isDisabled(),true);
+  assert.match(await p.locator('#kernelStatus').innerText(),/Route changed. No fresh Lean result/);
+  await p.locator('#choices button').nth(last).click();
+  assert.doesNotMatch(await p.locator('#kernelStatus').innerText(),/Fresh local Lean check passed/);
+  const report={format:'pcs-stale-route-real-Lean-browser-v1',status:'PASS',actual_successful_kernel_receipts_delayed:1,changed_route_did_not_inherit_receipt:true,previously_displayed_success_invalidated:true,actual_fresh_checks:2,producer_response_bytes_changed:false,positive_verdict_fabricated:false,public_jobs_submitted:0,pcs_authority:false};
   fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'result.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
  }finally{clearTimeout(timer);release();await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
