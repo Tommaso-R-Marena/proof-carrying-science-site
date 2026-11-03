@@ -20,8 +20,8 @@ import webbrowser
 from file_check import LocalChecker, SCOPE, canonical, strict_json
 
 DEFAULT_PORT = 49381  # Stable loopback origin keeps explicitly saved browser recipes reachable.
-MAX_REQUEST = 6_500_000
-PUBLIC_FILES = {'file-check.mjs', 'science-workflow-core.mjs', 'page-help.mjs', 'page-help-core.mjs', 'page-help.css', 'file-check-local.mjs', 'review-changes.mjs', 'review-changes.html', 'usability-study.html', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg', 'file-check.css', 'check-my-files.html', 'file-check-core.mjs', 'usability-core.mjs', 'change-review-core.mjs', 'usability-study.mjs'}
+MAX_REQUEST = 9_000_000
+PUBLIC_FILES = {'model-evaluation-core.mjs','model-evaluation.mjs','evaluation-reference.csv','evaluation-baseline.csv','evaluation-candidate.csv','evaluation-example.json', 'file-check.mjs', 'science-workflow-core.mjs', 'page-help.mjs', 'page-help-core.mjs', 'page-help.css', 'file-check-local.mjs', 'review-changes.mjs', 'review-changes.html', 'usability-study.html', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg', 'file-check.css', 'check-my-files.html', 'file-check-core.mjs', 'usability-core.mjs', 'change-review-core.mjs', 'usability-study.mjs'}
 
 
 @contextmanager
@@ -65,16 +65,18 @@ class AppServer(ThreadingHTTPServer):
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
         super().server_bind()
 
-    def __init__(self, assets, *, port=0):
+    def __init__(self, assets, *, port=0, handoff=None):
         self.assets = Path(assets).resolve()
         self.checker = LocalChecker(self.assets)
         self.token = secrets.token_hex(32)
         self.check_slot = threading.BoundedSemaphore(1)
+        self.handoff = handoff
+        self.handoff_lock = threading.Lock()
         super().__init__(('127.0.0.1', port), Handler)
         self.origin = f'http://127.0.0.1:{self.server_port}'
         # A new document URL also refreshes a browser that reuses an old tab.
         # This public navigation nonce is separate from the secret capability.
-        self.launch_url = f'{self.origin}/check-my-files.html?launch={secrets.token_hex(16)}#session={self.token}'
+        self.launch_url = f'{self.origin}/review-changes.html?launch={secrets.token_hex(16)}#session={self.token}'
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -103,11 +105,13 @@ class Handler(BaseHTTPRequestHandler):
         self.send(code, canonical({'error': message}))
 
     def valid_host(self):
-        return self.headers.get('Host') == self.server.origin.removeprefix('http://')
+        return self.headers.get_all('Host',[]) == [self.server.origin.removeprefix('http://')]
 
     def authorized(self):
-        token = self.headers.get('X-PCS-Session', '')
-        return self.valid_host() and len(token)==64 and all(c in '0123456789abcdef' for c in token) and hmac.compare_digest(token, self.server.token) and self.headers.get('Origin', self.server.origin) == self.server.origin
+        tokens = self.headers.get_all('X-PCS-Session', [])
+        origins = self.headers.get_all('Origin', [])
+        token = tokens[0] if len(tokens)==1 else ''
+        return self.valid_host() and len(token)==64 and all(c in '0123456789abcdef' for c in token) and hmac.compare_digest(token, self.server.token) and (not origins or origins==[self.server.origin])
 
     def do_GET(self):
         if not self.valid_host():
@@ -117,7 +121,15 @@ class Handler(BaseHTTPRequestHandler):
                 return self.error(403, 'Open the app using its local session link.')
             return self.send(200, canonical({'format': 'pcs-file-check-session-v1', 'scope': SCOPE,
                                             'checker_sha256': self.server.checker.manifest['binary_sha256'],
-                                            'capabilities':self.server.checker.manifest.get('capabilities',[])}))
+                                            'capabilities':self.server.checker.manifest.get('capabilities',[]),
+                                            'has_handoff':self.server.handoff is not None,'version':self.server.checker.manifest.get('version')}))
+        if self.path == '/api/handoff':
+            if not self.authorized():return self.error(403,'Open the app using its local session link.')
+            with self.server.handoff_lock:
+                raw=self.server.handoff
+                self.server.handoff=None
+            if raw is None:return self.error(404,'No pending private replay. Choose your saved replay in the app.')
+            return self.send(200,raw)
         path = self.path.partition('?')[0]
         name = 'check-my-files.html' if path == '/' else path.removeprefix('/')
         if name not in PUBLIC_FILES:
@@ -130,7 +142,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.error(503, 'Bundled page changed. Download a fresh app.')
         except OSError:
             return self.error(503, 'Bundled page unavailable. Download a fresh app.')
-        content_type = {'.mjs': 'text/javascript; charset=utf-8', '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.csv': 'text/csv; charset=utf-8'}[Path(name).suffix]
+        content_type = {'.mjs': 'text/javascript; charset=utf-8', '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.csv': 'text/csv; charset=utf-8', '.json':'application/json; charset=utf-8'}[Path(name).suffix]
         self.send(200, raw, content_type)
 
     do_HEAD = do_GET
@@ -158,7 +170,11 @@ class Handler(BaseHTTPRequestHandler):
                 if len(raw) != size:
                     raise ValueError('The request was incomplete.')
                 payload = strict_json(raw)
-                result = self.server.checker.review(payload) if type(payload) is dict and payload.get('mode')=='changes' else self.server.checker.verify(payload)
+                mode=payload.get('mode') if type(payload) is dict else None
+                if mode=='evaluation':
+                    from model_evaluation import evaluate
+                    result=evaluate(self.server.checker,payload)
+                else:result = self.server.checker.review(payload) if mode=='changes' else self.server.checker.verify(payload)
                 self.send(200, canonical(result))
             finally:
                 self.server.check_slot.release()
@@ -171,12 +187,18 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description='PCS File Checker: choose CSV files in your browser; all checks stay local.')
     parser.add_argument('--self-test', action='store_true', help='Run a real bundled-checker smoke test without opening a browser.')
+    parser.add_argument('handoff',nargs='?',type=Path,help='Optional private replay; files and rules load together, then need a fresh check.')
     args = parser.parse_args()
     with application_assets() as assets:
-        run_app(assets, args.self_test)
+        from handoff import capture_handoff
+        try: captured=capture_handoff(args.handoff)
+        except (ValueError,OSError,RecursionError):
+            print('Could not open that private replay. Choose a canonical PCS replay up to 9 MB. No check ran.')
+            raise SystemExit(2) from None
+        run_app(assets, args.self_test, captured)
 
 
-def run_app(assets, self_test):
+def run_app(assets, self_test, handoff=None):
     if self_test:
         import base64, hashlib
         raw = [b'id\n001\n002\n', b'id\n003\n']
@@ -187,10 +209,16 @@ def run_app(assets, self_test):
         request.update(mode='changes', compare_headers=[], rules={'allow_added': True, 'allow_removed': True, 'allow_changed': False})
         if checker.review(request)['accepted'] is not True:
             raise ValueError('Packaged change-review self-test failed.')
+        from model_evaluation import evaluate
+        files=[b'id,label\na,yes\nb,yes\nc,yes\n',b'id,label\na,yes\nb,no\nc,no\n',b'id,label\na,no\nb,yes\nc,yes\n']
+        req={'mode':'evaluation','files':[{'name':str(i)+'.csv','data_base64':base64.b64encode(x).decode(),'sha256':hashlib.sha256(x).hexdigest()} for i,x in enumerate(files)],'columns':[[0,1]]*3,
+             'provenance':{'baseline_name':'Old','candidate_name':'New','baseline_weights_sha256':None,'candidate_weights_sha256':None,'reference_note':'Authored control','source_note':''}}
+        er=evaluate(checker,req)
+        if er['summary']!={'total':3,'before_matches':1,'after_matches':2,'improvements':2,'regressions':1} or er['preserved'] is not False:raise ValueError('Packaged evaluation regression control failed.')
         print('PASS: packaged app executed the real bundled Lean CSV checker')
         return
     try:
-        server = AppServer(assets, port=DEFAULT_PORT)
+        server = AppServer(assets, port=DEFAULT_PORT, handoff=handoff)
     except OSError as exc:
         if exc.errno != errno.EADDRINUSE:
             raise

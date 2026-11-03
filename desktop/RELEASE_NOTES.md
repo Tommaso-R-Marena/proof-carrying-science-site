@@ -1,3 +1,13 @@
+Version 2.1 adds automatic Lean checking after each valid change review, private
+file-and-settings handoffs, and finite model-output evaluation from three original
+CSV snapshots. Open What changed? for recurring exports or Compare model results
+for reference/earlier/new output files. The app checks exact gains and regressions;
+a higher total can still lose earlier successes. Private handoffs explicitly
+contain your original files and must be kept private. Open the saved replay in
+the app, or pass it as an optional executable argument. Imported receipts always
+require a fresh check. Model evaluation supports 1,000 unique IDs per file and
+never establishes the truth of reference labels or physical model generation.
+
 Check original CSV files and review recurring exports without programming setup.
 
 Version 2 adds a proved byte-level decoder for the bounded PCS UTF-8 CSV dialect,

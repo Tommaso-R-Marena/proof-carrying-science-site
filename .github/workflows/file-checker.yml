@@ -40,9 +40,11 @@ jobs:
       - name: Browser/Python semantics and malformed input tests
         shell: bash
         run: |
-          node --test tests/file-check.test.mjs tests/change-review.test.mjs
+          node --test tests/file-check.test.mjs tests/change-review.test.mjs tests/model-evaluation.test.mjs
           python -m unittest discover -s tests -p test_file_checker.py -v
           python -m unittest discover -s tests -p test_change_review.py -v
+          python -m unittest discover -s tests -p test_model_evaluation.py -v
+          python scripts/export_model_evaluation_example.py
           python -m unittest discover -s tests -p test_usability_sessions.py -v
           python -m unittest discover -s tests -p test_git_snapshot.py -v
           python scripts/file_check_differential.py
@@ -53,6 +55,7 @@ jobs:
         run: |
           python scripts/test_file_checker_native.py "${{ runner.temp }}/pcs-files-build/bundle"
           python scripts/test_change_review_boundary.py "${{ runner.temp }}/pcs-files-build/bundle"
+          python scripts/test_model_evaluation_native.py "${{ runner.temp }}/pcs-files-build/bundle" > "${{ runner.temp }}/pcs-files-build/model-evaluation-native.json"
       - name: Original byte grammar and conservation policy differentials
         shell: bash
         run: |
@@ -61,7 +64,8 @@ jobs:
           python scripts/test_original_csv_native.py "$binary"
           python scripts/test_change_review_native.py "$binary"
       - name: Real published-data conservation and labeled corruption controls
-        run: python scripts/run_public_export_experiment.py "${{ runner.temp }}/pcs-files-build/bundle" > "${{ runner.temp }}/pcs-files-build/public-data-experiment.json"
+        run: python scripts/run_public_export_experiment.py "${{ runner.temp }}/pcs-files-build/bundle" > "${{ runner.temp }}/pcs-files-build/public-data-experiment.json
+            ${{ runner.temp }}/pcs-files-build/model-evaluation-native.json"
       - name: Linux browser task completion including real local Lean confirmation
         if: runner.os == 'Linux'
         env:
@@ -73,6 +77,7 @@ jobs:
           npx playwright install --with-deps chromium
           PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_file_check.cjs
           PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_change_review.cjs
+          PCS_CHROMIUM="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/browser_model_evaluation.cjs
           python scripts/analyze_usability_sessions.py "${{ runner.temp }}/pcs-files-browser/study-automated-session.json" > "${{ runner.temp }}/pcs-files-browser/study-analysis.json"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -84,6 +89,7 @@ jobs:
             ${{ runner.temp }}/pcs-files-build/axioms.log
             ${{ runner.temp }}/pcs-files-browser/*.json
             ${{ runner.temp }}/pcs-files-build/public-data-experiment.json
+            ${{ runner.temp }}/pcs-files-build/model-evaluation-native.json
           if-no-files-found: error
 
   qualify-packages:

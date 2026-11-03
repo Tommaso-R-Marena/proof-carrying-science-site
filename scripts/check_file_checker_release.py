@@ -5,9 +5,9 @@ from pathlib import Path
 def require(condition, message):
     if not condition:raise ValueError(message)
 
-SOURCE_FILES = {'desktop/VERSION','desktop/app.py','desktop/file_check.py','desktop/change_review.py',
-                    *('desktop/lean/'+n+'.lean' for n in ['Main','StackSafe','Audit','OriginalCsv','Review']),
-                    *('public/'+n for n in ['check-my-files.html','file-check.css','file-check.mjs',
+SOURCE_FILES = {'desktop/VERSION','desktop/app.py','desktop/file_check.py','desktop/change_review.py','desktop/model_evaluation.py','desktop/handoff.py',
+                    *('desktop/lean/'+n+'.lean' for n in ['Main','StackSafe','Audit','OriginalCsv','Review','Evaluation']),
+                    *('public/'+n for n in ['model-evaluation-core.mjs','model-evaluation.mjs','evaluation-reference.csv','evaluation-baseline.csv','evaluation-candidate.csv','evaluation-example.json','check-my-files.html','file-check.css','file-check.mjs',
                     'science-workflow-core.mjs', 'page-help.mjs','page-help-core.mjs','page-help.css',
                     'file-check-core.mjs','file-check-local.mjs','change-review-core.mjs','review-changes.html',
                     'review-changes.mjs','usability-core.mjs','usability-study.html','usability-study.mjs',
@@ -36,8 +36,9 @@ def main():
             m = json.loads(z.read('BUILD.json'))
             require(m['version'] == a.version and m['site_commit'] == a.commit and (m['core_commit'] == 'f20f3cab2938f2e085f137185e88f4700d5da2ed') and (m['development_build'] is False) and (m['source_snapshot'] == 'git-blobs'), 'Release archive qualification failed.')
             require(m['production_scientific_authority'] is False and m['host_refinement_proved'] is False and (m['code_signed'] is False), 'Release archive qualification failed.')
-            require({'original-csv-decoding-v2', 'original-csv-change-review-v2'} <= set(m['capabilities']), 'Release archive qualification failed.')
+            require({'original-csv-decoding-v2', 'original-csv-change-review-v2','original-csv-model-evaluation-v1'} <= set(m['capabilities']), 'Release archive qualification failed.')
             require('PCSFiles.Review.original_conservative_extension' in m['theorems'] and 'PCSFiles.OriginalCsv.decode_iff' in m['theorems'], 'Release archive qualification failed.')
+            require('PCSFiles.Evaluation.original_labels_agree' in m['theorems'] and 'PCSFiles.Evaluation.original_preservation' in m['theorems'],'Missing evaluation proof audit')
             audit = z.read('axioms.log').decode('utf-8')
             require('sorryAx' not in audit and 'Lean.ofReduceBool' not in audit and ('Lean.trustCompiler' not in audit), 'Release archive qualification failed.')
             require(set(m['source_sha256']) == source_files, 'Incomplete source closure')

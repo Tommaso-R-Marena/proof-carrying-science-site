@@ -643,9 +643,10 @@
       "execution": "native-original-byte-Lean",
       "entrypoints": [
         "review-changes.mjs",
+        "model-evaluation.mjs",
         "page-help.mjs"
       ],
-      "scope": "The website runs a browser calculation. The downloaded app independently executes its pinned compiled Lean checker on original CSV bytes; new builds run it automatically with each review. Imported receipts are not fresh checks."
+      "scope": "The website runs a browser calculation. The downloaded app independently executes its pinned compiled Lean checker on original CSV bytes; new builds run it automatically with each review. Imported receipts are not fresh checks. Model-output evaluation compares three exact ID sets; supplied labels and model provenance remain external assumptions."
     },
     {
       "page": "reviewer-desk.html",

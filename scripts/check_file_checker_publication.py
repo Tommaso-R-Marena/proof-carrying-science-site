@@ -43,14 +43,14 @@ def validate_release(release, version):
 
 
 def advertised_version():
-    version = (ROOT / 'desktop/VERSION').read_text(encoding='ascii').strip()
+    version = (ROOT / 'desktop/PUBLISHED_VERSION').read_text(encoding='ascii').strip()
     if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version):
         raise ValueError('Invalid desktop release version.')
     for name in ['check-my-files.html', 'review-changes.html']:
         text = (ROOT / 'public' / name).read_text(encoding='utf-8')
         versions = set(re.findall(r'/releases/(?:download|tag)/pcs-files-v([^/\"<>]+)', text))
         if versions != {version}:
-            raise ValueError('Advertised app links do not match desktop/VERSION.')
+            raise ValueError('Advertised app links do not match desktop/PUBLISHED_VERSION.')
     return version
 
 

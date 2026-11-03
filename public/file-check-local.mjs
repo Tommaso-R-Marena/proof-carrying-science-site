@@ -13,14 +13,27 @@ async function readBounded(response) {
   const value=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(raw));
   if(!response.ok)throw Error(value.error||'The local checker could not complete this check.');return value;
 }
-export async function connectLocal() {
+let connection, handoff;
+export function connectLocal(){return connection??=(connectOnce());}
+async function connectOnce() {
   const token=new URLSearchParams(location.hash.slice(1)).get('session');if(!token)return null;
   const session={origin:location.origin,token};requireLocal(session);
   history.replaceState(null,'',location.pathname);
   const response=await fetch('/api/session',{headers:{'X-PCS-Session':session.token},credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(5000)});
   const value=await readBounded(response);
   if(value.format!=='pcs-file-check-session-v1'||value.scope!==SCOPE||!/^[a-f0-9]{64}$/.test(value.checker_sha256))throw Error('Local session unavailable.');
-  return Object.freeze({...session,checkerHash:value.checker_sha256,capabilities:Array.isArray(value.capabilities)?Object.freeze(value.capabilities.filter(x=>typeof x==='string')):Object.freeze([])});
+  return Object.freeze({...session,checkerHash:value.checker_sha256,hasHandoff:value.has_handoff===true,version:typeof value.version==='string'?value.version:null,capabilities:Array.isArray(value.capabilities)?Object.freeze(value.capabilities.filter(x=>typeof x==='string')):Object.freeze([])});
+}
+export function readLocalHandoff(session){return handoff??=(fetchHandoff(session));}
+async function fetchHandoff(session){
+  requireLocal(session);
+  if(!session.hasHandoff)return null;
+  const response=await fetch('/api/handoff',{headers:{'X-PCS-Session':session.token},credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error('The private handoff could not be opened. Choose the saved file again.');
+  const reader=response.body.getReader(),parts=[];let size=0;
+  try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>9000000){await reader.cancel();throw Error('Private handoff exceeds 9 MB.');}parts.push(value);}}
+  finally{reader.releaseLock();}
+  const bytes=new Uint8Array(size);let offset=0;for(const p of parts){bytes.set(p,offset);offset+=p.length;}return bytes;
 }
 export async function checkLocally(session,request,signal) {
   requireLocal(session);
