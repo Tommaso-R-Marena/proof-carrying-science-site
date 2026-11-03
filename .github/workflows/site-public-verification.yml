@@ -131,6 +131,7 @@ jobs:
           npm run test:browser
           PCS_BEGINNER_OUTPUT="$PWD/browser-beginner-results" npm run test:browser:beginner
           PCS_USABILITY_OUTPUT="$PWD/browser-usability-results.json" npm run test:browser:usability
+          PCS_PURPOSE_OUTPUT="$PWD/browser-clear-purpose" npm run test:browser:clear-purpose
           PCS_GAMES_START_OUTPUT="$PWD/browser-games-start" npm run test:browser:games-start
           PCS_LAYOUT_OUTPUT="$PWD/browser-layout-results" npm run test:browser:layout
           PYTHONPATH="$PWD/.ci-components/pcs" python - <<'PYREPLAY'
@@ -176,6 +177,7 @@ jobs:
             browser-results.json
             browser-beginner-results/
             browser-usability-results.json*
+            browser-clear-purpose/
             browser-layout-results/
             conditional-python-parity-results.json
             intervention-python-parity-results.json

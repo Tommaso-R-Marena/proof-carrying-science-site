@@ -42,7 +42,7 @@ function useLearningAid(){hints=Math.min(20,hints+1);}
 function renderDiary(){
   const target=$("questHistory");target.replaceChildren();
   $("questAttemptCount").textContent=String(attempts.length);
-  if(!attempts.length){const li=document.createElement("li");li.textContent="No checks yet. Experiment, then press Check my proof path.";target.appendChild(li);return;}
+  if(!attempts.length){const li=document.createElement("li");li.textContent="No checks yet. Experiment, then press Check this order.";target.appendChild(li);return;}
   for(const a of attempts.slice(0,12)){
     const li=document.createElement("li");
     li.textContent=(a.valid?"✅ ":"🛠️ ")+a.title+" · "+a.correct+"/"+a.total+" dependencies · "+a.score+"/100 · "+a.hints+" hints";
@@ -184,7 +184,7 @@ function render(){
   // Display order is stable for this render, so clicking a step does not reorder other available options.
   for(const n of bankOrder.map(id=>selected.nodes.find(n=>n.id===id)).filter(n=>!chosen.includes(n.id))){
     const b=document.createElement("button");b.type="button";b.className="quest-step";
-    b.textContent=n.label;b.title="Add "+n.label+" to your proof path";
+    b.textContent=n.label;b.title="Add "+n.label+" to your path";
     b.addEventListener("click",()=>{
       const inspected=inspectPlacement(selected,chosen,n.id);
       combo=inspected.valid?combo+1:0;
@@ -236,10 +236,10 @@ $("questCheck").addEventListener("click",()=>{
     const box=$("questFeedback");box.replaceChildren();box.hidden=false;
     box.classList.toggle("bad",!result.valid);
     const h=document.createElement("h3");
-    h.textContent=result.valid?"🌟 You built a valid proof path!":"🧩 Almost! Some steps need to move.";
+    h.textContent=result.valid?"🌟 Your steps are in a working order!":"🧩 Almost! Some steps need to move.";
     box.appendChild(h);
     const p=document.createElement("p");
-    p.textContent=result.correct+" of "+result.total+" prerequisite links are in the right order. Practice score: "+result.score+"/100.";
+    p.textContent=result.correct+" of "+result.total+" required step pairs are in the right order. Practice score: "+result.score+"/100.";
     box.appendChild(p);
     if(!result.valid){
       const bad=result.mistakes.slice(0,3);
@@ -255,7 +255,7 @@ $("questCheck").addEventListener("click",()=>{
       $("questStars").textContent=String(stars);$("questSolved").textContent=String(seen.size);buttonList();
     }
     const fine=document.createElement("p");
-    fine.textContent="This checks the toy ordering, not an actual Lean proof or deployed AI behavior.";
+    fine.textContent="You checked the order of these cards. This does not prove a mathematical theorem.";
     box.appendChild(fine);
     $("questResearch").hidden=false;
     $("questNext").hidden=!result.valid;$("questTryAgain").hidden=result.valid;$("questFixOne").hidden=result.valid;

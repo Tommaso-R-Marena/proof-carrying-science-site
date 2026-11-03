@@ -59,7 +59,7 @@ export function mountGameGuide(doc = document) {
  const back=make('button','Previous'),jump=make('button','Show the controls','game-guide-primary'),next=make('button','Next'),close=make('button','Close guide'),board=make('button','Show the board');
  for(const b of [back,jump,next,close,board])b.type='button';
  jump.id='gameGuideJump';next.id='gameGuideNext';close.id='gameGuideClose';board.id='gameGuidePlay';
- nav.append(back,jump,next,close,board);tour.append(progress,title,instruction,nav);root.append(head,first,actions,ready,note,scope,tour);
+ nav.append(back,jump,next,close,board);tour.append(progress,title,instruction,nav);const boundaries=make('details');boundaries.id='gameGuideDetails';boundaries.append(make('summary','What does this game check?'),note,scope);root.append(head,first,actions,ready,boundaries,tour);
  const header=main.querySelector(':scope > header');if(header)header.after(root);else main.prepend(root);
  let step=0,highlight=null;
  const stages=[['1 · Try a move',move,moveTarget],['2 · Check the result',check,checkTarget],['3 · Try again or play on','Read the game’s feedback. You can retry, undo or choose another round. This guide does not make a move, give an answer or award a win.',resultTarget]];

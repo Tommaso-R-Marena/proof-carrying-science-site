@@ -84,7 +84,7 @@ async function cleanup(){
  await page.goto(base+'/world-builder.html',{waitUntil:'networkidle'});
  await page.locator('#wbCheck').click();
  await page.locator('#wbWorld [data-fact=P][data-character="0"]').click();await page.locator('#wbCheck').click();
- await page.locator('#wbShare > summary').click();
+ await page.locator('#worldExtraTools > summary').click();await page.locator('#wbShare > summary').click();
  async function donateVisual(){
   await page.locator('#wbAdult').check();await page.locator('#wbConsent').check();
   const reply=page.waitForResponse(r=>r.url().endsWith('/api/arena/countermodel/search-donate'));

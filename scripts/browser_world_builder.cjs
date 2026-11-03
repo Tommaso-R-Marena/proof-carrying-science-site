@@ -32,6 +32,7 @@ const server=http.createServer((req,res)=>{
    assert.deepEqual(covered,[],'control bar must not cover the puzzle while scrolling');
   }
   await p.screenshot({path:path.join(output,`start-${width}.png`),fullPage:true});
+  await p.locator('#worldPuzzleChoices > summary').click();await p.locator('#worldExtraTools > summary').click();
   assert.equal(await p.locator('#wbWitness').isDisabled(),true);
   await p.locator('#wbCheck').click();assert.match(await p.locator('#wbFeedback').innerText(),/rules agree/);
   const fact=p.locator('#wbWorld [data-fact=P][data-character="0"]');await fact.focus();await p.keyboard.press('Space');

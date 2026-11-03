@@ -43,7 +43,7 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   if(width<=768){await page.locator('.navtoggle').click();if(!(await page.locator('.navlinks').isVisible()))throw Error('Mobile navigation did not open');}
   if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2))throw Error('Active game overflow');
   if(process.env.PCS_LAYOUT_OUTPUT){fs.mkdirSync(process.env.PCS_LAYOUT_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`game-${width}.png`),fullPage:true});}
-  await page.goto(base+'/arena-proof-quest.html');await page.locator('#questSchedule').click();
+  await page.goto(base+'/arena-proof-quest.html');await page.locator('#questExtraTools > summary').click();await page.locator('#questSchedule').click();
   if(!(await page.locator('#questScheduleReport').innerText()).includes('parallel stages'))throw Error('Dependency schedule missing');
   await page.goto(base+'/omega-workspace.html');await page.locator('#omegaStatus').filter({hasText:'Mapped 1 explicit claim'}).waitFor();
   const original=await page.locator('#omegaMeaningSource').innerText();

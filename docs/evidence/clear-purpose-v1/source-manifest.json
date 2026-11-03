@@ -1,0 +1,30 @@
+{
+  "format": "pcs-clear-purpose-source-v1",
+  "base": "ee82589a2b51774edef3ab485c35d49cf46add7e",
+  "files": {
+    "public/arena-proof-quest.html": "baae16c494f9ac92035de79d0bc87a286a27d1a7c4be99e840fc90691d5bfcec",
+    "public/arena-proof-quest.js": "6239c028dd90530fb854bd78b518a2d7cfc13b315eeb600c04ca3e2c4ab9a628",
+    "public/arena-safety-forge.html": "dc9f88b8ee525e6b07a401e6e23e0ebd1b0eac11cb4369834ef869a2c282b79c",
+    "public/arena-safety-forge.js": "7e2e971f11bafba9cfabbf56195a793f77f10b20f7f3bd4d5ec06bbad4a57fd9",
+    "public/arena.html": "679561ed35639a40e608c616feef64dd1e88eecf61710bb7d5e1c2f4b3074352",
+    "public/check-my-files.html": "84cb5d099779112649a39067e3d510b5ea3e80054c01dd284967f7ee02800ca2",
+    "public/experience.html": "11e6d54614f10ab8d368121366885d7a82e5ddb2fe9bf4f1cc18757fcf1aea76",
+    "public/file-check.css": "574000e22cc61cc55beb18d6218741695fea521907ca6c032caa06a629a16f78",
+    "public/first-visit-observer.mjs": "5417933676fb5aaece63c44a0f6f605ab14784d345795028efe4e0a38e80712d",
+    "public/first-visit-study-core.mjs": "c3937d1ab6cd19867b6ed1c0b53c6681f9e09a91f8d939091cdd8f109fd3205b",
+    "public/first-visit-study.html": "2278e299c678bf3721d5c512aed8321a77a219b3533311a8a116e006f5995ab3",
+    "public/first-visit-study.mjs": "c1378e67b9ab8353e2cc8c92f621e96fb9480d8c2e9b091d882525f5595e5d65",
+    "public/game-guide.css": "115c001d3a81417292c475f0bc9c963fc4f090ead6987d171e829075d47b608c",
+    "public/game-guide.mjs": "4dc90ec52da116dae0b3a2c2d7d87fd1975a6dcedac5853f91ead01e55bf5975",
+    "public/index.html": "0243b2014c254abc076a54080e3cc6c029810cfebb3a0ba57a8fc577216ce2ad",
+    "public/model-walkthrough-core.mjs": "46db8e032f1e70d5993ca96b711318662fc56e48b99246d5f2e87ba3010d53a7",
+    "public/model-walkthrough.css": "6a29116bb2fcb9760e105fc137ebccdec5eeec58ea92f33cf66821d558052356",
+    "public/model-walkthrough.html": "de70c8081362873e9f7cd089bc180ce96cc6a78bd0278b837d507485a8769ebc",
+    "public/model-walkthrough.mjs": "cf220f0ec6a3afb990c8cc74880cc8aeb10c16c39cab8360b23f9849bcbac850",
+    "public/one-minute-core.mjs": "2977a3f36e2f60964da56c722754d91ce1971c1ff78bfa51a5ae2be9884e790c",
+    "public/one-minute.css": "d7872f0a922606f77a625c60e995f6a421192cb4a8a2a7057ae8ad2e2f3dbee0",
+    "public/one-minute.mjs": "249218a965533b536c5c51bd2bcbe3f227158265fd381939a89f62b77ae6262f",
+    "public/world-builder.html": "d18c76f3495460aded7ab8ae4b700267ac7dc055203c6d958a16424bd82913ec"
+  },
+  "hashes_authenticate_author": false
+}

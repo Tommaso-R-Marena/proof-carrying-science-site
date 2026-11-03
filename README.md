@@ -6,6 +6,22 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
+## First visit: one useful check, with evidence
+
+Open [Start here](https://proof-carrying-science-site.marenatommaso.workers.dev/experience)
+to check two example lists, understand the result, save a report and reopen the
+exact inputs for a fresh check. Continue with your own CSV exports or
+[watch the actual PCS repair model](https://proof-carrying-science-site.marenatommaso.workers.dev/model-walkthrough)
+propose edits that a separate finite evaluator tests. The browser demonstrations
+make no Lean, scientific acceptance or real AI-safety claim.
+
+The [games](https://proof-carrying-science-site.marenatommaso.workers.dev/arena)
+practise catching a changed rule, ordering prerequisites and fixing a fictional
+bot loophole. Each starts with one task; maps and research tools are optional.
+The [optional first-visit study](https://proof-carrying-science-site.marenatommaso.workers.dev/first-visit-study)
+records consented practice only on the device. Automated tests do not establish
+human comprehension or enjoyment. See [scope and reproduction](docs/CLEAR_PURPOSE_WORKFLOWS_V1.md).
+
 ## Check a mathematical claim
 
 Open the [guided proof workbench](https://proof-carrying-science-site.marenatommaso.workers.dev/proof-workbench),

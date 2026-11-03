@@ -19,7 +19,7 @@ function saveLocalBest(){try{localStorage.setItem("pcs-safety-forge-best-v1",JSO
 const tour=[
   ["Find a loophole 🔎","Tap actions to experiment with a fictional bot. Try routes, request permission, and look for a safety failure."],
   ["Build a better shield 🛡️","Choose Repair the shield, then flip protection switches on and off. Cheap fixes are great, but don't stop the real mission."],
-  ["Check and level up 🏆","Check every possible state. Green means no unsafe behavior is reachable AND the intended mission can still finish. Then try another seed."]
+  ["Check and level up 🏆","Check my repair. Green means no unsafe behavior is reachable AND the intended mission can still finish. Then try another seed."]
 ];
 function renderTour(){const [title,description]=tour[tourStep];
   $("forgeTourTitle").textContent=title;$("forgeTourText").textContent=description;
@@ -124,7 +124,7 @@ function policyKey(ids){return [...ids].sort().join("|");}
 function renderStrategyBoard(){
   const root=$("forgeStrategyBoard");root.replaceChildren();
   if(!repairs.length){
-    addText(root,"p","No tested shields yet. Try a guard combination and press Check every possible state.");return;
+    addText(root,"p","No tested shields yet. Try a guard combination and press Check my repair.");return;
   }
   const ranked=classifyPolicyTrials(repairs.map(trial=>{
     const key=policyKey(trial.guards);
@@ -220,11 +220,11 @@ function showMode(next){
     $(id).classList.toggle("active",active);$(id).setAttribute("aria-pressed",String(active));
   }
   if(next!=="attack"){
-    $("forgeRepairHeading").textContent=next==="optimize"?"Beat your safe shield: keep safety, cut cost.":"Patch every loophole without killing the mission.";
-    $("forgeVerify").textContent=next==="optimize"?"🏆 Test this optimized shield":"🔬 Check every possible state";
+    $("forgeRepairHeading").textContent=next==="optimize"?"Keep the bot safe. Make the repair cheaper.":"Fix the rules. Keep the mission possible.";
+    $("forgeVerify").textContent=next==="optimize"?"🏆 Test this optimized shield":"🔬 Check my repair";
     $("forgeCoach").textContent=next==="optimize"
-      ?"🏆 Optimization round: remove or replace guards, then prove the cheaper shield still passes every reachable state."
-      :"🛠️ Repair round: build a shield that is both safe and useful.";
+      ?"🏆 Try a cheaper repair, then check it against every possible game state."
+      :"🛠️ Choose safeguards that prevent failures and still let the bot finish.";
     renderGuards();
   }
 }
@@ -337,10 +337,10 @@ function verify(){
     $("forgePersonalBest").textContent=localBest[String(seed)]?localBest[String(seed)]+"/100":"—";
     if(result.passed){
       $("forgeTabOptimize").disabled=false;
-      $("forgeTabOptimize").textContent="🏆 3 · Beat your shield ✨";
+      $("forgeTabOptimize").textContent="3 · Make the repair cheaper";
     }
     $("forgeCoach").textContent=result.passed
-      ?"🏆 Your shield passed! Optimization is unlocked: can you remove cost and keep the proof-by-exhaustive-check?"
+      ?"🏆 Your repair passed the game check. Can you lower its cost while keeping the mission possible?"
       :result.safe?"🚧 Safe, but too restrictive. Remove a guard to let the real mission finish."
       :"🔎 A counterexample remains. Study its path, adjust your switches, and check again.";
     const status=$("forgeVerification");

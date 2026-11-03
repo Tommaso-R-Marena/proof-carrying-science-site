@@ -1,0 +1,66 @@
+{
+  "format": "pcs-clear-purpose-browser-v1",
+  "human_participants": 0,
+  "positive_responses_substituted": false,
+  "rows": [
+    {
+      "width": 320,
+      "file_check_save_and_recheck": true,
+      "tampered_file_counts_rejected": true,
+      "real_model_and_baseline_checked": true,
+      "edited_model_replay_rejected": true,
+      "model_case_change_clears_old_result": true,
+      "study_explicit_consent_and_erasure": true,
+      "study_automation_labeled": true,
+      "private_data_fields_absent": true,
+      "world_optional_controls_closed": true,
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "file_check_save_and_recheck": true,
+      "tampered_file_counts_rejected": true,
+      "real_model_and_baseline_checked": true,
+      "edited_model_replay_rejected": true,
+      "model_case_change_clears_old_result": true,
+      "study_explicit_consent_and_erasure": true,
+      "study_automation_labeled": true,
+      "private_data_fields_absent": true,
+      "world_optional_controls_closed": true,
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "file_check_save_and_recheck": true,
+      "tampered_file_counts_rejected": true,
+      "real_model_and_baseline_checked": true,
+      "edited_model_replay_rejected": true,
+      "model_case_change_clears_old_result": true,
+      "study_explicit_consent_and_erasure": true,
+      "study_automation_labeled": true,
+      "private_data_fields_absent": true,
+      "world_optional_controls_closed": true,
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "file_check_save_and_recheck": true,
+      "tampered_file_counts_rejected": true,
+      "real_model_and_baseline_checked": true,
+      "edited_model_replay_rejected": true,
+      "model_case_change_clears_old_result": true,
+      "study_explicit_consent_and_erasure": true,
+      "study_automation_labeled": true,
+      "private_data_fields_absent": true,
+      "world_optional_controls_closed": true,
+      "keyboard": true,
+      "overflow": false
+    }
+  ],
+  "missing_model_fails_closed": true,
+  "substituted_weights_rejected": true,
+  "status": "PASS"
+}
