@@ -88,3 +88,8 @@ combinations, 300 layout combinations, 12 scientific workflows, 60 game-guide
 journeys and the existing beginner/model/game flows. The actual native browser
 check ran seven Lean calls, accepted three matching confirmations and rejected
 four negative controls. These are automated results, not a human usability study.
+
+Protected CI exposed a long-heading overflow under a different system font.
+Titles now wrap on narrow screens; the all-page campaign also checks the longer
+fallback font. The independent first-investigation campaign follows the renamed
+scientific-example link and retains its four-width negative-control checks.
