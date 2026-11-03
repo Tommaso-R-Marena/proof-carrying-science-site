@@ -13,7 +13,33 @@ function render(i){for(let j=0;j<2;j++){const select=$('evalCol'+i+j);select.rep
 async function load(i,file){invalidate();const token=++loads[i];inputs[i]=null;columns[i]=[null,null];render(i);if(!file)return;try{if(file.size>LIMITS.bytes||file.name.length>255)throw Error('Choose a CSV up to 2 MB with a shorter name.');const bytes=new Uint8Array(await file.arrayBuffer()),table=parseCSV(bytes),digest=await sha256(bytes);if(token!==loads[i])return;inputs[i]={name:file.name,bytes,table,sha256:digest};columns[i]=expected?expected.columns[i].map(x=>chooseSavedColumn(table,x)):[table.header.indexOf('id'),['outcome','label','prediction'].map(h=>table.header.indexOf(h)).find(n=>n>=0)??-1];columns[i]=columns[i].map(n=>n<0?null:n);render(i);say('File ready. Confirm its ID and outcome columns.');}catch(e){if(token===loads[i])say(e.message);}finally{ready();}}
 function fillProvenance(){for(const k of Object.keys(DEFAULT_PROVENANCE))$('eval_'+k).value=provenance[k]??'';}
 for(const k of Object.keys(DEFAULT_PROVENANCE))$('eval_'+k).oninput=()=>{invalidate();expected=null;provenance={...provenance,[k]:$('eval_'+k).value|| (k.includes('sha256')?null:'')};};
-async function open(file){if(!file)return;invalidate();const token=revision;try{if(file.size>9000000)throw Error('Choose a replay up to 9 MB.');const raw=new Uint8Array(await file.arrayBuffer()),doc=parseEvaluationDocument(raw);if(token!==revision)return;expected=doc;provenance=structuredClone(doc.provenance);fillProvenance();inputs.fill(null);columns.fill(null);for(let i=0;i<3;i++){columns[i]=[null,null];loads[i]++;render(i);}if(doc.inputs.every(x=>x.data_base64!==null)){const checked=await replayEvaluation(raw);if(token!==revision)return;checked.inputs.forEach((e,i)=>{inputs[i]=e;columns[i]=checked.columns[i];render(i);});}say('Recorded evaluation loaded. Run a fresh check. Choose original files if they were not included; an imported receipt is never a fresh result.');ready();$('evaluate-models').open=true;}catch(e){if(token===revision){expected=null;say('Could not open the evaluation: '+e.message);ready();}}}
+function focusEvaluationAction(){
+ const element=$($('evalRun').disabled?'evalStatus':'evalRun');
+ if(element.id==='evalStatus')element.tabIndex=-1;
+ element.focus();element.scrollIntoView({block:'center'});
+}
+async function open(file){
+ if(!file)return false;
+ $('evaluate-models').open=true;invalidate();const token=revision;
+ try{
+  if(file.size>9000000)throw Error('Choose a replay up to 9 MB.');
+  const raw=new Uint8Array(await file.arrayBuffer()),doc=parseEvaluationDocument(raw);
+  if(token!==revision)return false;
+  expected=doc;provenance=structuredClone(doc.provenance);fillProvenance();
+  inputs.fill(null);columns.fill(null);
+  for(let i=0;i<3;i++){columns[i]=[null,null];loads[i]++;render(i);}
+  if(doc.inputs.every(x=>x.data_base64!==null)){
+   const checked=await replayEvaluation(raw);
+   if(token!==revision)return false;
+   checked.inputs.forEach((e,i)=>{inputs[i]=e;columns[i]=checked.columns[i];render(i);});
+  }
+  say('Recorded evaluation loaded. Run a fresh check. Choose original files if they were not included; an imported receipt is never a fresh result.');
+  ready();focusEvaluationAction();return true;
+ }catch(e){
+  if(token===revision){expected=null;say('Could not open the evaluation: '+e.message);ready();focusEvaluationAction();}
+  return false;
+ }
+}
 for(let i=0;i<3;i++){$('evalFile'+i).onchange=e=>load(i,e.target.files[0]);for(let j=0;j<2;j++)$('evalCol'+i+j).onchange=e=>{invalidate();columns[i][j]=e.target.value===''?null:Number(e.target.value);};}
 $('evalOpen').onchange=e=>open(e.target.files[0]);
 $('evalRun').onclick=async()=>{if(busy||!inputs.every(Boolean))return;invalidate();const token=revision;busy=true;ready();try{validateProvenance(provenance);const calculated=evaluateTables(inputs.map(e=>e.table),columns);if(expected&&(canonical(calculated.summary)!==canonical(expected.summary)||calculated.preserved!==expected.preserved||inputs.some((e,i)=>e.sha256!==expected.inputs[i].sha256||e.bytes.length!==expected.inputs[i].bytes)||canonical(columns)!==canonical(inputs.map((e,i)=>expected.columns[i].map(x=>{if(e.table.header[x.index]!==x.header)throw Error('Recorded column changed.');return x.index;})))))throw Error('The replay does not match the exact original files, columns and counts.');result=calculated;show();say('Browser comparison complete. Files stayed on this device.');if(session?.capabilities.includes(EVALUATION_SCOPE)){
@@ -31,3 +57,5 @@ $('evalExample').onclick=async()=>{invalidate();const token=revision;loads.forEa
 function openLinkedPanel(){if(location.hash==='#evaluate-models')$('evaluate-models').open=true;}
 openLinkedPanel();addEventListener('hashchange',openLinkedPanel);
 fillProvenance();ready();connectLocal().then(async s=>{session=s;if(s){$('evalRun').textContent=s.capabilities.includes(EVALUATION_SCOPE)?'Compare and check with Lean':'Compare the outputs';if(s.hasHandoff){const bytes=await readLocalHandoff(s),raw=JSON.parse(new TextDecoder().decode(bytes));if(raw.format==='pcs-model-evaluation-replay-v1')await open(new File([bytes],'private-evaluation.json'));}}}).catch(e=>say(e.message));
+
+export {open as openModelEvaluation};

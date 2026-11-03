@@ -42,6 +42,11 @@ Core mathematical dependencies stay at `f20f3cab2938f2e085f137185e88f4700d5da2ed
 
 ## Replay and trust boundary
 
+The opening screen’s saved-file picker accepts both change reviews and model
+evaluations and opens the matching tool. Connected apps display their real bundle
+version and hide the download instructions, since the checker is already running.
+A fresh check is required after either kind of import.
+
 A canonical `pcs-model-evaluation-replay-v1` binds three file hashes, exact column
 indices/headings, summary counts, and supplied provenance. Explicitly including
 original CSVs enables a complete private handoff. Readable reports omit rows by
