@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>v0.6 MVP · Proof-Carrying Science</title>
-<meta name="description" content="The PCS v0.6 MVP candidate: one-command attestation, deterministic self-verified bundles, independent replay, and reviewer-controlled acceptance policy.">
+<title>Run PCS on your own computer. · PCS</title>
+<meta name="description" content="Prepare a small scientific project, collect its evidence, and let an independent reviewer repeat the supported checks. This page gives the command-line setup.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/mvp.html">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:title" content="PCS v0.6 MVP · Proof-Carrying Science">
@@ -15,9 +15,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>PCS v0.6 MVP candidate · Producer → signed bundle → independent reviewer</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Technical setup guide</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -35,8 +35,8 @@
 <main>
 <section class="pagehead mvp-head">
   <div class="kicker">v0.6 MVP candidate</div>
-  <h1>One command to produce. One command to verify.</h1>
-  <p>The current PCS v0.6 branch now starts from an existing scientific project: guided discovery drafts the artifact/check/claim graph, explicit confirmation freezes the reviewed bytes, attestation packages and replays them, and independent reviewers verify the exact archive under their own policy.</p>
+  <h1>Run PCS on your own computer.</h1>
+  <p>Prepare a small scientific project, collect its evidence, and let an independent reviewer repeat the supported checks. This page gives the command-line setup.</p>
   <div class="actions">
     <a class="button primary" href="project-builder.html">Map a project →</a>
     <a class="button secondary" href="#policy-lab">Open policy lab</a>
@@ -51,7 +51,7 @@
 
 <section class="section-tight">
   <div class="kicker">Guided intake before attestation</div>
-  <h2>The scientist no longer starts by writing PCS JSON.</h2>
+  <h2>Start with project files you already have.</h2>
   <p class="section-intro">Use the local Project Mapper or <code>pcs discover-v06</code> to inventory an existing project and draft only the supported, high-confidence checks PCS can currently understand. The draft is deliberately non-attestable until human confirmation re-hashes the selected files.</p>
   <div class="mvp-command-grid">
     <article class="command-card"><div class="command-label"><span>Step 0</span><strong>Discover</strong></div><div class="codecommand"><code>pcs discover-v06 ./my-project</code><button data-copy="pcs discover-v06 ./my-project">Copy</button></div><p>Locally inventories regular files, excludes key material, snapshots SHA-256/size, recommends supported scientific checks, and statically maps high-confidence Python/Jupyter artifact dependencies without executing user code.</p></article>
@@ -106,7 +106,7 @@
 
 <section class="section-tight">
   <div class="kicker">Independent environment provenance</div>
-  <h2>A lockfile is evidence only if the reviewer can regenerate the same environment contract.</h2>
+  <h2>Let the reviewer reconstruct the software environment.</h2>
   <p class="section-intro">Guided discovery captures Python/R dependencies, lockfiles, interpreter constraints, Conda/Nix specifications, and Docker/OCI base references without executing package managers or builds. After package binding, the reviewer reconstructs those exact environment files and regenerates the canonical environment contract before workflow or scientific replay.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Pinned</div><h3>Strength is explicit</h3><p>PCS distinguishes loose declarations, application lockfiles, hash-pinned requirements, digest-pinned containers, and stronger combined states instead of calling all of them “reproducible.”</p></article>
@@ -127,7 +127,7 @@
 
 <section class="section-tight">
   <div class="kicker">Independent workflow provenance</div>
-  <h2>Signed workflow is not trusted just because it is signed.</h2>
+  <h2>Check the workflow as well as its signature.</h2>
   <p class="section-intro">After package hashes and producer signatures pass, the reviewer reconstructs project-relative source files from the exact delivered artifacts and reruns static workflow discovery. A forged dependency edge therefore fails before ordinary scientific evidence replay, even if the producer recomputed hashes and re-signed the package.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Exact</div><h3>Clean AST graph</h3><p>For clean Python/Jupyter analysis, the complete signed input/output set must equal the freshly rediscovered set.</p></article>
@@ -139,7 +139,7 @@
 <section class="section split">
   <div>
     <div class="kicker">Why policy is separate</div>
-    <h2>Valid does not mean accepted.</h2>
+    <h2>A reviewer can reject a valid package.</h2>
     <p class="section-intro">A PCS package can be perfectly authentic and replay-consistent while honestly carrying a failed or open scientific claim. The receiving organization decides whether those claim statuses are acceptable for its use case.</p>
     <div class="boundary"><strong>PCS validity</strong><span>Did the delivered bytes, signatures, replay results, and normalized decisions agree?</span></div>
     <div class="boundary policy-boundary"><strong>Reviewer acceptance</strong><span>Do the verified claim statuses and signer identity satisfy this reviewer's external policy?</span></div>
@@ -279,7 +279,7 @@
 
 <section class="section" id="scheduler-lab">
   <div class="kicker">Adaptive replay scheduling</div>
-  <h2>Learn where failures tend to surface without learning the verdict.</h2>
+  <h2>Choose which checks to run first without deciding their results.</h2>
   <p class="section-intro">PCS now includes deterministic scheduling baselines and a contextual LinUCB-style bandit. The optimization target is time to first detected failure. Every mandatory check still runs, and the scheduler is explicitly excluded from claim assessment, normalized decisions, reviewer policy, signed receipts, and quorum approval.</p>
 
   <div class="grid3" style="margin-top:28px">
@@ -395,5 +395,5 @@
 </div>
 <script src="site.js"></script>
 <script src="mvp.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

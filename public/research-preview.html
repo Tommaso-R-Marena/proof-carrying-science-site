@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Research Preview · Proof-Carrying Science</title>
-<meta name="description" content="Run honest, bounded example checks in your browser, then inspect what PCS proves, reproduces and still trusts. No account or upload required.">
+<title>Try a small scientific or policy check. · PCS</title>
+<meta name="description" content="Change an input, run a real browser calculation, and see why a check passes or fails. Follow the links to the separate evidence-review workflow. No account required.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/research-preview.html">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="research-preview.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body class="preview-page">
-<div class="topbar"><div class="shell"><span>PCS research preview · No account required · Local-only example calculations</span><a href="trust.html">Trust boundaries</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Local calculation preview</span><a href="trust.html">Trust boundaries</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -21,8 +21,8 @@
 <main>
 <section class="preview-intro">
   <div class="kicker">A practical, bounded research preview</div>
-  <h1>See what gets checked and what remains unproved.</h1>
-  <p class="preview-lede">Try an AI-policy trace or synthetic scientific model in your own browser. Change the input to make a check fail. Then explore the separate PCS evidence and proof-review workflows.</p>
+  <h1>Try a small scientific or policy check.</h1>
+  <p class="preview-lede">Change an input, run a real browser calculation, and see why a check passes or fails. Follow the links to the separate evidence-review workflow. No account required.</p>
   <div class="preview-meta">
     <span>✓ Runs without an account</span><span>✓ No file upload or server execution</span><span>✓ Failure cases included</span>
   </div>
@@ -101,5 +101,5 @@
 </div>
 <script src="site.js"></script>
 <script type="module" src="research-preview.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

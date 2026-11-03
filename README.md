@@ -6,21 +6,24 @@ Live preview:
 
 `https://proof-carrying-science-site.marenatommaso.workers.dev`
 
-## First visit: one useful check, with evidence
+## Start with a scientific workflow
 
-Open [Start here](https://proof-carrying-science-site.marenatommaso.workers.dev/experience)
-to check two example lists, understand the result, save a report and reopen the
-exact inputs for a fresh check. Continue with your own CSV exports or
-[watch the actual PCS repair model](https://proof-carrying-science-site.marenatommaso.workers.dev/model-walkthrough)
-propose edits that a separate finite evaluator tests. The browser demonstrations
-make no Lean, scientific acceptance or real AI-safety claim.
+[Start here](https://proof-carrying-science-site.marenatommaso.workers.dev/experience)
+now compares two exports of real published Iris observations. Check that adding
+50 records preserved the original 100, try deliberately edited/missing-record
+controls, save a report, and reopen the exact data for a fresh check. Source,
+license, transformations and scientific limits are visible. These are teaching
+exports from one archived dataset, not a historical update to a study.
 
-The [games](https://proof-carrying-science-site.marenatommaso.workers.dev/arena)
-practise catching a changed rule, ordering prerequisites and fixing a fictional
-bot loophole. Each starts with one task; maps and research tools are optional.
-The [optional first-visit study](https://proof-carrying-science-site.marenatommaso.workers.dev/first-visit-study)
-records consented practice only on the device. Automated tests do not establish
-human comprehension or enjoyment. See [scope and reproduction](docs/CLEAR_PURPOSE_WORKFLOWS_V1.md).
+Continue with your own CSV exports in [What changed?](https://proof-carrying-science-site.marenatommaso.workers.dev/review-changes),
+[watch the actual repair model](https://proof-carrying-science-site.marenatommaso.workers.dev/model-walkthrough),
+or practise reasoning in the [games](https://proof-carrying-science-site.marenatommaso.workers.dev/arena).
+All 75 pages have been reviewed for clearer introductions, first steps and scope;
+technical detail and historical evidence remain available. Automated checks do
+not establish human comprehension or enjoyment.
+
+See [the scientific workflow and reproduction](docs/SCIENTIFIC_START_V1.md) and
+[the full page-by-page review](docs/SITE_CLARITY_REVIEW_V1.md).
 
 ## Check a mathematical claim
 

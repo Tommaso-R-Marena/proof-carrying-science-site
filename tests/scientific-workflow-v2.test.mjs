@@ -1,3 +1,4 @@
+import {verifyBrowserUISources} from '../scripts/verify_browser_ui_sources.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -16,10 +17,7 @@ test('exact real dataset and every public artifact match preserved digests',()=>
   assert.equal(manifest.files['penguins.csv'],'f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93');
   assert.equal(checkRecordedCase(receipt,dataset,manifest.files['penguins.csv']),true);
   const browser=JSON.parse(read('browser-validation.json'));
-  for(const [name,sha] of Object.entries(browser.source_sha256)){
-    const actual=fs.readFileSync(new URL(name.startsWith('scripts/')?'../'+name:'../public/'+name,import.meta.url));
-    assert.equal(crypto.createHash('sha256').update(actual).digest('hex'),sha,'Executed browser source '+name);
-  }
+  verifyBrowserUISources('public/reasoning/scientific-workflow-v2/browser-validation.json');
 });
 test('real species subsets account for every complete observation',()=>{
   assert.equal(filteredPoints(dataset.points,'Adelie').length,151);

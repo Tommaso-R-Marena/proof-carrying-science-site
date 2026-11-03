@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Governance · PCS AI Safety Commons</title><meta name="description" content="Common Good Commitment, contributor rights, assurance authority, compensation rules, and public-interest governance for the PCS AI Safety Commons.">
+<title>How decisions and responsibilities work. · PCS</title><meta name="description" content="This page explains who can approve work, how conflicts are handled, and why scientific claims still need evidence.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/governance.html"><meta name="robots" content="index,follow">
-<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"></head>
-<body class="commons-page"><div class="topbar commons-topbar"><div class="shell"><span>Governance · crowdsource the work, not the truth</span><a href="trust.html">Technical Trust Center</a></div></div>
+<link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="page-help.css"></head>
+<body class="commons-page"><div class="topbar commons-topbar"><div class="shell"><span>PCS · Governance policy</span><a href="trust.html">Technical Trust Center</a></div></div>
 <div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="fund.html">Fund</a><a href="governance.html">Governance</a><a class="button dark" href="trust.html">Trust Center</a></div></nav>
 <main>
-<section class="pagehead commons-pagehead"><div class="kicker">Common Good Governance</div><h1>The crowd can supply work. It cannot vote a claim into truth.</h1><p>The social governance of PCS should mirror its technical trust model: provenance, explicit authority, conflict disclosure, independent checking, and visible uncertainty.</p></section>
+<section class="pagehead commons-pagehead"><div class="kicker">Common Good Governance</div><h1>How decisions and responsibilities work.</h1><p>This page explains who can approve work, how conflicts are handled, and why scientific claims still need evidence.</p></section>
 
 <section class="common-good-commitment">
 <div class="commitment-mark">PCS</div>
-<div><span>COMMON GOOD COMMITMENT · DRAFT PUBLIC POLICY</span><h2>Participation should be broadly accessible. Assurance should remain rigorous. Labor should be treated fairly.</h2>
+<div><span>COMMON GOOD COMMITMENT · DRAFT PUBLIC POLICY</span><h2>Access, careful checking, and fair treatment.</h2>
 <p>Proof-Carrying Science exists to improve the reliability and safety of consequential computational systems. Individuals should not be excluded from contributing to or benefiting from public-interest work because they cannot pay. Public research, education, contributor training, and core AI-safety work should remain broadly accessible. Large commercial users should help sustain the infrastructure and paid safety work from which the wider ecosystem benefits.</p>
 <p>This commitment is a governance policy, not a substitute for final software licensing, tax, employment, or contractual terms. Those require separate legal review.</p></div>
 </section>
@@ -27,7 +27,7 @@
 </section>
 
 <section class="section" id="qualification">
-<div class="section-heading-row"><div><div class="kicker">Competency qualification</div><h2>Two routes in; no automatic authority.</h2></div><p>Higher-trust access should test competence without forcing every contributor through one identical exam or making credentials the only route.</p></div>
+<div class="section-heading-row"><div><div class="kicker">Competency qualification</div><h2>How people qualify for responsibilities.</h2></div><p>Higher-trust access should test competence without forcing every contributor through one identical exam or making credentials the only route.</p></div>
 <div class="qualification-choice-banner">
 <article><span>VARIABLE EVALUATION</span><strong>Fresh screening per attempt</strong><p>PCS generates parameterized scenarios and shuffles answer order. Objective items are auto-scored and a reasoning note is required. A passing screen only enters the manual review queue.</p></article>
 <article><span>MANUAL APPLICATION</span><strong>Evidence can substitute for the screen</strong><p>A contributor may instead submit prior work or the task application itself as competency evidence. PCS targets a human decision within 1 business day and no later than 2 business days.</p></article>
@@ -36,7 +36,7 @@
 </section>
 
 <section class="section" id="admin-audit">
-<div class="section-heading-row"><div><div class="kicker">Administrative accountability</div><h2>Privileged actions get a separate session and a permanent audit trail.</h2></div><p>Contributor authentication and administrator authentication are deliberately separated. Administrative decisions are preserved independently of user-account lifecycle.</p></div>
+<div class="section-heading-row"><div><div class="kicker">Administrative accountability</div><h2>Administrative actions need permission and leave a record.</h2></div><p>Contributor authentication and administrator authentication are deliberately separated. Administrative decisions are preserved independently of user-account lifecycle.</p></div>
 <div class="governance-rules">
 <article><b>LOGIN</b><div><h3>Separate privileged session</h3><p>Admin Center access requires the dedicated administrator sign-in. A normal contributor session cannot call administrator APIs. The privileged session expires after eight hours.</p></div></article>
 <article><b>LOG</b><div><h3>Append-only audit archive</h3><p>Every recorded action is copied with an actor identity snapshot into a SHA-256 hash chain. The database rejects archive updates and deletions through immutable-table triggers.</p></div></article>
@@ -56,7 +56,7 @@
 </section>
 
 <section class="section" id="compensation">
-<div class="section-heading-row"><div><div class="kicker">Compensation policy</div><h2>Volunteerism should be a choice, not the hidden price of belonging.</h2></div></div>
+<div class="section-heading-row"><div><div class="kicker">Compensation policy</div><h2>Volunteering and paid work.</h2></div></div>
 <div class="governance-rules">
 <article><b>1</b><div><h3>Disclose compensation before work begins.</h3><p>Every productive task is labeled volunteer, funded bounty, paid review, specialist contract, or explicitly planned/unfunded.</p></div></article>
 <article><b>2</b><div><h3>Do not require indefinite unpaid productive work for advancement.</h3><p>Small training and qualification exercises are reasonable. Large unpaid gates are not.</p></div></article>
@@ -83,7 +83,7 @@
 </section>
 
 <section class="commons-two-col">
-<div class="panel"><div class="kicker">Reliability system</div><h2>Accountability without coercion.</h2><p>The default is one active task at a time, roughly one bounded contribution per week for new contributors. If a claimed task expires, it returns to the pool. Repeated abandonment can reduce simultaneous reservations or create a cooldown. “Attempted but blocked” should be recorded separately because it may reveal documentation or task-design failures.</p><div class="boundary"><strong>No monetary penalty for ordinary volunteer non-completion.</strong><span>Reliability protects scarce tasks without turning a volunteer commons into debt or coercion.</span></div></div>
+<div class="panel"><div class="kicker">Reliability system</div><h2>How concerns and disagreements are handled.</h2><p>The default is one active task at a time, roughly one bounded contribution per week for new contributors. If a claimed task expires, it returns to the pool. Repeated abandonment can reduce simultaneous reservations or create a cooldown. “Attempted but blocked” should be recorded separately because it may reveal documentation or task-design failures.</p><div class="boundary"><strong>No monetary penalty for ordinary volunteer non-completion.</strong><span>Reliability protects scarce tasks without turning a volunteer commons into debt or coercion.</span></div></div>
 <div class="panel"><div class="kicker">Conflict rules</div><h2>Separate contribution, review, and funding where risk warrants it.</h2><p>High-consequence assurance cases should disclose who funded the work, who produced the evidence, who reviewed it, and whether a reviewer has a conflict. The same person may contribute and review in low-risk contexts, but the role should be explicit rather than invisible.</p></div>
 </section>
 
@@ -99,4 +99,4 @@
 <section class="commons-callout"><div><span class="commons-kicker-dark">TRUST RULE</span><h2>Money, seniority, and popularity never substitute for evidence.</h2><p>The technical verifier and the social governance should reinforce the same principle: authority must be explicit and conclusions must remain scoped to what was actually checked.</p></div><div class="actions"><a class="button primary button-lg" href="trust.html">Technical Trust Center</a><a class="button ghost button-lg" href="fund.html">Funding firewall</a></div></section>
 </main>
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Public-good governance for distributed assurance.</p></div><div class="footercol"><strong>Policies</strong><a href="contributors.html">Contributor progression</a><a href="fund.html">Funding model</a><a href="organizations.html">Organization access</a></div><div class="footercol"><strong>Technical trust</strong><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a><a href="privacy.html">Privacy</a></div></div></footer>
-</div><script src="site.js"></script><script src="commons.js"></script></body></html>
+</div><script src="site.js"></script><script src="commons.js"></script><script type="module" src="page-help.mjs"></script></body></html>

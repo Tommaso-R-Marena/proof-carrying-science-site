@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Project Mapper · Proof-Carrying Science</title>
-<meta name="description" content="Map a scientific project directory into a reviewable PCS v0.6 manifest draft locally in your browser. No files are uploaded.">
+<title>Choose which project files to check. · PCS</title>
+<meta name="description" content="Inspect files locally and review the checks PCS proposes. This advanced tool gives direct control over the draft and its technical details. Nothing is uploaded, and your code is not executed.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/project-builder.html">
 <meta name="robots" content="noindex,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>Local-only Project Mapper · Your scientific files never leave the browser</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Advanced local project mapper</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -29,8 +29,8 @@
 <main>
 <section class="pagehead">
   <div class="kicker">Advanced Project Mapper</div>
-  <h1>Inspect and tune PCS discovery in detail.</h1>
-  <p>This is the advanced discovery surface for users who want direct control over confidence thresholds, inferred workflow edges, environment metadata, artifacts, and the raw manifest draft. Nothing is uploaded, no user code is executed, and no private key is needed.</p><div class="notice" style="margin-top:18px"><strong>New to PCS?</strong> Start with <a href="guided-submission.html">Guided Submission</a>. It uses this same discovery engine with a simpler five-step review flow.</div>
+  <h1>Choose which project files to check.</h1>
+  <p>Inspect files locally and review the checks PCS proposes. This advanced tool gives direct control over the draft and its technical details. Nothing is uploaded, and your code is not executed.</p><div class="notice" style="margin-top:18px"><strong>New to PCS?</strong> Start with <a href="guided-submission.html">Guided Submission</a>. It uses this same discovery engine with a simpler five-step review flow.</div>
   <div class="actions">
     <a class="button primary" href="guided-submission.html">Use Guided Submission</a>
     <button class="button secondary" id="chooseProject">Choose project folder here</button>
@@ -157,5 +157,5 @@
 </div>
 <script src="site.js"></script>
 <script src="project-builder.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Completed PCS Result · Proof-Carrying Science</title>
-<meta name="description" content="Understand a completed PCS v0.6 review: package validity, claim support, reviewer acceptance, and signed receipt commitments.">
+<title>How to read a PCS result. · PCS</title>
+<meta name="description" content="Read four separate answers: were the files intact, did the computation pass, was the formal evidence valid, and did the reviewer accept it?">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/result-anatomy.html">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:title" content="Completed PCS Result · Proof-Carrying Science">
@@ -15,9 +15,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body class="result-revamp">
-<div class="topbar"><div class="shell"><span>Result anatomy · PCS v0.6 semantics · Educational walkthrough</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Result-reading guide</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -36,8 +36,8 @@
 <main>
 <section class="pagehead result-anatomy-head">
   <div class="kicker">Completed review anatomy</div>
-  <h1>What does a finished PCS result actually mean?</h1>
-  <p>A PCS result has separate layers. The package can be valid while a scientific claim fails. A claim can be computationally supported while a reviewer still declines to accept it. This walkthrough uses the actual PCS v0.6 result and receipt fields to make those distinctions concrete.</p>
+  <h1>How to read a PCS result.</h1>
+  <p>Read four separate answers: were the files intact, did the computation pass, was the formal evidence valid, and did the reviewer accept it?</p>
   <div class="real-package-entry-inline">
     <div><strong>Already received a real <code>.pcs.zip</code>?</strong><span>Open it locally in Package Inspector first. No package bytes are uploaded by that browser tool.</span></div>
     <a class="button primary" href="package-inspector.html#inspectorDrop">Inspect my package →</a>
@@ -49,7 +49,7 @@
   <div class="reviewer-first-glance-head">
     <div>
       <div class="kicker">Reviewer first glance</div>
-      <h2 id="reviewerFirstGlanceTitle">Four questions before you read anything else.</h2>
+      <h2 id="reviewerFirstGlanceTitle">Read four separate answers.</h2>
       <p>These four axes are deliberately separate. A valid package can carry a failed claim, and a supported claim can still be rejected by reviewer policy.</p>
     </div>
     <div class="reviewer-scenario-switch">
@@ -130,7 +130,7 @@
   <div class="typed-claim-inspection-head">
     <div>
       <div class="kicker">Exact illustrative claim</div>
-      <h2 id="typedClaimInspectionTitle">What the verifier is literally evaluating.</h2>
+      <h2 id="typedClaimInspectionTitle">See the exact question being checked.</h2>
       <p>This walkthrough uses the same restricted PK/PD reference-match predicate exposed by the PCS model example. The prose explains it; these typed fields define it.</p>
     </div>
     <span>ILLUSTRATIVE · NOT A LIVE RECEIPT</span>
@@ -191,7 +191,7 @@
 
   <div class="panel result-receipt-card" id="policy-receipt">
     <div class="kicker">Actual v0.6 field names</div>
-    <h2>Verification receipt anatomy</h2>
+    <h2>What the verification record contains</h2>
     <div class="receipt-axis-row"><span><code>format</code></span><strong>pcs-end-to-end-verifier-v06-v1</strong><small>Current executable v0.6 verifier result format.</small></div>
     <div class="receipt-axis-row"><span><code>valid</code></span><strong id="receiptValid">true</strong><small>Did PCS accept the package/replay/normalized-decision chain?</small></div>
     <div class="receipt-axis-row"><span><code>accepted</code></span><strong id="receiptAccepted">true</strong><small>Did the receiver's external policy accept that verified state?</small></div>
@@ -224,7 +224,7 @@
 
 <section class="section result-stage-detail" id="verification-chain">
   <div class="kicker">What “valid” contains</div>
-  <h2>PCS v0.6 verifies a chain, not one green checkbox.</h2>
+  <h2>Follow the complete evidence trail.</h2>
   <div class="result-stage-grid">
     <article><span>1</span><h3>Canonical inputs</h3><p>Certificate, manifest, and signature records must use the exact accepted canonical byte representation.</p></article>
     <article><span>2</span><h3>Certificate signature</h3><p>The certificate must authenticate under the expected Ed25519 producer key.</p></article>
@@ -254,5 +254,5 @@
 </div>
 <script src="site.js"></script>
 <script src="result-anatomy.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

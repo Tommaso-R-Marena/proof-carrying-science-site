@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Semantic Audit · PCS Research Demo</title><meta name="description" content="Inspect recorded PCS Lean semantic-translation fixture expectations, their failure codes and formal trust limits.">
+<title>Inspect examples of changed meaning. · PCS</title><meta name="description" content="Choose a translation example and see what its recorded test expected. The cases come from an archived Aristotle proof-development output. This page is not executing Lean.">
 <link rel="stylesheet" href="styles.css"><style>
 .audit-shell{max-width:980px;margin:40px auto 70px;padding:0 20px}.audit-shell h1{font-size:clamp(2rem,5vw,3.7rem);line-height:1.1}
 .audit-box{background:#fff;border:1px solid #dae4e0;border-radius:15px;padding:22px;margin:18px 0}
@@ -10,11 +10,11 @@
 .audit-status[data-verdict=ACCEPTED]{color:#17715b}.audit-status[data-verdict=NEEDS_CLARIFICATION]{color:#8a6121}
 .audit-shell code{overflow-wrap:anywhere}.audit-shell p{line-height:1.65}
 @media(max-width:720px){.audit-grid{grid-template-columns:1fr}}
-</style></head><body class="commons-page"><div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img alt="" src="logo-mark.svg"><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="arena.html">Arena</a><a href="tasks.html">Tasks</a><a href="research-preview.html">Research demo</a><a href="account.html">Account</a></div></nav></div>
-<main class="audit-shell"><div class="kicker">SEMANTIC TRANSLATION · RECORDED FORMAL TEST CASES</div><h1>What does a faithful translation actually require?</h1>
-<p>Explore a curated selection of Aristotle's v1 test fixtures. The original Lean build was reported successful by Aristotle, but <strong>this website is not executing Lean</strong>. These are recorded fixture expectations, not freshly verified runtime receipts.</p>
+</style><link rel="stylesheet" href="page-help.css"></head><body class="commons-page"><div class="shell"><nav aria-label="Primary"><a class="brand" href="index.html"><img alt="" src="logo-mark.svg"><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="arena.html">Arena</a><a href="tasks.html">Tasks</a><a href="research-preview.html">Research demo</a><a href="account.html">Account</a></div></nav></div>
+<main class="audit-shell"><div class="kicker">SEMANTIC TRANSLATION · RECORDED FORMAL TEST CASES</div><h1>Inspect examples of changed meaning.</h1>
+<p>Choose a translation example and see what its recorded test expected. The cases come from an archived Aristotle proof-development output. This page is not executing Lean.</p>
 <div class="audit-grid"><section class="audit-box"><h2>Select a research case</h2><label for="auditCase">Translation mutation</label><select id="auditCase"></select><p><strong>Evidence source:</strong> original Aristotle fixture index.</p><p><a href="arena-countermodel.html">Construct your own finite countermodel →</a></p></section>
 <section class="audit-box" aria-live="polite"><h2 id="auditTitle">Loading…</h2><p id="auditVerdict" class="audit-status"></p><p id="auditDesc"></p><strong>Recorded diagnostics</strong><ul id="auditCodes"></ul></section></div>
 <section class="audit-box"><h2>Trust boundary</h2><p><strong>Recorded result:</strong> an expected outcome of a fixed, versioned formal checker fixture. <strong>Not established here:</strong> current compiled Lean kernel execution, actual meaning of arbitrary English, live model generation, correctness of real-world premises, or completed PCS integration.</p>
 <p><strong>Exact fixture-index SHA-256:</strong> <code id="auditHash"></code></p><p><strong>Cases displayed:</strong> <span id="auditCount"></span> of 36. <a href="arena.html">Return to all games.</a></p></section>
-<p id="auditError" role="alert"></p></main><script type="module" src="semantic-audit.js"></script></body></html>
+<p id="auditError" role="alert"></p></main><script type="module" src="semantic-audit.js"></script><script type="module" src="page-help.mjs"></script></body></html>

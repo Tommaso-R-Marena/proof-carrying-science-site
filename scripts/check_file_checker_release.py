@@ -5,6 +5,14 @@ from pathlib import Path
 def require(condition, message):
     if not condition:raise ValueError(message)
 
+SOURCE_FILES = {'desktop/VERSION','desktop/app.py','desktop/file_check.py','desktop/change_review.py',
+                    *('desktop/lean/'+n+'.lean' for n in ['Main','StackSafe','Audit','OriginalCsv','Review']),
+                    *('public/'+n for n in ['check-my-files.html','file-check.css','file-check.mjs',
+                    'page-help.mjs','page-help-core.mjs','page-help.css',
+                    'file-check-core.mjs','file-check-local.mjs','change-review-core.mjs','review-changes.html',
+                    'review-changes.mjs','usability-core.mjs','usability-study.html','usability-study.mjs',
+                    'example-iris-previous.csv','example-iris-new.csv','logo-mark.svg'])}
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('folder', type=Path)
@@ -15,12 +23,7 @@ def main():
     expected = {f'PCS-File-Checker-{os}.zip' for os in ['linux-x64', 'windows-x64', 'macos-arm64', 'macos-x64']}
     files = list(a.folder.rglob('*.zip'))
     require(len(files) == 4 and {f.name for f in files} == expected, 'Release archive qualification failed.')
-    source_files = {'desktop/VERSION','desktop/app.py','desktop/file_check.py','desktop/change_review.py',
-                    *('desktop/lean/'+n+'.lean' for n in ['Main','StackSafe','Audit','OriginalCsv','Review']),
-                    *('public/'+n for n in ['check-my-files.html','file-check.css','file-check.mjs',
-                    'file-check-core.mjs','file-check-local.mjs','change-review-core.mjs','review-changes.html',
-                    'review-changes.mjs','usability-core.mjs','usability-study.html','usability-study.mjs',
-                    'example-iris-previous.csv','example-iris-new.csv','logo-mark.svg'])}
+    source_files = SOURCE_FILES
     require(re.fullmatch('[a-f0-9]{40}', a.commit), 'Expected exact committed source')
     expected_hashes = {name:hashlib.sha256(subprocess.check_output(
         ['git','cat-file','blob',a.commit+':'+name],cwd=root)).hexdigest() for name in source_files}

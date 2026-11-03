@@ -35,7 +35,7 @@ const server = http.createServer((req, res) => {
       });
       const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message));
       assert.equal((await page.goto(base + '/')).status(), 200);
-      await page.getByRole('link', {name:'Try a 1-minute example', exact:true}).click();
+      await page.getByRole('link', {name:'Try the scientific example', exact:true}).click();
       await page.locator('#ruleInvestigation>summary').click();
       await page.locator('#firstInvestigation[data-ready=true]').waitFor();
       assert.equal(await page.locator('#fiCheck').isDisabled(), true);

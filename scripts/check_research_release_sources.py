@@ -35,8 +35,9 @@ def verify(core):
     capability=manifest['capability_source_sha']
     subprocess.run(['git','-C',str(core),'merge-base','--is-ancestor',capability,current],check=True)
     qualification=json.loads((ROOT/'docs/evidence/d1-present-state-baseline-v1/clone-boundary-qualification.json').read_text())
-    browser=json.loads((ROOT/'docs/evidence/website-research-sync-v1/calibration-browser.json').read_text())
-    for receipt in [qualification,browser]:
+    # Fresh UI-only replays retain all historical outcomes and mathematical sources.
+    subprocess.run(['node',str(ROOT/'scripts/verify_browser_ui_sources.mjs')],check=True)
+    for receipt in [qualification]:
         for name,expected_sha in receipt['source_sha256'].items():
             if hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=expected_sha:
                 raise ValueError('Executed local qualification source differs: '+name)

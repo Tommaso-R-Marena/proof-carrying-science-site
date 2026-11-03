@@ -2,12 +2,12 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>What is PCS? Try a one-minute example</title>
-<meta name="description" content="PCS checks specific rules in data and calculations. Try two example lists, see the matching IDs, and save a report. No account or technical experience needed.">
+<meta name="description" content="PCS checks specific rules in data and calculations. It shows what passed, what needs attention, and how someone else can check the same result.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/experience.html">
 <meta name="robots" content="index,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="experience.css"><link rel="stylesheet" href="first-investigation.css"><link rel="stylesheet" href="one-minute.css">
-</head><body class="experience-page">
+<link rel="stylesheet" href="page-help.css"></head><body class="experience-page">
 
 <div class="shell">
 <nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="experience.html">Start here</a><a href="check-my-files.html">Check my files</a><a href="research.html">Explore research</a></div></nav>
@@ -16,8 +16,22 @@
  <span class="minute-kicker">PCS IN ONE MINUTE</span>
  <h1 id="minuteTitle">Check your work.<br>Keep the evidence.</h1>
  <p>PCS checks specific rules in data and calculations. It shows what passed, what needs attention, and how someone else can check the same result.</p>
- <ol class="minute-steps" aria-label="How to use PCS"><li><strong>1. Pick a question</strong><span>For example: do two lists share an ID?</span></li><li><strong>2. Run the check</strong><span>See the result and the rows to review.</span></li><li><strong>3. Save the report</strong><span>Keep it or share it for someone to recheck.</span></li></ol>
- <section class="minute-demo" id="minuteExamplePanel" aria-labelledby="minuteQuestion">
+<section class="minute-demo science-demo" id="scienceDemoPanel" aria-labelledby="scienceQuestion">
+ <span class="minute-kicker">A REAL SCIENTIFIC WORKFLOW · PUBLISHED IRIS DATA</span>
+ <h2 id="scienceQuestion">Did adding observations change the data I already had?</h2>
+ <p>Before using a larger dataset, researchers check that earlier observations were not lost or changed.</p>
+ <p>Try published iris flower measurements. The two teaching exports contain 100 and 150 recorded observations.</p>
+ <p class="minute-limit">One archived dataset, not a historical update. Data: R. A. Fisher, <a href="https://archive.ics.uci.edu/dataset/53/iris">UCI Iris</a>, CC BY 4.0.</p>
+ <ol class="minute-steps"><li><strong>1. Compare</strong><span>Preserve earlier observations.</span></li><li><strong>2. Understand</strong><span>Inspect the differences.</span></li><li><strong>3. Keep evidence</strong><span>Recheck the same files.</span></li></ol>
+ <div class="science-snapshots"><article><strong>Previous export</strong><span id="scienceCount0">Checking source…</span></article><span aria-hidden="true">→</span><article><strong>Larger export</strong><span id="scienceCount1">Checking source…</span></article></div>
+ <label for="scienceCase">Choose what to test</label><select id="scienceCase" disabled><option value="original">Original observations</option><option value="edited">Change one measurement</option><option value="removed">Remove one observation</option></select><p id="scienceControlNote" class="minute-limit">Published values are unchanged. The two exports differ in size and row order.</p>
+ <button class="button primary" id="scienceCheck" type="button" disabled>Check the observations</button><p id="scienceStatus" role="status" aria-live="polite">Loading the published-data files. No result yet.</p><p id="scienceStage" class="minute-progress" aria-live="polite">Step 1: compare the saved observations.</p>
+ <section class="minute-result" id="scienceResults" hidden><h3 id="scienceOutcome" tabindex="-1">No result yet</h3><p id="scienceMeaning"></p><p id="scienceCounts"></p><dl class="minute-facts"><dt>What was checked</dt><dd>Every earlier row is present and its five recorded values are unchanged. New rows are allowed.</dd><dt>What remains unknown</dt><dd>Whether the published measurements are accurate or support your scientific conclusion. This browser check does not run Lean, the mathematical proof checker.</dd></dl><div class="minute-actions"><button class="button primary" id="scienceReport" disabled>Save a readable report</button><button class="button secondary" id="scienceReplay" disabled>Save files for a recheck</button></div><p>Use <a href="review-changes.html">What changed?</a> for your own exports. The downloadable local app can also recheck this replay with Lean on your computer.</p></section>
+ <details id="scienceReopen"><summary>Reopen your download and check it again</summary><p>Choose the recheck file you saved. PCS compares its embedded data again using this same five-column preservation question. It checks the counts instead of trusting a saved “passed” label. Other settings belong in <a href="review-changes.html">What changed?</a>.</p><label for="scienceRecheckFile">Choose the recheck JSON file</label><input type="file" id="scienceRecheckFile" accept=".json,application/json"><p id="scienceRecheckStatus" role="status">No download has been rechecked.</p></details>
+ <details><summary>See the observations and their source</summary><p>Measurements are in centimetres. A sepal is an outer flower part; a petal is an inner flower part. All five published columns are compared, even though this preview shows only three fields.</p><div class="minute-lists"><table><caption id="scienceFile0">Previous export</caption><thead><tr><th>ID</th><th>Sepal length</th><th>Species</th></tr></thead><tbody id="scienceRows0"></tbody></table><table><caption id="scienceFile1">Larger export</caption><thead><tr><th>ID</th><th>Sepal length</th><th>Species</th></tr></thead><tbody id="scienceRows1"></tbody></table></div><p><a href="example-iris-previous.csv" download>Download the 100-observation export</a> · <a href="example-iris-new.csv" download>Download the 150-observation export</a> · <a href="iris-workflow-provenance.json">Source and file identities</a></p><p>R. A. Fisher, <em>Iris</em>, UC Irvine Machine Learning Repository, DOI 10.24432/C56C76, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. <a href="https://archive.ics.uci.edu/dataset/53/iris">Publisher and data notes</a>.</p><p>We kept the published cell values, added row IDs within this frozen snapshot, and reversed the larger export’s row order. These IDs do not identify flowers across other versions of the dataset. UCI reports measurement discrepancies in observations 35 and 38; this example preserves those values and does not resolve the discrepancies.</p></details>
+ <noscript><p>This check needs JavaScript to calculate on your device. You can still download the published-data exports and read the workflow above.</p></noscript>
+</section>
+<details id="practiceLists" class="minute-more"><summary>Optional: practise matching IDs with made-up lists</summary> <section class="minute-demo" id="minuteExamplePanel" aria-labelledby="minuteQuestion">
   <h2 id="minuteQuestion">Check a result: should these groups be separate?</h2>
   <p>You have two lists of people. Nobody should be in both groups. Check the ID numbers to find any overlap.</p>
   <p class="minute-limit">Made-up practice data. The checker runs now on your device.</p><p id="minuteProgress" class="minute-progress" aria-live="polite">Step 1 of 3: check the lists.</p>
@@ -29,8 +43,9 @@
   <details><summary>How does this relate to the rest of PCS?</summary><p>This example uses the same CSV checker as “Check my files”. A CSV is a spreadsheet saved as a simple text file. Everything here runs on your device.</p><p>The wider PCS project also studies checks for scientific calculations, mathematical proofs and AI systems. Each tool explains exactly what it checks. This browser example does not run Lean, the mathematical proof checker, or establish that an AI is safe.</p></details>
   <noscript><p>The interactive example needs JavaScript to run on your device. The tables above are still readable. <a href="check-my-files.html">Open the file checker</a> to see its instructions and downloadable app.</p></noscript>
  </section>
- <section class="minute-next" aria-labelledby="minuteNext"><h2 id="minuteNext">Ready to try your own work?</h2><p>Choose two spreadsheet exports with an ID column. The file checker explains how.</p><div class="minute-actions"><a class="button primary" href="check-my-files.html">Check my own files</a><a class="button secondary" href="model-walkthrough.html">See the PCS model at work</a><a class="button secondary" href="arena.html">Learn by playing</a></div><p class="minute-limit">No account is needed for these local file checks.</p></section>
-<p class="minute-limit"><a href="first-visit-study.html">Optional: help us find confusing steps</a>. Practice tasks and answers stay on your device unless you choose to share a download.</p></section>
+</details>
+ <section class="minute-next" aria-labelledby="minuteNext"><h2 id="minuteNext">Try your own work</h2><p>Compare two CSV exports to check for added, removed or edited records. A CSV is a spreadsheet saved as a simple text file.</p><div class="minute-actions"><a class="button primary" href="review-changes.html">Check my own dataset</a><a class="button secondary" href="model-walkthrough.html">See the PCS model at work</a><a class="button secondary" href="arena.html">Learn by playing</a></div><p class="minute-limit">No account is needed for these local file checks.</p><details><summary>See a calculation from real measurements</summary><p>Data preservation is one part of a scientific workflow. The <a href="scientific-workflow-v2.html">penguin example</a> follows actual field measurements into a calculation and its recorded verification evidence. It explains which checks passed and why that does not establish biological causation.</p></details></section>
+</section>
 <details class="minute-more" id="ruleInvestigation"><summary>Optional: explore rule changes, games and technical details</summary>
 <section class="xp-hero">
   <div class="xp-hero-content"><span class="xp-eyebrow"><span class="xp-dot"></span> TRY A RULE CHECK</span>
@@ -144,5 +159,5 @@
 </section>
 </details>
 </details>
-</main><footer class="minute-footer"><p>Proof-Carrying Science</p><p><a href="index.html">Home</a> · <a href="check-my-files.html">Check my files</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p></footer>
-</div><script src="site.js"></script><script type="module" src="one-minute.mjs"></script><script type="module" src="experience.js"></script><script type="module" src="first-investigation.mjs"></script><script type="module" src="first-visit-observer.mjs"></script></body></html>
+</main><footer class="minute-footer"><p>Proof-Carrying Science</p><p><a href="index.html">Home</a> · <a href="check-my-files.html">Check my files</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p><p class="minute-limit"><a href="first-visit-study.html">Optional: help us find confusing steps</a>. Practice tasks and answers stay on your device unless you choose to share a download.</p></footer>
+</div><script src="site.js"></script><script type="module" src="science-workflow.mjs"></script><script type="module" src="one-minute.mjs"></script><script type="module" src="experience.js"></script><script type="module" src="first-investigation.mjs"></script><script type="module" src="first-visit-observer.mjs"></script><script type="module" src="page-help.mjs"></script></body></html>

@@ -195,14 +195,14 @@ if result_anatomy_page.exists():
     text_value = result_anatomy_page.read_text(encoding="utf-8")
     for required_text in [
         "Completed review anatomy",
-        "What does a finished PCS result actually mean?",
+        "How to read a PCS result.",
         "Educational walkthrough:",
         "Already received a real",
         "Inspect my package →",
         'href="package-inspector.html#inspectorDrop"',
         "Valid + accepted",
         "Reviewer first glance",
-        "Four questions before you read anything else.",
+        "Read four separate answers.",
         "1 · Package validity",
         "2 · Exact typed claim",
         "3 · Still trusted / open",
@@ -211,7 +211,7 @@ if result_anatomy_page.exists():
         "Recommended next inspection",
         "Inspect exact predicate →",
         "Jump to reviewer evidence",
-        "What the verifier is literally evaluating.",
+        "See the exact question being checked.",
         "ILLUSTRATIVE · NOT A LIVE RECEIPT",
         "model_artifact",
         "pk_predictions",
@@ -287,8 +287,8 @@ if index_page.exists():
         "Let someone else verify it",
         "A green result never proves universal AI safety.",
         "what needs attention",
-        "find a shared ID in two lists.",
-        "Try a 1-minute example",
+        "add published observations without losing or changing earlier data.",
+        "Try the scientific example",
         "Check my files",
         "Start from your role",
         "What are you here to do?",
@@ -317,7 +317,7 @@ if index_page.exists():
 # Public research-preview examples must never masquerade as kernel evidence.
 for preview_name, expected_tokens in {
     "research-preview.html": [
-        "Research Preview", "No account required", "not Lean proofs",
+        "Try a small scientific or policy check.", "No account required", "not Lean proofs",
         'id="previewInput"', 'id="previewResult"',
         'src="research-preview.js"', 'href="package-inspector.html"',
     ],
@@ -347,7 +347,7 @@ for preview_name, expected_tokens in {
 # and independent of protected production approval or arbitrary remote execution.
 for pilot_file, required_tokens in {
     "researcher-pilots.html": [
-        "Independent Researcher Pilots", "Falsification", "NOT PCS-VERIFIED",
+        "Help test a PCS scientific workflow.", "Falsification", "NOT PCS-VERIFIED",
         'id="pilotDraftForm"', 'id="pilotDraftResult"',
         'src="researcher-pilot-ui.js"', 'href="research-preview.html"',
         "PCS core, website and CertiForge source are public",
@@ -638,7 +638,7 @@ if not (REPO / "scripts" / "prepare_safety_forge_dataset.mjs").is_file():
 commons_contracts = {
     "commons.html": [
         "Crowdsource the work. Never the truth.",
-        "Give one useful hour to AI safety.",
+        "Find a useful way to help PCS.",
         "Volunteer and paid work are labeled before you accept it",
         "Safety Bounty Fund",
         'href="contribute.html"',
@@ -646,8 +646,8 @@ commons_contracts = {
         'src="commons.js"',
     ],
     "contribute.html": [
-        "You can help before you are an expert.",
-        "account required",
+        "Choose a way to contribute.",
+        "account is required",
         "verified levels are assigned, never self-selected",
         "variable generated evaluation",
         "manual competency review",
@@ -659,8 +659,8 @@ commons_contracts = {
         'src="commons.js"',
     ],
     "tasks.html": [
-        "Only work PCS actually needs should be here.",
-        "explicit Founder publication",
+        "Find a task you can help with.",
+        "project owner has approved for publication",
         "published + needed",
         "administrative",
         "marketing",
@@ -679,7 +679,7 @@ commons_contracts = {
         'src="commons.js"',
     ],
     "projects.html": [
-        "See exactly where a contribution fits.",
+        "See how a task helps a larger project.",
         "Not a claim of global AI safety",
         "Distributed assurance",
         "Claim Invalidation v1",
@@ -687,7 +687,7 @@ commons_contracts = {
     ],
     "claim-invalidation-v1.html": [
         "First public PCS Commons research program",
-        "Which claims must reopen when evidence changes?",
+        "What needs rechecking when a file changes?",
         "unreachable ≠ unaffected",
         "INV-001",
         "INV-006",
@@ -724,15 +724,15 @@ commons_contracts = {
         "Licensing caution",
     ],
     "research.html": [
-        "Distributed contributors should not require distributed trust.",
+        "What PCS research is trying to establish.",
         "AI safety first",
-        "External-world transfer is explicit",
+        "Explain the connection to reality",
         "integrated into the core repository and independently rebuilt",
     ],
     "account.html": [
-        "Build your contributor record.",
-        "Every new account starts at L0.",
-        "Two ways to qualify for higher-trust work.",
+        "Sign in or create an account.",
+        "New contributors begin at level 0.",
+        "Two ways to apply for specialist work.",
         "Variable competency evaluation",
         "Manual application / evidence review",
         "AI is allowed:",
@@ -744,7 +744,7 @@ commons_contracts = {
         'src="account.js"',
     ],
     "admin.html": [
-        "One place for approvals, authority, operations, and audit history.",
+        "Manage contributions and review decisions.",
         "Separate privileged session",
         "Approval history",
         "Administrative actions",
@@ -815,7 +815,7 @@ roles_page = ROOT / "roles.html"
 roles_js = ROOT / "roles.js"
 if roles_page.exists():
     value = roles_page.read_text(encoding="utf-8")
-    for required_text in ["Some useful work is a responsibility, not a ticket.",'id="roleList"','src="roles.js"']:
+    for required_text in ["Find an ongoing role.",'id="roleList"','src="roles.js"']:
         if required_text not in value:
             errors.append(f"roles.html: ongoing-role contract drift: {required_text}")
 if roles_js.exists():
@@ -828,7 +828,7 @@ task_graph_page = ROOT / "task-graph.html"
 task_graph_js = ROOT / "task-graph.js"
 if task_graph_page.exists():
     value = task_graph_page.read_text(encoding="utf-8")
-    for required_text in ["Which tasks depend on others? Why?","ALL, ANY, and AT_LEAST",'id="taskGraphPrograms"','src="task-graph.js"']:
+    for required_text in ["See which tasks need other work first.","ALL, ANY, and AT_LEAST",'id="taskGraphPrograms"','src="task-graph.js"']:
         if required_text not in value:
             errors.append(f"task-graph.html: dependency-graph contract drift: {required_text}")
 if task_graph_js.exists():
@@ -1214,7 +1214,7 @@ guided_js = ROOT / "guided-submission.js"
 if guided_page.exists():
     guided_text = guided_page.read_text(encoding="utf-8")
     for required_text in [
-        "From scientific project to review-ready PCS draft in five steps.",
+        "Prepare a scientific project for review.",
         "Start with a small, reviewable slice of your project",
         "Usually 2–4 files are enough to learn whether PCS fits.",
         "code + input + output + environment file",

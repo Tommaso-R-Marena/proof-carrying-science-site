@@ -1,5 +1,6 @@
 """Public availability metadata tests, not positive Lean authorization tests."""
 import copy
+import ast
 import importlib.util
 from pathlib import Path
 import unittest
@@ -19,6 +20,26 @@ def metadata():
 
 
 class PublicationTests(unittest.TestCase):
+    def test_builder_server_and_release_gate_require_the_same_public_assets(self):
+        # Independent consumers used to disagree when new reading assets were added.
+        root = Path(__file__).resolve().parents[1]
+        builder = ast.parse((root/'scripts/build_file_checker.py').read_text())
+        packaged = next(ast.literal_eval(n.value) for n in ast.walk(builder)
+                        if isinstance(n, ast.Assign) and any(
+                            isinstance(t, ast.Name) and t.id == 'public' for t in n.targets))
+        server = ast.parse((root/'desktop/app.py').read_text())
+        served = next(ast.literal_eval(n.value) for n in server.body
+                      if isinstance(n, ast.Assign) and any(
+                          isinstance(t, ast.Name) and t.id == 'PUBLIC_FILES' for t in n.targets))
+        gate_spec = importlib.util.spec_from_file_location('release_gate', root/'scripts/check_file_checker_release.py')
+        gate = importlib.util.module_from_spec(gate_spec)
+        gate_spec.loader.exec_module(gate)
+        required = {p.removeprefix('public/') for p in gate.SOURCE_FILES if p.startswith('public/')}
+        self.assertEqual(len(packaged), len(set(packaged)), 'Duplicate package source')
+        self.assertEqual(set(packaged), served)
+        self.assertEqual(required, served)
+        self.assertTrue({'page-help.mjs', 'page-help-core.mjs', 'page-help.css'} <= required)
+
     def test_shipped_links_match_the_version_file(self):
         self.assertRegex(publication.advertised_version(), r'^[0-9]+\.[0-9]+\.[0-9]+$')
 

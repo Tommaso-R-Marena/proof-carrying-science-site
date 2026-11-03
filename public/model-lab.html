@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PK/PD Model Lab · Proof-Carrying Science</title>
-<meta name="description" content="Generate a restricted one-compartment IV-bolus PK + direct Emax PD model, replay it locally, and export PCS-compatible manifest/model/prediction files.">
+<title>Explore a simple drug-concentration model. · PCS</title>
+<meta name="description" content="Change the dose and model parameters, calculate the predicted concentrations, and save the files needed for a separate PCS check.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/model-lab.html">
 <meta name="robots" content="noindex,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>Local model lab · Generates PCS-compatible inputs</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Synthetic scientific-model lab</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -21,8 +21,8 @@
 <main>
 <section class="pagehead">
   <div class="kicker">Restricted PK/PD model lab</div>
-  <h1>Generate the computation. Then hand it to PCS for assurance.</h1>
-  <p>This tool uses the same restricted one-compartment IV-bolus PK and direct Emax PD equations as the current PCS adapter. Change the parameters, generate predictions, replay them locally with the browser engine, then download a production-compatible <code>manifest.json</code>, <code>pk_model.json</code>, and <code>predictions.csv</code> for the Python checker.</p>
+  <h1>Explore a simple drug-concentration model.</h1>
+  <p>Change the dose and model parameters, calculate the predicted concentrations, and save the files needed for a separate PCS check.</p><details class="page-help"><summary>Technical formats used here</summary><p>This tool uses the same restricted one-compartment IV-bolus PK and direct Emax PD equations as the current PCS adapter. Change the parameters, generate predictions, replay them locally with the browser engine, then download a production-compatible <code>manifest.json</code>, <code>pk_model.json</code>, and <code>predictions.csv</code> for the Python checker.</p></details>
 </section>
 
 <section class="demo-shell">
@@ -94,5 +94,5 @@ pcs attest manifest.json -o evidence --intake-lock pilot_intake.lock.json</pre>
 <script src="pcs-engine.js"></script>
 <script src="model-lab.js"></script>
 <script src="site.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>
