@@ -93,3 +93,10 @@ Protected CI exposed a long-heading overflow under a different system font.
 Titles now wrap on narrow screens; the all-page campaign also checks the longer
 fallback font. The independent first-investigation campaign follows the renamed
 scientific-example link and retains its four-width negative-control checks.
+
+The four-platform archive qualification also caught a stale third asset inventory:
+the builder and local server included the new reading-help files, while the
+release gate still expected the older set. The gate now requires all three new
+files in addition to every earlier source and its exact committed hash. A quick
+integration regression compares the builder, server and release inventories so
+this mismatch is caught before compiling four platform packages.
