@@ -68,9 +68,11 @@ toolchains or terminal commands. Reports and reusable settings preserve privacy
 by default. The public Iris example demonstrates checks on published observations.
 
 See [the exact contract, proofs and reproduction](docs/CHANGE_REVIEW_V2.md).
-New native builds automatically run the original-byte Lean checker after each
-valid review, including the three published-data controls. Existing version 2.0.0
-downloads still use their explicit local-check button; their archives are unchanged.
+The [published 2.1.0 app](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/tag/pcs-files-v2.1.0)
+automatically runs the original-byte Lean checker after each valid review, including
+the three published-data controls. Open either a private review or model comparison
+from its first screen; original files and settings load together and require a fresh
+check. Earlier 2.0.0 archives retain their explicit local-check button and remain unchanged.
 A private handoff now carries both original files, chosen columns and rules to
 the local app. No remapping is needed; a fresh check is still required.
 The [optional newcomer study](docs/NEWCOMER_STUDY_V1.md) provides consent-based local
@@ -85,7 +87,7 @@ have exactly the same unique IDs. PCS reports both gains and lost earlier
 matches; a better total alone does not pass preservation. The optional provenance
 notes and weight hashes are supplied claims, not proof of physical generation.
 
-Version 2.1 builds add an independently compiled Lean checker for the three
+Released version 2.1.0 adds an independently compiled Lean checker for the three
 original byte snapshots. The browser and Python reader independently reproduce
 every decoded cell, selected label and count. Private replays carry exact files
 and settings, and imported receipts never authorize a new result. The real

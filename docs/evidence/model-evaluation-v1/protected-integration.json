@@ -1,0 +1,150 @@
+{
+  "format": "pcs-native-release-protected-integration-v1",
+  "feature": {
+    "pull_request": 142,
+    "merge_commit": "7f9b1557ca1138d76475187d06690dee3f0faef2",
+    "head": "8f2b5885c3ba01164f6035064a364af0f5648c0b",
+    "checks": [
+      {
+        "name": "site-full-gate",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126199039500"
+      },
+      {
+        "name": "portable-file-checker / qualify-packages",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126198830533"
+      },
+      {
+        "name": "portable-file-checker / packages (macos-15)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126191625827"
+      },
+      {
+        "name": "portable-file-checker / packages (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126191625793"
+      },
+      {
+        "name": "portable-file-checker / packages (windows-2022)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126191625789"
+      },
+      {
+        "name": "portable-file-checker / packages (macos-15-intel)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126191625456"
+      },
+      {
+        "name": "proof-workbench-research / receiving-replay",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126191625281"
+      },
+      {
+        "name": "lean-learning-browser",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509549/job/126191624685"
+      },
+      {
+        "name": "beginner-browser",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509596/job/126190886200"
+      },
+      {
+        "name": "visual-game-browser",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509628/job/126190884152"
+      },
+      {
+        "name": "site-check",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509778/job/126190883493"
+      },
+      {
+        "name": "site-contract",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509830/job/126190883454"
+      },
+      {
+        "name": "countermodel-lean-kernel",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41714509887/job/126190883380"
+      }
+    ]
+  },
+  "unified_receiving": {
+    "pull_request": 143,
+    "merge_commit": "db77dd2b7c0a8e138dd44e778e541c81f864015c",
+    "head": "c7b759bb4c542e9f77049ce3b86de120d3978c19",
+    "checks": [
+      {
+        "name": "site-full-gate",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126228571804"
+      },
+      {
+        "name": "portable-file-checker / qualify-packages",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126228321956"
+      },
+      {
+        "name": "visual-game-browser",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41723502870/job/126222128657"
+      },
+      {
+        "name": "portable-file-checker / packages (macos-15)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126219645317"
+      },
+      {
+        "name": "portable-file-checker / packages (macos-15-intel)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126219645261"
+      },
+      {
+        "name": "portable-file-checker / packages (ubuntu-24.04)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126219645027"
+      },
+      {
+        "name": "portable-file-checker / packages (windows-2022)",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126219645016"
+      },
+      {
+        "name": "proof-workbench-research / receiving-replay",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126219644702"
+      },
+      {
+        "name": "lean-learning-browser",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526395/job/126219644226"
+      },
+      {
+        "name": "countermodel-lean-kernel",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526312/job/126218749292"
+      },
+      {
+        "name": "beginner-browser",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526400/job/126218748660"
+      },
+      {
+        "name": "site-check",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526298/job/126218748513"
+      },
+      {
+        "name": "site-contract",
+        "conclusion": "success",
+        "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41722526332/job/126218748234"
+      }
+    ]
+  },
+  "human_participants": 0,
+  "independent_external_validation": false,
+  "unpublished_7f_release_build_canceled_for_receiving_fix": 41718591642
+}

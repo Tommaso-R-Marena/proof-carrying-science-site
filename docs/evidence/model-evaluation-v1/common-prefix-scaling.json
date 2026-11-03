@@ -1,0 +1,27 @@
+{
+  "format": "pcs-evaluation-adversarial-id-scaling-v1",
+  "rows": [
+    {
+      "rows_per_original": 100,
+      "id_bytes": 256,
+      "shared_prefix_bytes": 250,
+      "actual_native_check_passed": true,
+      "seconds": 0.066
+    },
+    {
+      "rows_per_original": 500,
+      "id_bytes": 256,
+      "shared_prefix_bytes": 250,
+      "actual_native_check_passed": true,
+      "seconds": 0.293
+    },
+    {
+      "rows_per_original": 1000,
+      "id_bytes": 256,
+      "shared_prefix_bytes": 250,
+      "actual_native_check_passed": true,
+      "seconds": 0.782
+    }
+  ],
+  "new_model_inference_executed": false
+}
