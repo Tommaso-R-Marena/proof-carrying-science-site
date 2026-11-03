@@ -281,6 +281,7 @@ jobs:
           PYCONNECTED
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BRIDGE_BASE=http://127.0.0.1:8769 npm run test:browser:bridge
           PCS_LEAN_CORE="$PWD/.ci-components/lean-prover" PCS_BRIDGE_BASE=http://127.0.0.1:8769 npm run test:browser:memory
+          PCS_ROUTE_STALE_OUTPUT="$RUNNER_TEMP/stale-route" npm run test:browser:route-stale
           PCS_CONNECTED_OUTPUT="$RUNNER_TEMP/connected-models" npm run test:browser:connected-models
           python scripts/replay_model_lean_chain.py "$RUNNER_TEMP/connected-models/implication-reversal-1-browser-chain.json" --core .ci-components/lean-prover
           python scripts/replay_model_lean_chain.py "$RUNNER_TEMP/connected-models/universal-existential-1-browser-chain.json" --core .ci-components/lean-prover

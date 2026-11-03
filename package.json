@@ -79,7 +79,8 @@
     "test:browser:clear-purpose": "node scripts/browser_clear_purpose.cjs",
     "test:browser:site-clarity": "node scripts/browser_site_clarity.cjs",
     "test:browser:model-handoff": "node scripts/browser_model_lean_handoff.cjs",
-    "test:browser:connected-models": "node scripts/browser_connected_models.cjs"
+    "test:browser:connected-models": "node scripts/browser_connected_models.cjs",
+    "test:browser:route-stale": "node scripts/browser_route_stale.cjs"
   },
   "devDependencies": {
     "playwright": "1.64.0",

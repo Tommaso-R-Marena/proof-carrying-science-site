@@ -1,0 +1,10 @@
+{
+  "format": "pcs-stale-route-real-Lean-browser-v1",
+  "status": "PASS",
+  "actual_successful_kernel_receipts_delayed": 1,
+  "changed_route_did_not_inherit_receipt": true,
+  "producer_response_bytes_changed": false,
+  "positive_verdict_fabricated": false,
+  "public_jobs_submitted": 0,
+  "pcs_authority": false
+}

@@ -125,6 +125,12 @@ journal. Local-only receipts disclose that the legacy backend does not
 independently attest its source revision; the recommended gateway checks source
 before launch, but cannot create a hardware attestation.
 
+An additional real-browser regression holds the actual closing response from
+Lean, undoes the route, then releases that unchanged successful response. The
+changed route must not inherit the receipt, even after it is completed again.
+The clean committed local runtime passed this check; the response is delayed,
+not replaced by an invented positive verifier.
+
 ## Evidence and limits
 
 Raw actual public-job-entrypoint outputs and combined replay files live under
