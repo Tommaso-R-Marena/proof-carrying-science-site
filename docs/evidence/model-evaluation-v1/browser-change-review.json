@@ -1,0 +1,85 @@
+{
+  "format": "pcs-change-review-browser-v2",
+  "human_participants": 0,
+  "widths": [
+    {
+      "width": 320,
+      "exact_changes": true,
+      "privacy_defaults": true,
+      "saved_recipe_recovered": true,
+      "canonical_replay_rechecked": true,
+      "forged_receipt_refused": true,
+      "rule_change_invalidates": true,
+      "duplicate_ids_refused": true,
+      "no_study_record_without_consent": true,
+      "no_overflow": true
+    },
+    {
+      "width": 390,
+      "exact_changes": true,
+      "privacy_defaults": true,
+      "saved_recipe_recovered": true,
+      "canonical_replay_rechecked": true,
+      "forged_receipt_refused": true,
+      "rule_change_invalidates": true,
+      "duplicate_ids_refused": true,
+      "no_study_record_without_consent": true,
+      "no_overflow": true
+    },
+    {
+      "width": 768,
+      "exact_changes": true,
+      "privacy_defaults": true,
+      "saved_recipe_recovered": true,
+      "canonical_replay_rechecked": true,
+      "forged_receipt_refused": true,
+      "rule_change_invalidates": true,
+      "duplicate_ids_refused": true,
+      "no_study_record_without_consent": true,
+      "no_overflow": true
+    },
+    {
+      "width": 1440,
+      "exact_changes": true,
+      "privacy_defaults": true,
+      "saved_recipe_recovered": true,
+      "canonical_replay_rechecked": true,
+      "forged_receipt_refused": true,
+      "rule_change_invalidates": true,
+      "duplicate_ids_refused": true,
+      "no_study_record_without_consent": true,
+      "no_overflow": true
+    }
+  ],
+  "actual_native_review_calls": 6,
+  "study_consent_export_and_erasure": true,
+  "local_brand_navigation_keeps_session": true,
+  "forged_original_policy_binding_refused": true,
+  "automatic_native_review": true,
+  "actual_scientific_cases": [
+    {
+      "mode": "original",
+      "lean_verdict": "PASS",
+      "input_sha256": [
+        "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+        "5df2056b9bcfb9165d4a4ab0ef55837605896caa4ac36090b0830e5d351b2111"
+      ]
+    },
+    {
+      "mode": "edited",
+      "lean_verdict": "REVIEW",
+      "input_sha256": [
+        "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+        "a6a4eee47be355c8d45a5103233c5fd4cbe5329f621007e87c066fa3a5e3dc2d"
+      ]
+    },
+    {
+      "mode": "removed",
+      "lean_verdict": "REVIEW",
+      "input_sha256": [
+        "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+        "03f6e15275803004f355437f3c618613fee83a3c27c65236020f8560218d7e72"
+      ]
+    }
+  ]
+}

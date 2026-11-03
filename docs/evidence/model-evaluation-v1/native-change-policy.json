@@ -1,0 +1,9 @@
+{
+  "format": "pcs-change-native-policy-v2",
+  "table_pairs_and_scopes": 1352,
+  "policy_configurations": 10816,
+  "all_compiled_counts_and_rules_match_independent_sets": true,
+  "conservative_extension_controls": true,
+  "seconds": 0.017,
+  "mock_affirmative_verdicts": 0
+}

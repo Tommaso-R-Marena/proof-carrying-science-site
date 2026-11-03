@@ -1,0 +1,20 @@
+{
+  "format": "pcs-original-csv-native-differential-v2",
+  "seed": 20261101,
+  "cases": 20541,
+  "accepted": 1392,
+  "rejected": 19149,
+  "exhaustive_suffix_lengths": [
+    0,
+    6
+  ],
+  "alphabet_hex": "612c220d0a",
+  "full_table_and_physical_lines_equal": true,
+  "implementations": [
+    "Lean",
+    "Python",
+    "JavaScript"
+  ],
+  "native_mock_verdicts": 0,
+  "seconds": 0.703
+}

@@ -43,7 +43,7 @@ jobs:
           node --test tests/file-check.test.mjs tests/change-review.test.mjs tests/model-evaluation.test.mjs
           python -m unittest discover -s tests -p test_file_checker.py -v
           python -m unittest discover -s tests -p test_change_review.py -v
-          python -m unittest discover -s tests -p test_model_evaluation.py -v
+          python -m unittest discover -s tests -p 'test_model_evaluation*.py' -v
           python scripts/export_model_evaluation_example.py
           python -m unittest discover -s tests -p test_usability_sessions.py -v
           python -m unittest discover -s tests -p test_git_snapshot.py -v
@@ -64,8 +64,7 @@ jobs:
           python scripts/test_original_csv_native.py "$binary"
           python scripts/test_change_review_native.py "$binary"
       - name: Real published-data conservation and labeled corruption controls
-        run: python scripts/run_public_export_experiment.py "${{ runner.temp }}/pcs-files-build/bundle" > "${{ runner.temp }}/pcs-files-build/public-data-experiment.json
-            ${{ runner.temp }}/pcs-files-build/model-evaluation-native.json"
+        run: python scripts/run_public_export_experiment.py "${{ runner.temp }}/pcs-files-build/bundle" > "${{ runner.temp }}/pcs-files-build/public-data-experiment.json"
       - name: Linux browser task completion including real local Lean confirmation
         if: runner.os == 'Linux'
         env:

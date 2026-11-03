@@ -1,0 +1,21 @@
+{
+  "format": "pcs-usability-analysis-v1",
+  "sessions": 1,
+  "automated_sessions_excluded": 1,
+  "unverified_volunteer_sessions": 0,
+  "observer_attested_human_sessions": 0,
+  "human_identities_verified_by_software": 0,
+  "observer_attestations_are_unverified_empirical_claims": true,
+  "client_clocks_and_answers_are_untrusted": true,
+  "rows": [
+    {
+      "session_id": "8ef3049e-e97e-4b3f-b010-d70fadfeefad",
+      "participant_kind": "automated",
+      "answered": 5,
+      "correct": 5,
+      "hints": 0,
+      "last_answer_elapsed_ms": 298
+    }
+  ],
+  "observer_attested_rows": []
+}

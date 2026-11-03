@@ -1,0 +1,69 @@
+{
+  "format": "pcs-local-model-evaluation-qualification-v1",
+  "implementation_commit": "5a168febeb3922a42b7103ddef33fc187bdda132",
+  "core_commit": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "lean_toolchain": "leanprover/lean4:v4.28.0",
+  "checker_sha256": "5032e25798739a22b6bf2d0ce3ceb1dbddf4c2d686412bb4b5dd2356b49d0320",
+  "source_sha256": {
+    "desktop/VERSION": "c89b87c262e9d5ffd20e73aac74a1772adcc9f5a21682cc33adcf5086e5fef5c",
+    "desktop/app.py": "ec9bb3c6adc381033aea5c33d46595fa40df981b5810c3a6debed2dc13f61a56",
+    "desktop/file_check.py": "e311bcc172999b760d78b38951ca8ddfc883b830350fdc5952fb9941cbebaf62",
+    "desktop/change_review.py": "e028cf915733031f42e36d5dedc51c0be05a70968e63726dc6e495fd3101bbdf",
+    "desktop/model_evaluation.py": "357750d166a3da859306d211133fc6f3edcd5dc446741a5c07071f87b1b68172",
+    "desktop/handoff.py": "cbfddfa9f6a4efef7f93964e1e0733e3536267184554947a0832af8f21a11e9e",
+    "desktop/lean/Main.lean": "e3395aeafa2de75ae745b1806099c97f6f44e58ec4040d0e89988b2551fd9e3f",
+    "desktop/lean/StackSafe.lean": "f660a711308e959078b34af09fb3e80e1d0a3ef96be0380863f990b1afc25a20",
+    "desktop/lean/Audit.lean": "a4c737865c17e5b276170e0ce7556a3aa29308916dd59b7df5cf1aca23f0471f",
+    "desktop/lean/OriginalCsv.lean": "31474cb1a71aae205322829af595b1f2f539545060f1639f927161d55d94ad05",
+    "desktop/lean/Review.lean": "493ce9ede218999e17c196412d69d2fb2772e29ed8430d7b41b11479a7ae857a",
+    "desktop/lean/Evaluation.lean": "b5a84251fb05d0cd08b164ac244af9e8a034731d549c1385224862e5b119d8e9",
+    "public/model-evaluation-core.mjs": "1e31deff6684b1ec0664b09230ab974829b1115dacc8d726935a54b85569d507",
+    "public/model-evaluation.mjs": "4e96d7a5ac6669798036e4a563d2d4123a22187528ecde1cf198b183d6196341",
+    "public/evaluation-reference.csv": "8d8440a30305ba173e51f953260db0a0850144502055491d72e8e7e8bd048476",
+    "public/evaluation-baseline.csv": "8d8440a30305ba173e51f953260db0a0850144502055491d72e8e7e8bd048476",
+    "public/evaluation-candidate.csv": "50bbdac15fe3f02f509ebd07fa906129c5bc8485a24406b00bc9ec9c71101f97",
+    "public/evaluation-example.json": "c634a405874087c5ee04464ec5085ba8ac148eb90bbe306d7f72eabe5dd6d58a",
+    "public/check-my-files.html": "d61f62134e4e2762d2c38b6edbed67e3a07d0e091d944330645c3dd582ce4197",
+    "public/file-check.css": "79e30229ab3762d217638c0880e41c549035e45d559da2d52a49d3728c6ecb22",
+    "public/file-check.mjs": "95186f14c6e74365533c190a0ede2b924f72e5322675dd3dc335b8192036a760",
+    "public/science-workflow-core.mjs": "0f48fe2be82af07dca277080d4285cd0c44978fe9d0f247ae9bab61c1fd444c8",
+    "public/page-help.mjs": "65d57a5a45df54e49a5f92f0a79bf70dac278af3e20217f53b79e3643680d91b",
+    "public/page-help-core.mjs": "0a791249caac7be618799c66999cd707f60c00e1dc9df9a23be7fa399f3d68b7",
+    "public/page-help.css": "fa5a95ecf72f3b0f384387418dbf3311c3bd0a757b36ebda8a14cfad47d5a3b9",
+    "public/file-check-core.mjs": "a6f3c23acee28d74bfbfd3f69bad83f92c27a6c10a5e346dae2cf00a1e3b909b",
+    "public/file-check-local.mjs": "1427e8eb5042ba22fdfb40b983c4fe213f6fffed0ec7029e8bf09849941d043f",
+    "public/change-review-core.mjs": "c103ee2cb7a11918b0a8b1fe57f15936f52b16a60ff888a212e18f478722dbbb",
+    "public/review-changes.html": "b96b2dd1f1207553d0e9f1ba6c7b8cd93fa0673fa76186be1e04ef70fd7782fe",
+    "public/review-changes.mjs": "32756b11fef9fd596b243efae597c16edf29301879c95c49b8708cfb88721169",
+    "public/usability-core.mjs": "f65d96016cc6dd0ff08ce5e5f89017b54b27be2edf7907227c639145d87f7d41",
+    "public/usability-study.html": "e95c2486b55534df03430013d1778d49861eb6858efd13e17c6c0fc3ccb2b1af",
+    "public/usability-study.mjs": "a6b9725f8b70820614f007fd6f6418af6cc7302d998e72bd55fad1e4a8c1ad5a",
+    "public/example-iris-previous.csv": "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+    "public/example-iris-new.csv": "5df2056b9bcfb9165d4a4ab0ef55837605896caa4ac36090b0830e5d351b2111",
+    "public/logo-mark.svg": "920f813370181da7ded9b4e787fd72cb856cf7a4b719f9a1ef49b05bb5802798"
+  },
+  "source_pin_count": 36,
+  "audited_theorem_count": 38,
+  "node_tests": {
+    "passed": 586,
+    "failed": 0,
+    "skipped": 0
+  },
+  "full_local_release_gate_passed": true,
+  "actual_packaged_linux_executable_tested": true,
+  "human_participants": 0,
+  "new_model_inference_executed": false,
+  "independent_external_validation": false,
+  "host_refinement_proved": false,
+  "scientific_acceptance": false,
+  "historical_ci_failures": [
+    {
+      "run": 41713022532,
+      "failure": "First homepage browser child exceeded 30 seconds; unchanged local ten-case suite passed."
+    },
+    {
+      "run": 41713022623,
+      "failure": "Windows checkout newline conversion and malformed workflow output redirect; corrected without accepting different byte identities."
+    }
+  ]
+}

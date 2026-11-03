@@ -1,0 +1,15 @@
+{
+  "format": "pcs-change-boundary-tests-v2",
+  "actual_native_checks": 6,
+  "negative_controls": 24,
+  "max_dimensions": {
+    "rows_per_file": 5000,
+    "columns": 128,
+    "id_bytes": 256,
+    "seconds": 2.84,
+    "also_passed_authenticated_http": true
+  },
+  "post_check_snapshot_and_binary_mutation_refused": true,
+  "mock_affirmative_verdicts": 0,
+  "immutable_host_security_proved": false
+}

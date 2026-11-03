@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """Derive evaluation CSVs from recorded real proof-search observations.
 
-The reference is the registered objective 'verified', not a claim that an unknown
-search result is a false theorem. This export runs no inference or training.
+Reference targets distinguish positive tasks from negative controls. An unknown
+search result is not a false theorem. This export runs no inference or training.
+The historical source is read from its raw Git blob, independently of OS checkout
+newline conversion. The four generated public snapshots disable that conversion.
 """
-import argparse,csv,hashlib,io,json
+import argparse,csv,hashlib,io,json,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
 def example():
     source=ROOT/'research/proof-search-prospective-v1/run-1/summary.json'
-    run=json.loads(source.read_text());rows=run['rows'];cases=sorted({r['case'] for r in rows})
+    source_raw=subprocess.check_output(['git','cat-file','blob','HEAD:'+source.relative_to(ROOT).as_posix()],cwd=ROOT)
+    run=json.loads(source_raw);rows=run['rows'];cases=sorted({r['case'] for r in rows})
     groups={method:{r['case']:r for r in rows if r['method']==method and r['case'] in cases} for method in ['std_then_structural','frozen_neural']}
     def verified(r):return r['search_status']=='verified' and r.get('independent_replay',{}).get('status')=='verified'
     controls={r['case']:r['authored_control'] for r in rows}
+    if (len(cases),sum(v=='positive' for v in controls.values()),sum(v=='negative' for v in controls.values()),*[sum(verified(r) for r in groups[m].values()) for m in groups])!=(14,11,3,11,8):
+        raise ValueError('The frozen recorded experiment no longer matches its stated tasks and outcomes.')
     tables=[[(c,'verified' if controls[c]=='positive' else 'not_verified') for c in cases],*[[ (c,'verified' if verified(groups[m][c]) else 'not_verified') for c in cases] for m in groups]]
     result={}
     for name,table in zip(['evaluation-reference.csv','evaluation-baseline.csv','evaluation-candidate.csv'],tables):
@@ -21,7 +26,7 @@ def example():
     checkpoint=next(r['checkpoint_sha256'] for r in rows if r['method']=='frozen_neural')
     meta={'format':'pcs-recorded-model-evaluation-example-v1','new_inference_executed':False,'physical_model_generation_independently_attested':False,
           'input_sha256':[hashlib.sha256(v).hexdigest() for v in result.values()],
-          'source_path':source.relative_to(ROOT).as_posix(),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),
+          'source_path':source.relative_to(ROOT).as_posix(),'source_sha256':hashlib.sha256(source_raw).hexdigest(),
           'original_proof_success_counts':{'baseline':11,'candidate':8,'cases':14},'positive_cases':11,'negative_controls':3,'core_revision':run['core_revision'],'protocol_sha256':run['protocol_sha256'],
           'provenance':{'baseline_name':'Ordinary Lean tactics + structural search','candidate_name':'Frozen PCS learned memory policy',
                         'baseline_weights_sha256':None,'candidate_weights_sha256':checkpoint,

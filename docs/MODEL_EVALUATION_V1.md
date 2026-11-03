@@ -89,6 +89,13 @@ python scripts/test_model_evaluation_native.py /tmp/pcs-eval/bundle
 PCS_FILE_CHECK_BUNDLE=/tmp/pcs-eval/bundle PCS_FILE_CHECK_EXECUTABLE='/tmp/pcs-eval/dist/PCS File Checker' npm run test:browser:model-evaluation
 ```
 
+The [local qualification record](evidence/model-evaluation-v1/local-qualification.json)
+binds the actually packaged implementation commit and all 36 source hashes. Its
+separate browser/native records include negative controls and zero human results.
+Initial hosted failures are retained; they are not recorded as passing checks.
+The source exporter reads the frozen historical Git blob and preserves exact public
+CSV bytes on Windows rather than normalizing mismatched identities.
+
 The native campaign exhausts 512 binary configurations, adds shuffled/Unicode and
 1,000-case vectors, compares JavaScript and Python against an independent Boolean
 oracle, and exercises the real compiled executable. Failure-only mutation controls

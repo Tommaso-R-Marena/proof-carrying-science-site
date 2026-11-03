@@ -1,0 +1,61 @@
+{
+  "format": "pcs-model-evaluation-browser-v1",
+  "human_participants": 0,
+  "widths": [
+    {
+      "width": 320,
+      "aggregate_gain_can_regress": true,
+      "private_handoff_complete": true,
+      "canonical_replay": true,
+      "forged_counts_refused": true,
+      "report_redacted": true,
+      "recorded_negative_finding_preserved": true,
+      "no_network_writes": true,
+      "no_overflow": true
+    },
+    {
+      "width": 390,
+      "aggregate_gain_can_regress": true,
+      "private_handoff_complete": true,
+      "canonical_replay": true,
+      "forged_counts_refused": true,
+      "report_redacted": true,
+      "recorded_negative_finding_preserved": true,
+      "no_network_writes": true,
+      "no_overflow": true
+    },
+    {
+      "width": 768,
+      "aggregate_gain_can_regress": true,
+      "private_handoff_complete": true,
+      "canonical_replay": true,
+      "forged_counts_refused": true,
+      "report_redacted": true,
+      "recorded_negative_finding_preserved": true,
+      "no_network_writes": true,
+      "no_overflow": true
+    },
+    {
+      "width": 1440,
+      "aggregate_gain_can_regress": true,
+      "private_handoff_complete": true,
+      "canonical_replay": true,
+      "forged_counts_refused": true,
+      "report_redacted": true,
+      "recorded_negative_finding_preserved": true,
+      "no_network_writes": true,
+      "no_overflow": true
+    }
+  ],
+  "actual_native_checks": 8,
+  "negative_controls": [
+    "altered_input_sha256",
+    "altered_decoded_sha256",
+    "altered_evaluation_sha256",
+    "altered_summary",
+    "altered_reference_labels_validated",
+    "stale_genuine_response"
+  ],
+  "exact_change_review_handoff": true,
+  "actual_packaged_app": true
+}
