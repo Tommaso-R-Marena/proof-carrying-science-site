@@ -1,0 +1,17 @@
+{
+  "format": "pcs-evaluation-maximum-byte-control-v1",
+  "bytes_per_original": 2097152,
+  "files": 3,
+  "actual_native_lean_check": true,
+  "summary": {
+    "total": 1,
+    "before_matches": 1,
+    "after_matches": 1,
+    "improvements": 0,
+    "regressions": 0
+  },
+  "seconds": 4.333,
+  "also_passed_authenticated_http": true,
+  "http_request_bytes": 8389207,
+  "http_native_seconds": 2.441
+}

@@ -10,6 +10,11 @@ IDs/columns remain explicit assumptions. This is not a signed scientific claim.
 
 ## Use the workflow
 
+Published app 2.1.0 automatically runs the pinned native checker after each valid
+review. The public page offers a private file-and-settings download for the app.
+Its opening picker accepts saved reviews and model comparisons, restores the
+exact original snapshots and selected columns, and requires a fresh check.
+
 Open **What changed?**, choose previous/new CSV exports and confirm the ID columns.
 Each ID must occur once per file. Select shared value headings to compare. Exact
 heading matches are required; added/removed headings are visibly excluded.

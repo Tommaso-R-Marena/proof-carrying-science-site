@@ -1,0 +1,81 @@
+{
+  "format": "pcs-published-native-release-qualification-v1",
+  "release_url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/tag/pcs-files-v2.1.0",
+  "source_commit": "db77dd2b7c0a8e138dd44e778e541c81f864015c",
+  "version": "2.1.0",
+  "tag_matches_exact_source": true,
+  "public_metadata": {
+    "format": "pcs-desktop-download-availability-v1",
+    "tag": "pcs-files-v2.1.0",
+    "required_downloads": 8,
+    "public_metadata_complete": true,
+    "archive_contents_or_signatures_verified_by_this_check": false
+  },
+  "archive_qualification": {
+    "format": "pcs-four-platform-release-qualification-v2",
+    "archives": 4,
+    "exact_git_source_hashes_match_on_all_platforms": true,
+    "source_commit": "db77dd2b7c0a8e138dd44e778e541c81f864015c",
+    "version": "2.1.0"
+  },
+  "downloads": [
+    {
+      "name": "PCS-File-Checker-linux-x64.zip",
+      "bytes": 24183228,
+      "sha256": "b43ea0f62adf44c2cf8ec09ecd4112847a136d0b0fe597b0091420bf5e0fb908",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-linux-x64.zip"
+    },
+    {
+      "name": "PCS-File-Checker-linux-x64.zip.sha256",
+      "bytes": 97,
+      "sha256": "b9d629dd0c0d3ca17680f380d3c29dcde336dd64abf3fd0e55096412e46c581e",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-linux-x64.zip.sha256"
+    },
+    {
+      "name": "PCS-File-Checker-macos-arm64.zip",
+      "bytes": 10020381,
+      "sha256": "08e9752a18fcb6b6c676b5049b7b0b4f6b097269a7e250cb443c6915a8fd2217",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-macos-arm64.zip"
+    },
+    {
+      "name": "PCS-File-Checker-macos-arm64.zip.sha256",
+      "bytes": 99,
+      "sha256": "0ba5d7a5ef080825f17df2c254e83ba045daa8ed4a77d007f060c136a20c6a4b",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-macos-arm64.zip.sha256"
+    },
+    {
+      "name": "PCS-File-Checker-macos-x64.zip",
+      "bytes": 10450407,
+      "sha256": "7e7410ce315b817d8382bce80cf01bf5e358159c686e72f217b9da1502cdbcbc",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-macos-x64.zip"
+    },
+    {
+      "name": "PCS-File-Checker-macos-x64.zip.sha256",
+      "bytes": 97,
+      "sha256": "3f8c32e7e69dccd05de057cc15400a9013ffbb9f19180c1b8b3f4b603e8de1a4",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-macos-x64.zip.sha256"
+    },
+    {
+      "name": "PCS-File-Checker-windows-x64.zip",
+      "bytes": 121550163,
+      "sha256": "fb975f4db016369c1104113f31be47e18a6752b00f6ecad908eabfe580f376ac",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-windows-x64.zip"
+    },
+    {
+      "name": "PCS-File-Checker-windows-x64.zip.sha256",
+      "bytes": 100,
+      "sha256": "d72d97e988677c01069565a019759e7bebdee15c4d334861cb48d761395deeb2",
+      "url": "https://github.com/Tommaso-R-Marena/proof-carrying-science-site/releases/download/pcs-files-v2.1.0/PCS-File-Checker-windows-x64.zip.sha256"
+    }
+  ],
+  "downloaded_linux_app_real_native_self_test_passed": true,
+  "linux_checker_sha256": "5032e25798739a22b6bf2d0ce3ceb1dbddf4c2d686412bb4b5dd2356b49d0320",
+  "audited_theorems": 38,
+  "source_pins": 36,
+  "new_model_inference_executed": false,
+  "human_participants": 0,
+  "independent_external_validation": false,
+  "host_refinement_proved": false,
+  "signed_receipt": false,
+  "scientific_acceptance": false
+}

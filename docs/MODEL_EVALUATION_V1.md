@@ -110,10 +110,16 @@ automatic native evaluation, altered bindings and stale response invalidation.
 Protected CI repeats native tests on Linux, Windows and both Mac architectures.
 Release publication requires all four qualified archives at the exact source commit.
 
-Build version and published-download version are separate. The first feature PR
-keeps published 2.0.0 downloads available while building 2.1.0. Only after the
-existing protected release publisher issues all eight assets may a follow-up change
-advance public links and `desktop/PUBLISHED_VERSION`. No historical tag is overwritten.
+Version 2.1.0 is publicly published from exact source `db77dd2b7c0a8e138dd44e778e541c81f864015c`. Independent
+readback verified all four public archives, all eight ZIP/checksum downloads,
+38 theorem audits and the 36-file source closure. The publicly downloaded Linux
+app passed real native self-tests and the receiving/browser campaign. See the
+[published archive record](evidence/model-evaluation-v1/published-2.1.0.json).
+
+Build version and published-download version remain separate. Public links advance
+only after all qualified assets are published and read back. Historical tags and
+archives are preserved. No human usability result or authenticated model-generation
+claim is inferred from package qualification.
 
 ## Outstanding work
 

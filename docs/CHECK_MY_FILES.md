@@ -1,4 +1,11 @@
-# Check my files, version 2
+# Check my files, version 2.1
+
+The published 2.1.0 app starts at What changed? and automatically runs Lean after
+a valid review. Check shared IDs opens the overlap tool. Use the opening screen’s
+saved-file picker for either a private review or a model comparison; files and
+settings load together, followed by a fresh check. The app displays its actual
+bundle version. See [finite model evaluation](MODEL_EVALUATION_V1.md) for the
+three-file comparison and its separate reference/model provenance assumptions.
 
 For current original-byte decoding, recurring-export review, exact theorem names
 and trust limits, see [CHANGE_REVIEW_V2.md](CHANGE_REVIEW_V2.md). Version 2 passes
