@@ -101,6 +101,7 @@ async function cleanup(){
  if((await donateVisual()).recorded!==false)throw Error('Visual duplicate counted as another participant');
  await page.locator('#wbHint').click();await page.locator('#wbCheck').click();
  if((await donateVisual()).recorded!==true)throw Error('Visual assisted session was not stored');
+ await page.locator('#worldPuzzleChoices > summary').click();
  await page.getByRole('button',{name:/^Puzzle 5:/}).click();
  if(await page.locator('#wbConsent').isChecked())throw Error('Visual consent silently carried into another round');
  await page.locator('#wbAdd').click();await page.locator('#wbWorld [data-fact=P][data-character="0"]').click();await page.locator('#wbCheck').click();
