@@ -21,7 +21,7 @@ from file_check import LocalChecker, SCOPE, canonical, strict_json
 
 DEFAULT_PORT = 49381  # Stable loopback origin keeps explicitly saved browser recipes reachable.
 MAX_REQUEST = 6_500_000
-PUBLIC_FILES = {'file-check.mjs', 'file-check-local.mjs', 'review-changes.mjs', 'review-changes.html', 'usability-study.html', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg', 'file-check.css', 'check-my-files.html', 'file-check-core.mjs', 'usability-core.mjs', 'change-review-core.mjs', 'usability-study.mjs'}
+PUBLIC_FILES = {'file-check.mjs', 'page-help.mjs', 'page-help-core.mjs', 'page-help.css', 'file-check-local.mjs', 'review-changes.mjs', 'review-changes.html', 'usability-study.html', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg', 'file-check.css', 'check-my-files.html', 'file-check-core.mjs', 'usability-core.mjs', 'change-review-core.mjs', 'usability-study.mjs'}
 
 
 @contextmanager

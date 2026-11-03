@@ -23,11 +23,12 @@ CANNED = re.compile(
 PROSE_DASH = re.compile(r"\w\s*—\s*\w", re.UNICODE)
 
 
-# This exact page is bound by docs/evidence/website-research-sync-v1/
-# calibration-browser.json. Preserve its paired mathematical parenthetical;
-# never rehash the historical receipt just to pass an editorial check.
+# The current calibration UI has a fresh browser qualification. The previous
+# record and exact prior HTML remain in docs/evidence/site-clarity-v1/. Keep this
+# source identity guard even though its old prose em dash has been removed.
+# Full mathematical/data-source continuity is checked by verify_browser_ui_sources.
 QUALIFIED_COPY = {
-    'public/calibration-lab.html': '91e25f22b22f0a787a09b1e39c3555c7324068d76874f059639166db678d6e32',
+    'public/calibration-lab.html': 'a2b9af9d5a00477e96aa0c57251c7bb47387532a65b78f91b6b243c6290a458b',
 }
 
 

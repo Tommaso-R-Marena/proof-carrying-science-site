@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Privacy · Proof-Carrying Science</title>
-<meta name="description" content="Privacy and data-handling posture for Proof-Carrying Science, including local-only scientific package tools and privacy-first Cloudflare Web Analytics.">
+<title>What PCS stores and shares. · PCS</title>
+<meta name="description" content="Local tools keep their working data on your device. Accounts, public proof requests, and optional research donations have different data rules, explained below.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/privacy.html">
 <meta name="robots" content="index,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>Account-backed Commons · local scientific tools · privacy-first analytics</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Privacy policy</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a><a href="index.html#research">Research</a><a class="button dark" href="contact.html">Contact</a></div></nav>
 <main>
+<section class="pagehead"><div class="kicker">Privacy</div><h1>What PCS stores and shares.</h1><p>Local tools keep their working data on your device. Accounts, public proof requests, and optional research donations have different data rules, explained below.</p></section>
+<section class="panel privacy-summary"><h2>Choose the data rule that applies to you</h2><ul><li><strong>Local tools:</strong> your project files stay on your device.</li><li><strong>Account features:</strong> PCS stores the account and records needed to provide them.</li><li><strong>Public proof requests:</strong> the submitted statement and proof actions can appear in public job logs, after explicit consent.</li><li><strong>Research donations:</strong> sharing is optional and separate from playing. Read the feature’s consent and deletion terms.</li><li><strong>Website visits:</strong> normal security logs and documented performance analytics still apply.</li></ul><p>The sections below give the details, including limits on withdrawing copies already exported or used in models.</p></section>
+
 <section class="section"><h2>Bridge Builder proof choices</h2><p>Practice stays in the current browser tab. There is no automatic upload. A fresh remote proof-check request requires separate explicit publication consent: the mathematical statement and exact typed proof actions become public in a GitHub Actions log.</p><p>Optional research donation requires a verified PCS account, self-attested age 18+, and a separate CC0 release and research/model-training checkbox. Donated data contains the fixed mission and catalog IDs, ordered proof-action choices, invalid attempts, undo and hint exposure. We record event order, not mouse movements or reaction times. The Worker replays the fixed catalog; training intake must independently replay with Lean. Server replay cannot prove that choices were human or that hints were reported honestly.</p><p>Account linkage supports deduplication and erasure. Owner-only exports omit names, emails, IPs, account IDs and precise timestamps. Delete active donated sessions from Bridge Builder or delete your account. Previously exported copies, backups and learned weights may require separate handling. No current result claims to have trained on real participant data before such consented data exists.</p></section>
 
 <section class="panel" aria-labelledby="countermodelPrivacyTitle">
@@ -60,7 +63,7 @@
   <p>A passing automated check does not certify scientific truth; administrators review submissions before accepting, and only the Founder/Owner can invoke integration through the PCS dashboard. Evidence of outreach activity is not treated as proof of clicks, registrations, or business results.</p>
 </section>
 
-<section class="pagehead"><div class="kicker">Privacy</div><h1>Local by design.</h1><p>PCS now has a small account backend for the AI Safety Commons. Contributor accounts, verified levels/skills, task applications, review decisions, notifications, and audit events are stored in a Cloudflare D1 database in the United States. Scientific package inspection, Project Mapper, browser verifier, and pilot-intake tools remain local in the browser and do not upload scientific file contents to PCS. The site also uses Cloudflare Web Analytics for aggregate traffic/Core Web Vitals and Workers Logs/Issues for operational reliability; request query strings are redacted before observability persistence.</p></section>
+
 <section class="grid4">
   <article class="card"><div class="num">01</div><h3>Project Mapper stays in-browser</h3><p>Files you explicitly select are read and SHA-256 hashed locally to draft artifact/check metadata. Python/Jupyter text may also be inspected locally for literal file dependencies; it is never executed. The mapper contains no PCS upload endpoint or network API.</p></article>
   <article class="card"><div class="num">02</div><h3>Verifier stays in-browser</h3><p>The legacy browser verifier uses Web Crypto and JavaScript locally. Compatible package JSON and selected extracted-directory files are not transmitted by this site.</p></article>
@@ -93,5 +96,5 @@
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="index.html">Home</a><a href="demo.html">Live verifier</a><a href="intake.html">Pilot intake</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 <script src="site.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

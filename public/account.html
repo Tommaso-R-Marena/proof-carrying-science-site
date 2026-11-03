@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Account · PCS AI Safety Commons</title>
-<meta name="description" content="Create and manage your PCS AI Safety Commons contributor account, verified level, skills, task work, and notifications.">
+<title>Sign in or create an account. · PCS</title>
+<meta name="description" content="You can use the local tools and games without an account. An account lets you contribute work and manage your optional research donations. New contributors begin at level 0. Higher permissions require review.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/account.html">
 <meta name="robots" content="noindex,follow"><link rel="icon" href="logo-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body class="commons-page account-page">
-<div class="topbar commons-topbar"><div class="shell"><span>PCS Commons account · verified levels · task work · AI-use disclosure</span><a href="tasks.html">Task marketplace</a></div></div>
+<div class="topbar commons-topbar"><div class="shell"><span>PCS · Account</span><a href="tasks.html">Task marketplace</a></div></div>
 <div class="shell">
 <nav aria-label="Primary"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><div class="navlinks"><a href="commons.html">Commons</a><a href="contribute.html">Contribute</a><a href="tasks.html">Tasks</a><a href="projects.html">Projects</a><a href="governance.html">Governance</a><a href="account.html">Account</a><a class="button dark" href="tasks.html">Find work</a></div></nav>
 <main>
 <section class="pagehead commons-pagehead">
   <div class="kicker">Contributor account</div>
-  <h1>Build your contributor record.</h1>
-  <p>Every new account starts at L0. L0 work is immediately available and non-exclusive. Higher levels, verified skills, and reserved tasks require reviewed evidence and explicit PCS approval.</p>
+  <h1>Sign in or create an account.</h1>
+  <p>You can use the local tools and games without an account. An account lets you contribute work and manage your optional research donations. New contributors begin at level 0. Higher permissions require review.</p>
   <div class="commons-policy-note"><strong>AI is allowed:</strong><span>You may use AI tools, but higher-trust work requires you to disclose that use, explain how you independently checked the output, and show that you understand what the contribution establishes and what it does not.</span></div>
 </section>
 
@@ -32,7 +32,7 @@
 <section id="accountLoggedOut" class="account-auth-grid" hidden>
   <div class="panel">
     <div class="panel-eyebrow">Create account</div>
-    <h2>Start at L0 immediately.</h2>
+    <h2>Start with beginner tasks.</h2>
     <p class="muted">Creating an account does not require founder approval. It lets you begin open L0 work without reserving or blocking anyone else's task.</p>
     <form id="registerForm">
       <label class="field"><span>Name</span><input class="textinput" name="display_name" autocomplete="name" required maxlength="80"></label>
@@ -112,7 +112,7 @@
   </div>
 
   <section class="section-tight">
-    <div class="section-heading-row"><div><div class="kicker">Profile</div><h2>Time and interests are self-reported. Level is not.</h2></div></div>
+    <div class="section-heading-row"><div><div class="kicker">Profile</div><h2>You describe your interests. PCS reviews your level.</h2></div></div>
     <div class="panel">
       <form id="profileForm">
         <div class="commons-form-grid">
@@ -128,7 +128,7 @@
   </section>
 
   <section class="section-tight" id="competency">
-    <div class="section-heading-row"><div><div class="kicker">Task competency</div><h2>Two ways to qualify for higher-trust work.</h2></div><p>You do not have to wait for a preset calibration. Either take a newly generated competency evaluation or submit evidence/application for manual review. Auto-grading is screening only: PCS still makes the final approval manually.</p></div>
+    <div class="section-heading-row"><div><div class="kicker">Task competency</div><h2>Two ways to apply for specialist work.</h2></div><p>You do not have to wait for a preset calibration. Either take a newly generated competency evaluation or submit evidence/application for manual review. Auto-grading is screening only: PCS still makes the final approval manually.</p></div>
     <div class="qualification-choice-banner">
       <article><span>OPTION A</span><strong>Variable competency evaluation</strong><p>PCS generates fresh questions. Passing goes to manual approval; it never grants authority automatically.</p><a class="button primary" href="#evaluationStartForm" data-qualify="evaluation">Take the exam →</a></article>
       <article><span>OPTION B</span><strong>Manual application / evidence review</strong><p>Skip the exam and submit evidence explaining your competence. Target review: 1–2 business days.</p><a class="button secondary" href="#skillForm" data-qualify="application">Submit an application →</a></article>
@@ -160,7 +160,7 @@
     </div>
   </section>
   <section class="section-tight">
-    <div class="section-heading-row"><div><div class="kicker">My work</div><h2>Requests, reservations, checkpoints, and submissions.</h2><p><a href="workboard.html">See every contribution stage and next action in My Work Pipeline →</a></p></div><a class="button secondary" href="tasks.html">Browse tasks</a></div>
+    <div class="section-heading-row"><div><div class="kicker">My work</div><h2>Track your tasks and submissions.</h2><p><a href="workboard.html">See every contribution stage and next action in My Work Pipeline →</a></p></div><a class="button secondary" href="tasks.html">Browse tasks</a></div>
     <div id="requestList" class="account-request-list"></div>
   </section>
 
@@ -226,4 +226,4 @@
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Contributor accounts with verified authority boundaries.</p></div><div class="footercol"><strong>Commons</strong><a href="tasks.html">Tasks</a><a href="contribute.html">Onboarding</a><a href="projects.html">Projects</a></div><div class="footercol"><strong>Trust</strong><a href="governance.html">Governance</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></div></div></footer>
 </div>
 <script src="site.js"></script><script src="account.js"></script>
-</body></html>
+<script type="module" src="page-help.mjs"></script></body></html>

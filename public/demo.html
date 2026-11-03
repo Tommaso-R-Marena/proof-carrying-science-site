@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Production-Format Assurance Demo · Proof-Carrying Science</title>
-<meta name="description" content="Verify a production-format PCS v0.5 package in your browser: package hashes, Ed25519 signature, PK/PD replay, claim reassessment, reviewer policy, and decision-kernel parity.">
+<title>See how a damaged evidence package is rejected. · PCS</title>
+<meta name="description" content="Change a sample package and inspect which check catches the problem. This is an older, recorded-format demonstration; use it to understand the checks.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/demo.html">
 <meta name="robots" content="noindex,follow">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body class="demo-revamp">
-<div class="topbar"><div class="shell"><span>Threat lab · Legacy PCS v0.5 browser parity fixture · Current product path is v0.6</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Legacy demonstration</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -23,8 +23,8 @@
 <section class="pagehead">
   <div>
     <div class="kicker">Threat lab · legacy v0.5 parity engine</div>
-    <h1>Break a package. Watch PCS fail closed.</h1>
-    <p>This is the adversarial transparency demo, intentionally pinned to the frozen v0.5 browser fixture. Mutate a signed reference package and inspect exactly which assurance layer rejects it. The current product path is v0.6 and requires the compiled Lean authority for authoritative validity.</p>
+    <h1>See how a damaged evidence package is rejected.</h1>
+    <p>Change a sample package and inspect which check catches the problem. This is an older, recorded-format demonstration; use it to understand the checks.</p>
     <div class="actions"><a class="button primary" href="experience.html">✨ Start the new interactive PCS tour →</a><a class="button secondary" href="guided-submission.html?demo=1">Guided scientific submission</a><a class="button secondary" href="mvp.html">Open v0.6 MVP</a></div>
   </div>
   <aside class="demo-profile-card">
@@ -210,5 +210,5 @@
 <script src="pcs-reference.js"></script>
 <script src="demo.js"></script>
 <script src="site.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

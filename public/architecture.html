@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Architecture · Proof-Carrying Science</title>
-<meta name="description" content="Technical architecture and trust boundaries for Proof-Carrying Science: production Python checker, browser parity profile, evidence package, reviewer policy, and Lean assurance layer.">
+<title>How PCS checks a scientific result. · PCS</title>
+<meta name="description" content="PCS keeps the claim, its files, the checks, and the reviewer’s decision separate. This page explains how those parts fit together.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/architecture.html">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:title" content="PCS Architecture · Proof-Carrying Science">
@@ -15,9 +15,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>Technical architecture · Trust boundaries stated explicitly</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Technical reference</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav>
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -28,14 +28,14 @@
 <main>
 <section class="pagehead">
   <div class="kicker">Technical architecture</div>
-  <h1>A small acceptance path around a large scientific workflow.</h1>
-  <p>PCS is designed around a simple trust principle: the system that produces a scientific result does not get to define whether its own evidence is sufficient. Producers emit artifacts and claims; a separate verification path replays supported checks, binds evidence, authenticates delivery, and applies reviewer-controlled policy.</p>
+  <h1>How PCS checks a scientific result.</h1>
+  <p>PCS keeps the claim, its files, the checks, and the reviewer’s decision separate. This page explains how those parts fit together.</p>
   <p><strong>Open-core verification:</strong> <a href="https://github.com/Tommaso-R-Marena/proof-carrying-science" rel="noopener noreferrer">Audit the PCS reference source, Lean proofs, tests, and certificate formats on GitHub</a>. Website accounts, private research submissions, administrative review, credentials, and production data remain access controlled. The public repository license does not turn those private records into open datasets.</p>
 </section>
 
 <section class="section">
   <div class="kicker">Usability layer</div>
-  <h2>Guided project mapper, outside the scientific verdict boundary.</h2>
+  <h2>Prepare project files without running them.</h2>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Discover</div><h3>Local artifact + workflow mapping</h3><p>Inventory files, hash bytes, inspect bounded JSON/CSV structure, and statically infer conservative Python/Jupyter file dependencies without executing source code.</p></article>
     <article class="card"><div class="num">Confirm</div><h3>Explicit human gate</h3><p>A discovery draft cannot be attested. Confirmation re-hashes the exact selected artifact snapshot.</p></article>
@@ -101,7 +101,7 @@
 
 <section class="section">
   <div class="kicker">v0.6 delivery invariants</div>
-  <h2>The serialized artifact is part of the verification target.</h2>
+  <h2>Check the exact file that was delivered.</h2>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">JCS</div><h3>Canonical bytes</h3><p>Certificate, signatures, package manifest, normalized wires, and index use the frozen v0.6 JCS profile with strict UTF-8 and duplicate-key rejection.</p></article>
     <article class="card"><div class="num">ZIP</div><h3>Deterministic delivery</h3><p>Sorted ZIP_STORED members, fixed metadata, exact manifest-signed file set, post-build self-verification, and atomic publication.</p></article>
@@ -123,7 +123,7 @@
 
 <section class="section">
   <div class="kicker">Audit architecture</div>
-  <h2>Three distinct trust decisions.</h2>
+  <h2>Keep three review decisions separate.</h2>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">1</div><h3>Producer authenticity</h3><p>Who issued the scientific package? Bound by the producer Ed25519 signature.</p></article>
     <article class="card"><div class="num">2</div><h3>PCS verification + policy</h3><p>Did the package replay correctly, and did it satisfy this reviewer's explicit acceptance criteria?</p></article>
@@ -143,7 +143,7 @@
 
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Trust statement</div>
-  <h2>Formal verification does not certify biology.</h2>
+  <h2>What still needs scientific judgment.</h2>
   <p class="section-intro">The current PCS v0.6/v2 frontier theorem is machine-checked under Lean 4.28.0. For canonical STORED archives, the compiled authority starts from the raw archive bytes, proves canonical ZIP decoding and exact partition, uses SHA-256 proved equal to an independent FIPS 180-4 specification, and replays all six built-in predicates with certified Lean checkers. The strongest archive theorem reaches <code>HighAssurance</code> with one explicit theorem hypothesis: <code>NoForgery</code> for the Lean Ed25519 trust anchor. This still does not prove empirical adequacy, clinical truth, regulatory acceptance, or arbitrary program correctness; RFC 8032/SHA-512 correspondence, workflow-front-end semantics, broader environment capture, external validators, and legacy non-canonical ZIPs remain explicit boundaries.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Correctness</div><h3>Did the computation follow its declared rules?</h3><p>Formal proof and executable replay can address this dimension within a bounded model.</p></article>
@@ -172,5 +172,5 @@
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Explore</strong><a href="project-builder.html">Project Mapper</a><a href="mvp.html">v0.6 MVP</a><a href="validation.html">Real-world validation</a><a href="trust.html">Trust Center</a><a href="demo.html">Live verifier</a><a href="model-lab.html">Model lab</a><a href="intake.html">Pilot intake</a><a href="privacy.html">Privacy</a></div><div class="footercol"><strong>Contact</strong><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a><a href="contact.html">Design-partner inquiry</a></div></div></footer>
 </div>
 <script src="site.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

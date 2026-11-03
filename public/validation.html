@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Real-world Validation · Proof-Carrying Science</title>
-<meta name="description" content="PCS v0.6 real-world validation results across public pharmacokinetics, biology/ML, chemistry, units, and adversarial leakage cases.">
+<title>What happened when PCS checked five real-data cases? · PCS</title>
+<meta name="description" content="Three cases were expected to pass and two were deliberately expected to fail. The recorded checks matched all five expectations.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/validation.html">
 <meta name="robots" content="index,follow,max-snippet:-1">
 <meta property="og:title" content="PCS Real-world Validation"><meta property="og:description" content="Five public-data validation cases, including two expected failures, with executed checker evidence."><meta property="og:type" content="website"><meta property="og:url" content="https://proof-carrying-science-site.marenatommaso.workers.dev/validation.html"><meta property="og:site_name" content="Proof-Carrying Science"><meta name="twitter:card" content="summary">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>Real-world validation · 5 / 5 expected outcomes matched · 2026-09-29</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Recorded validation results</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -27,11 +27,11 @@
 </nav>
 
 <main>
-<p class="boundary"><a href="calibration-lab.html">New: exact calibration on real measurements</a> · <a href="research-updates.html">Protected Aristotle, transport and trace integrations</a>. Inspect the executed evidence and its explicit scientific limits.</p>
+
 <section class="pagehead validation-head">
   <div class="kicker">Executed public-data validation</div>
-  <h1>Five real-world cases. Two were supposed to fail.</h1>
-  <p>PCS should not earn credibility by turning every benchmark green. The first public-data validation set contains three expected positive controls and two expected negative controls. All five matched expectation.</p>
+  <h1>What happened when PCS checked five real-data cases?</h1>
+  <p>Three cases were expected to pass and two were deliberately expected to fail. The recorded checks matched all five expectations.</p>
   <div class="statusbar" aria-label="Real-world validation summary">
     <div><span>Cases</span><strong>5</strong></div>
     <div><span>Matched expectation</span><strong>5 / 5</strong></div>
@@ -50,7 +50,7 @@
   <div class="validation-callout">
     <div>
       <div class="kicker">Execution boundary</div>
-      <h2>Genuine checker-level execution, not a hosted CI claim.</h2>
+      <h2>What actually ran.</h2>
       <p>The public datasets were loaded and the current PCS check logic was executed in an isolated Python session. This is real computation over the cited data. This specific 2026-09-29 campaign was not a full <code>attest-v06 → verify-v06-bundle</code> repository run because GitHub allocated no runner for that workflow. <strong>Later, separate CircleCI campaigns did execute the full runtime/restoration path across amd64/ARM64, Docker/rootful Podman, Python/R, and offline dependency restoration.</strong></p>
     </div>
     <div class="validation-kpis">
@@ -63,7 +63,7 @@
 
 <section class="section" id="results">
   <div class="kicker">Case-by-case results</div>
-  <h2>Positive controls and falsification controls.</h2>
+  <h2>Cases that should pass and cases that should fail.</h2>
   <div class="validation-table-wrap">
     <table class="validation-table">
       <thead>
@@ -118,7 +118,7 @@
 <section class="section split">
   <div>
     <div class="kicker">Strongest negative result</div>
-    <h2>Real measured PK data did not get a free PASS.</h2>
+    <h2>A drug-concentration model failed to match measured data.</h2>
     <p class="section-intro">The public Indometh dataset contains intravenous indomethacin plasma concentrations over time. Subject 1 was fit with the best log-linear single-exponential curve and those measured concentrations were then intentionally presented to the PCS replay predicate as though they were exact deterministic model output.</p>
     <div class="metricgrid validation-metrics">
       <div class="metric"><span>Subject 1 observations</span><strong>11</strong></div>
@@ -200,7 +200,7 @@
 
 <section class="dark-section">
   <div class="kicker" style="color:#78b9ff">Adaptive validation / RL</div>
-  <h2>RL may schedule checks. It may not decide scientific truth.</h2>
+  <h2>A learned scheduler chooses the order of checks, not their verdicts.</h2>
   <p class="section-intro">We evaluated adding reinforcement learning to the architecture. It does not improve the correctness of deterministic replay and would unnecessarily enlarge the verdict trust boundary. A future bandit/RL scheduler could learn which expensive mandatory checks are most likely to fail and run those earlier, reducing time-to-failure. Acceptance would still require every mandatory check, and the scheduler's output would remain untrusted.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">Allowed</div><h3>Order checks</h3><p>Use historical benchmark cost/failure data to prioritize the next expensive check.</p></article>
@@ -212,7 +212,7 @@
 <section class="section-tight">
   <div class="notice"><strong>Current limit:</strong> these results establish behavior on five targeted real-world cases. They do not establish broad pharmacometric validity, general chemistry coverage, general ML leakage detection, or end-to-end v0.6 formal verification.</div>
 </section>
-</main>
+<details class="page-help"><summary>Related research results</summary><p class="boundary"><a href="calibration-lab.html">New: exact calibration on real measurements</a> · <a href="research-updates.html">Protected Aristotle, transport and trace integrations</a>. Inspect the executed evidence and its explicit scientific limits.</p></details></main>
 
 <footer>
   <div class="footergrid">
@@ -223,5 +223,5 @@
 </footer>
 </div>
 <script src="site.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

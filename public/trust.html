@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Trust Center · Proof-Carrying Science</title>
-<meta name="description" content="Current release, machine-checked proof status, verification boundaries, browser-demo scope, and explicit non-claims for Proof-Carrying Science.">
+<title>What can you rely on in PCS? · PCS</title>
+<meta name="description" content="See which capabilities are released, which mathematical results are proved, which checks were executed, and what remains uncertain.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/trust.html">
 <meta name="robots" content="index,follow,max-snippet:-1">
 <meta property="og:title" content="PCS Trust Center">
@@ -13,9 +13,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body>
-<div class="topbar"><div class="shell"><span>Trust Center · v0.6 MVP candidate, released v0.5 fixture, and proof boundaries</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Trust reference</span><a href="mailto:marenatommaso@gmail.com">marenatommaso@gmail.com</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -32,11 +32,11 @@
 </nav>
 
 <main>
-<p class="boundary"><a href="calibration-lab.html">New: exact calibration on real measurements</a> · <a href="research-updates.html">Protected Aristotle, transport and trace integrations</a>. Inspect the executed evidence and its explicit scientific limits.</p>
+
 <section class="pagehead">
   <div class="kicker">Trust Center</div>
-  <h1>What is verified, what is released, and what remains open.</h1>
-  <p>PCS is intended to reduce ambiguity around scientific computation, so its own assurance claims should be equally explicit. This page separates released executable behavior, machine-checked formal results, browser parity demonstrations, active refinement work, and non-claims.</p>
+  <h1>What can you rely on in PCS?</h1>
+  <p>See which capabilities are released, which mathematical results are proved, which checks were executed, and what remains uncertain.</p>
   <div class="statusbar" aria-label="Current PCS status">
     <div><span>MVP candidate</span><strong>PCS v0.6 · complete executable loop</strong></div>
     <div><span>Formal theorem stack</span><strong>v0.5/v1 · Lean 4.28.0</strong></div>
@@ -144,7 +144,7 @@
 
   <div class="truststack">
     <article class="panel">
-      <h2>Current verification boundary</h2>
+      <h2>What the current checker establishes</h2>
       <div class="timeline">
         <div class="timeline-item"><strong>v0.6 delivery ZIP</strong><span>Executable Python validates ZIP namespace, exact file hashes, signatures, canonical JSON, scientific replay, normalized decisions, and reviewer policy.</span></div>
         <div class="timeline-item"><strong>v0.6/v2 frontier assurance layer</strong><span>For canonical STORED archives, the compiled Lean authority decodes raw bytes itself, proves FIPS SHA-256 correspondence, replays all six built-ins with certified checkers, and reaches <code>HighAssurance</code> under the sole <code>NoForgery</code> hypothesis.</span></div>
@@ -177,7 +177,7 @@
 
 <section class="section">
   <div class="kicker">Real-world benchmark evidence</div>
-  <h2>Positive controls and expected failures are both part of the trust story.</h2>
+  <h2>Tests must catch failures as well as confirm valid cases.</h2>
   <p class="section-intro">A direct checker-level run against public chemistry, biology/ML, and pharmacokinetic examples matched all five predeclared outcomes. Two were expected failures and were correctly rejected. That historical campaign was checker-level; later CircleCI runs independently exercised the full v0.6 product/formal/restoration path.</p>
   <div class="grid3" style="margin-top:28px">
     <article class="card"><div class="num">5 / 5</div><h3>Matched expectation</h3><p>Haber–Bosch balance, clean Iris split, contaminated Iris split, concentration units, and Indometh model-misfit.</p></article>
@@ -210,7 +210,7 @@
 
 <section class="section-tight">
   <div class="kicker">Executed trust-boundary evidence</div>
-  <h2>Runtime portability is tested as evidence, not assumed.</h2>
+  <h2>Checks on different operating systems.</h2>
   <div class="trustgrid">
     <article class="trustitem"><header><h3>Machines and OCI engines</h3><span class="chip released">PASS</span></header><p>PCS replay has completed on Ubuntu 24.04 amd64, Ubuntu 24.04 ARM64, and Ubuntu 26.04 amd64, and across Docker and real rootful Podman. Runtime identity is captured in realized-environment evidence.</p></article>
     <article class="trustitem"><header><h3>Dependency restoration</h3><span class="chip released">PASS</span></header><p>Python wheels and R package repository payloads are cryptographically bound into the signed environment and restored offline. Base images were checked not to provide the target dependency in advance.</p></article>
@@ -230,7 +230,7 @@
   <div class="boundary" style="margin-top:18px"><strong>Current supported formal claim families</strong><span><code>csv_disjoint</code>, <code>reaction_balance</code>, <code>unit_compatible</code>, <code>pkpd_contract</code>, <code>pkpd_reference_match</code>, and <code>pkpd_peak_concentration_threshold</code>.</span></div>
 </section>
 
-</main>
+<details class="page-help"><summary>Related research results</summary><p class="boundary"><a href="calibration-lab.html">New: exact calibration on real measurements</a> · <a href="research-updates.html">Protected Aristotle, transport and trace integrations</a>. Inspect the executed evidence and its explicit scientific limits.</p></details></main>
 
 <footer>
   <div class="footergrid">
@@ -241,5 +241,5 @@
 </footer>
 </div>
 <script src="site.js"></script>
-</body>
+<script type="module" src="page-help.mjs"></script></body>
 </html>

@@ -86,7 +86,7 @@ def main():
         for dll in Path(shutil.which('lean')).resolve().parent.glob('*.dll'):
             shutil.copy2(dll,bundle/dll.name)
             dependencies[dll.name] = hashlib.sha256(dll.read_bytes()).hexdigest()
-    public = ['check-my-files.html', 'file-check.css', 'file-check.mjs', 'file-check-core.mjs', 'file-check-local.mjs', 'change-review-core.mjs', 'review-changes.html', 'review-changes.mjs', 'usability-core.mjs', 'usability-study.html', 'usability-study.mjs', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg']
+    public = ['check-my-files.html', 'file-check.css', 'file-check.mjs', 'page-help.mjs', 'page-help-core.mjs', 'page-help.css', 'file-check-core.mjs', 'file-check-local.mjs', 'change-review-core.mjs', 'review-changes.html', 'review-changes.mjs', 'usability-core.mjs', 'usability-study.html', 'usability-study.mjs', 'example-iris-previous.csv', 'example-iris-new.csv', 'logo-mark.svg']
     for name in public:
         shutil.copy2(source/'public'/name,bundle/'public'/name)
     manifest = {'format':'pcs-files-checker-build-v1','version':release_version,'scope':SCOPE,

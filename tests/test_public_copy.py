@@ -5,6 +5,7 @@ import importlib.util
 import json
 from pathlib import Path
 import unittest
+import subprocess
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,11 +20,11 @@ class PublicCopyTests(unittest.TestCase):
         result = copy.review_copy('example.html', '<p>One claim—not another. Delve into it.</p>'.encode())
         self.assertEqual({i['rule'] for i in result['issues']}, {'prose_em_dash', 'canned_phrase'})
 
-    def test_exact_qualified_page_discloses_its_retained_parenthetical(self):
+    def test_new_qualified_page_removes_prose_dash_and_keeps_source_guard(self):
         name = 'public/calibration-lab.html'
         result = copy.review_copy(name, (ROOT/name).read_bytes())
         self.assertEqual(result['issues'], [])
-        self.assertEqual(len(result['preserved_qualified_findings']), 1)
+        self.assertEqual(len(result['preserved_qualified_findings']), 0)
 
     def test_editing_the_qualified_page_cannot_reuse_the_editorial_exception(self):
         name = 'public/calibration-lab.html'
@@ -47,8 +48,9 @@ class PublicCopyTests(unittest.TestCase):
     def test_every_existing_local_qualification_binding_still_matches(self):
         # The complete hosted gate separately binds these to the independent core.
         # This makes the existing exact local-source check run in the quick gate too.
+        subprocess.run(['node',str(ROOT/'scripts/verify_browser_ui_sources.mjs')],check=True,capture_output=True)
         for name in ['d1-present-state-baseline-v1/clone-boundary-qualification.json',
-                     'website-research-sync-v1/calibration-browser.json']:
+                     'site-clarity-v1/calibration-browser.json']:
             receipt = json.loads((ROOT/'docs/evidence'/name).read_text())
             for source, expected in receipt['source_sha256'].items():
                 with self.subTest(source=source):

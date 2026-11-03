@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PCS Package Inspector · Inspect a .pcs.zip Locally</title>
-<meta name="description" content="Inspect a PCS v0.6 package locally in your browser: ZIP members, SHA-256 bindings, typed claims, normalized decisions, signatures, and proof boundaries.">
+<title>Inspect an evidence package. · PCS</title>
+<meta name="description" content="A PCS package keeps a claim and its evidence together in one file. Open it to see the contents and check their recorded file identities.">
 <link rel="canonical" href="https://proof-carrying-science-site.marenatommaso.workers.dev/package-inspector.html">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta property="og:title" content="PCS Package Inspector">
@@ -16,9 +16,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="logo-mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="stylesheet" href="page-help.css"></head>
 <body class="inspector-page">
-<div class="topbar"><div class="shell"><span>PCS v0.6 package inspector · Local browser analysis · No upload</span><a href="trust.html">Trust Center</a></div></div>
+<div class="topbar"><div class="shell"><span>PCS · Local package inspector</span><a href="trust.html">Trust Center</a></div></div>
 <div class="shell">
 <nav aria-label="Primary">
   <a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a>
@@ -28,8 +28,8 @@
 <section class="pagehead inspector-head">
   <div>
     <div class="kicker">Reviewer tool · browser-local</div>
-    <h1>Open a <code>.pcs.zip</code>. See exactly what is inside.</h1>
-    <p>A PCS package keeps a claim and its evidence together in one file. Open yours to see what it contains and whether its files match the record. If you are just exploring, load the sample below.</p>
+    <h1>Inspect an evidence package.</h1>
+    <p>A PCS package keeps a claim and its evidence together in one file. Open it to see the contents and check their recorded file identities.</p>
     <div class="notice"><strong>Important:</strong> this is an inspector, not the authoritative verifier. Signature authenticity, scientific replay, and Lean acceptance remain explicitly marked as requiring the production verifier.</div>
   </div>
   <aside class="demo-profile-card"><span>PRIVACY</span><strong>Your file stays local</strong><small>No package bytes are uploaded by this page.</small></aside>
@@ -207,4 +207,4 @@
 <footer><div class="footergrid"><div class="footerbrand"><a class="brand" href="index.html"><img src="logo-mark.svg" alt=""><span>Proof-Carrying Science</span></a><p>Independent assurance infrastructure for critical scientific computation.</p></div><div class="footercol"><strong>Review</strong><a href="package-inspector.html">Package Inspector</a><a href="result-anatomy.html">Result anatomy</a><a href="trust-explorer.html">Trust Explorer</a></div><div class="footercol"><strong>Evidence</strong><a href="validation.html">Validation</a><a href="trust.html">Trust Center</a><a href="architecture.html">Architecture</a></div></div></footer>
 </div>
 <script src="site.js"></script><script src="package-inspector.js"></script>
-</body></html>
+<script type="module" src="page-help.mjs"></script></body></html>

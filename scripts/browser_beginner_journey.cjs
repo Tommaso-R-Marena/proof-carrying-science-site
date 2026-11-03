@@ -58,7 +58,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
         return route.continue();
       });
       const p = await context.newPage(); await p.goto(base + '/');
-      const start = p.getByRole('link', {name:'Try a 1-minute example', exact:true});
+      const start = p.getByRole('link', {name:'Try the scientific example', exact:true});
       assert.equal(await inView(start), true, 'the first action must be visible without scrolling');
       assert.equal(await p.locator('#homeResearch').getAttribute('open'), null);
       assert.equal(await p.locator('.home-sample').getAttribute('open'), null);
@@ -74,7 +74,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       const primaryActionBottom = await start.evaluate(e => e.getBoundingClientRect().bottom + scrollY);
       await start.click(); await p.locator('#firstInvestigation[data-ready=true]').waitFor({state:'attached'});
       // The first task is an actual file check, not a prerequisite logic quiz.
-      await p.locator('#minuteExamplePanel[data-ready=true]').waitFor();
+      await p.locator('#minuteExamplePanel[data-ready=true]').waitFor({state:'attached'});
       assert.equal(await p.locator('#ruleInvestigation').getAttribute('open'),null);
       assert.equal(await p.locator('#minuteResults').isHidden(),true);
       assert.equal(await p.locator('#minuteReport').isDisabled(),true);
@@ -82,6 +82,7 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
       assert.ok(introductionWords<=260,'keep the initial explanation short: '+introductionWords);
       assert.equal(await p.locator('nav.pcs-nav-ready .navlinks>a').count(),3);
       await p.screenshot({path:path.join(output,`one-minute-${width}.png`),fullPage:true});
+      await p.locator('#practiceLists>summary').click();
       await p.locator('#minuteCheck').focus();await p.keyboard.press('Enter');
       await p.locator('#minuteResults:not([hidden])').waitFor();
       assert.equal(await p.locator('#minuteOutcome').innerText(),'1 shared ID found');
@@ -214,9 +215,9 @@ const noOverflow = p => p.evaluate(() => document.documentElement.scrollWidth <=
     }
     const fallback = await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:900}});
     const p = await fallback.newPage(); await p.goto(base + '/');
-    assert.equal(await inView(p.getByRole('link',{name:'Try a 1-minute example',exact:true})),true);
+    assert.equal(await inView(p.getByRole('link',{name:'Try the scientific example',exact:true})),true);
     await p.locator('#homeResearch>summary').click(); assert.equal(await p.locator('#product').isVisible(),true);
-    await p.getByRole('link',{name:'Try a 1-minute example',exact:true}).click();
+    await p.getByRole('link',{name:'Try the scientific example',exact:true}).click();
     assert.equal(await p.locator('#minuteCheck').isDisabled(),true);assert.equal(await p.locator('#minuteRows0 tr').count(),3);
     assert.match(await p.locator('noscript').first().innerText(),/needs JavaScript/);
     await fallback.close(); report.no_javascript_navigation=true;

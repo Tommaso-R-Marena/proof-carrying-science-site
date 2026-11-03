@@ -1,0 +1,29 @@
+{
+  "format": "pcs-browser-ui-requalification-v1",
+  "scientific_acceptance": false,
+  "records": [
+    {
+      "historical": "docs/evidence/website-research-sync-v1/calibration-browser.json",
+      "historical_sha256": "08d6cae0b66fec16e9505d90bc765c4f5fab1d832afa4d8ddf3915788872721e",
+      "previous_html": "docs/evidence/site-clarity-v1/calibration-before.html",
+      "current": "docs/evidence/site-clarity-v1/calibration-browser.json"
+    },
+    {
+      "historical": "public/reasoning/scientific-workflow-v2/browser-validation.json",
+      "historical_sha256": "140ee2230577f495dad9ebb5c9b4b16a6f4622c9d647ddb6b653ad5e3b53e344",
+      "previous_html": "docs/evidence/site-clarity-v1/penguins-before.html",
+      "current": "docs/evidence/site-clarity-v1/penguins-browser.json"
+    },
+    {
+      "historical": "public/reasoning/scientific-workflow-v3/browser-validation.json",
+      "historical_sha256": "680e31bf2b654f57ac18dfe18c315949b0f9f510cbf8c658900fb88e79bf7f57",
+      "previous_html": "docs/evidence/site-clarity-v1/transport-before.html",
+      "current": "docs/evidence/site-clarity-v1/transport-browser.json"
+    }
+  ],
+  "reading_help_sources": {
+    "public/page-help.mjs": "65d57a5a45df54e49a5f92f0a79bf70dac278af3e20217f53b79e3643680d91b",
+    "public/page-help-core.mjs": "0a791249caac7be618799c66999cd707f60c00e1dc9df9a23be7fa399f3d68b7",
+    "public/page-help.css": "3499e5dad6567102288cef579bc9b83f332dce7e9e9d2166c86852dd23ce6f49"
+  }
+}

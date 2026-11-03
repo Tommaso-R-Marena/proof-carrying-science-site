@@ -1,0 +1,147 @@
+{
+  "format": "pcs-public-data-conservation-v2",
+  "provenance": {
+    "format": "pcs-public-export-provenance-v2",
+    "dataset": "Iris",
+    "creator": "R. A. Fisher",
+    "publisher": "UC Irvine Machine Learning Repository",
+    "doi": "10.24432/C56C76",
+    "source_url": "https://archive.ics.uci.edu/static/public/53/data.csv",
+    "repository_url": "https://archive.ics.uci.edu/dataset/53/iris",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "retrieved_utc": "2026-11-01",
+    "source_sha256": "daaeb5e3e889d07fbdd44544f5a39fe2372a07172e25899d577be0ad74df9e65",
+    "source_data_rows": 150,
+    "transformations": [
+      "Retain all published field strings.",
+      "Add source_row_id using the ordinal in this fixed source snapshot.",
+      "Previous export uses the first 100 rows; new export uses all 150 in reverse order."
+    ],
+    "identity_assumption": "Ordinal IDs are only stable within this frozen snapshot, not across future publisher reorderings.",
+    "publisher_warning": "UCI notes discrepancies from Fisher\u2019s original article in observations 35 and 38. Values are preserved, not scientifically validated.",
+    "scientific_acceptance": false
+  },
+  "actual_native_checks": 3,
+  "records": [
+    {
+      "case": "published_observation_extension",
+      "source": "UCI Iris snapshot with documented ordinal IDs",
+      "receipt": {
+        "format": "pcs-change-review-local-receipt-v2",
+        "scope": "original-csv-change-review-v2",
+        "authority": "local-lean-original-csv-v2",
+        "lean_verdict": "PASS",
+        "decoded_sha256": [
+          "b0f9f486a0d22fb58726fd617b6e021847cba9e102fd407279d4e3032d5fa035",
+          "2e8ebd8fe86eaec2b4a5a830528daddf0e10a521327a074af1a9fe3e9df3caee"
+        ],
+        "original_csv_decoding_proved": true,
+        "input_sha256": [
+          "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+          "5df2056b9bcfb9165d4a4ab0ef55837605896caa4ac36090b0830e5d351b2111"
+        ],
+        "columns": [
+          0,
+          0
+        ],
+        "comparison_sha256": "3423ffa54e3066ea47811ae0108d160d2c4fd97347bec18349100593d2b7d2cc",
+        "summary": {
+          "old_rows": 100,
+          "new_rows": 150,
+          "added": 50,
+          "removed": 0,
+          "changed": 0,
+          "same": 100,
+          "compared_columns": 5
+        },
+        "accepted": true,
+        "checker_sha256": "727e3457ed500741ba26e53f4af7e5d4ca49429d36deeb8912b8f6cb106f3ad0",
+        "core_commit": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+        "host_refinement_proved": false,
+        "signed_receipt": false,
+        "scientific_acceptance": false
+      }
+    },
+    {
+      "case": "synthetic_corruption_of_one_published_value",
+      "receipt": {
+        "format": "pcs-change-review-local-receipt-v2",
+        "scope": "original-csv-change-review-v2",
+        "authority": "local-lean-original-csv-v2",
+        "lean_verdict": "REVIEW",
+        "decoded_sha256": [
+          "b0f9f486a0d22fb58726fd617b6e021847cba9e102fd407279d4e3032d5fa035",
+          "a930d7523adedfe60f4cededafdee14ae0a874f36a49e31787b665d937e93426"
+        ],
+        "original_csv_decoding_proved": true,
+        "input_sha256": [
+          "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+          "a6a4eee47be355c8d45a5103233c5fd4cbe5329f621007e87c066fa3a5e3dc2d"
+        ],
+        "columns": [
+          0,
+          0
+        ],
+        "comparison_sha256": "3423ffa54e3066ea47811ae0108d160d2c4fd97347bec18349100593d2b7d2cc",
+        "summary": {
+          "old_rows": 100,
+          "new_rows": 150,
+          "added": 50,
+          "removed": 0,
+          "changed": 1,
+          "same": 99,
+          "compared_columns": 5
+        },
+        "accepted": false,
+        "checker_sha256": "727e3457ed500741ba26e53f4af7e5d4ca49429d36deeb8912b8f6cb106f3ad0",
+        "core_commit": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+        "host_refinement_proved": false,
+        "signed_receipt": false,
+        "scientific_acceptance": false
+      }
+    },
+    {
+      "case": "synthetic_loss_of_one_existing_record",
+      "receipt": {
+        "format": "pcs-change-review-local-receipt-v2",
+        "scope": "original-csv-change-review-v2",
+        "authority": "local-lean-original-csv-v2",
+        "lean_verdict": "REVIEW",
+        "decoded_sha256": [
+          "b0f9f486a0d22fb58726fd617b6e021847cba9e102fd407279d4e3032d5fa035",
+          "867740068ed0d0bb16517cfc436d37394c82be100522eb7003343d8f5a078866"
+        ],
+        "original_csv_decoding_proved": true,
+        "input_sha256": [
+          "18bea934786a9ca9aa6745226120bf816e3aec059db7afc95eeb739c10a5038b",
+          "03f6e15275803004f355437f3c618613fee83a3c27c65236020f8560218d7e72"
+        ],
+        "columns": [
+          0,
+          0
+        ],
+        "comparison_sha256": "3423ffa54e3066ea47811ae0108d160d2c4fd97347bec18349100593d2b7d2cc",
+        "summary": {
+          "old_rows": 100,
+          "new_rows": 149,
+          "added": 50,
+          "removed": 1,
+          "changed": 0,
+          "same": 99,
+          "compared_columns": 5
+        },
+        "accepted": false,
+        "checker_sha256": "727e3457ed500741ba26e53f4af7e5d4ca49429d36deeb8912b8f6cb106f3ad0",
+        "core_commit": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+        "host_refinement_proved": false,
+        "signed_receipt": false,
+        "scientific_acceptance": false
+      }
+    }
+  ],
+  "model_accuracy_tested": false,
+  "new_measurements_collected": false,
+  "human_participants": 0,
+  "scientific_acceptance": false
+}
