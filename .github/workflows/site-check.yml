@@ -82,7 +82,9 @@ jobs:
       - name: Validate deployable static site
         run: python scripts/check_site.py
       - name: Validate responsive UI layout
-        run: python scripts/check_ui_layout.py
+        run: |
+          npx --no-install playwright install --with-deps chromium
+          PCS_CHROME="$(node -e "console.log(require('playwright').chromium.executablePath())")" python scripts/check_ui_layout.py
       - name: Upload UI layout failure screenshots
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
