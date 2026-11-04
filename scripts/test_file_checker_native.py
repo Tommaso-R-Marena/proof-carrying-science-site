@@ -5,6 +5,7 @@ Every positive verdict below executes the bundled Lean checker. No mock verifier
 is used for a positive case. Tests deliberately fail if the bundle is absent.
 """
 import errno
+from contextlib import contextmanager
 import base64,hashlib,http.client,itertools,json,os,random,shutil,subprocess,sys,tempfile,threading,time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -15,6 +16,21 @@ from app import AppServer
 
 def request(a,b,columns=None):
     return {'columns':columns or [0,0],'files':[{'name':f'{i}.csv','data_base64':base64.b64encode(raw).decode(),'sha256':hashlib.sha256(raw).hexdigest()} for i,raw in enumerate([a,b])]}
+
+
+@contextmanager
+def running_app(assets, *, port=0):
+    """Stop the listener before context exit closes its socket, including failed assertions."""
+    with AppServer(assets,port=port) as server:
+        # Fixture teardown also waits for request workers; production behavior is unchanged.
+        server.daemon_threads=False
+        thread=threading.Thread(target=server.serve_forever)
+        thread.start()
+        try:yield server,thread
+        finally:
+            server.shutdown()
+            thread.join(5)
+            assert not thread.is_alive(),'Local test listener did not stop'
 
 
 def main():
@@ -70,21 +86,32 @@ def main():
         try:LocalChecker(damaged)
         except ValueError:negative+=1
         else:raise AssertionError('Changed checker accepted')
-    with AppServer(assets) as server:
+    # Deliberately fail inside the actual fixture. No positive verdict is mocked.
+    try:
+        with running_app(assets) as (failed_server,failed_thread):
+            raise ConnectionAbortedError('synthetic fixture cleanup control')
+    except ConnectionAbortedError:
+        assert not failed_thread.is_alive() and failed_server.socket.fileno()==-1
+        negative+=1
+    else:raise AssertionError('Cleanup control did not fail')
+    with running_app(assets) as (server,thread):
         try:
             duplicate=AppServer(assets,port=server.server_port)
         except OSError as exc:
             assert exc.errno==errno.EADDRINUSE;negative+=1
         else:
             duplicate.server_close();raise AssertionError('Conflicting app address accepted')
-        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
-        def call(method,path,body=None,headers=None):
+        def call(method,path,body=None,headers=None,*,case='request'):
             c=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=40)
-            c.request(method,path,body=body,headers=headers or {});r=c.getresponse();data=r.read();c.close();return r.status,data
+            try:
+                c.request(method,path,body=body,headers=headers or {});r=c.getresponse();data=r.read();return r.status,data
+            except OSError as exc:
+                raise AssertionError(f'Loopback transport failed: {case}; errno={exc.errno}; winerror={getattr(exc,"winerror",None)}') from exc
+            finally:c.close()
         token={'X-PCS-Session':server.token,'Content-Type':'application/json','Origin':server.origin}
         status,data=call('POST','/api/check-files',canonical(valid),token);assert status==200 and json.loads(data)['lean_verdict']=='DISJOINT';positive+=1
-        for headers in [{},{**token,'Origin':'https://attacker.invalid'},{**token,'Host':'attacker.invalid'},{**token,'X-PCS-Session':'f'*64},{**token,'X-PCS-Session':'é'*64}]:
-            status,_=call('POST','/api/check-files',canonical(valid),headers);assert status==403;negative+=1
+        for name,headers in [('missing-session',{}),('foreign-origin',{**token,'Origin':'https://attacker.invalid'}),('foreign-host',{**token,'Host':'attacker.invalid'}),('wrong-session',{**token,'X-PCS-Session':'f'*64}),('non-ascii-session',{**token,'X-PCS-Session':'é'*64})]:
+            status,_=call('POST','/api/check-files',canonical(valid),headers,case=name);assert status==403,name;negative+=1
         assert call('OPTIONS','/api/check-files',headers={'Origin':'https://attacker.invalid'})[0]==403;negative+=1
         assert call('GET','/../../checker-manifest.json')[0]==404;negative+=1
         assert call('GET','/api/session')[0]==403;negative+=1
@@ -95,14 +122,11 @@ def main():
         try:assert call('POST','/api/check-files',canonical(valid),token)[0]==429;negative+=1
         finally:server.check_slot.release()
         previous_port,previous_token=server.server_port,server.token
-        server.shutdown();thread.join(5)
     # The same address is available after close, with a different capability.
-    with AppServer(assets,port=previous_port) as server:
-        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+    with running_app(assets,port=previous_port) as (server,thread):
         assert server.token!=previous_token
         assert call('GET','/api/session',headers={'X-PCS-Session':previous_token})[0]==403;negative+=1
         assert call('GET','/api/session',headers={'X-PCS-Session':server.token})[0]==200
-        server.shutdown();thread.join(5)
     print(json.dumps({'format':'pcs-file-check-native-tests-v1','actual_lean_positive_checks':positive,'negative_controls':negative,'seconds':round(time.monotonic()-started,3),'same_address_restart':True,'scaling':scaling,'mock_positive_verdicts':0,'immutable_host_security_proved':False}))
 
 

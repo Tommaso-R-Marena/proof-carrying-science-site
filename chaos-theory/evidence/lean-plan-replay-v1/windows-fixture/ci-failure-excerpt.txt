@@ -1,0 +1,46 @@
+026-11-04T20:02:03.8518490Z Exception in thread Thread-485 (serve_forever):
+2026-11-04T20:02:03.8593463Z Traceback (most recent call last):
+2026-11-04T20:02:03.8599563Z Traceback (most recent call last):
+2026-11-04T20:02:03.8624050Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\threading.py", line 1044, in _bootstrap_inner
+2026-11-04T20:02:03.8624688Z     self.run()
+2026-11-04T20:02:03.8624935Z     ~~~~~~~~^^
+2026-11-04T20:02:03.8632693Z   File "D:\a\proof-carrying-science-site\proof-carrying-science-site\scripts\test_file_checker_native.py", line 109, in <module>
+2026-11-04T20:02:03.8633782Z     if __name__=='__main__':main()
+2026-11-04T20:02:03.8634208Z                             ~~~~^^
+2026-11-04T20:02:03.8634707Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\threading.py", line 995, in run
+2026-11-04T20:02:03.8635288Z     self._target(*self._args, **self._kwargs)
+2026-11-04T20:02:03.8635616Z     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T20:02:03.8636226Z   File "D:\a\proof-carrying-science-site\proof-carrying-science-site\scripts\test_file_checker_native.py", line 87, in main
+2026-11-04T20:02:03.8637204Z     status,_=call('POST','/api/check-files',canonical(valid),headers);assert status==403;negative+=1
+2026-11-04T20:02:03.8637673Z              ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T20:02:03.8638247Z   File "D:\a\proof-carrying-science-site\proof-carrying-science-site\scripts\test_file_checker_native.py", line 83, in call
+2026-11-04T20:02:03.8639013Z     c.request(method,path,body=body,headers=headers or {});r=c.getresponse();data=r.read();c.close();return r.status,data
+2026-11-04T20:02:03.8639531Z                                                              ~~~~~~~~~~~~~^^
+2026-11-04T20:02:03.8640029Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\socketserver.py", line 235, in serve_forever
+2026-11-04T20:02:03.8640485Z     ready = selector.select(poll_interval)
+2026-11-04T20:02:03.8640958Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\http\client.py", line 1478, in getresponse
+2026-11-04T20:02:03.8641363Z     response.begin()
+2026-11-04T20:02:03.8641579Z     ~~~~~~~~~~~~~~^^
+2026-11-04T20:02:03.8641959Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\http\client.py", line 343, in begin
+2026-11-04T20:02:03.8642410Z     version, status, reason = self._read_status()
+2026-11-04T20:02:03.8642717Z                               ~~~~~~~~~~~~~~~~~^^
+2026-11-04T20:02:03.8643140Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\selectors.py", line 314, in select
+2026-11-04T20:02:03.8643625Z     r, w, _ = self._select(self._readers, self._writers, [], timeout)
+2026-11-04T20:02:03.8644005Z               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-04T20:02:03.8646438Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\http\client.py", line 304, in _read_status
+2026-11-04T20:02:03.8647003Z     line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+2026-11-04T20:02:03.8647339Z                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+2026-11-04T20:02:03.8647783Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\selectors.py", line 305, in _select
+2026-11-04T20:02:03.8648205Z     r, w, x = select.select(r, w, w, timeout)
+2026-11-04T20:02:03.8648489Z               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+2026-11-04T20:02:03.8648903Z   File "C:\hostedtoolcache\windows\Python\3.13.17\x64\Lib\socket.py", line 723, in readinto
+2026-11-04T20:02:03.8649328Z     return self._sock.recv_into(b)
+2026-11-04T20:02:03.8649591Z            ~~~~~~~~~~~~~~~~~~~~^^^
+2026-11-04T20:02:03.8650117Z ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+2026-11-04T20:02:04.8675193Z Fatal Python error: _enter_buffered_busy: could not acquire lock for <_io.BufferedWriter name='<stderr>'> at interpreter shutdown, possibly due to daemon threads
+2026-11-04T20:02:04.8676224Z Python runtime state: finalizing (tstate=0x00007ffd7ae8dda0)
+2026-11-04T20:02:04.8676516Z
+2026-11-04T20:02:04.8676700Z Current thread 0x000017b0 (most recent call first):
+2026-11-04T20:02:04.8677024Z   <no Python frame>
+2026-11-04T20:02:07.2171723Z ##[error]Process completed with exit code 127.
+2026-11-04T20:02:07.2394786Z
