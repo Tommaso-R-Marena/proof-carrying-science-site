@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "failureHead": "6200480ff5ec96549e1a2db096ea2eeb19119f78",
+  "failedWorkflowRun": 41795893615,
+  "failedJob": 126464418762,
+  "scope": "test synchronization and independent replay only; all listed public runtime/model files unchanged",
+  "files": {
+    "scripts/browser_layout_check.cjs": "ea9879d53bd2fe1ebada50e7763c5fa77a9f4e1bf630c58cbc9ddd5c9463eaff",
+    "public/omega-workspace.js": "a23f2b38aff34c37bbf69fe1ecc23ff1ad92bfd0ac6cefa9f31f6e23071a1569",
+    "public/omega-core.mjs": "8e0937ce859244715dc8529b18669b31fb868813bc6c03aee15b70b4bfdd062e",
+    "public/omega-adaptive.mjs": "f67bae78595d861cd1427ef7ae6aa35334fd9dbd3a1b4af82af53513165f8ca9",
+    "public/omega/nonlinear-v2.json": "0737e4cc7e297b9dbee29714cea664d29b819cf22b39f0d980292fbc7544e0b4"
+  }
+}

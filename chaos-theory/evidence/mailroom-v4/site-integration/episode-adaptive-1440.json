@@ -1,0 +1,187 @@
+{
+  "format": "pcs-omega-adaptive-episode-v2",
+  "original_task": {
+    "variables": [
+      "P",
+      "Q"
+    ],
+    "source": {
+      "op": "and",
+      "left": {
+        "op": "atom",
+        "symbol": "P",
+        "args": []
+      },
+      "right": {
+        "op": "atom",
+        "symbol": "Q",
+        "args": []
+      }
+    },
+    "candidate": {
+      "op": "or",
+      "left": {
+        "op": "atom",
+        "symbol": "P",
+        "args": []
+      },
+      "right": {
+        "op": "atom",
+        "symbol": "Q",
+        "args": []
+      }
+    }
+  },
+  "model_sha256": null,
+  "budget": {
+    "checks": 8,
+    "depth": 3,
+    "proposals": 128
+  },
+  "initial_receipt": {
+    "format": "pcs-omega-check-v1",
+    "checker": "pcs-omega-exhaustive-bool/1",
+    "task_sha256": "de3eea420fc3e1e57040c7c0a044de30ed97366eb4a43c919117a3db3525bb34",
+    "source_sha256": "12864a32e1cfd0ed6ef44bb1f0c80a36254a85dc7e4d8287c614eb720e56ff4c",
+    "candidate_sha256": "f94bb019705927fa2a453600b5cdd10a6e2ef0af230fde9d30a718552f4c0870",
+    "assignments_checked": 4,
+    "truth_pairs": [
+      [
+        false,
+        false
+      ],
+      [
+        false,
+        true
+      ],
+      [
+        false,
+        true
+      ],
+      [
+        true,
+        true
+      ]
+    ],
+    "equivalent": false,
+    "counterexample": {
+      "assignment": {
+        "P": false,
+        "Q": true
+      },
+      "source_true": false,
+      "candidate_true": true
+    },
+    "scope": "All valuations of the explicitly declared Boolean symbols",
+    "pcs_authority": false,
+    "lean_kernel_checked": false
+  },
+  "attempts": [
+    {
+      "parent_sha256": "f94bb019705927fa2a453600b5cdd10a6e2ef0af230fde9d30a718552f4c0870",
+      "action": {
+        "kind": "REPAIR_CANDIDATE",
+        "path": [],
+        "operation": "replace_and"
+      },
+      "candidate": {
+        "op": "and",
+        "left": {
+          "op": "atom",
+          "symbol": "P",
+          "args": []
+        },
+        "right": {
+          "op": "atom",
+          "symbol": "Q",
+          "args": []
+        }
+      },
+      "depth": 1,
+      "rejected_by_witness": null,
+      "receipt": {
+        "format": "pcs-omega-check-v1",
+        "checker": "pcs-omega-exhaustive-bool/1",
+        "task_sha256": "c286e03731de65f1653636779b88757f9cefcbb196be96ef57ddf8e389a1b2c1",
+        "source_sha256": "12864a32e1cfd0ed6ef44bb1f0c80a36254a85dc7e4d8287c614eb720e56ff4c",
+        "candidate_sha256": "12864a32e1cfd0ed6ef44bb1f0c80a36254a85dc7e4d8287c614eb720e56ff4c",
+        "assignments_checked": 4,
+        "truth_pairs": [
+          [
+            false,
+            false
+          ],
+          [
+            false,
+            false
+          ],
+          [
+            false,
+            false
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "equivalent": true,
+        "counterexample": null,
+        "scope": "All valuations of the explicitly declared Boolean symbols",
+        "pcs_authority": false,
+        "lean_kernel_checked": false
+      }
+    }
+  ],
+  "checks_used": 2,
+  "witness_evaluations": 1,
+  "solution": {
+    "candidate": {
+      "op": "and",
+      "left": {
+        "op": "atom",
+        "symbol": "P",
+        "args": []
+      },
+      "right": {
+        "op": "atom",
+        "symbol": "Q",
+        "args": []
+      }
+    },
+    "receipt": {
+      "format": "pcs-omega-check-v1",
+      "checker": "pcs-omega-exhaustive-bool/1",
+      "task_sha256": "c286e03731de65f1653636779b88757f9cefcbb196be96ef57ddf8e389a1b2c1",
+      "source_sha256": "12864a32e1cfd0ed6ef44bb1f0c80a36254a85dc7e4d8287c614eb720e56ff4c",
+      "candidate_sha256": "12864a32e1cfd0ed6ef44bb1f0c80a36254a85dc7e4d8287c614eb720e56ff4c",
+      "assignments_checked": 4,
+      "truth_pairs": [
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          true,
+          true
+        ]
+      ],
+      "equivalent": true,
+      "counterexample": null,
+      "scope": "All valuations of the explicitly declared Boolean symbols",
+      "pcs_authority": false,
+      "lean_kernel_checked": false
+    }
+  },
+  "status": "BOOLEAN_VERIFIED",
+  "pcs_authority": false,
+  "lean_kernel_checked": false,
+  "episode_sha256": "1921eea778bfdbed1792c2b5e1eb07c231bbadfb612c6d96909b25af93bfbbf5"
+}

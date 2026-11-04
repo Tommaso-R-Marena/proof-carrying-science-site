@@ -1,0 +1,30 @@
+[
+  {
+    "width": 320,
+    "real_checkpoint_delayed": true,
+    "comparison_blocked_before_validation": true,
+    "pinned_models_ready_before_search": true,
+    "positive_verdict_substituted": false
+  },
+  {
+    "width": 390,
+    "real_checkpoint_delayed": true,
+    "comparison_blocked_before_validation": true,
+    "pinned_models_ready_before_search": true,
+    "positive_verdict_substituted": false
+  },
+  {
+    "width": 768,
+    "real_checkpoint_delayed": true,
+    "comparison_blocked_before_validation": true,
+    "pinned_models_ready_before_search": true,
+    "positive_verdict_substituted": false
+  },
+  {
+    "width": 1440,
+    "real_checkpoint_delayed": true,
+    "comparison_blocked_before_validation": true,
+    "pinned_models_ready_before_search": true,
+    "positive_verdict_substituted": false
+  }
+]

@@ -109,7 +109,7 @@ This makes **two potentially billable calls**, prints the call/token plan, recor
 
 See the [current Mailroom v0.4 report](docs/MAILROOM_V4_REPORT.md), [historical v0.1 test report](docs/TEST_REPORT.md), [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [threat model](docs/THREAT_MODEL.md), and [playtest protocol](docs/PLAYTEST_PROTOCOL.md). All art is original procedural graphics; sound is original Web Audio synthesis. Dependency notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-This is a **review-only standalone addition** to the site repository. Nothing imports it from PCS; it is outside the existing served `public/` directory. Its new CI workflow has no deployment step or credentials. Existing PCS source, authority, CI workflows, dependencies, and production settings are unchanged. **This PR must not be merged or deployed automatically.** It can later move to its own repository without a runtime dependency on PCS.
+This is a **review-only standalone addition** to the site repository. Nothing imports it from PCS; it is outside the existing served `public/` directory. Its new CI workflow has no deployment step or credentials. Existing PCS runtime, authority, CI definitions, dependencies and production settings are unchanged. A protected-site browser smoke test also now waits for actual checkpoint validation before exercising learned search, retaining its real-model and receipt checks. **This PR must not be merged or deployed automatically.** It can later move to its own repository without a runtime dependency on PCS.
 
 ## Build a portable review copy
 

@@ -1,0 +1,15 @@
+2026-11-04T08:14:01.1227224Z > test:browser:layout
+2026-11-04T08:14:01.1227844Z > node scripts/browser_layout_check.cjs
+2026-11-04T08:14:01.1228070Z
+2026-11-04T08:15:15.1627950Z locator.waitFor: Timeout 30000ms exceeded.
+2026-11-04T08:15:15.1628327Z Call log:
+2026-11-04T08:15:15.1628707Z   - waiting for locator('#omegaResult').filter({ hasText: 'Boolean equivalence checked' }) to be visible
+2026-11-04T08:15:15.1629024Z
+2026-11-04T08:15:15.1629357Z     at /home/runner/work/proof-carrying-science-site/proof-carrying-science-site/scripts/browser_layout_check.cjs:52:87 {
+2026-11-04T08:15:15.1629973Z   log: [
+2026-11-04T08:15:15.1630327Z     "  - waiting for locator('#omegaResult').filter({ hasText: 'Boolean equivalence checked' }) to be visible"
+2026-11-04T08:15:15.1630660Z   ],
+2026-11-04T08:15:15.1630822Z   name: 'TimeoutError'
+2026-11-04T08:15:15.1630995Z }
+2026-11-04T08:15:15.5642627Z ##[error]Process completed with exit code 1.
+2026-11-04T08:15:15.5696390Z

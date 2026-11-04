@@ -1,0 +1,3459 @@
+[
+  {
+    "file": "404.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "account.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin-login.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "architecture.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-countermodel.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "pcs countermodel-replay-v1 my-local-search.json\nnode scripts/train_countermodel_"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "arena-proof-quest.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-safety-forge.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "assurance-fold.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "bridge-builder.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "calibration-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "Pointwise minimax versus one global least-squares polynomial per hullDegreeLeast"
+      },
+      {
+        "tag": "CAPTION",
+        "id": "",
+        "cls": "",
+        "text": "Pointwise minimax versus one global least-squares polynomial per hull"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "DegreeLeast-squares SSEMinimax SSEDecrease"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "DegreeLeast-squares SSEMinimax SSEDecrease"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Minimax SSE"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Decrease"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "119,357.8981527,115.86282963.24%24,524.3935541,854.25074959.02%3467.264787382.97"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "119,357.8981527,115.86282963.24%"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "7,115.862829"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "63.24%"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "capabilities.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "check-my-files.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-invalidation-v1.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "changed artifact\n      ↓\ndeclared workflow edges\n      ↓\naffected artifacts\n    "
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "claim-review.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "commons.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contact.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contribute.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contributors.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "demo.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-2",
+        "cls": "tab",
+        "text": "Decision trace"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-3",
+        "cls": "tab",
+        "text": "Certificate"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-4",
+        "cls": "tab",
+        "text": "Decision parity"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-5",
+        "cls": "tab",
+        "text": "Verification log"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "evaluation-firewall.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "evidence-atlas.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "experience.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "first-visit-study.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "forge-duel.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "fund.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "governance.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "guided-submission.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "index.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "DIV",
+        "id": "",
+        "cls": "hero-glow hero-glow-one",
+        "text": ""
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "cls": "hero-glow hero-glow-two",
+        "text": ""
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "intake.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "intervention-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "pcs intervention verify pcs-intervention-result.json\npcs intervention plan task."
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "lean-learning-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "live-demo.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "Tool usedPermissionIntended ruleProposalDifferent?NoNoYesYesNoNoYesYesNoYesYesNo"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "Tool usedPermissionIntended ruleProposalDifferent?"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "Tool usedPermissionIntended ruleProposalDifferent?"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Proposal"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Different?"
+      },
+      {
+        "tag": "TBODY",
+        "id": "ldTruthTable",
+        "cls": "",
+        "text": "NoNoYesYesNoNoYesYesNoYesYesNoNoYesYesYesYesYesYesNo"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "NoNoYesYesNo"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "Yes"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "No"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "NoYesYesNoYes"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "meaning-forge.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "memory-workshop.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-2",
+        "cls": "tab",
+        "text": "Model JSON"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "model-walkthrough.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "mvp.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "omega-workspace.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "PQOriginalCandidateAgreementfalsefalsefalsefalseagreesfalsetruefalsetrueCOUNTERE"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "PQOriginalCandidateAgreement"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "PQOriginalCandidateAgreement"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Agreement"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "falsefalsefalsefalseagreesfalsetruefalsetrueCOUNTEREXAMPLEtruefalsefalsetrueCOUN"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "falsefalsefalsefalseagrees"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "agrees"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "falsetruefalsetrueCOUNTEREXAMPLE"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "COUNTEREXAMPLE"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "truefalsefalsetrueCOUNTEREXAMPLE"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "organizations.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "package-inspector.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "paper-demos.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "privacy.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "project-builder.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "projects.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-search-results.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench-study.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "prooflab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reasoning-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "pcs conditional verify pcs-conditional-result.json\npcs conditional check task.js"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "repair-model-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-preview.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-updates.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "typed domain claim\n      ↓\nClaim IR / obligation graph\n      ↓\nformal proof | re"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "researcher-pilots.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "result-anatomy.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "review-changes.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reviewer-desk.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "roles.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "scientific-workflow-v2.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-audit.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-gauntlet.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-multistep-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-repair-lab.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "task-graph.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "tasks.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "transport-workflow-v3.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust-explorer.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "usability-study.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation-registry.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "validation-table",
+        "text": "\n      \n        CasePublic sourcePCS checkExpectedObservedKey result\n      \n    "
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "\n        CasePublic sourcePCS checkExpectedObservedKey result\n      "
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "CasePublic sourcePCS checkExpectedObservedKey result"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Public source"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "PCS check"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Expected"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Observed"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Key result"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "\n        \n          Haber–Bosch ammonia synthesis\n          Chemistry LibreTexts"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "\n          Haber–Bosch ammonia synthesis\n          Chemistry LibreTexts, “The Ha"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "workboard.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "world-builder.html",
+    "width": 320,
+    "status": 200,
+    "scrollWidth": 320,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "404.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "account.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin-login.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "architecture.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-countermodel.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "pcs countermodel-replay-v1 my-local-search.json\nnode scripts/train_countermodel_"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "arena-proof-quest.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-safety-forge.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "assurance-fold.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "bridge-builder.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "calibration-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "Pointwise minimax versus one global least-squares polynomial per hullDegreeLeast"
+      },
+      {
+        "tag": "CAPTION",
+        "id": "",
+        "cls": "",
+        "text": "Pointwise minimax versus one global least-squares polynomial per hull"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "DegreeLeast-squares SSEMinimax SSEDecrease"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "DegreeLeast-squares SSEMinimax SSEDecrease"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Minimax SSE"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Decrease"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "119,357.8981527,115.86282963.24%24,524.3935541,854.25074959.02%3467.264787382.97"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "119,357.8981527,115.86282963.24%"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "7,115.862829"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "63.24%"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "capabilities.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "check-my-files.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-invalidation-v1.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-review.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "commons.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contact.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contribute.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contributors.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "demo.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-3",
+        "cls": "tab",
+        "text": "Certificate"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-4",
+        "cls": "tab",
+        "text": "Decision parity"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "tab-0-5",
+        "cls": "tab",
+        "text": "Verification log"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "evaluation-firewall.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "evidence-atlas.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "experience.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "first-visit-study.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "forge-duel.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "fund.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "governance.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "guided-submission.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "index.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "DIV",
+        "id": "",
+        "cls": "hero-glow hero-glow-one",
+        "text": ""
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "cls": "hero-glow hero-glow-two",
+        "text": ""
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "intake.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "intervention-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "pcs intervention verify pcs-intervention-result.json\npcs intervention plan task."
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "lean-learning-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "live-demo.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "Tool usedPermissionIntended ruleProposalDifferent?NoNoYesYesNoNoYesYesNoYesYesNo"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "Tool usedPermissionIntended ruleProposalDifferent?"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "Tool usedPermissionIntended ruleProposalDifferent?"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Different?"
+      },
+      {
+        "tag": "TBODY",
+        "id": "ldTruthTable",
+        "cls": "",
+        "text": "NoNoYesYesNoNoYesYesNoYesYesNoNoYesYesYesYesYesYesNo"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "NoNoYesYesNo"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "No"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "NoYesYesNoYes"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "Yes"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "YesNoNoYesYes"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "meaning-forge.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "memory-workshop.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-walkthrough.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "mvp.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "omega-workspace.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "PQOriginalCandidateAgreementfalsefalsefalsefalseagreesfalsetruefalsetrueCOUNTERE"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "PQOriginalCandidateAgreement"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "PQOriginalCandidateAgreement"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Agreement"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "falsefalsefalsefalseagreesfalsetruefalsetrueCOUNTEREXAMPLEtruefalsefalsetrueCOUN"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "falsefalsefalsefalseagrees"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "agrees"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "falsetruefalsetrueCOUNTEREXAMPLE"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "COUNTEREXAMPLE"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "truefalsefalsetrueCOUNTEREXAMPLE"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "organizations.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "package-inspector.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "paper-demos.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "privacy.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "project-builder.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "projects.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-search-results.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench-study.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "prooflab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reasoning-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "pcs conditional verify pcs-conditional-result.json\npcs conditional check task.js"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "repair-model-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-preview.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-updates.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "CODE",
+        "id": "",
+        "cls": "",
+        "text": "typed domain claim\n      ↓\nClaim IR / obligation graph\n      ↓\nformal proof | re"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "researcher-pilots.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "result-anatomy.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "review-changes.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reviewer-desk.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "roles.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "scientific-workflow-v2.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-audit.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-gauntlet.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-multistep-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-repair-lab.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "task-graph.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "tasks.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "transport-workflow-v3.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust-explorer.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "usability-study.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation-registry.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "validation-table",
+        "text": "\n      \n        CasePublic sourcePCS checkExpectedObservedKey result\n      \n    "
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "\n        CasePublic sourcePCS checkExpectedObservedKey result\n      "
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "CasePublic sourcePCS checkExpectedObservedKey result"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Public source"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "PCS check"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Expected"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Observed"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Key result"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "\n        \n          Haber–Bosch ammonia synthesis\n          Chemistry LibreTexts"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "\n          Haber–Bosch ammonia synthesis\n          Chemistry LibreTexts, “The Ha"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "workboard.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "world-builder.html",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "404.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "account.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin-login.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "architecture.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-countermodel.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-proof-quest.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-safety-forge.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "assurance-fold.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "bridge-builder.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "calibration-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "capabilities.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "check-my-files.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-invalidation-v1.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-review.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "commons.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contact.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contribute.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contributors.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "demo.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "evaluation-firewall.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "evidence-atlas.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "experience.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "first-visit-study.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "forge-duel.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "fund.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "governance.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "guided-submission.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "index.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "DIV",
+        "id": "",
+        "cls": "hero-glow hero-glow-one",
+        "text": ""
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "intake.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "intervention-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "lean-learning-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "live-demo.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "meaning-forge.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "memory-workshop.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-walkthrough.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "mvp.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "omega-workspace.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "",
+        "text": "SeedStrategyFull-check budgetSolved / 96Mean repairsMean witness testsCPU second"
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "SeedStrategyFull-check budgetSolved / 96Mean repairsMean witness testsCPU second"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "SeedStrategyFull-check budgetSolved / 96Mean repairsMean witness testsCPU second"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "CPU seconds"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "20261009bfs418 / 963.00.01.4820261009random435 / 962.70.01.4720261009structural4"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "20261009bfs418 / 963.00.01.48"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "1.48"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "20261009random435 / 962.70.01.47"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "1.47"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "20261009structural463 / 962.00.01.46"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "organizations.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "package-inspector.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "paper-demos.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "privacy.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "project-builder.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "projects.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-search-results.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench-study.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "prooflab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reasoning-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "repair-model-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-preview.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-updates.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "researcher-pilots.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "result-anatomy.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "review-changes.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reviewer-desk.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "roles.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "scientific-workflow-v2.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-audit.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-gauntlet.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-multistep-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-repair-lab.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "task-graph.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "tasks.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "transport-workflow-v3.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust-explorer.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "usability-study.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation-registry.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [
+      {
+        "tag": "TABLE",
+        "id": "",
+        "cls": "validation-table",
+        "text": "\n      \n        CasePublic sourcePCS checkExpectedObservedKey result\n      \n    "
+      },
+      {
+        "tag": "THEAD",
+        "id": "",
+        "cls": "",
+        "text": "\n        CasePublic sourcePCS checkExpectedObservedKey result\n      "
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "CasePublic sourcePCS checkExpectedObservedKey result"
+      },
+      {
+        "tag": "TH",
+        "id": "",
+        "cls": "",
+        "text": "Key result"
+      },
+      {
+        "tag": "TBODY",
+        "id": "",
+        "cls": "",
+        "text": "\n        \n          Haber–Bosch ammonia synthesis\n          Chemistry LibreTexts"
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "\n          Haber–Bosch ammonia synthesis\n          Chemistry LibreTexts, “The Ha"
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "N=2 and H=6 on each side; atom delta empty."
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "\n          UCI Iris clean split\n          Fisher Iris, UCI DOI 10.24432/C56C76, "
+      },
+      {
+        "tag": "TD",
+        "id": "",
+        "cls": "",
+        "text": "120 train IDs, 30 test IDs, zero overlap."
+      },
+      {
+        "tag": "TR",
+        "id": "",
+        "cls": "",
+        "text": "\n          UCI Iris contaminated split\n          Adversarial mutation of the sam"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "file": "workboard.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "world-builder.html",
+    "width": 768,
+    "status": 200,
+    "scrollWidth": 768,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "404.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "account.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin-login.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "admin.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "architecture.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-countermodel.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-proof-quest.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena-safety-forge.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "arena.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "assurance-fold.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "bridge-builder.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "calibration-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "capabilities.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "check-my-files.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-invalidation-v1.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "claim-review.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "commons.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contact.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contribute.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "contributors.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "demo.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "evaluation-firewall.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "evidence-atlas.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "experience.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "first-visit-study.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "forge-duel.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "fund.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "governance.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "guided-submission.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "index.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "intake.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "intervention-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "lean-learning-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "live-demo.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "meaning-forge.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "memory-workshop.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "model-walkthrough.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "mvp.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "omega-workspace.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "organizations.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "package-inspector.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "paper-demos.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "privacy.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "project-builder.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "projects.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-search-results.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench-study.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "proof-workbench.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "prooflab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reasoning-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "repair-model-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-preview.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research-updates.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "research.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "researcher-pilots.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "result-anatomy.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "review-changes.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "reviewer-desk.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "roles.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "scientific-workflow-v2.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-audit.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-gauntlet.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-multistep-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "semantic-repair-lab.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "task-graph.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "tasks.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "transport-workflow-v3.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust-explorer.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "trust.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "usability-study.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation-registry.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "validation.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "workboard.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  },
+  {
+    "file": "world-builder.html",
+    "width": 1440,
+    "status": 200,
+    "scrollWidth": 1440,
+    "clashes": [],
+    "escapes": [],
+    "errors": []
+  }
+]

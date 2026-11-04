@@ -1,0 +1,26 @@
+
+> test:omega
+> node --test tests/omega-core.test.mjs tests/omega-adaptive.test.mjs
+
+✔ actual nonlinear checkpoint drives bounded repair, full checks retain acceptance (53.177917ms)
+✔ recommitted false authority, budget and verdict fail independent replay (6.518731ms)
+✔ checkpoint bounds and feature semantics do not trust a recomputed digest (19.964454ms)
+✔ independent browser checker finds the actual protocol counterexample (17.444824ms)
+✔ strict JSON rejects duplicates, non-finite values, prototype keys and byte overflow (1.648589ms)
+✔ typed intake rejects unsupported science, missing source text and cyclic dependencies (1.51048ms)
+✔ closed actions cannot change source or smuggle executable code (1.237358ms)
+✔ actual bag checkpoint is pinned, nonzero and cannot grant authority (14.587762ms)
+✔ actual graph checkpoint is pinned, nonzero and cannot grant authority (7.569056ms)
+✔ actual bandit checkpoint is pinned, nonzero and cannot grant authority (2.2264ms)
+✔ all strategies generate Python-compatible bounded episodes and exact independent replay (25.938356ms)
+✔ rehashed receipt and goal forgery still fail independent replay (6.472762ms)
+✔ exhausted search does not offer a false proof and budget types are strict (2.115994ms)
+✔ workspace evidence is local, rendered as text, and invalidated by edits (0.773498ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 335.587321

@@ -1,0 +1,32 @@
+F....FF
+======================================================================
+FAIL: test_normal_change_does_not_require_a_nonexistent_archive (__main__.ContributionGateTests.test_normal_change_does_not_require_a_nonexistent_archive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/chaos-theory-pr/tests/test_pr_contribution_gate.py", line 77, in test_normal_change_does_not_require_a_nonexistent_archive
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 1 != 0 : Protected contribution gate FAIL: Expected an owner repository and exact PR base SHA
+
+
+======================================================================
+FAIL: test_valid_archive_runs_the_actual_digest_checker (__main__.ContributionGateTests.test_valid_archive_runs_the_actual_digest_checker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/chaos-theory-pr/tests/test_pr_contribution_gate.py", line 84, in test_valid_archive_runs_the_actual_digest_checker
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 1 != 0 : Protected contribution gate FAIL: Expected an owner repository and exact PR base SHA
+
+
+======================================================================
+FAIL: test_valid_promotion_runs_exact_archive_to_source_checker (__main__.ContributionGateTests.test_valid_promotion_runs_exact_archive_to_source_checker)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/chaos-theory-pr/tests/test_pr_contribution_gate.py", line 105, in test_valid_promotion_runs_exact_archive_to_source_checker
+    self.assertEqual(r.returncode, 0, r.stderr)
+AssertionError: 1 != 0 : Protected contribution gate FAIL: Expected an owner repository and exact PR base SHA
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.386s
+
+FAILED (failures=3)
