@@ -1,5 +1,7 @@
 # Authored notices for AI-safety evaluation
 
+This input format was developed before the live-weight experiments. Its original zero-call development record remains historical; see [real-model results](REAL_MODEL_RESULTS.md) for the subsequent 122 local inference requests and their limitations. No human participant or model-training dataset is claimed.
+
 The notice desk adds a distinct, versioned input format. It does **not** relax existing PCS authority or the game's fixed-template `verifyScenario` gate. No Lean theorem certifies the game or authored text.
 
 ## What the data can support

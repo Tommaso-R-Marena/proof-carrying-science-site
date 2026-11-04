@@ -1,5 +1,7 @@
 # Synthetic scenario evaluation method
 
+This method and its zero-model-call baseline describe the original fixture evaluation. Later actual-weight experiments are recorded separately in [real-model results](REAL_MODEL_RESULTS.md), including negative findings and deliberately compromised-proposer tests. Fixture outcomes below remain fixture outcomes.
+
 The game turns three specific environmental tricks into small, synthetic tool-use tasks. A cartoon robot taking the wrong route is a gameplay event. It is not a finding about a language model.
 
 ## What is implemented
