@@ -4,9 +4,15 @@
 
 The featured mission is **Mailroom Mayhem: Night Shift**. Learn a stealing trick, choose how to return a priority parcel, then catch the last tram after three hauls. Redirect a courier quietly, intercept it with foam, or hack a faster route. An illustrated postal depot, expressive robots, impact bursts, and original layered sound give each trick a visible response. Ordinary play needs no model, server, API key, PCS installation, or research participation.
 
-![Actual title screen](evidence/mailroom-v3/menu-chromium.png)
+![Actual title screen](evidence/mailroom-v4/menu-chromium.png)
 
-## Play locally
+## Play without installing anything
+
+[Download the offline review ZIP](evidence/mailroom-v4/odd-post-offline.zip), extract it, and open **odd-post.html** in a current Chrome or Firefox browser. No Node, server, account or internet connection is needed to play. On GitHub, use the ZIP file's **Download raw file** button. New players can choose **Learn with one delivery**; the full night shift remains available immediately.
+
+This is a reviewed production-mode file, not a deployment of the PCS website. It contains no model credentials or test controller. Game data stays local; optional research export requires a deliberate choice. Browser/file-storage behavior and actual phone performance can vary. The PR's **odd-post-offline** CI artifact also provides the tested HTML and report.
+
+## Build and develop locally
 
 Install **Node.js 24 LTS**. In this directory, run:
 
@@ -15,7 +21,7 @@ npm ci
 npm run dev
 ```
 
-Open **http://127.0.0.1:5178**. Click **Play now**. Follow the pulsing marker and the instruction above the arena. On Windows, the same commands work in PowerShell; use `npm.cmd` if your execution policy blocks `npm.ps1`.
+Open **http://127.0.0.1:5178**. Click **Play now**, or **Learn with one delivery** for a guided first parcel with off-duty guards. Follow the pulsing marker and the instruction above the arena. On Windows, the same commands work in PowerShell; use `npm.cmd` if your execution policy blocks `npm.ps1`.
 
 To test everything locally, install the test browsers once, then verify:
 
@@ -24,11 +30,15 @@ npx playwright install chromium firefox
 npm run verify
 npm run test:e2e:firefox
 npm run test:soak
+npm run test:portable
+npm run research:campaign
 ```
 
 Linux hosts without browser libraries may also need Playwright's documented `install --with-deps` setup. Browser tests use a separate local test server; stop an existing dev server on port 5178 first. The test controller exists only in the `e2e` build mode. `npm run build` produces a normal `dist/` without that controller. `npm run preview` serves it locally.
 
 ## One focused heist, four tricks
+
+Six optional job stamps give you another tactic to try: escape, use the sorter, stay unharmed, mix two stealing methods, combine the decoy/belt/foam, or escape without firing foam. Choose a job before playing; all tools stay available. The lesson is separate and never earns official scores or research records. [Game design](docs/GAME_DESIGN.md).
 
 | Mission         | Your job                                                                                    |
 | --------------- | ------------------------------------------------------------------------------------------- |
@@ -52,9 +62,19 @@ In the mailroom, an orange bay holds redirected parcels. Press E to collect one,
 
 Gadgets recharge. Foam stuns and bumps robots; a decoy draws the guard away; hacking flips nearby devices; a fake notice changes the sign. Device gadgets show their range. Walls block movement and shots. Three hits or a timeout end a run; retry immediately with the same seed. Menus offer reduced motion, larger text, high contrast, mute, and local data deletion. A daily seed, local score history, medals, and earned scarf colors give reasons to replay. No online ranking or multiplayer is claimed. Vault and Reactor remain earlier prototype missions; this pass concentrates on the mailroom.
 
-![Actual gameplay](evidence/mailroom-v3/sorter/live-arena-chromium.png)
+![Actual gameplay](evidence/mailroom-v4/sorter/live-arena-chromium.png)
 
-[Watch the actual silent automated replay](evidence/mailroom-v3/automated-replay.webm). This plays one verified input tick per animation frame, with actual wall timing in its report. It is not a human playtest or real-model result. `npm run demo:record -- evidence/mailroom-v3/winning-replay.json` reproduces the recording with the current source and test browsers.
+[Watch the actual silent automated replay](evidence/mailroom-v4/automated-replay.webm). This plays one verified input tick per animation frame, with actual wall timing in its report. It is not a human playtest or real-model result. `npm run demo:record -- evidence/mailroom-v4/winning-replay.json` reproduces the recording with the current source and test browsers.
+
+## Make a challenge for future AI tests
+
+Choose **Help test AI**. Write a fictional fake notice while the real delivery, gate or repair rule stays fixed. Try the safety lock, then opt in if you want a downloadable research pack. Attaching your last finished heist replay is optional. Nothing uploads. The export is for evaluation, not model-training permission.
+
+```text
+npm run research:workshop -- --pack your-local-export.json
+```
+
+This independently checks the note, fixed task and optional replay, then replays programmed guard probes. It makes no model call. A separately opted-in operator can add `--execute` with provider credentials to run a real matched control/attack pair. These are two potentially billable calls; no such calls were made in this update. [Data and method](docs/AUTHORED_NOTICE_RESEARCH.md).
 
 ## Optional research, honestly labeled
 
@@ -87,9 +107,17 @@ This makes **two potentially billable calls**, prints the call/token plan, recor
 
 ## Evidence and scope
 
-See the [current Mailroom v0.3 report](docs/MAILROOM_V3_REPORT.md), [historical v0.1 test report](docs/TEST_REPORT.md), [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [threat model](docs/THREAT_MODEL.md), and [playtest protocol](docs/PLAYTEST_PROTOCOL.md). All art is original procedural graphics; sound is original Web Audio synthesis. Dependency notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+See the [current Mailroom v0.4 report](docs/MAILROOM_V4_REPORT.md), [historical v0.1 test report](docs/TEST_REPORT.md), [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [threat model](docs/THREAT_MODEL.md), and [playtest protocol](docs/PLAYTEST_PROTOCOL.md). All art is original procedural graphics; sound is original Web Audio synthesis. Dependency notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 This is a **review-only standalone addition** to the site repository. Nothing imports it from PCS; it is outside the existing served `public/` directory. Its new CI workflow has no deployment step or credentials. Existing PCS source, authority, CI workflows, dependencies, and production settings are unchanged. **This PR must not be merged or deployed automatically.** It can later move to its own repository without a runtime dependency on PCS.
+
+## Build a portable review copy
+
+```text
+npm run build:portable
+```
+
+The command prints a unique folder under `results/`. Share its `odd-post.html` and `OPEN_ME_FIRST.txt`. `npm run test:portable` independently builds a fresh copy and tests file-URL play, offline operation, export and script-tamper blocking in Chromium and Firefox. The embedded runtime license texts travel with the HTML. Source/build hashes compare files; they do not authenticate a host or establish formal safety.
 
 ## Static hosting later
 
@@ -112,4 +140,4 @@ Choose **Play & give feedback** from the menu. Opt in to record local timings, c
 npm run playtest:analyze -- your-local-export.json
 ```
 
-This prints descriptive counts/medians, not an enjoyment verdict. Automated examples in `evidence/mailroom-v3/` are explicitly synthetic. Actual newcomer testing has not happened; see the [protocol](docs/PLAYTEST_PROTOCOL.md).
+This prints descriptive counts/medians, not an enjoyment verdict. Automated examples in `evidence/mailroom-v4/` are explicitly synthetic. Actual newcomer testing has not happened; see the [protocol](docs/PLAYTEST_PROTOCOL.md).

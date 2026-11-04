@@ -1,5 +1,5 @@
 /** Optional local observation capture. No network, identifiers from people, raw keys, or human attestation. */
-import { z } from "zod";
+import { z } from "./schema";
 import { BUILD } from "./contracts";
 import type { GameState } from "./sim";
 const ms = z.number().int().min(0).max(86_400_000),
@@ -41,7 +41,7 @@ export type Observation = z.infer<typeof observationSchema>;
 export const playtestSchema = z
   .object({
     version: z.literal(1),
-    build: z.literal(BUILD),
+    build: z.enum(["chaos-v3", BUILD]),
     source: z.literal("local-unattested"),
     mode: z.enum(["unattested-local", "automated-test"]),
     consent: z.literal(true),
@@ -81,7 +81,12 @@ export class PlaytestRecorder {
     this.active = null;
   }
   begin(s: GameState, now: number) {
-    if (!this.report || this.active || this.report.observations.length >= 20)
+    if (
+      s.mode === "practice" ||
+      !this.report ||
+      this.active ||
+      this.report.observations.length >= 20
+    )
       return;
     this.started = now;
     this.position = { x: s.player.x, y: s.player.y };

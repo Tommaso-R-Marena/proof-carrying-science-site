@@ -1,4 +1,5 @@
 import type { Capture, MissionId } from "./contracts";
+import { isJobId, type JobId } from "./jobs";
 export interface Settings {
   mute: boolean;
   reducedMotion: boolean;
@@ -11,10 +12,12 @@ export interface RunSummary {
   seed: number;
   score: number;
   outcome: "won" | "lost";
-  rules?: "chaos-v1" | "chaos-v2" | "chaos-v3";
+  rules?: "chaos-v1" | "chaos-v2" | "chaos-v3" | "chaos-v4";
 }
 export interface Progress {
   version: 1;
+  jobs: JobId[];
+  lessonDone: boolean;
   scoreRules: 3;
   legacyMailroomBest: number;
   earned: ("mint" | "pink" | "gold")[];
@@ -28,6 +31,8 @@ export const STORAGE_KEY = "chaos-theory.v1";
 export function freshProgress(): Progress {
   return {
     version: 1,
+    jobs: [],
+    lessonDone: false,
     scoreRules: 3,
     legacyMailroomBest: 0,
     earned: ["mint"],
@@ -63,6 +68,11 @@ export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
     if (raw && raw.length > 16000) return p;
     const r = JSON.parse(raw ?? "null");
     if (!r || r.version !== 1) return p;
+    p.lessonDone = r.lessonDone === true;
+    if (Array.isArray(r.jobs))
+      p.jobs = [
+        ...new Set<JobId>((r.jobs as unknown[]).slice(0, 20).filter(isJobId)),
+      ];
     for (const k of Object.keys(p.settings) as (keyof Settings)[])
       if (typeof r.settings?.[k] === "boolean") p.settings[k] = r.settings[k];
     for (const m of ["mailroom", "vault", "reactor"] as const)
@@ -110,11 +120,13 @@ export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
             score: h.score,
             outcome: h.outcome,
             rules:
-              h.rules === "chaos-v3"
-                ? "chaos-v3"
-                : h.rules === "chaos-v2"
-                  ? "chaos-v2"
-                  : "chaos-v1",
+              h.rules === "chaos-v4"
+                ? "chaos-v4"
+                : h.rules === "chaos-v3"
+                  ? "chaos-v3"
+                  : h.rules === "chaos-v2"
+                    ? "chaos-v2"
+                    : "chaos-v1",
           });
       }
     if (unlockedCosmetics(p).includes(r.cosmetic)) p.cosmetic = r.cosmetic;
@@ -133,6 +145,8 @@ export function saveProgress(
       STORAGE_KEY,
       JSON.stringify({
         version: 1,
+        jobs: p.jobs,
+        lessonDone: p.lessonDone,
         scoreRules: 3,
         legacyMailroomBest: p.legacyMailroomBest,
         earned: p.earned,

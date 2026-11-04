@@ -1,6 +1,6 @@
 {
   "name": "chaos-theory-pocket-mayhem",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -26,7 +26,11 @@
     "test:soak": "tsx scripts/soak.ts",
     "test:production": "tsx scripts/production-smoke.ts",
     "demo:record": "tsx scripts/record-demo.ts",
-    "playtest:analyze": "tsx scripts/analyze-playtest.ts"
+    "playtest:analyze": "tsx scripts/analyze-playtest.ts",
+    "research:workshop": "tsx scripts/workshop.ts",
+    "research:campaign": "tsx scripts/guard-campaign.ts",
+    "build:portable": "tsx scripts/portable.ts",
+    "test:portable": "tsx scripts/portable-smoke.ts"
   },
   "dependencies": {
     "phaser": "4.2.1",

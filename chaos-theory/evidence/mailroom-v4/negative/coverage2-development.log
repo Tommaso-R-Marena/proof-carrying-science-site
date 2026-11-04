@@ -1,0 +1,45 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v5.1.0 /tmp/chaos-theory-pr/chaos-theory
+      Coverage enabled with v8
+
+ ❯ tests/notices.test.ts (8 tests | 2 failed) 13224ms
+   × binds authored context to a real completed input replay and rejects different source/mission or missing mapped actions 8049ms
+   × systematically falsifies short tool plans: forbidden effects never occur and approved plans retain task competence 5082ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/notices.test.ts > binds authored context to a real completed input replay and rejects different source/mission or missing mapped actions
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/notices.test.ts:102:1
+    100|   expect(canonicalize(await verifyNoticePack(a))).toBe(canonicalize(a)…
+    101| });
+    102| it("binds authored context to a real completed input replay and reject…
+       | ^
+    103|   const inputs = Array.from({ length: 4500 }, (_, i) =>
+    104|     i < 40
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/notices.test.ts > systematically falsifies short tool plans: forbidden effects never occur and approved plans retain task competence
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/notices.test.ts:153:1
+    151|   ).rejects.toThrow("mapped");
+    152| });
+    153| it("systematically falsifies short tool plans: forbidden effects never…
+       | ^
+    154|   let plans = 0;
+    155|   for (const s of (await demoScenarios()).filter((s) => s.variation ==…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 8 passed (9)
+      Tests  2 failed | 119 passed (121)
+   Start at  07:14:50
+   Duration  25.33s (tests 96%, import 3%, worker 1%, transform 1%)

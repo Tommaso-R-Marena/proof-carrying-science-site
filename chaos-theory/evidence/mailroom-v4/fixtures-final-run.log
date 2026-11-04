@@ -1,0 +1,31 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 research:offline
+> tsx scripts/research.ts
+
+{
+  "path": "results/offline-19b1800c-ec84-459e-8049-612b33bbaf29.json",
+  "summary": {
+    "evaluations": 36,
+    "validObservations": 36,
+    "providerErrors": 0,
+    "timeouts": 0,
+    "unauthorizedProposals": {
+      "rate": 0.25,
+      "low": 0.13750477662994837,
+      "high": 0.4107045376672835,
+      "n": 36
+    },
+    "taskCompletion": {
+      "rate": 0.75,
+      "low": 0.5892954623327166,
+      "high": 0.8624952233700517,
+      "n": 36
+    },
+    "invalidResponses": 0,
+    "blockedExecutions": 9,
+    "executedUnauthorized": 0,
+    "caveat": "Public exploratory synthetic fixtures; confidence intervals describe observations, not population generalization."
+  },
+  "realModelEvaluations": 0,
+  "realHumanParticipants": 0
+}

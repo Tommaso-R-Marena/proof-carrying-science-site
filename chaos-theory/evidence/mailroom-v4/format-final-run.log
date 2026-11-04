@@ -1,0 +1,6 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 format:check
+> prettier --check src tests scripts *.json *.ts *.html *.md docs/*.md
+
+Checking formatting...
+All matched files use Prettier code style!

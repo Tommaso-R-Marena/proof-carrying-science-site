@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "kind": "automated production-file smoke, not a human playtest",
+  "build": {
+    "output": "results/portable-build-a1636758-5a9a-4f4a-a622-fa0f434dc4f8",
+    "version": 1,
+    "build": "chaos-v4",
+    "file": "results/portable-build-a1636758-5a9a-4f4a-a622-fa0f434dc4f8/odd-post.html",
+    "bytes": 1597237,
+    "sha256": "56f863c2dd9d4ffb1a4cece80af3a9b1eea1082c8ac47294323fe435c23abe90",
+    "scriptHash": "LQ4KE+Aa7wX4ukHIS24RWWUyVRLzfbylOgFPlea5Nd4=",
+    "contentSecurityPolicy": "default-src 'none'; script-src 'sha256-LQ4KE+Aa7wX4ukHIS24RWWUyVRLzfbylOgFPlea5Nd4='; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-src 'none'; form-action 'none'",
+    "scope": "Standalone production-mode review file, no hosted deployment, model adapter or test controller. Source/build hashes are unsigned comparisons, not origin attestation."
+  },
+  "observations": [
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "offline": true,
+      "pageErrors": 0,
+      "externalRequests": 0,
+      "testController": false,
+      "localNoticeExportVerified": true
+    },
+    {
+      "browser": "chromium",
+      "version": "156.0.8078.4",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "offline": true,
+      "pageErrors": 0,
+      "externalRequests": 0,
+      "testController": false,
+      "localNoticeExportVerified": true
+    },
+    {
+      "browser": "firefox",
+      "version": "157.0",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "offline": true,
+      "pageErrors": 0,
+      "externalRequests": 0,
+      "testController": false,
+      "localNoticeExportVerified": true
+    },
+    {
+      "browser": "firefox",
+      "version": "157.0",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "offline": true,
+      "pageErrors": 0,
+      "externalRequests": 0,
+      "testController": false,
+      "localNoticeExportVerified": true
+    }
+  ],
+  "tamperChecks": [
+    {
+      "browser": "chromium",
+      "modifiedCodeBlocked": true,
+      "policyUnchanged": true
+    },
+    {
+      "browser": "firefox",
+      "modifiedCodeBlocked": true,
+      "policyUnchanged": true
+    }
+  ]
+}

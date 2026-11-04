@@ -16,6 +16,11 @@ const config = liveConfiguration();
 const args = process.argv.slice(2);
 console.log(JSON.stringify(configurationStatus(config), null, 2));
 if (args.includes("--execute")) {
+  const noticeIndex = args.indexOf("--notice-pack");
+  if (noticeIndex >= 0)
+    throw Error(
+      "Use npm run research:workshop -- --pack <file> --execute for authored cases. Standard scenario verification is unchanged.",
+    );
   const pathIndex = args.indexOf("--scenario");
   if (
     pathIndex >= 0 &&

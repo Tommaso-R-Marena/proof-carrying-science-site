@@ -132,7 +132,12 @@ function robot(
       ? Math.sin(age * 0.3) * 8
       : Math.cos(b!.facing) * 3;
   const lookY = player ? s.player.aimY * 2 : Math.sin(b!.facing) * 2;
-  if (stunned) {
+  if (b?.state === "off-duty") {
+    g.lineStyle(2, P.mint)
+      .lineBetween(x - 12, torsoY - 6, x - 4, torsoY - 6)
+      .lineBetween(x + 4, torsoY - 6, x + 12, torsoY - 6);
+    label(x, y - 36, "zz", "#376d6c", 12);
+  } else if (stunned) {
     g.lineStyle(2, P.paper);
     for (const dx of [-8, 8]) {
       g.lineBetween(x + dx - 3, torsoY - 9, x + dx + 3, torsoY - 3).lineBetween(
@@ -414,7 +419,11 @@ export function drawMailroom(
       label(
         x,
         y + 21,
-        m.escapeDeadline !== null ? "BOARD · E" : "AFTER 3 PARCELS",
+        m.escapeDeadline !== null
+          ? "BOARD · E"
+          : s.mode === "practice"
+            ? "NIGHT SHIFT ONLY"
+            : "AFTER 3 PARCELS",
         m.escapeDeadline !== null ? "#f2dfb9" : "#173b43",
         10,
       );
@@ -445,7 +454,11 @@ export function drawMailroom(
   }
   // Actual field of view is the same angle/radius/LOS rule used by the simulator.
   for (const b of s.bots.filter(
-    (b) => b.kind === "sentinel" && b.stun === 0 && b.arriving === 0,
+    (b) =>
+      s.mode !== "practice" &&
+      b.kind === "sentinel" &&
+      b.stun === 0 &&
+      b.arriving === 0,
   )) {
     const radius = 190 + m.alertLevel * 22;
     g.lineStyle(1, P.red, b.awareness > 0 ? 0.5 : 0.2).strokeCircle(

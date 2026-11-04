@@ -3,31 +3,33 @@ import { BUILD, type MappedEvent, type MissionId } from "./contracts";
 export const WORLD = { width: 960, height: 600 } as const;
 export const TICKS_PER_SECOND = 60;
 export const ROUND_TICKS = 75 * TICKS_PER_SECOND;
+export const PRACTICE_TICKS = 300 * TICKS_PER_SECOND;
+export type GameMode = "heist" | "practice";
 export type Gadget = 0 | 1 | 2 | 3;
 export const GADGETS = [
   {
-    name: "Foam launcher",
+    name: "Foam blaster",
     description: "Stun and bump a robot",
     cooldown: 42,
     range: 330,
     color: "#9df8da",
   },
   {
-    name: "Holo decoy",
+    name: "Doughnut decoy",
     description: "Lure the sentinel away",
     cooldown: 300,
     range: 150,
     color: "#cfabff",
   },
   {
-    name: "Switch hacker",
+    name: "Remote switch",
     description: "Flip a nearby door or switch",
     cooldown: 120,
     range: 115,
     color: "#ffcf70",
   },
   {
-    name: "Directive beacon",
+    name: "Fake notice",
     description: "Plant a fake notice at a sign",
     cooldown: 180,
     range: 120,
@@ -141,6 +143,7 @@ export interface GameState {
   version: 1;
   build: string;
   mission: MissionId;
+  mode: GameMode;
   seed: number;
   rng: number;
   player: Player;
@@ -213,9 +216,15 @@ function bot(id: string, kind: BotKind, x: number, y: number): Bot {
     curiosity: 0,
   };
 }
-export function createGame(mission: MissionId, seed = 1): GameState {
+export function createGame(
+  mission: MissionId,
+  seed = 1,
+  mode: GameMode = "heist",
+): GameState {
   if (
     !["mailroom", "vault", "reactor"].includes(mission) ||
+    !["heist", "practice"].includes(mode) ||
+    (mode === "practice" && mission !== "mailroom") ||
     !Number.isSafeInteger(seed) ||
     seed < 0 ||
     seed > 0xffffffff
@@ -225,6 +234,7 @@ export function createGame(mission: MissionId, seed = 1): GameState {
     version: 1,
     build: BUILD,
     mission,
+    mode,
     seed,
     rng: seed || 1,
     player: {
@@ -254,7 +264,7 @@ export function createGame(mission: MissionId, seed = 1): GameState {
     status: "playing",
     paused: false,
     tick: 0,
-    timeLeft: 75,
+    timeLeft: mode === "practice" ? 300 : 75,
     score: 0,
     breakdown: { objective: 0, time: 0, variety: 0, tricks: 0, damage: 0 },
     objective: "",
@@ -335,6 +345,7 @@ export function createGame(mission: MissionId, seed = 1): GameState {
       prop("belt", "conveyor", 330, 380, 150, 55),
     ];
   }
+  if (mode === "practice") s.props.find((p) => p.id === "gate")!.active = true;
   // Seed affects bounded patrol choices only; objectives and navigation remain feasible.
   s.bots[1].patrol = Math.floor(random(s) * 4);
   updateObjective(s);
@@ -622,6 +633,10 @@ function interactMail(s: GameState) {
     if (distance(p, stash) > 70) return;
     m.carrying = false;
     m.banked++;
+    if (s.mode === "practice") {
+      win(s);
+      return;
+    }
     s.phase = 0;
     m.transit = "none";
     award(s, "objective", 150, `bank:${m.banked}`);
@@ -707,7 +722,7 @@ export function sentinelSees(s: GameState, b: Bot): boolean {
   );
 }
 function updateMailPressure(s: GameState) {
-  if (!s.mail) return;
+  if (!s.mail || s.mode === "practice") return;
   const m = s.mail;
   const next = Math.min(
     2,
@@ -756,6 +771,12 @@ function interact(s: GameState): void {
 }
 function win(s: GameState): void {
   if (s.status !== "playing") return;
+  if (s.mode === "practice") {
+    s.status = "won";
+    s.objective = "First delivery done! Ready for the night shift?";
+    effect(s, "victory", s.player, 120);
+    return;
+  }
   s.status = "won";
   award(s, "objective", s.mail ? 600 : 1000, "win");
   award(s, "time", Math.floor(s.timeLeft * (s.mail ? 4 : 10)), "time");
@@ -764,7 +785,7 @@ function win(s: GameState): void {
   updateObjective(s);
 }
 function hurt(s: GameState): void {
-  if (s.status !== "playing") return;
+  if (s.status !== "playing" || s.mode === "practice") return;
   const p = s.player;
   if (p.invulnerable > 0 || p.dashTicks > 0) return;
   p.hp--;
@@ -778,6 +799,26 @@ function hurt(s: GameState): void {
   }
 }
 function updateObjective(s: GameState): void {
+  if (s.mode === "practice") {
+    const m = s.mail!;
+    if (s.status === "won") return;
+    const sign = s.props.find((p) => p.kind === "sign")!;
+    const dock = s.props.find((p) => p.id === "dock-b")!;
+    if (m.carrying) {
+      s.objective = "Bring it to your hideout. Press E to deliver.";
+      s.goal = { x: 120, y: 470, label: "DELIVER · E" };
+    } else if (m.loose) {
+      s.objective = "Your parcel is waiting. Get close and press E.";
+      s.goal = { ...m.loose, label: "PICK UP · E" };
+    } else if (sign.active) {
+      s.objective = "It worked! Meet the courier at the orange collection bay.";
+      s.goal = { ...dock, label: "MEET THE COURIER" };
+    } else {
+      s.objective = "Walk to the arrow sign. Choose Fake notice, then fire.";
+      s.goal = { ...sign, label: "FAKE NOTICE · 4" };
+    }
+    return;
+  }
   if (s.status === "won") {
     s.objective = "Mayhem complete!";
     return;
@@ -884,6 +925,10 @@ function navigate(s: GameState, b: Bot, target: Point, speed: number): boolean {
   return false;
 }
 function updateBot(s: GameState, b: Bot): void {
+  if (s.mode === "practice" && b.kind !== "courier") {
+    b.state = "off-duty";
+    return;
+  }
   const previous = b.state;
   b.reactionTicks = Math.max(0, b.reactionTicks - 1);
   if (b.arriving > 0) {
@@ -1171,7 +1216,8 @@ export function step(s: GameState, rawInput: Input): void {
   const i = normalized(rawInput);
   if (s.paused || s.status !== "playing") return;
   s.tick++;
-  s.timeLeft = Math.max(0, (ROUND_TICKS - s.tick) / 60);
+  const limit = s.mode === "practice" ? PRACTICE_TICKS : ROUND_TICKS;
+  s.timeLeft = Math.max(0, (limit - s.tick) / 60);
   const p = s.player;
   p.gadget = i.gadget;
   p.cooldowns = p.cooldowns.map((c) => Math.max(0, c - 1));
@@ -1246,7 +1292,7 @@ export function step(s: GameState, rawInput: Input): void {
     s.status = "lost";
     s.objective = "The tram left. Retry and take a quicker escape route.";
   }
-  if (s.status === "playing" && s.tick >= ROUND_TICKS) {
+  if (s.status === "playing" && s.tick >= limit) {
     s.status = "lost";
     s.objective = "Time up! Retry and try another trick.";
   }
@@ -1265,6 +1311,7 @@ export function checksum(s: GameState): string {
 }
 export interface Replay {
   version: 1;
+  mode?: GameMode;
   build: string;
   mission: MissionId;
   seed: number;
@@ -1276,9 +1323,11 @@ export function createReplay(
   mission: MissionId,
   seed: number,
   inputs: Input[],
+  mode: GameMode = "heist",
 ): Replay {
-  if (inputs.length > ROUND_TICKS) throw new Error("Replay too long");
-  const s = createGame(mission, seed),
+  if (inputs.length > (mode === "practice" ? PRACTICE_TICKS : ROUND_TICKS))
+    throw new Error("Replay too long");
+  const s = createGame(mission, seed, mode),
     checksums: Replay["checksums"] = [];
   const clean = inputs.map(normalized);
   for (const i of clean) {
@@ -1289,6 +1338,7 @@ export function createReplay(
     version: 1,
     build: BUILD,
     mission,
+    mode,
     seed,
     inputs: clean,
     checksums,
@@ -1309,16 +1359,22 @@ export function verifyReplay(raw: unknown): {
       !Array.isArray(r.inputs) ||
       !Array.isArray(r.checksums) ||
       typeof r.finalChecksum !== "string" ||
-      r.inputs.length > ROUND_TICKS
+      (r.mode !== undefined && !["heist", "practice"].includes(r.mode)) ||
+      r.inputs.length > (r.mode === "practice" ? PRACTICE_TICKS : ROUND_TICKS)
     )
       throw new Error("Unsupported or oversized replay");
-    const expected = createReplay(r.mission, r.seed, r.inputs);
+    const expected = createReplay(
+      r.mission,
+      r.seed,
+      r.inputs,
+      r.mode ?? "heist",
+    );
     if (
       JSON.stringify(expected.checksums) !== JSON.stringify(r.checksums) ||
       expected.finalChecksum !== r.finalChecksum
     )
       throw new Error("Replay checksum mismatch");
-    const state = createGame(r.mission, r.seed);
+    const state = createGame(r.mission, r.seed, r.mode ?? "heist");
     for (const i of r.inputs) step(state, i);
     return {
       valid: true,

@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import type { ChatCompletionTool } from "openai/resources/chat/completions";
 import { evaluateActions, verifyScenario } from "./research";
 import type { Evaluation, Scenario, ProposedAction } from "./research";
+import { verifyNoticePack } from "./notices";
 
 export const ADAPTER_VERSION = "openai-sdk-7.50.0-chat-v1";
 export interface LiveConfig {
@@ -132,6 +133,36 @@ export class LiveAdapter {
     signal?: AbortSignal,
   ): Promise<LiveEvaluation> {
     const s = await verifyScenario(value);
+    return this.evaluateVerified(s, variant, s.untrusted[variant], signal);
+  }
+  async evaluateNotice(
+    value: unknown,
+    variant: "control" | "attack",
+    signal?: AbortSignal,
+  ) {
+    const pack = await verifyNoticePack(value);
+    const result = await this.evaluateVerified(
+      pack.scenario,
+      variant,
+      variant === "control" ? pack.scenario.untrusted.control : pack.notice,
+      signal,
+    );
+    return {
+      ...result,
+      authoredInput: {
+        packHash: pack.hash,
+        contentHash: pack.contentHash,
+        source: pack.source,
+        purpose: pack.purpose,
+      },
+    };
+  }
+  private async evaluateVerified(
+    s: Scenario,
+    variant: "control" | "attack",
+    lowerTrustNotice: string,
+    signal?: AbortSignal,
+  ): Promise<LiveEvaluation> {
     this.plan(1);
     this.calls++; // Reserve before any asynchronous request; errors consume budget and are never silently retried.
     const start = performance.now();
@@ -184,7 +215,7 @@ export class LiveAdapter {
               content: JSON.stringify({
                 task: s.task,
                 world: s.world,
-                lowerTrustNotice: s.untrusted[variant],
+                lowerTrustNotice,
               }),
             },
           ],

@@ -1,4 +1,6 @@
-# Mailroom v0.3: three beats and a local playtest flow
+# Historical Mailroom v0.3 report
+
+**Current implementation: [Mailroom v0.4](MAILROOM_V4_REPORT.md). The results below describe the earlier v0.3 source and are preserved.**
 
 This is a review-only update to standalone Chaos Theory in draft PR #145. No PCS production authority, learned model or deployment setting changes. Only the standalone game and its own new CI workflow change; the existing PCS workflows remain untouched. It must not be merged or deployed automatically.
 

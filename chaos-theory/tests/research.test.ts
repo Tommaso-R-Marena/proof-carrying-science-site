@@ -382,6 +382,6 @@ it("reads historical v1 scenarios, creates v2 captures, and rejects unreviewed g
   expect((await verifyScenario(current)).provenance.build).toBe("chaos-v3");
   expect(old.hash).not.toBe(current.hash);
   await expect(
-    extractScenarios({ ...capture, build: "chaos-v4" }),
+    extractScenarios({ ...capture, build: "chaos-v5" }),
   ).rejects.toThrow();
 });

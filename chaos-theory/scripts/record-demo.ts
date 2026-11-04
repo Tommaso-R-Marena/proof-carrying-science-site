@@ -16,6 +16,7 @@ const verified = verifyReplay(replay);
 if (
   !verified.valid ||
   verified.state?.status !== "won" ||
+  verified.state?.mode !== "heist" ||
   replay.mission !== "mailroom" ||
   replay.seed !== 42
 )

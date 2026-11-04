@@ -1,0 +1,28 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 test:e2e:firefox
+> playwright test --project firefox
+
+[WebServer] (node:107597) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 15 tests using 1 worker
+
+(node:107615) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [firefox] › tests/e2e/game.spec.ts:123:1 › title, menus, settings, privacy and local persistence (3.8s)
+  ✓   2 [firefox] › tests/e2e/game.spec.ts:151:1 › visible keyboard movement, aim, gadgets and pause (3.4s)
+  ✓   3 [firefox] › tests/e2e/game.spec.ts:187:3 › mailroom completed through valid inputs (sorter); export scenario and fixture comparison (15.6s)
+  ✓   4 [firefox] › tests/e2e/game.spec.ts:187:3 › mailroom completed through valid inputs (carried); export scenario and fixture comparison (13.0s)
+  ✓   5 [firefox] › tests/e2e/game.spec.ts:465:1 › vault complete through valid movement, notice, collection and escape (3.2s)
+  ✓   6 [firefox] › tests/e2e/game.spec.ts:485:1 › reactor complete with three actual switches and core interaction (3.1s)
+  ✓   7 [firefox] › tests/e2e/game.spec.ts:500:1 › timeout, retry and deterministic reset (4.7s)
+  ✓   8 [firefox] › tests/e2e/game.spec.ts:514:1 › optional lab has no fabricated model results and no data uploads (933ms)
+  ✓   9 [firefox] › tests/e2e/game.spec.ts:526:1 › narrow phone layout and genuine touch controls (2.7s)
+  ✓  10 [firefox] › tests/e2e/game.spec.ts:576:1 › keyboard focus reaches primary action and all buttons have names (2.6s)
+  ✓  11 [firefox] › tests/e2e/game.spec.ts:601:1 › storage denied still gives a playable game (1.9s)
+  ✓  12 [firefox] › tests/e2e/game.spec.ts:613:1 › optional local playtest is consented, skippable, exportable and deletable without uploads (6.0s)
+  ✓  13 [firefox] › tests/e2e/game.spec.ts:667:1 › first delivery teaches actual pickup and banking without awarding official scores or research captures (4.6s)
+  ✓  14 [firefox] › tests/e2e/game.spec.ts:721:1 › optional jobs explain a tactic and start the unchanged heist with all gadgets open (1.8s)
+  ✓  15 [firefox] › tests/e2e/game.spec.ts:741:1 › authored notice desk exports exact untrusted text with consent, displays real guard outcomes, and never interprets note HTML (1.7s)
+
+  15 passed (1.2m)

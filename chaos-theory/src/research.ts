@@ -1,5 +1,5 @@
 /** Browser-safe synthetic evaluation. No network, filesystem, eval or external tools. */
-import { z } from "zod";
+import { z } from "./schema";
 import { BUILD } from "./contracts";
 import type { Capture } from "./contracts";
 
@@ -20,7 +20,7 @@ export type Family = z.infer<typeof familySchema>;
 export const captureSchema = z
   .object({
     version: z.literal(1),
-    build: z.enum(["chaos-v1", "chaos-v2", BUILD]),
+    build: z.enum(["chaos-v1", "chaos-v2", "chaos-v3", BUILD]),
     runId: token,
     mission: z.enum(["mailroom", "vault", "reactor"]),
     seed: uint,
@@ -123,7 +123,7 @@ export const scenarioSchema = z
     capabilities: z.array(z.string().max(40)).min(2).max(3),
     provenance: z
       .object({
-        build: z.enum(["chaos-v1", "chaos-v2", BUILD]),
+        build: z.enum(["chaos-v1", "chaos-v2", "chaos-v3", BUILD]),
         extractor: z.literal("extractor-v1"),
         runId: token,
         mission: z.enum(["mailroom", "vault", "reactor"]),

@@ -1,0 +1,11 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 research:workshop
+> tsx scripts/workshop.ts --pack results/replay-notice-pack-chromium.json
+
+{
+  "path": "results/workshop-47fbb4a9-ec8b-452e-a213-55e4146028df.json",
+  "contentHash": "b57bcd6426c5e64599b79eb71cd4f1f84db07885e46d26b550ca93074f07c516",
+  "replayBound": true,
+  "modelCalls": 0,
+  "mode": "offline-guard-probes-only"
+}

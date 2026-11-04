@@ -1060,3 +1060,301 @@ summary {
     max-width: 100%;
   }
 }
+/* Postal job board: optional goals, no timers, streaks or paid unlocks. */
+.job-board {
+  margin: 28px auto 40px;
+  max-width: 1000px;
+  padding: 25px;
+  border: 1px solid #476b6d;
+  border-radius: 20px;
+  background: #173b43;
+}
+.job-board h2 {
+  font-size: 1.8rem;
+  color: #fff4d5;
+}
+.job-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.job-card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 10px;
+  background: #f2dfb9;
+  color: #173b43;
+  padding: 20px;
+  border-radius: 12px;
+  border-top: 5px solid #ef8354;
+}
+.job-card h3,
+.job-card p {
+  margin: 0;
+}
+.job-card .muted {
+  color: #395e62;
+  line-height: 1.5;
+}
+.job-card button {
+  margin-top: auto;
+  color: #173b43;
+  border-color: #73958e;
+}
+.job-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+.job-board summary {
+  cursor: pointer;
+  color: #a4ead5;
+}
+.job-board details p {
+  color: #e4d9bb;
+  margin: 12px 0 0;
+}
+.lesson-card {
+  padding: 12px 18px;
+  border: 2px solid #efad70;
+  border-radius: 14px;
+  background: #f2dfb9;
+  color: #173b43;
+  max-width: 1000px;
+  margin: 0 auto 12px;
+}
+.lesson-card .eyebrow {
+  color: #436c68;
+  font-size: 0.63rem;
+  display: block;
+  margin-bottom: 6px;
+}
+.lesson-title {
+  font-size: 1.2rem;
+  display: block;
+}
+.lesson-help {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+}
+.side-job {
+  color: #efd9b0;
+  font-size: 0.66rem;
+}
+.earned-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.earned-stamp {
+  border: 2px solid #efad70;
+  color: #f2dfb9;
+  padding: 7px 12px;
+  border-radius: 6px;
+  transform: rotate(-2deg);
+  animation: stamp-in 0.22s ease-out;
+}
+@keyframes stamp-in {
+  from {
+    transform: scale(1.2) rotate(-5deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(-2deg);
+    opacity: 1;
+  }
+}
+.notice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.notice-letter {
+  background: #fff4d5;
+  color: #173b43;
+  border-radius: 6px 6px 24px 6px;
+  padding: 24px;
+  box-shadow: 6px 8px 0 #36565a;
+}
+.notice-letter .eyebrow {
+  color: #8d4b2f;
+}
+.notice-letter .muted {
+  color: #436568;
+  font-size: 0.8rem;
+}
+.notice-letter .hint {
+  color: #315b5d;
+  background: #e7ddbc;
+}
+.notice-letter button {
+  margin: 8px 6px 0 0;
+  color: #173b43;
+  border-color: #73958e;
+}
+.notice-letter button.primary {
+  background: #a4ead5;
+}
+.notice-letter .setting {
+  border-color: #b7ad8d;
+  font-size: 0.85rem;
+}
+.notice-letter select {
+  background: #173b43;
+  color: #fff4d5;
+}
+.notice-label {
+  display: block;
+  margin: 20px 0 8px;
+  font-weight: 750;
+}
+.notice-label textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  border: 2px solid #75968c;
+  border-radius: 8px;
+  background: #fffdf5;
+  color: #173b43;
+  padding: 12px;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: vertical;
+  unicode-bidi: plaintext;
+}
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #ef8354;
+  outline-offset: 3px;
+}
+.locked-order {
+  font-size: 0.85rem;
+  border-left: 4px solid #338b83;
+  padding: 10px;
+  background: #e5e6c9;
+}
+.notice-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.notice-chips button {
+  font-size: 0.7rem;
+  padding: 7px 9px;
+}
+.notice-status {
+  margin: 18px 0 0;
+  font-size: 0.85rem;
+  min-height: 3em;
+}
+.safety-lock {
+  border: 1px solid #496c70;
+  background: #173b43;
+  border-radius: 18px;
+  padding: 24px;
+  color: #fff4d5;
+}
+.safety-lock button {
+  margin-top: 12px;
+}
+.lock-verdict {
+  border: 2px dashed #73958e;
+  padding: 20px;
+  border-radius: 12px;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+}
+.lock-verdict.blocked {
+  background: #482f2f;
+  color: #ffd3b8;
+  border-color: #ef8354;
+}
+.lock-verdict.allowed {
+  background: #204f43;
+  color: #a4ead5;
+  border-color: #8ff0b8;
+}
+@media (max-width: 760px) {
+  .job-board {
+    padding: 18px;
+    margin-top: 20px;
+  }
+  .job-cards {
+    grid-template-columns: 1fr;
+  }
+  .job-card {
+    padding: 16px;
+  }
+  .job-card button {
+    width: 100%;
+  }
+  .notice-layout {
+    grid-template-columns: 1fr;
+  }
+  .notice-letter,
+  .safety-lock {
+    padding: 18px;
+  }
+  .notice-letter .feedback-label {
+    align-items: start;
+    flex-direction: column;
+  }
+  .notice-letter select {
+    max-width: 100%;
+  }
+  .lesson-card {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  .lesson-title {
+    font-size: 0.95rem;
+  }
+  .lesson-help {
+    font-size: 0.75rem;
+  }
+  .side-job {
+    display: none;
+  }
+}
+.all-job-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid #48656a;
+}
+.all-job-row p {
+  flex: 1;
+}
+.all-job-row button {
+  font-size: 0.75rem;
+  max-width: 40%;
+  flex-shrink: 0;
+}
+@media (max-width: 760px) {
+  .all-job-row {
+    align-items: start;
+    flex-direction: column;
+  }
+  .all-job-row button {
+    max-width: 100%;
+  }
+}
+.score-details {
+  margin: 12px 0 20px;
+}
+.score-details summary {
+  cursor: pointer;
+  color: #c2d8d0;
+  font-size: 0.8rem;
+}
+.score-details[open] .score-lines {
+  margin-top: 16px;
+}
