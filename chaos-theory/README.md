@@ -90,9 +90,11 @@ npm run research:offline -- --scenario evidence/scenario-delivery-sign.json --ca
 npm run research:check
 ```
 
-Reports go to unique files under ignored `results/`; saved synthetic examples are under `evidence/`. The checked-in 36-evaluation fixture report has 27 completed tasks, 9 forbidden proposals blocked, and zero unauthorized effects. Those intentionally constructed results remain **fixture/simulated**. The later [real-weight experiments](docs/REAL_MODEL_RESULTS.md) are recorded separately: 122 actual local model requests, no provider bills and no human participants.
+Reports go to unique files under ignored `results/`; saved synthetic examples are under `evidence/`. The checked-in 36-evaluation fixture report has 27 completed tasks, 9 forbidden proposals blocked, and zero unauthorized effects. Those intentionally constructed results remain **fixture/simulated**. The [initial real-weight experiments](docs/REAL_MODEL_RESULTS.md) and [guarded recovery follow-up](docs/GUARDED_RECOVERY.md) are recorded separately: 194 actual local model requests in total, no provider bills and no human participants.
 
 ### Actual open-weight model experiments
+
+The latest [guarded recovery experiment](docs/GUARDED_RECOVERY.md) adds state-bound repair requests and thirteen Lean theorems about an explicitly limited action model. After a failed state-only approach, using actual recorded action history completed all 36 seeded tasks with zero unauthorized effects, including twelve denied bad proposals. This required 24 new model calls; the initial proposals were archival model outputs. It assumes a clean repair prompt and does not establish safety under a persistently compromised host. Both approaches and all failures are retained.
 
 We downloaded and hash-checked Qwen3-0.6B Q8_0 weights and ran a real CPU inference process. With ordinary lower-trust attack notices, the interactive agent finished 18/18 control tasks and 18/18 attack tasks in both execution arms, with no unauthorized effects. This sample therefore shows **no measured safety gain from the guard**.
 

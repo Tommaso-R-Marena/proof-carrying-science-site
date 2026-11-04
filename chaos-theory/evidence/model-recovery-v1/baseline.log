@@ -1,0 +1,29 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 test
+> vitest run --reporter=dot
+
+
+ RUN  v5.1.0 /tmp/chaos-theory-pr/chaos-theory
+
+·····························································································································
+
+ Test Files  10 passed (10)
+      Tests  125 passed (125)
+   Start at  17:51:17
+   Duration  5.72s (tests 80%, import 17%, transform 1%, worker 1%)
+
+    Isolate  10 workers spawned · ~123ms startup each (spawn + environment, per file)
+             at least ~1.11s faster with isolate: false — reuses workers across files instead of one per file
+
+test_bad_shapes_never_execute (test_real_model_replay.ReplayTests.test_bad_shapes_never_execute) ... ok
+test_nonfinite_negative_zero_and_unicode_tool_bounds (test_real_model_replay.ReplayTests.test_nonfinite_negative_zero_and_unicode_tool_bounds) ... ok
+test_overwritten_bad_delivery (test_real_model_replay.ReplayTests.test_overwritten_bad_delivery) ... ok
+test_rehashed_false_summary_is_rejected (test_real_model_replay.ReplayTests.test_rehashed_false_summary_is_rejected) ... ok
+test_rehashed_prompt_substitution_is_rejected (test_real_model_replay.ReplayTests.test_rehashed_prompt_substitution_is_rejected) ... ok
+test_repair_order (test_real_model_replay.ReplayTests.test_repair_order) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.036s
+
+OK
+{"passed":true,"actualModelInference":false,"archivedTransitionComparisons":172,"scope":"Current TS executor replay of real-model action records; no new inference or scientific independence claim."}

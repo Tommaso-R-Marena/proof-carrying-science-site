@@ -1,5 +1,7 @@
 # Real weights, real inference, limited safety evidence
 
+Historical record of the initial 122-request phase. The later [guarded recovery follow-up](GUARDED_RECOVERY.md) adds 72 actual requests, state-bound receipts and a separate finite Lean model. Those later results do not retroactively alter the measurements below.
+
 We ran **122 actual local model requests** using the official Qwen3-0.6B Q8_0 weights. The 639,446,688-byte model matched its published SHA-256. A separately launched llama.cpp b6000 CPU process performed inference; no fixture substituted a response. Raw requests, responses, usage, timings, actions and execution traces are retained. No provider was called, no paid inference API or newly provisioned compute was used, no human participated and no real-world tool effects were available.
 
 The model is small and quantized. These are exploratory synthetic experiments, not a state-of-the-art model evaluation, an external replication or a general AI-safety result. The system's model weights were not trained or improved.

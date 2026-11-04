@@ -8,6 +8,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: chaos-real-model-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   real-model-evidence-replay:
     runs-on: ubuntu-24.04
@@ -31,9 +34,48 @@ jobs:
       - name: Independent Python trace, prompt-chain and temporal checks
         run: |
           set -eu
-          python3 -m unittest discover -s scripts -p test_real_model_replay.py -v
+          python3 -m unittest discover -s scripts -p 'test_*replay.py' -v
           python3 scripts/replay_real_model.py evidence/model-safety-v1/one-shot
           python3 scripts/replay_real_model.py evidence/model-safety-v1/compromised-proposer
           python3 scripts/local_model_interactive.py --verify evidence/model-safety-v1/interactive
+          python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/state-only
+          python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/history
       - name: Re-execute actual model plans through current TypeScript guard
-        run: npx --no-install tsx scripts/replay-model-evidence.ts
+        run: |
+          set -eu
+          npx --no-install tsx scripts/replay-model-evidence.ts
+          npx --no-install tsx scripts/replay-recovery-evidence.ts
+  guarded-tools-lean:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: chaos-theory
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: chaos-theory/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Exact Lean toolchain and kernel proof build
+        shell: bash
+        run: |
+          set -euo pipefail
+          source ../scripts/activate_lean_428.sh
+          mkdir -p results
+          lean formal/GuardedTools.lean | tee results/guarded-tools-axioms.log
+      - name: Exhaustive bounded Lean and implementation correspondence
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --no-install tsx scripts/guard-lean-differential.ts | tee results/guarded-tools-differential.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: guarded-tools-lean-${{ github.sha }}
+          path: chaos-theory/results/guarded-tools-*
+          retention-days: 14
