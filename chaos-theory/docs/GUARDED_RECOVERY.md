@@ -1,5 +1,7 @@
 # Block a bad proposal, then finish the original task
 
+Historical record of the 72-call recovery phase. The later [direct Lean gate](LEAN_PLAN_GATE.md) adds 24 actual calls and checks original plan text in Lean before publication. The original thirteen theorem statements and all measurements below are preserved.
+
 This research prototype can now ask a real model to repair a denied proposal. The repair is bound to the exact guarded state, and the same fixed guard checks every continuation. Nothing here controls real equipment or changes the production PCS authority.
 
 The new experiments used **72 actual CPU inference requests** with the existing, hash-checked Qwen3-0.6B Q8_0 weights. Together with the prior phase, that is **194 actual requests**. Thirty-six previously recorded real-model proposals were replayed as initial conditions; they are not counted again as new inference. No training, human participants, paid inference API or newly provisioned compute was involved.

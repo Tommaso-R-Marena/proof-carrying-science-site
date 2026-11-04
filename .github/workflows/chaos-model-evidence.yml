@@ -40,6 +40,7 @@ jobs:
           python3 scripts/local_model_interactive.py --verify evidence/model-safety-v1/interactive
           python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/state-only
           python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/history
+          python3 scripts/local_model_recovery.py --verify evidence/lean-plan-replay-v1/live
       - name: Re-execute actual model plans through current TypeScript guard
         run: |
           set -eu
@@ -73,9 +74,19 @@ jobs:
         run: |
           set -euo pipefail
           npx --no-install tsx scripts/guard-lean-differential.ts | tee results/guarded-tools-differential.json
+      - name: Actual Lean raw-plan gate, adversarial parsing and archived model trajectories
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --no-install tsx scripts/test-lean-plan-runtime.ts | tee results/lean-plan-integration.json
+          npx --no-install tsx scripts/replay-lean-gated-evidence.ts | tee results/lean-plan-live-replay.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: guarded-tools-lean-${{ github.sha }}
-          path: chaos-theory/results/guarded-tools-*
+          path: |
+            chaos-theory/results/guarded-tools-*
+            chaos-theory/results/lean-plan-integration.json
+            chaos-theory/results/lean-plan-live-replay.json
+            chaos-theory/results/lean-plan-*/manifest.json
           retention-days: 14

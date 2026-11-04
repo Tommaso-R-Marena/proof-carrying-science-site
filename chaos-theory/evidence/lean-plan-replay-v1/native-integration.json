@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "actualLeanProcess": true,
+  "modelCalls": 0,
+  "archivedSnapshotComparisons": 144,
+  "identifierCases": 426,
+  "negativeRejections": 22,
+  "sessionCommits": 3,
+  "scope": "Real source-built Lean raw-plan decisions, archived trajectories, process/artifact failure and session publication. No inference rerun or immutable-host claim."
+}

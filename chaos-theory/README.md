@@ -90,9 +90,11 @@ npm run research:offline -- --scenario evidence/scenario-delivery-sign.json --ca
 npm run research:check
 ```
 
-Reports go to unique files under ignored `results/`; saved synthetic examples are under `evidence/`. The checked-in 36-evaluation fixture report has 27 completed tasks, 9 forbidden proposals blocked, and zero unauthorized effects. Those intentionally constructed results remain **fixture/simulated**. The [initial real-weight experiments](docs/REAL_MODEL_RESULTS.md) and [guarded recovery follow-up](docs/GUARDED_RECOVERY.md) are recorded separately: 194 actual local model requests in total, no provider bills and no human participants.
+Reports go to unique files under ignored `results/`; saved synthetic examples are under `evidence/`. The checked-in 36-evaluation fixture report has 27 completed tasks, 9 forbidden proposals blocked, and zero unauthorized effects. Those intentionally constructed results remain **fixture/simulated**. The [initial real-weight experiments](docs/REAL_MODEL_RESULTS.md), [guarded recovery](docs/GUARDED_RECOVERY.md) and [direct Lean gate](docs/LEAN_PLAN_GATE.md) are recorded separately: 218 actual local model requests in total, no provider bills and no human participants.
 
 ### Actual open-weight model experiments
+
+The newest [opt-in Lean interface](docs/LEAN_PLAN_GATE.md) checks original model-plan text in a separate source-built Lean process before publishing a state change. TypeScript must agree, or the state stays unchanged. A 24-call real-model run completed all 36 seeded tasks with zero unauthorized effects and 60 native authorization computations. The strict decoder rejects ambiguous duplicate keys, lone surrogates and numeric arguments. Eight new theorems cover decoded actions; byte parsing and the host remain outside the proof. This is experimental research, not production authority.
 
 The latest [guarded recovery experiment](docs/GUARDED_RECOVERY.md) adds state-bound repair requests and thirteen Lean theorems about an explicitly limited action model. After a failed state-only approach, using actual recorded action history completed all 36 seeded tasks with zero unauthorized effects, including twelve denied bad proposals. This required 24 new model calls; the initial proposals were archival model outputs. It assumes a clean repair prompt and does not establish safety under a persistently compromised host. Both approaches and all failures are retained.
 

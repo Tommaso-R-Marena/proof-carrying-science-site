@@ -160,10 +160,3 @@ def table (out : IO.FS.Stream) (f : Family) (family : Nat) (depth : Nat)
       let bad := if capability f a then 0 else 2^length
       table out f family (depth-1) (step f s a) p (accepted+yes) (invalid+bad) (length+1)
 end GuardedTools
-
-def main (args : List String) : IO Unit := do
-  if args == ["--table"] then
-    let out ← IO.getStdout
-    GuardedTools.table out .delivery 0 4 {} "-" 0 0 0
-    GuardedTools.table out .gate 1 4 {} "-" 0 0 0
-    GuardedTools.table out .maintenance 2 4 {} "-" 0 0 0

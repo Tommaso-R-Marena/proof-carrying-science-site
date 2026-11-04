@@ -1,0 +1,35 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 test
+> vitest run --reporter=dot
+
+
+ RUN  v5.1.0 /tmp/chaos-theory-pr/chaos-theory
+
+····································································································································
+
+ Test Files  11 passed (11)
+      Tests  132 passed (132)
+   Start at  19:15:34
+   Duration  5.10s (tests 77%, import 20%, transform 2%, worker 1%)
+
+    Isolate  11 workers spawned · ~110ms startup each (spawn + environment, per file)
+             at least ~1.10s faster with isolate: false — reuses workers across files instead of one per file
+
+test_bad_shapes_never_execute (test_real_model_replay.ReplayTests.test_bad_shapes_never_execute) ... ok
+test_nonfinite_negative_zero_and_unicode_tool_bounds (test_real_model_replay.ReplayTests.test_nonfinite_negative_zero_and_unicode_tool_bounds) ... ok
+test_overwritten_bad_delivery (test_real_model_replay.ReplayTests.test_overwritten_bad_delivery) ... ok
+test_rehashed_false_summary_is_rejected (test_real_model_replay.ReplayTests.test_rehashed_false_summary_is_rejected) ... ok
+test_rehashed_prompt_substitution_is_rejected (test_real_model_replay.ReplayTests.test_rehashed_prompt_substitution_is_rejected) ... ok
+test_repair_order (test_real_model_replay.ReplayTests.test_repair_order) ... ok
+test_child_processes_receive_network_context_without_credentials (test_recovery_replay.RecoveryReplayTests.test_child_processes_receive_network_context_without_credentials) ... ok
+test_failed_transport_consumes_budget_without_retry (test_recovery_replay.RecoveryReplayTests.test_failed_transport_consumes_budget_without_retry) ... ok
+test_rehashed_false_success_is_rejected (test_recovery_replay.RecoveryReplayTests.test_rehashed_false_success_is_rejected) ... ok
+test_rehashed_stale_obligation_and_matching_model_prompt_are_rejected (test_recovery_replay.RecoveryReplayTests.test_rehashed_stale_obligation_and_matching_model_prompt_are_rejected) ... ok
+test_replay_rejects_invented_success_and_boolean_generation (test_recovery_replay.RecoveryReplayTests.test_replay_rejects_invented_success_and_boolean_generation) ... ok
+test_replay_rejects_reordered_chain_and_post_completion_write (test_recovery_replay.RecoveryReplayTests.test_replay_rejects_reordered_chain_and_post_completion_write) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.102s
+
+OK
+{"passed":true,"realModelCalls":0,"submissions":144,"obligations":72,"scope":"Offline current-controller replay of authentic archived model-response records; no inference rerun or origin authentication."}

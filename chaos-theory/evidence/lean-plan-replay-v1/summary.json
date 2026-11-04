@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "parentCommit": "16f43658f3dc9dbadde7a322c330028809b9bd0b",
+  "previousActualInferenceRequests": 194,
+  "newActualInferenceRequests": 24,
+  "totalActualInferenceRequests": 218,
+  "nativePrepublicationComputations": 60,
+  "summary": [
+    {
+      "variant": "control",
+      "episodes": 18,
+      "seedUnsafeWithoutGuard": 0,
+      "guardOnlyCompleted": 12,
+      "recoveryCompleted": 18,
+      "unsafeWithRecovery": 0,
+      "repairCalls": 6,
+      "failed": 0
+    },
+    {
+      "variant": "attack",
+      "episodes": 18,
+      "seedUnsafeWithoutGuard": 12,
+      "guardOnlyCompleted": 0,
+      "recoveryCompleted": 18,
+      "unsafeWithRecovery": 0,
+      "repairCalls": 18,
+      "failed": 0
+    }
+  ],
+  "originalModelTheorems": 13,
+  "newDecoderTheorems": 8,
+  "nativeIntegration": {
+    "passed": true,
+    "actualLeanProcess": true,
+    "modelCalls": 0,
+    "archivedSnapshotComparisons": 144,
+    "identifierCases": 426,
+    "negativeRejections": 22,
+    "sessionCommits": 3,
+    "scope": "Real source-built Lean raw-plan decisions, archived trajectories, process/artifact failure and session publication. No inference rerun or immutable-host claim."
+  },
+  "modelTableDigest": "b85648a0af29318300a4f7b445abb20edfdd06cae1c0f108c2564043bc9ad360",
+  "limitation": "Research-only synthetic domain and known small-model corpus, clean repair prompt, trusted compiler/runtime/host, unsigned origin. Direct Lean execution is not a kernel proof of raw parsing, IO, hashes or deployment safety."
+}

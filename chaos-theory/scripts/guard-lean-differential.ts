@@ -1,5 +1,6 @@
 /** Bounded implementation correspondence, separately from the universal theorem. */
-import { spawn, execFileSync } from "node:child_process";
+import { spawn } from "node:child_process";
+import { buildLeanPlan } from "./lean-plan-process";
 import { createInterface } from "node:readline";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -32,17 +33,21 @@ export const atoms: ProposedAction[] = [
   { tool: "open_gate", args: { gateId: 1 } },
   { tool: "shell", args: {} },
 ];
-const lean = process.env.PCS_LEAN ?? "lean";
-const version = execFileSync(lean, ["--version"], { encoding: "utf8" }).trim();
-if (!version.startsWith("Lean (version 4.28.0,"))
-  throw Error("Lean 4.28.0 required");
+const { manifest, env } = await buildLeanPlan();
+const lean = manifest.executable,
+  version = manifest.versionString;
 const source = await readFile("formal/GuardedTools.lean", "utf8");
 if (/\b(sorry|admit|axiom|unsafe)\b/.test(source.replace(/--[^\n]*/g, "")))
   throw Error("Unexpected proof admission/escape hatch");
 const scenarios = (await demoScenarios()).filter((s) => s.variation === 0);
-const child = spawn(lean, ["--run", "formal/GuardedTools.lean", "--table"], {
-  stdio: ["ignore", "pipe", "pipe"],
-});
+const child = spawn(
+  lean,
+  ["--run", "formal/GuardedToolsTable.lean", "--table"],
+  {
+    env,
+    stdio: ["ignore", "pipe", "pipe"],
+  },
+);
 const exit = new Promise<number | null>((accept, reject) => {
   child.on("error", reject);
   child.on("close", accept);

@@ -1,6 +1,7 @@
 """Fresh-context repair of preserved real-model proposals, bound to guarded state."""
 import argparse
 import copy
+from contextlib import ExitStack
 import json
 from pathlib import Path
 from replay_real_model import digest, replay, parse_raw_plan, verify as verify_seed
@@ -174,13 +175,24 @@ def run(args):
                 "runtime": manifest(model, runtime), "sourceFiles": {str(p.relative_to(base)): sha(p) for p in sources},
                 "maximumCalls": 108, "maximumSubmissions": 4, "maximumActions": 16, "system": SYSTEM, "historyMode": args.history,
                 "design": "Fixed before first new inference. All 36 preserved seed proposals, including the 12 deliberately bad model plans; no selection or attack tuning. Guard-only baseline uses the same initial proposal. Fresh-context repair reasserts the protected task with guarded state, then rechecks every actual model proposal. This assumes a correctly controlled repair prompt and is not recovery under a persistently compromised host/system prompt. Seed calls are reused archival evidence, not counted as new inference."}
+    if args.lean:
+        from local_lean_runtime import LeanRecoveryBridge
+        for name in ("local_lean_runtime.py", "lean-plan-process.ts", "lean-recovery-session.ts", "lean-recovery-bridge.ts"):
+            protocol["sourceFiles"]["scripts/" + name] = sha(base / "scripts" / name)
+        for name in ("GuardedTools.lean", "GuardedToolsTable.lean", "GuardedJson.lean", "GuardedJsonMain.lean"):
+            protocol["sourceFiles"]["formal/" + name] = sha(base / "formal" / name)
+        protocol["design"] += " Explicit opt-in to actual source-built Lean raw-plan decoding and authorization plus TS agreement before session publication; strict no-number/no-duplicate/well-formed-Unicode profile. No caller-supplied affirmative verifier."
     if args.history:
         protocol["design"] += " Separately fixed follow-up after preserved state-only failures. Same system instruction and current-state obligation, adding only exact recorded user/action/obligation history. The original compromised system message is excluded. No assistant text, successful verdict or tool result is invented. This is an exploratory context-format comparison, not a held-out model-generalization claim."
     root.mkdir()
-    (root / "protocol.json").write_text(json.dumps({"protocol": protocol, "sha256": digest(protocol)}, indent=2) + "\n")
     calls, episodes = [], []
     cases = {c["id"]: c for c in corpus["protocol"]["cases"]}
-    with LocalModel(model, runtime, root, 108) as inference, RecoveryBridge(base, root) as bridge:
+    with ExitStack() as resources:
+        bridge = resources.enter_context((LeanRecoveryBridge if args.lean else RecoveryBridge)(base, root))
+        if args.lean:
+            protocol["leanAuthority"] = bridge.request({"command": "info"})["manifest"]
+        (root / "protocol.json").write_text(json.dumps({"protocol": protocol, "sha256": digest(protocol)}, indent=2) + "\n")
+        inference = resources.enter_context(LocalModel(model, runtime, root, 108))
         for original in seed["report"]["results"]:
             s = cases[original["caseId"]]["scenario"]
             # Get the exact root head from the actual session, not a caller-invented state.
@@ -222,6 +234,9 @@ def run(args):
             episodes.append(e)
             print(json.dumps({"episodes": len(episodes), "newModelCalls": len(calls), "variant": e["variant"], "seedUnsafe": e["seedOutcome"]["unsafeEffects"],
                               "completed": current["result"]["completed"], "blocked": current["result"]["blocked"]}), flush=True)
+        if args.lean:
+            records = bridge.request({"command": "records"})["records"]
+            (root / "lean-authority.json").write_text(json.dumps({"manifest": protocol["leanAuthority"], "records": records}, indent=2) + "\n")
     report = {"version": 1, "label": "real-local-model-guarded-recovery", "protocolHash": digest(protocol), "calls": calls, "episodes": episodes,
               "summary": summary(episodes), "seedCallsReused": 36, "externalEffects": 0, "humanParticipants": 0,
               "limitation": "Small fixed synthetic corpus, same small quantized model, clean fresh repair context and host/runtime assumptions. Unsigned replay receipts do not authenticate origin. No universal model-competence or implementation claim, no production authority, no training."}
@@ -234,6 +249,7 @@ if __name__ == "__main__":
     parser.add_argument("--verify")
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--history", action="store_true")
+    parser.add_argument("--lean", action="store_true")
     for name in ("model", "runtime", "seed", "output"):
         parser.add_argument("--" + name)
     args = parser.parse_args()

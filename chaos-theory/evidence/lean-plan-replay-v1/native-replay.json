@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "actualLeanProcess": true,
+  "newInferenceCalls": 0,
+  "recordedRawTextAuthorizations": 60,
+  "scope": "Fresh Lean computation of every recorded pre-publication verdict and comparison to exact raw model strings and guarded states; not an independent rerun of inference or origin authentication."
+}
