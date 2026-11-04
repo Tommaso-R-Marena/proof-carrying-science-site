@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "implementationCommit": "2d9df54e77c8f2692e60f18607d3cff0e4f18e48",
+  "baseCommit": "54bc61805e741a7228c36e257d3e314cd603b1a9",
+  "kind": "local executed verification record; unsigned and not a formal assurance certificate",
+  "sourceSha256": {
+    "index.html": "1ffa44e79533ef70c5eefc1b034d09168807e95bd7e8a350008b49a08a1999db",
+    "package-lock.json": "98399ae5dfcc73f2b7549122699fbed62cbc993683af0464d6817b06810696ea",
+    "package.json": "0a4576588f533f1a5d4f6894013adcb03935fba66b43d6a3126f98d69e7f667f",
+    "playwright.config.ts": "f10029cc8e6e938b8995b4225ed1ed8f42276b77ae63ba4d4965ad201e1601f1",
+    "scripts/live.ts": "8d822e2aa42b74e0f74556586f535a38406cccaad04152ad692c1b10efa2fd7b",
+    "scripts/notices.ts": "3794eb54cd24346f0ed072d29b5807995601f386415da434544fa5cbbf120caf",
+    "scripts/production-smoke.ts": "3d35fd40b303c42894b00ba9ad6fe29744434cfc8ab08e88dbe9662e916527ff",
+    "scripts/research.ts": "a080107638556c50109f06361a45699a241a9c8dcff1b8cadd4ac89b53e0979a",
+    "scripts/server.ts": "d0c2a49d5416da682fe8d6b4e3ad79d0ee70701e88524d7229f0acf44a8ceffe",
+    "scripts/soak.ts": "ff5535f4afa727612d88ee5f5d004660bf2cc2c6ac4a7ae445cd851942177583",
+    "src/audio.ts": "b394280d155b64cf0b52b85a6dd9f8c806c589c26b626f2c5c67dbb1f666a29b",
+    "src/contracts.ts": "a96b581be3daa9f72528d33e3cfc9fcc928a0cd6fb260bef8cabceaf31628519",
+    "src/live.ts": "8af6505da4c2f85260dc35e523b2da5a389c02ddc0f15b515d16713213f2a8cc",
+    "src/main.ts": "ff91048030002b3bb0fff8663d0be23b65c00b20f2ac7ed424b9a31910ac2787",
+    "src/research.ts": "302f1a6a852bbfa1110c32cf00b6f104acc2f73d40909ba647e1b0123299d966",
+    "src/scene.ts": "683706a6d19e6ead2d733a17020022ab01c7d658cff06e07e8e8e93f0aa6d623",
+    "src/sim.ts": "8a3628a6bc21a75b5659906ecd37e802f3d16e24fc02d4250a12ec3de23c963c",
+    "src/storage.ts": "bc0d1618fc3bc82187dae3e39a87ad2cc0e6c02c34bf34e4f96122b012ddef02",
+    "src/style.css": "a2d208cbef66992438a7be7dfd14a7ac5b57c202389e05f8ec35486ce87627b5",
+    "src/ui.css": "49b19c7e284af4162b263ad4aa9809476656d7922cf0376f4f45c6cefeffd6cd",
+    "tsconfig.json": "68ef1de83f46f839fc4a6070c483dfd9b07ab071b6eeb989e559a75fc2d934c6",
+    "vite.config.ts": "e08a7fd32b9778f40eba5847a42bc46ba42680a1054f490f3a4f9331e66e6ad2",
+    "vitest.config.ts": "9133271ec47a5ab417c920ab3b9b5e902af2ee5b99eb45997b2b577b28031ffd"
+  },
+  "checks": {
+    "unitIntegration": {
+      "status": "PASS",
+      "cases": 84
+    },
+    "chromiumE2E": {
+      "status": "PASS",
+      "cases": 10
+    },
+    "firefoxE2E": {
+      "status": "PASS",
+      "cases": 10
+    },
+    "productionBrowser": {
+      "status": "PASS",
+      "viewports": 2,
+      "restarts": 20
+    },
+    "simulationSoak": {
+      "status": "PASS",
+      "rounds": 120,
+      "ticks": 540000
+    },
+    "fixtureEvaluation": {
+      "status": "PASS",
+      "evaluations": 36,
+      "unauthorizedProposals": 9,
+      "blocked": 9,
+      "unauthorizedEffects": 0
+    },
+    "realModel": {
+      "status": "SKIPPED",
+      "calls": 0
+    },
+    "humanStudy": {
+      "status": "SKIPPED",
+      "participants": 0
+    }
+  }
+}

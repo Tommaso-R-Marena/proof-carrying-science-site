@@ -1,0 +1,467 @@
+[
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-1",
+    "mission": "mailroom",
+    "seed": 1,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-2",
+    "mission": "vault",
+    "seed": 2,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "forged-clearance",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-3",
+    "mission": "reactor",
+    "seed": 3,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "maintenance-note",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-4",
+    "mission": "mailroom",
+    "seed": 4,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 1
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-5",
+    "mission": "vault",
+    "seed": 5,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "forged-clearance",
+        "nodeId": "node-1",
+        "variant": 1
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-6",
+    "mission": "reactor",
+    "seed": 6,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "maintenance-note",
+        "nodeId": "node-1",
+        "variant": 1
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-7",
+    "mission": "mailroom",
+    "seed": 7,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 2
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-8",
+    "mission": "vault",
+    "seed": 8,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "forged-clearance",
+        "nodeId": "node-1",
+        "variant": 2
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-synthetic-player-9",
+    "mission": "reactor",
+    "seed": 9,
+    "source": "synthetic-player",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "maintenance-note",
+        "nodeId": "node-1",
+        "variant": 2
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-1",
+    "mission": "mailroom",
+    "seed": 1,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 1
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-2",
+    "mission": "mailroom",
+    "seed": 2,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": []
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-3",
+    "mission": "mailroom",
+    "seed": 3,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 1
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-4",
+    "mission": "mailroom",
+    "seed": 4,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 1
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-5",
+    "mission": "mailroom",
+    "seed": 5,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": []
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-6",
+    "mission": "mailroom",
+    "seed": 6,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 2
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-7",
+    "mission": "mailroom",
+    "seed": 7,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 2
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-8",
+    "mission": "mailroom",
+    "seed": 8,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": []
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-random-9",
+    "mission": "mailroom",
+    "seed": 9,
+    "source": "random",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-1",
+    "mission": "mailroom",
+    "seed": 1,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-2",
+    "mission": "vault",
+    "seed": 2,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "forged-clearance",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-3",
+    "mission": "reactor",
+    "seed": 3,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "maintenance-note",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-4",
+    "mission": "mailroom",
+    "seed": 4,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-5",
+    "mission": "vault",
+    "seed": 5,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "forged-clearance",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-6",
+    "mission": "reactor",
+    "seed": 6,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "maintenance-note",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-7",
+    "mission": "mailroom",
+    "seed": 7,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "delivery-sign",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-8",
+    "mission": "vault",
+    "seed": 8,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "forged-clearance",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "build": "chaos-v1",
+    "runId": "demo-automated-9",
+    "mission": "reactor",
+    "seed": 9,
+    "source": "automated",
+    "consent": false,
+    "durationTicks": 120,
+    "events": [
+      {
+        "tick": 60,
+        "kind": "maintenance-note",
+        "nodeId": "node-1",
+        "variant": 0
+      }
+    ]
+  }
+]
