@@ -1,4 +1,6 @@
-# Test report
+# Historical v0.1 test report
+
+**The current Mailroom v0.2 implementation and evidence are described in [MAILROOM_V2_REPORT.md](MAILROOM_V2_REPORT.md). This report records the earlier prototype; its data is retained.**
 
 Local source is the isolated `game/chaos-theory-pocket-mayhem-v1` branch based on site main `54bc61805e741a7228c36e257d3e314cd603b1a9`. No PCS production source, model, Lean authority, dependencies or deployment configuration changes. A new dedicated read-only workflow is the only addition outside this project directory.
 

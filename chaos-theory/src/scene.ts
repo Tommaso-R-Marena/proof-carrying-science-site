@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { drawMailroom } from "./mailroom-art";
 import {
   blocked,
   lineOfSight,
@@ -26,6 +27,8 @@ export class ArenaScene extends Phaser.Scene {
   private g!: Phaser.GameObjects.Graphics;
   private labels: Phaser.GameObjects.Text[] = [];
   private cursor = 0;
+  private lastImpact = -1;
+  private impactPause = 0;
   constructor(private bridge: SceneBridge) {
     super("arena");
   }
@@ -67,7 +70,9 @@ export class ArenaScene extends Phaser.Scene {
       .setOrigin(0.5);
   }
   update(_time: number, delta: number) {
-    this.bridge.update(delta);
+    if (this.impactPause > 0) {
+      this.impactPause -= delta;
+    } else this.bridge.update(delta);
     const s = this.bridge.getState();
     if (!s) return;
     const compact = matchMedia("(max-width:760px)").matches;
@@ -78,6 +83,30 @@ export class ArenaScene extends Phaser.Scene {
     const motion = !this.bridge.reducedMotion();
     g.clear();
     this.cursor = 0;
+    if (s.mail) {
+      if (motion) {
+        const impact = s.effects.find(
+          (e) =>
+            e.id > this.lastImpact &&
+            ["splat", "hurt", "bank"].includes(e.kind),
+        );
+        if (impact) {
+          this.lastImpact = s.nextEffectId - 1;
+          this.impactPause = 45;
+          camera.shake(100, impact.kind === "hurt" ? 0.006 : 0.003);
+        }
+      }
+      drawMailroom(
+        g,
+        s,
+        (x, y, text, color, size) => this.label(x, y, text, color, size),
+        motion,
+        this.bridge.cosmetic(),
+      );
+      for (let i = this.cursor; i < this.labels.length; i++)
+        this.labels[i].setVisible(false);
+      return;
+    }
     g.fillStyle(0x19263b).fillRect(0, 0, 960, 600);
     g.lineStyle(1, 0x2b3a51, 0.5);
     for (let x = 0; x <= 960; x += 40) g.lineBetween(x, 0, x, 600);

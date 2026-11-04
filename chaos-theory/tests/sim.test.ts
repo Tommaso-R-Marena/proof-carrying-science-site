@@ -175,9 +175,9 @@ describe("navigation and robot state machines", () => {
     expect(s.status).toBe("playing");
   });
   it("sentinel chases visible player, honors dash immunity, loses sight and investigates decoy", () => {
-    const s = isolated();
+    const s = isolated("vault");
     s.solids = [];
-    s.props = s.props.filter((p) => p.kind !== "door");
+    s.props.find((p) => p.kind === "door")!.active = true;
     const guard = s.bots[1];
     guard.stun = 0;
     guard.x = 140;
@@ -362,17 +362,29 @@ describe("four gadgets and environmental interactions", () => {
 });
 
 describe("mission completion via movement and valid action inputs", () => {
-  it("mailroom can be completed by intercepting courier, then delivering parcel", () => {
-    const s = isolated();
-    const courier = s.bots[0];
-    walk(s, courier, 50);
-    pressE(s);
-    expect(s.phase).toBe(1);
-    walk(s, s.props.find((p) => p.id === "dock-b")!, 50);
-    pressE(s);
+  it("mailroom requires three carried parcels stashed at home, never a one-click dock win", () => {
+    const s = isolated(),
+      courier = s.bots[0],
+      stash = s.props.find((p) => p.id === "stash")!;
+    s.props.find((p) => p.kind === "door")!.active = true;
+    for (let n = 0; n < 3; n++) {
+      // Isolate individual pickup/bank rules. Full active-bot completion is browser tested.
+      courier.carrying = true;
+      courier.stun = ROUND_TICKS;
+      walk(s, courier, 45);
+      pressE(s);
+      expect(s.mail!.carrying).toBe(true);
+      walk(s, s.props.find((p) => p.id === "dock-b")!, 45);
+      pressE(s);
+      expect(s.status).toBe("playing");
+      walk(s, stash, 45);
+      pressE(s);
+      expect(s.mail!.banked).toBe(n + 1);
+      s.bots.forEach((b) => (b.stun = ROUND_TICKS));
+      if (n < 2) expect(s.status).toBe("playing");
+    }
     expect(s.status).toBe("won");
-    expect(s.breakdown.objective).toBe(1300);
-    expect(s.breakdown.time).toBeGreaterThan(0);
+    expect(s.breakdown.objective).toBe(1200);
     const before = checksum(s);
     pressE(s);
     expect(checksum(s)).toBe(before);

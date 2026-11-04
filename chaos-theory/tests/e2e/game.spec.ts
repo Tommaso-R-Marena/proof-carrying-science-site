@@ -1,8 +1,10 @@
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { verifyScenario } from "../../src/research";
 import { test, expect, type Page } from "@playwright/test";
 import {
   nextWaypoint,
+  verifyReplay,
+  lineOfSight,
   EMPTY_INPUT,
   type Input,
   type GameState,
@@ -51,7 +53,13 @@ async function drive(page: Page, to: { x: number; y: number }, gadget = 0) {
     const dx = p.x - s.player.x,
       dy = p.y - s.player.y,
       n = Math.hypot(dx, dy);
-    const enemy = s.bots.find((b) => b.kind === "sentinel")!;
+    const enemy = s.bots
+      .filter((b) => b.kind === "sentinel")
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - s.player.x, a.y - s.player.y) -
+          Math.hypot(b.x - s.player.x, b.y - s.player.y),
+      )[0];
     const ax = enemy.x - s.player.x,
       ay = enemy.y - s.player.y,
       an = Math.hypot(ax, ay) || 1;
@@ -60,7 +68,10 @@ async function drive(page: Page, to: { x: number; y: number }, gadget = 0) {
       y: dy / n,
       aimX: ax / an,
       aimY: ay / an,
-      fire: gadget === 0,
+      fire:
+        gadget === 0 &&
+        Math.hypot(ax, ay) < 240 &&
+        lineOfSight(s, s.player, enemy),
       gadget: gadget as Input["gadget"],
       dash: i % 24 === 0,
     });
@@ -101,7 +112,7 @@ test("title, menus, settings, privacy and local persistence", async ({
 }) => {
   await expect(page.getByRole("heading", { name: /SMALL BOT/ })).toBeVisible();
   await page.screenshot({
-    path: `evidence/menu-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/menu-${test.info().project.name}.png`,
     fullPage: true,
   });
   await page.getByRole("button", { name: "Options ↗" }).click();
@@ -155,7 +166,7 @@ test("visible keyboard movement, aim, gadgets and pause", async ({ page }) => {
   await page.keyboard.up("j");
   await page.evaluate(() => window.__chaos.manual(true));
   await page.screenshot({
-    path: `evidence/gadgets-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/gadgets-${test.info().project.name}.png`,
     fullPage: true,
   });
 });
@@ -169,19 +180,112 @@ test("mailroom completed through valid inputs; export scenario and fixture compa
   await beacon(page);
   expect((await state(page)).events.length).toBe(1);
   await page.screenshot({
-    path: `evidence/live-arena-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/live-arena-${test.info().project.name}.png`,
     fullPage: true,
   });
+  // Quiet first haul: lure security away, hack a useful shortcut, follow the redirected parcel.
+  await advance(page, 1, { gadget: 1, fire: true, aimX: 0, aimY: 1 });
+  await advance(page, 1, { fire: false });
+  await drive(page, { x: 395, y: 300 }, 3);
+  await advance(page, 1, { fire: false });
+  await advance(page, 1, { gadget: 2, fire: true });
+  await advance(page, 1, { fire: false });
   const dock = (await state(page)).props.find((p) => p.id === "dock-b")!;
-  await drive(page, dock);
-  for (let i = 0; i < 50 && (await state(page)).bots[0].carrying; i++)
-    await advance(page, 30, { fire: false });
+  await drive(page, dock, 3);
+  for (let i = 0; i < 30 && !(await state(page)).mail!.loose; i++)
+    await advance(page, 6, { fire: false });
   await interact(page);
+  expect((await state(page)).mail!.carrying).toBe(true);
+  await drive(page, { x: 120, y: 470 });
+  await interact(page);
+  expect((await state(page)).mail!.banked).toBe(1);
+  await page.screenshot({
+    path: `evidence/mailroom-v2/first-haul-${test.info().project.name}.png`,
+    fullPage: true,
+  });
+  // Two active interceptions use real foam shots and E, with every bot still running.
+  for (let haul = 1; haul < 3; haul++) {
+    for (let j = 0; j < 180 && !(await state(page)).mail!.carrying; j++) {
+      const s = await state(page),
+        c = s.bots.find((b) => b.kind === "courier")!;
+      if (s.status !== "playing")
+        throw Error("Mailroom ended before three hauls: " + s.status);
+      const d = Math.hypot(c.x - s.player.x, c.y - s.player.y);
+      if (c.carrying && c.stun > 0 && d < 60) {
+        await interact(page);
+        break;
+      }
+      const target = nextWaypoint(s, s.player, c) ?? c;
+      const dx = target.x - s.player.x,
+        dy = target.y - s.player.y,
+        n = Math.hypot(dx, dy) || 1;
+      const aimX = (c.x - s.player.x) / (d || 1),
+        aimY = (c.y - s.player.y) / (d || 1);
+      await advance(page, 6, {
+        x: d > 45 ? dx / n : 0,
+        y: d > 45 ? dy / n : 0,
+        aimX,
+        aimY,
+        gadget: 0,
+        fire: c.carrying && d < 300,
+        dash: j % 22 === 0,
+      });
+    }
+    expect(
+      (await state(page)).mail!.carrying,
+      JSON.stringify(await state(page)),
+    ).toBe(true);
+    await drive(page, { x: 120, y: 470 });
+    await interact(page);
+    if (haul === 1)
+      await page.screenshot({
+        path: `evidence/mailroom-v2/backup-${test.info().project.name}.png`,
+        fullPage: true,
+      });
+  }
+  expect((await state(page)).mail!.banked).toBe(3);
+  const exportedReplay = await page.evaluate(() => window.__chaos.getReplay());
+  const independentReplay = verifyReplay(exportedReplay);
+  expect(independentReplay.valid, independentReplay.reason).toBe(true);
+  expect(independentReplay.state!.mail!.banked).toBe(3);
+  await mkdir("results", { recursive: true });
+  await writeFile(
+    `results/mailroom-replay-${test.info().project.name}.json`,
+    JSON.stringify(
+      await page.evaluate(() => window.__chaos.getReplay()),
+      null,
+      2,
+    ),
+  );
+  const completed = await state(page);
+  await writeFile(
+    `results/mailroom-run-${test.info().project.name}.json`,
+    JSON.stringify(
+      {
+        kind: "automated valid-input browser play, not a human study",
+        seed: completed.seed,
+        ticks: completed.tick,
+        gameSeconds: completed.tick / 60,
+        score: completed.score,
+        hearts: completed.player.hp,
+        banked: completed.mail!.banked,
+        methods: completed.mail!.methods,
+        backup: completed.bots.some((b) => b.id === "backup"),
+        events: completed.events,
+      },
+      null,
+      2,
+    ),
+  );
+  expect((await state(page)).mail!.methods.sort()).toEqual([
+    "intercept",
+    "redirect",
+  ]);
   await expect(
     page.getByRole("heading", { name: "Mayhem complete!" }),
   ).toBeVisible();
   await page.screenshot({
-    path: `evidence/victory-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/victory-${test.info().project.name}.png`,
     fullPage: true,
   });
   await page.getByRole("button", { name: "Research Lab", exact: true }).click();
@@ -189,7 +293,7 @@ test("mailroom completed through valid inputs; export scenario and fixture compa
   await page.getByRole("button", { name: "Run fixture comparison" }).click();
   await expect(page.getByText(/Tool guard blocked execution/)).toBeVisible();
   await page.screenshot({
-    path: `evidence/research-lab-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/research-lab-${test.info().project.name}.png`,
     fullPage: true,
   });
   const dl = page.waitForEvent("download");
@@ -264,7 +368,7 @@ test("narrow phone layout and genuine touch controls", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
   await page.screenshot({
-    path: `evidence/mobile-menu-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/mobile-menu-${test.info().project.name}.png`,
     fullPage: true,
   });
   await begin(page);
@@ -301,7 +405,7 @@ test("narrow phone layout and genuine touch controls", async ({ page }) => {
   }
   await page.evaluate(() => window.__chaos.manual(true));
   await page.screenshot({
-    path: `evidence/mobile-arena-${test.info().project.name}.png`,
+    path: `evidence/mailroom-v2/mobile-arena-${test.info().project.name}.png`,
     fullPage: true,
   });
   expect(

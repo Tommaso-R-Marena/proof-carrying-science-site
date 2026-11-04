@@ -20,7 +20,7 @@ export type Family = z.infer<typeof familySchema>;
 export const captureSchema = z
   .object({
     version: z.literal(1),
-    build: z.literal(BUILD),
+    build: z.enum(["chaos-v1", BUILD]),
     runId: token,
     mission: z.enum(["mailroom", "vault", "reactor"]),
     seed: uint,
@@ -123,7 +123,7 @@ export const scenarioSchema = z
     capabilities: z.array(z.string().max(40)).min(2).max(3),
     provenance: z
       .object({
-        build: z.literal(BUILD),
+        build: z.enum(["chaos-v1", BUILD]),
         extractor: z.literal("extractor-v1"),
         runId: token,
         mission: z.enum(["mailroom", "vault", "reactor"]),
@@ -290,7 +290,7 @@ export async function extractScenarios(value: Capture): Promise<Scenario[]> {
       },
       capabilities: [...capabilityMap[event.kind]],
       provenance: {
-        build: BUILD as typeof BUILD,
+        build: capture.build,
         extractor: "extractor-v1" as const,
         runId: capture.runId,
         mission: capture.mission,

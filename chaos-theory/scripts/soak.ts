@@ -10,7 +10,7 @@ import {
   ROUND_TICKS,
   nextWaypoint,
 } from "../src/sim";
-import type { MissionId } from "../src/contracts";
+import { BUILD, type MissionId } from "../src/contracts";
 
 const start = performance.now(),
   before = process.memoryUsage();
@@ -87,7 +87,7 @@ const after = process.memoryUsage();
 const report = {
   schemaVersion: 1,
   kind: "deterministic simulation soak, not human play or a browser memory-leak claim",
-  build: "chaos-v1",
+  build: BUILD,
   rounds: rounds.length,
   totalTicks,
   simulatedSeconds: totalTicks / 60,

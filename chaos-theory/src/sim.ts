@@ -75,6 +75,8 @@ export interface Bot extends Point {
   carrying: boolean;
   timer: number;
   patrol: number;
+  facing: number;
+  awareness: number;
 }
 export type PropKind =
   | "sign"
@@ -108,6 +110,15 @@ export interface ScoreBreakdown {
   tricks: number;
   damage: number;
 }
+export interface MailRun {
+  banked: number;
+  carrying: boolean;
+  loose: Point | null;
+  route: "none" | "redirect" | "intercept";
+  methods: ("redirect" | "intercept")[];
+  alertLevel: number;
+  clean: boolean;
+}
 export interface GameState {
   version: 1;
   build: string;
@@ -129,6 +140,7 @@ export interface GameState {
   breakdown: ScoreBreakdown;
   objective: string;
   phase: number;
+  mail: MailRun | null;
   goal: Point & { label: string };
   decoy: (Point & { ttl: number }) | null;
   nextEffectId: number;
@@ -172,6 +184,8 @@ function bot(id: string, kind: BotKind, x: number, y: number): Bot {
     carrying: kind === "courier",
     timer: 0,
     patrol: 0,
+    facing: Math.PI,
+    awareness: 0,
   };
 }
 export function createGame(mission: MissionId, seed = 1): GameState {
@@ -220,6 +234,18 @@ export function createGame(mission: MissionId, seed = 1): GameState {
     breakdown: { objective: 0, time: 0, variety: 0, tricks: 0, damage: 0 },
     objective: "",
     phase: 0,
+    mail:
+      mission === "mailroom"
+        ? {
+            banked: 0,
+            carrying: false,
+            loose: null,
+            route: "none",
+            methods: [],
+            alertLevel: 0,
+            clean: true,
+          }
+        : null,
     goal: { x: 0, y: 0, label: "" },
     decoy: null,
     nextEffectId: 0,
@@ -230,17 +256,21 @@ export function createGame(mission: MissionId, seed = 1): GameState {
     dashHeld: false,
   };
   if (mission === "mailroom") {
+    s.bots[2].x = 775;
+    s.bots[2].y = 150;
     s.solids = [
-      { x: 245, y: 80, w: 145, h: 100 },
-      { x: 430, y: 430, w: 175, h: 90 },
-      { x: 655, y: 80, w: 55, h: 150 },
+      { x: 245, y: 90, w: 120, h: 105 },
+      { x: 440, y: 90, w: 50, h: 145 },
+      { x: 440, y: 365, w: 50, h: 140 },
+      { x: 675, y: 85, w: 60, h: 115 },
     ];
     s.props = [
       prop("notice", "sign", 350, 300),
       prop("belt", "conveyor", 590, 300, 190, 80),
-      prop("gate", "door", 470, 180, 32, 105),
+      prop("gate", "door", 465, 300, 50, 130),
       prop("dock-a", "dock", 850, 130, 80, 65),
       prop("dock-b", "dock", 850, 470, 80, 65),
+      prop("stash", "exit", 120, 470, 115, 80),
     ];
   } else if (mission === "vault") {
     s.solids = [
@@ -348,13 +378,23 @@ export function lineOfSight(s: GameState, a: Point, b: Point): boolean {
       return false;
   return true;
 }
+/** Actor-size-aware segment check: visual LOS alone can clip collision corners. */
+function clearTravel(s: GameState, a: Point, b: Point): boolean {
+  const n = Math.max(1, Math.ceil(distance(a, b) / 5));
+  for (let i = 0; i <= n; i++)
+    if (
+      blocked(s, a.x + ((b.x - a.x) * i) / n, a.y + ((b.y - a.y) * i) / n, 13)
+    )
+      return false;
+  return true;
+}
 /** Four-connected deterministic BFS. Unreachable targets explicitly return null. */
 export function nextWaypoint(
   s: GameState,
   from: Point,
   to: Point,
 ): Point | null {
-  if (lineOfSight(s, from, to) && !blocked(s, to.x, to.y, 12)) return to;
+  if (clearTravel(s, from, to)) return to;
   const cell = 30,
     cols = 32,
     rows = 20;
@@ -509,31 +549,76 @@ function useGadget(s: GameState, i: Input): void {
   // Use the fixed typed action rather than an event-provided instruction.
   void i;
 }
+/** Actual guarded deposit/pickup loop. A parcel is consumed once and only at the stash. */
+function interactMail(s: GameState) {
+  const m = s.mail!,
+    p = s.player,
+    c = s.bots.find((b) => b.kind === "courier")!;
+  const stash = s.props.find((p) => p.id === "stash")!;
+  if (m.carrying) {
+    if (distance(p, stash) > 70) return;
+    m.carrying = false;
+    m.banked++;
+    s.phase = 0;
+    award(s, "objective", 150, `bank:${m.banked}`);
+    effect(s, "bank", stash, 90);
+    if (m.methods.length === 2) award(s, "variety", 120, "mixed-route");
+    s.props.find((p) => p.id === "dock-b")!.active = false;
+    s.props.find((p) => p.kind === "sign")!.active = false;
+    if (m.banked === 3) win(s);
+    return;
+  }
+  const intercepted = c.carrying && c.stun > 0 && distance(p, c) < 65;
+  if (intercepted || (m.loose && distance(p, m.loose) < 65)) {
+    const route = intercepted ? "intercept" : "redirect";
+    m.carrying = true;
+    m.loose = null;
+    m.route = route;
+    s.phase = 1;
+    if (intercepted) {
+      c.carrying = false;
+      c.timer = 0;
+    }
+    if (!m.methods.includes(route)) m.methods.push(route);
+    award(s, "objective", 50, `pickup:${m.banked}`);
+    effect(s, "snatch", p, 65);
+  }
+}
+export function sentinelSees(s: GameState, b: Bot): boolean {
+  const d = distance(b, s.player);
+  if (!lineOfSight(s, b, s.player)) return false;
+  if (d < 65) return true;
+  if (d > 190 + (s.mail?.alertLevel ?? 0) * 22) return false;
+  const angle = Math.atan2(s.player.y - b.y, s.player.x - b.x);
+  return (
+    Math.abs(
+      Math.atan2(Math.sin(angle - b.facing), Math.cos(angle - b.facing)),
+    ) <
+    Math.PI / 3
+  );
+}
+function updateMailPressure(s: GameState) {
+  if (!s.mail) return;
+  const m = s.mail;
+  const next = Math.min(
+    2,
+    Math.max(m.banked, s.tick >= 3000 ? 2 : s.tick >= 1800 ? 1 : 0),
+  );
+  if (next > m.alertLevel) {
+    m.alertLevel = next;
+    effect(s, "alarm", s.player, 100);
+    if (next === 2 && !s.bots.some((b) => b.id === "backup")) {
+      const backup = bot("backup", "sentinel", 850, 190);
+      backup.stun = 180;
+      s.bots.push(backup);
+      effect(s, "backup", backup, 180);
+    }
+  }
+}
 function interact(s: GameState): void {
   const p = s.player;
   if (s.mission === "mailroom") {
-    const courier = s.bots.find((b) => b.kind === "courier")!;
-    const dock = s.props.find((q) => q.id === "dock-b")!;
-    if (
-      s.phase === 0 &&
-      courier.carrying &&
-      courier.stun > 0 &&
-      distance(p, courier) < 65
-    ) {
-      courier.carrying = false;
-      s.phase = 1;
-      effect(s, "parcel", p);
-      award(s, "objective", 300, "parcel");
-    } else if (
-      s.phase === 0 &&
-      !courier.carrying &&
-      dock.active &&
-      distance(p, dock) < 70
-    ) {
-      s.phase = 1;
-      award(s, "objective", 300, "parcel");
-      win(s);
-    } else if (s.phase === 1 && distance(p, dock) < 70) win(s);
+    interactMail(s);
   } else if (s.mission === "vault") {
     const relic = s.props.find((q) => q.kind === "vault")!,
       exit = s.props.find((q) => q.kind === "exit")!;
@@ -563,8 +648,9 @@ function interact(s: GameState): void {
 function win(s: GameState): void {
   if (s.status !== "playing") return;
   s.status = "won";
-  award(s, "objective", 1000, "win");
-  award(s, "time", Math.floor(s.timeLeft * 10), "time");
+  award(s, "objective", s.mail ? 600 : 1000, "win");
+  award(s, "time", Math.floor(s.timeLeft * (s.mail ? 4 : 10)), "time");
+  if (s.mail?.clean) award(s, "tricks", 150, "clean-haul");
   effect(s, "victory", s.player, 120);
   updateObjective(s);
 }
@@ -573,6 +659,7 @@ function hurt(s: GameState): void {
   const p = s.player;
   if (p.invulnerable > 0 || p.dashTicks > 0) return;
   p.hp--;
+  if (s.mail) s.mail.clean = false;
   p.invulnerable = 100;
   award(s, "damage", -100, `hit:${p.hp}`);
   effect(s, "hurt", p, 28);
@@ -587,25 +674,30 @@ function updateObjective(s: GameState): void {
     return;
   }
   if (s.mission === "mailroom") {
-    const dock = s.props.find((q) => q.id === "dock-b")!,
-      courier = s.bots[0];
-    if (s.phase === 1) {
-      s.objective = "Bring the parcel to Dock B. Press E at the yellow dock.";
-      s.goal = { ...dock, label: "Deliver parcel · E" };
-    } else if (!courier.carrying && dock.active) {
+    const m = s.mail!,
+      courier = s.bots.find((b) => b.kind === "courier")!;
+    const stash = s.props.find((p) => p.id === "stash")!;
+    if (m.carrying) {
+      s.objective = `Parcel secured! Take it home. E at your hideout. (${m.banked}/3 stashed)`;
+      s.goal = { ...stash, label: "STASH PARCEL · E" };
+    } else if (m.loose) {
+      s.objective = `Parcel waiting! Grab it with E. (${m.banked}/3 stashed)`;
+      s.goal = { ...m.loose, label: "GRAB PARCEL · E" };
+    } else if (courier.stun > 0 && courier.carrying) {
       s.objective =
-        "The parcel is at Dock B! Go there and press E to pick it up.";
-      s.goal = { ...dock, label: "Collect parcel · E" };
-    } else if (s.props.find((q) => q.kind === "sign")!.active) {
-      s.objective =
-        "Courier redirected! Meet it at Dock B. Press E when the parcel arrives.";
-      s.goal = { ...dock, label: "Meet the courier · Dock B" };
-    } else {
-      s.objective =
-        "Trick the courier: use gadget 4 at the blue sign. Or foam it and press E.";
+        "Courier stunned! Get close and press E to snatch its parcel.";
+      s.goal = { ...courier, label: "SNATCH · E" };
+    } else if (s.props.find((p) => p.kind === "sign")!.active) {
+      s.objective = `Courier fooled. Meet it at the orange collection bay. (${m.banked}/3 stashed)`;
       s.goal = {
-        ...s.props.find((q) => q.kind === "sign")!,
-        label: "Fake sign · gadget 4",
+        ...s.props.find((p) => p.id === "dock-b")!,
+        label: "COLLECTION BAY",
+      };
+    } else {
+      s.objective = `Stash three parcels. Use 4 at the sign, or foam the courier and press E. (${m.banked}/3)`;
+      s.goal = {
+        ...s.props.find((p) => p.kind === "sign")!,
+        label: "FOOL THE COURIER · 4",
       };
     }
   } else if (s.mission === "vault") {
@@ -658,7 +750,10 @@ function navigate(s: GameState, b: Bot, target: Point, speed: number): boolean {
   const dx = waypoint.x - b.x,
     dy = waypoint.y - b.y,
     d = Math.hypot(dx, dy);
-  if (d > 0) move(s, b, ((dx / d) * speed) / 60, ((dy / d) * speed) / 60);
+  if (d > 0) {
+    b.facing = Math.atan2(dy, dx);
+    move(s, b, ((dx / d) * speed) / 60, ((dy / d) * speed) / 60);
+  }
   return false;
 }
 function updateBot(s: GameState, b: Bot): void {
@@ -668,23 +763,46 @@ function updateBot(s: GameState, b: Bot): void {
     return;
   }
   if (b.kind === "courier") {
-    if (s.mission !== "mailroom" || !b.carrying) {
+    if (!s.mail) {
       b.state = "idle";
       return;
     }
-    const sign = s.props.find((q) => q.kind === "sign")!;
+    const m = s.mail;
+    if (!b.carrying) {
+      if (m.carrying || m.loose) {
+        b.state = "confused";
+        return;
+      }
+      b.state = "collecting";
+      if (distance(b, { x: 590, y: 300 }) < 30) {
+        b.state = "loading";
+        b.timer++;
+        if (b.timer >= 45) {
+          b.carrying = true;
+          b.timer = 0;
+          effect(s, "loaded", b, 45);
+        }
+      } else {
+        b.timer = 0;
+        navigate(s, b, { x: 590, y: 300 }, 100);
+      }
+      return;
+    }
+    const sign = s.props.find((p) => p.kind === "sign")!;
     const dock = s.props.find(
-      (q) => q.id === (sign.active ? "dock-b" : "dock-a"),
+      (p) => p.id === (sign.active ? "dock-b" : "dock-a"),
     )!;
     b.state = sign.active ? "rerouted" : "delivery";
-    if (navigate(s, b, dock, 74)) {
+    if (navigate(s, b, dock, 78)) {
       b.carrying = false;
+      b.timer = 0;
       dock.active = true;
-      b.state = "delivered";
-      effect(s, "parcel", dock, 60);
-      if (dock.id === "dock-a") {
-        // A new parcel arrives after a short bounded delay; no unwinnable first-run timer trap.
-        b.timer = 180;
+      if (sign.active) {
+        m.loose = { x: dock.x, y: dock.y };
+        m.route = "redirect";
+        effect(s, "parcel", dock, 70);
+      } else {
+        effect(s, "delivered", dock, 50);
       }
     }
   } else if (b.kind === "sentinel") {
@@ -697,18 +815,39 @@ function updateBot(s: GameState, b: Bot): void {
     if (s.decoy && distance(b, s.decoy) < 480) {
       b.state = "investigate";
       navigate(s, b, s.decoy, 115);
-    } else if (distance(b, s.player) < 185 && lineOfSight(s, b, s.player)) {
+    } else if (
+      s.mail
+        ? sentinelSees(s, b)
+        : distance(b, s.player) < 185 && lineOfSight(s, b, s.player)
+    ) {
+      if (s.mail) {
+        b.awareness = Math.min(60, b.awareness + 2);
+        if (b.awareness < 60) {
+          b.state = "suspicious";
+          b.facing = Math.atan2(s.player.y - b.y, s.player.x - b.x);
+          return;
+        }
+      }
       b.state = "chase";
       b.timer = 80;
-      navigate(s, b, s.player, 120);
+      navigate(s, b, s.player, s.mail ? 125 + s.mail.alertLevel * 16 : 120);
       if (distance(b, s.player) < 29) hurt(s);
     } else if (b.timer > 0) {
+      b.awareness = Math.max(0, b.awareness - 1);
       b.timer--;
       b.state = "search";
       navigate(s, b, { x: b.targetX, y: b.targetY }, 95);
     } else {
+      b.awareness = Math.max(0, b.awareness - 3);
       b.state = "patrol";
-      if (navigate(s, b, patrols[b.patrol], 65))
+      if (
+        navigate(
+          s,
+          b,
+          patrols[b.patrol],
+          s.mail ? 72 + s.mail.alertLevel * 10 : 65,
+        )
+      )
         b.patrol = (b.patrol + 1) % patrols.length;
     }
   } else {
@@ -801,6 +940,35 @@ function normalized(input: Input): Input {
     aimY: clamp(input.aimY),
   };
 }
+/** A binary grid prevents tiny engine-specific transcendental/normalization differences from accumulating. */
+function quantizeState(s: GameState): void {
+  const q = (v: number) => Math.round(v * 65536) / 65536;
+  for (const a of [
+    s.player,
+    ...s.bots,
+    ...s.shots,
+    ...s.effects,
+    s.goal,
+    ...(s.decoy ? [s.decoy] : []),
+    ...(s.mail?.loose ? [s.mail.loose] : []),
+  ]) {
+    a.x = q(a.x);
+    a.y = q(a.y);
+  }
+  s.player.vx = q(s.player.vx);
+  s.player.vy = q(s.player.vy);
+  s.player.aimX = q(s.player.aimX);
+  s.player.aimY = q(s.player.aimY);
+  for (const b of s.bots) {
+    b.facing = q(b.facing);
+    b.targetX = q(b.targetX);
+    b.targetY = q(b.targetY);
+  }
+  for (const p of s.shots) {
+    p.vx = q(p.vx);
+    p.vy = q(p.vy);
+  }
+}
 export function step(s: GameState, rawInput: Input): void {
   const i = normalized(rawInput);
   if (s.paused || s.status !== "playing") return;
@@ -832,7 +1000,8 @@ export function step(s: GameState, rawInput: Input): void {
     p.vx += (ax * 215 - p.vx) * 0.28;
     p.vy += (ay * 215 - p.vy) * 0.28;
   }
-  move(s, p, p.vx / 60, p.vy / 60);
+  const burden = s.mail?.carrying && p.dashTicks === 0 ? 0.9 : 1;
+  move(s, p, (p.vx / 60) * burden, (p.vy / 60) * burden);
   for (const belt of s.props.filter((q) => q.kind === "conveyor")) {
     if (
       Math.abs(p.x - belt.x) < belt.w / 2 &&
@@ -845,28 +1014,21 @@ export function step(s: GameState, rawInput: Input): void {
   s.interactHeld = i.interact;
   s.fireHeld = i.fire;
   s.dashHeld = i.dash;
+  updateMailPressure(s);
   updateShots(s);
   if (s.decoy && --s.decoy.ttl <= 0) s.decoy = null;
   for (const b of s.bots) {
     for (const belt of s.props.filter((q) => q.kind === "conveyor")) {
       if (
+        !(
+          b.kind === "courier" &&
+          !b.carrying &&
+          (b.state === "loading" || distance(b, { x: 590, y: 300 }) < 30)
+        ) &&
         Math.abs(b.x - belt.x) < belt.w / 2 &&
         Math.abs(b.y - belt.y) < belt.h / 2
       )
         move(s, b, (belt.active ? -1 : 1) * 0.7, 0);
-    }
-    if (
-      b.kind === "courier" &&
-      !b.carrying &&
-      b.timer > 0 &&
-      s.phase === 0 &&
-      s.mission === "mailroom"
-    ) {
-      if (--b.timer === 0) {
-        b.carrying = true;
-        b.x = 540;
-        b.y = 360;
-      }
     }
     updateBot(s, b);
   }
@@ -876,6 +1038,7 @@ export function step(s: GameState, rawInput: Input): void {
     s.objective = "Time up! Retry and try another trick.";
   }
   if (s.status === "playing") updateObjective(s);
+  quantizeState(s);
 }
 function hashText(text: string): number {
   let h = 2166136261;

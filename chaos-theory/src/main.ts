@@ -32,8 +32,9 @@ const metadata: Record<
   mailroom: {
     name: "Mailroom Mayhem",
     subtitle: "A special delivery. Wrong address.",
-    objective: "Trick a courier, grab its parcel, and deliver it to Dock B.",
-    tip: "Walk toward the pulsing sign. Pick gadget 4, then fire when you are close.",
+    objective:
+      "Steal three parcels and stash them at your hideout as security tightens.",
+    tip: "4 fools the courier. Foam + E snatches a parcel. Carry each parcel home.",
   },
   vault: {
     name: "Vault Panic",
@@ -150,7 +151,7 @@ function resetInput() {
   secondary = false;
 }
 function clean() {
-  document.body.classList.remove("in-game");
+  document.body.classList.remove("in-game", "mailroom");
   engine?.destroy(true);
   engine = undefined;
   state = undefined;
@@ -179,7 +180,7 @@ function screen(name: string, title: string, subtitle: string) {
 function home() {
   screen("home", "", "");
   main.innerHTML =
-    '<section class="menu-hero"><div class="hero-copy"><p class="eyebrow">75 seconds. A very bad idea.</p><h1>SMALL BOT.<br><span>BIG TROUBLE.</span></h1><p class="intro">Sneak. Dash. Fool a robot. Pull off a tiny heist before the clock runs out.</p><div class="hero-actions" id="hero-actions"></div><div class="status-row"><span class="tag">✦ Three quick missions</span><span class="tag">◉ No account needed</span></div></div><div class="hero-art" role="img" aria-label="A puzzled yellow courier robot, surrounded by mischievous gadgets"><span class="orbit one" aria-hidden="true">↗</span><div class="big-bot" aria-hidden="true"></div><div class="bot-feet" aria-hidden="true"><i></i><i></i></div><span class="orbit two" aria-hidden="true">✦</span><span class="art-note">DELIVERY STATUS: COMPLICATED</span></div></section><nav class="menu-links" aria-label="Game menu" id="menu-links"></nav><footer class="footer-note"><span>Offline-first. No tracking. All chaos is pretend.</span><span>First playtest edition · v0.1</span></footer>';
+    '<section class="menu-hero"><div class="hero-copy"><p class="eyebrow">75 seconds. A very bad idea.</p><h1>SMALL BOT.<br><span>BIG TROUBLE.</span></h1><p class="intro">Steal three parcels. Outsmart the night guard. Get them home before backup catches up.</p><div class="hero-actions" id="hero-actions"></div><div class="status-row"><span class="tag">✦ A 75-second postal heist</span><span class="tag">◉ No account needed</span></div></div><div class="hero-art" role="img" aria-label="A puzzled yellow courier robot, surrounded by mischievous gadgets"><span class="orbit one" aria-hidden="true">↗</span><div class="big-bot" aria-hidden="true"></div><div class="bot-feet" aria-hidden="true"><i></i><i></i></div><span class="orbit two" aria-hidden="true">✦</span><span class="art-note">ODD POST / AFTER HOURS</span></div></section><nav class="menu-links" aria-label="Game menu" id="menu-links"></nav><footer class="footer-note"><span>Offline-first. No tracking. All chaos is pretend.</span><span>Playtest candidate · v0.2</span></footer>';
   document.querySelector("#hero-actions")!.append(
     action("Play now →", () => void start("mailroom"), "primary"),
     action("Choose a mission", missionSelect, "ghost"),
@@ -250,7 +251,7 @@ function howTo() {
     ],
     [
       "4. Stay out of trouble",
-      "Three hits end a run. Pink guards chase you when they see you. Hide behind walls or lure them away.",
+      "Three hits end a run. Guards see the light cone and hear you up close. Walls block their view; decoys lure them away.",
     ],
   ]) {
     const c = node("article", "", "panel");
@@ -448,7 +449,7 @@ function daily() {
       history.append(
         node(
           "p",
-          `${metadata[r.mission].name} · ${r.outcome === "won" ? "Complete" : "Try again"} · ${r.score} points · seed ${r.seed}`,
+          `${metadata[r.mission].name} · ${r.outcome === "won" ? "Complete" : "Try again"} · ${r.score} points · seed ${r.seed}${r.rules === BUILD ? "" : " · earlier version"}`,
           "muted",
         ),
       );
@@ -505,7 +506,20 @@ function tick(input: Input) {
     hp = state.player.hp;
   step(state, input);
   inputs.push({ ...input });
-  if (state.nextEffectId > effects && input.fire) audio.play("fire");
+  const soundKinds = {
+    foam: "fire",
+    splat: "splat",
+    bank: "bank",
+    snatch: "snatch",
+    alarm: "alarm",
+    hack: "hack",
+    beacon: "beacon",
+    decoy: "decoy",
+  } as const;
+  for (const e of state.effects.filter((e) => e.id >= effects)) {
+    if (Object.hasOwn(soundKinds, e.kind))
+      audio.play(soundKinds[e.kind as keyof typeof soundKinds]);
+  }
   if (state.player.hp < hp) {
     audio.play("hit");
     announce(`Caught. ${state.player.hp} hearts left.`);
@@ -530,6 +544,7 @@ async function start(m: MissionId, n?: number) {
   clean();
   currentScreen = "game";
   document.body.classList.add("in-game");
+  document.body.classList.toggle("mailroom", m === "mailroom");
   seed =
     n ??
     (import.meta.env.MODE === "e2e"
@@ -546,11 +561,31 @@ async function start(m: MissionId, n?: number) {
   playing = true;
   main.innerHTML =
     '<div class="game-top"><div class="mission-title"><strong id="mission-name"></strong><span class="tag">ARCADE MAYHEM</span></div><div class="stats"><div><small>TIME</small><b id="time">75</b></div><div><small>SCORE</small><b id="score">0</b></div><div><small>HEARTS</small><b id="health" aria-label="3 hearts">♥♥♥</b></div></div><button id="pause" type="button" aria-label="Pause game">Ⅱ</button></div><div class="goal-strip"><strong id="objective"></strong><span class="tag" id="seed"></span></div><div class="arena-wrap"><div class="arena" id="arena" role="img" aria-label="Robot facility. You are the white robot; follow the pulsing goal marker."></div></div><div class="gadget-bar" id="gadgets" role="group" aria-label="Choose a gadget"></div><div class="touch-controls" aria-label="Touch controls"><div class="dpad"><button data-touch="up" aria-label="Move up">↑</button><button data-touch="left" aria-label="Move left">←</button><button data-touch="down" aria-label="Move down">↓</button><button data-touch="right" aria-label="Move right">→</button></div><div class="touch-actions"><button data-touch="dash">Dash</button><button data-touch="fire">Fire</button><button data-touch="interact" aria-label="Interact">E</button></div></div><p class="game-help"><span class="desktop-help">WASD / arrows move · Mouse aims · Click / J fires · 1–4 gadget · Space dashes · E interacts · Esc pauses</span><span id="beginner-hint"></span></p>';
+  if (state.mail) {
+    const dashboard = node("div", "", "mail-dashboard");
+    dashboard.innerHTML =
+      '<div class="haul-count"><span class="eyebrow">THE JOB</span><strong id="hauls">○ ○ ○</strong><span id="carry-state">Stash 3 parcels at your hideout</span></div><div class="security"><span class="eyebrow">SECURITY</span><strong id="security-stage">Night shift</strong><div class="security-bars"><i></i><i></i><i></i></div></div>';
+    document.querySelector(".arena-wrap")!.before(dashboard);
+  }
   document.querySelector("#mission-name")!.textContent = metadata[m].name;
   document.querySelector("#seed")!.textContent = `SEED ${seed}`;
   document.querySelector("#beginner-hint")!.textContent =
     ` · ${metadata[m].tip}`;
   document.querySelector("#pause")!.addEventListener("click", showPause);
+  const full = action(
+    "Fullscreen",
+    () => {
+      const request = document.fullscreenElement
+        ? document.exitFullscreen()
+        : document.documentElement.requestFullscreen();
+      void request.catch(() =>
+        toast("Fullscreen is unavailable in this browser."),
+      );
+    },
+    "fullscreen",
+  );
+  full.disabled = !document.fullscreenEnabled;
+  document.querySelector("#pause")!.before(full);
   for (const [i, g] of GADGETS.entries()) {
     const b = action("", () => selectGadget(i as Gadget), "gadget");
     b.setAttribute("aria-label", `Gadget ${i + 1}: ${g.name}`);
@@ -634,6 +669,26 @@ function selectGadget(n: Gadget) {
 function updateHud() {
   if (!state) return;
   const s = state;
+  if (s.mail) {
+    const hauls = document.querySelector("#hauls"),
+      stage = document.querySelector("#security-stage"),
+      carry = document.querySelector("#carry-state");
+    if (hauls)
+      hauls.textContent = Array.from({ length: 3 }, (_, i) =>
+        i < s.mail!.banked ? "●" : "○",
+      ).join(" ");
+    if (carry)
+      carry.textContent = s.mail.carrying
+        ? "Parcel in hand. Get it home!"
+        : `${s.mail.banked}/3 parcels stashed`;
+    if (stage)
+      stage.textContent = ["Night shift", "On the lookout", "Backup called"][
+        s.mail.alertLevel
+      ];
+    document
+      .querySelector(".security")
+      ?.setAttribute("data-level", String(s.mail.alertLevel));
+  }
   const time = document.querySelector("#time"),
     score = document.querySelector("#score"),
     health = document.querySelector("#health"),
@@ -761,6 +816,7 @@ async function showResult() {
   progress.history.unshift({
     mission: s.mission,
     seed: s.seed,
+    rules: BUILD,
     score: s.score,
     outcome: s.status === "won" ? "won" : "lost",
   });
@@ -1106,7 +1162,11 @@ if (import.meta.env.MODE === "e2e") {
     checksum: () => (state ? checksum(state) : null),
     advance: (actions: Partial<Input>[]) => {
       manual = true;
-      for (const input of actions) tick({ ...EMPTY_INPUT, ...input });
+      for (const input of actions) {
+        if (input.gadget !== undefined && input.gadget !== selected)
+          selectGadget(input.gadget);
+        tick({ ...EMPTY_INPUT, gadget: selected, ...input });
+      }
       updateHud();
     },
     manual: (value: boolean) => {

@@ -11,9 +11,12 @@ export interface RunSummary {
   seed: number;
   score: number;
   outcome: "won" | "lost";
+  rules?: "chaos-v1" | "chaos-v2";
 }
 export interface Progress {
   version: 1;
+  scoreRules: 2;
+  legacyMailroomBest: number;
   settings: Settings;
   bests: Record<MissionId, number>;
   recent: Capture[];
@@ -24,6 +27,8 @@ export const STORAGE_KEY = "chaos-theory.v1";
 export function freshProgress(): Progress {
   return {
     version: 1,
+    scoreRules: 2,
+    legacyMailroomBest: 0,
     settings: {
       mute: false,
       reducedMotion: false,
@@ -38,7 +43,8 @@ export function freshProgress(): Progress {
   };
 }
 export function unlockedCosmetics(p: Progress): Progress["cosmetic"][] {
-  const total = Object.values(p.bests).reduce((a, b) => a + b, 0);
+  const total =
+    Object.values(p.bests).reduce((a, b) => a + b, 0) + p.legacyMailroomBest;
   return [
     "mint",
     ...(total > 0 ? ["pink"] : []),
@@ -61,6 +67,15 @@ export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
         r.bests[m] <= 1e7
       )
         p.bests[m] = r.bests[m];
+    if (r.scoreRules !== 2) {
+      p.legacyMailroomBest = p.bests.mailroom;
+      p.bests.mailroom = 0;
+    } else if (
+      Number.isSafeInteger(r.legacyMailroomBest) &&
+      r.legacyMailroomBest >= 0 &&
+      r.legacyMailroomBest <= 1e7
+    )
+      p.legacyMailroomBest = r.legacyMailroomBest;
     if (Array.isArray(r.history))
       for (const h of r.history.slice(0, 10)) {
         if (
@@ -79,6 +94,7 @@ export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
             seed: h.seed,
             score: h.score,
             outcome: h.outcome,
+            rules: h.rules === "chaos-v2" ? "chaos-v2" : "chaos-v1",
           });
       }
     if (unlockedCosmetics(p).includes(r.cosmetic)) p.cosmetic = r.cosmetic;
@@ -97,6 +113,8 @@ export function saveProgress(
       STORAGE_KEY,
       JSON.stringify({
         version: 1,
+        scoreRules: 2,
+        legacyMailroomBest: p.legacyMailroomBest,
         settings: p.settings,
         bests: p.bests,
         history: p.history.slice(0, 10),

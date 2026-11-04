@@ -1,6 +1,6 @@
 {
   "name": "chaos-theory-pocket-mayhem",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -24,7 +24,8 @@
     "verify": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build && npm run test:e2e && npm run test:production && npm run research:offline",
     "test:e2e:firefox": "playwright test --project firefox",
     "test:soak": "tsx scripts/soak.ts",
-    "test:production": "tsx scripts/production-smoke.ts"
+    "test:production": "tsx scripts/production-smoke.ts",
+    "demo:record": "tsx scripts/record-demo.ts"
   },
   "dependencies": {
     "phaser": "4.2.1",

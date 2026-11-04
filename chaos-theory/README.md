@@ -2,9 +2,9 @@
 
 **A little robot trouble. Three quick missions. No account needed.**
 
-Sneak through a robot facility, dash past a guard, and use silly gadgets to pull off a 75-second heist. Ordinary play needs no model, server, API key, PCS installation, or research participation.
+The featured mission is **Mailroom Mayhem: Night Shift**. Steal three parcels, bring each one to your hideout, and adapt as the guard calls backup. Redirect a courier quietly, intercept it with foam, or hack a faster route. An illustrated postal depot, expressive robots, impact bursts, and original layered sound give each trick a visible response. Ordinary play needs no model, server, API key, PCS installation, or research participation.
 
-![Actual title screen](evidence/menu-chromium.png)
+![Actual title screen](evidence/mailroom-v2/menu-chromium.png)
 
 ## Play locally
 
@@ -28,13 +28,13 @@ npm run test:soak
 
 Linux hosts without browser libraries may also need Playwright's documented `install --with-deps` setup. Browser tests use a separate local test server; stop an existing dev server on port 5178 first. The test controller exists only in the `e2e` build mode. `npm run build` produces a normal `dist/` without that controller. `npm run preview` serves it locally.
 
-## Three missions, four tricks
+## One focused heist, four tricks
 
-| Mission         | Your job                                                                       |
-| --------------- | ------------------------------------------------------------------------------ |
-| Mailroom Mayhem | Redirect or intercept a courier's parcel; deliver it to Dock B.                |
-| Vault Panic     | Open the gate, grab the moon relic, return to the green exit.                  |
-| Reactor Rush    | Disable three relays and shut down the core before the technician resets them. |
+| Mission         | Your job                                                                            |
+| --------------- | ----------------------------------------------------------------------------------- |
+| Mailroom Mayhem | Stash **three** parcels at home. Each haul raises security; the last brings backup. |
+| Vault Panic     | Open the gate, grab the moon relic, return to the green exit.                       |
+| Reactor Rush    | Disable three relays and shut down the core before the technician resets them.      |
 
 | Control                            | Action                                           |
 | ---------------------------------- | ------------------------------------------------ |
@@ -48,9 +48,13 @@ Linux hosts without browser libraries may also need Playwright's documented `ins
 | Escape                             | Pause / resume                                   |
 | Phone                              | Direction pad, tap arena to aim, Fire / Dash / E |
 
-Gadgets recharge. Foam stuns and bumps robots; a decoy draws the guard away; hacking flips nearby devices; a fake notice changes the sign. Device gadgets show their range. Walls block movement and shots. Three hits or a timeout end a run; retry immediately with the same seed. Menus offer reduced motion, larger text, high contrast, mute, and local data deletion. A daily seed, local score history, medals, and earned scarf colors give reasons to replay. No online ranking or multiplayer is claimed.
+In the mailroom, an orange bay holds redirected parcels. Press E to collect one, then return to your green hideout and press E again. Holding a parcel slows normal movement slightly; dash still works. Guards give a suspicion warning before chasing. Their visible cones stop at walls, and a small close-range ring shows where they can hear you.
 
-![Actual gameplay](evidence/live-arena-chromium.png)
+Gadgets recharge. Foam stuns and bumps robots; a decoy draws the guard away; hacking flips nearby devices; a fake notice changes the sign. Device gadgets show their range. Walls block movement and shots. Three hits or a timeout end a run; retry immediately with the same seed. Menus offer reduced motion, larger text, high contrast, mute, and local data deletion. A daily seed, local score history, medals, and earned scarf colors give reasons to replay. No online ranking or multiplayer is claimed. Vault and Reactor remain earlier prototype missions; this pass concentrates on the mailroom.
+
+![Actual gameplay](evidence/mailroom-v2/live-arena-chromium.png)
+
+[Watch the actual silent automated replay](evidence/mailroom-v2/automated-replay.webm). This is a verified input replay at 60 ticks/s, not a human playtest or real-model result. `npm run demo:record -- evidence/mailroom-v2/winning-replay.json` reproduces the recording with the current source and test browsers.
 
 ## Optional research, honestly labeled
 
@@ -83,7 +87,7 @@ This makes **two potentially billable calls**, prints the call/token plan, recor
 
 ## Evidence and scope
 
-See [test report](docs/TEST_REPORT.md), [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [threat model](docs/THREAT_MODEL.md), and [playtest protocol](docs/PLAYTEST_PROTOCOL.md). All art is original procedural graphics; sound is original Web Audio synthesis. Dependency notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+See the [current Mailroom v0.2 report](docs/MAILROOM_V2_REPORT.md), [historical v0.1 test report](docs/TEST_REPORT.md), [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [threat model](docs/THREAT_MODEL.md), and [playtest protocol](docs/PLAYTEST_PROTOCOL.md). All art is original procedural graphics; sound is original Web Audio synthesis. Dependency notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 This is a **review-only standalone addition** to the site repository. Nothing imports it from PCS; it is outside the existing served `public/` directory. Its new CI workflow has no deployment step or credentials. Existing PCS source, authority, CI workflows, dependencies, and production settings are unchanged. **This PR must not be merged or deployed automatically.** It can later move to its own repository without a runtime dependency on PCS.
 

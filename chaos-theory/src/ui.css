@@ -792,3 +792,217 @@ summary {
   grid-row: 2;
   grid-column: 3;
 }
+/* The mailroom is a complete episode. Its warmer palette extends through the game chrome. */
+.mailroom {
+  background: #153b43;
+}
+.mailroom header {
+  background: #102e36;
+  border-color: #365c60;
+}
+.mailroom .game-top .tag {
+  background: #264e54;
+  color: #f2dfb9;
+  border-color: #61827d;
+}
+.mailroom .goal-strip {
+  background: #f1dfb9;
+  color: #173b43;
+  border: 0;
+  box-shadow: 0 4px 0 #0d2a31;
+}
+.mailroom .goal-strip .tag {
+  color: #486c68;
+  border-color: #b7b090;
+  font-size: 0.6rem;
+}
+.mail-dashboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto 12px;
+  gap: 16px;
+}
+.haul-count {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.haul-count .eyebrow,
+.security .eyebrow {
+  color: #a4ead5;
+  font-size: 0.6rem;
+}
+.haul-count strong {
+  font-size: 1.7rem;
+  letter-spacing: 6px;
+  color: #efad70;
+  line-height: 1;
+}
+.haul-count > span:last-child {
+  color: #e7dcc4;
+  font-size: 0.85rem;
+}
+.security {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.security strong {
+  font-size: 0.8rem;
+}
+.security-bars {
+  display: flex;
+  gap: 4px;
+}
+.security-bars i {
+  width: 21px;
+  height: 8px;
+  border-radius: 3px;
+  background: #395c60;
+}
+.security-bars i:first-child {
+  background: #a4ead5;
+}
+.security[data-level="1"] .security-bars i:nth-child(2) {
+  background: #efb85d;
+}
+.security[data-level="2"] .security-bars i {
+  background: #ef8354;
+}
+.security[data-level="2"] strong {
+  color: #ffbca0;
+}
+.mailroom .arena {
+  border: 3px solid #0c2931;
+  border-radius: 18px;
+  box-shadow: 0 8px 0 #0c2931;
+}
+.mailroom .gadget-bar {
+  margin-top: 16px;
+}
+.mailroom .gadget {
+  background: #264c52;
+  border-color: #517873;
+}
+.mailroom .gadget[aria-pressed="true"] {
+  background: #e9dcb9;
+  color: #173b43;
+  border-color: #efad70;
+  box-shadow: 0 3px 0 #0c2931;
+}
+.mailroom .gadget[aria-pressed="true"] small {
+  color: #365c60;
+}
+.mailroom .game-help {
+  color: #c3d2c2;
+}
+.mailroom .arena-wrap,
+.mailroom .gadget-bar {
+  max-width: min(1100px, calc((100dvh - 350px) * 1.6));
+}
+.mailroom .gadget {
+  padding: 0.6rem 0.8rem;
+}
+.mailroom .game-top {
+  margin-bottom: 12px;
+}
+.mailroom .goal-strip {
+  margin-bottom: 14px;
+}
+.mailroom .overlay {
+  background: #102d36ed;
+}
+.mailroom .overlay .panel {
+  background: #20464d;
+  border-color: #63827a;
+}
+.mailroom .result-score {
+  color: #efad70;
+}
+@media (max-width: 760px) {
+  .mail-dashboard {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .haul-count {
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 62%;
+  }
+  .haul-count .eyebrow {
+    display: none;
+  }
+  .haul-count strong {
+    font-size: 1.2rem;
+  }
+  .haul-count > span:last-child {
+    font-size: 0.65rem;
+  }
+  .security {
+    flex-direction: column;
+    gap: 3px;
+    align-items: end;
+  }
+  .security .eyebrow {
+    display: none;
+  }
+  .security strong {
+    font-size: 0.65rem;
+  }
+  .mailroom .arena-wrap,
+  .mailroom .gadget-bar {
+    max-width: 100%;
+  }
+  .mailroom .goal-strip .tag {
+    display: none;
+  }
+  .mailroom .gadget {
+    padding: 0.65rem 0.3rem;
+  }
+  .mailroom .game-help {
+    font-size: 0.7rem;
+  }
+  .mailroom main {
+    padding-top: 1rem;
+  }
+}
+.mailroom header {
+  height: 48px;
+}
+.mailroom main {
+  padding: 12px 4% 8px;
+}
+.mailroom .game-top {
+  margin-bottom: 8px;
+}
+.mailroom .game-top > button {
+  padding: 0.5rem 0.8rem;
+}
+.mailroom .goal-strip {
+  padding: 0.6rem 1rem;
+  margin-bottom: 10px;
+}
+.mailroom .mail-dashboard {
+  margin-bottom: 8px;
+}
+.mailroom .arena-wrap,
+.mailroom .gadget-bar {
+  max-width: min(1100px, calc((100dvh - 330px) * 1.6));
+}
+@media (max-width: 760px) {
+  .mailroom .arena-wrap,
+  .mailroom .gadget-bar {
+    max-width: 100%;
+  }
+}
+@media (max-width: 760px) {
+  .fullscreen {
+    display: none;
+  }
+}
+.fullscreen {
+  margin-left: auto;
+  font-size: 0.75rem;
+}

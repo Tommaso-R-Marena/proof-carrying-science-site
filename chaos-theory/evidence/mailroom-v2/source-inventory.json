@@ -1,0 +1,29 @@
+{
+  "kind": "unsigned local source inventory; not a trusted root or formal certificate",
+  "build": "chaos-v2",
+  "sourceSha256": {
+    "package-lock.json": "8e6b0bee510628c17e0ca663662363693716f4f61b6fdbd950f913438d46e5a8",
+    "package.json": "4c209f7d3f447c42816a26e916efa0246b032791050c35b632c1a70a127017a0",
+    "scripts/live.ts": "8d822e2aa42b74e0f74556586f535a38406cccaad04152ad692c1b10efa2fd7b",
+    "scripts/notices.ts": "3794eb54cd24346f0ed072d29b5807995601f386415da434544fa5cbbf120caf",
+    "scripts/production-smoke.ts": "3d35fd40b303c42894b00ba9ad6fe29744434cfc8ab08e88dbe9662e916527ff",
+    "scripts/record-demo.ts": "945861d602711f50889229564c8e26ce0407afe628019cdb7df16c7d7eef43ac",
+    "scripts/research.ts": "a080107638556c50109f06361a45699a241a9c8dcff1b8cadd4ac89b53e0979a",
+    "scripts/server.ts": "d0c2a49d5416da682fe8d6b4e3ad79d0ee70701e88524d7229f0acf44a8ceffe",
+    "scripts/soak.ts": "583b875cbf3c0860b2b8cb132687330e5622fd4651deb3474c39e8d29461603e",
+    "src/audio.ts": "b52683c85b1083e92ff0a0441975ddfd210130c13174e1f51b18784015169384",
+    "src/contracts.ts": "9f142cc4f81e65e92f439ed971240fd80dadc6f9074b2bb04299d3ae8139a618",
+    "src/live.ts": "8af6505da4c2f85260dc35e523b2da5a389c02ddc0f15b515d16713213f2a8cc",
+    "src/mailroom-art.ts": "8b730ddb9ada5a89168451f5349ff1835e53d6a793b143fa5c356a504f29362a",
+    "src/main.ts": "4b394efac5d55901faaf8faeef7c656092bb461973ebd5e6ca0e823e9b7f15fb",
+    "src/research.ts": "1060c1ef9fa85d0b88b6633a55a59e376ee76d1929cc55cac20d064c99652bec",
+    "src/scene.ts": "3fdadf7b37448b04b2ae69bf04be6a5c0a136d21a2525c2418fc9e1a0a3c5b78",
+    "src/sim.ts": "690ccf910b02bda32d5f49e04bd7b9b524933f755f89449b849dd079440af2c0",
+    "src/storage.ts": "30aa1027895d5c29b329a7b7fcb55bd49fe7f70adfef1c75c15a2964e47bbd03",
+    "src/style.css": "a2d208cbef66992438a7be7dfd14a7ac5b57c202389e05f8ec35486ce87627b5",
+    "src/ui.css": "85b101b0bfff2b3168938be85f039b256f8b9c6a556ea3bb850f5afcace1deca"
+  },
+  "replaySha256": "58153b4df17cec1c26e5ca5d13f8612abb28908f9b4adb66966a94980c867966",
+  "realModelCalls": 0,
+  "humanParticipants": 0
+}

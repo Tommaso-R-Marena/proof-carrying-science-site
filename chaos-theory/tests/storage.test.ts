@@ -102,3 +102,31 @@ it("restores only bounded summaries and earned cosmetic unlocks", () => {
     freshProgress(),
   );
 });
+it("archives earlier easy mailroom scores without deleting their history or earned cosmetics", () => {
+  const p = loadProgress({
+    getItem: () =>
+      JSON.stringify({
+        version: 1,
+        bests: { mailroom: 2400, vault: 2200 },
+        cosmetic: "gold",
+        history: [
+          { mission: "mailroom", seed: 4, score: 2400, outcome: "won" },
+        ],
+      }),
+  });
+  expect(p.bests.mailroom).toBe(0);
+  expect(p.legacyMailroomBest).toBe(2400);
+  expect(p.bests.vault).toBe(2200);
+  expect(p.cosmetic).toBe("gold");
+  expect(p.history[0].rules).toBe("chaos-v1");
+  let raw = "";
+  saveProgress(
+    {
+      setItem(_k, v) {
+        raw = v;
+      },
+    },
+    p,
+  );
+  expect(loadProgress({ getItem: () => raw })).toEqual(p);
+});

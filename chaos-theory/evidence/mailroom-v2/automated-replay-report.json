@@ -1,0 +1,16 @@
+{
+  "kind": "silent automated input replay, not human feedback",
+  "build": "chaos-v2",
+  "seed": 42,
+  "ticks": 1219,
+  "gameSeconds": 20.316666666666666,
+  "banked": 3,
+  "hearts": 2,
+  "methods": [
+    "redirect",
+    "intercept"
+  ],
+  "checksum": "3419c0e2",
+  "matchesVerifiedReplay": true,
+  "renderCaveat": "60 input ticks/s; rendering hit-stop is not used to delay the input feed. No audio is captured."
+}

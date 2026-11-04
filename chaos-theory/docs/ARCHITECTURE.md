@@ -13,3 +13,11 @@ The test harness in the `e2e` build mode can advance valid player inputs and ins
 Progress version 1 stores bounded best scores, recent outcome/seed/score summaries, selected earned scarf, and settings. Raw event records remain session-only. No live game is resumed after reload. Corrupt or blocked storage falls back to defaults. All missions and gadgets are open regardless of scores.
 
 The optional HTTP server listens on 127.0.0.1:8788, accepts only exact-host GET /status without Origin, and executes no evaluation. Model runs are explicit local CLI actions; model-selected tools cannot access network, shell or files. This is process separation from the browser, not an immutable root, isolated operating-system sandbox, or formal proof of the host implementation.
+
+## Mailroom v0.2
+
+`mailroom-art.ts` supplies the featured mission’s original procedural presentation. Its effects, eye motion, foot animation, camera shake and audio never authorize a world action. The simulation owns a three-haul pickup/carry/bank state machine, sight/close detection, suspicion, loading, timed/haul escalation and a single backup arrival. Browser input logs include each executed tick; pause and short presentation hit-stop do not count as game time.
+
+Simulation actor positions, velocities, headings, shots and transient coordinates are rounded to a 1/65,536-unit binary grid every tick. This repairs a concrete cross-engine intermediate-checksum mismatch. Winning Chromium and Firefox input exports must also replay independently in Node with matching periodic and final state checksums. This is measured compatibility for the tested build/engines, not a formal universal determinism proof. The source retains the failing development replay as negative evidence.
+
+The simulation build is chaos-v2; old game replays fail closed. Research schemas explicitly accept chaos-v1 and chaos-v2 captures and preserve each capture’s own build label. Neither format grants trusted authority. Score rules version 2 archives old easy mailroom bests, keeps historical run labels and retains earned cosmetics.
