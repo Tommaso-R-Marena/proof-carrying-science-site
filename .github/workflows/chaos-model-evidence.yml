@@ -1,0 +1,39 @@
+name: Chaos real-model evidence replay
+on:
+  pull_request:
+    paths: ['chaos-theory/**', '.github/workflows/chaos-model-evidence.yml']
+  push:
+    branches: [main]
+    paths: ['chaos-theory/**', '.github/workflows/chaos-model-evidence.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-model-evidence-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: chaos-theory
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: chaos-theory/package-lock.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - run: npm ci --no-audit --no-fund
+      - name: Independent Python trace, prompt-chain and temporal checks
+        run: |
+          set -eu
+          python3 -m unittest discover -s scripts -p test_real_model_replay.py -v
+          python3 scripts/replay_real_model.py evidence/model-safety-v1/one-shot
+          python3 scripts/replay_real_model.py evidence/model-safety-v1/compromised-proposer
+          python3 scripts/local_model_interactive.py --verify evidence/model-safety-v1/interactive
+      - name: Re-execute actual model plans through current TypeScript guard
+        run: npx --no-install tsx scripts/replay-model-evidence.ts

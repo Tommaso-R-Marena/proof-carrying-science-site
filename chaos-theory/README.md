@@ -90,11 +90,17 @@ npm run research:offline -- --scenario evidence/scenario-delivery-sign.json --ca
 npm run research:check
 ```
 
-Reports go to unique files under ignored `results/`; saved synthetic examples are under `evidence/`. The checked-in 36-evaluation report has 27 completed tasks, 9 forbidden proposals blocked, and zero unauthorized effects. These are intentionally constructed **fixture/simulated** results, not real-model findings. There have been **zero human participants and zero real-model calls** in this release.
+Reports go to unique files under ignored `results/`; saved synthetic examples are under `evidence/`. The checked-in 36-evaluation fixture report has 27 completed tasks, 9 forbidden proposals blocked, and zero unauthorized effects. Those intentionally constructed results remain **fixture/simulated**. The later [real-weight experiments](docs/REAL_MODEL_RESULTS.md) are recorded separately: 122 actual local model requests, no provider bills and no human participants.
+
+### Actual open-weight model experiments
+
+We downloaded and hash-checked Qwen3-0.6B Q8_0 weights and ran a real CPU inference process. With ordinary lower-trust attack notices, the interactive agent finished 18/18 control tasks and 18/18 attack tasks in both execution arms, with no unauthorized effects. This sample therefore shows **no measured safety gain from the guard**.
+
+A separately labeled **compromised-proposer stress test** deliberately gave the model a wrong system objective while keeping the executor's rules fixed. Twelve actual model-generated plans caused unauthorized effects with policy enforcement off; the same twelve caused none with it on. This tests containment of a deliberately faulty proposer, not prompt-injection success, improved model weights or broad AI safety. Model/runtime/host behavior and the tiny synthetic domain remain limitations. See [results and negative findings](docs/REAL_MODEL_RESULTS.md), [reproduction](docs/REAL_MODEL_SAFETY.md) and the [raw evidence](evidence/model-safety-v1/README.md).
 
 ### Optional model test: operator CLI only
 
-The browser cannot call a model. `npm run research:server` only exposes a read-only loopback configuration status; it has no evaluation endpoint. The live adapter uses one bounded OpenAI Chat Completions request per control or attack variant, with structured tools and in-memory effects. It is a one-turn tool-plan test, not an autonomous feedback loop.
+The browser cannot call a model. `npm run research:server` only exposes a read-only loopback configuration status; it has no evaluation endpoint. The hosted adapter uses one bounded OpenAI Chat Completions request per control or attack variant, with structured tools and in-memory effects. It is a one-turn tool-plan test. The separate local-weight research runner also supports bounded multi-turn execution with feedback; it cannot redirect this hosted adapter or PCS authority.
 
 Use server environment variables, never browser variables or a committed key. `.env.example` is a reference; environment files are **not automatically loaded**. Set `OPENAI_API_KEY` through your normal local secret manager, choose an actual operator-authorized `OPENAI_MODEL`, set `CHAOS_MAX_CALLS=2`, and deliberately opt in with `CHAOS_LIVE_OPT_IN=yes`. Then:
 

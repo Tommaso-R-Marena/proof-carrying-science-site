@@ -1,5 +1,7 @@
 # Mailroom v0.4: learn, improvise, replay, contribute
 
+Historical game implementation/validation record for `6200480` and its integration repair `015338e`. Its zero model-call counts describe that completed update. Later actual-weight experiments, including negative findings, are recorded separately in [real-model results](REAL_MODEL_RESULTS.md); they do not retroactively change this evidence.
+
 This is a review-only update to draft PR #145. The game and its own CI workflow are isolated from the served PCS website. No production authority, Lean statement, model weight, trusted verifier or deployment setting changes. No merge or deployment is authorized by this update.
 
 ## Product changes implemented
