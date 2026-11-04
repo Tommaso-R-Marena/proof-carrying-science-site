@@ -1,0 +1,13 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 research:check
+> tsx scripts/live.ts --check
+
+{
+  "status": "not configured",
+  "model": null,
+  "maxCalls": 6,
+  "timeoutMs": 15000,
+  "callsMade": 0,
+  "explanation": "No calls occur during configuration checks, gameplay, browser use, or fixture tests."
+}
+SKIPPED: no live calls. To opt in, configure server-only environment variables and pass --execute.

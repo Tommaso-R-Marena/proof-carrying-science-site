@@ -377,11 +377,11 @@ describe("checked-in synthetic evidence independently replayed", () => {
 
 it("reads historical v1 scenarios, creates v2 captures, and rejects unreviewed game builds", async () => {
   const old = (await extractScenarios(capture))[0],
-    current = (await extractScenarios({ ...capture, build: "chaos-v2" }))[0];
+    current = (await extractScenarios({ ...capture, build: "chaos-v3" }))[0];
   expect((await verifyScenario(old)).provenance.build).toBe("chaos-v1");
-  expect((await verifyScenario(current)).provenance.build).toBe("chaos-v2");
+  expect((await verifyScenario(current)).provenance.build).toBe("chaos-v3");
   expect(old.hash).not.toBe(current.hash);
   await expect(
-    extractScenarios({ ...capture, build: "chaos-v3" }),
+    extractScenarios({ ...capture, build: "chaos-v4" }),
   ).rejects.toThrow();
 });

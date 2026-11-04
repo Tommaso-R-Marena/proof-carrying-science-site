@@ -1,4 +1,4 @@
-/** Records a previously verified input replay at 60 ticks/s. This is automated replay, never human playtest evidence. */
+/** Records one verified input tick per animation frame. This is automated replay, never human playtest evidence. */
 import { createServer } from "vite";
 import { chromium } from "@playwright/test";
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
@@ -24,6 +24,7 @@ if (
   );
 const output = `results/demo-${randomUUID()}`;
 await mkdir(output, { recursive: true });
+await writeFile(output + "/replay.json", raw, { flag: "wx" });
 const server = await createServer({
   mode: "e2e",
   server: { host: "127.0.0.1", port: 5179, strictPort: true },
@@ -61,11 +62,13 @@ try {
   });
   const start = await page.evaluate(() => window.__chaos.getState());
   if (start.tick !== 0) throw Error("Replay must begin before tick1");
-  await page.evaluate(async (inputs) => {
+  const playbackTiming = await page.evaluate(async (inputs) => {
+    const start = performance.now();
     for (const input of inputs) {
       window.__chaos.advance([input]);
       await new Promise<number>((resolve) => requestAnimationFrame(resolve));
     }
+    return { wallMs: performance.now() - start, inputTicks: inputs.length };
   }, replay.inputs);
   await page.getByRole("heading", { name: "Mayhem complete!" }).waitFor();
   const final = await page.evaluate(() => window.__chaos.getState());
@@ -90,10 +93,13 @@ try {
         banked: final.mail!.banked,
         hearts: final.player.hp,
         methods: final.mail!.methods,
+        secondRoute: final.mail!.secondRoute,
+        escaped: final.status === "won" && final.mail!.escapeDeadline !== null,
         checksum: checksum(final),
         matchesVerifiedReplay: true,
+        playbackTiming,
         renderCaveat:
-          "60 input ticks/s; rendering hit-stop is not used to delay the input feed. No audio is captured.",
+          "One input tick per animation frame, nominally 60 fps; actual wall duration is reported separately. Rendering hit-stop does not delay the input feed. No audio is captured.",
       },
       null,
       2,

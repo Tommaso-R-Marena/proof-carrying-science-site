@@ -1,0 +1,25 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 test:e2e:firefox
+> playwright test --project firefox
+
+[WebServer] (node:94901) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:94919) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [firefox] › tests/e2e/game.spec.ts:123:1 › title, menus, settings, privacy and local persistence (3.3s)
+  ✓   2 [firefox] › tests/e2e/game.spec.ts:151:1 › visible keyboard movement, aim, gadgets and pause (2.5s)
+  ✓   3 [firefox] › tests/e2e/game.spec.ts:187:3 › mailroom completed through valid inputs (sorter); export scenario and fixture comparison (13.3s)
+  ✓   4 [firefox] › tests/e2e/game.spec.ts:187:3 › mailroom completed through valid inputs (carried); export scenario and fixture comparison (14.6s)
+  ✓   5 [firefox] › tests/e2e/game.spec.ts:420:1 › vault complete through valid movement, notice, collection and escape (2.9s)
+  ✓   6 [firefox] › tests/e2e/game.spec.ts:440:1 › reactor complete with three actual switches and core interaction (3.1s)
+  ✓   7 [firefox] › tests/e2e/game.spec.ts:455:1 › timeout, retry and deterministic reset (4.5s)
+  ✓   8 [firefox] › tests/e2e/game.spec.ts:469:1 › optional lab has no fabricated model results and no data uploads (881ms)
+  ✓   9 [firefox] › tests/e2e/game.spec.ts:481:1 › narrow phone layout and genuine touch controls (2.6s)
+  ✓  10 [firefox] › tests/e2e/game.spec.ts:531:1 › keyboard focus reaches primary action and all buttons have names (2.8s)
+  ✓  11 [firefox] › tests/e2e/game.spec.ts:556:1 › storage denied still gives a playable game (2.0s)
+  ✓  12 [firefox] › tests/e2e/game.spec.ts:568:1 › optional local playtest is consented, skippable, exportable and deletable without uploads (5.8s)
+
+  12 passed (1.0m)

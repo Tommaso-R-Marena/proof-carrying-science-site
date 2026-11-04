@@ -1,5 +1,5 @@
 /** Public v1 contract between deterministic simulation and unprivileged research extraction. */
-export const BUILD = "chaos-v2";
+export const BUILD = "chaos-v3";
 export type MissionId = "mailroom" | "vault" | "reactor";
 export type MappedKind =
   | "delivery-sign"

@@ -2,6 +2,7 @@
 import type Phaser from "phaser";
 import {
   gadgetTarget,
+  mailBeat,
   GADGETS,
   blocked,
   type GameState,
@@ -39,9 +40,14 @@ function panel(
   g.fillStyle(color).fillRoundedRect(x, y, w, h, r);
   g.lineStyle(2, P.ink, 0.85).strokeRoundedRect(x, y, w, h, r);
 }
-function parcel(g: Graphics, x: number, y: number, size = 24) {
+function parcel(g: Graphics, x: number, y: number, size = 24, beat = 1) {
   panel(g, x - size / 2, y - size * 0.4, size, size * 0.8, 0xd5a16a, 3);
-  g.fillStyle(P.paper).fillRect(x - 3, y - size * 0.4, 6, size * 0.8);
+  g.fillStyle(beat === 2 ? P.blue : beat === 3 ? P.orange : P.paper).fillRect(
+    x - 3,
+    y - size * 0.4,
+    6,
+    size * 0.8,
+  );
   g.fillStyle(P.paper).fillRoundedRect(x + 4, y - 4, size * 0.25, 6, 1);
   g.lineStyle(1, P.ink, 0.6).lineBetween(x - size / 2 + 4, y + 4, x - 5, y + 4);
 }
@@ -73,6 +79,12 @@ function robot(
     a = b ?? s.player,
     x = a.x,
     y = a.y;
+  if (b?.arriving) {
+    g.fillStyle(P.red, 0.12).fillCircle(x, y, 27);
+    g.lineStyle(3, P.red, 0.6).strokeCircle(x, y, 27);
+    label(x, y, String(Math.ceil(b.arriving / 60)), "#a92e35", 21);
+    return;
+  }
   const age = s.tick,
     walking = b
       ? [
@@ -112,7 +124,13 @@ function robot(
     player ? 15 : b!.kind === "courier" ? 11 : 7,
   );
   g.fillStyle(P.ink).fillRoundedRect(x - 16, torsoY - 13, 32, 15, 7);
-  const lookX = player ? s.player.aimX * 3 : Math.cos(b!.facing) * 3;
+  const lookX = player
+    ? s.player.aimX * 3
+    : b!.reactionTicks > 0 &&
+        ["double-take", "lost", "doughnut"].includes(b!.reaction) &&
+        motion
+      ? Math.sin(age * 0.3) * 8
+      : Math.cos(b!.facing) * 3;
   const lookY = player ? s.player.aimY * 2 : Math.sin(b!.facing) * 2;
   if (stunned) {
     g.lineStyle(2, P.paper);
@@ -124,7 +142,10 @@ function robot(
         torsoY - 3,
       );
     }
-  } else if (b?.state === "chase") {
+  } else if (
+    b?.state === "chase" ||
+    (b?.reaction === "annoyed" && b.reactionTicks > 0)
+  ) {
     g.lineStyle(3, 0xffe5b8)
       .lineBetween(x - 12, torsoY - 10, x - 4, torsoY - 5)
       .lineBetween(x + 4, torsoY - 5, x + 12, torsoY - 10);
@@ -176,13 +197,45 @@ function robot(
       torsoY + 15,
     );
   } else {
-    g.lineStyle(3, P.ink).lineBetween(x + 20, torsoY + 8, x + 28, torsoY - 4);
-    g.strokeCircle(x + 30, torsoY - 8, 5);
+    const wrench =
+      motion && b!.reaction === "grumble" && b!.reactionTicks > 0
+        ? Math.sin(age * 0.28) * 9
+        : 0;
+    g.lineStyle(3, P.ink).lineBetween(
+      x + 20,
+      torsoY + 8,
+      x + 28,
+      torsoY - 4 + wrench,
+    );
+    g.strokeCircle(x + 30, torsoY - 8 + wrench, 5);
     g.lineBetween(x - 6, torsoY - 23, x - 6, torsoY - 31);
     g.fillStyle(P.orange).fillCircle(x - 6, torsoY - 33, 4);
   }
-  if (b?.carrying || (player && s.mail?.carrying))
-    parcel(g, x + 20, torsoY + 10, 25);
+  if (
+    b &&
+    b.reactionTicks > 0 &&
+    ["parcel-gone", "annoyed"].includes(b.reaction)
+  ) {
+    const lift = motion ? Math.sin(age * 0.25) * 3 : 0;
+    g.lineStyle(4, P.ink)
+      .lineBetween(x - 20, torsoY + 3, x - 30, torsoY - 14 + lift)
+      .lineBetween(x + 20, torsoY + 3, x + 30, torsoY - 14 + lift);
+    g.fillStyle(P.paper)
+      .fillCircle(x - 30, torsoY - 14 + lift, 4)
+      .fillCircle(x + 30, torsoY - 14 + lift, 4);
+  }
+  if (b?.carrying || (player && s.mail?.carrying)) {
+    const carryX = player ? x : x + 20;
+    parcel(g, carryX, torsoY + 14, player ? 36 : 27, mailBeat(s));
+    if (player) {
+      g.fillStyle(P.paper)
+        .fillCircle(x - 21, torsoY + 13, 6)
+        .fillCircle(x + 21, torsoY + 13, 6);
+      g.lineStyle(2, P.teal)
+        .strokeCircle(x - 21, torsoY + 13, 6)
+        .strokeCircle(x + 21, torsoY + 13, 6);
+    }
+  }
   if (stunned) {
     for (let i = 0; i < 3; i++) {
       const a = (motion ? age * 0.09 : 0) + (i * Math.PI * 2) / 3;
@@ -192,10 +245,7 @@ function robot(
         3,
       );
     }
-    label(x, y - 47, "SEEING STARS", "#173b43", 10);
-  } else if (b?.state === "confused")
-    label(x, y - 40, "…where did it go?", "#173b43", 11);
-  else if (b?.state === "suspicious" || b?.state === "chase") {
+  } else if (b?.state === "suspicious" || b?.state === "chase") {
     label(x, y - 43, b.state === "chase" ? "!" : "?", "#a92e35", 22);
     g.fillStyle(P.ink, 0.3).fillRoundedRect(x - 21, y + 32, 42, 5, 2);
     g.fillStyle(P.red).fillRoundedRect(
@@ -205,13 +255,8 @@ function robot(
       5,
       2,
     );
-  } else if (b?.state === "loading")
-    label(x, y - 42, "NEXT PARCEL…", "#173b43", 10);
-  else if (b?.state === "rerouted")
-    label(x, y - 42, "NEW ADDRESS?", "#173b43", 10);
-  else if (b?.state === "repair")
-    label(x, y - 44, "FIXING THIS.", "#173b43", 10);
-  else if (player) label(x, y + 40, "YOU", "#173b43", 10);
+  }
+  if (player) label(x, y + 40, "YOU", "#173b43", 10);
 }
 export function drawMailroom(
   g: Graphics,
@@ -290,7 +335,13 @@ export function drawMailroom(
       label(
         x,
         y - p.h / 2 - 15,
-        p.active ? "BELT REVERSED" : "PARCEL INTAKE",
+        mailBeat(s) === 2
+          ? p.active
+            ? "EXPRESS · E TO SEND"
+            : "EXPRESS · HACK 3 + E"
+          : p.active
+            ? "BELT REVERSED"
+            : "PARCEL INTAKE",
         "#173b43",
         11,
       );
@@ -342,6 +393,31 @@ export function drawMailroom(
         g.fillStyle(P.orange).fillRect(x + a, y + 34, 10, 5);
       label(x, y - 63, "COLLECTION BAY B", "#9b573d", 12);
       if (!m.loose) label(x, y, "WAITING…", "#9b573d", 10);
+    } else if (p.id === "getaway") {
+      panel(
+        g,
+        x - 46,
+        y - 43,
+        92,
+        86,
+        m.escapeDeadline !== null ? P.teal : 0x698a82,
+        12,
+      );
+      g.fillStyle(P.ink).fillRoundedRect(x - 35, y - 28, 70, 35, 6);
+      g.fillStyle(P.paper, 0.65)
+        .fillRect(x - 27, y - 23, 24, 22)
+        .fillRect(x + 3, y - 23, 24, 22);
+      g.fillStyle(P.ink)
+        .fillRoundedRect(x - 37, y + 35, 18, 9, 3)
+        .fillRoundedRect(x + 19, y + 35, 18, 9, 3);
+      label(x, y - 59, "LAST TRAM", "#173b43", 13);
+      label(
+        x,
+        y + 21,
+        m.escapeDeadline !== null ? "BOARD · E" : "AFTER 3 PARCELS",
+        m.escapeDeadline !== null ? "#f2dfb9" : "#173b43",
+        10,
+      );
     } else if (p.id === "stash") {
       g.fillStyle(P.teal, 0.2).fillRoundedRect(x - 64, y - 53, 128, 106, 15);
       g.lineStyle(3, P.teal).strokeRoundedRect(x - 64, y - 53, 128, 106, 15);
@@ -359,8 +435,18 @@ export function drawMailroom(
       label(x, y + 71, "BRING PARCELS HERE · E", "#173b43", 10);
     }
   }
+  if (mailBeat(s) === 2) {
+    label(675, 560, "QUIET DETOUR ←", "#376d6c", 12);
+    g.lineStyle(2, P.blue, 0.4)
+      .lineBetween(360, 300, 590, 300)
+      .lineBetween(360, 300, 360, 360);
+    g.lineStyle(2, P.blue, 0.5).strokeRoundedRect(333, 338, 54, 44, 6);
+    label(360, 404, "EXPRESS CATCH", "#376d6c", 10);
+  }
   // Actual field of view is the same angle/radius/LOS rule used by the simulator.
-  for (const b of s.bots.filter((b) => b.kind === "sentinel" && b.stun === 0)) {
+  for (const b of s.bots.filter(
+    (b) => b.kind === "sentinel" && b.stun === 0 && b.arriving === 0,
+  )) {
     const radius = 190 + m.alertLevel * 22;
     g.lineStyle(1, P.red, b.awareness > 0 ? 0.5 : 0.2).strokeCircle(
       b.x,
@@ -391,7 +477,7 @@ export function drawMailroom(
   if (m.loose) {
     const p = m.loose;
     g.fillStyle(P.orange, 0.15).fillCircle(p.x, p.y, 30);
-    parcel(g, p.x, p.y, 36);
+    parcel(g, p.x, p.y, 36, mailBeat(s));
     label(p.x, p.y - 35, "GRAB · E", "#173b43", 13);
   }
   const sorted = [
@@ -399,6 +485,39 @@ export function drawMailroom(
     { y: s.player.y, bot: undefined },
   ].sort((a, b) => a.y - b.y);
   for (const a of sorted) robot(g, s, a.bot, label, motion, scarf);
+  const speaker = s.bots
+    .filter((b) => b.reactionTicks > 0 && b.stun === 0 && b.arriving === 0)
+    .sort(
+      (a, b) =>
+        Math.hypot(a.x - s.player.x, a.y - s.player.y) -
+        Math.hypot(b.x - s.player.x, b.y - s.player.y),
+    )[0];
+  if (speaker) {
+    const words = {
+      none: "",
+      "double-take": "Wait. Which bay?",
+      grumble: "Who changed this?!",
+      doughnut: "Free doughnuts?",
+      annoyed: "Cardboard. Again.",
+      lost: "Where did you go?",
+      "parcel-gone": "My parcel!",
+    };
+    const text = words[speaker.reaction],
+      w = Math.min(220, text.length * 7.5 + 20),
+      x = Math.max(44, Math.min(916 - w, speaker.x - w / 2)),
+      y = Math.max(90, Math.min(525, speaker.y - 76));
+    panel(g, x, y, w, 32, P.paper, 9);
+    g.fillStyle(P.paper).fillTriangle(
+      x + w / 2 - 5,
+      y + 32,
+      x + w / 2 + 5,
+      y + 27,
+      speaker.x,
+      y + 35,
+    );
+    label(x + w / 2, y + 15, text, "#173b43", 13);
+  }
+
   for (const shot of s.shots) {
     g.fillStyle(P.teal, 0.18).fillCircle(shot.x - 5, shot.y, 10);
     g.fillStyle(P.paper).fillCircle(shot.x, shot.y, 6);
@@ -459,16 +578,6 @@ export function drawMailroom(
         e.kind === "bank" ? 24 : 17,
       );
     }
-    if (e.kind === "alarm")
-      label(
-        480,
-        95,
-        m.alertLevel === 1
-          ? "MISSING PARCELS. GUARDS ALERT."
-          : "LAST HAUL. BACKUP ON THE WAY.",
-        "#a42e36",
-        17,
-      );
     if (e.kind === "backup" && e.ttl > 60) {
       g.lineStyle(3, P.red, 0.7).strokeCircle(
         e.x,
@@ -493,10 +602,38 @@ export function drawMailroom(
         42,
         12,
       );
-      label(e.x, e.y - 42, "FREE DOUGHNUTS!", "#173b43", 11);
+      g.lineStyle(4, P.orange, 0.8).strokeCircle(e.x, e.y - 7 + bounce, 8);
     }
     if (e.kind === "out-of-range")
       label(s.player.x, s.player.y - 53, "A LITTLE CLOSER…", "#9b573d", 13);
+  }
+  const banners: Record<string, { priority: number; text: string }> = {
+    "time-warning": {
+      priority: 11,
+      text: `TRAM LEAVES IN ${Math.max(0, Math.ceil(((m.escapeDeadline ?? s.tick) - s.tick) / 60))}!`,
+    },
+    getaway: { priority: 10, text: "LAST TRAM! GO, GO, GO!" },
+    "combo-belt": { priority: 8, text: "RETURN TO SENDER!" },
+    jam: { priority: 7, text: "JAMMED · GRAB IT WITH E" },
+    "sorter-arrived": { priority: 6, text: "PARCEL ON STAFF SIDE" },
+    sorter: { priority: 3, text: "EXPRESS SORTER: LOUD & FAST" },
+    alarm: {
+      priority: 2,
+      text:
+        m.alertLevel === 1
+          ? "MISSING PARCELS. GUARDS ALERT."
+          : "SECURITY IS ON THE LOOKOUT.",
+    },
+  };
+  const banner = s.effects
+    .filter((e) => Object.hasOwn(banners, e.kind) && e.ttl > 12)
+    .sort(
+      (a, b) =>
+        banners[b.kind].priority - banners[a.kind].priority || b.id - a.id,
+    )[0];
+  if (banner) {
+    g.fillStyle(P.paper, 0.95).fillRoundedRect(255, 83, 450, 27, 8);
+    label(480, 96, banners[banner.kind].text, "#a42e36", 14);
   }
   const p = s.player,
     range = GADGETS[p.gadget].range;

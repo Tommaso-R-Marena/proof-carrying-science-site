@@ -1,0 +1,18 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 playtest:analyze
+> tsx scripts/analyze-playtest.ts results/playtest-chromium.json
+
+{
+  "mode": "automated-test",
+  "source": "local-unattested",
+  "observations": 2,
+  "completed": 1,
+  "won": 0,
+  "abandoned": 1,
+  "retryClicks": 1,
+  "medianFirstMoveMs": null,
+  "medianFirstGadgetMs": null,
+  "clarityAnswers": 1,
+  "requestedAnother": 0,
+  "caveat": "Descriptive local observations only. Local source does not attest a human; automated-test records are synthetic. No study approval, causal comparison, or enjoyment finding follows."
+}

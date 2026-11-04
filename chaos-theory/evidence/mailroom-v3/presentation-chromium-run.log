@@ -1,0 +1,15 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 test:e2e
+> playwright test --project chromium --grep mailroom completed
+
+[WebServer] (node:96399) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:96417) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium] › tests/e2e/game.spec.ts:187:3 › mailroom completed through valid inputs (sorter); export scenario and fixture comparison (14.7s)
+  ✓  2 [chromium] › tests/e2e/game.spec.ts:187:3 › mailroom completed through valid inputs (carried); export scenario and fixture comparison (14.3s)
+
+  2 passed (30.4s)

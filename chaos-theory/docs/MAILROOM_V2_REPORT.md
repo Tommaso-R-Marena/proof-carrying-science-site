@@ -1,4 +1,6 @@
-# Mailroom Mayhem v0.2: focused game pass
+# Historical Mailroom v0.2 report
+
+**Current implementation: [Mailroom v0.3](MAILROOM_V3_REPORT.md). The evidence below is retained from v0.2.**
 
 This pass develops one mission. Vault and Reactor remain working earlier prototypes. No PCS production source, authority, model, existing workflow or deployment setting is modified. PR #145 stays a draft: no merge or deployment is authorized.
 

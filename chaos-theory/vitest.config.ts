@@ -9,6 +9,7 @@ export default defineConfig({
         "src/research.ts",
         "src/live.ts",
         "src/storage.ts",
+        "src/playtest.ts",
       ],
       reporter: ["text", "json-summary", "html"],
     },

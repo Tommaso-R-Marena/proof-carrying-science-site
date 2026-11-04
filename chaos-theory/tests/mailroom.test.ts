@@ -51,6 +51,11 @@ describe("mailroom pacing and tactical rules v2", () => {
     expect(s.mail!.banked).toBe(2);
     expect(s.bots.filter((b) => b.kind === "sentinel")).toHaveLength(2);
     bank(s);
+    expect(s.status).toBe("playing");
+    expect(s.mail!.escapeDeadline).not.toBeNull();
+    s.player.x = 850;
+    s.player.y = 300;
+    e(s);
     expect(s.status).toBe("won");
     expect(s.mail!.alertLevel).toBe(2);
   });

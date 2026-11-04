@@ -21,3 +21,9 @@ The optional HTTP server listens on 127.0.0.1:8788, accepts only exact-host GET 
 Simulation actor positions, velocities, headings, shots and transient coordinates are rounded to a 1/65,536-unit binary grid every tick. This repairs a concrete cross-engine intermediate-checksum mismatch. Winning Chromium and Firefox input exports must also replay independently in Node with matching periodic and final state checksums. This is measured compatibility for the tested build/engines, not a formal universal determinism proof. The source retains the failing development replay as negative evidence.
 
 The simulation build is chaos-v2; old game replays fail closed. Research schemas explicitly accept chaos-v1 and chaos-v2 captures and preserve each capture’s own build label. Neither format grants trusted authority. Score rules version 2 archives old easy mailroom bests, keeps historical run labels and retains earned cosmetics.
+
+## Mailroom v0.3
+
+Game build chaos-v3 adds three beats, recoverable physical parcel transport, capped actual-combination scoring, typed finite reactions/arrival/decoy curiosity, and an exclusive timed getaway gate. Old game replays fail closed, while research schemas explicitly retain reviewed v1/v2/v3 records without relabeling their source. The binary simulation grid and cross-engine replay check remain. Score rules 3 archive the prior best and preserve earned cosmetics/history.
+
+`playtest.ts` is a browser-safe, opt-in, memory-only recorder and strict bounded schema; it cannot execute model calls. `scripts/analyze-playtest.ts` accepts at most a 1 MB local JSON file and emits descriptive summaries. The UI never waits for feedback before retry. Recorder data is outside the mathematical/game state, so its wall clock, random session ID and feedback cannot change replay decisions. Production-local source remains unattested; synthetic E2E exports are labeled automated-test.

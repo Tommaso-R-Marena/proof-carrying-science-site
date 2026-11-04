@@ -383,6 +383,10 @@ describe("mission completion via movement and valid action inputs", () => {
       s.bots.forEach((b) => (b.stun = ROUND_TICKS));
       if (n < 2) expect(s.status).toBe("playing");
     }
+    expect(s.status).toBe("playing");
+    expect(s.mail!.escapeDeadline).not.toBeNull();
+    walk(s, s.props.find((p) => p.id === "getaway")!, 45);
+    pressE(s);
     expect(s.status).toBe("won");
     expect(s.breakdown.objective).toBe(1200);
     const before = checksum(s);

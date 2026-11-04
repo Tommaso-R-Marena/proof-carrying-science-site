@@ -22,6 +22,7 @@ import {
   unlockedCosmetics,
   type Settings,
 } from "./storage";
+import { PlaytestRecorder, summarizePlaytest } from "./playtest";
 import { AudioBus } from "./audio";
 import type Phaser from "phaser";
 const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -33,7 +34,7 @@ const metadata: Record<
     name: "Mailroom Mayhem",
     subtitle: "A special delivery. Wrong address.",
     objective:
-      "Steal three parcels and stash them at your hideout as security tightens.",
+      "Learn a trick, choose a delivery route, and catch the last tram after three hauls.",
     tip: "4 fools the courier. Foam + E snatches a parcel. Carry each parcel home.",
   },
   vault: {
@@ -66,6 +67,7 @@ const storage = (() => {
 })();
 let progress = loadProgress(storage);
 const audio = new AudioBus();
+const playtest = new PlaytestRecorder();
 let state: GameState | undefined;
 let engine: Phaser.Game | undefined;
 let inputs: Input[] = [];
@@ -151,6 +153,7 @@ function resetInput() {
   secondary = false;
 }
 function clean() {
+  if (state) playtest.finish(state, performance.now(), "abandoned");
   document.body.classList.remove("in-game", "mailroom");
   engine?.destroy(true);
   engine = undefined;
@@ -178,9 +181,10 @@ function screen(name: string, title: string, subtitle: string) {
   return s;
 }
 function home() {
+  if (state && state.status !== "playing") playtest.choose("home-click");
   screen("home", "", "");
   main.innerHTML =
-    '<section class="menu-hero"><div class="hero-copy"><p class="eyebrow">75 seconds. A very bad idea.</p><h1>SMALL BOT.<br><span>BIG TROUBLE.</span></h1><p class="intro">Steal three parcels. Outsmart the night guard. Get them home before backup catches up.</p><div class="hero-actions" id="hero-actions"></div><div class="status-row"><span class="tag">✦ A 75-second postal heist</span><span class="tag">◉ No account needed</span></div></div><div class="hero-art" role="img" aria-label="A puzzled yellow courier robot, surrounded by mischievous gadgets"><span class="orbit one" aria-hidden="true">↗</span><div class="big-bot" aria-hidden="true"></div><div class="bot-feet" aria-hidden="true"><i></i><i></i></div><span class="orbit two" aria-hidden="true">✦</span><span class="art-note">ODD POST / AFTER HOURS</span></div></section><nav class="menu-links" aria-label="Game menu" id="menu-links"></nav><footer class="footer-note"><span>Offline-first. No tracking. All chaos is pretend.</span><span>Playtest candidate · v0.2</span></footer>';
+    '<section class="menu-hero"><div class="hero-copy"><p class="eyebrow">75 seconds. A very bad idea.</p><h1>SMALL BOT.<br><span>BIG TROUBLE.</span></h1><p class="intro">Steal three parcels. Outsmart the night guard. Then catch the last tram before it leaves.</p><div class="hero-actions" id="hero-actions"></div><div class="status-row"><span class="tag">✦ A 75-second postal heist</span><span class="tag">◉ No account needed</span></div></div><div class="hero-art" role="img" aria-label="A puzzled yellow courier robot, surrounded by mischievous gadgets"><span class="orbit one" aria-hidden="true">↗</span><div class="big-bot" aria-hidden="true"></div><div class="bot-feet" aria-hidden="true"><i></i><i></i></div><span class="orbit two" aria-hidden="true">✦</span><span class="art-note">ODD POST / AFTER HOURS</span></div></section><nav class="menu-links" aria-label="Game menu" id="menu-links"></nav><footer class="footer-note"><span>Offline-first. No tracking. All chaos is pretend.</span><span>Playtest candidate · v0.3</span></footer>';
   document.querySelector("#hero-actions")!.append(
     action("Play now →", () => void start("mailroom"), "primary"),
     action("Choose a mission", missionSelect, "ghost"),
@@ -192,6 +196,7 @@ function home() {
     ["Research Lab ↗", () => void lab()],
     ["Daily remix ↗", daily],
     ["Credits ↗", credits],
+    ["Play & give feedback ↗", playtestScreen],
   ] as [string, () => void][])
     document.querySelector("#menu-links")!.append(action(label, fn));
 }
@@ -347,6 +352,7 @@ function options() {
           /* Storage may be disabled. */
         }
         progress = freshProgress();
+        playtest.clear();
         scenarios = [];
         recordings.length = 0;
         capturedRun = "";
@@ -395,6 +401,97 @@ function privacy() {
     action("Open optional lab", () => void lab()),
     action("Back to playing →", () => void start("mailroom"), "primary"),
   );
+}
+function playtestScreen() {
+  const panel = screen(
+    "playtest",
+    "Play, then tell us what happened.",
+    "Optional local recording. You can play without it. Nothing uploads automatically.",
+  );
+  const report = playtest.snapshot();
+  if (!report) {
+    const info = node("div", "", "panel");
+    info.append(
+      node(
+        "p",
+        "Records time to your first move, gadget use, pickup and delivery; hits, route choices, outcome and optional feedback. No name, raw keys or browser identity are collected. Reloading clears observations.",
+        "muted",
+      ),
+    );
+    const label = node(
+        "label",
+        "Record this session on this device",
+        "setting",
+      ),
+      consent = node("input");
+    consent.type = "checkbox";
+    label.append(consent);
+    const begin = action(
+      "Start a local playtest",
+      () => {
+        playtest.optIn(
+          import.meta.env.MODE === "e2e"
+            ? "automated-test"
+            : "unattested-local",
+        );
+        void start("mailroom");
+      },
+      "primary",
+    );
+    begin.disabled = true;
+    consent.addEventListener("change", () => {
+      begin.disabled = !consent.checked;
+    });
+    info.append(label, begin);
+    panel.append(info);
+    return;
+  }
+  const summary = summarizePlaytest(report);
+  if (report.observations.length >= 20)
+    panel.append(
+      node(
+        "p",
+        "Recording limit reached. Further rounds are not recorded. Export, then delete to begin a new session.",
+        "hint",
+      ),
+    );
+  panel.append(
+    node(
+      "p",
+      report.mode === "automated-test"
+        ? "Automated test session (synthetic)"
+        : "Saved on this device for this session",
+      "tag",
+    ),
+    node(
+      "p",
+      `${summary.observations} finished runs · ${summary.retryClicks} retry-button clicks`,
+      "hint",
+    ),
+    node(
+      "p",
+      "Export saves a file to your device. Share it only if you choose. Stop & delete or reload to clear this session.",
+      "muted",
+    ),
+  );
+  const buttons = node("div", "", "actions"),
+    exportButton = action("Export local observations", () =>
+      download("chaos-local-playtest.json", playtest.snapshot()),
+    );
+  exportButton.disabled = !report.observations.length;
+  buttons.append(
+    action("Play Mailroom →", () => void start("mailroom"), "primary"),
+    exportButton,
+    action(
+      "Stop & delete observations",
+      () => {
+        playtest.clear();
+        playtestScreen();
+      },
+      "ghost",
+    ),
+  );
+  panel.append(buttons);
 }
 function credits() {
   const s = screen(
@@ -506,6 +603,7 @@ function tick(input: Input) {
     hp = state.player.hp;
   step(state, input);
   inputs.push({ ...input });
+  playtest.observe(state, performance.now());
   const soundKinds = {
     foam: "fire",
     splat: "splat",
@@ -515,6 +613,12 @@ function tick(input: Input) {
     hack: "hack",
     beacon: "beacon",
     decoy: "decoy",
+    sorter: "hack",
+    "sorter-arrived": "snatch",
+    jam: "hit",
+    getaway: "alarm",
+    "time-warning": "alarm",
+    "combo-belt": "bank",
   } as const;
   for (const e of state.effects.filter((e) => e.id >= effects)) {
     if (Object.hasOwn(soundKinds, e.kind))
@@ -538,7 +642,12 @@ function frame(delta: number) {
     acc -= 1000 / 60;
   }
 }
-async function start(m: MissionId, n?: number) {
+async function start(
+  m: MissionId,
+  n?: number,
+  choice?: "retry-click" | "next-mission-click",
+) {
+  if (choice) playtest.choose(choice);
   if (busy) return;
   busy = true;
   clean();
@@ -551,6 +660,7 @@ async function start(m: MissionId, n?: number) {
       ? 42
       : crypto.getRandomValues(new Uint32Array(1))[0]);
   state = createGame(m, seed);
+  playtest.begin(state, performance.now());
   runId = crypto.randomUUID();
   inputs = [];
   selected = 0;
@@ -566,6 +676,18 @@ async function start(m: MissionId, n?: number) {
     dashboard.innerHTML =
       '<div class="haul-count"><span class="eyebrow">THE JOB</span><strong id="hauls">○ ○ ○</strong><span id="carry-state">Stash 3 parcels at your hideout</span></div><div class="security"><span class="eyebrow">SECURITY</span><strong id="security-stage">Night shift</strong><div class="security-bars"><i></i><i></i><i></i></div></div>';
     document.querySelector(".arena-wrap")!.before(dashboard);
+    const beats = node("div", "", "mission-beats");
+    beats.setAttribute("aria-label", "Mission chapters");
+    for (const [i, text] of [
+      "1 · Learn a trick",
+      "2 · Choose a route",
+      "3 · Make your escape",
+    ].entries()) {
+      const b = node("span", text);
+      b.dataset.beat = String(i + 1);
+      beats.append(b);
+    }
+    dashboard.before(beats);
   }
   document.querySelector("#mission-name")!.textContent = metadata[m].name;
   document.querySelector("#seed")!.textContent = `SEED ${seed}`;
@@ -670,6 +792,14 @@ function updateHud() {
   if (!state) return;
   const s = state;
   if (s.mail) {
+    for (const b of document.querySelectorAll<HTMLElement>("[data-beat]")) {
+      const active =
+        Number(b.dataset.beat) ===
+        (s.mail.banked === 0 ? 1 : s.mail.banked === 1 ? 2 : 3);
+      b.classList.toggle("current", active);
+      if (active) b.setAttribute("aria-current", "step");
+      else b.removeAttribute("aria-current");
+    }
     const hauls = document.querySelector("#hauls"),
       stage = document.querySelector("#security-stage"),
       carry = document.querySelector("#carry-state");
@@ -678,13 +808,20 @@ function updateHud() {
         i < s.mail!.banked ? "●" : "○",
       ).join(" ");
     if (carry)
-      carry.textContent = s.mail.carrying
-        ? "Parcel in hand. Get it home!"
-        : `${s.mail.banked}/3 parcels stashed`;
+      carry.textContent =
+        s.mail.escapeDeadline !== null
+          ? "All three stashed. Catch the tram!"
+          : s.mail.carrying
+            ? "Parcel in hand. Get it home!"
+            : `${s.mail.banked}/3 parcels stashed`;
     if (stage)
-      stage.textContent = ["Night shift", "On the lookout", "Backup called"][
-        s.mail.alertLevel
-      ];
+      stage.textContent = [
+        "Night shift",
+        "On the lookout",
+        s.bots.some((b) => b.id === "backup")
+          ? "Backup called"
+          : "Guards alerted",
+      ][s.mail.alertLevel];
     document
       .querySelector(".security")
       ?.setAttribute("data-level", String(s.mail.alertLevel));
@@ -693,7 +830,13 @@ function updateHud() {
     score = document.querySelector("#score"),
     health = document.querySelector("#health"),
     obj = document.querySelector("#objective");
-  if (time) time.textContent = String(Math.ceil(s.timeLeft));
+  if (time)
+    time.textContent =
+      s.mail?.escapeDeadline != null
+        ? String(
+            Math.max(0, Math.ceil((s.mail.escapeDeadline - s.tick) / 60)),
+          ) + " to tram"
+        : String(Math.ceil(s.timeLeft));
   if (score) score.textContent = String(s.score);
   if (health) {
     health.textContent =
@@ -807,6 +950,7 @@ async function showResult() {
   if (!state) return;
   resetInput();
   const s = state;
+  playtest.finish(s, performance.now(), s.status === "won" ? "won" : "lost");
   pause(s, true);
   audio.play(s.status === "won" ? "win" : "hit");
   if (s.status === "won") {
@@ -881,10 +1025,19 @@ async function showResult() {
   );
   const actions = node("div", "", "actions");
   actions.append(
-    action("Play again →", () => void start(s.mission, seed), "primary"),
+    action(
+      "Play again →",
+      () => void start(s.mission, seed, "retry-click"),
+      "primary",
+    ),
     action(
       "Next mission",
-      () => void start(missions[(missions.indexOf(s.mission) + 1) % 3]),
+      () =>
+        void start(
+          missions[(missions.indexOf(s.mission) + 1) % 3],
+          undefined,
+          "next-mission-click",
+        ),
     ),
   );
   p.append(actions);
@@ -903,6 +1056,54 @@ async function showResult() {
     ),
   );
   p.append(more);
+  if (playtest.enabled) {
+    const feedback = node("details");
+    feedback.append(node("summary", "Feedback (optional)"));
+    for (const [key, label, choices] of [
+      [
+        "clarity",
+        "Was the next step clear?",
+        [
+          ["clear", "Clear"],
+          ["sometimes-unclear", "Sometimes unclear"],
+          ["unclear", "Unclear"],
+        ],
+      ],
+      [
+        "tactics",
+        "How many tricks did you discover?",
+        [
+          ["none", "None"],
+          ["one", "One"],
+          ["several", "Several"],
+        ],
+      ],
+      [
+        "again",
+        "Would you choose another round?",
+        [
+          ["yes", "Yes"],
+          ["unsure", "Not sure"],
+          ["no", "No"],
+        ],
+      ],
+    ] as const) {
+      const l = node("label", label, "feedback-label"),
+        select = node("select");
+      select.append(new Option("Skip", ""));
+      for (const [value, text] of choices)
+        select.append(new Option(text, value));
+      select.addEventListener("change", () => {
+        playtest.feedback(key, select.value || null);
+      });
+      l.append(select);
+      feedback.append(l);
+    }
+    feedback.append(
+      action("View / export local observations", playtestScreen, "ghost"),
+    );
+    p.append(feedback);
+  }
   o.append(p);
   document.body.append(o);
   announce(

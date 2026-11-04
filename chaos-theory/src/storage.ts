@@ -11,12 +11,13 @@ export interface RunSummary {
   seed: number;
   score: number;
   outcome: "won" | "lost";
-  rules?: "chaos-v1" | "chaos-v2";
+  rules?: "chaos-v1" | "chaos-v2" | "chaos-v3";
 }
 export interface Progress {
   version: 1;
-  scoreRules: 2;
+  scoreRules: 3;
   legacyMailroomBest: number;
+  earned: ("mint" | "pink" | "gold")[];
   settings: Settings;
   bests: Record<MissionId, number>;
   recent: Capture[];
@@ -27,8 +28,9 @@ export const STORAGE_KEY = "chaos-theory.v1";
 export function freshProgress(): Progress {
   return {
     version: 1,
-    scoreRules: 2,
+    scoreRules: 3,
     legacyMailroomBest: 0,
+    earned: ["mint"],
     settings: {
       mute: false,
       reducedMotion: false,
@@ -46,10 +48,13 @@ export function unlockedCosmetics(p: Progress): Progress["cosmetic"][] {
   const total =
     Object.values(p.bests).reduce((a, b) => a + b, 0) + p.legacyMailroomBest;
   return [
-    "mint",
-    ...(total > 0 ? ["pink"] : []),
-    ...(total >= 4000 ? ["gold"] : []),
-  ] as Progress["cosmetic"][];
+    ...new Set<Progress["cosmetic"]>([
+      "mint",
+      ...p.earned,
+      ...(total > 0 ? ["pink" as const] : []),
+      ...(total >= 4000 ? ["gold" as const] : []),
+    ]),
+  ];
 }
 export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
   const p = freshProgress();
@@ -67,15 +72,25 @@ export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
         r.bests[m] <= 1e7
       )
         p.bests[m] = r.bests[m];
-    if (r.scoreRules !== 2) {
-      p.legacyMailroomBest = p.bests.mailroom;
-      p.bests.mailroom = 0;
-    } else if (
+    const legacy =
       Number.isSafeInteger(r.legacyMailroomBest) &&
       r.legacyMailroomBest >= 0 &&
       r.legacyMailroomBest <= 1e7
-    )
-      p.legacyMailroomBest = r.legacyMailroomBest;
+        ? r.legacyMailroomBest
+        : 0;
+    const oldTotal = Object.values(p.bests).reduce((a, b) => a + b, 0) + legacy;
+    if (r.scoreRules !== 3) {
+      if (oldTotal > 0) p.earned.push("pink");
+      if (oldTotal >= 4000) p.earned.push("gold");
+    }
+    if (Array.isArray(r.earned))
+      for (const e of r.earned.slice(0, 3))
+        if (["mint", "pink", "gold"].includes(e) && !p.earned.includes(e))
+          p.earned.push(e);
+    if (r.scoreRules !== 3) {
+      p.legacyMailroomBest = Math.max(legacy, p.bests.mailroom);
+      p.bests.mailroom = 0;
+    } else p.legacyMailroomBest = legacy;
     if (Array.isArray(r.history))
       for (const h of r.history.slice(0, 10)) {
         if (
@@ -94,7 +109,12 @@ export function loadProgress(storage: Pick<Storage, "getItem">): Progress {
             seed: h.seed,
             score: h.score,
             outcome: h.outcome,
-            rules: h.rules === "chaos-v2" ? "chaos-v2" : "chaos-v1",
+            rules:
+              h.rules === "chaos-v3"
+                ? "chaos-v3"
+                : h.rules === "chaos-v2"
+                  ? "chaos-v2"
+                  : "chaos-v1",
           });
       }
     if (unlockedCosmetics(p).includes(r.cosmetic)) p.cosmetic = r.cosmetic;
@@ -113,8 +133,9 @@ export function saveProgress(
       STORAGE_KEY,
       JSON.stringify({
         version: 1,
-        scoreRules: 2,
+        scoreRules: 3,
         legacyMailroomBest: p.legacyMailroomBest,
+        earned: p.earned,
         settings: p.settings,
         bests: p.bests,
         history: p.history.slice(0, 10),

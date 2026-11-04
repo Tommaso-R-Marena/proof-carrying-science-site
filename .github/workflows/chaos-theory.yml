@@ -33,6 +33,7 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox
       - run: npm run test:e2e
       - run: npm run test:e2e:firefox
+      - run: npm run playtest:analyze -- results/playtest-chromium.json
       - run: npm run test:production
       - run: npm run research:offline && npm run research:check && npm run test:soak
       - name: Preserve reports and browser evidence

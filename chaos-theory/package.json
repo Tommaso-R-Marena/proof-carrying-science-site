@@ -1,6 +1,6 @@
 {
   "name": "chaos-theory-pocket-mayhem",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -25,7 +25,8 @@
     "test:e2e:firefox": "playwright test --project firefox",
     "test:soak": "tsx scripts/soak.ts",
     "test:production": "tsx scripts/production-smoke.ts",
-    "demo:record": "tsx scripts/record-demo.ts"
+    "demo:record": "tsx scripts/record-demo.ts",
+    "playtest:analyze": "tsx scripts/analyze-playtest.ts"
   },
   "dependencies": {
     "phaser": "4.2.1",
