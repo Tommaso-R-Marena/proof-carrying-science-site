@@ -1,13 +1,30 @@
 /** Real Lean process integration. Negative fixtures never substitute a positive verdict. */
 import { deepStrictEqual, rejects, equal, ok } from "node:assert";
-import { readFile, writeFile } from "node:fs/promises";
-import { startLeanPlanProcess, root } from "./lean-plan-process";
+import { readFile, writeFile, mkdtemp, chmod, access } from "node:fs/promises";
+import { env as environment } from "node:process";
+import { startLeanPlanProcess, buildLeanPlan, root } from "./lean-plan-process";
 import { createLeanRecoveryHost } from "./lean-recovery-session";
 import { demoScenarios } from "../src/research";
 import { evaluateActions } from "../src/research";
 import { parsePlan } from "./safety-ablation";
 const plan = (tool: string, args: unknown) =>
   JSON.stringify({ actions: [{ tool, args }] });
+const unapproved = await mkdtemp(`${root}/results/unapproved-lean-`);
+const fake = `${unapproved}/compiler`,
+  marker = fake + ".executed";
+await writeFile(fake, '#!/bin/sh\nprintf invoked > "$0.executed"\n', {
+  flag: "wx",
+});
+await chmod(fake, 0o755);
+const previousCompiler = environment.PCS_LEAN;
+try {
+  environment.PCS_LEAN = fake;
+  await rejects(buildLeanPlan(), /Unapproved Lean compiler/);
+  await rejects(access(marker));
+} finally {
+  if (previousCompiler === undefined) delete environment.PCS_LEAN;
+  else environment.PCS_LEAN = previousCompiler;
+}
 const process = await startLeanPlanProcess();
 let comparisons = 0,
   identifierCases = 0,
@@ -224,6 +241,7 @@ console.log(
       archivedSnapshotComparisons: comparisons,
       identifierCases,
       negativeRejections: rejections,
+      unapprovedCompilerRejectedBeforeExecution: true,
       sessionCommits: commits,
       scope:
         "Real source-built Lean raw-plan decisions, archived trajectories, process/artifact failure and session publication. No inference rerun or immutable-host claim.",

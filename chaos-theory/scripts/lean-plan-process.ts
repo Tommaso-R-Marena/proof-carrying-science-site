@@ -15,6 +15,9 @@ import { createInterface } from "node:readline";
 import { z } from "../src/schema";
 import type { Family } from "../src/research";
 export const root = fileURLToPath(new URL("../", import.meta.url));
+// Qualified Linux x86-64 Lean 4.28.0 executable, confirmed in the SHA-checked CI toolchain.
+export const QUALIFIED_LEAN_SHA256 =
+  "3e0d0d3d801675359f2d4cf9815bfdb417b20b92fdd9d48b3b14c95bbae28bbf";
 function wellFormed(s: string) {
   for (let i = 0; i < s.length; i++) {
     const n = s.charCodeAt(i);
@@ -81,6 +84,14 @@ export async function buildLeanPlan() {
       ? resolve(selected)
       : execFileSync("which", [selected], { encoding: "utf8" }).trim(),
   );
+  if (
+    process.platform !== "linux" ||
+    process.arch !== "x64" ||
+    (await hash(executable)) !== QUALIFIED_LEAN_SHA256
+  )
+    throw Error(
+      "Unapproved Lean compiler bytes; use the qualified Linux x86-64 4.28.0 release",
+    );
   const version = execFileSync(executable, ["--version"], {
     encoding: "utf8",
   }).trim();
@@ -132,6 +143,8 @@ export async function buildLeanPlan() {
   const pins = Object.fromEntries(
     await Promise.all(pinned.map(async (p) => [p, await hash(p)])),
   );
+  if (pins[executable] !== QUALIFIED_LEAN_SHA256)
+    throw Error("Lean compiler changed during build");
   const manifest = {
     version: 1,
     kind: "research-lean-plan-build",
