@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "nativeLedgerBytes": 2292875,
+  "nativeComputations": 18,
+  "bridgeMetadataBytes": 124,
+  "existingLedgerOverwriteRefused": true,
+  "newInferenceCalls": 0,
+  "positiveVerifierResponsesMocked": 0
+}

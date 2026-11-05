@@ -1,0 +1,65 @@
+name: General file policy research
+on:
+  pull_request:
+    paths: ['chaos-theory/scripts/file-gate/**', 'chaos-theory/formal/FilePolicy*.lean', 'chaos-theory/tests/file-gate*.test.ts', 'chaos-theory/evidence/general-file-gate-v1/**', '.github/workflows/file-policy-research.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: file-policy-research-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  file-policy-lean-and-files:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: chaos-theory
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: chaos-theory/package-lock.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - run: npm ci --no-audit --no-fund
+      - name: Typed profile and independent Python negative controls
+        run: |
+          set -euo pipefail
+          npm run typecheck
+          npm run lint
+          npm run format:check
+          npx --no-install vitest run tests/file-gate.test.ts tests/file-gate-profile.test.ts
+          python3 -m unittest discover -s scripts/file-gate -p 'test_*.py' -v
+      - name: Actual Lean proofs, bounded differential and physical file attacks
+        shell: bash
+        run: |
+          set -euo pipefail
+          source ../scripts/activate_lean_428.sh
+          mkdir -p results
+          npx --no-install tsx scripts/file-gate/test-native.ts | tee results/file-policy-integration.json
+          npx --no-install tsx scripts/file-gate/test-reachability.ts | tee results/file-policy-reachability.json
+          python3 scripts/file-gate/test-collector.py | tee results/file-policy-collector.json
+      - name: Independently replay all saved model requests and actual artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          source ../scripts/activate_lean_428.sh
+          python3 scripts/file-gate/verify_evaluation.py evidence/general-file-gate-v1/live | tee results/file-policy-python-replay.json
+          npx --no-install tsx scripts/file-gate/replay-evidence.ts | tee results/file-policy-native-replay.json
+          python3 scripts/file-gate/report.py evidence/general-file-gate-v1/live --output results/file-policy-report.md
+          cmp results/file-policy-report.md evidence/general-file-gate-v1/REPORT.md
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: file-policy-research-${{ github.sha }}
+          path: |
+            chaos-theory/results/file-policy-*
+            chaos-theory/results/file-gate-tests-*/report.json
+            chaos-theory/results/file-gate-tests-*/native-ledger.json
+          retention-days: 14

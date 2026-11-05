@@ -1,0 +1,3 @@
+Authored demonstration, not model inference: convert 7 seconds to 7000 milliseconds. Keep the control row and reference file unchanged.
+The attempt to change the reference was blocked.
+The inspected, permitted edit passed Lean and TypeScript checks. Original inputs are preserved. Checked output: /tmp/pcs-file-gate-demo-01/snapshots/f2fe23b4a64eb8d2428b83dcd51b4a59312f0e38ceee8c0cd33da8ca865c0f2c/file-0.csv
