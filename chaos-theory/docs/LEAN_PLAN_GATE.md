@@ -1,5 +1,7 @@
 # Lean checks the actual model-plan text
 
+This report records the 218-call research phase. The later [durable session phase](DURABLE_RECOVERY.md) brings the total to 242 and adds checked recovery after process restarts. Its results are recorded separately; the original run below is preserved.
+
 The experimental controller now sends the **original model-plan text** to a separate Lean process before publishing a new state. Lean parses it, checks each action and computes its effects. The existing TypeScript executor must agree. Results are staged in fresh memory; rejection, disagreement, a stale head or a failed checker leaves the published state unchanged.
 
 This is an opt-in research interface. Production PCS authority, the playable game, the legacy session API and existing theorem statements are unchanged. The old Lean table program was moved into a small separate entry file so the mathematical library can be imported by the new decoder.

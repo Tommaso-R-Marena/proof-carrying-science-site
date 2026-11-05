@@ -156,6 +156,14 @@ def verify(directory):
         assert e["final"] == current and e["status"] == status
     assert used == list(range(len(report["calls"]))), "Missing, duplicated or unaccounted inference"
     assert report["summary"] == summary(report["episodes"])
+    if protocol.get("durableMode", False):
+        from replay_durable_journal import read, verify as verify_journal
+        for i, episode in enumerate(report["episodes"]):
+            journal = root / 'journals' / f'journal-{i}'
+            checkpoint = read(root / 'checkpoints' / f'journal-{i}-{episode["final"]["generation"]}.json')
+            checked = verify_journal(journal, checkpoint)
+            assert checked['checkpoint']['snapshotHead'] == episode['final']['head']
+            assert read(journal / f'commit-{episode["final"]["generation"]}.json')['snapshot'] == episode['final']
     return {"passed": True, "episodes": 36, "newActualModelCalls": len(report["calls"]), "summary": report["summary"],
             "limitation": "Replay of receipts, states, original model proposals and new model responses; no independent inference rerun or universal implementation proof."}
 
@@ -182,15 +190,24 @@ def run(args):
         for name in ("GuardedTools.lean", "GuardedToolsTable.lean", "GuardedJson.lean", "GuardedJsonMain.lean"):
             protocol["sourceFiles"]["formal/" + name] = sha(base / "formal" / name)
         protocol["design"] += " Explicit opt-in to actual source-built Lean raw-plan decoding and authorization plus TS agreement before session publication; strict no-number/no-duplicate/well-formed-Unicode profile. No caller-supplied affirmative verifier."
+    if args.durable:
+        from local_durable_runtime import DurableLeanRecoveryBridge
+        for name in ('durable-recovery.ts', 'durable-recovery-bridge.ts', 'local_durable_runtime.py', 'replay_durable_journal.py'):
+            protocol['sourceFiles']['scripts/' + name] = sha(base / 'scripts' / name)
+        protocol['durableMode'] = True
+        protocol['design'] += ' Durable exact-text journals commit before acknowledgement; every replay recomputes raw plans through the real Lean gate and TS. Separately stored unsigned checkpoints need independent protected retention for rollback detection. No immutable host or power-loss assurance.'
     if args.history:
         protocol["design"] += " Separately fixed follow-up after preserved state-only failures. Same system instruction and current-state obligation, adding only exact recorded user/action/obligation history. The original compromised system message is excluded. No assistant text, successful verdict or tool result is invented. This is an exploratory context-format comparison, not a held-out model-generalization claim."
     root.mkdir()
     calls, episodes = [], []
     cases = {c["id"]: c for c in corpus["protocol"]["cases"]}
     with ExitStack() as resources:
-        bridge = resources.enter_context((LeanRecoveryBridge if args.lean else RecoveryBridge)(base, root))
+        bridge = resources.enter_context((DurableLeanRecoveryBridge if args.durable else LeanRecoveryBridge if args.lean else RecoveryBridge)(base, root))
         if args.lean:
-            protocol["leanAuthority"] = bridge.request({"command": "info"})["manifest"]
+            info = bridge.request({"command": "info"})
+            protocol["leanAuthority"] = info["manifest"]
+            if args.durable:
+                protocol['journalAuthority'] = info['journalAuthority']
         (root / "protocol.json").write_text(json.dumps({"protocol": protocol, "sha256": digest(protocol)}, indent=2) + "\n")
         inference = resources.enter_context(LocalModel(model, runtime, root, 108))
         for original in seed["report"]["results"]:
@@ -250,9 +267,12 @@ if __name__ == "__main__":
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--history", action="store_true")
     parser.add_argument("--lean", action="store_true")
+    parser.add_argument("--durable", action="store_true")
     for name in ("model", "runtime", "seed", "output"):
         parser.add_argument("--" + name)
     args = parser.parse_args()
+    if args.durable and not args.lean:
+        parser.error('--durable requires --lean')
     if args.verify:
         print(json.dumps(verify(args.verify), indent=2))
     elif args.execute and all(getattr(args, name) for name in ("model", "runtime", "seed", "output")):

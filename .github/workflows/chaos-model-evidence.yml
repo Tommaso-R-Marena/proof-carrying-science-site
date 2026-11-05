@@ -41,6 +41,7 @@ jobs:
           python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/state-only
           python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/history
           python3 scripts/local_model_recovery.py --verify evidence/lean-plan-replay-v1/live
+          python3 scripts/local_model_recovery.py --verify evidence/durable-recovery-v1/live
       - name: Re-execute actual model plans through current TypeScript guard
         run: |
           set -eu
@@ -80,6 +81,12 @@ jobs:
           set -euo pipefail
           npx --no-install tsx scripts/test-lean-plan-runtime.ts | tee results/lean-plan-integration.json
           npx --no-install tsx scripts/replay-lean-gated-evidence.ts | tee results/lean-plan-live-replay.json
+      - name: Durable real-Lean sessions, killed processes and competing writers
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --no-install tsx scripts/test-durable-recovery.ts | tee results/durable-journal-integration.json
+          npx --no-install tsx scripts/replay-durable-model-evidence.ts | tee results/durable-model-replay.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
@@ -89,4 +96,8 @@ jobs:
             chaos-theory/results/lean-plan-integration.json
             chaos-theory/results/lean-plan-live-replay.json
             chaos-theory/results/lean-plan-*/manifest.json
+            chaos-theory/results/durable-journal-integration.json
+            chaos-theory/results/durable-model-replay.json
+            chaos-theory/results/durable-recovery-*/report.json
+            chaos-theory/results/durable-recovery-*/native-ledger.json
           retention-days: 14

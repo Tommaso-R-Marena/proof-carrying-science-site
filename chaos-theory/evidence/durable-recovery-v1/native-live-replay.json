@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "journals": 36,
+  "nativeLedgerRecords": 144,
+  "originalInferenceCalls": 24,
+  "newInferenceCalls": 0,
+  "sourceBound": true,
+  "scope": "Fresh real-Lean journal and native-ledger replay plus independent Python state/hash verification. Inference is archived, not independently rerun; host and unsigned origin remain trusted."
+}
