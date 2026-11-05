@@ -32,7 +32,7 @@ jobs:
           python -m pip install --no-deps --no-build-isolation -e .ci-components/frozen-study
           python scripts/run_proof_search_evaluation.py --core .ci-components/frozen-study --out "$RUNNER_TEMP/fresh-evaluation"
           python scripts/verify_proof_search_study.py --core .ci-components/frozen-study --results "$RUNNER_TEMP/fresh-evaluation" > "$RUNNER_TEMP/fresh-evaluation/receiving.json"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: fresh-frozen-policy-study-${{ github.run_id }}-${{ github.run_attempt }}
