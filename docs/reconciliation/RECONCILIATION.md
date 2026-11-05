@@ -10,7 +10,7 @@ V20's complete manifest remains byte-for-byte preserved. V21 is a new reviewed c
 
 The new workflow transformation permits only the exact Lean-action digest replacement. Existing commands, required flags, private-repository safeguards and protected CI semantics remain. Unknown source files, altered modes, changed evidence or unreviewed workflow bodies still fail. The existing receiver-exit test successor remains narrowly bound to its original/repaired hashes.
 
-The cross-repository checker verifies the fixed original-PR registry digest, all selected head ancestries and unchanged committed/working production paths. Core `pcs/` and `formal/` and website `public/` retain their protected trees. This is source reconciliation, not proof of semantic equivalence or authorization to deploy.
+The cross-repository checker verifies the fixed original-PR registry digest, all selected head ancestries and unchanged committed/working production paths. Core authority source, every `formal/` file and website `public/` retain protected bytes. The sole `pcs/` exception is an exact digest-pinned non-authority transport proof-construction repair, documented below; every other PCS file must remain unchanged. This is source reconciliation, not proof of semantic equivalence or authorization to deploy.
 
 ## Independently validated studio repairs
 
@@ -23,3 +23,5 @@ The website's 51-proof CSV/intent/conversion work remains a separate assurance p
 ## Integration status
 
 These are review-only integration candidates. No main branch, existing PR head, production authority, signing root, model weights or deployment is changed. Protected CI must complete on each exact candidate. Research replay, kernel compilation, finite numerical observations, scientific assumptions and host custody remain separate facts. Owner-held key custody and an independently administered trusted root are not established here.
+
+The first fresh full run exposed bounded Lean evaluator memory exhaustion in the existing transport experiment. The research receiver now retries its existing finite fragment proofs for that exact diagnostic as well as the previously handled tactic diagnostic. Every fragment still needs actual Lean compilation, the same 2 GB limit, one shared deadline, exact input/source/object bindings and the same named axiom inventory. A failed attempt never grants acceptance. Positive fallback and incorrect-trace rejection are tested with real Lean; only the initial negative resource error is injected. Original failure evidence and all mathematical theorem sources remain preserved. See the core [transport repair report](https://github.com/Tommaso-R-Marena/proof-carrying-science/blob/integration/pcs-open-pr-reconciliation-v1/docs/integration/2026-11-05/TRANSPORT_RESOURCE_REPAIR.md).
