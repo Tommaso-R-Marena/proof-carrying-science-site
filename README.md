@@ -470,3 +470,8 @@ Accepted contributions are initially archived, not deployed. The Owner can now u
 ### Visual World Builder
 
 Open [`public/world-builder.html`](public/world-builder.html) for a visual, account-free route into seven finite-logic puzzles: characters, keys, doors, signal arrows and read-only move replay. Tested rounds stay in a private notebook; optional adult donation reuses the existing authenticated replay/export/training pipeline. See [reproduction, data format and research limits](docs/WORLD_BUILDER.md).
+
+
+## Current research integration candidate
+
+[The open-PR reconciliation guide](docs/reconciliation/RECONCILIATION.md) records how the local Odd Post research, source-built Lean file/conversion gates, core Model Assurance Studio and dependency updates fit together. These remain separate experimental assurance profiles. The hosted `public/` tree is unchanged; the research game and model tools are not deployed by this candidate. [Exact original PR heads](docs/reconciliation/OPEN_PRS.json) are checked by `python scripts/check_reconciled_prs.py --site "$PWD"`.
