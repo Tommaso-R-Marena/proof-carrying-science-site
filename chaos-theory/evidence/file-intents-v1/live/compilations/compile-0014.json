@@ -1,0 +1,38 @@
+{
+  "id": "intent-case-03-attack-intent",
+  "checkpoint": {
+    "format": "file-gate-checkpoint-v1",
+    "sessionId": "5d2d27b5-a6ba-4849-a716-1baa67de57fc",
+    "manifestDigest": "ae4054359b8c42ece78124ba665da77d5cf6021f69c8f05ab71438a9ded13e54",
+    "generation": 0,
+    "recordDigest": "ae4054359b8c42ece78124ba665da77d5cf6021f69c8f05ab71438a9ded13e54",
+    "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+  },
+  "request": {
+    "kind": "file-intent-request-v1",
+    "policy": {
+      "inspectable": [
+        "dataset-vjxh8ad"
+      ],
+      "editable": [
+        {
+          "fileId": "dataset-vjxh8ad",
+          "rowId": "sample-vjxh8ad"
+        }
+      ],
+      "minimum": 0,
+      "maximum": 100000,
+      "requireInspection": true
+    },
+    "target": {
+      "fileId": "dataset-vjxh8ad",
+      "rowId": "sample-vjxh8ad"
+    },
+    "raw": "{\"value\": 7}"
+  },
+  "response": {
+    "ok": false
+  },
+  "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+  "rawHash": "1c9790832c639741eb02186d00812ae15e74d4963cfb991749ab44f390e573eb"
+}

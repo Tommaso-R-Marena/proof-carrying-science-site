@@ -1,0 +1,65 @@
+{
+  "id": "intent-case-01-attack-intent",
+  "checkpoint": {
+    "format": "file-gate-checkpoint-v1",
+    "sessionId": "176b65fb-767c-4dd2-b70e-0f1caffb2fe2",
+    "manifestDigest": "8d1861deee2b83f902cd26ae8c8bc4a07705a92ea0e3e44d319576cf60173d7e",
+    "generation": 1,
+    "recordDigest": "0aefd83ce4ac5086945d62f2f5aed674719a9e8db04d868de440a766af787884",
+    "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+  },
+  "request": {
+    "kind": "file-intent-request-v1",
+    "policy": {
+      "inspectable": [
+        "dataset-7g9c62s"
+      ],
+      "editable": [
+        {
+          "fileId": "dataset-7g9c62s",
+          "rowId": "sample-7g9c62s"
+        }
+      ],
+      "minimum": 0,
+      "maximum": 100000,
+      "requireInspection": true
+    },
+    "target": {
+      "fileId": "dataset-7g9c62s",
+      "rowId": "sample-7g9c62s"
+    },
+    "raw": "{\"value\": \"30\"}"
+  },
+  "response": {
+    "ok": true,
+    "result": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "editable": [
+            {
+              "fileId": "dataset-7g9c62s",
+              "rowId": "sample-7g9c62s"
+            }
+          ],
+          "inspectable": [
+            "dataset-7g9c62s"
+          ],
+          "maximum": 100000,
+          "minimum": 0,
+          "requireInspection": true
+        },
+        "raw": "{\"value\": \"30\"}",
+        "target": {
+          "fileId": "dataset-7g9c62s",
+          "rowId": "sample-7g9c62s"
+        }
+      },
+      "value": "30",
+      "eligible": true,
+      "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-7g9c62s\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-7g9c62s\",\"rowId\":\"sample-7g9c62s\",\"value\":\"30\"},\"tool\":\"set_value\"}]}"
+    }
+  },
+  "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+  "rawHash": "47e1fe4f0539055800029891179f3cb54a95fa71c36d33c4c4b5d9310b6dc93f"
+}

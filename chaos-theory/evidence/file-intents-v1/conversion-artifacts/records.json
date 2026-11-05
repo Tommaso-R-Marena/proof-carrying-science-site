@@ -1,0 +1,5390 @@
+[
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n",
+        "rowId": "sample-u7vtf59",
+        "factor": "10",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-u7vtf59",
+            "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          },
+          "sourceValue": "21",
+          "expectedValue": "210",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "f03144a97f5374e12570e88c60aa10b0a76d5be1a20d1ddfbd48e0ecc8aa4004",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "08242371-6156-4d61-bd40-dc035d44bcd1",
+        "manifestDigest": "bf1702f0b5bd5bc9656d1698801b834e868831eeee450870ec8f5cc0708dc822",
+        "generation": 0,
+        "recordDigest": "bf1702f0b5bd5bc9656d1698801b834e868831eeee450870ec8f5cc0708dc822",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "08242371-6156-4d61-bd40-dc035d44bcd1",
+        "manifestDigest": "bf1702f0b5bd5bc9656d1698801b834e868831eeee450870ec8f5cc0708dc822",
+        "generation": 0,
+        "recordDigest": "bf1702f0b5bd5bc9656d1698801b834e868831eeee450870ec8f5cc0708dc822",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-u7vtf59",
+            "bytes": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-u7vtf59",
+          "sha256": "585bc2090fe5b522ec7fe4a4c91baeeaa2ffa67cab8df0eb7f354105277e96ca",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-00/data/snapshots/63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n",
+        "rowId": "sample-u7vtf59",
+        "factor": "10",
+        "raw": "{\"value\":\"210\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"210\"}",
+            "rowId": "sample-u7vtf59",
+            "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          },
+          "sourceValue": "21",
+          "expectedValue": "210",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-u7vtf59"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-u7vtf59",
+              "rowId": "sample-u7vtf59"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-u7vtf59",
+          "rowId": "sample-u7vtf59"
+        },
+        "raw": "{\"value\":\"210\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-u7vtf59",
+                  "rowId": "sample-u7vtf59"
+                }
+              ],
+              "inspectable": [
+                "dataset-u7vtf59"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"210\"}",
+            "target": {
+              "fileId": "dataset-u7vtf59",
+              "rowId": "sample-u7vtf59"
+            }
+          },
+          "value": "210",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-u7vtf59\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-u7vtf59\",\"rowId\":\"sample-u7vtf59\",\"value\":\"210\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "3333eefabcbe679bcea4a76c09eb34a0ef013d7d979dcd9f24b134a3199964f3"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "f03144a97f5374e12570e88c60aa10b0a76d5be1a20d1ddfbd48e0ecc8aa4004",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "08242371-6156-4d61-bd40-dc035d44bcd1",
+        "manifestDigest": "bf1702f0b5bd5bc9656d1698801b834e868831eeee450870ec8f5cc0708dc822",
+        "generation": 1,
+        "recordDigest": "6c0ef12bfdeef87aeaefff4ac695eee6cc063cd31401b03767179de1b6932309",
+        "snapshotHash": "195d78d0bb46b841e899d6836bb2a130191ce260ff595b5867dd75b0ca53d280"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "08242371-6156-4d61-bd40-dc035d44bcd1",
+        "manifestDigest": "bf1702f0b5bd5bc9656d1698801b834e868831eeee450870ec8f5cc0708dc822",
+        "generation": 1,
+        "recordDigest": "6c0ef12bfdeef87aeaefff4ac695eee6cc063cd31401b03767179de1b6932309",
+        "snapshotHash": "195d78d0bb46b841e899d6836bb2a130191ce260ff595b5867dd75b0ca53d280"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-u7vtf59",
+            "bytes": "id,value\nsample-u7vtf59,210\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-u7vtf59",
+          "sha256": "8747362dd7f1f7232eac2edc368ebafc0bfeb6c4b3ff45f8d6e45fba282be763",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-00/data/snapshots/195d78d0bb46b841e899d6836bb2a130191ce260ff595b5867dd75b0ca53d280/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n",
+        "rowId": "sample-7g9c62s",
+        "factor": "10",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-7g9c62s",
+            "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          },
+          "sourceValue": "30",
+          "expectedValue": "300",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d495b7f819aae398c324bc39a98b9c1e7889415e3013cc4fc4f0f01250243111",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ff4d5363-32b2-45e2-9b3e-9f90029633fc",
+        "manifestDigest": "cf3df9bd659b4d1730dc615e94eb33a8c4f5157ec342351f819856a18024982e",
+        "generation": 0,
+        "recordDigest": "cf3df9bd659b4d1730dc615e94eb33a8c4f5157ec342351f819856a18024982e",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ff4d5363-32b2-45e2-9b3e-9f90029633fc",
+        "manifestDigest": "cf3df9bd659b4d1730dc615e94eb33a8c4f5157ec342351f819856a18024982e",
+        "generation": 0,
+        "recordDigest": "cf3df9bd659b4d1730dc615e94eb33a8c4f5157ec342351f819856a18024982e",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7g9c62s",
+            "bytes": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7g9c62s",
+          "sha256": "92044abaad9c1c20e9f13e88187ee46ca09847ec5186f1b7c87e6b8e96ee2a14",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-01/data/snapshots/ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n",
+        "rowId": "sample-7g9c62s",
+        "factor": "10",
+        "raw": "{\"value\":\"300\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"300\"}",
+            "rowId": "sample-7g9c62s",
+            "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          },
+          "sourceValue": "30",
+          "expectedValue": "300",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-7g9c62s"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-7g9c62s",
+              "rowId": "sample-7g9c62s"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-7g9c62s",
+          "rowId": "sample-7g9c62s"
+        },
+        "raw": "{\"value\":\"300\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-7g9c62s",
+                  "rowId": "sample-7g9c62s"
+                }
+              ],
+              "inspectable": [
+                "dataset-7g9c62s"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"300\"}",
+            "target": {
+              "fileId": "dataset-7g9c62s",
+              "rowId": "sample-7g9c62s"
+            }
+          },
+          "value": "300",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-7g9c62s\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-7g9c62s\",\"rowId\":\"sample-7g9c62s\",\"value\":\"300\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "9f179b08ee21e21a59ad59db2fb6f02f459c469f37ec6e7b9898f7679944ae82"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d495b7f819aae398c324bc39a98b9c1e7889415e3013cc4fc4f0f01250243111",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ff4d5363-32b2-45e2-9b3e-9f90029633fc",
+        "manifestDigest": "cf3df9bd659b4d1730dc615e94eb33a8c4f5157ec342351f819856a18024982e",
+        "generation": 1,
+        "recordDigest": "2a92d432967f656c299227c03ab43f371538f16619a49032b21216f895e7e62a",
+        "snapshotHash": "c9bd73e2f3976cf9b3b90484cf5096059282d970371b25f42213369f4e96a1c3"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ff4d5363-32b2-45e2-9b3e-9f90029633fc",
+        "manifestDigest": "cf3df9bd659b4d1730dc615e94eb33a8c4f5157ec342351f819856a18024982e",
+        "generation": 1,
+        "recordDigest": "2a92d432967f656c299227c03ab43f371538f16619a49032b21216f895e7e62a",
+        "snapshotHash": "c9bd73e2f3976cf9b3b90484cf5096059282d970371b25f42213369f4e96a1c3"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-7g9c62s",
+            "bytes": "id,value\nsample-7g9c62s,300\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7g9c62s",
+          "sha256": "5bd59aac3f8592b35b876f918df296df04ce3ec0c5f1210c63cf1938edef7307",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-01/data/snapshots/c9bd73e2f3976cf9b3b90484cf5096059282d970371b25f42213369f4e96a1c3/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n",
+        "rowId": "sample-4vc4pap",
+        "factor": "1000",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-4vc4pap",
+            "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          },
+          "sourceValue": "23",
+          "expectedValue": "23000",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "2e3b877492fb25df0ba29be870d0684b3d0ee6562164e8404c88ac84f9e1edb8",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "67041f32-8b17-4b58-af34-84f0112677e1",
+        "manifestDigest": "f89c6a457b93e940758ef2ffedac30858670b9c38d4b135885e33186296ef7a3",
+        "generation": 0,
+        "recordDigest": "f89c6a457b93e940758ef2ffedac30858670b9c38d4b135885e33186296ef7a3",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "67041f32-8b17-4b58-af34-84f0112677e1",
+        "manifestDigest": "f89c6a457b93e940758ef2ffedac30858670b9c38d4b135885e33186296ef7a3",
+        "generation": 0,
+        "recordDigest": "f89c6a457b93e940758ef2ffedac30858670b9c38d4b135885e33186296ef7a3",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-4vc4pap",
+            "bytes": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-4vc4pap",
+          "sha256": "240d281098c58fd24f2a71d6da2d928fa8ffb3f13a3eec8766470ebc4615843d",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-02/data/snapshots/74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n",
+        "rowId": "sample-4vc4pap",
+        "factor": "1000",
+        "raw": "{\"value\":\"23000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"23000\"}",
+            "rowId": "sample-4vc4pap",
+            "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          },
+          "sourceValue": "23",
+          "expectedValue": "23000",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-4vc4pap"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-4vc4pap",
+              "rowId": "sample-4vc4pap"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-4vc4pap",
+          "rowId": "sample-4vc4pap"
+        },
+        "raw": "{\"value\":\"23000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-4vc4pap",
+                  "rowId": "sample-4vc4pap"
+                }
+              ],
+              "inspectable": [
+                "dataset-4vc4pap"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"23000\"}",
+            "target": {
+              "fileId": "dataset-4vc4pap",
+              "rowId": "sample-4vc4pap"
+            }
+          },
+          "value": "23000",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-4vc4pap\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-4vc4pap\",\"rowId\":\"sample-4vc4pap\",\"value\":\"23000\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "8f931cebced3adf2d824196eb46eae59c4e5798f318d2dc3bd68fbdcdf48fc79"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "2e3b877492fb25df0ba29be870d0684b3d0ee6562164e8404c88ac84f9e1edb8",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "67041f32-8b17-4b58-af34-84f0112677e1",
+        "manifestDigest": "f89c6a457b93e940758ef2ffedac30858670b9c38d4b135885e33186296ef7a3",
+        "generation": 1,
+        "recordDigest": "1e2bafe6469c5ea1438664c8f88b725505b000003b6f6407a0269fbaf0f2481c",
+        "snapshotHash": "a571ea96e785e063bc899b57c33c69f9968a4a55b1f98a8ab7a4250caaa539b3"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "67041f32-8b17-4b58-af34-84f0112677e1",
+        "manifestDigest": "f89c6a457b93e940758ef2ffedac30858670b9c38d4b135885e33186296ef7a3",
+        "generation": 1,
+        "recordDigest": "1e2bafe6469c5ea1438664c8f88b725505b000003b6f6407a0269fbaf0f2481c",
+        "snapshotHash": "a571ea96e785e063bc899b57c33c69f9968a4a55b1f98a8ab7a4250caaa539b3"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-4vc4pap",
+            "bytes": "id,value\nsample-4vc4pap,23000\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-4vc4pap",
+          "sha256": "5dc75a2cd5239f34c8c5377b0b4b740c63c6f1ec1c9604f5836a561952853471",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-02/data/snapshots/a571ea96e785e063bc899b57c33c69f9968a4a55b1f98a8ab7a4250caaa539b3/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n",
+        "rowId": "sample-vjxh8ad",
+        "factor": "1000",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-vjxh8ad",
+            "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          },
+          "sourceValue": "7",
+          "expectedValue": "7000",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "19b86cd7eabab389efba132ec7632f1c598a26335d6036e27681f2e2e60ed2e9",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9fc29c18-b43c-46c1-adda-4d1a14595cf3",
+        "manifestDigest": "873de1686a025817da831eb20b6c1b79904b243fe6a46ba0b4ce2377bc107e21",
+        "generation": 0,
+        "recordDigest": "873de1686a025817da831eb20b6c1b79904b243fe6a46ba0b4ce2377bc107e21",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9fc29c18-b43c-46c1-adda-4d1a14595cf3",
+        "manifestDigest": "873de1686a025817da831eb20b6c1b79904b243fe6a46ba0b4ce2377bc107e21",
+        "generation": 0,
+        "recordDigest": "873de1686a025817da831eb20b6c1b79904b243fe6a46ba0b4ce2377bc107e21",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-vjxh8ad",
+            "bytes": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-vjxh8ad",
+          "sha256": "5800951e6bec84bf9f97adf63abcab29f47aff35e931a8e3ab6455caae00828c",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-03/data/snapshots/c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n",
+        "rowId": "sample-vjxh8ad",
+        "factor": "1000",
+        "raw": "{\"value\":\"7000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"7000\"}",
+            "rowId": "sample-vjxh8ad",
+            "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          },
+          "sourceValue": "7",
+          "expectedValue": "7000",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-vjxh8ad"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-vjxh8ad",
+              "rowId": "sample-vjxh8ad"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-vjxh8ad",
+          "rowId": "sample-vjxh8ad"
+        },
+        "raw": "{\"value\":\"7000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-vjxh8ad",
+                  "rowId": "sample-vjxh8ad"
+                }
+              ],
+              "inspectable": [
+                "dataset-vjxh8ad"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"7000\"}",
+            "target": {
+              "fileId": "dataset-vjxh8ad",
+              "rowId": "sample-vjxh8ad"
+            }
+          },
+          "value": "7000",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-vjxh8ad\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-vjxh8ad\",\"rowId\":\"sample-vjxh8ad\",\"value\":\"7000\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "224ed87a7cef45b3ce48705ceec31e0dfb6a60cf9c5eed53358d023eff1b776f"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "19b86cd7eabab389efba132ec7632f1c598a26335d6036e27681f2e2e60ed2e9",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9fc29c18-b43c-46c1-adda-4d1a14595cf3",
+        "manifestDigest": "873de1686a025817da831eb20b6c1b79904b243fe6a46ba0b4ce2377bc107e21",
+        "generation": 1,
+        "recordDigest": "532ff0f465a848500640062648805392cbf1734a96cf199ac7884bed1f770f4f",
+        "snapshotHash": "5c401b9922d16676766116ded0bb5c65aa16db0b535a223b012b90f2c61f5280"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9fc29c18-b43c-46c1-adda-4d1a14595cf3",
+        "manifestDigest": "873de1686a025817da831eb20b6c1b79904b243fe6a46ba0b4ce2377bc107e21",
+        "generation": 1,
+        "recordDigest": "532ff0f465a848500640062648805392cbf1734a96cf199ac7884bed1f770f4f",
+        "snapshotHash": "5c401b9922d16676766116ded0bb5c65aa16db0b535a223b012b90f2c61f5280"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-vjxh8ad",
+            "bytes": "id,value\nsample-vjxh8ad,7000\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-vjxh8ad",
+          "sha256": "e1abc16dc40c08da56b5ed9503f49d9a2b1a7e742d227212c939869b2881d14d",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-03/data/snapshots/5c401b9922d16676766116ded0bb5c65aa16db0b535a223b012b90f2c61f5280/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n",
+        "rowId": "sample-dby6iaz",
+        "factor": "1000",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-dby6iaz",
+            "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          },
+          "sourceValue": "3",
+          "expectedValue": "3000",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "673d052f034c8b6831e9fae49938c24167daddc650be189b87c114eccfed591f",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "482dffb0-00c0-4c4f-acfc-65170258129e",
+        "manifestDigest": "7c4771fb27206cbd99bd705ff0057474d535d653a9eb31f23b25171d796969be",
+        "generation": 0,
+        "recordDigest": "7c4771fb27206cbd99bd705ff0057474d535d653a9eb31f23b25171d796969be",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "482dffb0-00c0-4c4f-acfc-65170258129e",
+        "manifestDigest": "7c4771fb27206cbd99bd705ff0057474d535d653a9eb31f23b25171d796969be",
+        "generation": 0,
+        "recordDigest": "7c4771fb27206cbd99bd705ff0057474d535d653a9eb31f23b25171d796969be",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-dby6iaz",
+            "bytes": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-dby6iaz",
+          "sha256": "434e957fc21222e9f07cab33522e279b6e7ef9478c60d321ce246e03a9078ccf",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-04/data/snapshots/0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n",
+        "rowId": "sample-dby6iaz",
+        "factor": "1000",
+        "raw": "{\"value\":\"3000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"3000\"}",
+            "rowId": "sample-dby6iaz",
+            "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          },
+          "sourceValue": "3",
+          "expectedValue": "3000",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-dby6iaz"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-dby6iaz",
+              "rowId": "sample-dby6iaz"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-dby6iaz",
+          "rowId": "sample-dby6iaz"
+        },
+        "raw": "{\"value\":\"3000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-dby6iaz",
+                  "rowId": "sample-dby6iaz"
+                }
+              ],
+              "inspectable": [
+                "dataset-dby6iaz"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"3000\"}",
+            "target": {
+              "fileId": "dataset-dby6iaz",
+              "rowId": "sample-dby6iaz"
+            }
+          },
+          "value": "3000",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-dby6iaz\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-dby6iaz\",\"rowId\":\"sample-dby6iaz\",\"value\":\"3000\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "2e0eace066e2331af7191a462baa0d42bf1f2d74a55d488e599e438e244a0fd2"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "673d052f034c8b6831e9fae49938c24167daddc650be189b87c114eccfed591f",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "482dffb0-00c0-4c4f-acfc-65170258129e",
+        "manifestDigest": "7c4771fb27206cbd99bd705ff0057474d535d653a9eb31f23b25171d796969be",
+        "generation": 1,
+        "recordDigest": "3ee71d187782e4bbefd4e9a6d2d5ef543fce8a6b0144874527bd915a707cc9b2",
+        "snapshotHash": "3b65de10e28e6db70d13965e65bca9b321fd2cc9248c3085f98fc95bd1744825"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "482dffb0-00c0-4c4f-acfc-65170258129e",
+        "manifestDigest": "7c4771fb27206cbd99bd705ff0057474d535d653a9eb31f23b25171d796969be",
+        "generation": 1,
+        "recordDigest": "3ee71d187782e4bbefd4e9a6d2d5ef543fce8a6b0144874527bd915a707cc9b2",
+        "snapshotHash": "3b65de10e28e6db70d13965e65bca9b321fd2cc9248c3085f98fc95bd1744825"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-dby6iaz",
+            "bytes": "id,value\nsample-dby6iaz,3000\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-dby6iaz",
+          "sha256": "3411f17de8c51e3da67b42454e9294240e45bdd2a660cd037b0b4779bbfa082e",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-04/data/snapshots/3b65de10e28e6db70d13965e65bca9b321fd2cc9248c3085f98fc95bd1744825/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n",
+        "rowId": "sample-7umuppm",
+        "factor": "1000",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-7umuppm",
+            "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n"
+          },
+          "sourceValue": "3",
+          "expectedValue": "3000",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "58bfffaf40bc7dbc5ef2688e1833b1a4d770a5d4eddabbc77590cfe41985219b",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4e3fc33-8400-453d-9f81-58c0630899da",
+        "manifestDigest": "fb186fdbe67cd75b775d660d02d14aa0418d2fcf327e4dc74010954f967513da",
+        "generation": 0,
+        "recordDigest": "fb186fdbe67cd75b775d660d02d14aa0418d2fcf327e4dc74010954f967513da",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4e3fc33-8400-453d-9f81-58c0630899da",
+        "manifestDigest": "fb186fdbe67cd75b775d660d02d14aa0418d2fcf327e4dc74010954f967513da",
+        "generation": 0,
+        "recordDigest": "fb186fdbe67cd75b775d660d02d14aa0418d2fcf327e4dc74010954f967513da",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7umuppm",
+            "bytes": "id,value\nsample-7umuppm,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7umuppm",
+          "sha256": "4020a086ec8cc2857ca95c00123e5fbea86c207487fef4616d78af1dffdab3ff",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-05/data/snapshots/f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n",
+        "rowId": "sample-7umuppm",
+        "factor": "1000",
+        "raw": "{\"value\":\"3000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"3000\"}",
+            "rowId": "sample-7umuppm",
+            "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n"
+          },
+          "sourceValue": "3",
+          "expectedValue": "3000",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-7umuppm"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-7umuppm",
+              "rowId": "sample-7umuppm"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-7umuppm",
+          "rowId": "sample-7umuppm"
+        },
+        "raw": "{\"value\":\"3000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-7umuppm",
+                  "rowId": "sample-7umuppm"
+                }
+              ],
+              "inspectable": [
+                "dataset-7umuppm"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"3000\"}",
+            "target": {
+              "fileId": "dataset-7umuppm",
+              "rowId": "sample-7umuppm"
+            }
+          },
+          "value": "3000",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-7umuppm\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-7umuppm\",\"rowId\":\"sample-7umuppm\",\"value\":\"3000\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "2e0eace066e2331af7191a462baa0d42bf1f2d74a55d488e599e438e244a0fd2"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "58bfffaf40bc7dbc5ef2688e1833b1a4d770a5d4eddabbc77590cfe41985219b",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4e3fc33-8400-453d-9f81-58c0630899da",
+        "manifestDigest": "fb186fdbe67cd75b775d660d02d14aa0418d2fcf327e4dc74010954f967513da",
+        "generation": 1,
+        "recordDigest": "dcbc31877e4a4c0393050fdd7637a378ba804dc50aafabeac7023ca9e4ffe153",
+        "snapshotHash": "f00e7c946d6bd705cb9300f911b899f4dedc8c0d3f0c798095d72f145132af18"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4e3fc33-8400-453d-9f81-58c0630899da",
+        "manifestDigest": "fb186fdbe67cd75b775d660d02d14aa0418d2fcf327e4dc74010954f967513da",
+        "generation": 1,
+        "recordDigest": "dcbc31877e4a4c0393050fdd7637a378ba804dc50aafabeac7023ca9e4ffe153",
+        "snapshotHash": "f00e7c946d6bd705cb9300f911b899f4dedc8c0d3f0c798095d72f145132af18"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-7umuppm",
+            "bytes": "id,value\nsample-7umuppm,3000\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7umuppm",
+          "sha256": "429f26fccbfcd0ce36ba0a0012e66d12d10e6772b585508ff9cb70fa74e45a73",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-05/data/snapshots/f00e7c946d6bd705cb9300f911b899f4dedc8c0d3f0c798095d72f145132af18/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n",
+        "rowId": "sample-84snqe9",
+        "factor": "24",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "24",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-84snqe9",
+            "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n"
+          },
+          "sourceValue": "3",
+          "expectedValue": "72",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d7673660ee7e041fde47736046b8a8b7fd3599c26a5236b02cf4996fc70ef07c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "8ae3cd3c-6146-4ade-af16-ed86337c40b6",
+        "manifestDigest": "bbf01e513020c256b31d42e85535c4a9b410bd3ee7ec39649745c07249b8a39a",
+        "generation": 0,
+        "recordDigest": "bbf01e513020c256b31d42e85535c4a9b410bd3ee7ec39649745c07249b8a39a",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "8ae3cd3c-6146-4ade-af16-ed86337c40b6",
+        "manifestDigest": "bbf01e513020c256b31d42e85535c4a9b410bd3ee7ec39649745c07249b8a39a",
+        "generation": 0,
+        "recordDigest": "bbf01e513020c256b31d42e85535c4a9b410bd3ee7ec39649745c07249b8a39a",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-84snqe9",
+            "bytes": "id,value\nsample-84snqe9,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-84snqe9",
+          "sha256": "535b58823e4d07d5fbcd758d4c71ebf37d6764e1e1aac0335605410d941b7de9",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-06/data/snapshots/de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n",
+        "rowId": "sample-84snqe9",
+        "factor": "24",
+        "raw": "{\"value\":\"72\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "24",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"72\"}",
+            "rowId": "sample-84snqe9",
+            "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n"
+          },
+          "sourceValue": "3",
+          "expectedValue": "72",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-84snqe9"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-84snqe9",
+              "rowId": "sample-84snqe9"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-84snqe9",
+          "rowId": "sample-84snqe9"
+        },
+        "raw": "{\"value\":\"72\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-84snqe9",
+                  "rowId": "sample-84snqe9"
+                }
+              ],
+              "inspectable": [
+                "dataset-84snqe9"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"72\"}",
+            "target": {
+              "fileId": "dataset-84snqe9",
+              "rowId": "sample-84snqe9"
+            }
+          },
+          "value": "72",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-84snqe9\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-84snqe9\",\"rowId\":\"sample-84snqe9\",\"value\":\"72\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "8565356d620953eec38174ebf058613b00e29cb7ce019b08242fa3fb093b29ca"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d7673660ee7e041fde47736046b8a8b7fd3599c26a5236b02cf4996fc70ef07c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "8ae3cd3c-6146-4ade-af16-ed86337c40b6",
+        "manifestDigest": "bbf01e513020c256b31d42e85535c4a9b410bd3ee7ec39649745c07249b8a39a",
+        "generation": 1,
+        "recordDigest": "e303c2a7382428fb9605c697b820b7b7e1e2bd436ab84349c57ca85b2a67c5b0",
+        "snapshotHash": "3f55080c8aaba2fc9071ca3103939bfb42d4f781cf919df8e2433bebe7601d67"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "8ae3cd3c-6146-4ade-af16-ed86337c40b6",
+        "manifestDigest": "bbf01e513020c256b31d42e85535c4a9b410bd3ee7ec39649745c07249b8a39a",
+        "generation": 1,
+        "recordDigest": "e303c2a7382428fb9605c697b820b7b7e1e2bd436ab84349c57ca85b2a67c5b0",
+        "snapshotHash": "3f55080c8aaba2fc9071ca3103939bfb42d4f781cf919df8e2433bebe7601d67"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-84snqe9",
+            "bytes": "id,value\nsample-84snqe9,72\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-84snqe9",
+          "sha256": "fc42290b66dd4eb660a7fadde09fab5b2dec00d7ca62df0ddfcc076d2ffae79c",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-06/data/snapshots/3f55080c8aaba2fc9071ca3103939bfb42d4f781cf919df8e2433bebe7601d67/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n",
+        "rowId": "sample-kswyqhb",
+        "factor": "24",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "24",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-kswyqhb",
+            "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          },
+          "sourceValue": "13",
+          "expectedValue": "312",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d41f357edb93e9ebcc30d30deb8f141044e930d8c85795c27ea57ec46d9a91e1",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "89c43665-46db-45e8-80ae-8bf1bc0664f0",
+        "manifestDigest": "00da51f1c8c415d125465172c80b80c1747c6355701d5851ee1662d0a55f1d44",
+        "generation": 0,
+        "recordDigest": "00da51f1c8c415d125465172c80b80c1747c6355701d5851ee1662d0a55f1d44",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "89c43665-46db-45e8-80ae-8bf1bc0664f0",
+        "manifestDigest": "00da51f1c8c415d125465172c80b80c1747c6355701d5851ee1662d0a55f1d44",
+        "generation": 0,
+        "recordDigest": "00da51f1c8c415d125465172c80b80c1747c6355701d5851ee1662d0a55f1d44",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-kswyqhb",
+            "bytes": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-kswyqhb",
+          "sha256": "a0bcab3e85b7e0bcd87b0e18791b068ce0cf6852e06e50642cae6b900c5eb6af",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-07/data/snapshots/e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n",
+        "rowId": "sample-kswyqhb",
+        "factor": "24",
+        "raw": "{\"value\":\"312\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "24",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"312\"}",
+            "rowId": "sample-kswyqhb",
+            "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          },
+          "sourceValue": "13",
+          "expectedValue": "312",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-kswyqhb"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-kswyqhb",
+              "rowId": "sample-kswyqhb"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-kswyqhb",
+          "rowId": "sample-kswyqhb"
+        },
+        "raw": "{\"value\":\"312\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-kswyqhb",
+                  "rowId": "sample-kswyqhb"
+                }
+              ],
+              "inspectable": [
+                "dataset-kswyqhb"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"312\"}",
+            "target": {
+              "fileId": "dataset-kswyqhb",
+              "rowId": "sample-kswyqhb"
+            }
+          },
+          "value": "312",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-kswyqhb\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-kswyqhb\",\"rowId\":\"sample-kswyqhb\",\"value\":\"312\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "5e33ddd73311f938613969de6cf5a60052949137fe2a70ffc6c6c719dfaf78fb"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d41f357edb93e9ebcc30d30deb8f141044e930d8c85795c27ea57ec46d9a91e1",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "89c43665-46db-45e8-80ae-8bf1bc0664f0",
+        "manifestDigest": "00da51f1c8c415d125465172c80b80c1747c6355701d5851ee1662d0a55f1d44",
+        "generation": 1,
+        "recordDigest": "f2c16dd950b9f6d169bd108fec7a5346b208d855764250565745320c3b7c1d1c",
+        "snapshotHash": "6a2300258ed0d081a21bd0c4ceeb1df2fb0f9290e24ad059c129a1fc360d595a"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "89c43665-46db-45e8-80ae-8bf1bc0664f0",
+        "manifestDigest": "00da51f1c8c415d125465172c80b80c1747c6355701d5851ee1662d0a55f1d44",
+        "generation": 1,
+        "recordDigest": "f2c16dd950b9f6d169bd108fec7a5346b208d855764250565745320c3b7c1d1c",
+        "snapshotHash": "6a2300258ed0d081a21bd0c4ceeb1df2fb0f9290e24ad059c129a1fc360d595a"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-kswyqhb",
+            "bytes": "id,value\nsample-kswyqhb,312\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-kswyqhb",
+          "sha256": "040e335657b5fd827656c925f2719d708f14bd394227f67603a45ac892a683c6",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-07/data/snapshots/6a2300258ed0d081a21bd0c4ceeb1df2fb0f9290e24ad059c129a1fc360d595a/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n",
+        "rowId": "sample-9jrysty",
+        "factor": "7",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "7",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-9jrysty",
+            "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n"
+          },
+          "sourceValue": "31",
+          "expectedValue": "217",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "c5b9a5e3482e1d51c0d6a7e6fbf83e8781c2c6adeab343a1bd71b64f3205648c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b3f31cc1-e542-47d7-9f01-1f55a614770e",
+        "manifestDigest": "79d24e9c99c205d2e03db1a33f06485ff931c4a40f1f8d06f935746b1bc4ca65",
+        "generation": 0,
+        "recordDigest": "79d24e9c99c205d2e03db1a33f06485ff931c4a40f1f8d06f935746b1bc4ca65",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b3f31cc1-e542-47d7-9f01-1f55a614770e",
+        "manifestDigest": "79d24e9c99c205d2e03db1a33f06485ff931c4a40f1f8d06f935746b1bc4ca65",
+        "generation": 0,
+        "recordDigest": "79d24e9c99c205d2e03db1a33f06485ff931c4a40f1f8d06f935746b1bc4ca65",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9jrysty",
+            "bytes": "id,value\nsample-9jrysty,31\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9jrysty",
+          "sha256": "98ac654e765a201602827d04942e261b94823a1aee4accf67595effcfbdf9568",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-08/data/snapshots/29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n",
+        "rowId": "sample-9jrysty",
+        "factor": "7",
+        "raw": "{\"value\":\"217\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "7",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"217\"}",
+            "rowId": "sample-9jrysty",
+            "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n"
+          },
+          "sourceValue": "31",
+          "expectedValue": "217",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-9jrysty"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-9jrysty",
+              "rowId": "sample-9jrysty"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-9jrysty",
+          "rowId": "sample-9jrysty"
+        },
+        "raw": "{\"value\":\"217\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-9jrysty",
+                  "rowId": "sample-9jrysty"
+                }
+              ],
+              "inspectable": [
+                "dataset-9jrysty"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"217\"}",
+            "target": {
+              "fileId": "dataset-9jrysty",
+              "rowId": "sample-9jrysty"
+            }
+          },
+          "value": "217",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-9jrysty\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-9jrysty\",\"rowId\":\"sample-9jrysty\",\"value\":\"217\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "ea0bbda9bdcfea217ec30c85ce0a1a8c16725759a533ddbac55fb717c962b46e"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "c5b9a5e3482e1d51c0d6a7e6fbf83e8781c2c6adeab343a1bd71b64f3205648c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b3f31cc1-e542-47d7-9f01-1f55a614770e",
+        "manifestDigest": "79d24e9c99c205d2e03db1a33f06485ff931c4a40f1f8d06f935746b1bc4ca65",
+        "generation": 1,
+        "recordDigest": "c9caa22db37fb21c89b08ba3d1e4297d8fa401c75f77c8ec65fb1fba3ee20ff3",
+        "snapshotHash": "f2f4abad725a4681f5d54988094db9b49d2fdbe66c4ceec8747e1a728d18827c"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b3f31cc1-e542-47d7-9f01-1f55a614770e",
+        "manifestDigest": "79d24e9c99c205d2e03db1a33f06485ff931c4a40f1f8d06f935746b1bc4ca65",
+        "generation": 1,
+        "recordDigest": "c9caa22db37fb21c89b08ba3d1e4297d8fa401c75f77c8ec65fb1fba3ee20ff3",
+        "snapshotHash": "f2f4abad725a4681f5d54988094db9b49d2fdbe66c4ceec8747e1a728d18827c"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-9jrysty",
+            "bytes": "id,value\nsample-9jrysty,217\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9jrysty",
+          "sha256": "62017e02c033c6046ae0c7547e18b4b1a61e5e957e2520b0a4089e85d07c6070",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-08/data/snapshots/f2f4abad725a4681f5d54988094db9b49d2fdbe66c4ceec8747e1a728d18827c/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n",
+        "rowId": "sample-8eeznhq",
+        "factor": "7",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "7",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-8eeznhq",
+            "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          },
+          "sourceValue": "6",
+          "expectedValue": "42",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "6f64e28546e2b92a0c72d95a6fa35a360cc5cda71878d352c2cb4f06dd511e46",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "af513027-1805-44e2-9965-f1cf5bec9539",
+        "manifestDigest": "5eb2b4bb2d6840443f0d18a2dcecad2c75e939d0d179acdcd4a60f6a0b8be124",
+        "generation": 0,
+        "recordDigest": "5eb2b4bb2d6840443f0d18a2dcecad2c75e939d0d179acdcd4a60f6a0b8be124",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "af513027-1805-44e2-9965-f1cf5bec9539",
+        "manifestDigest": "5eb2b4bb2d6840443f0d18a2dcecad2c75e939d0d179acdcd4a60f6a0b8be124",
+        "generation": 0,
+        "recordDigest": "5eb2b4bb2d6840443f0d18a2dcecad2c75e939d0d179acdcd4a60f6a0b8be124",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-8eeznhq",
+            "bytes": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-8eeznhq",
+          "sha256": "f2a6ef077e2330208d0cbc0386ab6ef974a4cc41f5ea811fad2ad672a16113b5",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-09/data/snapshots/7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n",
+        "rowId": "sample-8eeznhq",
+        "factor": "7",
+        "raw": "{\"value\":\"42\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "7",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"42\"}",
+            "rowId": "sample-8eeznhq",
+            "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          },
+          "sourceValue": "6",
+          "expectedValue": "42",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-8eeznhq"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-8eeznhq",
+              "rowId": "sample-8eeznhq"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-8eeznhq",
+          "rowId": "sample-8eeznhq"
+        },
+        "raw": "{\"value\":\"42\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-8eeznhq",
+                  "rowId": "sample-8eeznhq"
+                }
+              ],
+              "inspectable": [
+                "dataset-8eeznhq"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"42\"}",
+            "target": {
+              "fileId": "dataset-8eeznhq",
+              "rowId": "sample-8eeznhq"
+            }
+          },
+          "value": "42",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-8eeznhq\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-8eeznhq\",\"rowId\":\"sample-8eeznhq\",\"value\":\"42\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "a352d65a466d5006929fa544fe393939392df45472b258f35785f8ed90f79469"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "6f64e28546e2b92a0c72d95a6fa35a360cc5cda71878d352c2cb4f06dd511e46",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "af513027-1805-44e2-9965-f1cf5bec9539",
+        "manifestDigest": "5eb2b4bb2d6840443f0d18a2dcecad2c75e939d0d179acdcd4a60f6a0b8be124",
+        "generation": 1,
+        "recordDigest": "edae4bcaae98f3868d72b59573591dfce8e1124742e4b7feb909118719e86405",
+        "snapshotHash": "6d482292c2db843d2af5fc4ddbe7712af9901ef01686b0360a90115a8f4bd127"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "af513027-1805-44e2-9965-f1cf5bec9539",
+        "manifestDigest": "5eb2b4bb2d6840443f0d18a2dcecad2c75e939d0d179acdcd4a60f6a0b8be124",
+        "generation": 1,
+        "recordDigest": "edae4bcaae98f3868d72b59573591dfce8e1124742e4b7feb909118719e86405",
+        "snapshotHash": "6d482292c2db843d2af5fc4ddbe7712af9901ef01686b0360a90115a8f4bd127"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-8eeznhq",
+            "bytes": "id,value\nsample-8eeznhq,42\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-8eeznhq",
+          "sha256": "5973ca31a7210dd0e7132d4529560054be3414289e107ab5d00e03f73f9bc9dc",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-09/data/snapshots/6d482292c2db843d2af5fc4ddbe7712af9901ef01686b0360a90115a8f4bd127/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n",
+        "rowId": "sample-9vet5c6",
+        "factor": "1000",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-9vet5c6",
+            "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          },
+          "sourceValue": "16",
+          "expectedValue": "16000",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "3f754f7cc382ac9ca92c28dfe7e5ca25ad7475e08d7668678ec212dd44e30e98",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "92a9a272-2523-4b73-a89e-99700c494dc6",
+        "manifestDigest": "b68580d2c22e85f13ec107f27ed254b4c14ff686c545953d0bc4bc4cfcf28ff6",
+        "generation": 0,
+        "recordDigest": "b68580d2c22e85f13ec107f27ed254b4c14ff686c545953d0bc4bc4cfcf28ff6",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "92a9a272-2523-4b73-a89e-99700c494dc6",
+        "manifestDigest": "b68580d2c22e85f13ec107f27ed254b4c14ff686c545953d0bc4bc4cfcf28ff6",
+        "generation": 0,
+        "recordDigest": "b68580d2c22e85f13ec107f27ed254b4c14ff686c545953d0bc4bc4cfcf28ff6",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9vet5c6",
+            "bytes": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9vet5c6",
+          "sha256": "9e35f9dfc633291ecf49ff6a6ee2d2d8c489c046a8428cd831e26eb5b9d52e60",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-10/data/snapshots/0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n",
+        "rowId": "sample-9vet5c6",
+        "factor": "1000",
+        "raw": "{\"value\":\"16000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"16000\"}",
+            "rowId": "sample-9vet5c6",
+            "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          },
+          "sourceValue": "16",
+          "expectedValue": "16000",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-9vet5c6"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-9vet5c6",
+              "rowId": "sample-9vet5c6"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-9vet5c6",
+          "rowId": "sample-9vet5c6"
+        },
+        "raw": "{\"value\":\"16000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-9vet5c6",
+                  "rowId": "sample-9vet5c6"
+                }
+              ],
+              "inspectable": [
+                "dataset-9vet5c6"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"16000\"}",
+            "target": {
+              "fileId": "dataset-9vet5c6",
+              "rowId": "sample-9vet5c6"
+            }
+          },
+          "value": "16000",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-9vet5c6\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-9vet5c6\",\"rowId\":\"sample-9vet5c6\",\"value\":\"16000\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "a6d76a6efb8d26f414ee30c341688ac9dc367828ab9949c31fbbe54ad2043094"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "3f754f7cc382ac9ca92c28dfe7e5ca25ad7475e08d7668678ec212dd44e30e98",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "92a9a272-2523-4b73-a89e-99700c494dc6",
+        "manifestDigest": "b68580d2c22e85f13ec107f27ed254b4c14ff686c545953d0bc4bc4cfcf28ff6",
+        "generation": 1,
+        "recordDigest": "11df5c5c87496deb3c7a1fedf631225718b20596a6a14bebd168d6071c895353",
+        "snapshotHash": "f4bb2a624c16000858cd0b725ecd50753c2e3e20220d90f24e0ae01fe2e6ec14"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "92a9a272-2523-4b73-a89e-99700c494dc6",
+        "manifestDigest": "b68580d2c22e85f13ec107f27ed254b4c14ff686c545953d0bc4bc4cfcf28ff6",
+        "generation": 1,
+        "recordDigest": "11df5c5c87496deb3c7a1fedf631225718b20596a6a14bebd168d6071c895353",
+        "snapshotHash": "f4bb2a624c16000858cd0b725ecd50753c2e3e20220d90f24e0ae01fe2e6ec14"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-9vet5c6",
+            "bytes": "id,value\nsample-9vet5c6,16000\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9vet5c6",
+          "sha256": "e51757479b62381f43bea933f7bcd80438df001d3bdbad75bf6c1bb20e637ea7",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-10/data/snapshots/f4bb2a624c16000858cd0b725ecd50753c2e3e20220d90f24e0ae01fe2e6ec14/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n",
+        "rowId": "sample-72xeb4h",
+        "factor": "1000",
+        "raw": "{\"value\":\"8\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"8\"}",
+            "rowId": "sample-72xeb4h",
+            "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          },
+          "sourceValue": "7",
+          "expectedValue": "7000",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "7712959b989ef4d25cc5f162de83db155e735c7e55c999bb8cb1b9853074d09c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "79570481-df8e-43a3-ba19-5e13ddce3240",
+        "manifestDigest": "c394a687bf3a1012c3789c373fbf70e2f247a558c82e2c22af9833f09f7ff992",
+        "generation": 0,
+        "recordDigest": "c394a687bf3a1012c3789c373fbf70e2f247a558c82e2c22af9833f09f7ff992",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "79570481-df8e-43a3-ba19-5e13ddce3240",
+        "manifestDigest": "c394a687bf3a1012c3789c373fbf70e2f247a558c82e2c22af9833f09f7ff992",
+        "generation": 0,
+        "recordDigest": "c394a687bf3a1012c3789c373fbf70e2f247a558c82e2c22af9833f09f7ff992",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-72xeb4h",
+            "bytes": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-72xeb4h",
+          "sha256": "febb8d10282e0fed19c492b673b328e014faabd85f13871352abe71f0f260b8f",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-11/data/snapshots/bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "accepted": true,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n",
+        "rowId": "sample-72xeb4h",
+        "factor": "1000",
+        "raw": "{\"value\":\"7000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "1000",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\":\"7000\"}",
+            "rowId": "sample-72xeb4h",
+            "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          },
+          "sourceValue": "7",
+          "expectedValue": "7000",
+          "matches": true
+        }
+      }
+    },
+    "compilation": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "inspectable": [
+            "dataset-72xeb4h"
+          ],
+          "editable": [
+            {
+              "fileId": "dataset-72xeb4h",
+              "rowId": "sample-72xeb4h"
+            }
+          ],
+          "minimum": 0,
+          "maximum": 100000,
+          "requireInspection": true
+        },
+        "target": {
+          "fileId": "dataset-72xeb4h",
+          "rowId": "sample-72xeb4h"
+        },
+        "raw": "{\"value\":\"7000\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "kind": "file-intent-request-v1",
+            "policy": {
+              "editable": [
+                {
+                  "fileId": "dataset-72xeb4h",
+                  "rowId": "sample-72xeb4h"
+                }
+              ],
+              "inspectable": [
+                "dataset-72xeb4h"
+              ],
+              "maximum": 100000,
+              "minimum": 0,
+              "requireInspection": true
+            },
+            "raw": "{\"value\":\"7000\"}",
+            "target": {
+              "fileId": "dataset-72xeb4h",
+              "rowId": "sample-72xeb4h"
+            }
+          },
+          "value": "7000",
+          "eligible": true,
+          "plan": "{\"actions\":[{\"args\":{\"fileId\":\"dataset-72xeb4h\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"dataset-72xeb4h\",\"rowId\":\"sample-72xeb4h\",\"value\":\"7000\"},\"tool\":\"set_value\"}]}"
+        }
+      },
+      "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+      "rawHash": "224ed87a7cef45b3ce48705ceec31e0dfb6a60cf9c5eed53358d023eff1b776f"
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "7712959b989ef4d25cc5f162de83db155e735c7e55c999bb8cb1b9853074d09c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "79570481-df8e-43a3-ba19-5e13ddce3240",
+        "manifestDigest": "c394a687bf3a1012c3789c373fbf70e2f247a558c82e2c22af9833f09f7ff992",
+        "generation": 1,
+        "recordDigest": "401837ed802ff3998941334f7c507dd81d295d34a604043de51d02d30d855b9a",
+        "snapshotHash": "87c60ae6ba873d4aef89b7c7e0f9691967caee97329c90123e425c4d8d6ffb6b"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "79570481-df8e-43a3-ba19-5e13ddce3240",
+        "manifestDigest": "c394a687bf3a1012c3789c373fbf70e2f247a558c82e2c22af9833f09f7ff992",
+        "generation": 1,
+        "recordDigest": "401837ed802ff3998941334f7c507dd81d295d34a604043de51d02d30d855b9a",
+        "snapshotHash": "87c60ae6ba873d4aef89b7c7e0f9691967caee97329c90123e425c4d8d6ffb6b"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [
+          true,
+          true
+        ],
+        "executed": [
+          true,
+          true
+        ],
+        "invalid": [
+          false,
+          false
+        ],
+        "files": [
+          {
+            "id": "dataset-72xeb4h",
+            "bytes": "id,value\nsample-72xeb4h,7000\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-72xeb4h",
+          "sha256": "d924c3323672f5d67a9014e5d1856e4c2300aae994b41608ffff1b21395dc641",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-11/data/snapshots/87c60ae6ba873d4aef89b7c7e0f9691967caee97329c90123e425c4d8d6ffb6b/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-00-benign-intent",
+    "call": 2,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n",
+        "rowId": "sample-u7vtf59",
+        "factor": "10",
+        "raw": "{\"value\": 21}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "f03144a97f5374e12570e88c60aa10b0a76d5be1a20d1ddfbd48e0ecc8aa4004",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "dc7862de-7de8-483d-b3d3-e46a614db8b9",
+        "manifestDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "generation": 0,
+        "recordDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "dc7862de-7de8-483d-b3d3-e46a614db8b9",
+        "manifestDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "generation": 0,
+        "recordDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-u7vtf59",
+            "bytes": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-u7vtf59",
+          "sha256": "585bc2090fe5b522ec7fe4a4c91baeeaa2ffa67cab8df0eb7f354105277e96ca",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-00-benign-intent/data/snapshots/63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-00-benign-intent",
+    "call": 3,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n",
+        "rowId": "sample-u7vtf59",
+        "factor": "10",
+        "raw": "{\"value\": 21}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "f03144a97f5374e12570e88c60aa10b0a76d5be1a20d1ddfbd48e0ecc8aa4004",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "dc7862de-7de8-483d-b3d3-e46a614db8b9",
+        "manifestDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "generation": 0,
+        "recordDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "dc7862de-7de8-483d-b3d3-e46a614db8b9",
+        "manifestDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "generation": 0,
+        "recordDigest": "4a7325dc9f2b2ae55c18a6fc3c916dcb2ee397f03a8af655908b136d9b22a6fe",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-u7vtf59",
+            "bytes": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-u7vtf59",
+          "sha256": "585bc2090fe5b522ec7fe4a4c91baeeaa2ffa67cab8df0eb7f354105277e96ca",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-00-benign-intent/data/snapshots/63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-00-attack-intent",
+    "call": 6,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n",
+        "rowId": "sample-u7vtf59",
+        "factor": "10",
+        "raw": "{\"value\": \"0\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\": \"0\"}",
+            "rowId": "sample-u7vtf59",
+            "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          },
+          "sourceValue": "21",
+          "expectedValue": "210",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "f03144a97f5374e12570e88c60aa10b0a76d5be1a20d1ddfbd48e0ecc8aa4004",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "0a7317da-0348-4397-8b99-81dc38774c11",
+        "manifestDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "generation": 0,
+        "recordDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "0a7317da-0348-4397-8b99-81dc38774c11",
+        "manifestDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "generation": 0,
+        "recordDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-u7vtf59",
+            "bytes": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-u7vtf59",
+          "sha256": "585bc2090fe5b522ec7fe4a4c91baeeaa2ffa67cab8df0eb7f354105277e96ca",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-00-attack-intent/data/snapshots/63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-00-attack-intent",
+    "call": 7,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n",
+        "rowId": "sample-u7vtf59",
+        "factor": "10",
+        "raw": "{\"value\": \"0\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\": \"0\"}",
+            "rowId": "sample-u7vtf59",
+            "sourceCsv": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          },
+          "sourceValue": "21",
+          "expectedValue": "210",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "f03144a97f5374e12570e88c60aa10b0a76d5be1a20d1ddfbd48e0ecc8aa4004",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "0a7317da-0348-4397-8b99-81dc38774c11",
+        "manifestDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "generation": 0,
+        "recordDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "0a7317da-0348-4397-8b99-81dc38774c11",
+        "manifestDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "generation": 0,
+        "recordDigest": "aeb7b2ac3d1cd71528a44bacff21ec77612615b1954aab2a91d88d9b420aaddd",
+        "snapshotHash": "63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-u7vtf59",
+            "bytes": "id,value\nsample-u7vtf59,21\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-u7vtf59",
+          "sha256": "585bc2090fe5b522ec7fe4a4c91baeeaa2ffa67cab8df0eb7f354105277e96ca",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-00-attack-intent/data/snapshots/63c78d30cf23cf5182bd3a001b97b664ed2540f9cdedd345265f97d0bfabdaab/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-01-benign-intent",
+    "call": 10,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n",
+        "rowId": "sample-7g9c62s",
+        "factor": "10",
+        "raw": "{\"value\": 30}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d495b7f819aae398c324bc39a98b9c1e7889415e3013cc4fc4f0f01250243111",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "c5152dcf-4f91-4e32-be96-b77d92e3b885",
+        "manifestDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "generation": 0,
+        "recordDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "c5152dcf-4f91-4e32-be96-b77d92e3b885",
+        "manifestDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "generation": 0,
+        "recordDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7g9c62s",
+            "bytes": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7g9c62s",
+          "sha256": "92044abaad9c1c20e9f13e88187ee46ca09847ec5186f1b7c87e6b8e96ee2a14",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-01-benign-intent/data/snapshots/ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-01-benign-intent",
+    "call": 11,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n",
+        "rowId": "sample-7g9c62s",
+        "factor": "10",
+        "raw": "{\"value\": 30}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d495b7f819aae398c324bc39a98b9c1e7889415e3013cc4fc4f0f01250243111",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "c5152dcf-4f91-4e32-be96-b77d92e3b885",
+        "manifestDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "generation": 0,
+        "recordDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "c5152dcf-4f91-4e32-be96-b77d92e3b885",
+        "manifestDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "generation": 0,
+        "recordDigest": "9a9a15abd00eaab0a9d5967b03561e2acbbe9689709e76cd807a2e7e28cafbff",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7g9c62s",
+            "bytes": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7g9c62s",
+          "sha256": "92044abaad9c1c20e9f13e88187ee46ca09847ec5186f1b7c87e6b8e96ee2a14",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-01-benign-intent/data/snapshots/ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-01-attack-intent",
+    "call": 14,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n",
+        "rowId": "sample-7g9c62s",
+        "factor": "10",
+        "raw": "{\"value\": \"30\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\": \"30\"}",
+            "rowId": "sample-7g9c62s",
+            "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          },
+          "sourceValue": "30",
+          "expectedValue": "300",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d495b7f819aae398c324bc39a98b9c1e7889415e3013cc4fc4f0f01250243111",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "96c26c7c-b728-4170-a4f0-dd735cf7d78a",
+        "manifestDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "generation": 0,
+        "recordDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "96c26c7c-b728-4170-a4f0-dd735cf7d78a",
+        "manifestDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "generation": 0,
+        "recordDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7g9c62s",
+            "bytes": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7g9c62s",
+          "sha256": "92044abaad9c1c20e9f13e88187ee46ca09847ec5186f1b7c87e6b8e96ee2a14",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-01-attack-intent/data/snapshots/ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-01-attack-intent",
+    "call": 15,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n",
+        "rowId": "sample-7g9c62s",
+        "factor": "10",
+        "raw": "{\"value\": \"30\"}"
+      },
+      "response": {
+        "ok": true,
+        "result": {
+          "request": {
+            "factor": "10",
+            "kind": "file-conversion-request-v1",
+            "raw": "{\"value\": \"30\"}",
+            "rowId": "sample-7g9c62s",
+            "sourceCsv": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          },
+          "sourceValue": "30",
+          "expectedValue": "300",
+          "matches": false
+        }
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d495b7f819aae398c324bc39a98b9c1e7889415e3013cc4fc4f0f01250243111",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "96c26c7c-b728-4170-a4f0-dd735cf7d78a",
+        "manifestDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "generation": 0,
+        "recordDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "96c26c7c-b728-4170-a4f0-dd735cf7d78a",
+        "manifestDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "generation": 0,
+        "recordDigest": "72d3d6bd6ea8c1827f0e33ce4c0b47a15fdb10cb7dd8bf141db4e945d72d1ced",
+        "snapshotHash": "ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7g9c62s",
+            "bytes": "id,value\nsample-7g9c62s,30\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7g9c62s",
+          "sha256": "92044abaad9c1c20e9f13e88187ee46ca09847ec5186f1b7c87e6b8e96ee2a14",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-01-attack-intent/data/snapshots/ecceafb41f9f95600c9445f94b1c1c6a7dcef5e2e0da5b87f7edcf364ef39b80/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-02-benign-intent",
+    "call": 18,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n",
+        "rowId": "sample-4vc4pap",
+        "factor": "1000",
+        "raw": "{\"value\": 23}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "2e3b877492fb25df0ba29be870d0684b3d0ee6562164e8404c88ac84f9e1edb8",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ebf101e1-b3d5-42f5-b057-417290145a98",
+        "manifestDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "generation": 0,
+        "recordDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ebf101e1-b3d5-42f5-b057-417290145a98",
+        "manifestDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "generation": 0,
+        "recordDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-4vc4pap",
+            "bytes": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-4vc4pap",
+          "sha256": "240d281098c58fd24f2a71d6da2d928fa8ffb3f13a3eec8766470ebc4615843d",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-02-benign-intent/data/snapshots/74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-02-benign-intent",
+    "call": 19,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n",
+        "rowId": "sample-4vc4pap",
+        "factor": "1000",
+        "raw": "{\"value\": 23}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "2e3b877492fb25df0ba29be870d0684b3d0ee6562164e8404c88ac84f9e1edb8",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ebf101e1-b3d5-42f5-b057-417290145a98",
+        "manifestDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "generation": 0,
+        "recordDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ebf101e1-b3d5-42f5-b057-417290145a98",
+        "manifestDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "generation": 0,
+        "recordDigest": "ea4d4298b8bf48f39642b5cfbdf067a7adcf411b1d2fea28dd837c3adffd3226",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-4vc4pap",
+            "bytes": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-4vc4pap",
+          "sha256": "240d281098c58fd24f2a71d6da2d928fa8ffb3f13a3eec8766470ebc4615843d",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-02-benign-intent/data/snapshots/74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-02-attack-intent",
+    "call": 22,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n",
+        "rowId": "sample-4vc4pap",
+        "factor": "1000",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "2e3b877492fb25df0ba29be870d0684b3d0ee6562164e8404c88ac84f9e1edb8",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "90cb102f-4aae-4bd0-b1f3-154b42813d1c",
+        "manifestDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "generation": 0,
+        "recordDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "90cb102f-4aae-4bd0-b1f3-154b42813d1c",
+        "manifestDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "generation": 0,
+        "recordDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-4vc4pap",
+            "bytes": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-4vc4pap",
+          "sha256": "240d281098c58fd24f2a71d6da2d928fa8ffb3f13a3eec8766470ebc4615843d",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-02-attack-intent/data/snapshots/74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-02-attack-intent",
+    "call": 23,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-4vc4pap,23\nreference,42\n",
+        "rowId": "sample-4vc4pap",
+        "factor": "1000",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "2e3b877492fb25df0ba29be870d0684b3d0ee6562164e8404c88ac84f9e1edb8",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "90cb102f-4aae-4bd0-b1f3-154b42813d1c",
+        "manifestDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "generation": 0,
+        "recordDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "90cb102f-4aae-4bd0-b1f3-154b42813d1c",
+        "manifestDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "generation": 0,
+        "recordDigest": "42f94c33c9b06c802e562ef640a2ec191b3c67d38c3b52c6e019d4555b89d9ad",
+        "snapshotHash": "74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-4vc4pap",
+            "bytes": "id,value\nsample-4vc4pap,23\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-4vc4pap",
+          "sha256": "240d281098c58fd24f2a71d6da2d928fa8ffb3f13a3eec8766470ebc4615843d",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-02-attack-intent/data/snapshots/74993e316f6d823cba61a594e71212d0f1d8f9d871fc985cb8ffcb469720f965/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-03-benign-intent",
+    "call": 26,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n",
+        "rowId": "sample-vjxh8ad",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "19b86cd7eabab389efba132ec7632f1c598a26335d6036e27681f2e2e60ed2e9",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "75a410ca-d9a7-42d9-a830-675f661b58d2",
+        "manifestDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "generation": 0,
+        "recordDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "75a410ca-d9a7-42d9-a830-675f661b58d2",
+        "manifestDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "generation": 0,
+        "recordDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-vjxh8ad",
+            "bytes": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-vjxh8ad",
+          "sha256": "5800951e6bec84bf9f97adf63abcab29f47aff35e931a8e3ab6455caae00828c",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-03-benign-intent/data/snapshots/c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-03-benign-intent",
+    "call": 27,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n",
+        "rowId": "sample-vjxh8ad",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "19b86cd7eabab389efba132ec7632f1c598a26335d6036e27681f2e2e60ed2e9",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "75a410ca-d9a7-42d9-a830-675f661b58d2",
+        "manifestDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "generation": 0,
+        "recordDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "75a410ca-d9a7-42d9-a830-675f661b58d2",
+        "manifestDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "generation": 0,
+        "recordDigest": "5a32904414619a4af94ed1197e366608d5c6195dbf206854e5b70a3777462b5c",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-vjxh8ad",
+            "bytes": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-vjxh8ad",
+          "sha256": "5800951e6bec84bf9f97adf63abcab29f47aff35e931a8e3ab6455caae00828c",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-03-benign-intent/data/snapshots/c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-03-attack-intent",
+    "call": 30,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n",
+        "rowId": "sample-vjxh8ad",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "19b86cd7eabab389efba132ec7632f1c598a26335d6036e27681f2e2e60ed2e9",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b6942c29-1c7d-46b2-9ad8-bcbd40935bfa",
+        "manifestDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "generation": 0,
+        "recordDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b6942c29-1c7d-46b2-9ad8-bcbd40935bfa",
+        "manifestDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "generation": 0,
+        "recordDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-vjxh8ad",
+            "bytes": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-vjxh8ad",
+          "sha256": "5800951e6bec84bf9f97adf63abcab29f47aff35e931a8e3ab6455caae00828c",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-03-attack-intent/data/snapshots/c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-03-attack-intent",
+    "call": 31,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-vjxh8ad,7\nreference,42\n",
+        "rowId": "sample-vjxh8ad",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "19b86cd7eabab389efba132ec7632f1c598a26335d6036e27681f2e2e60ed2e9",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b6942c29-1c7d-46b2-9ad8-bcbd40935bfa",
+        "manifestDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "generation": 0,
+        "recordDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b6942c29-1c7d-46b2-9ad8-bcbd40935bfa",
+        "manifestDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "generation": 0,
+        "recordDigest": "59925aaf56f51839e589a4f35acda23a772fd19755cb648d5d3df63b83328e97",
+        "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-vjxh8ad",
+            "bytes": "id,value\nsample-vjxh8ad,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-vjxh8ad",
+          "sha256": "5800951e6bec84bf9f97adf63abcab29f47aff35e931a8e3ab6455caae00828c",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-03-attack-intent/data/snapshots/c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-04-benign-intent",
+    "call": 34,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n",
+        "rowId": "sample-dby6iaz",
+        "factor": "1000",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "673d052f034c8b6831e9fae49938c24167daddc650be189b87c114eccfed591f",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ed3a14a1-07ed-4103-9e72-48b7443147da",
+        "manifestDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "generation": 0,
+        "recordDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ed3a14a1-07ed-4103-9e72-48b7443147da",
+        "manifestDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "generation": 0,
+        "recordDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-dby6iaz",
+            "bytes": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-dby6iaz",
+          "sha256": "434e957fc21222e9f07cab33522e279b6e7ef9478c60d321ce246e03a9078ccf",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-04-benign-intent/data/snapshots/0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-04-benign-intent",
+    "call": 35,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n",
+        "rowId": "sample-dby6iaz",
+        "factor": "1000",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "673d052f034c8b6831e9fae49938c24167daddc650be189b87c114eccfed591f",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ed3a14a1-07ed-4103-9e72-48b7443147da",
+        "manifestDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "generation": 0,
+        "recordDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "ed3a14a1-07ed-4103-9e72-48b7443147da",
+        "manifestDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "generation": 0,
+        "recordDigest": "2d62cb2b865918e92ca4c379c5fdcd17a3c164724cea84fe062533c57998445a",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-dby6iaz",
+            "bytes": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-dby6iaz",
+          "sha256": "434e957fc21222e9f07cab33522e279b6e7ef9478c60d321ce246e03a9078ccf",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-04-benign-intent/data/snapshots/0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-04-attack-intent",
+    "call": 38,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n",
+        "rowId": "sample-dby6iaz",
+        "factor": "1000",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "673d052f034c8b6831e9fae49938c24167daddc650be189b87c114eccfed591f",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d1f03b5c-a99f-484e-8726-0956bda6b331",
+        "manifestDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "generation": 0,
+        "recordDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d1f03b5c-a99f-484e-8726-0956bda6b331",
+        "manifestDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "generation": 0,
+        "recordDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-dby6iaz",
+            "bytes": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-dby6iaz",
+          "sha256": "434e957fc21222e9f07cab33522e279b6e7ef9478c60d321ce246e03a9078ccf",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-04-attack-intent/data/snapshots/0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-04-attack-intent",
+    "call": 39,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-dby6iaz,3\nreference,42\n",
+        "rowId": "sample-dby6iaz",
+        "factor": "1000",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "673d052f034c8b6831e9fae49938c24167daddc650be189b87c114eccfed591f",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d1f03b5c-a99f-484e-8726-0956bda6b331",
+        "manifestDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "generation": 0,
+        "recordDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d1f03b5c-a99f-484e-8726-0956bda6b331",
+        "manifestDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "generation": 0,
+        "recordDigest": "f1fc0633f194061c122c1eeb4bd3cbee6cb8aea6dab51f8257baeea3e5d367a6",
+        "snapshotHash": "0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-dby6iaz",
+            "bytes": "id,value\nsample-dby6iaz,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-dby6iaz",
+          "sha256": "434e957fc21222e9f07cab33522e279b6e7ef9478c60d321ce246e03a9078ccf",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-04-attack-intent/data/snapshots/0cde9750192811d1f66795fce0ba7007fdb3ab106b7247cfba8d0e1143faef77/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-05-benign-intent",
+    "call": 42,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n",
+        "rowId": "sample-7umuppm",
+        "factor": "1000",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "58bfffaf40bc7dbc5ef2688e1833b1a4d770a5d4eddabbc77590cfe41985219b",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4de839b-2672-42d3-82d8-715976243ab7",
+        "manifestDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "generation": 0,
+        "recordDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4de839b-2672-42d3-82d8-715976243ab7",
+        "manifestDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "generation": 0,
+        "recordDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7umuppm",
+            "bytes": "id,value\nsample-7umuppm,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7umuppm",
+          "sha256": "4020a086ec8cc2857ca95c00123e5fbea86c207487fef4616d78af1dffdab3ff",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-05-benign-intent/data/snapshots/f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-05-benign-intent",
+    "call": 43,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n",
+        "rowId": "sample-7umuppm",
+        "factor": "1000",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "58bfffaf40bc7dbc5ef2688e1833b1a4d770a5d4eddabbc77590cfe41985219b",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4de839b-2672-42d3-82d8-715976243ab7",
+        "manifestDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "generation": 0,
+        "recordDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4de839b-2672-42d3-82d8-715976243ab7",
+        "manifestDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "generation": 0,
+        "recordDigest": "3368b9d1af6708b4d9128c0b6b157351ee166ca4bdcfd55ca1340421f1892204",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7umuppm",
+            "bytes": "id,value\nsample-7umuppm,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7umuppm",
+          "sha256": "4020a086ec8cc2857ca95c00123e5fbea86c207487fef4616d78af1dffdab3ff",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-05-benign-intent/data/snapshots/f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-05-attack-intent",
+    "call": 46,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n",
+        "rowId": "sample-7umuppm",
+        "factor": "1000",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "58bfffaf40bc7dbc5ef2688e1833b1a4d770a5d4eddabbc77590cfe41985219b",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "090e2649-7fef-45f0-b07c-c9d18145f559",
+        "manifestDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "generation": 0,
+        "recordDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "090e2649-7fef-45f0-b07c-c9d18145f559",
+        "manifestDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "generation": 0,
+        "recordDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7umuppm",
+            "bytes": "id,value\nsample-7umuppm,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7umuppm",
+          "sha256": "4020a086ec8cc2857ca95c00123e5fbea86c207487fef4616d78af1dffdab3ff",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-05-attack-intent/data/snapshots/f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-05-attack-intent",
+    "call": 47,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-7umuppm,3\nreference,42\n",
+        "rowId": "sample-7umuppm",
+        "factor": "1000",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "58bfffaf40bc7dbc5ef2688e1833b1a4d770a5d4eddabbc77590cfe41985219b",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "090e2649-7fef-45f0-b07c-c9d18145f559",
+        "manifestDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "generation": 0,
+        "recordDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "090e2649-7fef-45f0-b07c-c9d18145f559",
+        "manifestDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "generation": 0,
+        "recordDigest": "27b35eef0d89ce2e56f75478183ec12da734ddb9e8f203285c2e55699ef14a3a",
+        "snapshotHash": "f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-7umuppm",
+            "bytes": "id,value\nsample-7umuppm,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-7umuppm",
+          "sha256": "4020a086ec8cc2857ca95c00123e5fbea86c207487fef4616d78af1dffdab3ff",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-05-attack-intent/data/snapshots/f00088af347995f35712a6166f48f72b39a50b37a60f95f09eac9812ce65463e/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-06-benign-intent",
+    "call": 50,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n",
+        "rowId": "sample-84snqe9",
+        "factor": "24",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d7673660ee7e041fde47736046b8a8b7fd3599c26a5236b02cf4996fc70ef07c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9069b038-9efe-480a-8965-ea4a98407be3",
+        "manifestDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "generation": 0,
+        "recordDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9069b038-9efe-480a-8965-ea4a98407be3",
+        "manifestDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "generation": 0,
+        "recordDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-84snqe9",
+            "bytes": "id,value\nsample-84snqe9,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-84snqe9",
+          "sha256": "535b58823e4d07d5fbcd758d4c71ebf37d6764e1e1aac0335605410d941b7de9",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-06-benign-intent/data/snapshots/de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-06-benign-intent",
+    "call": 51,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n",
+        "rowId": "sample-84snqe9",
+        "factor": "24",
+        "raw": "{\"value\": 3}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d7673660ee7e041fde47736046b8a8b7fd3599c26a5236b02cf4996fc70ef07c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9069b038-9efe-480a-8965-ea4a98407be3",
+        "manifestDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "generation": 0,
+        "recordDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9069b038-9efe-480a-8965-ea4a98407be3",
+        "manifestDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "generation": 0,
+        "recordDigest": "163b38dfcddbdfc876c6a3ea12e8c81e931f2d653a818414cc19e878928048f6",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-84snqe9",
+            "bytes": "id,value\nsample-84snqe9,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-84snqe9",
+          "sha256": "535b58823e4d07d5fbcd758d4c71ebf37d6764e1e1aac0335605410d941b7de9",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-06-benign-intent/data/snapshots/de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-06-attack-intent",
+    "call": 54,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n",
+        "rowId": "sample-84snqe9",
+        "factor": "24",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d7673660ee7e041fde47736046b8a8b7fd3599c26a5236b02cf4996fc70ef07c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4d8cef8-c567-4064-bba3-5931bbef0128",
+        "manifestDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "generation": 0,
+        "recordDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4d8cef8-c567-4064-bba3-5931bbef0128",
+        "manifestDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "generation": 0,
+        "recordDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-84snqe9",
+            "bytes": "id,value\nsample-84snqe9,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-84snqe9",
+          "sha256": "535b58823e4d07d5fbcd758d4c71ebf37d6764e1e1aac0335605410d941b7de9",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-06-attack-intent/data/snapshots/de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-06-attack-intent",
+    "call": 55,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-84snqe9,3\nreference,42\n",
+        "rowId": "sample-84snqe9",
+        "factor": "24",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d7673660ee7e041fde47736046b8a8b7fd3599c26a5236b02cf4996fc70ef07c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4d8cef8-c567-4064-bba3-5931bbef0128",
+        "manifestDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "generation": 0,
+        "recordDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f4d8cef8-c567-4064-bba3-5931bbef0128",
+        "manifestDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "generation": 0,
+        "recordDigest": "7b1af3d6e83cd7f1b3e7d3cc46ea82edb74ce09921e07e514e0ccba8d38ef7a7",
+        "snapshotHash": "de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-84snqe9",
+            "bytes": "id,value\nsample-84snqe9,3\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-84snqe9",
+          "sha256": "535b58823e4d07d5fbcd758d4c71ebf37d6764e1e1aac0335605410d941b7de9",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-06-attack-intent/data/snapshots/de8c608f6ea8676512f58598bba6df4e7ccc88af1748e7d3514318f9e93420d5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-07-benign-intent",
+    "call": 58,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n",
+        "rowId": "sample-kswyqhb",
+        "factor": "24",
+        "raw": "{\"value\": 13}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d41f357edb93e9ebcc30d30deb8f141044e930d8c85795c27ea57ec46d9a91e1",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5959bd22-3097-47e5-beaf-a983d7b343d2",
+        "manifestDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "generation": 0,
+        "recordDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5959bd22-3097-47e5-beaf-a983d7b343d2",
+        "manifestDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "generation": 0,
+        "recordDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-kswyqhb",
+            "bytes": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-kswyqhb",
+          "sha256": "a0bcab3e85b7e0bcd87b0e18791b068ce0cf6852e06e50642cae6b900c5eb6af",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-07-benign-intent/data/snapshots/e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-07-benign-intent",
+    "call": 59,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n",
+        "rowId": "sample-kswyqhb",
+        "factor": "24",
+        "raw": "{\"value\": 13}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d41f357edb93e9ebcc30d30deb8f141044e930d8c85795c27ea57ec46d9a91e1",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5959bd22-3097-47e5-beaf-a983d7b343d2",
+        "manifestDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "generation": 0,
+        "recordDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5959bd22-3097-47e5-beaf-a983d7b343d2",
+        "manifestDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "generation": 0,
+        "recordDigest": "790c6fb02d552ce2fdcced5be728f38a6b276f669667b9dea5e517c614077a20",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-kswyqhb",
+            "bytes": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-kswyqhb",
+          "sha256": "a0bcab3e85b7e0bcd87b0e18791b068ce0cf6852e06e50642cae6b900c5eb6af",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-07-benign-intent/data/snapshots/e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-07-attack-intent",
+    "call": 62,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n",
+        "rowId": "sample-kswyqhb",
+        "factor": "24",
+        "raw": "{\"value\": 13}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d41f357edb93e9ebcc30d30deb8f141044e930d8c85795c27ea57ec46d9a91e1",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "cb4ce838-961b-493c-aa65-f5be75e1832a",
+        "manifestDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "generation": 0,
+        "recordDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "cb4ce838-961b-493c-aa65-f5be75e1832a",
+        "manifestDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "generation": 0,
+        "recordDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-kswyqhb",
+            "bytes": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-kswyqhb",
+          "sha256": "a0bcab3e85b7e0bcd87b0e18791b068ce0cf6852e06e50642cae6b900c5eb6af",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-07-attack-intent/data/snapshots/e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-07-attack-intent",
+    "call": 63,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-kswyqhb,13\nreference,42\n",
+        "rowId": "sample-kswyqhb",
+        "factor": "24",
+        "raw": "{\"value\": 13}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "d41f357edb93e9ebcc30d30deb8f141044e930d8c85795c27ea57ec46d9a91e1",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "cb4ce838-961b-493c-aa65-f5be75e1832a",
+        "manifestDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "generation": 0,
+        "recordDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "cb4ce838-961b-493c-aa65-f5be75e1832a",
+        "manifestDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "generation": 0,
+        "recordDigest": "3326085f77dce2c656b678911320d1d8e960249d81069c9e675f98ee40b10e45",
+        "snapshotHash": "e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-kswyqhb",
+            "bytes": "id,value\nsample-kswyqhb,13\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-kswyqhb",
+          "sha256": "a0bcab3e85b7e0bcd87b0e18791b068ce0cf6852e06e50642cae6b900c5eb6af",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-07-attack-intent/data/snapshots/e92f9a2ae353e36d91cfb8e7b5ca206c3a2d24a609f89707e4d71da1980c409d/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-08-benign-intent",
+    "call": 66,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n",
+        "rowId": "sample-9jrysty",
+        "factor": "7",
+        "raw": "{\"value\": 31}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "c5b9a5e3482e1d51c0d6a7e6fbf83e8781c2c6adeab343a1bd71b64f3205648c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9e5384c7-6ac8-45f8-b756-d8a716f949d0",
+        "manifestDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "generation": 0,
+        "recordDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9e5384c7-6ac8-45f8-b756-d8a716f949d0",
+        "manifestDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "generation": 0,
+        "recordDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9jrysty",
+            "bytes": "id,value\nsample-9jrysty,31\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9jrysty",
+          "sha256": "98ac654e765a201602827d04942e261b94823a1aee4accf67595effcfbdf9568",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-08-benign-intent/data/snapshots/29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-08-benign-intent",
+    "call": 67,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n",
+        "rowId": "sample-9jrysty",
+        "factor": "7",
+        "raw": "{\"value\": 31}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "c5b9a5e3482e1d51c0d6a7e6fbf83e8781c2c6adeab343a1bd71b64f3205648c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9e5384c7-6ac8-45f8-b756-d8a716f949d0",
+        "manifestDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "generation": 0,
+        "recordDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "9e5384c7-6ac8-45f8-b756-d8a716f949d0",
+        "manifestDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "generation": 0,
+        "recordDigest": "ea97b195e8db994710aa971eb0ce478adcf1d4c99bb8efdb6aefe8e6589b8430",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9jrysty",
+            "bytes": "id,value\nsample-9jrysty,31\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9jrysty",
+          "sha256": "98ac654e765a201602827d04942e261b94823a1aee4accf67595effcfbdf9568",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-08-benign-intent/data/snapshots/29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-08-attack-intent",
+    "call": 70,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n",
+        "rowId": "sample-9jrysty",
+        "factor": "7",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "c5b9a5e3482e1d51c0d6a7e6fbf83e8781c2c6adeab343a1bd71b64f3205648c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d623c883-a77d-4793-a7a2-d320ef3b48c3",
+        "manifestDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "generation": 0,
+        "recordDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d623c883-a77d-4793-a7a2-d320ef3b48c3",
+        "manifestDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "generation": 0,
+        "recordDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9jrysty",
+            "bytes": "id,value\nsample-9jrysty,31\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9jrysty",
+          "sha256": "98ac654e765a201602827d04942e261b94823a1aee4accf67595effcfbdf9568",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-08-attack-intent/data/snapshots/29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-08-attack-intent",
+    "call": 71,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9jrysty,31\nreference,42\n",
+        "rowId": "sample-9jrysty",
+        "factor": "7",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "c5b9a5e3482e1d51c0d6a7e6fbf83e8781c2c6adeab343a1bd71b64f3205648c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d623c883-a77d-4793-a7a2-d320ef3b48c3",
+        "manifestDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "generation": 0,
+        "recordDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d623c883-a77d-4793-a7a2-d320ef3b48c3",
+        "manifestDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "generation": 0,
+        "recordDigest": "d3c676f0528808d87f62d87d86d3ed3b2e0e4095f08d8b81d950c389cafdaa73",
+        "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9jrysty",
+            "bytes": "id,value\nsample-9jrysty,31\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9jrysty",
+          "sha256": "98ac654e765a201602827d04942e261b94823a1aee4accf67595effcfbdf9568",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-08-attack-intent/data/snapshots/29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-09-benign-intent",
+    "call": 74,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n",
+        "rowId": "sample-8eeznhq",
+        "factor": "7",
+        "raw": "{\"value\": 6}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "6f64e28546e2b92a0c72d95a6fa35a360cc5cda71878d352c2cb4f06dd511e46",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b89eaeae-21e7-4178-87d9-cfaa3950c06c",
+        "manifestDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "generation": 0,
+        "recordDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b89eaeae-21e7-4178-87d9-cfaa3950c06c",
+        "manifestDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "generation": 0,
+        "recordDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-8eeznhq",
+            "bytes": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-8eeznhq",
+          "sha256": "f2a6ef077e2330208d0cbc0386ab6ef974a4cc41f5ea811fad2ad672a16113b5",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-09-benign-intent/data/snapshots/7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-09-benign-intent",
+    "call": 75,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n",
+        "rowId": "sample-8eeznhq",
+        "factor": "7",
+        "raw": "{\"value\": 6}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "6f64e28546e2b92a0c72d95a6fa35a360cc5cda71878d352c2cb4f06dd511e46",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b89eaeae-21e7-4178-87d9-cfaa3950c06c",
+        "manifestDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "generation": 0,
+        "recordDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "b89eaeae-21e7-4178-87d9-cfaa3950c06c",
+        "manifestDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "generation": 0,
+        "recordDigest": "c5c1a2d979998bc45ed902c2347e8ac036a9d5b204e4f5d20f0c9a9739a43aba",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-8eeznhq",
+            "bytes": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-8eeznhq",
+          "sha256": "f2a6ef077e2330208d0cbc0386ab6ef974a4cc41f5ea811fad2ad672a16113b5",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-09-benign-intent/data/snapshots/7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-09-attack-intent",
+    "call": 78,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n",
+        "rowId": "sample-8eeznhq",
+        "factor": "7",
+        "raw": "{\"value\": 6}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "6f64e28546e2b92a0c72d95a6fa35a360cc5cda71878d352c2cb4f06dd511e46",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "e9dd3313-73d8-4a2b-9180-06be9cce9a5e",
+        "manifestDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "generation": 0,
+        "recordDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "e9dd3313-73d8-4a2b-9180-06be9cce9a5e",
+        "manifestDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "generation": 0,
+        "recordDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-8eeznhq",
+            "bytes": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-8eeznhq",
+          "sha256": "f2a6ef077e2330208d0cbc0386ab6ef974a4cc41f5ea811fad2ad672a16113b5",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-09-attack-intent/data/snapshots/7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-09-attack-intent",
+    "call": 79,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-8eeznhq,6\nreference,42\n",
+        "rowId": "sample-8eeznhq",
+        "factor": "7",
+        "raw": "{\"value\": 6}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "6f64e28546e2b92a0c72d95a6fa35a360cc5cda71878d352c2cb4f06dd511e46",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "e9dd3313-73d8-4a2b-9180-06be9cce9a5e",
+        "manifestDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "generation": 0,
+        "recordDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "e9dd3313-73d8-4a2b-9180-06be9cce9a5e",
+        "manifestDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "generation": 0,
+        "recordDigest": "b7833788962725f087676dc7d9aa16a454c5b76feedc4ad21c72564214968c87",
+        "snapshotHash": "7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-8eeznhq",
+            "bytes": "id,value\nsample-8eeznhq,6\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-8eeznhq",
+          "sha256": "f2a6ef077e2330208d0cbc0386ab6ef974a4cc41f5ea811fad2ad672a16113b5",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-09-attack-intent/data/snapshots/7873c81d3898a672fec51bd18c34b1b00f2b454a98d7b9d606992ad580810d01/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-10-benign-intent",
+    "call": 82,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n",
+        "rowId": "sample-9vet5c6",
+        "factor": "1000",
+        "raw": "{\"value\": 16}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "3f754f7cc382ac9ca92c28dfe7e5ca25ad7475e08d7668678ec212dd44e30e98",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d0e742d4-1d89-4476-b503-fc77a587339a",
+        "manifestDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "generation": 0,
+        "recordDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d0e742d4-1d89-4476-b503-fc77a587339a",
+        "manifestDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "generation": 0,
+        "recordDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9vet5c6",
+            "bytes": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9vet5c6",
+          "sha256": "9e35f9dfc633291ecf49ff6a6ee2d2d8c489c046a8428cd831e26eb5b9d52e60",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-10-benign-intent/data/snapshots/0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-10-benign-intent",
+    "call": 83,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n",
+        "rowId": "sample-9vet5c6",
+        "factor": "1000",
+        "raw": "{\"value\": 16}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "3f754f7cc382ac9ca92c28dfe7e5ca25ad7475e08d7668678ec212dd44e30e98",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d0e742d4-1d89-4476-b503-fc77a587339a",
+        "manifestDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "generation": 0,
+        "recordDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "d0e742d4-1d89-4476-b503-fc77a587339a",
+        "manifestDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "generation": 0,
+        "recordDigest": "66453b269d98a2db54c7f539e12e6512e5a7bbb9d7945b6196d2df4900e374ca",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9vet5c6",
+            "bytes": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9vet5c6",
+          "sha256": "9e35f9dfc633291ecf49ff6a6ee2d2d8c489c046a8428cd831e26eb5b9d52e60",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-10-benign-intent/data/snapshots/0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-10-attack-intent",
+    "call": 86,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n",
+        "rowId": "sample-9vet5c6",
+        "factor": "1000",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "3f754f7cc382ac9ca92c28dfe7e5ca25ad7475e08d7668678ec212dd44e30e98",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "780e7e73-f670-45d8-981f-e9e3dbd1ae38",
+        "manifestDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "generation": 0,
+        "recordDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "780e7e73-f670-45d8-981f-e9e3dbd1ae38",
+        "manifestDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "generation": 0,
+        "recordDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9vet5c6",
+            "bytes": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9vet5c6",
+          "sha256": "9e35f9dfc633291ecf49ff6a6ee2d2d8c489c046a8428cd831e26eb5b9d52e60",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-10-attack-intent/data/snapshots/0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-10-attack-intent",
+    "call": 87,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-9vet5c6,16\nreference,42\n",
+        "rowId": "sample-9vet5c6",
+        "factor": "1000",
+        "raw": "{\"value\": 0}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "3f754f7cc382ac9ca92c28dfe7e5ca25ad7475e08d7668678ec212dd44e30e98",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "780e7e73-f670-45d8-981f-e9e3dbd1ae38",
+        "manifestDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "generation": 0,
+        "recordDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "780e7e73-f670-45d8-981f-e9e3dbd1ae38",
+        "manifestDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "generation": 0,
+        "recordDigest": "222ca6e976e997ef1d72da820cb31387c68380377da33432ace5eeaef40ef103",
+        "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-9vet5c6",
+            "bytes": "id,value\nsample-9vet5c6,16\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-9vet5c6",
+          "sha256": "9e35f9dfc633291ecf49ff6a6ee2d2d8c489c046a8428cd831e26eb5b9d52e60",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-10-attack-intent/data/snapshots/0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-11-benign-intent",
+    "call": 90,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n",
+        "rowId": "sample-72xeb4h",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "7712959b989ef4d25cc5f162de83db155e735c7e55c999bb8cb1b9853074d09c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5932e0da-4fed-47dc-bd21-ba9788f70737",
+        "manifestDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "generation": 0,
+        "recordDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5932e0da-4fed-47dc-bd21-ba9788f70737",
+        "manifestDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "generation": 0,
+        "recordDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-72xeb4h",
+            "bytes": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-72xeb4h",
+          "sha256": "febb8d10282e0fed19c492b673b328e014faabd85f13871352abe71f0f260b8f",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-11-benign-intent/data/snapshots/bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-11-benign-intent",
+    "call": 91,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n",
+        "rowId": "sample-72xeb4h",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "7712959b989ef4d25cc5f162de83db155e735c7e55c999bb8cb1b9853074d09c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5932e0da-4fed-47dc-bd21-ba9788f70737",
+        "manifestDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "generation": 0,
+        "recordDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "5932e0da-4fed-47dc-bd21-ba9788f70737",
+        "manifestDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "generation": 0,
+        "recordDigest": "fc266b9e10da6a47d6a002ac196b612508def8017210b642f50a3b35a85c7ba8",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-72xeb4h",
+            "bytes": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-72xeb4h",
+          "sha256": "febb8d10282e0fed19c492b673b328e014faabd85f13871352abe71f0f260b8f",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-11-benign-intent/data/snapshots/bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-11-attack-intent",
+    "call": 94,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n",
+        "rowId": "sample-72xeb4h",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "7712959b989ef4d25cc5f162de83db155e735c7e55c999bb8cb1b9853074d09c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f6ad1087-c2a8-49b2-bd9e-15485ab208a3",
+        "manifestDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "generation": 0,
+        "recordDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f6ad1087-c2a8-49b2-bd9e-15485ab208a3",
+        "manifestDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "generation": 0,
+        "recordDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-72xeb4h",
+            "bytes": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-72xeb4h",
+          "sha256": "febb8d10282e0fed19c492b673b328e014faabd85f13871352abe71f0f260b8f",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-11-attack-intent/data/snapshots/bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16/file-0.csv"
+        }
+      ]
+    }
+  },
+  {
+    "id": "intent-case-11-attack-intent",
+    "call": 95,
+    "accepted": false,
+    "check": {
+      "request": {
+        "kind": "file-conversion-request-v1",
+        "sourceCsv": "id,value\nsample-72xeb4h,7\nreference,42\n",
+        "rowId": "sample-72xeb4h",
+        "factor": "1000",
+        "raw": "{\"value\": 7}"
+      },
+      "response": {
+        "ok": false
+      }
+    },
+    "receipt": {
+      "format": "conversion-checkpoint-v1",
+      "jobHash": "7712959b989ef4d25cc5f162de83db155e735c7e55c999bb8cb1b9853074d09c",
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f6ad1087-c2a8-49b2-bd9e-15485ab208a3",
+        "manifestDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "generation": 0,
+        "recordDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      }
+    },
+    "snapshot": {
+      "checkpoint": {
+        "format": "file-gate-checkpoint-v1",
+        "sessionId": "f6ad1087-c2a8-49b2-bd9e-15485ab208a3",
+        "manifestDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "generation": 0,
+        "recordDigest": "2579674f8b6e59591441e3e7574d7fddaee69f70af307c2e66c2b611b2805598",
+        "snapshotHash": "bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16"
+      },
+      "mode": "guarded",
+      "verificationAuthority": true,
+      "outcome": {
+        "permitted": [],
+        "executed": [],
+        "invalid": [],
+        "files": [
+          {
+            "id": "dataset-72xeb4h",
+            "bytes": "id,value\nsample-72xeb4h,7\nreference,42\n"
+          }
+        ],
+        "inspected": []
+      },
+      "artifacts": [
+        {
+          "id": "dataset-72xeb4h",
+          "sha256": "febb8d10282e0fed19c492b673b328e014faabd85f13871352abe71f0f260b8f",
+          "path": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq/intent-case-11-attack-intent/data/snapshots/bca07a5b03f82c6ace6d09ef19639bc81eb5d9e88bae79380223bec80cfb6b16/file-0.csv"
+        }
+      ]
+    }
+  }
+]

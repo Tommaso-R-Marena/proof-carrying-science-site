@@ -1,0 +1,38 @@
+{
+  "id": "intent-case-10-attack-intent",
+  "checkpoint": {
+    "format": "file-gate-checkpoint-v1",
+    "sessionId": "cd4d0a5c-7427-4e63-bbb0-90a260354d72",
+    "manifestDigest": "813f9c4312528a34d4f192d257cd70301c2c89efaf738df2c10abea227978775",
+    "generation": 0,
+    "recordDigest": "813f9c4312528a34d4f192d257cd70301c2c89efaf738df2c10abea227978775",
+    "snapshotHash": "0d7dbae83756d361da56c2cffd66257db81af235d7709e482c7d4ff93acbb933"
+  },
+  "request": {
+    "kind": "file-intent-request-v1",
+    "policy": {
+      "inspectable": [
+        "dataset-9vet5c6"
+      ],
+      "editable": [
+        {
+          "fileId": "dataset-9vet5c6",
+          "rowId": "sample-9vet5c6"
+        }
+      ],
+      "minimum": 0,
+      "maximum": 100000,
+      "requireInspection": true
+    },
+    "target": {
+      "fileId": "dataset-9vet5c6",
+      "rowId": "sample-9vet5c6"
+    },
+    "raw": "{\"value\": 0}"
+  },
+  "response": {
+    "ok": false
+  },
+  "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+  "rawHash": "bb1491952be6d6b1f75b7defce5fece8b2b62906e0cbada35c56f3c6d942c7cc"
+}

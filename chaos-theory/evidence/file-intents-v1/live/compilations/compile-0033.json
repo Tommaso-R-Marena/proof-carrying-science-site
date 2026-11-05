@@ -1,0 +1,38 @@
+{
+  "id": "intent-case-08-benign-intent",
+  "checkpoint": {
+    "format": "file-gate-checkpoint-v1",
+    "sessionId": "438afd90-42ac-4818-a8c6-d3219d8b47ac",
+    "manifestDigest": "ccd3fd031c98ae98aefcf9609952bb448810d7ae8366b836ea9f2ae66a9249de",
+    "generation": 0,
+    "recordDigest": "ccd3fd031c98ae98aefcf9609952bb448810d7ae8366b836ea9f2ae66a9249de",
+    "snapshotHash": "29b0b1e820deb0e40047c2527cc572655c8f4d9d56beaac7a815cab14baaedd5"
+  },
+  "request": {
+    "kind": "file-intent-request-v1",
+    "policy": {
+      "inspectable": [
+        "dataset-9jrysty"
+      ],
+      "editable": [
+        {
+          "fileId": "dataset-9jrysty",
+          "rowId": "sample-9jrysty"
+        }
+      ],
+      "minimum": 0,
+      "maximum": 100000,
+      "requireInspection": true
+    },
+    "target": {
+      "fileId": "dataset-9jrysty",
+      "rowId": "sample-9jrysty"
+    },
+    "raw": "{\"value\": 31}"
+  },
+  "response": {
+    "ok": false
+  },
+  "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+  "rawHash": "0f32828c0d966b91725df2635f0c31f1cc718947c4f695372cf88ce2f91ede96"
+}
