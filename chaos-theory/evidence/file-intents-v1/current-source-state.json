@@ -1,0 +1,31 @@
+{
+  "sha256": {
+    "formal/FileConversion.lean": "d4bf666b18a038853f528afaad16d0a33460add8005a65464a058f5dab574e83",
+    "formal/FileConversionMain.lean": "05b96fa61c603e32e537ae196f1078db5281101399d5fdef9921447ec7c86d0a",
+    "formal/FileIntent.lean": "f281a59eea52298d4719f64d6d7e8fa9afd48aabf947a3128384821863293bd0",
+    "formal/FileIntentMain.lean": "c5200f622575732072c41f6d0dfde89fe3b707c41bba42dcf56cf06022b9c5cd",
+    "scripts/conversion-gate/campaign.ts": "750967dc42fe555b83d2b4e2d6c4da71ff49224601e7e2c9e778dc0c31279f6f",
+    "scripts/conversion-gate/cli.ts": "7deca2d561944f7ba9c0897a8c10351b7eb70bedab4bc49a9841730e63c7986a",
+    "scripts/conversion-gate/host.ts": "4ba949b7abe11634fcb9be68d4d2ac9f73a9520753a1c0fb06c058a117f9c543",
+    "scripts/conversion-gate/native.ts": "09f6e60d17bf5dd9b3cfd15a74267e3db696b873ce697c051a8a48c9299a9e74",
+    "scripts/conversion-gate/test-parser.ts": "f9ac923ae1b8a549dbce2b167e0b492ece698c5871b0f5d1be215fcd933db0bf",
+    "scripts/conversion-gate/verify-artifacts.py": "55129b6dfbc9f3c54692d1246d6cb0933768ddd6edeb7ec43e3be9dfbda87f4f",
+    "scripts/conversion-gate/verify-parser.py": "3edfd566c8d1efddcebfbf2ceb70471495c2e95aa874148c5bc828afe4bd6e50",
+    "scripts/file-intent/bridge.ts": "85250d377d992dc30ac3be3c85aa139342b1128dbd685508ab8c70cd7a296f44",
+    "scripts/file-intent/demo.py": "725c11aef9f7efd71fe5be6f65651b907323c1e9becdac5985ab5ea9628e3694",
+    "scripts/file-intent/intent_oracle.py": "dd9a03a6e954adcd11208e4202802d652b4935336555b7b90c57ee6a46b34f8b",
+    "scripts/file-intent/model.ts": "d96c72f7c7e08c25e152cebbc620d7a74c9e3e18ef4e9d246f3a05a69b6ad177",
+    "scripts/file-intent/native-replay.ts": "6ff24629fe3750ba4f2d88c1ad3117bbcc8219c31d51bb9d270ac84a41d1ebc0",
+    "scripts/file-intent/native.ts": "9ad522fd6f7b1bcb14f9f8c00fce06b040c7801d57ea9efd7aec76e533929439",
+    "scripts/file-intent/replay.py": "982213844c8a4ec54998bad3600d50f1b90319a1b37bcaebe9ea75900f8af5ea",
+    "scripts/file-intent/report.py": "0d8403a76bdb575cf724fa69070f813b6035242f5735e85932c3055fe0222635",
+    "scripts/file-intent/run.py": "3438bd6fa105be398f0abba2858048f58327dd8bd324743b69a205067ba697d1",
+    "scripts/file-intent/study.py": "f8ac8ea5d2934dacc340d236b9c6345913b6ca234ab7e087416df01c44be858f",
+    "scripts/file-intent/test-native.ts": "2c6623ee2d24d351241673bc6cfdaf0714c4baa585592453effe0dfd089e2394",
+    "scripts/file-intent/test_replay.py": "9196c617fe1305a5e279bbae76fd06fa523257ded3eb1bf19e27957a884dbb4c",
+    "scripts/file-intent/test_unit.py": "fa376ee8857c125864b474496f312adc9937a0cfeba568e64531e19ed62f5caf",
+    "scripts/file-intent/verify-vectors.py": "b3d4a3a3151940063122a0a3a283af860882bd2cbad8e38ba048f1d78e3913a6"
+  },
+  "frozenExecutionSources": "live/protocol.json",
+  "note": "Execution/scoring sources remain byte-identical to freeze commit. Exact-conversion refinement is a separate post-run implementation and archival campaign; observers are reviewed separately."
+}

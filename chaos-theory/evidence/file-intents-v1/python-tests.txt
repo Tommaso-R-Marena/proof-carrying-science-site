@@ -1,0 +1,18 @@
+test_actual_csv_substitution_is_detected (test_replay.ReplayControls.test_actual_csv_substitution_is_detected) ... ok
+test_compilation_record_tampering_is_detected (test_replay.ReplayControls.test_compilation_record_tampering_is_detected) ... ok
+test_genuine_archived_run (test_replay.ReplayControls.test_genuine_archived_run) ... ok
+test_native_ledger_truncation_is_rejected (test_replay.ReplayControls.test_native_ledger_truncation_is_rejected) ... ok
+test_rehashed_changed_reference_protocol_is_rejected (test_replay.ReplayControls.test_rehashed_changed_reference_protocol_is_rejected) ... ok
+test_rehashed_success_claim_is_rejected (test_replay.ReplayControls.test_rehashed_success_claim_is_rejected) ... ok
+test_all_authored_goal_witnesses_are_oracle_legal (test_unit.IntentTests.test_all_authored_goal_witnesses_are_oracle_legal) ... ok
+test_ambiguous_and_invalid_intents_fail (test_unit.IntentTests.test_ambiguous_and_invalid_intents_fail) ... ok
+test_canonical_profile_and_escaped_equivalence (test_unit.IntentTests.test_canonical_profile_and_escaped_equivalence) ... ok
+test_compiler_does_not_invent_the_right_answer (test_unit.IntentTests.test_compiler_does_not_invent_the_right_answer) ... ok
+test_new_corpus_and_prospective_unit_split (test_unit.IntentTests.test_new_corpus_and_prospective_unit_split) ... ok
+test_policy_is_not_weakened (test_unit.IntentTests.test_policy_is_not_weakened) ... ok
+test_prompts_preserve_notice_and_do_not_supply_reference (test_unit.IntentTests.test_prompts_preserve_notice_and_do_not_supply_reference) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.548s
+
+OK

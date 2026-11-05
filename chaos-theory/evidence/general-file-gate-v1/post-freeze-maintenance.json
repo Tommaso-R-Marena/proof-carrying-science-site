@@ -1,0 +1,46 @@
+{
+  "changes": {
+    "scripts/file-gate/bridge.ts": {
+      "before": "3b719028b05dc27d24d2d692a925e11ee764d91e00cd84650a1a6e296657efae",
+      "current": "95d20ca77e95704f29decb15be9d150c4059bac766eb811ff3a0664b152e754f"
+    },
+    "scripts/file-gate/cli.ts": {
+      "before": "b0495700fb2520d34de3ea947631e3f4e571a43b86466e21032def0449e6e993",
+      "current": "d77f878d9b6d14d7a9d892ad8b19f119e6c279c14a8491f4c5a3001503c7caed"
+    },
+    "scripts/file-gate/evaluate.py": {
+      "before": "ccd5a29c6965c3f3498af31851b8edc906390b34ad9cc89d0e452c7e6132e749",
+      "current": "82bad48e385e0ff632e509bdbfa625a6edf80ecf52144af45a9d03937ebc4f9d"
+    },
+    "scripts/file-gate/replay-evidence.ts": {
+      "before": "791fe95c8294ac0b7ba681346f2562ba5a892aa7d2e579bc89df4f2610ae5281",
+      "current": "901e98c9bb354c6f77bc5bae1ed7d6b6cf57217b4dfad967e38e05a4578d3a87"
+    },
+    "scripts/file-gate/report.py": {
+      "before": "e2438d710ad77d6c702c0d4c62aaf4cbace0afaa5ae5c2e61a6b8049469a714f",
+      "current": "712ebc5dfce70f7e3a4b452e1118c824b6aa1340cbc7a03d61d0437506efdc99"
+    },
+    "scripts/file-gate/test-native.ts": {
+      "before": "82fbb3787d6433eaeaed9a4c77d353b4484e08d0068a882305cbb132addda589",
+      "current": "2e95019451e4fc019bff52c49edda432eae0ac375dc739457ea85b921dee2fa8"
+    }
+  },
+  "reasons": {
+    "scripts/file-gate/cli.ts": "Added already supported CSV import command to help text.",
+    "scripts/file-gate/test-native.ts": "Removed unused value import and created results directory for fresh-checkout execution. Test semantics unchanged.",
+    "scripts/file-gate/bridge.ts": "After final export exceeded transport bound, persist native ledger exclusively to a fixed host-owned file with fsync; return bounded count/digest metadata. No change to authority or execution policy.",
+    "scripts/file-gate/evaluate.py": "Read persisted ledger and verify returned count/digest instead of transferring whole ledger over bounded JSON-lines bridge. No change to prompts, tasks, policies, scoring or original saved inference records.",
+    "scripts/file-gate/replay-evidence.ts": "Explicit exact-hash historical/repaired observer compatibility; unchanged enforcement fingerprint required. Disclose reconstructed native ledger provenance. Compatibility logic factored into source-profile.ts with rejection tests.",
+    "scripts/file-gate/report.py": "Render original collection failure/reconstruction disclosure, model generation limits and zero accepted guarded writes prominently. Frozen scoring unchanged."
+  },
+  "enforcementSourceFingerprintUnchanged": true,
+  "enforcementSourceFingerprint": "fd2c828e7c475406a5fcb2080b0e168a8a58e62066c472416e716ee8c30ebc10",
+  "experimentalObserverSourcesRepaired": [
+    "scripts/file-gate/bridge.ts",
+    "scripts/file-gate/evaluate.py"
+  ],
+  "promptsTasksPoliciesAndMetricsUnchanged": true,
+  "originalSnapshotPreserved": true,
+  "originalAggregateNativeLedgerRetained": false,
+  "ledgerProvenance": "fresh-lean-reconstruction"
+}

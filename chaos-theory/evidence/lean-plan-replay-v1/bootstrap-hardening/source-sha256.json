@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "parentCommit": "f5673210c455cc2dffc8e013c0f3f1bc523b0192",
+  "qualifiedCompilerSha256": "3e0d0d3d801675359f2d4cf9815bfdb417b20b92fdd9d48b3b14c95bbae28bbf",
+  "files": {
+    "scripts/lean-plan-process.ts": "8b9f7402c8690b9b34c68e68695ecb5fc3ae9d7a0e032f71040deb7b0f4bcbc0",
+    "scripts/test-lean-plan-runtime.ts": "372d31eb29974aad211a186cf74f4b17d2c2570286bd41168ec19bb64e709361"
+  },
+  "scope": "Bootstrap rejects an unapproved compiler before executing it. Original live inference and sources remain unchanged; new checks recompute all 60 recorded authorization results."
+}

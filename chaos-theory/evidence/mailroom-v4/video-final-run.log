@@ -1,0 +1,5 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 demo:record
+> tsx scripts/record-demo.ts results/mailroom-sorter-replay-chromium.json
+
+{"output":"results/demo-f73a9f37-2044-4301-8be5-5a38bb6b3d66","video":"results/demo-f73a9f37-2044-4301-8be5-5a38bb6b3d66/mailroom.webm","matchesVerifiedReplay":true}

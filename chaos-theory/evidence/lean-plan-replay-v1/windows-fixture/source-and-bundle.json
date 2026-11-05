@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "failedCommit": "f6ccbf9446d49616511cbda4af66fd113d20c5c5",
+  "failedJob": 126824898234,
+  "fixtureSha256": "0bddc6cc3c8da71d91693be78701b97dbd465df16af7e7786e64f6e61574d67d",
+  "bundleCoreCommit": "f20f3cab2938f2e085f137185e88f4700d5da2ed",
+  "bundleBinarySha256": "5032e25798739a22b6bf2d0ce3ceb1dbddf4c2d686412bb4b5dd2356b49d0320",
+  "mockPositiveVerdicts": 0,
+  "scope": "Linux local actual-native verification and deterministic cleanup regression; Windows CI still required."
+}

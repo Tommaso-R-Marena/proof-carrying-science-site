@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "authoredPositiveControls": 24,
+  "actualModelCalls": 0,
+  "actualLeanProcess": true,
+  "scope": "All frozen goals can be published by a legal authored witness. This does not count as model task success or show that a model finds that witness.",
+  "output": "/tmp/pcs-file-gate-pr/chaos-theory/results/file-gate-reachability-aAjDV6"
+}

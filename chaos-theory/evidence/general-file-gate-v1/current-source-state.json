@@ -1,0 +1,31 @@
+{
+  "parentCommit": "91e0164a7a24fd77736606c2d481cb14d947918a",
+  "sha256": {
+    "formal/FilePolicy.lean": "1b035ab9a6e6198719cc86803d2ef765687371549befc6098b4c1f2df5db5fdc",
+    "formal/FilePolicyMain.lean": "6dfb5287ee639924a3d826691fb7af245b18847e81ec30713c723cb472fa6c71",
+    "scripts/file-gate/bridge.ts": "95d20ca77e95704f29decb15be9d150c4059bac766eb811ff3a0664b152e754f",
+    "scripts/file-gate/cli.ts": "d77f878d9b6d14d7a9d892ad8b19f119e6c279c14a8491f4c5a3001503c7caed",
+    "scripts/file-gate/evaluate.py": "82bad48e385e0ff632e509bdbfa625a6edf80ecf52144af45a9d03937ebc4f9d",
+    "scripts/file-gate/model.ts": "2fbbc4bec0bb9be20af07e85c8556f00818e13315f0f04751f4f6bfec977e060",
+    "scripts/file-gate/native.ts": "058ac0b8b55652b10457aeafd811b3cbf262ddde5009c54577e332760975cecd",
+    "scripts/file-gate/oracle.py": "dd6b798614cff9468432e1d7d84b7054a698323537e83987ced9db5caf288d30",
+    "scripts/file-gate/protocol.py": "3105ee11bd30e751ea98f52427d346482fa4c9c06dcf9249d2c52727b3c663c4",
+    "scripts/file-gate/reconstruct-ledger.ts": "23eaa1fe1d7e78201997343f1a7981303e8dfe3d5ca59f8abae96b3fa25a837c",
+    "scripts/file-gate/recover-report.py": "c6edbea7381fd83eaa8860f63ef90eec0fad47aaf5c0593f7d65589fcef673f7",
+    "scripts/file-gate/replay-evidence.ts": "901e98c9bb354c6f77bc5bae1ed7d6b6cf57217b4dfad967e38e05a4578d3a87",
+    "scripts/file-gate/report.py": "712ebc5dfce70f7e3a4b452e1118c824b6aa1340cbc7a03d61d0437506efdc99",
+    "scripts/file-gate/source-profile.ts": "0be5eeda1634eab41ec4ae8a88e5356e075072cd3811e308d736aa026dbd470d",
+    "scripts/file-gate/test-collector.py": "2eac382bbc4135464fda354e1dd8d68f3d5f427a149a8d7cda49959c4cf032d5",
+    "scripts/file-gate/test-native.ts": "2e95019451e4fc019bff52c49edda432eae0ac375dc739457ea85b921dee2fa8",
+    "scripts/file-gate/test-reachability.ts": "a3698ca29cb1791a573aab3d116106049bc1347d6158e78cd0f8747fa37512ea",
+    "scripts/file-gate/test-worker.ts": "d116d83e249d6f2ff6fdd61f5c7e98d1a67b2aa21842a502e7f03a5dc1754b7c",
+    "scripts/file-gate/test_oracle.py": "2d6a711ccbb480403a2b602b6ec067cef02a2d90d77edda73dedadfd7c676725",
+    "scripts/file-gate/verify-vectors.py": "23cecb51c45a976481bbe4329da2a3e881ae5ca6cf0f5805fcb27d3946e44142",
+    "scripts/file-gate/verify_evaluation.py": "a16a8b91de3f75bb7065a01148e315a7702f2674255a2d0a07e4112dc6a9d8c6",
+    "scripts/file-gate/workspace.ts": "865e10e4dd4b87bf94bd1953bb76de62bd26e10e2f60a8adefadd5cf7d0c8b8d",
+    "tests/file-gate-profile.test.ts": "25dd2bdb6986083972e9b2184c20f490101f433dab7fddb47e513b55abb9e881",
+    "tests/file-gate.test.ts": "af194e28a7fa045c1cd7872998cffeecd4ef6f84a80384f3eb0a0cca2a001818"
+  },
+  "originalSourceInventory": "source-state.json",
+  "note": "Current implementation inventory after disclosed collection repair. Does not replace the original frozen profile."
+}

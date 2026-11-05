@@ -1,0 +1,11 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 research:campaign
+> tsx scripts/guard-campaign.ts
+
+{
+  "path": "results/guard-campaign-ddda8a9c-80e0-4df0-9d65-ef5f09c2c67d.json",
+  "plans": 1200,
+  "counterexamples": 0,
+  "approvedControlTasks": 3,
+  "blockedRequests": 2895
+}

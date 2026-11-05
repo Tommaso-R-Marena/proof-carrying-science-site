@@ -1,0 +1,55 @@
+# Historical v0.1 test report
+
+**The current Mailroom v0.2 implementation and evidence are described in [MAILROOM_V2_REPORT.md](MAILROOM_V2_REPORT.md). This report records the earlier prototype; its data is retained.**
+
+Local source is the isolated `game/chaos-theory-pocket-mayhem-v1` branch based on site main `54bc61805e741a7228c36e257d3e314cd603b1a9`. No PCS production source, model, Lean authority, dependencies or deployment configuration changes. A new dedicated read-only workflow is the only addition outside this project directory.
+
+This report accompanies the implementation commit; Git supplies its exact source identity. Remote PR/Actions status is reported in the PR after pushing. Nothing is merged or deployed.
+
+| Check                   | Status       | Evidence                                                                                                                                                                                                            |
+| ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript strict check | PASS         | `npm run typecheck`                                                                                                                                                                                                 |
+| ESLint                  | PASS         | `npm run lint`                                                                                                                                                                                                      |
+| Formatting              | PASS         | `npm run format:check`                                                                                                                                                                                              |
+| Unit/integration        | PASS         | 84 tests across 4 files, including simulation, storage, tool guards, saved-evidence replay, and SDK mock transport                                                                                                  |
+| Chromium browser        | PASS         | 10 E2E cases: menus/persistence; actual keyboard movement and two gadget uses; valid-input completion of each of 3 missions; timeout/retry; honest lab/export; narrow touch control; keyboard focus; denied storage |
+| Firefox browser         | PASS         | Same 10 cases; D-pad uses a real pointer because Firefox's Playwright protocol does not expose equivalent held-touch input                                                                                          |
+| Production browser      | PASS         | Desktop and phone-sized viewport; no test controller, secret configuration or model adapter in built assets; 10 restarts per viewport; no duplicate canvas or observed external requests                            |
+| Build                   | PASS         | Vite static `dist`; Phaser chunk about 1.37 MB raw / 356 KB gzip, lazily loaded after Play                                                                                                                          |
+| Offline research        | PASS         | 36 synthetic fixture evaluations; 27 task completions, 9 unauthorized proposals, all 9 blocked, 0 unauthorized effects; exact v2 evidence independently replayed by tests                                           |
+| Real model              | SKIPPED      | 0 calls; no model key/model configured or explicit spending opt-in. Mock HTTP tests are not provider evaluations                                                                                                    |
+| Human study             | SKIPPED      | 0 participants; proposed protocol only                                                                                                                                                                              |
+| Fuzz/adversarial        | PASS         | 6,000 randomized simulation inputs and 4,000 malicious synthetic tool calls inside meaningful tests; no unauthorized effects                                                                                        |
+| Simulation soak         | PASS         | `evidence/soak.json`: 120 full rounds / 540,000 ticks, 16.83 s on initial local run; final rerun 17.09 s in `evidence/soak-final.json`; bounded transient state and finite in-bounds actors                         |
+| CI                      | PENDING PUSH | New read-only project workflow; current remote result belongs in PR, not fabricated here                                                                                                                            |
+
+Final measured coverage is 94.00% branches (564/600), 95.62% statements (722/755) over simulation/research/live/storage. The exact coverage JSON is in `evidence/coverage-integrated.json`. Coverage excludes browser presentation; browser behavior has explicit E2E checks. A percentage is not a proof.
+
+Actual screenshots: `evidence/menu-chromium.png`, `live-arena-chromium.png`, `gadgets-chromium.png`, `victory-chromium.png`, `research-lab-chromium.png`, `mobile-menu-chromium.png`, `mobile-arena-chromium.png`; corresponding Firefox files. Initial screenshots are retained to document iteration. Production timing and final check metadata are saved in evidence; fresh runs write unique ignored results rather than silently replacing recorded research runs.
+
+## Observed defects and fixes
+
+| Observed problem                                                           | Repair and check                                                                                                                                  |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title wrapped into four oversized lines and had an initial focus outline   | Smaller responsive type; no programmatic heading focus. Actual before/after menu screenshots inspected.                                           |
+| Arena hid gadget controls below a 900 px laptop screen                     | Height-aware desktop arena sizing; whole control bar now fits.                                                                                    |
+| Phone D-pad used CSS auto-placement in the wrong order; targets were small | Explicit up/left/down/right grid positions and 44 px targets; real Chromium held-touch and Firefox pointer checks.                                |
+| Phone actors were difficult to see in the full facility view               | Zoomed follow camera and nearby goal-direction arrow; aim converts through camera world coordinates.                                              |
+| Sign stayed the goal after courier redirection                             | Objective now says to meet the courier at Dock B. Browser mission completion checks the real action sequence.                                     |
+| Relay display called disabled switches “POWER ON”                          | Labels and visual state now agree with simulation; shapes/words accompany colors.                                                                 |
+| Non-foam gadgets offered no placement/range feedback                       | Decoy ghost, blocked label, device radius/eligible outline, and out-of-range hint.                                                                |
+| Firefox rejected capture for a synthetic/canceled pointer ID               | Capture is best-effort; pointer IDs track releases independently, with global cancellation handling. Browser test now uses actual pointer events. |
+| Preview eligibility could differ from actual device selection              | Shared nearest/range/LOS target resolver now serves rendering and runtime; explicit regression cases.                                             |
+| Space on a focused pause button was swallowed by gameplay input            | Modal keys retain native button behavior; browser keyboard test resumes with Space.                                                               |
+| localStorage getter could throw before the loader's catch                  | Memory fallback around access; blocked-storage E2E case still starts a playable game.                                                             |
+| Fixture card initially printed pass unconditionally                        | Expected control/attack outcomes now determine its pass/fail text.                                                                                |
+
+Test-development failures were retained during iteration and repaired. One broad “Back” selector matched two legitimate buttons; the test now selects the actual navigation button. A scripted controller initially held foam while switching to a notice gadget and sometimes stunned its courier; it now releases the trigger and targets the guard. No gameplay specification was weakened to pass those tests. A production timing script needed a self-contained browser callback because TSX-generated helper closures are not serializable; the production game was unaffected.
+
+## Performance and limitations
+
+Headless Chromium 156 on this shared Linux/Node 24 executor sampled 120 frames per viewport. The committed-code run averaged 16.667 ms (60.00 FPS), p95 16.7 ms, at 1280×900; 16.665 ms (60.01 FPS), p95 16.7 ms, at 390×844. An earlier phone-sized run averaged 17.083 ms (58.54 FPS); retained measurements show normal executor variation. Exact results are in `evidence/production-reviewed.json`. Viewport size does not emulate mobile CPU/GPU. rAF scheduling is not isolated simulation/render latency. Node soak memory snapshots include garbage collection; the checks do not prove leak absence. No hardware phone, Safari, screen-reader audit, motor-accessibility study, human fun assessment, live provider evaluation, or formal proof was performed.
+
+The game is ready for an owner to review and arrange a small consenting novice playtest. Automated mission completion supports feasibility and usability checks, not enjoyment or scientific validity. Most useful next questions: can a new player explain the goal, which moment makes them retry, and can they distinguish the lab's synthetic fixture from a model test? A preregistered equal-budget player/random/automated generator comparison would be the first useful research study; no superiority claim is justified now.
+
+The code manifest in `evidence/local-verification.json` names implementation commit `2d9df54e77c8f2692e60f18607d3cff0e4f18e48` and hashes its tracked source inputs. Documentation/evidence are committed afterward; this is a reproducibility record, not a signed origin attestation. Runtime dependency audit reported 0 known runtime vulnerabilities at the time of checking; this is not a guarantee against unknown vulnerabilities.

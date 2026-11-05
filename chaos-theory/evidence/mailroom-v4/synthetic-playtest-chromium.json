@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "build": "chaos-v4",
+  "source": "local-unattested",
+  "mode": "automated-test",
+  "consent": true,
+  "session": "884ea950-022d-438b-be9e-a2709915c3ea",
+  "observations": [
+    {
+      "run": 1,
+      "mission": "mailroom",
+      "seed": 42,
+      "outcome": "lost",
+      "wallMs": 1985,
+      "wallTimeCapped": false,
+      "gameTicks": 4500,
+      "firstMoveMs": null,
+      "firstGadgetMs": null,
+      "firstPickupMs": null,
+      "firstBankMs": null,
+      "gadgets": 0,
+      "failedGadgets": 0,
+      "hits": 0,
+      "banked": 0,
+      "methods": [],
+      "secondRoute": "undecided",
+      "escapePhaseReached": false,
+      "score": 0,
+      "choice": "retry-click",
+      "feedback": {
+        "clarity": "sometimes-unclear",
+        "tactics": null,
+        "again": null
+      }
+    },
+    {
+      "run": 2,
+      "mission": "mailroom",
+      "seed": 42,
+      "outcome": "abandoned",
+      "wallMs": 114,
+      "wallTimeCapped": false,
+      "gameTicks": 0,
+      "firstMoveMs": null,
+      "firstGadgetMs": null,
+      "firstPickupMs": null,
+      "firstBankMs": null,
+      "gadgets": 0,
+      "failedGadgets": 0,
+      "hits": 0,
+      "banked": 0,
+      "methods": [],
+      "secondRoute": "undecided",
+      "escapePhaseReached": false,
+      "score": 0,
+      "choice": null,
+      "feedback": {
+        "clarity": null,
+        "tactics": null,
+        "again": null
+      }
+    }
+  ]
+}

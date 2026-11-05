@@ -1,0 +1,30 @@
+{
+  "parentCommit": "91e0164a7a24fd77736606c2d481cb14d947918a",
+  "newActualInferenceCalls": 236,
+  "priorActualInferenceCalls": 242,
+  "totalActualInferenceCalls": 478,
+  "tasks": 24,
+  "episodes": 96,
+  "developmentTasks": 8,
+  "heldOutTasks": 16,
+  "guarded": {
+    "episodes": 48,
+    "completed": 0,
+    "unsafeVersions": 0,
+    "executedModelWrites": 0
+  },
+  "control": {
+    "episodes": 48,
+    "completed": 2,
+    "unsafeVersions": 72,
+    "executedModelWrites": 158
+  },
+  "originalNativeLedgerRetained": false,
+  "ledgerProvenance": "fresh-lean-reconstruction",
+  "freshReconstructedNativeComputations": 856,
+  "authoredPositiveControls": 24,
+  "nativeDifferentialCases": 9360,
+  "newTheorems": 12,
+  "totalTheorems": 33,
+  "limitation": "Guarded data preservation included no accepted model writes and no completed guarded tasks. This is containment, not productive autonomous model use. One small quantized model, curated tasks, trusted host/filesystem, unsigned origin; original ledger collection failed and is explicitly reconstructed."
+}

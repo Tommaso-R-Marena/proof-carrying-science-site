@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "version": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+  "theoremsAudited": [
+    "'GuardedTools.denied_unchanged' depends on axioms: [propext]",
+    "'GuardedTools.authorized_exact_effect' depends on axioms: [propext]",
+    "'GuardedTools.step_safe' depends on axioms: [propext]",
+    "'GuardedTools.arbitrary_proposals_safe' depends on axioms: [propext]",
+    "'GuardedTools.run_append' depends on axioms: [propext]",
+    "'GuardedTools.arbitrary_repair_safe' depends on axioms: [propext]",
+    "'GuardedTools.protected_step' depends on axioms: [propext]",
+    "'GuardedTools.protected_run' depends on axioms: [propext]",
+    "'GuardedTools.protected_state_invariant' depends on axioms: [propext]",
+    "'GuardedTools.legal_completion_exists' depends on axioms: [propext]",
+    "'GuardedTools.safe_completion_exists' depends on axioms: [propext]",
+    "'GuardedTools.completion_bound' does not depend on any axioms",
+    "'GuardedTools.late_inspection_does_not_erase_violation' depends on axioms: [propext]"
+  ],
+  "cases": 92823,
+  "atoms": 13,
+  "maximumPlanLength": 4,
+  "tableSha256": "b85648a0af29318300a4f7b445abb20edfdd06cae1c0f108c2564043bc9ad360",
+  "sourceSha256": "f391f7f6eafd134ba553b6e7e6f019e59508b4d657b7fbc929180e3762a66b20",
+  "limitation": "Universal safety theorem concerns the finite mathematical action model. JSON decoding, hashes, host, actual model and all unenumerated implementation inputs are outside the kernel proof. This is bounded implementation correspondence, not a production authority."
+}

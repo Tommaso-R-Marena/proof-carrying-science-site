@@ -1,0 +1,797 @@
+[
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": []
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": []
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": []
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": []
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": []
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": []
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": [
+        "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}"
+      ]
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [
+            "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}"
+          ],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": [
+          {
+            "guarded": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            },
+            "control": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": [
+        "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}"
+      ]
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [
+            "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}"
+          ],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": [
+          {
+            "guarded": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            },
+            "control": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": [
+        "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}",
+        "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"7000\"},\"tool\":\"set_value\"}]}"
+      ]
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [
+            "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}",
+            "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"7000\"},\"tool\":\"set_value\"}]}"
+          ],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": [
+          {
+            "guarded": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            },
+            "control": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            }
+          },
+          {
+            "guarded": {
+              "permitted": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,7000\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            },
+            "control": {
+              "permitted": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,7000\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-policy-request-v1",
+      "files": [
+        {
+          "id": "measurements",
+          "bytes": "id,value\nsample,7\nreference,42\n"
+        }
+      ],
+      "policy": {
+        "inspectable": [
+          "measurements"
+        ],
+        "editable": [
+          {
+            "fileId": "measurements",
+            "rowId": "sample"
+          }
+        ],
+        "minimum": 0,
+        "maximum": 1000000,
+        "requireInspection": true
+      },
+      "plans": [
+        "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}",
+        "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"7000\"},\"tool\":\"set_value\"}]}"
+      ]
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "kind": "file-policy-result-v1",
+        "request": {
+          "files": [
+            {
+              "bytes": "id,value\nsample,7\nreference,42\n",
+              "id": "measurements"
+            }
+          ],
+          "kind": "file-policy-request-v1",
+          "plans": [
+            "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}",
+            "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"7000\"},\"tool\":\"set_value\"}]}"
+          ],
+          "policy": {
+            "editable": [
+              {
+                "fileId": "measurements",
+                "rowId": "sample"
+              }
+            ],
+            "inspectable": [
+              "measurements"
+            ],
+            "maximum": 1000000,
+            "minimum": 0,
+            "requireInspection": true
+          }
+        },
+        "initial": {
+          "permitted": [],
+          "executed": [],
+          "invalid": [],
+          "files": [
+            {
+              "id": "measurements",
+              "bytes": "id,value\nsample,7\nreference,42\n"
+            }
+          ],
+          "inspected": []
+        },
+        "outcomes": [
+          {
+            "guarded": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            },
+            "control": {
+              "permitted": [
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,8\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            }
+          },
+          {
+            "guarded": {
+              "permitted": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,7000\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            },
+            "control": {
+              "permitted": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "executed": [
+                true,
+                true,
+                true,
+                true
+              ],
+              "invalid": [
+                false,
+                false,
+                false,
+                false
+              ],
+              "files": [
+                {
+                  "id": "measurements",
+                  "bytes": "id,value\nsample,7000\nreference,42\n"
+                }
+              ],
+              "inspected": []
+            }
+          }
+        ]
+      }
+    }
+  }
+]

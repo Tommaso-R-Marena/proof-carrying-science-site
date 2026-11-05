@@ -1,0 +1,494 @@
+[
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"7000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"7000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,7\nkeep,42\n"
+        },
+        "sourceValue": "7",
+        "expectedValue": "7000",
+        "matches": true
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"8\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"8\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,7\nkeep,42\n"
+        },
+        "sourceValue": "7",
+        "expectedValue": "7000",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": " {\"value\":\"\\u0037\\u0030\\u0030\\u0030\"}\n"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000",
+          "kind": "file-conversion-request-v1",
+          "raw": " {\"value\":\"\\u0037\\u0030\\u0030\\u0030\"}\n",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,7\nkeep,42\n"
+        },
+        "sourceValue": "7",
+        "expectedValue": "7000",
+        "matches": true
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":7000}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"07000\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"-0\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"1.0\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"1000001\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"7000\",\"value\":\"8\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"7000\",\"\\u0076alue\":\"8\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"7000\",\"verified\":true}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"٧٠٠٠\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"\\ud800\"}"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,7\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000",
+      "raw": "{\"value\":\"7000\"}x"
+    },
+    "response": {
+      "ok": false
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,0\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1",
+      "raw": "{\"value\":\"0\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"0\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,0\nkeep,42\n"
+        },
+        "sourceValue": "0",
+        "expectedValue": "0",
+        "matches": true
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,0\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1",
+      "raw": "{\"value\":\"1000000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"1000000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,0\nkeep,42\n"
+        },
+        "sourceValue": "0",
+        "expectedValue": "0",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,0\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000000",
+      "raw": "{\"value\":\"0\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"0\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,0\nkeep,42\n"
+        },
+        "sourceValue": "0",
+        "expectedValue": "0",
+        "matches": true
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,0\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000000",
+      "raw": "{\"value\":\"1000000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"1000000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,0\nkeep,42\n"
+        },
+        "sourceValue": "0",
+        "expectedValue": "0",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1",
+      "raw": "{\"value\":\"0\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"0\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1\nkeep,42\n"
+        },
+        "sourceValue": "1",
+        "expectedValue": "1",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1",
+      "raw": "{\"value\":\"1000000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"1000000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1\nkeep,42\n"
+        },
+        "sourceValue": "1",
+        "expectedValue": "1",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000000",
+      "raw": "{\"value\":\"0\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"0\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1\nkeep,42\n"
+        },
+        "sourceValue": "1",
+        "expectedValue": "1000000",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000000",
+      "raw": "{\"value\":\"1000000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"1000000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1\nkeep,42\n"
+        },
+        "sourceValue": "1",
+        "expectedValue": "1000000",
+        "matches": true
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1000000\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1",
+      "raw": "{\"value\":\"0\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"0\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1000000\nkeep,42\n"
+        },
+        "sourceValue": "1000000",
+        "expectedValue": "1000000",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1000000\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1",
+      "raw": "{\"value\":\"1000000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"1000000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1000000\nkeep,42\n"
+        },
+        "sourceValue": "1000000",
+        "expectedValue": "1000000",
+        "matches": true
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1000000\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000000",
+      "raw": "{\"value\":\"0\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"0\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1000000\nkeep,42\n"
+        },
+        "sourceValue": "1000000",
+        "expectedValue": "1000000000000",
+        "matches": false
+      }
+    }
+  },
+  {
+    "request": {
+      "kind": "file-conversion-request-v1",
+      "sourceCsv": "id,value\nx,1000000\nkeep,42\n",
+      "rowId": "x",
+      "factor": "1000000",
+      "raw": "{\"value\":\"1000000\"}"
+    },
+    "response": {
+      "ok": true,
+      "result": {
+        "request": {
+          "factor": "1000000",
+          "kind": "file-conversion-request-v1",
+          "raw": "{\"value\":\"1000000\"}",
+          "rowId": "x",
+          "sourceCsv": "id,value\nx,1000000\nkeep,42\n"
+        },
+        "sourceValue": "1000000",
+        "expectedValue": "1000000000000",
+        "matches": false
+      }
+    }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "kind": "automated valid-input browser play, not a human study",
+  "seed": 42,
+  "ticks": 1219,
+  "gameSeconds": 20.316666666666666,
+  "score": 2138,
+  "hearts": 2,
+  "banked": 3,
+  "methods": [
+    "redirect",
+    "intercept"
+  ],
+  "backup": true,
+  "events": [
+    {
+      "tick": 37,
+      "kind": "delivery-sign",
+      "nodeId": "notice",
+      "variant": 1
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "realLeanProcess": true,
+  "actualArtifactWorkspaces": 96,
+  "freshNativeComputations": 856,
+  "acceptedNativeProfiles": 832,
+  "rejectedNativeProfiles": 24,
+  "originalModelCalls": 236,
+  "ledgerProvenance": "fresh-lean-reconstruction",
+  "observerReplayProfile": "pinned-collection-repair-v1",
+  "newInferenceCalls": 0,
+  "scope": "Exact-source independent replay of archived inference, not a new generation experiment, origin authentication or a hostile-host proof."
+}

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "actualLean": true,
+  "newConversionTheorems": 9,
+  "totalNamedTheorems": 51,
+  "authoredCorrectConversions": 12,
+  "authoredWrongAnswersBlocked": 12,
+  "lowerLevelBypassDetectedOnResume": true,
+  "substitutedJobRejected": true,
+  "concurrentPublicationWinners": 1,
+  "ownerMultiplierTamperingRejected": true,
+  "safeUnacknowledgedSuffixRecovered": true,
+  "incorrectSuffixRecoveryRejected": true,
+  "archivedModelProposals": 48,
+  "archivedProposalsAccepted": 0,
+  "newInferenceCalls": 0,
+  "output": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-campaign-qdiXiq",
+  "scope": "Exact Nat multiplier relation under owner-supplied metadata; archived proposals are not an adaptive counterfactual. No-model authored controls are not model performance."
+}

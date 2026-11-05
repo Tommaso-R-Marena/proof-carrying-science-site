@@ -1,0 +1,7 @@
+{
+  "kind": "scripted-controller counterexample, not human playtesting",
+  "route": "carried",
+  "observed": "lost before completing three hauls",
+  "controllerLimitation": "Interception aimed at the courier even while a nearby guard attacked.",
+  "interpretation": "One attack-only policy failed; this does not establish that the route is impossible or how newcomers will perform."
+}

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "parentCommit": "1a04d791057da9f87a56cae571273e8c567af7e7",
+  "kind": "unsigned source/config inventory; live-run versions are snapshotted separately",
+  "files": {
+    "formal/lean-toolchain": "db7bb24b756d745bbde83fe92718b51bd3625dae3701ba0f598d0eedcd3f3028",
+    "formal/GuardedTools.lean": "f391f7f6eafd134ba553b6e7e6f019e59508b4d657b7fbc929180e3762a66b20",
+    "scripts/guard-lean-differential.ts": "311e91379fbe19bce4558a826a8b550535e62a197e1edd672de2bafff298b75e",
+    "scripts/recovery-session.ts": "547dcf772e4d09a6583883fb980825f67ea80c68a44248b3cdf280c05e8239f4",
+    "scripts/recovery-bridge.ts": "10a8494da183539db1c5f98abb38a2bb6981b11c64c72005ee0110940e6b8055",
+    "scripts/replay-recovery-evidence.ts": "d48a58e0e004940285ef93cd487deaebc6aa053cf7f1ef86a56322f6b7f0aa57",
+    "scripts/local_model_recovery.py": "63b52c22f3bef8f1c1335e62236f3096a23ef0ba7cc7080757cf9297602f5d05",
+    "scripts/local_runtime.py": "508401f8ccfbf602edd1c4103655975f2b1278793ae2f6f07efbc96246bbeb09",
+    "scripts/test_recovery_replay.py": "61eb5f7662d3f63fd91ef587b570709acb220afd995414ea569b6c72a81472b8",
+    "tests/recovery.test.ts": "ab71290d93be0d1c34f49b6baedcf1c3f9905248b61a0c498c425aca1e83a243",
+    "src/research.ts": "4dc3f376607fb354280d14e213f9eb683286f3e51a7343e7c9ea58124042e237",
+    "scripts/safety-ablation.ts": "3596397284cf120ab8e3898982bee46c97775be7258c3d8167a7764cc80d65ba",
+    "../.github/workflows/chaos-model-evidence.yml": "4c95f0fe1b60454b6bd6b55fce72c4a4e64a8d2f01f12f0ba4895c9bad3f0ff3"
+  }
+}

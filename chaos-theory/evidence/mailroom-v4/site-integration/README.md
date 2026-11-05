@@ -1,0 +1,13 @@
+# Protected-site checkpoint readiness regression
+
+The game CI passed on `6200480`, but [the final site-wide gate](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41795893615/job/126464418762) failed when the layout test demanded a nonlinear search result after source mapping, before asynchronous checkpoint validation finished. The source page rejected an unavailable model; this was not a false positive authorization.
+
+`controlled-checkpoint-delay.json` reproduces that boundary by holding the real nonlinear checkpoint response. An early search is rejected with no episode download. After releasing the actual bytes, the existing pin validation and real learned search succeed, and Node independently replays the resulting trajectory. No positive result is supplied by the test.
+
+The production page, model weights, core algorithms and registered authority remain untouched. The fix in `scripts/browser_layout_check.cjs` delays actual checkpoint delivery, asserts the existing comparison gate is disabled before validation, releases the response, and waits for the all-pins-validated readiness signal. Existing success, authority and size checks remain. Both downloaded strategy episodes now also pass independent Node replay. No fixed sleep, timeout increase, fabricated verdict or skipped strategy was introduced.
+
+Local results: 300 static page/viewport checks, four widths, eight adaptive/nonlinear episodes replayed, four delayed-checkpoint regressions, and 14 Omega unit tests passed. `layout.json`, `omega-checkpoint-readiness.json`, the episode exports and console files preserve those results. The local server was static loopback on port 4173; this does not substitute for the real Worker/account checks in protected CI.
+
+`source-sha256.json` records exact test/runtime/model comparisons. Public runtime/model files match the failed commit byte for byte. Text console copies trim trailing whitespace; the raw archive preserves original bytes. The CI failure file is an explicitly selected log excerpt. All observations are automated, not human study data or an AI-safety efficacy finding. No external proof-generation trace is used for training.
+
+The seven unchanged contribution-gate tests also passed with the exact source files copied into the repository's standard checkout basename. Their original local run under the worktree name `chaos-theory-pr` rejected that nonstandard owner/repository identifier; both transcripts are retained. The protected CI checkout already uses the correct repository name. No repository-identity guard was weakened or test expectation edited.

@@ -1,0 +1,63 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 test:production
+> tsx scripts/production-smoke.ts
+
+{
+  "path": "results/production-7eeba363-e40e-4bc7-a69a-03ddced21db0.json",
+  "version": 1,
+  "browser": "156.0.8078.4",
+  "node": "v24.19.0",
+  "hardwareCaveat": "Headless browser on this shared Linux executor; viewport sizes do not emulate phone CPU/GPU or human input latency. requestAnimationFrame measures browser frame scheduling, not isolated render cost.",
+  "assets": [
+    {
+      "name": "index-CT8nlJEU.css",
+      "bytes": 20103,
+      "gzipBytes": 5376
+    },
+    {
+      "name": "index-DBFjyCPG.js",
+      "bytes": 168217,
+      "gzipBytes": 53858
+    },
+    {
+      "name": "phaser-DBGSxffB.js",
+      "bytes": 1368033,
+      "gzipBytes": 355861
+    },
+    {
+      "name": "scene-T5YMgjdh.js",
+      "bytes": 19636,
+      "gzipBytes": 7495
+    }
+  ],
+  "observations": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "frames": 120,
+      "meanMs": 16.666666666666668,
+      "p95Ms": 16.700000000000273,
+      "estimatedFPS": 60,
+      "restarts": 10,
+      "consolePageErrors": 0,
+      "externalRequests": 0,
+      "testController": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "frames": 120,
+      "meanMs": 16.66666666666666,
+      "p95Ms": 16.799999999999727,
+      "estimatedFPS": 60.00000000000002,
+      "restarts": 10,
+      "consolePageErrors": 0,
+      "externalRequests": 0,
+      "testController": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "chaos-theory-pocket-mayhem",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test --project chromium",
+    "lint": "eslint src tests scripts --max-warnings 0",
+    "format": "prettier --write src tests scripts *.json *.ts *.html *.md docs/*.md",
+    "format:check": "prettier --check src tests scripts *.json *.ts *.html *.md docs/*.md",
+    "research:offline": "tsx scripts/research.ts",
+    "research:live": "tsx scripts/live.ts",
+    "research:check": "tsx scripts/live.ts --check",
+    "research:server": "tsx scripts/server.ts",
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build && npm run test:e2e && npm run test:production && npm run research:offline",
+    "test:e2e:firefox": "playwright test --project firefox",
+    "test:soak": "tsx scripts/soak.ts",
+    "test:production": "tsx scripts/production-smoke.ts",
+    "demo:record": "tsx scripts/record-demo.ts",
+    "playtest:analyze": "tsx scripts/analyze-playtest.ts",
+    "research:workshop": "tsx scripts/workshop.ts",
+    "research:campaign": "tsx scripts/guard-campaign.ts",
+    "build:portable": "tsx scripts/portable.ts",
+    "test:portable": "tsx scripts/portable-smoke.ts",
+    "research:journal": "tsx scripts/journal-cli.ts",
+    "test:journal": "tsx scripts/test-durable-recovery.ts"
+  },
+  "dependencies": {
+    "phaser": "4.2.1",
+    "zod": "4.6.7",
+    "openai": "7.50.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.10.1",
+    "typescript": "6.0.3",
+    "vite": "8.3.5",
+    "vitest": "5.1.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "tsx": "4.23.0",
+    "eslint": "10.4.0",
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.62.0",
+    "prettier": "3.8.3"
+  }
+}

@@ -1,0 +1,14 @@
+test_actual_csv_substitution_is_detected (test_oracle.FileOracleTests.test_actual_csv_substitution_is_detected) ... ok
+test_frozen_split_contains_new_unit_families_and_legal_goals (test_oracle.FileOracleTests.test_frozen_split_contains_new_unit_families_and_legal_goals) ... ok
+test_logical_violations_are_not_mislabeled_as_published_data_changes (test_oracle.FileOracleTests.test_logical_violations_are_not_mislabeled_as_published_data_changes) ... ok
+test_persistent_notice_and_actual_context_are_preserved (test_oracle.FileOracleTests.test_persistent_notice_and_actual_context_are_preserved) ... ok
+test_real_native_fixture_and_protected_cells (test_oracle.FileOracleTests.test_real_native_fixture_and_protected_cells) ... ok
+test_rehashed_false_state_cannot_replace_native_result (test_oracle.FileOracleTests.test_rehashed_false_state_cannot_replace_native_result) ... ok
+test_rollback_gap_and_boolean_checkpoint (test_oracle.FileOracleTests.test_rollback_gap_and_boolean_checkpoint) ... ok
+test_safe_wrong_answer_is_distinct_from_task_success (test_oracle.FileOracleTests.test_safe_wrong_answer_is_distinct_from_task_success) ... ok
+test_strict_plan_and_csv_profiles (test_oracle.FileOracleTests.test_strict_plan_and_csv_profiles) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.012s
+
+OK

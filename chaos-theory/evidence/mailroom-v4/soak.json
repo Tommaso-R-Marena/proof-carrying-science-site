@@ -1,0 +1,1232 @@
+{
+  "schemaVersion": 1,
+  "kind": "deterministic simulation soak, not human play or a browser memory-leak claim",
+  "build": "chaos-v4",
+  "rounds": 120,
+  "totalTicks": 540000,
+  "simulatedSeconds": 9000,
+  "elapsedMs": 41390.999007,
+  "memoryBefore": {
+    "rss": 43716608,
+    "heapTotal": 12054528,
+    "heapUsed": 8801888,
+    "external": 2803070,
+    "arrayBuffers": 374888
+  },
+  "memoryAfter": {
+    "rss": 118784000,
+    "heapTotal": 77852672,
+    "heapUsed": 39121968,
+    "external": 2891105,
+    "arrayBuffers": 462883
+  },
+  "memoryCaveat": "RSS/heap include Node garbage collection and test allocations. Bounded transient-state checks establish limits, not absence of all memory leaks.",
+  "invariants": {
+    "finiteInBoundsActors": true,
+    "boundedEffects": true,
+    "boundedShots": true,
+    "atMostOneMappingPerRound": true
+  },
+  "results": [
+    {
+      "seed": 1000,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "a4a840b0",
+      "elapsedMs": 819.9794929999999,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1001,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "239b8689",
+      "elapsedMs": 195.27537399999994,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1002,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "b11d9099",
+      "elapsedMs": 198.84983899999997,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1003,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "277a18ad",
+      "elapsedMs": 719.6586050000001,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1004,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "9bd84140",
+      "elapsedMs": 205.41587600000003,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1005,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "32eed064",
+      "elapsedMs": 177.96560099999988,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1006,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "f61efa82",
+      "elapsedMs": 670.8383950000002,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1007,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "33dfdd45",
+      "elapsedMs": 219.0855389999997,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1008,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "0a3a184a",
+      "elapsedMs": 187.40253600000005,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1009,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "a8163a92",
+      "elapsedMs": 672.9588869999998,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1010,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "87512111",
+      "elapsedMs": 198.75111600000037,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1011,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "2c2b570d",
+      "elapsedMs": 183.69132499999978,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1012,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "0cf7fb63",
+      "elapsedMs": 667.1341080000002,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1013,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "a41d4808",
+      "elapsedMs": 221.7389149999999,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1014,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "6f20787f",
+      "elapsedMs": 201.38469200000054,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1015,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "42b73086",
+      "elapsedMs": 663.368144,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1016,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "9627b2ed",
+      "elapsedMs": 214.29526999999962,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1017,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ee327768",
+      "elapsedMs": 181.7439290000002,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1018,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "94f34f2b",
+      "elapsedMs": 691.1162089999998,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1019,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "e9291f6b",
+      "elapsedMs": 180.883151,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1020,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "5ea60e17",
+      "elapsedMs": 170.72896299999957,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1021,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "6acecf11",
+      "elapsedMs": 721.0349430000006,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1022,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ec4e0bb8",
+      "elapsedMs": 198.46524200000022,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1023,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "f20d7dd8",
+      "elapsedMs": 175.05379600000015,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1024,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ee105a4b",
+      "elapsedMs": 643.0442309999999,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1025,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "331f8f27",
+      "elapsedMs": 210.45090600000003,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1026,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "10014ae9",
+      "elapsedMs": 161.26251899999988,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1027,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "63718117",
+      "elapsedMs": 632.5889829999996,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1028,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "dd947eee",
+      "elapsedMs": 204.133425,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1029,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "be1632b6",
+      "elapsedMs": 179.32767100000092,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1030,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "355b0f52",
+      "elapsedMs": 693.3692769999998,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1031,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "598e5f05",
+      "elapsedMs": 172.4587819999997,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1032,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "e2b5624b",
+      "elapsedMs": 160.3884510000007,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1033,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "017683fc",
+      "elapsedMs": 585.7995030000002,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1034,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "bcd2709e",
+      "elapsedMs": 215.29658899999959,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1035,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "65ff15f7",
+      "elapsedMs": 187.80730399999993,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1036,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "03d521b1",
+      "elapsedMs": 630.1706859999995,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1037,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "0ab2f812",
+      "elapsedMs": 198.8091800000002,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1038,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "b1e9e456",
+      "elapsedMs": 197.4368310000009,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1039,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "7111e22c",
+      "elapsedMs": 681.0190819999989,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1040,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "3702ffea",
+      "elapsedMs": 194.41932499999893,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1041,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "62bf85c8",
+      "elapsedMs": 193.50444100000095,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1042,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "e5c2ec02",
+      "elapsedMs": 662.7620610000013,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1043,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "66ba7442",
+      "elapsedMs": 194.82432599999993,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1044,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "408db9ad",
+      "elapsedMs": 175.2267670000001,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1045,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ea943d40",
+      "elapsedMs": 692.2799030000006,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1046,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "746e080e",
+      "elapsedMs": 189.74763800000073,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1047,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "0c409826",
+      "elapsedMs": 169.8673929999968,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1048,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "570ffb65",
+      "elapsedMs": 636.0606239999979,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1049,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "620aaf32",
+      "elapsedMs": 204.68850799999927,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1050,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "f772f6e5",
+      "elapsedMs": 220.1568589999988,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1051,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "a3f71186",
+      "elapsedMs": 667.777191000001,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1052,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "6ee36692",
+      "elapsedMs": 217.32299899999998,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1053,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ddce007a",
+      "elapsedMs": 209.27014299999792,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1054,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "f2fd2347",
+      "elapsedMs": 632.2276020000027,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1055,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "0214d1c3",
+      "elapsedMs": 189.27031799999895,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1056,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "33e67053",
+      "elapsedMs": 182.37857400000212,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1057,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ff2b96df",
+      "elapsedMs": 628.3878020000011,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1058,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "874bdcc6",
+      "elapsedMs": 192.7588250000008,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1059,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "f7253ccb",
+      "elapsedMs": 174.56643099999928,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1060,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "b6cc30b3",
+      "elapsedMs": 661.8941169999998,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1061,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "8e5f7969",
+      "elapsedMs": 186.91907300000094,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1062,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "d9827906",
+      "elapsedMs": 187.8433470000018,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1063,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "00ce583f",
+      "elapsedMs": 671.5720179999989,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1064,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "111ed6e0",
+      "elapsedMs": 190.47234599999865,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1065,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "2bc60e60",
+      "elapsedMs": 188.87979300000006,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1066,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "4b5654fc",
+      "elapsedMs": 633.7799279999999,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1067,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "d1d4925e",
+      "elapsedMs": 187.29197399999975,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1068,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "4a448375",
+      "elapsedMs": 175.47094600000128,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1069,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "74298a8b",
+      "elapsedMs": 609.9250809999976,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1070,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "973d516d",
+      "elapsedMs": 181.6834659999986,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1071,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "e2ab39f0",
+      "elapsedMs": 173.5337529999997,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1072,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "67344e89",
+      "elapsedMs": 622.6310950000006,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1073,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "c1e37db0",
+      "elapsedMs": 182.83530299999984,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1074,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "cd98fd25",
+      "elapsedMs": 179.88088699999935,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1075,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "eae2e095",
+      "elapsedMs": 607.8349339999986,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1076,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "77b43d1d",
+      "elapsedMs": 181.4856469999977,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1077,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "2c594a32",
+      "elapsedMs": 174.8547209999997,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1078,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "e0e2d285",
+      "elapsedMs": 673.3927989999975,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1079,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "73852759",
+      "elapsedMs": 220.46106599999985,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1080,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "546b0e90",
+      "elapsedMs": 189.3624869999985,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1081,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "e8b71d7f",
+      "elapsedMs": 701.7773390000002,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1082,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "2881386d",
+      "elapsedMs": 184.08746099999917,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1083,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "38d61eb3",
+      "elapsedMs": 181.07599000000118,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1084,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "49821ae4",
+      "elapsedMs": 642.0283400000008,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1085,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "a79e8879",
+      "elapsedMs": 191.23489599999812,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1086,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "5d11ec19",
+      "elapsedMs": 178.21326200000112,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1087,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "51821988",
+      "elapsedMs": 612.9301839999971,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1088,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "010b0a64",
+      "elapsedMs": 188.2251720000022,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1089,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "2523334f",
+      "elapsedMs": 186.3075699999972,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1090,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "7554a3b5",
+      "elapsedMs": 632.8805710000015,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1091,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "6ca61753",
+      "elapsedMs": 189.26465600000301,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1092,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ecfd1366",
+      "elapsedMs": 182.5520859999997,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1093,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "1b88f145",
+      "elapsedMs": 605.448177000002,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1094,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "0b214098",
+      "elapsedMs": 187.53539500000625,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1095,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "4d342b27",
+      "elapsedMs": 183.1641860000018,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1096,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "3e36ba76",
+      "elapsedMs": 684.0052179999984,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1097,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "b4676022",
+      "elapsedMs": 175.5462069999994,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1098,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "c5bb7f03",
+      "elapsedMs": 164.02744600000005,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1099,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "11b46575",
+      "elapsedMs": 577.3128829999987,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1100,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "f5ef2647",
+      "elapsedMs": 175.18363099999988,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1101,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "32d89912",
+      "elapsedMs": 172.16930500000308,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1102,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "07f00f7a",
+      "elapsedMs": 596.129909999996,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1103,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "dff3f136",
+      "elapsedMs": 184.74453899999935,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1104,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "9690000d",
+      "elapsedMs": 193.70446600000287,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1105,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "9ab698cb",
+      "elapsedMs": 690.8191240000015,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1106,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "84032d96",
+      "elapsedMs": 219.4728380000015,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1107,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "4c1d15b0",
+      "elapsedMs": 202.79635199999757,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1108,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "ece0ac58",
+      "elapsedMs": 648.4673840000032,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1109,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "1ee85344",
+      "elapsedMs": 215.70354300000326,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1110,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "11d14498",
+      "elapsedMs": 177.39225699999952,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1111,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "87f89703",
+      "elapsedMs": 610.8463639999973,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1112,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "2c111ba2",
+      "elapsedMs": 187.28159500000038,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1113,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "da52d59b",
+      "elapsedMs": 208.81483899999876,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1114,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "c076fc1d",
+      "elapsedMs": 624.5362300000052,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1115,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "5a45d2d2",
+      "elapsedMs": 184.219809000002,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1116,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "5875ecab",
+      "elapsedMs": 181.05356299999403,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1117,
+      "mission": "mailroom",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "01cc67ef",
+      "elapsedMs": 650.2426429999978,
+      "maxEffects": 4,
+      "maxShots": 1
+    },
+    {
+      "seed": 1118,
+      "mission": "vault",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "13ccbd8d",
+      "elapsedMs": 216.41989699999976,
+      "maxEffects": 2,
+      "maxShots": 1
+    },
+    {
+      "seed": 1119,
+      "mission": "reactor",
+      "ticks": 4500,
+      "status": "lost",
+      "checksum": "9b187431",
+      "elapsedMs": 198.5520930000057,
+      "maxEffects": 2,
+      "maxShots": 1
+    }
+  ]
+}

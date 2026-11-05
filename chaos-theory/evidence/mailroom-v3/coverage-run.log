@@ -1,0 +1,35 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v5.1.0 /tmp/chaos-theory-pr/chaos-theory
+      Coverage enabled with v8
+
+
+ Test Files  7 passed (7)
+      Tests  108 passed (108)
+   Start at  06:33:03
+   Duration  6.00s (tests 89%, import 8%, worker 3%, transform 1%)
+
+    Isolate  7 workers spawned · ~102ms startup each (spawn + environment, per file)
+             at least ~612ms faster with isolate: false — reuses workers across files instead of one per file
+
+ % Coverage report from v8
+-------------|---------|----------|---------|---------|-------------------------
+File         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------|---------|----------|---------|---------|-------------------------
+All files    |   96.02 |    93.23 |   95.23 |   96.68 |
+ live.ts     |   96.61 |     91.3 |     100 |   96.49 | 214-215
+ playtest.ts |   97.67 |    87.23 |      92 |   98.68 | 65
+ research.ts |   92.55 |    92.45 |   93.93 |   92.57 | 183,635,687-728
+ sim.ts      |   96.57 |    94.04 |   95.83 |   97.61 | ...5-996,1035-1047,1221
+ storage.ts  |     100 |       95 |     100 |     100 | 64,113-115
+-------------|---------|----------|---------|---------|-------------------------
+
+=============================== Coverage summary ===============================
+Statements   : 96.02% ( 1039/1082 )
+Branches     : 93.23% ( 813/872 )
+Functions    : 95.23% ( 160/168 )
+Lines        : 96.68% ( 933/965 )
+================================================================================

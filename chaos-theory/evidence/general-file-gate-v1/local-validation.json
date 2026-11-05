@@ -1,0 +1,22 @@
+{
+  "scope": "Current uncommitted implementation, before remote CI. This record is not independent validation.",
+  "typescriptTests": {
+    "passed": 164,
+    "failed": 0,
+    "testFiles": 14
+  },
+  "pythonTests": {
+    "existingPassed": 20,
+    "newPassed": 9,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "eslint": "passed",
+  "prettier": "passed",
+  "productionBuild": "passed",
+  "nativeFinalReplay": "native-replay-final.json",
+  "nativeDifferential": "native-integration.json",
+  "authoredPositiveControls": "authored-reachability.json",
+  "collectorRegression": "collector-regression.json",
+  "newInferenceCallsDuringValidation": 0
+}

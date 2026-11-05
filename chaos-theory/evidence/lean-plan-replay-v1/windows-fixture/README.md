@@ -1,0 +1,9 @@
+# Native boundary fixture cleanup after a Windows transport abort
+
+On `f6ccbf9`, [Windows job 126824898234](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/41901318017/job/126824898234) built the actual native Lean checker, then hit `WinError 10053` while testing a forbidden loopback POST. The old fixture exited its server context without calling `shutdown()` when an assertion/transport operation failed. Its still-running daemon listener accessed the closed socket during interpreter finalization, causing a second fatal Python stderr-lock error.
+
+`scripts/test_file_checker_native.py` now stops and joins the listener in `finally`, waits for request workers, and always closes the client connection. It labels forbidden-header cases without printing tokens or file contents. A deliberate exception inside the actual server fixture verifies cleanup; no positive Lean verdict is mocked. All 403 assertions, native-positive cases and existing timeouts remain intact. Production `desktop/app.py`, authority behavior and packaging configuration are unchanged.
+
+The primary Windows transport abort's cause remains unestablished. This patch fixes the demonstrated cleanup defect and improves diagnosis; it does not claim to prove that a future Windows connection cannot abort. Full Windows CI remains required. No retry or relaxed assertion substitutes for it.
+
+The Linux run in `local-native.json` executed 231 actual Lean positive checks, passed 41 negative controls and verified same-address restart. The checker came from the existing hash-validated `native-unified/bundle` cache, with the pinned core commit recorded in `source-and-bundle.json`. This is local Linux evidence, not a Windows result. The failure excerpt is selected and normalizes CRLF and trims trailing whitespace for readability; the linked original CI job retains the full log.

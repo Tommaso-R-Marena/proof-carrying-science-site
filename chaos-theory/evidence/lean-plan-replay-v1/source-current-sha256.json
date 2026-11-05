@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "kind": "unsigned source/config inventory; live-run versions are independently snapshotted",
+  "files": {
+    "formal/GuardedTools.lean": "0b8b98b447fb4b677aace6ed0558e27b4ba6b3563794c848db802a3c2ec1ad62",
+    "formal/GuardedToolsTable.lean": "052abbc9d31d8db93236c441cc4268388d759695ee9683ea8d3645ac77dda89d",
+    "formal/GuardedJson.lean": "9d530ec9208122d7f42765357949453426f375ad2207074193153bda4bdf7a7b",
+    "formal/GuardedJsonMain.lean": "316e473b888709eeff5aa036ed55864e64ca07cac32cab96996e47259a11f67e",
+    "scripts/lean-plan-process.ts": "645b0e55461c3085663c76bda93a42e0a478fe92bc195f8af2591ddd96a0fcae",
+    "scripts/lean-recovery-session.ts": "e91b9b21a57793b585bcb20cb2672816ef6ca4d86c37e3a06c7877e0d0e4e65e",
+    "scripts/lean-recovery-bridge.ts": "a02107a97de4d9cf486d0032f6cc337f952c396a8e44cf02a6efb0c46c6d0011",
+    "scripts/test-lean-plan-runtime.ts": "b317de18129a8d8dbe1179f8aad83e01e811169c9c1080b1df5873529cb386b2",
+    "scripts/replay-lean-gated-evidence.ts": "e6c5385f7d944c1fa69df060be9a938ea03c777ff5de39b61974a28bbdfe0c56",
+    "scripts/guard-lean-differential.ts": "916e2adfbc7e018f6f487e86ee5d2bc86e33403a42bc01a23114ee29b5a85a58",
+    "scripts/local_model_recovery.py": "91181140ec83d7ab03d543d7219db06b49f315b51d32320857a234ec1f684d41",
+    "scripts/local_lean_runtime.py": "a6f6e33e50dc2d679cf8da232c51abbe49127acab9b4f552ae8371070ab93db7",
+    "scripts/recovery-session.ts": "547dcf772e4d09a6583883fb980825f67ea80c68a44248b3cdf280c05e8239f4",
+    "scripts/local_runtime.py": "508401f8ccfbf602edd1c4103655975f2b1278793ae2f6f07efbc96246bbeb09",
+    "src/research.ts": "4dc3f376607fb354280d14e213f9eb683286f3e51a7343e7c9ea58124042e237",
+    "src/schema.ts": "e9ba3774736a14e6a196fdb1cedd9a00c1573fb26d49e9538d81a144e4744ec3",
+    "../.github/workflows/chaos-model-evidence.yml": "6b68d6d778383ecf97c6ffde0272623e5cbf110573ec64c5730514fa6bbacf37"
+  }
+}

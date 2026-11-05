@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "physicalWorkspaces": 38,
+  "validRefinedHistories": 37,
+  "intentionalLowerLevelCounterexamples": 1,
+  "semanticComputations": 72,
+  "archivedModelProposals": 48,
+  "newInferenceCalls": 0,
+  "nativeLeanExecutedByPython": false
+}

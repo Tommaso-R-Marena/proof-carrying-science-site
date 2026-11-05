@@ -1,0 +1,42 @@
+{
+  "build": "chaos-v4",
+  "kind": "tested reproducibility, not an origin or universal determinism theorem",
+  "comparisons": [
+    {
+      "route": "sorter",
+      "byteIdentical": true,
+      "replays": [
+        {
+          "engine": "chromium",
+          "ticks": 1485,
+          "finalChecksum": "5809b48c",
+          "sha256": "a0b295e2af3a34a0a8b935423cdd20e044361c01dd83f1a2c25321919f52a0eb"
+        },
+        {
+          "engine": "firefox",
+          "ticks": 1485,
+          "finalChecksum": "5809b48c",
+          "sha256": "a0b295e2af3a34a0a8b935423cdd20e044361c01dd83f1a2c25321919f52a0eb"
+        }
+      ]
+    },
+    {
+      "route": "carried",
+      "byteIdentical": true,
+      "replays": [
+        {
+          "engine": "chromium",
+          "ticks": 1748,
+          "finalChecksum": "aeba0276",
+          "sha256": "1e0ba45134f3bf67621caf2b2203ebb0d0a3c6e723e5a538c21d449dfc9c1a82"
+        },
+        {
+          "engine": "firefox",
+          "ticks": 1748,
+          "finalChecksum": "aeba0276",
+          "sha256": "1e0ba45134f3bf67621caf2b2203ebb0d0a3c6e723e5a538c21d449dfc9c1a82"
+        }
+      ]
+    }
+  ]
+}

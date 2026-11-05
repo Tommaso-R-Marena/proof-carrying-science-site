@@ -1,0 +1,22 @@
+{
+  "kind": "silent automated input replay, not human feedback",
+  "build": "chaos-v3",
+  "seed": 42,
+  "ticks": 1485,
+  "gameSeconds": 24.75,
+  "banked": 3,
+  "hearts": 3,
+  "methods": [
+    "redirect",
+    "intercept"
+  ],
+  "secondRoute": "sorter",
+  "escaped": true,
+  "checksum": "6dd3e7cf",
+  "matchesVerifiedReplay": true,
+  "playbackTiming": {
+    "wallMs": 31390.89999999851,
+    "inputTicks": 1485
+  },
+  "renderCaveat": "One input tick per animation frame, nominally 60 fps; actual wall duration is reported separately. Rendering hit-stop does not delay the input feed. No audio is captured."
+}

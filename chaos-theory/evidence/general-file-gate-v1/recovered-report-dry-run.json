@@ -1,0 +1,8 @@
+{
+  "derivedReportHash": "2b557f4b77429faeb4fbfce0465d092625d33c79581f9e564260474b3690c72f",
+  "actualSavedModelCalls": 236,
+  "savedEpisodes": 96,
+  "newInferenceCalls": 0,
+  "validationPending": true,
+  "next": "Run reconstruct-ledger.ts, then independent Python and fresh native replay. This tool makes no affirmative Lean verdict."
+}

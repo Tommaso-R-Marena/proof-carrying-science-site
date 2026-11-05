@@ -3,7 +3,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
 const base=process.env.PCS_BASE_URL||'http://127.0.0.1:8788';
 if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).origin))throw Error('Layout checks require an isolated local server');
 (async()=>{
- const browser=await chromium.launch({executablePath:process.env.PCS_CHROMIUM||'/usr/bin/chromium',args:['--no-sandbox']});const rows=[];
+ const browser=await chromium.launch({executablePath:process.env.PCS_CHROMIUM||'/usr/bin/chromium',args:['--no-sandbox']});const rows=[],omegaReadiness=[];
  try{
  for(const width of [320,390,768,1440]){
   const context=await browser.newContext({viewport:{width,height:900}});
@@ -45,7 +45,21 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   if(process.env.PCS_LAYOUT_OUTPUT){fs.mkdirSync(process.env.PCS_LAYOUT_OUTPUT,{recursive:true});await page.screenshot({path:path.join(process.env.PCS_LAYOUT_OUTPUT,`game-${width}.png`),fullPage:true});}
   await page.goto(base+'/arena-proof-quest.html');await page.locator('#questExtraTools > summary').click();await page.locator('#questSchedule').click();
   if(!(await page.locator('#questScheduleReport').innerText()).includes('parallel stages'))throw Error('Dependency schedule missing');
-  await page.goto(base+'/omega-workspace.html');await page.locator('#omegaStatus').filter({hasText:'Mapped 1 explicit claim'}).waitFor();
+  // Project mapping precedes asynchronous checkpoint validation. Delay real bytes to
+  // exercise that boundary, then await the existing all-pins-validated control.
+  // No model output, receipt or affirmative verifier result is substituted.
+  const checkpointURL=base+'/omega/nonlinear-v2.json';let releaseCheckpoint;
+  const checkpointGate=new Promise(resolve=>{releaseCheckpoint=resolve;});
+  const checkpointRequested=page.waitForRequest(request=>request.url()===checkpointURL);
+  await page.route(checkpointURL,async route=>{const response=await route.fetch();await checkpointGate;await route.fulfill({response});});
+  try{
+   await page.goto(base+'/omega-workspace.html');await page.locator('#omegaStatus').filter({hasText:'Mapped 1 explicit claim'}).waitFor();
+   await checkpointRequested;
+   if(!(await page.locator('#omegaCompare').isDisabled()))throw Error('Unvalidated checkpoint enabled learned comparison');
+   releaseCheckpoint();
+   await page.waitForFunction(()=>document.getElementById('omegaCompare')?.disabled===false);
+   omegaReadiness.push({width,real_checkpoint_delayed:true,comparison_blocked_before_validation:true,pinned_models_ready_before_search:true,positive_verdict_substituted:false});
+  }finally{releaseCheckpoint();await page.unroute(checkpointURL);}
   const original=await page.locator('#omegaMeaningSource').innerText();
   for(const strategy of ['adaptive','nonlinear']){
    await page.locator('#omegaStrategy').selectOption(strategy);await page.locator('#omegaRun').click();
@@ -53,6 +67,7 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
    const pending=page.waitForEvent('download');await page.locator('#omegaEpisode').click();const download=await pending;
    const e=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
    if(e.format!=='pcs-omega-adaptive-episode-v2'||!e.solution||e.pcs_authority!==false||e.lean_kernel_checked!==false)throw Error('Adaptive download authority or solution invalid');
+   const {replayAdaptive}=await import('../public/omega-adaptive.mjs');if(await replayAdaptive(e)!==true)throw Error('Adaptive browser trajectory failed independent Node replay');
    if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,`episode-${strategy}-${width}.json`),JSON.stringify(e,null,2));
   }
   await page.locator('#omegaRepair').click();
@@ -120,7 +135,7 @@ if(!['http://127.0.0.1:8788','http://127.0.0.1:4173'].includes(new URL(base).ori
   await context.close();
  }
  const failures=rows.filter(r=>r.status!==200||r.scrollWidth>r.width+2||r.clashes.length||r.errors.length);
- if(process.env.PCS_LAYOUT_OUTPUT)fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,'layout.json'),JSON.stringify(rows,null,2));
- console.log(JSON.stringify({pages:rows.length,viewports:[320,390,768,1440],failures}));if(failures.length)process.exitCode=1;
+ if(process.env.PCS_LAYOUT_OUTPUT){fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,'layout.json'),JSON.stringify(rows,null,2));fs.writeFileSync(path.join(process.env.PCS_LAYOUT_OUTPUT,'omega-checkpoint-readiness.json'),JSON.stringify(omegaReadiness,null,2));}
+ console.log(JSON.stringify({pages:rows.length,viewports:[320,390,768,1440],omega_checkpoint_readiness:omegaReadiness,failures}));if(failures.length)process.exitCode=1;
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,0 +1,34 @@
+{
+  "parentCommit": "991733d5dcb488eb3636b992a9953333e1e0b011",
+  "frozenImplementationCommit": "b77d17e585c9dabcd485b7efbf96f312a1eedc96",
+  "newActualModelCalls": 96,
+  "priorActualModelCalls": 478,
+  "totalRecordedActualModelCalls": 574,
+  "tasks": 12,
+  "episodes": 48,
+  "tools": {
+    "episodes": 24,
+    "completed": 0,
+    "executedWrites": 0
+  },
+  "intent": {
+    "episodes": 24,
+    "completed": 0,
+    "executedWrites": 4,
+    "wrongWrittenEpisodes": 2,
+    "malformedProposals": 44
+  },
+  "unsafePublishedVersions": 0,
+  "originalExecutionLedgerRetained": true,
+  "originalExecutionLedgerRecords": 248,
+  "newIntentTheorems": 9,
+  "newConversionTheorems": 9,
+  "totalNamedTheorems": 51,
+  "intentDifferentialCases": 94,
+  "conversionParserArithmeticCases": 26,
+  "authoredCorrectConversions": 12,
+  "archivedNumericProposalsFiltered": 48,
+  "archivedProposalsAcceptedByConversionGate": 0,
+  "newInferenceCallsDuringArchivalFiltering": 0,
+  "claimLimit": "No task completion gain demonstrated. Conditional exact task verification and deterministic execution; not model learning, general AI safety or production authority."
+}

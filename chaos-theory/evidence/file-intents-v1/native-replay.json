@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "actualLean": true,
+  "episodes": 48,
+  "recompiledIntents": 48,
+  "nativeExecutionRecords": 248,
+  "originalNativeLedgerRetained": true,
+  "newInferenceCalls": 0
+}

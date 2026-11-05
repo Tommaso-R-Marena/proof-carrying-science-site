@@ -1,0 +1,10 @@
+{
+  "format": "file-gate-collection-recovery-v1",
+  "originalProtocolHash": "681c6289c9259f1de9548b66db89c0b6d00521f01e95367efbf9a0cce88fd3d3",
+  "originalNativeLedgerRetained": false,
+  "nativeLedgerProvenance": "fresh-lean-reconstruction",
+  "modelCallsRecovered": 236,
+  "episodesRecovered": 96,
+  "newInferenceCalls": 0,
+  "reason": "The original final native-ledger response exceeded the 1 MB bridge response limit after all episodes completed. Original calls, episode records and CSV artifacts were preserved. Native verdicts below will be newly computed, not claimed to be the original pre-publication ledger."
+}

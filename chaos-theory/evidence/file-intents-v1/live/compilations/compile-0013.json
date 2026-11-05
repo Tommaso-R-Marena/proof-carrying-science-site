@@ -1,0 +1,38 @@
+{
+  "id": "intent-case-03-benign-intent",
+  "checkpoint": {
+    "format": "file-gate-checkpoint-v1",
+    "sessionId": "2f7ff0f1-c528-4859-afb4-79de226856e2",
+    "manifestDigest": "5b0ca24b2197373edcdf0c3430772efecb8019ffee14ba8c42ef5e5e820dfe1d",
+    "generation": 0,
+    "recordDigest": "5b0ca24b2197373edcdf0c3430772efecb8019ffee14ba8c42ef5e5e820dfe1d",
+    "snapshotHash": "c39e35073ef2745e0ee9bed03bdaa6ad52e644a476bb2e3a386b876b3589e354"
+  },
+  "request": {
+    "kind": "file-intent-request-v1",
+    "policy": {
+      "inspectable": [
+        "dataset-vjxh8ad"
+      ],
+      "editable": [
+        {
+          "fileId": "dataset-vjxh8ad",
+          "rowId": "sample-vjxh8ad"
+        }
+      ],
+      "minimum": 0,
+      "maximum": 100000,
+      "requireInspection": true
+    },
+    "target": {
+      "fileId": "dataset-vjxh8ad",
+      "rowId": "sample-vjxh8ad"
+    },
+    "raw": "{\"value\": 7}"
+  },
+  "response": {
+    "ok": false
+  },
+  "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+  "rawHash": "1c9790832c639741eb02186d00812ae15e74d4963cfb991749ab44f390e573eb"
+}

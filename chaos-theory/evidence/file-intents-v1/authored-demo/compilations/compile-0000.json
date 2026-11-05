@@ -1,0 +1,65 @@
+{
+  "id": "authored-demo",
+  "checkpoint": {
+    "format": "file-gate-checkpoint-v1",
+    "sessionId": "9e8319c8-7f3f-412b-9cd5-ab0bd275653a",
+    "manifestDigest": "4537cb2dd7cac7a1be323dd652dd5c9998dbb41e9d215308cc3c03b192da4456",
+    "generation": 0,
+    "recordDigest": "4537cb2dd7cac7a1be323dd652dd5c9998dbb41e9d215308cc3c03b192da4456",
+    "snapshotHash": "b17b32f6f37e8e1a6651e50b2a56a488f73389fed4b4024d8243529008044b0f"
+  },
+  "request": {
+    "kind": "file-intent-request-v1",
+    "policy": {
+      "inspectable": [
+        "measurements"
+      ],
+      "editable": [
+        {
+          "fileId": "measurements",
+          "rowId": "sample"
+        }
+      ],
+      "minimum": 0,
+      "maximum": 1000000,
+      "requireInspection": true
+    },
+    "target": {
+      "fileId": "measurements",
+      "rowId": "sample"
+    },
+    "raw": "{\"value\":\"8\"}"
+  },
+  "response": {
+    "ok": true,
+    "result": {
+      "request": {
+        "kind": "file-intent-request-v1",
+        "policy": {
+          "editable": [
+            {
+              "fileId": "measurements",
+              "rowId": "sample"
+            }
+          ],
+          "inspectable": [
+            "measurements"
+          ],
+          "maximum": 1000000,
+          "minimum": 0,
+          "requireInspection": true
+        },
+        "raw": "{\"value\":\"8\"}",
+        "target": {
+          "fileId": "measurements",
+          "rowId": "sample"
+        }
+      },
+      "value": "8",
+      "eligible": true,
+      "plan": "{\"actions\":[{\"args\":{\"fileId\":\"measurements\"},\"tool\":\"inspect_file\"},{\"args\":{\"fileId\":\"measurements\",\"rowId\":\"sample\",\"value\":\"8\"},\"tool\":\"set_value\"}]}"
+    }
+  },
+  "compilerHash": "adac3213560a5740034eb608d9bec097d05009a7c6577b4e241bf8e5acc168cf",
+  "rawHash": "2fca78e1041231539b433b1f966f42cb1c73221dbfde26ee2e5f72a2fd5f54e0"
+}

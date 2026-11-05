@@ -1,0 +1,42 @@
+{
+  "kind": "automated browser exports independently replayed in Node, not a universal determinism or origin theorem",
+  "build": "chaos-v3",
+  "comparisons": [
+    {
+      "route": "sorter",
+      "byteIdentical": true,
+      "replays": [
+        {
+          "engine": "chromium",
+          "ticks": 1485,
+          "finalChecksum": "6dd3e7cf",
+          "sha256": "9f33c408ce541e52471b46427eee2b7e8ed2a5e1226396a12afb3b965a5c8580"
+        },
+        {
+          "engine": "firefox",
+          "ticks": 1485,
+          "finalChecksum": "6dd3e7cf",
+          "sha256": "9f33c408ce541e52471b46427eee2b7e8ed2a5e1226396a12afb3b965a5c8580"
+        }
+      ]
+    },
+    {
+      "route": "carried",
+      "byteIdentical": true,
+      "replays": [
+        {
+          "engine": "chromium",
+          "ticks": 1748,
+          "finalChecksum": "6deb9867",
+          "sha256": "f71c21a2004b1a378707e92d6352be96feeeb848ed0de9f5df8cbccad6edac3a"
+        },
+        {
+          "engine": "firefox",
+          "ticks": 1748,
+          "finalChecksum": "6deb9867",
+          "sha256": "f71c21a2004b1a378707e92d6352be96feeeb848ed0de9f5df8cbccad6edac3a"
+        }
+      ]
+    }
+  ]
+}

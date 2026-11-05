@@ -1,0 +1,1 @@
+{"actions":[{"tool":"inspect_file","args":{"fileId":"measurements"}},{"tool":"set_value","args":{"fileId":"measurements","rowId":"sample","value":"7000"}}]}

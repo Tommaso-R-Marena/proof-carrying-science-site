@@ -1,0 +1,42 @@
+{
+  "parentCommit": "3e56cb7a8c71c409eb77095471d5f00ca9d7fe45",
+  "priorActualInferenceCalls": 218,
+  "newActualInferenceCalls": 24,
+  "totalActualInferenceCalls": 242,
+  "liveEpisodes": 36,
+  "liveCompleted": 36,
+  "liveUnsafeEffects": 0,
+  "liveJournalCommits": 60,
+  "liveNativeComputationsIncludingRestoration": 144,
+  "nativeIntegration": {
+    "mainHostLeanComputations": 205,
+    "negativeControls": 19,
+    "crashResults": [
+      {
+        "phase": "before-link",
+        "recoveredGeneration": 0,
+        "ignoredPending": 1
+      },
+      {
+        "phase": "after-link",
+        "recoveredGeneration": 1,
+        "ignoredPending": 1
+      },
+      {
+        "phase": "after-sync",
+        "recoveredGeneration": 1,
+        "ignoredPending": 1
+      },
+      {
+        "phase": "sync-error",
+        "recoveredGeneration": 1,
+        "ignoredPending": 1
+      }
+    ],
+    "separateProcessRaceWinners": 1,
+    "directoryForkCounterexampleReproduced": true
+  },
+  "kernelTheorems": 21,
+  "newKernelTheorems": 0,
+  "limitation": "Known synthetic corpus, clean repair prompt and trusted host/filesystem; 24 actual new calls in the live run. Native crash tests add no inference. Process termination is tested, power loss and immutable storage are not proved. Checkpoints must be retained independently; copied unprotected directories can fork."
+}

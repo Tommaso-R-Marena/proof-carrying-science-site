@@ -1,0 +1,25 @@
+test_checkpoint_substitution_and_boolean_generation (test_durable_replay.DurableReplayTests.test_checkpoint_substitution_and_boolean_generation) ... ok
+test_duplicate_and_noncanonical_bytes (test_durable_replay.DurableReplayTests.test_duplicate_and_noncanonical_bytes) ... ok
+test_genuine_receipts_and_temporal_order (test_durable_replay.DurableReplayTests.test_genuine_receipts_and_temporal_order) ... ok
+test_initial_boolean_generation_is_not_zero (test_durable_replay.DurableReplayTests.test_initial_boolean_generation_is_not_zero) ... ok
+test_rehashed_equivalent_text_changes_identity (test_durable_replay.DurableReplayTests.test_rehashed_equivalent_text_changes_identity) ... ok
+test_rehashed_false_state (test_durable_replay.DurableReplayTests.test_rehashed_false_state) ... ok
+test_retained_checkpoint_detects_truncation (test_durable_replay.DurableReplayTests.test_retained_checkpoint_detects_truncation) ... ok
+test_utf16_key_sorting_matches_javascript_profile (test_durable_replay.DurableReplayTests.test_utf16_key_sorting_matches_javascript_profile) ... ok
+test_bad_shapes_never_execute (test_real_model_replay.ReplayTests.test_bad_shapes_never_execute) ... ok
+test_nonfinite_negative_zero_and_unicode_tool_bounds (test_real_model_replay.ReplayTests.test_nonfinite_negative_zero_and_unicode_tool_bounds) ... ok
+test_overwritten_bad_delivery (test_real_model_replay.ReplayTests.test_overwritten_bad_delivery) ... ok
+test_rehashed_false_summary_is_rejected (test_real_model_replay.ReplayTests.test_rehashed_false_summary_is_rejected) ... ok
+test_rehashed_prompt_substitution_is_rejected (test_real_model_replay.ReplayTests.test_rehashed_prompt_substitution_is_rejected) ... ok
+test_repair_order (test_real_model_replay.ReplayTests.test_repair_order) ... ok
+test_child_processes_receive_network_context_without_credentials (test_recovery_replay.RecoveryReplayTests.test_child_processes_receive_network_context_without_credentials) ... ok
+test_failed_transport_consumes_budget_without_retry (test_recovery_replay.RecoveryReplayTests.test_failed_transport_consumes_budget_without_retry) ... ok
+test_rehashed_false_success_is_rejected (test_recovery_replay.RecoveryReplayTests.test_rehashed_false_success_is_rejected) ... ok
+test_rehashed_stale_obligation_and_matching_model_prompt_are_rejected (test_recovery_replay.RecoveryReplayTests.test_rehashed_stale_obligation_and_matching_model_prompt_are_rejected) ... ok
+test_replay_rejects_invented_success_and_boolean_generation (test_recovery_replay.RecoveryReplayTests.test_replay_rejects_invented_success_and_boolean_generation) ... ok
+test_replay_rejects_reordered_chain_and_post_completion_write (test_recovery_replay.RecoveryReplayTests.test_replay_rejects_reordered_chain_and_post_completion_write) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.107s
+
+OK

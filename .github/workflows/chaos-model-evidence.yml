@@ -1,0 +1,103 @@
+name: Chaos real-model evidence replay
+on:
+  pull_request:
+    paths: ['chaos-theory/**', '.github/workflows/chaos-model-evidence.yml']
+  push:
+    branches: [main]
+    paths: ['chaos-theory/**', '.github/workflows/chaos-model-evidence.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: chaos-real-model-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real-model-evidence-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: chaos-theory
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: chaos-theory/package-lock.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - run: npm ci --no-audit --no-fund
+      - name: Independent Python trace, prompt-chain and temporal checks
+        run: |
+          set -eu
+          python3 -m unittest discover -s scripts -p 'test_*replay.py' -v
+          python3 scripts/replay_real_model.py evidence/model-safety-v1/one-shot
+          python3 scripts/replay_real_model.py evidence/model-safety-v1/compromised-proposer
+          python3 scripts/local_model_interactive.py --verify evidence/model-safety-v1/interactive
+          python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/state-only
+          python3 scripts/local_model_recovery.py --verify evidence/model-recovery-v1/history
+          python3 scripts/local_model_recovery.py --verify evidence/lean-plan-replay-v1/live
+          python3 scripts/local_model_recovery.py --verify evidence/durable-recovery-v1/live
+      - name: Re-execute actual model plans through current TypeScript guard
+        run: |
+          set -eu
+          npx --no-install tsx scripts/replay-model-evidence.ts
+          npx --no-install tsx scripts/replay-recovery-evidence.ts
+  guarded-tools-lean:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: chaos-theory
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: chaos-theory/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Exact Lean toolchain and kernel proof build
+        shell: bash
+        run: |
+          set -euo pipefail
+          source ../scripts/activate_lean_428.sh
+          mkdir -p results
+          lean formal/GuardedTools.lean | tee results/guarded-tools-axioms.log
+      - name: Exhaustive bounded Lean and implementation correspondence
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --no-install tsx scripts/guard-lean-differential.ts | tee results/guarded-tools-differential.json
+      - name: Actual Lean raw-plan gate, adversarial parsing and archived model trajectories
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --no-install tsx scripts/test-lean-plan-runtime.ts | tee results/lean-plan-integration.json
+          npx --no-install tsx scripts/replay-lean-gated-evidence.ts | tee results/lean-plan-live-replay.json
+      - name: Durable real-Lean sessions, killed processes and competing writers
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --no-install tsx scripts/test-durable-recovery.ts | tee results/durable-journal-integration.json
+          npx --no-install tsx scripts/replay-durable-model-evidence.ts | tee results/durable-model-replay.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: guarded-tools-lean-${{ github.sha }}
+          path: |
+            chaos-theory/results/guarded-tools-*
+            chaos-theory/results/lean-plan-integration.json
+            chaos-theory/results/lean-plan-live-replay.json
+            chaos-theory/results/lean-plan-*/manifest.json
+            chaos-theory/results/durable-journal-integration.json
+            chaos-theory/results/durable-model-replay.json
+            chaos-theory/results/durable-recovery-*/report.json
+            chaos-theory/results/durable-recovery-*/native-ledger.json
+          retention-days: 14

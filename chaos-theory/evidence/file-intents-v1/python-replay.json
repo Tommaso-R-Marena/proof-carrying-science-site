@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "actualModelCalls": 96,
+  "episodes": 48,
+  "compilerRecords": 48,
+  "nativeLedgerRecords": 248,
+  "originalNativeLedgerRetained": true,
+  "nativeLeanExecutedByPython": false,
+  "newInferenceCalls": 0,
+  "warning": "Archived output consistency, not inference reproduction, origin authentication or proof of scientific validity."
+}

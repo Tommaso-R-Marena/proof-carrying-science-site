@@ -1,0 +1,137 @@
+@import url("./ui.css");
+:root {
+  font-family: ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  color: #f1f5ff;
+  background: #101526;
+  font-synthesis: none;
+  font-size: 16px;
+  --muted: #aab9d0;
+  --mint: #8df7be;
+  --pink: #ff86be;
+  --yellow: #ffdb7a;
+  --line: #34415b;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
+}
+button {
+  border: 1px solid #43516a;
+  background: #26324a;
+  color: inherit;
+  border-radius: 12px;
+  padding: 0.8rem 1.1rem;
+  font-weight: 750;
+  transition:
+    background 0.12s,
+    transform 0.12s;
+}
+button:hover {
+  background: #354663;
+}
+button:active {
+  transform: translateY(2px);
+}
+button.primary {
+  background: var(--mint);
+  color: #142a2a;
+  border-color: var(--mint);
+  box-shadow: 0 5px 0 #316759;
+}
+button.primary:hover {
+  background: #baffdb;
+}
+button.ghost {
+  background: transparent;
+}
+.eyebrow {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.19em;
+  font-weight: 800;
+  color: var(--mint);
+}
+.muted {
+  color: var(--muted);
+}
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+h1 {
+  font-size: clamp(3.7rem, 10vw, 7.5rem);
+  letter-spacing: -0.075em;
+  line-height: 0.86;
+  margin-bottom: 1.3rem;
+}
+h2 {
+  font-size: clamp(1.7rem, 4vw, 2.8rem);
+  letter-spacing: -0.045em;
+  margin-bottom: 0.7rem;
+}
+h3 {
+  font-size: 1.2rem;
+}
+p {
+  line-height: 1.6;
+}
+a {
+  color: var(--mint);
+}
+.tag {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--muted);
+}
+.hidden,
+[hidden] {
+  display: none !important;
+}
+.contrast {
+  --muted: #eef2ff;
+  --line: #c2cce0;
+}
+.large-text {
+  font-size: 19px;
+}
+.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "kind": "intermediate development counterexample; not a supported final-build replay",
+  "browserFirstChecksum": {
+    "tick": 60,
+    "value": "361c7726"
+  },
+  "nodeFirstChecksum": {
+    "tick": 60,
+    "value": "f01f53df"
+  },
+  "browserFinal": "57ffcc9d",
+  "nodeFinal": "57ffcc9d",
+  "interpretation": "Raw floating-point state hashing differed across engines. Final agreement alone did not establish replay agreement."
+}

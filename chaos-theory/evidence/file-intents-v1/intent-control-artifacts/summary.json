@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "realLeanCompiler": true,
+  "compilerDifferentialCases": 94,
+  "independentPythonCases": 94,
+  "newTheorems": 9,
+  "totalTheorems": 42,
+  "actualCsvWrites": 14,
+  "authoredGoalWitnesses": 12,
+  "acceptedSafeWrongAnswer": true,
+  "sourceTamperRejected": true,
+  "output": "/tmp/pcs-file-gate-pr/chaos-theory/results/intent-tests-dZwBCg",
+  "newInferenceCalls": 0
+}

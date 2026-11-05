@@ -1,0 +1,15 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 test
+> vitest run
+
+
+ RUN  v5.1.0 /tmp/chaos-theory-pr/chaos-theory
+
+
+ Test Files  7 passed (7)
+      Tests  108 passed (108)
+   Start at  07:05:50
+   Duration  3.28s (tests 80%, import 17%, transform 2%, worker 2%)
+
+    Isolate  7 workers spawned · ~112ms startup each (spawn + environment, per file)
+             at least ~671ms faster with isolate: false — reuses workers across files instead of one per file

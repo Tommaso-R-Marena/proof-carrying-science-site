@@ -1,0 +1,66 @@
+name: Chaos Theory playtest
+on:
+  pull_request:
+    paths: ['chaos-theory/**', '.github/workflows/chaos-theory.yml']
+  push:
+    branches: [main]
+    paths: ['chaos-theory/**', '.github/workflows/chaos-theory.yml']
+permissions:
+  contents: read
+concurrency:
+  group: chaos-theory-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  game-and-synthetic-research:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: chaos-theory
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: chaos-theory/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck && npm run lint && npm run format:check
+      - run: npm run test:coverage
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium firefox
+      - run: npm run test:e2e
+      - run: npm run test:e2e:firefox
+      - run: npm run playtest:analyze -- results/playtest-chromium.json
+      - run: npm run research:workshop -- --pack results/notice-pack-chromium.json
+      - run: npm run research:workshop -- --pack results/replay-notice-pack-chromium.json
+      - run: npm run research:campaign
+      - run: npm run test:production
+      - run: npm run test:portable
+      - run: npm run research:offline && npm run research:check && npm run test:soak
+      - name: Preserve reports and browser evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: chaos-theory-playtest-${{ github.sha }}
+          path: |
+            chaos-theory/evidence/
+            chaos-theory/results/
+            chaos-theory/coverage/coverage-summary.json
+            chaos-theory/playwright-report/
+            chaos-theory/test-results/
+          retention-days: 14
+
+      - name: Downloadable offline game
+        if: success()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: odd-post-offline-${{ github.sha }}
+          path: |
+            chaos-theory/results/portable-build-*/odd-post.html
+            chaos-theory/results/portable-build-*/OPEN_ME_FIRST.txt
+            chaos-theory/results/portable-build-*/build-report.json
+            chaos-theory/results/portable-build-*/smoke-report.json
+          retention-days: 14

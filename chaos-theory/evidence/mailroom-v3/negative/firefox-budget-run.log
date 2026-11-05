@@ -1,0 +1,62 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 test:e2e:firefox
+> playwright test --project firefox
+
+[WebServer] (node:89954) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:89972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [firefox] › tests/e2e/game.spec.ts:111:1 › title, menus, settings, privacy and local persistence (2.8s)
+  ✓   2 [firefox] › tests/e2e/game.spec.ts:139:1 › visible keyboard movement, aim, gadgets and pause (2.7s)
+  ✘   3 [firefox] › tests/e2e/game.spec.ts:175:3 › mailroom completed through valid inputs (sorter); export scenario and fixture comparison (10.7s)
+(node:90258) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 [firefox] › tests/e2e/game.spec.ts:175:3 › mailroom completed through valid inputs (carried); export scenario and fixture comparison (13.7s)
+  ✓   5 [firefox] › tests/e2e/game.spec.ts:407:1 › vault complete through valid movement, notice, collection and escape (2.9s)
+  ✓   6 [firefox] › tests/e2e/game.spec.ts:427:1 › reactor complete with three actual switches and core interaction (3.0s)
+  ✓   7 [firefox] › tests/e2e/game.spec.ts:442:1 › timeout, retry and deterministic reset (4.4s)
+  ✓   8 [firefox] › tests/e2e/game.spec.ts:456:1 › optional lab has no fabricated model results and no data uploads (739ms)
+  ✓   9 [firefox] › tests/e2e/game.spec.ts:468:1 › narrow phone layout and genuine touch controls (2.6s)
+  ✓  10 [firefox] › tests/e2e/game.spec.ts:518:1 › keyboard focus reaches primary action and all buttons have names (1.5s)
+  ✓  11 [firefox] › tests/e2e/game.spec.ts:543:1 › storage denied still gives a playable game (1.8s)
+  ✓  12 [firefox] › tests/e2e/game.spec.ts:555:1 › optional local playtest is consented, skippable, exportable and deletable without uploads (5.7s)
+
+
+  1) [firefox] › tests/e2e/game.spec.ts:175:3 › mailroom completed through valid inputs (sorter); export scenario and fixture comparison
+
+    Error: {"version":1,"build":"chaos-v3","mission":"mailroom","seed":42,"rng":2836018348,"player":{"x":739.6980438232422,"y":218.4691619873047,"vx":122.08950805664062,"vy":-53.962249755859375,"hp":2,"invulnerable":0,"dashTicks":0,"dashCooldown":56,"gadget":0,"cooldowns":[33,34,0,0],"aimX":1,"aimY":0},"bots":[{"id":"courier","kind":"courier","x":814.77294921875,"y":185.28688049316406,"state":"stunned","stun":178,"targetX":850,"targetY":130,"carrying":true,"timer":0,"patrol":0,"facing":-0.6837005615234375,"awareness":0,"arriving":0,"reaction":"parcel-gone","reactionTicks":0,"lookPause":0,"noticeSeen":false,"decoySeen":-1,"curiosity":0},{"id":"sentinel","kind":"sentinel","x":736.0140991210938,"y":317.6049346923828,"state":"stunned","stun":99,"targetX":708.0032196044922,"targetY":306.6657257080078,"carrying":false,"timer":0,"patrol":2,"facing":3.139404296875,"awareness":24,"arriving":0,"reaction":"doughnut","reactionTicks":0,"lookPause":0,"noticeSeen":false,"decoySeen":38,"curiosity":6},{"id":"technician","kind":"technician","x":496.87518310546875,"y":288.2725067138672,"state":"stunned","stun":4,"targetX":590,"targetY":300,"carrying":false,"timer":0,"patrol":0,"facing":0,"awareness":0,"arriving":0,"reaction":"grumble","reactionTicks":0,"lookPause":0,"noticeSeen":false,"decoySeen":-1,"curiosity":0},{"id":"backup","kind":"sentinel","x":745.4972076416016,"y":307.97296142578125,"state":"stunned","stun":142,"targetX":708.0032196044922,"targetY":306.6657257080078,"carrying":false,"timer":0,"patrol":0,"facing":2.4538116455078125,"awareness":0,"arriving":0,"reaction":"annoyed","reactionTicks":59,"lookPause":15,"noticeSeen":false,"decoySeen":38,"curiosity":0}],"solids":[{"x":245,"y":90,"w":120,"h":105},{"x":440,"y":90,"w":50,"h":145},{"x":440,"y":365,"w":50,"h":140},{"x":675,"y":85,"w":60,"h":115}],"props":[{"id":"notice","kind":"sign","x":350,"y":300,"w":46,"h":46,"active":false,"variant":1},{"id":"belt","kind":"conveyor","x":590,"y":300,"w":190,"h":80,"active":true,"variant":0},{"id":"gate","kind":"door","x":465,"y":300,"w":50,"h":130,"active":true,"variant":0},{"id":"dock-a","kind":"dock","x":850,"y":130,"w":80,"h":65,"active":false,"variant":0},{"id":"dock-b","kind":"dock","x":850,"y":470,"w":80,"h":65,"active":false,"variant":0},{"id":"stash","kind":"exit","x":120,"y":470,"w":115,"h":80,"active":false,"variant":0},{"id":"getaway","kind":"exit","x":850,"y":300,"w":90,"h":90,"active":false,"variant":0}],"effects":[{"id":38,"kind":"decoy","x":708.0032196044922,"y":306.6657257080078,"ttl":93},{"id":50,"kind":"splat","x":745.4972076416016,"y":307.97296142578125,"ttl":12},{"id":52,"kind":"foam","x":696.9552612304688,"y":237.36102294921875,"ttl":2},{"id":53,"kind":"splat","x":814.77294921875,"y":185.28688049316406,"ttl":48}],"shots":[],"events":[{"tick":34,"kind":"delivery-sign","nodeId":"notice","variant":1}],"status":"playing","paused":false,"tick":1279,"timeLeft":53.68333333333333,"score":1400,"breakdown":{"objective":400,"time":0,"variety":360,"tricks":740,"damage":-100},"objective":"Courier stunned! Get close and press E to snatch its parcel.","phase":0,"mail":{"banked":2,"carrying":false,"loose":null,"route":"intercept","methods":["redirect","intercept"],"alertLevel":2,"clean":false,"escapeDeadline":null,"secondRoute":"sorter","transit":"none","noise":null},"goal":{"id":"courier","kind":"courier","x":814.77294921875,"y":185.28688049316406,"state":"stunned","stun":178,"targetX":850,"targetY":130,"carrying":true,"timer":0,"patrol":0,"facing":-0.6837005615234375,"awareness":0,"arriving":0,"reaction":"parcel-gone","reactionTicks":0,"lookPause":0,"noticeSeen":false,"decoySeen":-1,"curiosity":0,"label":"SNATCH · E"},"decoy":{"x":708.0032196044922,"y":306.6657257080078,"ttl":93,"serial":38},"nextEffectId":54,"usedGadgets":[3,1,2,0],"scored":["manipulate:notice","gadget:3","gadget:1","manipulate:gate","gadget:2","hit:2","pickup:0","gadget:0","stun:courier","stun:sentinel","bank:1","pickup:1","manipulate:belt","bank:2","mixed-route","second-route","stun:technician","stun:backup"],"interactHeld":true,"fireHeld":false,"dashHeld":false}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      292 |         (await state(page)).mail!.carrying,
+      293 |         JSON.stringify(await state(page)),
+    > 294 |       ).toBe(true);
+          |         ^
+      295 |       if (haul === 1 && secondRoute === "sorter") {
+      296 |         await drive(page, { x: 590, y: 300 });
+      297 |         await advance(page, 1, { fire: false });
+        at /tmp/chaos-theory-pr/chaos-theory/tests/e2e/game.spec.ts:294:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/game-mailroom-completed-th-8ed68-ario-and-fixture-comparison-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/game-mailroom-completed-th-8ed68-ario-and-fixture-comparison-firefox/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/game-mailroom-completed-th-8ed68-ario-and-fixture-comparison-firefox/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/game-mailroom-completed-th-8ed68-ario-and-fixture-comparison-firefox/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [firefox] › tests/e2e/game.spec.ts:175:3 › mailroom completed through valid inputs (sorter); export scenario and fixture comparison
+  11 passed (56.1s)

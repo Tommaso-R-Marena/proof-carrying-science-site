@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "parent_commit": "015338e89f9663c573126a3a22ae1478c533e9ab",
+  "kind": "unsigned current research source/config inventory; exact live-run snapshots are separate",
+  "files": {
+    "scripts/safety-ablation.ts": "3596397284cf120ab8e3898982bee46c97775be7258c3d8167a7764cc80d65ba",
+    "scripts/local-model-safety.ts": "4bd37156afde1d5edba268b332a8d0be7c289ba5c797e738f6a577192366488d",
+    "scripts/grade-model-plan.ts": "93fa65fe7e2a866c500737a3a060cd320f07141aa725b005d5f348d423234865",
+    "scripts/replay-model-evidence.ts": "7ca2b81da92c89f20a060ee127b542e86ff0d6cc3efe0242765bb6d6d394afcc",
+    "scripts/replay_real_model.py": "df1f3fe3a09120a34392973f90c5bb6407e4c1371bcf7021cd6f88ceb688e463",
+    "scripts/local_model_interactive.py": "87ffaaa4c048bfeea010cbb190ca401e8c5e3b27088387c4bdd080cd3728a2a3",
+    "scripts/test_real_model_replay.py": "2aad2f28cbf15bdb7d431a1dc5e051dd3a78a9a07c2e954a3ca5743e885aee9a",
+    "tests/ablation.test.ts": "47e87b379cd898dbd86f567023fe91aeb59368f439be352a5fa2e424cb86e291",
+    "src/research.ts": "4dc3f376607fb354280d14e213f9eb683286f3e51a7343e7c9ea58124042e237",
+    "src/schema.ts": "e9ba3774736a14e6a196fdb1cedd9a00c1573fb26d49e9538d81a144e4744ec3",
+    "../.github/workflows/chaos-model-evidence.yml": "f3764242c9f536a659f50fc4170a5ddeebc13f2a8729ad25036e8e59cbd853a6"
+  }
+}

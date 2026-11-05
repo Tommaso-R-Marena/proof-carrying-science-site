@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "browser": "156.0.8078.4",
+  "node": "v24.19.0",
+  "hardwareCaveat": "Headless browser on this shared Linux executor; viewport sizes do not emulate phone CPU/GPU or human input latency. requestAnimationFrame measures browser frame scheduling, not isolated render cost.",
+  "assets": [
+    {
+      "name": "index-B4I341KJ.css",
+      "bytes": 15335,
+      "gzipBytes": 4323
+    },
+    {
+      "name": "index-ChRH5dYl.js",
+      "bytes": 140712,
+      "gzipBytes": 44903
+    },
+    {
+      "name": "phaser-DBGSxffB.js",
+      "bytes": 1368033,
+      "gzipBytes": 355861
+    },
+    {
+      "name": "scene-Dq0_SuDa.js",
+      "bytes": 16870,
+      "gzipBytes": 6477
+    }
+  ],
+  "observations": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "frames": 120,
+      "meanMs": 16.66666666666666,
+      "p95Ms": 16.700000000000273,
+      "estimatedFPS": 60.00000000000003,
+      "restarts": 10,
+      "consolePageErrors": 0,
+      "externalRequests": 0,
+      "testController": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "frames": 120,
+      "meanMs": 16.665,
+      "p95Ms": 16.799999999999955,
+      "estimatedFPS": 60.006000600060005,
+      "restarts": 10,
+      "consolePageErrors": 0,
+      "externalRequests": 0,
+      "testController": false
+    }
+  ]
+}

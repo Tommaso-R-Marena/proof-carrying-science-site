@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "freshActualLeanComputations": 856,
+  "originalPrepublicationLedgerRecovered": false,
+  "newInferenceCalls": 0,
+  "outcomeWorkspacesCompared": 96,
+  "authorityHash": "fd2c828e7c475406a5fcb2080b0e168a8a58e62066c472416e716ee8c30ebc10",
+  "scope": "Reconstruction of the expected computation sequence from saved actual model responses, with fresh Lean, TS and actual CSV publications. Original collection failed; these are not original-time verdict records."
+}

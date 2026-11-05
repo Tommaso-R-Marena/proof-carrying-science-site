@@ -1,0 +1,17 @@
+
+> chaos-theory-pocket-mayhem@0.4.0 test:portable
+> tsx scripts/portable-smoke.ts
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 112 modules transformed.
+rendering chunks...
+✓ built in 845ms
+/tmp/chaos-theory-pr/chaos-theory/scripts/portable-smoke.ts:86
+        throw Error(
+              ^
+
+Error: {"browser":"firefox","viewport":{"width":1280,"height":900},"errors":["[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a JavaScript eval (script-src) from being executed because it violates the following directive: “script-src 'sha256-y6tLiSt2brkD8+wj45LJJmak7KDA9a+tFXQzIKw2aC8='” (Missing 'unsafe-eval')\" {file: \"file:///tmp/chaos-theory-pr/chaos-theory/results/portable-build-6e761411-918b-4de2-8ef5-c9e71e75ba51/odd-post.html\" line: 20}]"],"external":[]}
+    at <anonymous> (/tmp/chaos-theory-pr/chaos-theory/scripts/portable-smoke.ts:86:15)
+
+Node.js v24.19.0

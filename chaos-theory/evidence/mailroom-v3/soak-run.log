@@ -1,0 +1,5 @@
+
+> chaos-theory-pocket-mayhem@0.3.0 test:soak
+> tsx scripts/soak.ts
+
+{"rounds":120,"totalTicks":540000,"elapsedMs":49861.438838,"artifact":"results/soak-9d012d40-5102-4fbc-aafd-b67ee033fb4e.json"}

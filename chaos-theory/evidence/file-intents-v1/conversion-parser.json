@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "realLean": true,
+  "parserAndArithmeticCases": 26,
+  "independentPythonCases": 26,
+  "invalidOwnerMultipliersRejected": 4,
+  "newInferenceCalls": 0,
+  "output": "/tmp/pcs-file-gate-pr/chaos-theory/results/conversion-parser-Gakj6q"
+}
