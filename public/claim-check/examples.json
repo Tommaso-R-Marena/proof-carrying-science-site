@@ -1,0 +1,121 @@
+{
+ "format": "pcs-claimcheck-site-examples-v1",
+ "authority": "RESEARCH_ONLY_NOT_PCS_V06_AUTHORITY",
+ "toolchain": "Lean 4.28.0",
+ "checker_sha256": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
+ "recorded_utc": "2026-11-11T06:07:13Z",
+ "examples": [
+  {
+   "id": "06_pmc5980576",
+   "title": "Effects of winter food provisioning on the phenotypes of breeding blue tits",
+   "data_sha256": "3431fbd902acd24298a4fcc2980e10b694018d91a015cb38822e2828f1171d44",
+   "counts": {
+    "PROVED": 13,
+    "REFUTED": 4,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "08_pmc6238128",
+   "title": "Morphological adaptations for relatively larger brains in hummingbird skulls",
+   "data_sha256": "eca9c8973f3ef2a3046e012fe50dc7cd63f7c77ec04185ae1543115c52dde8d6",
+   "counts": {
+    "PROVED": 7,
+    "REFUTED": 3,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "09_pmc6476783",
+   "title": "Ancient landscapes of the Namib Desert harbor high levels of genetic variability and deeply divergent lineages for Collembola",
+   "data_sha256": "9670bb7b9657a428efd054165bbc7360c5cf0ee05f19e55d1c9e06d4e7c9b513",
+   "counts": {
+    "PROVED": 2,
+    "REFUTED": 48,
+    "UNKNOWN": 2
+   }
+  }
+ ],
+ "benchmark": {
+  "summary": "Frozen held-out evaluation on 6 open-access articles with deposited data (86 true statements, 41 false ones including planted errors, 67 numbers that cannot be derived from the table). Every proposer feeds the same verifier.",
+  "arms": [
+   {
+    "label": "Cue-word rules (no model)",
+    "arm": "rules",
+    "correct_verification": 5,
+    "correct_refutation": 1,
+    "unsupported_positive": 10,
+    "unsupported_refutation": 161,
+    "abstained": 70
+   },
+   {
+    "label": "Data-matching search (no model)",
+    "arm": "search",
+    "correct_verification": 37,
+    "correct_refutation": 0,
+    "unsupported_positive": 45,
+    "unsupported_refutation": 0,
+    "abstained": 87
+   },
+   {
+    "label": "Gemini model",
+    "arm": "gemini",
+    "correct_verification": 0,
+    "correct_refutation": 0,
+    "unsupported_positive": 0,
+    "unsupported_refutation": 0,
+    "abstained": 108
+   },
+   {
+    "label": "OpenRouter model (Nemotron)",
+    "arm": "openrouter",
+    "correct_verification": 40,
+    "correct_refutation": 13,
+    "unsupported_positive": 5,
+    "unsupported_refutation": 131,
+    "abstained": 51
+   },
+   {
+    "label": "Both models, all proposals",
+    "arm": "union",
+    "correct_verification": 32,
+    "correct_refutation": 12,
+    "unsupported_positive": 5,
+    "unsupported_refutation": 126,
+    "abstained": 41
+   },
+   {
+    "label": "Only readings both models proposed",
+    "arm": "agree",
+    "correct_verification": 0,
+    "correct_refutation": 0,
+    "unsupported_positive": 0,
+    "unsupported_refutation": 0,
+    "abstained": 108
+   },
+   {
+    "label": "Gemini, filtered by the other model",
+    "arm": "gemini+critic",
+    "correct_verification": 0,
+    "correct_refutation": 0,
+    "unsupported_positive": 0,
+    "unsupported_refutation": 0,
+    "abstained": 54
+   },
+   {
+    "label": "OpenRouter model, filtered by Gemini",
+    "arm": "openrouter+critic",
+    "correct_verification": 23,
+    "correct_refutation": 1,
+    "unsupported_positive": 3,
+    "unsupported_refutation": 69,
+    "abstained": 21
+   }
+  ],
+  "notes": "Counts are printed numbers, over original and planted-error copies of the held-out articles. “Wrongly” columns include every result on a number that had no gold label, before any hand adjudication. Gold labels are AI-assisted annotations, not expert review. The full report, receipts and replay instructions are in the PCS core repository under research/claimcheck_v1. Adversarial suite: 409 deceptive proposals, 0 accepted; coincidence search submitted 214 numerically matching readings for 62 false or underivable numbers, 3 were proved.",
+  "freezes": {
+   "software_freeze_sha256": "1a7eeb57029e5ff35ee1586908f77fa949a7577777a2495dc00db18c6af0ae2d",
+   "benchmark_freeze_sha256": "1a2001809d1e923900817e17273a975fb554b13bc5b72809f4bd23e2f9ecc890"
+  }
+ }
+}

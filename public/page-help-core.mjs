@@ -105,6 +105,13 @@ export const PAGE_HELP = Object.freeze({
     "scope": "The dependency map only knows the connections that were recorded. It cannot discover an omitted connection automatically.",
     "kind": "research task"
   },
+  "claim-check.html": {
+    "title": "Check a number in a paper against its data.",
+    "purpose": "Recompute a printed statistic from a data table with exact arithmetic, and see separately what is proved, what is only linked to the source, and what stays a scientific judgment.",
+    "first_step": "Open a published example, or choose your own CSV file, paste the sentence and pick the number.",
+    "scope": "The page calculates in your browser and that preview is not a proof. Recorded examples show earlier results of the real Lean proof checker. No result here judges whether the science is right.",
+    "kind": "local claim tool"
+  },
   "claim-review.html": {
     "title": "Follow the evidence behind a claim.",
     "purpose": "Open a PCS translation plan to see which supporting checks are complete and which questions remain open. The file stays on your device.",
