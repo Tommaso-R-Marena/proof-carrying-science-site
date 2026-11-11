@@ -102,3 +102,11 @@ qualification, and moving it is the owner's decision. Until the owner re-qualifi
 and updates the pin, those three tests fail on this branch and the page must not be deployed.
 
 One existing page was edited: `public/check-my-files.html` gained a single link to this page.
+
+## Open item: the new tests are not wired into the CI scripts
+
+`tests/claim-check-core.test.mjs` and `tests/claim-check-page.test.mjs` are run by hand (see
+"Reproduce"). They are not added to the `package.json` scripts that CI and `deploy` call, because
+`package.json` is pinned by `docs/evidence/lean-job-operations-v1/manifest.json`. When the page is
+admitted, both tests should be added to the release gate so that the recorded examples cannot
+drift from the checker.
