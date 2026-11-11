@@ -3,4 +3,7 @@ export const EXAMPLE_LOADERS = Object.freeze({
   '06_pmc5980576': () => fetch('claim-check/examples/06_pmc5980576.json'),
   '08_pmc6238128': () => fetch('claim-check/examples/08_pmc6238128.json'),
   '09_pmc6476783': () => fetch('claim-check/examples/09_pmc6476783.json'),
+  '10_pmc5817150': () => fetch('claim-check/examples/10_pmc5817150.json'),
+  '12_pmc4417136': () => fetch('claim-check/examples/12_pmc4417136.json'),
+  '17_pmc9309151': () => fetch('claim-check/examples/17_pmc9309151.json'),
 });

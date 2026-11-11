@@ -3,7 +3,7 @@
  "authority": "RESEARCH_ONLY_NOT_PCS_V06_AUTHORITY",
  "toolchain": "Lean 4.28.0",
  "checker_sha256": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
- "recorded_utc": "2026-11-11T06:07:13Z",
+ "recorded_utc": "2026-11-11T18:29:37Z",
  "examples": [
   {
    "id": "06_pmc5980576",
@@ -11,7 +11,7 @@
    "data_sha256": "3431fbd902acd24298a4fcc2980e10b694018d91a015cb38822e2828f1171d44",
    "counts": {
     "PROVED": 13,
-    "REFUTED": 4,
+    "REFUTED": 7,
     "UNKNOWN": 2
    }
   },
@@ -34,85 +34,156 @@
     "REFUTED": 48,
     "UNKNOWN": 2
    }
+  },
+  {
+   "id": "10_pmc5817150",
+   "title": "Age, state, environment, and season dependence of senescence in body mass",
+   "data_sha256": "b3712bff4020df73727159f30321cb0f0e95ba7f404b377437b77479fdae646f",
+   "counts": {
+    "PROVED": 3,
+    "REFUTED": 1,
+    "UNKNOWN": 0
+   }
+  },
+  {
+   "id": "12_pmc4417136",
+   "title": "Soil microbial community variation correlates most strongly with plant species identity, followed by soil chemistry, spatial location and plant genus",
+   "data_sha256": "4db2fc7fd7b275dc5a190cf68fb24d4f572c4b5eda26d206af9654d5488644f7",
+   "counts": {
+    "PROVED": 14,
+    "REFUTED": 3,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "17_pmc9309151",
+   "title": "Positive effects of fast growth on locomotor performance in pelagic fish juveniles",
+   "data_sha256": "27a4372092b2e6dda1344e42a64da872f14c8760dc4c9ce12d8b19086c252627",
+   "counts": {
+    "PROVED": 10,
+    "REFUTED": 6,
+    "UNKNOWN": 2
+   }
   }
  ],
+ "not_published_as_examples": [],
  "benchmark": {
   "summary": "Frozen held-out evaluation on 6 open-access articles with deposited data (86 true statements, 41 false ones including planted errors, 67 numbers that cannot be derived from the table). Every proposer feeds the same verifier.",
   "arms": [
    {
     "label": "Cue-word rules (no model)",
     "arm": "rules",
+    "document_copies": 14,
+    "document_copies_total": 14,
     "correct_verification": 5,
     "correct_refutation": 1,
     "unsupported_positive": 10,
     "unsupported_refutation": 161,
-    "abstained": 70
+    "abstained": 70,
+    "model_calls": 0,
+    "model_errors": 0,
+    "complete": true
    },
    {
     "label": "Data-matching search (no model)",
     "arm": "search",
+    "document_copies": 14,
+    "document_copies_total": 14,
     "correct_verification": 37,
     "correct_refutation": 0,
     "unsupported_positive": 45,
     "unsupported_refutation": 0,
-    "abstained": 87
+    "abstained": 87,
+    "model_calls": 0,
+    "model_errors": 0,
+    "complete": true
    },
    {
     "label": "Gemini model",
     "arm": "gemini",
-    "correct_verification": 0,
-    "correct_refutation": 0,
-    "unsupported_positive": 0,
-    "unsupported_refutation": 0,
-    "abstained": 108
+    "document_copies": 12,
+    "document_copies_total": 14,
+    "correct_verification": 24,
+    "correct_refutation": 11,
+    "unsupported_positive": 2,
+    "unsupported_refutation": 2,
+    "abstained": 73,
+    "model_calls": 12,
+    "model_errors": 0,
+    "complete": true
    },
    {
-    "label": "OpenRouter model (Nemotron)",
+    "label": "Nemotron model (via OpenRouter)",
     "arm": "openrouter",
+    "document_copies": 14,
+    "document_copies_total": 14,
     "correct_verification": 40,
     "correct_refutation": 13,
     "unsupported_positive": 5,
     "unsupported_refutation": 131,
-    "abstained": 51
+    "abstained": 51,
+    "model_calls": 14,
+    "model_errors": 0,
+    "complete": true
    },
    {
     "label": "Both models, all proposals",
     "arm": "union",
-    "correct_verification": 32,
-    "correct_refutation": 12,
+    "document_copies": 12,
+    "document_copies_total": 14,
+    "correct_verification": 34,
+    "correct_refutation": 16,
     "unsupported_positive": 5,
-    "unsupported_refutation": 126,
-    "abstained": 41
+    "unsupported_refutation": 128,
+    "abstained": 35,
+    "model_calls": 24,
+    "model_errors": 0,
+    "complete": true
    },
    {
     "label": "Only readings both models proposed",
     "arm": "agree",
-    "correct_verification": 0,
-    "correct_refutation": 0,
-    "unsupported_positive": 0,
-    "unsupported_refutation": 0,
-    "abstained": 108
+    "document_copies": 12,
+    "document_copies_total": 14,
+    "correct_verification": 22,
+    "correct_refutation": 7,
+    "unsupported_positive": 2,
+    "unsupported_refutation": 2,
+    "abstained": 79,
+    "model_calls": 24,
+    "model_errors": 0,
+    "complete": true
    },
    {
-    "label": "Gemini, filtered by the other model",
+    "label": "Gemini, filtered by Nemotron as critic",
     "arm": "gemini+critic",
-    "correct_verification": 0,
-    "correct_refutation": 0,
+    "document_copies": 6,
+    "document_copies_total": 14,
+    "correct_verification": 17,
+    "correct_refutation": 2,
     "unsupported_positive": 0,
-    "unsupported_refutation": 0,
-    "abstained": 54
+    "unsupported_refutation": 2,
+    "abstained": 35,
+    "model_calls": 9,
+    "model_errors": 0,
+    "complete": true
    },
    {
-    "label": "OpenRouter model, filtered by Gemini",
+    "label": "Nemotron, filtered by Gemini as critic",
     "arm": "openrouter+critic",
+    "document_copies": 6,
+    "document_copies_total": 14,
     "correct_verification": 23,
     "correct_refutation": 1,
     "unsupported_positive": 3,
-    "unsupported_refutation": 69,
-    "abstained": 21
+    "unsupported_refutation": 65,
+    "abstained": 21,
+    "model_calls": 12,
+    "model_errors": 0,
+    "complete": true
    }
   ],
-  "notes": "Counts are printed numbers, over original and planted-error copies of the held-out articles. “Wrongly” columns include every result on a number that had no gold label, before any hand adjudication. Gold labels are AI-assisted annotations, not expert review. The full report, receipts and replay instructions are in the PCS core repository under research/claimcheck_v1. Adversarial suite: 409 deceptive proposals, 0 accepted; coincidence search submitted 214 numerically matching readings for 62 false or underivable numbers, 3 were proved.",
+  "notes": "Counts are printed numbers, over original, planted-error and prompt-injection copies of the held-out articles. Rows that cover fewer copies cannot be compared with rows that cover more. “Wrongly” columns include every result on a number that had no gold label, before any hand adjudication. Gold labels are AI-assisted annotations, not expert review. In this evaluation a proved match was reliable when the proposer had not seen the data, and a refutation was often a wrong reading of the sentence, so read “refuted” as “this reading does not hold for this file”. The full report, receipts and replay instructions are in the PCS core repository under research/claimcheck_v1. Adversarial suite: 409 deceptive proposals, 0 accepted; coincidence search submitted 214 numerically matching readings for 62 false or underivable numbers, 3 were proved.",
   "freezes": {
    "software_freeze_sha256": "1a7eeb57029e5ff35ee1586908f77fa949a7577777a2495dc00db18c6af0ae2d",
    "benchmark_freeze_sha256": "1a2001809d1e923900817e17273a975fb554b13bc5b72809f4bd23e2f9ecc890"

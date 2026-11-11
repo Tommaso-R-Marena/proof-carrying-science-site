@@ -202,7 +202,7 @@ function renderBenchmark(b) {
   if (!b) { $('benchmarkText').textContent = 'No evaluation summary is published yet.'; return; }
   $('benchmarkText').textContent = b.summary;
   const rows = $('benchmarkRows'); rows.replaceChildren();
-  for (const a of b.arms) { const tr = document.createElement('tr'); [a.complete === false ? `${a.label} — incomplete: ${a.model_errors} of ${a.model_calls} model calls failed` : a.label, a.correct_verification, a.correct_refutation, a.unsupported_positive, a.unsupported_refutation, a.abstained].forEach((x) => tr.append(el('td', String(x)))); rows.append(tr); }
+  for (const a of b.arms) { const tr = document.createElement('tr'); [(a.complete === false ? `${a.label} — incomplete: ${a.model_errors} of ${a.model_calls} model calls failed` : a.label) + (a.document_copies ? ` · ${a.document_copies} of ${a.document_copies_total} copies` : ''), a.correct_verification, a.correct_refutation, a.unsupported_positive, a.unsupported_refutation, a.abstained].forEach((x) => tr.append(el('td', String(x)))); rows.append(tr); }
   $('benchmarkTable').hidden = false; $('benchmarkNotes').textContent = b.notes;
 }
 const fromBase64 = (text) => Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
@@ -226,7 +226,7 @@ $('loadExample').addEventListener('click', async () => {
       tr.append(el('td', r.result + cond, `badge ${r.result === 'PROVED' ? 'ok' : r.result === 'REFUTED' ? 'bad' : 'neutral'}`), el('td', r.q2_correspondence?.sentence?.text || r.q2_correspondence?.quote?.text || ''), el('td', r.claim ? `${r.claim.reading} ${r.result === 'UNKNOWN' ? r.message : ''}` : r.message), el('td', value));
       rows.append(tr);
     }
-    $('recordedNote').textContent = `${ex.citation} Article licence: ${ex.article_license}. Data licence: ${ex.data_license}. These rows are recorded results of the real Lean proof checker, not a calculation by this page. Readings were proposed by ${ex.proposed_by}; a proposer has no authority. A REFUTED row means this file does not give the printed number under this reading. It does not mean the paper is wrong.`;
+    $('recordedNote').textContent = `${ex.citation} Article licence: ${ex.article_license}. Data licence: ${ex.data_license}. These rows are recorded results of the real Lean proof checker, not a calculation by this page. Readings were proposed by ${ex.proposed_by}; a proposer has no authority. A REFUTED row means this file does not give the printed number under this reading. It does not mean the paper is wrong.${ex.selection_note ? ' ' + ex.selection_note : ''}`;
     $('recordedSource').textContent = `Article DOI ${ex.article_doi}. Data: ${ex.data_origin}.`;
     // Re-derive the obligation bytes locally: the recorded proof is about exactly this data and these readings.
     const items = [];

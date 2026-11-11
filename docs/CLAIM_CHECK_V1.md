@@ -31,6 +31,10 @@ and compares its SHA-256 with the recorded one, so recorded results cannot be di
 different data or different readings. `tests/claim-check-page.test.mjs` performs the same rebuild
 in Node for every example.
 
+Six held-out articles are published as examples. For one of them (a 617-row table) Lean accepts
+the checks only a few per proof file, so the example shows four of its eleven selected readings and
+says so; the complete evidence bundle is in the core repository.
+
 The page also shows the held-out evaluation table (correct, wrong and abstained results per
 proposer, including the adversarial suite). Those numbers come from the core repository's frozen
 benchmark and include its failures.
@@ -68,6 +72,16 @@ python -m research.claimcheck_v1.tools.export_site --bundles research/claimcheck
   --adversarial research/claimcheck_v1/benchmark/results/adversarial/adversarial.json \
   --site ../proof-carrying-science-site/public
 ```
+
+## Recorded browser evidence
+
+`docs/evidence/claim-check-v1/browser-journey.json` and `claim-check-desktop.png` come from
+`scripts/browser_claim_check.cjs` run in Chromium at 390 px and 1280 px with `PCS_LEAN` set: a
+recorded example opened and rebuilt, the user's own data with a true statement, a
+convention-dependent standard deviation, a false statement, a reading the sentence does not
+support, and a malformed file. The Lean file the browser generated for the user's own claim, and
+the recorded Lean file downloaded from the page, were both accepted by the real Lean 4.28.0
+kernel. No external request and no page error occurred. This is authored automation.
 
 No human usability study has been run on this page.
 
