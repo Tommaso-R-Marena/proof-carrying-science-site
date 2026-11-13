@@ -187,3 +187,16 @@ test('provider accepts before failed D1 acknowledgment: report failure, do not c
   assert.equal(providerCalls,1);
   assert(reports.some(x=>x[0]==='PCS cron recovery failure'&&x[1].operation==='complete_mail'));
 });
+
+test('temporarily unavailable mail transport remains failed and eligible for retry',async()=>{
+  const n={id:'cron-reminder:relay-offline',kind:'task_request_target_admin:relay-offline',
+    subject:'Review',body:'Body'};
+  const db=mockDb({all:sql=>sql===CRON_SQL.pendingMail?[n]
+    :sql===CRON_SQL.claimMail?[{attempt_count:1,lease_id:'lease'}]:[]});
+  await assert.rejects(deliverCronMail({COMMONS_DB:db,ADMIN_EMAIL:'owner@example.test'},
+    async()=>({state:'disabled'}),t0),/incomplete delivery count/);
+  const statements=db.trace.find(x=>x.type==='batch').statements;
+  assert.equal(statements[0].args[0],'failed');
+  assert.match(statements[0].args[1],/retry scheduled/);
+  assert.equal(statements[1].args[2],'transport_unavailable');
+});
