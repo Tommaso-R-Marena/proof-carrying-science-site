@@ -158,8 +158,12 @@ class TestCronRecoverySQL(unittest.TestCase):
         self.c.execute("INSERT INTO audit_archive(event_id,legacy_audit_id,actor_user_id,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?,?)",
             ("cron-expiry:r1","cron-expiry:r1",None,"task_request_expired","task_request","r1",'{"task_id":"T1"}',self.now,"genesis","mockhash"))
         self.assertEqual(len(self.c.execute(self.q["pendingMail"],(self.now,self.now,31)).fetchall()),1)
+        notice=self.c.execute(
+            "SELECT id,kind,user_id,subject,body FROM notifications WHERE id=?", (nid,)
+        ).fetchone()
         claim=lambda lease,now: self.c.execute(self.q["claimMail"],(
-            nid,lease,"2026-11-13T07:05:00Z",now,now,now,now)).fetchall()
+            nid,lease,"2026-11-13T07:05:00Z",now,now,
+            *notice,"user@example.test",now,now)).fetchall()
         first=claim("lease1",self.now)
         self.assertEqual(first,[(1,"lease1")])
         self.assertEqual(claim("lease2",self.now),[])  # concurrent claimant cannot steal lease
@@ -191,9 +195,16 @@ class TestCronRecoverySQL(unittest.TestCase):
 
     def test_user_delete_cascades_cron_mail_attempt_records(self):
         self.expire_batch()
-        self.c.execute(self.q["claimMail"],(
-            "cron-expiry-note:r1","lease","2026-11-13T07:05:00Z",
-            self.now,self.now,self.now,self.now))
+        self.c.execute("INSERT INTO audit_archive(event_id,legacy_audit_id,actor_user_id,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?,?)",
+            ("cron-expiry:r1","cron-expiry:r1",None,"task_request_expired","task_request","r1",'{"task_id":"T1"}',self.now,"genesis","mockhash"))
+        nid="cron-expiry-note:r1"
+        notice=self.c.execute(
+            "SELECT id,kind,user_id,subject,body FROM notifications WHERE id=?", (nid,)
+        ).fetchone()
+        claimed=self.c.execute(self.q["claimMail"],(
+            nid,"lease","2026-11-13T07:05:00Z",self.now,self.now,
+            *notice,"user@example.test",self.now,self.now)).fetchall()
+        self.assertEqual(claimed,[(1,"lease")])
         self.c.execute("DELETE FROM task_requests WHERE id='r1'")
         self.c.execute("DELETE FROM users WHERE id='u1'")
         self.assertEqual(self.c.execute("SELECT COUNT(*) FROM cron_delivery_attempts").fetchone()[0],0)
