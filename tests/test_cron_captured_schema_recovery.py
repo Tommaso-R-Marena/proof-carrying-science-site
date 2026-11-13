@@ -338,11 +338,69 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
         after=self.db.execute(self.sql["pendingMail"],(NOW,NOW,31)).fetchall()
         self.assertEqual(after,[])
 
+    def test_mail_claim_rechecks_current_account_and_notification_after_selection(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request","task_request_expired",
+                         "task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","a"*64))
+        row=self.db.execute(self.sql["pendingMail"],(NOW,NOW,31)).fetchone()
+        self.assertIsNotNone(row)
+        original=(row[0],row[2],row[1],row[3],row[4])
+        # Passing an old selected row to the lease claim must not override
+        # a notification edit, account suspension, ownership change, or
+        # deleted audit eligibility during the scheduling gap.
+        cases={
+            "disabled_mail":"UPDATE notifications SET email_state='disabled' WHERE id='cron-expiry-note:cron-fixture-request'",
+            "altered_kind":"UPDATE notifications SET kind='unrelated' WHERE id='cron-expiry-note:cron-fixture-request'",
+            "altered_subject":"UPDATE notifications SET subject='tampered' WHERE id='cron-expiry-note:cron-fixture-request'",
+            "altered_body":"UPDATE notifications SET body='tampered' WHERE id='cron-expiry-note:cron-fixture-request'",
+            "suspended_account":"UPDATE users SET status='suspended' WHERE id='cron-fixture-user'",
+            "unverified_account":"UPDATE users SET email_verified=0 WHERE id='cron-fixture-user'",
+            "revoked_reservation":"UPDATE task_requests SET status='approved' WHERE id='cron-fixture-request'",
+        }
+        for name,mutation in cases.items():
+            with self.subTest(name=name):
+                self.db.execute("SAVEPOINT claim_race")
+                try:
+                    self.db.execute(mutation)
+                    claimed=self.db.execute(self.sql["claimMail"],(
+                        row[0],"race-lease","2026-11-13T07:05:00Z",
+                        NOW,NOW,*original,row[6],NOW,NOW)).fetchall()
+                    self.assertEqual(claimed,[])
+                    self.assertEqual(self.db.execute(
+                        "SELECT COUNT(*) FROM cron_delivery_attempts").fetchone()[0],0)
+                finally:
+                    self.db.execute("ROLLBACK TO claim_race")
+                    self.db.execute("RELEASE claim_race")
+        claimed=self.db.execute(self.sql["claimMail"],(
+            row[0],"valid-lease","2026-11-13T07:05:00Z",
+            NOW,NOW,*original,row[6],NOW,NOW)).fetchall()
+        self.assertEqual(claimed,[(1,"valid-lease")])
+
     def test_retry_ledger_is_deletable_with_user_notification(self):
         self.seed()
         self.expire()
-        self.db.execute(self.sql["claimMail"],("cron-expiry-note:cron-fixture-request",
-                         "lease","2026-11-13T07:05:00Z",NOW,NOW,NOW,NOW))
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","a"*64))
+        notice=self.db.execute(
+            "SELECT id,kind,user_id,subject,body FROM notifications WHERE id=?",
+            ("cron-expiry-note:cron-fixture-request",)).fetchone()
+        claimed=self.db.execute(self.sql["claimMail"],(
+            notice[0],"lease","2026-11-13T07:05:00Z",NOW,NOW,
+            *notice,"synthetic-cron-fixture-user@pcs.invalid",NOW,NOW)).fetchall()
+        self.assertEqual(claimed,[(1,"lease")])
         self.assertEqual(self.db.execute(
             "SELECT COUNT(*) FROM cron_delivery_attempts").fetchone()[0],1)
         self.db.execute("DELETE FROM users WHERE id='cron-fixture-user'")
