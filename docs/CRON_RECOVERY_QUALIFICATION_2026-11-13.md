@@ -3,7 +3,7 @@
 **Date:** 2026-11-13  
 **Status:** STAGED / NOT PRODUCTION-CLEARED  
 **Implementation:** draft PR #152, stacked on #151.  
-**Targeted independent CI:** [Cron Recovery Qualification run 43387807771](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807771) — **36/36 tests passed** (18 Node tests; 11 isolated SQLite tests; 7 tests against the captured production schema), plus `node --check` and `wrangler deploy --dry-run`. The job did **not** deploy.  
+**Targeted independent CI:** [Cron Recovery Qualification run 43391629981](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43391629981) — **47/47 tests passed** (24 Node tests; 12 isolated SQLite tests; 11 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
 **Unresolved source qualification:** [Open PR source reconciliation run 43387807628](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807628) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
 ## Fresh read-only production schema equality check (2026-11-13)
@@ -27,6 +27,9 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 | Two Cron invocations retry the same task | Stable `cron-expiry:<request-id>` and `cron-expiry-note:<request-id>` identifiers; conditional `approved`-only update | Repeated transaction tests: one audit, one notification |
 | First duty fails and reminders never execute | Independent sequential duties with sanitized failure report and aggregate rejection | Existing PR #151 tests |
 | Session cleanup fails partway | One transaction containing the five hygiene statements, isolated from other duties | JS duty test; no claim of full production restore test |
+| Immutable archive row has a matching legacy ID but conflicting action, subject, timestamp or detail | Recover-by-ID is no longer accepted; select conflicting rows as incomplete, reject conflicts and verify an exact archive postcondition after append | Captured-schema divergence tests and Node failure-injection tests |
+| Admin review notifications unnecessarily copy email, names or credential level | Store generic task/skill reminders and authenticated dashboard links; remove unnecessary personal-data reads | Privacy regression executing actual Worker reminder function against synthetic sensitive fixtures |
+| Reminder-ID collision silently suppresses an admin notification | Replace ignore-on-unique failure with a failing insert while retaining same-kind replay idempotency | Real isolated SQLite ID-collision control |
 | Expiry mail outruns hash-linked audit | Cron mail lookup requires matching archived expiry event before allowing external delivery | Isolated SQLite rejection before archive and positive delivery eligibility after archive |
 | Forged archive identifier reuses an expiry ID but has the wrong action | Email readiness now requires exact legacy-event binding, archived action, subject type and subject ID, not just matching event ID | Captured-production-schema regression with deliberately mismatched archived action |
 | Email fails or Cron restarts | Mail intent is stored first; separate `cron_delivery_attempts` table records claims, leases, retries and acknowledgments | Real SQLite lease/next-attempt test and JS provider-failure tests |
@@ -43,6 +46,9 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 6. Pending/failed messages from historical pre-migration notifications are intentionally not auto-replayed unless they carry the new `cron-` prefix. This avoids accidentally resending old mail.
 7. Failed mail attempts after exhausting five tries remain visible as failed records but need an operator monitoring and manual-retry process.
 8. Current tests use bounded synthetic fixtures; real concurrency on Workers/D1, actual email provider ambiguity, restore rehearsal, latency/CPU budget and user consent flows still require separate isolated validation.
+
+9. Current admin reminders avoid unnecessary name/email/competency-level copies, but their deterministic kind keys still contain opaque application/user identifiers; existing historical notifications are not rewritten or deleted.
+10. An attempted send and a concurrent account deletion cannot be made atomic across D1 and an external mail provider; provider-side idempotency and further data-retention review remain necessary.
 
 ## Production admission sequence (must remain blocked until all steps pass)
 
