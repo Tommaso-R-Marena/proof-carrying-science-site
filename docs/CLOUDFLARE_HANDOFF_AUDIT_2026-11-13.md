@@ -35,6 +35,12 @@ Snapshot from connected Cloudflare account API and GitHub connector on 2026-11-1
 | Account audit logs | Account audit API returned no entries in the queried period starting 2026-11-12 00:00 UTC. This does **not** demonstrate that no agent or external tool made changes outside the queried scope. |
 | Preview configuration | `wrangler.jsonc` sets `workers_dev: true`, `preview_urls: false`, and a preview binding config with no D1 database. Verify preview isolation in an actual test; do not presume all resources or side effects are isolated. |
 
+### Supplemental independent token check (2026-11-13)
+
+A second read-only Cloudflare call listed the account tokens and retrieved the metadata of the token named `GPT API Token` (ID prefix `3919b284`; full ID not included). It is **active**, has **no expiration**, has **no access condition**, and has **two broad policies with 289 and 96 permission groups** respectively. Last reported use was `2026-11-04T04:17:43Z`. This corroborates the handoff's **urgent token replacement** recommendation. It does not establish token leakage, who used the token, or attribution for an out-of-band deployment. The OAuth connector is separately authenticated; do not presume that revoking this account token will remove the connected agent's OAuth access.
+
+Before rotation: identify all consumers (especially builds), design purpose-specific credentials with resource-limited scopes and finite expiration, test the replacements, then revoke the old account token. Do not automatically alter unrelated projects or revoke shared build credentials.
+
 ### Immediate security priorities
 
 1. **P0 — Owner action: enable phishing-resistant MFA** for the Cloudflare administrator. This requires account-owner interaction; do not attempt to enroll an MFA factor automatically.
