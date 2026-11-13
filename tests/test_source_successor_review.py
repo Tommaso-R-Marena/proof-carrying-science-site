@@ -69,6 +69,8 @@ class SourceDossierTests(unittest.TestCase):
         git(self.root,"commit","-q","-m","unreviewed policy rewrite")
         d=review(self.root,self.base,git(self.root,"rev-parse","HEAD"))
         self.assertEqual({x["review_class"] for x in d["changed_files"]},{"PROTECTED_REVIEW"})
+        self.assertTrue(d["candidate_changes_protected_source_checker"])
+        self.assertFalse(d["existing_source_gate_executed_by_this_tool"])
         self.assertFalse(d["qualified"])
 
     def test_unqualified_extra_file_is_not_silently_ignored(self):
