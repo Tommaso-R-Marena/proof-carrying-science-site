@@ -363,6 +363,8 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
             "altered_body":"UPDATE notifications SET body='tampered' WHERE id='cron-expiry-note:cron-fixture-request'",
             "suspended_account":"UPDATE users SET status='suspended' WHERE id='cron-fixture-user'",
             "unverified_account":"UPDATE users SET email_verified=0 WHERE id='cron-fixture-user'",
+            "changed_recipient_email":"UPDATE users SET email='other-user@pcs.invalid' WHERE id='cron-fixture-user'",
+            "removed_notification_owner":"UPDATE notifications SET user_id=NULL WHERE id='cron-expiry-note:cron-fixture-request'",
             "revoked_reservation":"UPDATE task_requests SET status='approved' WHERE id='cron-fixture-request'",
         }
         for name,mutation in cases.items():
@@ -383,6 +385,41 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
             row[0],"valid-lease","2026-11-13T07:05:00Z",
             NOW,NOW,*original,row[6],NOW,NOW)).fetchall()
         self.assertEqual(claimed,[(1,"valid-lease")])
+
+    def test_admin_reminder_claim_rechecks_identity_and_message_after_selection(self):
+        self.seed()
+        self.db.execute(
+            "INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state) "
+            "VALUES(?,?,?,?,?,?,?)",
+            ("cron-reminder:task_request_target_admin:r1",None,
+             "task_request_target_admin:r1","Synthetic review","Safe dashboard",
+             NOW,"queued"))
+        selected=self.db.execute(self.sql["pendingMail"],(NOW,NOW,31)).fetchone()
+        self.assertEqual(selected[0],"cron-reminder:task_request_target_admin:r1")
+        original=(selected[0],selected[2],selected[1],selected[3],selected[4])
+        changes={
+            "disabled":"UPDATE notifications SET email_state='disabled' WHERE id=?",
+            "changed_kind":"UPDATE notifications SET kind='other_event' WHERE id=?",
+            "changed_subject":"UPDATE notifications SET subject='other' WHERE id=?",
+            "changed_body":"UPDATE notifications SET body='other' WHERE id=?",
+            "attached_user":"UPDATE notifications SET user_id='cron-fixture-user' WHERE id=?",
+        }
+        for label,sql in changes.items():
+            with self.subTest(label=label):
+                self.db.execute("SAVEPOINT admin_claim")
+                try:
+                    self.db.execute(sql,(selected[0],))
+                    claim=self.db.execute(self.sql["claimMail"],(
+                        selected[0],"admin-lease","2026-11-13T07:05:00Z",
+                        NOW,NOW,*original,"admin@pcs.invalid",NOW,NOW)).fetchall()
+                    self.assertEqual(claim,[])
+                finally:
+                    self.db.execute("ROLLBACK TO admin_claim")
+                    self.db.execute("RELEASE admin_claim")
+        accepted=self.db.execute(self.sql["claimMail"],(
+            selected[0],"approved-lease","2026-11-13T07:05:00Z",
+            NOW,NOW,*original,"admin@pcs.invalid",NOW,NOW)).fetchall()
+        self.assertEqual(accepted,[(1,"approved-lease")])
 
     def test_retry_ledger_is_deletable_with_user_notification(self):
         self.seed()
