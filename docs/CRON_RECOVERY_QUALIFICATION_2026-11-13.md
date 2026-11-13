@@ -3,7 +3,7 @@
 **Date:** 2026-11-13  
 **Status:** STAGED / NOT PRODUCTION-CLEARED  
 **Implementation:** draft PR #152, stacked on #151.  
-**Targeted independent CI:** [Cron Recovery Qualification run 43391629981](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43391629981) — **47/47 tests passed** (24 Node tests; 12 isolated SQLite tests; 11 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
+**Targeted independent CI:** [Cron Recovery Qualification run 43392272928](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43392272928) — **50/50 tests passed** (27 Node tests; 12 isolated SQLite tests; 11 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
 **Unresolved source qualification:** [Open PR source reconciliation run 43387807628](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807628) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
 ## Fresh read-only production schema equality check (2026-11-13)
@@ -35,6 +35,12 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 | Email fails or Cron restarts | Mail intent is stored first; separate `cron_delivery_attempts` table records claims, leases, retries and acknowledgments | Real SQLite lease/next-attempt test and JS provider-failure tests |
 | Message recipient not verified or deleted | Site notification may remain; external mail is disabled unless verified / admin address configured | JS recipient tests and SQLite cascading deletion test |
 | Unbounded database/email work | Per-run limits, explicit failures on over-limit backlog, five-attempt cap | JS bounded-load tests |
+
+## Resend-specific duplicate-reduction layer
+
+For **Cron-owned** outbound email only, the Worker derives a stable `pcs-cron-v1-` idempotency key using SHA-256 of a domain-separated, internal notification ID and passes the key to Resend's `POST /emails` endpoint. Provider test fixtures verify the header is present on Cron messages, the same notification gets the same key on retries, a different notification has a different key, and ordinary transactional emails remain unchanged. The internal notification identifier is not itself transmitted in this header.
+
+Resend documents an [Idempotency-Key header on `POST /emails`](https://github.com/resend/resend-openapi/blob/main/resend.yaml) and a **24-hour replay window**. This protects only requests processed on Resend within that window with unchanged body; altered payloads can receive HTTP 409, and attempts sent over the separate Gmail relay are not protected by Resend's key. It cannot turn the entire mail workflow into exactly-once delivery. The D1 outbox remains the durable, bounded retry source, and provider ambiguity remains visible in the audit/operations report.
 
 ## Important limitations
 
