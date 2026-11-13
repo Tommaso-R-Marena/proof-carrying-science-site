@@ -140,6 +140,18 @@ class TestCronRecoverySQL(unittest.TestCase):
         self.c.execute(self.q["reminder"],args)
         self.assertEqual(self.c.execute("SELECT COUNT(*) FROM notifications").fetchone()[0],1)
 
+    def test_reminder_id_collision_aborts_instead_of_silently_discarding(self):
+        self.c.execute("INSERT INTO notifications "
+            "(id,user_id,kind,subject,body,created_at,email_state) "
+            "VALUES(?,?,?,?,?,?,?)",
+            ("cron-reminder:kind","u1","unrelated_notification","Unrelated",
+             "Unrelated",self.now,"queued"))
+        args=("cron-reminder:kind","kind","Review needed","Admin dashboard",
+              self.now,"kind")
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.c.execute(self.q["reminder"],args)
+        self.assertEqual(self.c.execute("SELECT COUNT(*) FROM notifications").fetchone()[0],1)
+
     def test_mail_claim_lease_backoff_and_max_attempts(self):
         self.expire_batch()
         nid="cron-expiry-note:r1"
