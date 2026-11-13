@@ -104,6 +104,43 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
         ).fetchone(),("approved",))
         self.assertEqual(self.db.execute("SELECT COUNT(*) FROM audit_log WHERE action='task_request_expired'").fetchone()[0],0)
 
+    def test_existing_deterministic_audit_id_rolls_back_expiry(self):
+        self.seed()
+        # A pre-existing but non-equivalent audit ID is a security collision.
+        # INSERT OR IGNORE would let the status change proceed without recording
+        # a fresh event. Plain INSERT fails the D1 transaction instead.
+        self.db.execute(
+            "INSERT INTO audit_log(id,action,subject_type,subject_id,detail_json,created_at) "
+            "VALUES(?,?,?,?,?,?)",
+            ("cron-expiry:cron-fixture-request","forged_event","task_request",
+             "cron-fixture-request","{}",NOW))
+        self.db.commit()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.expire()
+        self.assertEqual(self.db.execute(
+            "SELECT status FROM task_requests WHERE id='cron-fixture-request'"
+        ).fetchone(),("approved",))
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM notifications WHERE id='cron-expiry-note:cron-fixture-request'"
+        ).fetchone()[0],0)
+
+    def test_existing_deterministic_notice_id_rolls_back_expiry_and_audit(self):
+        self.seed()
+        self.db.execute(
+            "INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state) "
+            "VALUES(?,?,?,?,?,?,?)",
+            ("cron-expiry-note:cron-fixture-request","cron-fixture-user",
+             "task_expired","Forged notice","Not from expiry",NOW,"queued"))
+        self.db.commit()
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.expire()
+        self.assertEqual(self.db.execute(
+            "SELECT status FROM task_requests WHERE id='cron-fixture-request'"
+        ).fetchone(),("approved",))
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM audit_log WHERE id='cron-expiry:cron-fixture-request'"
+        ).fetchone()[0],0)
+
     def test_stale_read_does_not_forge_legacy_audit(self):
         self.seed()
         self.db.execute("UPDATE tasks SET claim_mode='open' WHERE id='cron-fixture-task'")
