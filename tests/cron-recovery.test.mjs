@@ -157,7 +157,7 @@ test('cron reminders queue a durable notification but never directly send mail',
 
 test('mail outbox claims, dispatches, and records one success in two-statement transaction',async()=>{
   const n={id:'cron-expiry-note:r1',kind:'task_expired',subject:'Task released',body:'Message',
-    user_email:'verified@example.test',email_verified:1,user_id:'u1'};
+    user_email:'verified@example.test',email_verified:1,user_status:'active',user_id:'u1'};
   const db=mockDb({all:(sql)=>{
     if(sql===CRON_SQL.pendingMail)return [n];
     if(sql===CRON_SQL.claimMail)return [{attempt_count:1,lease_id:'one'}];
@@ -192,6 +192,19 @@ test('unverified expired-task email is disabled without sending',async()=>{
   await deliverCronMail({COMMONS_DB:db},async()=>{called=true;return {state:'sent'};},t0);
   assert.equal(called,false);
   assert(db.trace.some(x=>x.type==='run'&&x.args[0]===n.id));
+});
+
+test('suspended contributor does not receive task-expiration email',async()=>{
+  const n={id:'cron-expiry-note:r1',kind:'task_expired',subject:'Task',body:'Message',
+    user_email:'suspended@example.invalid',email_verified:1,user_status:'suspended'};
+  const db=mockDb({all:sql=>sql===CRON_SQL.pendingMail?[n]:[]});
+  let delivered=false;
+  await deliverCronMail({COMMONS_DB:db},async()=>{
+    delivered=true;return {state:'sent'};
+  },t0);
+  assert.equal(delivered,false);
+  assert(db.trace.some(x=>x.type==='run'
+    &&x.sql.includes("email_state='disabled'")&&x.args[0]===n.id));
 });
 
 test('mail job detects bounded backlog and does not silently drain unbounded work',async()=>{
