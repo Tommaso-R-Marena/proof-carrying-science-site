@@ -131,7 +131,13 @@ export async function deliverCronMail(env,sendMail,now=new Date().toISOString())
     const count=Number(claimed.results[0].attempt_count);
     let state='failed',providerUnavailable=false;
     try {
-      const outcome=await sendMail(env,address,n.subject,n.body);
+      // Provider-native idempotency reduces replay duplicates on Resend.
+      // Hash the internal notification ID to avoid sending pseudonymous
+      // account identifiers to an external provider.
+      const bytes=new TextEncoder().encode('pcs-cron-v1:' + n.id);
+      const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
+      const idempotencyKey='pcs-cron-v1-'+Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');
+      const outcome=await sendMail(env,address,n.subject,n.body,{idempotencyKey});
       // A temporarily unconfigured mail relay is retryable. In contrast,
       // missing or unverified recipients are disabled before claiming.
       providerUnavailable=outcome?.state==='disabled';
