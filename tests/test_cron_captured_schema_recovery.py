@@ -184,6 +184,49 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
         self.assertEqual(self.db.execute(
             self.sql["pendingMail"],(NOW,NOW,31)).fetchall(),[])
 
+    def test_archive_with_correct_id_but_wrong_detail_cannot_release_mail(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"WRONG-TASK"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","d"*64))
+        self.assertEqual(self.db.execute(
+            self.sql["pendingMail"],(NOW,NOW,31)).fetchall(),[])
+
+    def test_archive_with_correct_id_but_wrong_timestamp_cannot_release_mail(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',"2026-01-01T00:00:00Z",
+                         "SYNTHETIC_GENESIS_HASH","e"*64))
+        self.assertEqual(self.db.execute(
+            self.sql["pendingMail"],(NOW,NOW,31)).fetchall(),[])
+
+    def test_archive_with_correct_id_but_wrong_actor_cannot_release_mail(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,actor_user_id,action,"
+                        "subject_type,subject_id,detail_json,created_at,prev_hash,event_hash)"
+                        " VALUES(?,?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request","cron-fixture-user",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","b"*64))
+        self.assertEqual(self.db.execute(
+            self.sql["pendingMail"],(NOW,NOW,31)).fetchall(),[])
+
     def test_conflicting_immutable_archive_does_not_suppress_recovery(self):
         self.seed()
         self.expire()
