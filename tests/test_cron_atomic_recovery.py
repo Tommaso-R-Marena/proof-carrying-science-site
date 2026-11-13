@@ -126,6 +126,8 @@ class TestCronRecoverySQL(unittest.TestCase):
     def test_mail_claim_lease_backoff_and_max_attempts(self):
         self.expire_batch()
         nid="cron-expiry-note:r1"
+        self.c.execute("INSERT INTO audit_archive(event_id,legacy_audit_id,actor_user_id,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?,?)",
+            ("cron-expiry:r1","cron-expiry:r1",None,"task_request_expired","task_request","r1",'{"task_id":"T1"}',self.now,"genesis","mockhash"))
         self.assertEqual(len(self.c.execute(self.q["pendingMail"],(self.now,self.now,31)).fetchall()),1)
         claim=lambda lease,now: self.c.execute(self.q["claimMail"],(
             nid,lease,"2026-11-13T07:05:00Z",now,now,now,now)).fetchall()
@@ -143,6 +145,13 @@ class TestCronRecoverySQL(unittest.TestCase):
             self.now,self.now,None,self.now,nid,"lease4"))
         self.assertEqual(claim("lease5","2026-11-13T08:00:00Z"),[])  # delivered is final
         self.assertEqual(self.c.execute("SELECT email_state FROM notifications").fetchone()[0],"sent")
+
+    def test_expiry_email_waits_for_archived_evidence(self):
+        self.expire_batch()
+        self.assertEqual(self.c.execute(self.q["pendingMail"],(self.now,self.now,31)).fetchall(),[])
+        self.c.execute("INSERT INTO audit_archive(event_id,legacy_audit_id,actor_user_id,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?,?)",
+            ("cron-expiry:r1","cron-expiry:r1",None,"task_request_expired","task_request","r1",'{"task_id":"T1"}',self.now,"genesis","mockhash"))
+        self.assertEqual(len(self.c.execute(self.q["pendingMail"],(self.now,self.now,31)).fetchall()),1)
 
     def test_injected_archive_failure_has_retryable_audit_source(self):
         self.expire_batch()
