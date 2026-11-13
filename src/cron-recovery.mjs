@@ -13,7 +13,8 @@ export const CRON_SQL = Object.freeze({
   expire: "UPDATE task_requests SET status='expired',checkpoint_status=CASE WHEN checkpoint_status='pending' THEN 'missed' ELSE checkpoint_status END,reservation_key=NULL WHERE id=? AND status='approved' AND EXISTS(SELECT 1 FROM tasks t WHERE t.id=task_requests.task_id AND t.claim_mode!='open') AND ((checkpoint_status='pending' AND checkpoint_due_at IS NOT NULL AND checkpoint_due_at<=? AND COALESCE(checkpoint_note,'')='') OR (reservation_expires_at IS NOT NULL AND reservation_expires_at<=?))",
   audit: "INSERT INTO audit_log(id,actor_user_id,action,subject_type,subject_id,detail_json,created_at) SELECT ?,NULL,'task_request_expired','task_request',r.id,?,? FROM task_requests r WHERE r.id=? AND r.status='expired' AND changes()=1",
   notice: "INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state) SELECT ?,r.user_id,'task_expired',?,?,?,'queued' FROM task_requests r WHERE r.id=? AND r.status='expired' AND EXISTS(SELECT 1 FROM audit_log l WHERE l.id=('cron-expiry:' || r.id) AND l.action='task_request_expired' AND l.subject_id=r.id) AND changes()=1",
-  unarchived: "SELECT l.id,l.actor_user_id,l.action,l.subject_type,l.subject_id,l.detail_json,l.created_at FROM audit_log l LEFT JOIN audit_archive a ON a.legacy_audit_id=l.id WHERE l.action='task_request_expired' AND l.id LIKE 'cron-expiry:%' AND a.legacy_audit_id IS NULL ORDER BY l.created_at,l.id LIMIT ?",
+  unarchived: "SELECT l.id,l.actor_user_id,l.action,l.subject_type,l.subject_id,l.detail_json,l.created_at,a.legacy_audit_id AS existing_archive_legacy_id FROM audit_log l LEFT JOIN audit_archive a ON a.legacy_audit_id=l.id WHERE l.action='task_request_expired' AND l.id LIKE 'cron-expiry:%' AND (a.legacy_audit_id IS NULL OR a.event_id!=l.id OR a.action!=l.action OR a.subject_type!=l.subject_type OR a.subject_id!=l.subject_id OR a.detail_json!=l.detail_json OR a.created_at!=l.created_at OR COALESCE(a.actor_user_id,'')!=COALESCE(l.actor_user_id,'')) ORDER BY l.created_at,l.id LIMIT ?",
+  verifyArchive: "SELECT 1 AS ok FROM audit_archive WHERE event_id=? AND legacy_audit_id=? AND action=? AND subject_type=? AND subject_id=? AND detail_json=? AND created_at=? AND actor_user_id IS ?",
   reminder: "INSERT OR IGNORE INTO notifications(id,user_id,kind,subject,body,created_at,email_state) SELECT ?,NULL,?,?,?,?,'queued' WHERE NOT EXISTS(SELECT 1 FROM notifications WHERE kind=?)",
   pendingMail: "SELECT n.id,n.user_id,n.kind,n.subject,n.body,n.email_state,u.email AS user_email,u.email_verified FROM notifications n LEFT JOIN users u ON u.id=n.user_id LEFT JOIN cron_delivery_attempts a ON a.notification_id=n.id WHERE n.id LIKE 'cron-%' AND n.email_state IN ('queued','failed') AND (n.kind!='task_expired' OR EXISTS(SELECT 1 FROM audit_archive ar WHERE ar.event_id=('cron-expiry:' || substr(n.id,length('cron-expiry-note:')+1)) AND ar.legacy_audit_id=ar.event_id AND ar.action='task_request_expired' AND ar.subject_type='task_request' AND ar.subject_id=substr(n.id,length('cron-expiry-note:')+1))) AND COALESCE(a.attempt_count,0)<5 AND (a.next_attempt_at IS NULL OR a.next_attempt_at<=?) AND (a.lease_until IS NULL OR a.lease_until<=?) ORDER BY n.created_at,n.id LIMIT ?",
   claimMail: "INSERT INTO cron_delivery_attempts(notification_id,attempt_count,lease_id,lease_until,next_attempt_at,updated_at) VALUES(?,1,?,?,?,?) ON CONFLICT(notification_id) DO UPDATE SET attempt_count=cron_delivery_attempts.attempt_count+1,lease_id=excluded.lease_id,lease_until=excluded.lease_until,updated_at=excluded.updated_at WHERE cron_delivery_attempts.attempt_count<5 AND cron_delivery_attempts.delivered_at IS NULL AND cron_delivery_attempts.next_attempt_at<=? AND (cron_delivery_attempts.lease_until IS NULL OR cron_delivery_attempts.lease_until<=?) RETURNING attempt_count,lease_id",
@@ -69,11 +70,19 @@ export async function reconcileExpiryArchive(env,archiveEvent) {
   let errors=0;
   for(const row of rows.slice(0,CRON_ARCHIVE_LIMIT)) {
     try {
+      // Existing hash-chain events are immutable. Never silently interpret an
+      // unrelated or contradictory record as proof that this intent is archived.
+      if(row.existing_archive_legacy_id!==null && row.existing_archive_legacy_id!==undefined)
+        throw new Error('Conflicting immutable archive row');
       await archiveEvent({
         eventId:row.id,legacyAuditId:row.id,actorUserId:row.actor_user_id,
         action:row.action,subjectType:row.subject_type,subjectId:row.subject_id,
         detailJson:row.detail_json,createdAt:row.created_at,
       });
+      const verified=await env.COMMONS_DB.prepare(CRON_SQL.verifyArchive)
+        .bind(row.id,row.id,row.action,row.subject_type,row.subject_id,
+          row.detail_json,row.created_at,row.actor_user_id).first();
+      if(!verified?.ok) throw new Error('Immutable archive postcondition not satisfied');
     } catch(error) {errors++;report('archive_reconciliation',error);}
   }
   if(rows.length>CRON_ARCHIVE_LIMIT) throw new Error('PCS cron archive reconciliation backlog');
