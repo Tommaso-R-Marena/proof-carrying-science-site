@@ -3,7 +3,7 @@
 **Date:** 2026-11-13  
 **Status:** STAGED / NOT PRODUCTION-CLEARED  
 **Implementation:** draft PR #152, stacked on #151.  
-**Targeted independent CI:** [Cron Recovery Qualification run 43392272928](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43392272928) — **50/50 tests passed** (27 Node tests; 12 isolated SQLite tests; 11 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
+**Targeted independent CI:** [Cron Recovery Qualification run 43394410663](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43394410663) — **53/53 tests passed** (28 Node tests; 12 isolated SQLite tests; 13 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
 **Unresolved source qualification:** [Open PR source reconciliation run 43387807628](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807628) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
 ## Fresh read-only production schema equality check (2026-11-13)
@@ -41,6 +41,12 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 For **Cron-owned** outbound email only, the Worker derives a stable `pcs-cron-v1-` idempotency key using SHA-256 of a domain-separated, internal notification ID and passes the key to Resend's `POST /emails` endpoint. Provider test fixtures verify the header is present on Cron messages, the same notification gets the same key on retries, a different notification has a different key, and ordinary transactional emails remain unchanged. The internal notification identifier is not itself transmitted in this header.
 
 Resend documents an [Idempotency-Key header on `POST /emails`](https://github.com/resend/resend-openapi/blob/main/resend.yaml) and a **24-hour replay window**. This protects only requests processed on Resend within that window with unchanged body; altered payloads can receive HTTP 409, and attempts sent over the separate Gmail relay are not protected by Resend's key. It cannot turn the entire mail workflow into exactly-once delivery. The D1 outbox remains the durable, bounded retry source, and provider ambiguity remains visible in the audit/operations report.
+
+## Mail outbox admission and recipient-binding hardening
+
+A new negative-control suite tests **strict Cron-owned notification admission**. Pending messages must be either (a) an expired-task notification whose ID, historical archive record, request status and notification `user_id` agree with the actual expired reservation owner, or (b) a non-user administrative reminder whose ID exactly equals `cron-reminder:` plus one of the four recognized task/skill review kind prefixes. Arbitrary `cron-` IDs, mismatched kinds, forged administrator messages attached to a user, wrong recipient IDs and empty kind suffixes do not enter the outbox. Both captured-production-schema SQLite tests and local Wrangler scheduled-worker tests exercise these negative controls.
+
+The send path now also checks that the recipient is currently verified and their account remains **active** before passing a task-release notice to the transport. Suspended, disabled and unverified users are not emailed. These checks cannot make the external email send atomic with subsequent account changes; a narrow time-of-check/time-of-send race remains and must be disclosed.
 
 ## Important limitations
 
