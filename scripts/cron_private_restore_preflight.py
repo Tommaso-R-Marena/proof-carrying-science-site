@@ -33,6 +33,9 @@ EXPECTED_PRE0026_LEDGER=frozenset({
     "0024_countermodel_lab.sql", "0025_bridge_research_sessions.sql"
 })
 EXPECTED_NEW=frozenset({"cron_delivery_attempts","idx_cron_delivery_due"})
+# Independently reviewed exact migration bytes. A caller-provided digest alone
+# never approves an alternative SQL shape with weakened constraints.
+PINNED_0026_SHA256="28e1c98642317ffaa2df976ea976f3a696638f7f2c6232823112dbc17ce12756"
 MAX_SOURCE_BYTES=2_000_000_000
 MAX_ROWS=10_000_000
 
@@ -180,6 +183,8 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
     migration_path=Path(migration_path or ROOT/"migrations/0026_cron_mail_outbox.sql")
     capture=json.loads(capture_path.read_text())
     before_objects=validate_capture(capture)
+    if expected_migration_sha256!=PINNED_0026_SHA256:
+        raise PreflightRejected("Migration SHA-256 is not the reviewed 0026 revision")
     if digest_file(migration_path)!=expected_migration_sha256:
         raise PreflightRejected("Proposed migration checksum mismatch")
     migration_sql=vetted_migration_sql(migration_path)
