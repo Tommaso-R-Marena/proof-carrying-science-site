@@ -1,0 +1,163 @@
+/**
+ * Crash-recoverable scheduled maintenance for PCS Commons.
+ * D1 batch is one transaction; a failed write rolls all statements back.
+ * Receipt archive reconciliation is idempotent through archiveLeanEvent.
+ * Email delivery is at-least-once, NEVER guaranteed exactly-once.
+ */
+export const CRON_EXPIRY_LIMIT = 40;
+export const CRON_ARCHIVE_LIMIT = 60;
+export const CRON_MAIL_LIMIT = 30;
+export const CRON_MAIL_MAX_ATTEMPTS = 5;
+const CRON_MAIL_ADMISSION = "n.email_state IN ('queued','failed') AND ((n.kind='task_expired' AND n.user_id IS NOT NULL AND substr(n.id,1,length('cron-expiry-note:'))='cron-expiry-note:' AND length(n.id)>length('cron-expiry-note:') AND EXISTS(SELECT 1 FROM task_requests r WHERE r.id=substr(n.id,length('cron-expiry-note:')+1) AND r.user_id=n.user_id AND r.status='expired') AND EXISTS(SELECT 1 FROM audit_archive ar JOIN audit_log l ON l.id=ar.legacy_audit_id WHERE ar.event_id=('cron-expiry:' || substr(n.id,length('cron-expiry-note:')+1)) AND ar.legacy_audit_id=ar.event_id AND ar.action='task_request_expired' AND ar.subject_type='task_request' AND ar.subject_id=substr(n.id,length('cron-expiry-note:')+1) AND ar.action=l.action AND ar.subject_type=l.subject_type AND ar.subject_id=l.subject_id AND ar.detail_json=l.detail_json AND ar.created_at=l.created_at AND ar.actor_user_id IS l.actor_user_id)) OR (n.user_id IS NULL AND n.id=('cron-reminder:' || n.kind) AND ( (substr(n.kind,1,length('task_request_target_admin:'))='task_request_target_admin:' AND length(n.kind)>length('task_request_target_admin:')) OR (substr(n.kind,1,length('task_request_overdue_admin:'))='task_request_overdue_admin:' AND length(n.kind)>length('task_request_overdue_admin:')) OR (substr(n.kind,1,length('skill_review_target_admin:'))='skill_review_target_admin:' AND length(n.kind)>length('skill_review_target_admin:')) OR (substr(n.kind,1,length('skill_review_overdue_admin:'))='skill_review_overdue_admin:' AND length(n.kind)>length('skill_review_overdue_admin:')) )))";
+export const CRON_SQL = Object.freeze({
+  stale: "SELECT r.id,r.user_id,t.id AS task_id,t.title,u.email_verified FROM task_requests r JOIN tasks t ON t.id=r.task_id JOIN users u ON u.id=r.user_id WHERE r.status='approved' AND t.claim_mode!='open' AND ((r.checkpoint_status='pending' AND r.checkpoint_due_at IS NOT NULL AND r.checkpoint_due_at<=? AND COALESCE(r.checkpoint_note,'')='') OR (r.reservation_expires_at IS NOT NULL AND r.reservation_expires_at<=?)) ORDER BY COALESCE(r.reservation_expires_at,r.checkpoint_due_at),r.id LIMIT ?",
+  expire: "UPDATE task_requests SET status='expired',checkpoint_status=CASE WHEN checkpoint_status='pending' THEN 'missed' ELSE checkpoint_status END,reservation_key=NULL WHERE id=? AND status='approved' AND EXISTS(SELECT 1 FROM tasks t WHERE t.id=task_requests.task_id AND t.claim_mode!='open') AND ((checkpoint_status='pending' AND checkpoint_due_at IS NOT NULL AND checkpoint_due_at<=? AND COALESCE(checkpoint_note,'')='') OR (reservation_expires_at IS NOT NULL AND reservation_expires_at<=?))",
+  audit: "INSERT INTO audit_log(id,actor_user_id,action,subject_type,subject_id,detail_json,created_at) SELECT ?,NULL,'task_request_expired','task_request',r.id,?,? FROM task_requests r WHERE r.id=? AND r.status='expired' AND changes()=1",
+  notice: "INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state) SELECT ?,r.user_id,'task_expired',?,?,?,'queued' FROM task_requests r WHERE r.id=? AND r.status='expired' AND EXISTS(SELECT 1 FROM audit_log l WHERE l.id=('cron-expiry:' || r.id) AND l.action='task_request_expired' AND l.subject_id=r.id) AND changes()=1",
+  unarchived: "SELECT l.id,l.actor_user_id,l.action,l.subject_type,l.subject_id,l.detail_json,l.created_at,a.legacy_audit_id AS existing_archive_legacy_id FROM audit_log l LEFT JOIN audit_archive a ON a.legacy_audit_id=l.id WHERE l.action='task_request_expired' AND l.id LIKE 'cron-expiry:%' AND (a.legacy_audit_id IS NULL OR a.event_id!=l.id OR a.action!=l.action OR a.subject_type!=l.subject_type OR a.subject_id!=l.subject_id OR a.detail_json!=l.detail_json OR a.created_at!=l.created_at OR COALESCE(a.actor_user_id,'')!=COALESCE(l.actor_user_id,'')) ORDER BY l.created_at,l.id LIMIT ?",
+  verifyArchive: "SELECT 1 AS ok FROM audit_archive WHERE event_id=? AND legacy_audit_id=? AND action=? AND subject_type=? AND subject_id=? AND detail_json=? AND created_at=? AND actor_user_id IS ?",
+  reminder: "INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state) SELECT ?,NULL,?,?,?,?,'queued' WHERE NOT EXISTS(SELECT 1 FROM notifications WHERE kind=?)",
+  pendingMail: `SELECT n.id,n.user_id,n.kind,n.subject,n.body,n.email_state,u.email AS user_email,u.email_verified,u.status AS user_status FROM notifications n LEFT JOIN users u ON u.id=n.user_id LEFT JOIN cron_delivery_attempts a ON a.notification_id=n.id WHERE ${CRON_MAIL_ADMISSION} AND COALESCE(a.attempt_count,0)<5 AND (a.next_attempt_at IS NULL OR a.next_attempt_at<=?) AND (a.lease_until IS NULL OR a.lease_until<=?) ORDER BY n.created_at,n.id LIMIT ?`,
+  claimMail: `INSERT INTO cron_delivery_attempts(notification_id,attempt_count,lease_id,lease_until,next_attempt_at,updated_at) SELECT ?,1,?,?,?,? FROM notifications n LEFT JOIN users u ON u.id=n.user_id WHERE n.id=? AND n.kind=? AND n.user_id IS ? AND n.subject=? AND n.body=? AND (n.user_id IS NULL OR (u.status='active' AND u.email_verified=1 AND u.email=?)) AND ${CRON_MAIL_ADMISSION} ON CONFLICT(notification_id) DO UPDATE SET attempt_count=cron_delivery_attempts.attempt_count+1,lease_id=excluded.lease_id,lease_until=excluded.lease_until,updated_at=excluded.updated_at WHERE cron_delivery_attempts.attempt_count<5 AND cron_delivery_attempts.delivered_at IS NULL AND cron_delivery_attempts.next_attempt_at<=? AND (cron_delivery_attempts.lease_until IS NULL OR cron_delivery_attempts.lease_until<=?) RETURNING attempt_count,lease_id`,
+  emailState: "UPDATE notifications SET email_state=?,email_error=? WHERE id=? AND EXISTS(SELECT 1 FROM cron_delivery_attempts a WHERE a.notification_id=notifications.id AND a.lease_id=?)",
+  completeMail: "UPDATE cron_delivery_attempts SET lease_id=NULL,lease_until=NULL,next_attempt_at=?,delivered_at=?,last_error_class=?,updated_at=? WHERE notification_id=? AND lease_id=?",
+});
+
+function errorType(error) {
+  return ['Error','TypeError','RangeError','SyntaxError','ReferenceError','AggregateError'].includes(error?.name) ? error.name : 'Error';
+}
+function report(operation,error) {
+  // Do not log provider/SQLite error messages: they may include user data.
+  console.error('PCS cron recovery failure',{operation,error_type:errorType(error)});
+}
+function addMillis(iso,millis) {
+  return new Date(new Date(iso).getTime()+millis).toISOString();
+}
+
+export async function expireReservationsAtomically(env,now=new Date().toISOString()) {
+  const db=env.COMMONS_DB;
+  const found=(await db.prepare(CRON_SQL.stale).bind(now,now,CRON_EXPIRY_LIMIT+1).all()).results||[];
+  let errors=0,committed=0;
+  for(const row of found.slice(0,CRON_EXPIRY_LIMIT)) {
+    const id=String(row.id);
+    try {
+      const outcome=await db.batch([
+        db.prepare(CRON_SQL.expire).bind(id,now,now),
+        db.prepare(CRON_SQL.audit).bind('cron-expiry:'+id,JSON.stringify({task_id:row.task_id}),now,id),
+        db.prepare(CRON_SQL.notice).bind(
+          'cron-expiry-note:'+id,
+          'PCS task released: '+row.task_id,
+          'Your reservation for '+row.task_id+' — '+row.title+
+          ' was released because its checkpoint or reservation deadline passed. You may apply again later.\n',
+          now,id
+        ),
+      ]);
+      // D1 exposes changes on each transactional result. A concurrent
+      // status transition that no longer qualifies must not count as ours.
+      if(Number(outcome?.[0]?.meta?.changes ?? 1)>0) committed++;
+    } catch(error) {
+      errors++;
+      report('expire_transaction',error);
+    }
+  }
+  if(found.length>CRON_EXPIRY_LIMIT) throw new Error('PCS cron expiry backlog exceeds bounded per-run limit');
+  if(errors) throw new Error('PCS cron expiry transaction failure count: '+errors);
+  return committed;
+}
+
+/** Replay durable audit intents after interrupted archive hashing/appends. */
+export async function reconcileExpiryArchive(env,archiveEvent) {
+  const rows=(await env.COMMONS_DB.prepare(CRON_SQL.unarchived).bind(CRON_ARCHIVE_LIMIT+1).all()).results||[];
+  let errors=0;
+  for(const row of rows.slice(0,CRON_ARCHIVE_LIMIT)) {
+    try {
+      // Existing hash-chain events are immutable. Never silently interpret an
+      // unrelated or contradictory record as proof that this intent is archived.
+      if(row.existing_archive_legacy_id!==null && row.existing_archive_legacy_id!==undefined)
+        throw new Error('Conflicting immutable archive row');
+      await archiveEvent({
+        eventId:row.id,legacyAuditId:row.id,actorUserId:row.actor_user_id,
+        action:row.action,subjectType:row.subject_type,subjectId:row.subject_id,
+        detailJson:row.detail_json,createdAt:row.created_at,
+      });
+      const verified=await env.COMMONS_DB.prepare(CRON_SQL.verifyArchive)
+        .bind(row.id,row.id,row.action,row.subject_type,row.subject_id,
+          row.detail_json,row.created_at,row.actor_user_id).first();
+      if(!verified?.ok) throw new Error('Immutable archive postcondition not satisfied');
+    } catch(error) {errors++;report('archive_reconciliation',error);}
+  }
+  if(rows.length>CRON_ARCHIVE_LIMIT) throw new Error('PCS cron archive reconciliation backlog');
+  if(errors) throw new Error('PCS cron archive reconciliation failure count: '+errors);
+  return rows.length;
+}
+
+export async function cleanupExpiredAuth(env,now,expiredRateWindow) {
+  const db=env.COMMONS_DB;
+  return db.batch([
+    db.prepare("UPDATE competency_evaluations SET status='expired' WHERE status='open' AND expires_at<=?").bind(now),
+    db.prepare('DELETE FROM sessions WHERE expires_at<=?').bind(now),
+    db.prepare('DELETE FROM admin_sessions WHERE expires_at<=?').bind(now),
+    db.prepare('DELETE FROM email_verification_tokens WHERE expires_at<=? OR used_at IS NOT NULL').bind(now),
+    db.prepare('DELETE FROM rate_limits WHERE window_start<?').bind(expiredRateWindow),
+  ]);
+}
+
+/** A unique, repeatable notification intent precedes any external send. */
+export async function queueCronReminder(env,{kind,subject,body,now=new Date().toISOString()}) {
+  return env.COMMONS_DB.prepare(CRON_SQL.reminder)
+    .bind('cron-reminder:'+kind,kind,subject,body,now,kind).run();
+}
+
+/** Limited retries with a claim lease. External delivery can still duplicate
+ * if the provider accepts before D1 commits the acknowledgment. */
+export async function deliverCronMail(env,sendMail,now=new Date().toISOString()) {
+  const db=env.COMMONS_DB;
+  const selected=(await db.prepare(CRON_SQL.pendingMail).bind(now,now,CRON_MAIL_LIMIT+1).all()).results||[];
+  let sent=0,failed=0;
+  for(const n of selected.slice(0,CRON_MAIL_LIMIT)) {
+    const adminMail=n.kind.startsWith('task_request_')||n.kind.startsWith('skill_review_');
+    const address=adminMail?env.ADMIN_EMAIL
+      :(n.kind==='task_expired'&&n.user_status==='active'&&Number(n.email_verified)===1?n.user_email:null);
+    if(!address) {
+      await db.prepare("UPDATE notifications SET email_state='disabled',email_error='No verified recipient' WHERE id=? AND email_state IN ('queued','failed')").bind(n.id).run();
+      continue;
+    }
+    const leaseId=crypto.randomUUID();
+    let claimed;
+    try {
+      claimed=await db.prepare(CRON_SQL.claimMail)
+        .bind(n.id,leaseId,addMillis(now,5*60*1000),now,now,
+          n.id,n.kind,n.user_id??null,n.subject,n.body,address,now,now).all();
+    } catch(error) {failed++;report('claim_mail',error);continue;}
+    if(!(claimed.results||[]).length) continue;
+    const count=Number(claimed.results[0].attempt_count);
+    let state='failed',providerUnavailable=false;
+    try {
+      // Provider-native idempotency reduces replay duplicates on Resend.
+      // Hash the internal notification ID to avoid sending pseudonymous
+      // account identifiers to an external provider.
+      const bytes=new TextEncoder().encode('pcs-cron-v1:' + n.id);
+      const digest=new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
+      const idempotencyKey='pcs-cron-v1-'+Array.from(digest,b=>b.toString(16).padStart(2,'0')).join('');
+      const outcome=await sendMail(env,address,n.subject,n.body,{idempotencyKey});
+      // A temporarily unconfigured mail relay is retryable. In contrast,
+      // missing or unverified recipients are disabled before claiming.
+      providerUnavailable=outcome?.state==='disabled';
+      state=outcome?.state==='sent'?'sent':'failed';
+    } catch(error) {report('provider_mail',error);}
+    const delivered=state==='sent';
+    const retryAt=addMillis(now,delivered?0:Math.min(86400,300*Math.pow(2,count-1))*1000);
+    const exhausted=!delivered && count>=CRON_MAIL_MAX_ATTEMPTS;
+    if(exhausted) console.error('PCS cron mail retry limit exhausted',{error_type:'delivery_failed'});
+    try {
+      await db.batch([
+        db.prepare(CRON_SQL.emailState).bind(state,delivered?null:(exhausted?'Retry limit exhausted; manual review required':providerUnavailable?'Mail transport unavailable; retry scheduled':'Delivery pending retry'),n.id,leaseId),
+        db.prepare(CRON_SQL.completeMail).bind(retryAt,delivered?now:null,delivered?null:(providerUnavailable?'transport_unavailable':'provider_failure'),now,n.id,leaseId),
+      ]);
+      if(delivered) sent++;else failed++;
+    } catch(error) {failed++;report('complete_mail',error);}
+  }
+  if(selected.length>CRON_MAIL_LIMIT) throw new Error('PCS cron mail backlog exceeds bounded per-run limit');
+  if(failed) throw new Error('PCS cron mail incomplete delivery count: '+failed);
+  return sent;
+}
