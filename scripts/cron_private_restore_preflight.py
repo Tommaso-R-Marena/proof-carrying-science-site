@@ -165,6 +165,21 @@ def cron_migration_authorizer(action,arg1,arg2,database,trigger):
     return denied
 
 
+def require_standalone_backup(path):
+    """Reject backups whose real content could live in an unhashed sidecar.
+
+    A main-db SHA-256 is not a valid complete-backup digest for WAL or hot
+    rollback-journal databases. The operator must provide a completed,
+    standalone SQLite backup, not a live database or a WAL copy.
+    """
+    if path.stat().st_nlink != 1:
+        raise PreflightRejected("Hard-linked database files are not isolated backups")
+    for suffix in ("-wal", "-shm", "-journal"):
+        sidecar=path.with_name(path.name+suffix)
+        if os.path.lexists(sidecar):
+            raise PreflightRejected("SQLite database has unpinned journal/sidecar data")
+
+
 def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
              capture_path=None,migration_path=None):
     backup=Path(input_backup)
@@ -172,6 +187,7 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
         raise PreflightRejected("Input must be an existing regular local backup file")
     if not 1<=backup.stat().st_size<=MAX_SOURCE_BYTES:
         raise PreflightRejected("Backup size outside bounded offline qualification")
+    require_standalone_backup(backup)
     expected_pattern=r"[0-9a-f]{64}"
     if not re.fullmatch(expected_pattern,expected_backup_sha256):
         raise PreflightRejected("An exact trusted backup SHA-256 is required")
@@ -193,6 +209,12 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
         private_copy=Path(dirname)/"rehearsal.sqlite"
         source=sqlite_readonly(backup)
         try:
+            if source.execute("PRAGMA journal_mode").fetchone()[0].lower()=="wal":
+                raise PreflightRejected("WAL-mode database is not a standalone pinned backup")
+            # Pin a single read snapshot for schema, rows, and backup API.
+            # Without this, another local process could change rows between
+            # the first fingerprint and the temporary restore.
+            source.execute("BEGIN")
             if schema_rows(source)!=before_objects:
                 raise PreflightRejected("Backup schema differs from exact captured schema")
             integrity(source)
@@ -235,7 +257,9 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
         finally:
             source.close()
 
-    # Explicitly verify that the original backup was not modified.
+    # Explicitly verify that the original backup was not modified and no
+    # SQLite sidecar appeared during the rehearsal.
+    require_standalone_backup(backup)
     if digest_file(backup)!=expected_backup_sha256:
         raise PreflightRejected("Input backup changed during offline rehearsal")
     return {
@@ -248,6 +272,7 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
         "original_backup_not_mutated":True,
         "migration_ledger_not_backfilled":True,
         "input_checksum_pin_verified":True,
+        "standalone_backup_and_snapshot_verified":True,
         "migration_checksum_pin_verified":True,
         "production_data_not_exported_or_logged":True,
         "cloudflare_network_access_used":False,
