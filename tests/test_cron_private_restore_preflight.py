@@ -49,6 +49,7 @@ class PrivateD1RestorePreflightTests(unittest.TestCase):
         self.assertTrue(result["offline_rehearsal_passed"])
         self.assertTrue(result["preexisting_tables_same_rows"])
         self.assertTrue(result["original_backup_not_mutated"])
+        self.assertTrue(result["standalone_backup_and_snapshot_verified"])
         self.assertFalse(result["production_migration_authorized"])
         self.assertFalse(result["protected_source_admitted"])
         self.assertFalse(result["backup_authenticity_independently_proven"])
@@ -182,6 +183,34 @@ class PrivateD1RestorePreflightTests(unittest.TestCase):
             path.write_text(sql)
             with self.subTest(name=name),self.assertRaises(PreflightRejected):
                 vetted_migration_sql(path)
+
+    def test_wal_journal_mode_not_considered_self_contained_backup(self):
+        with sqlite3.connect(self.backup) as conn:
+            self.assertEqual(conn.execute("PRAGMA journal_mode=WAL").fetchone()[0],"wal")
+            conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+        # A WAL-format database header is not an authorized standalone
+        # backup even when no -wal file happens to exist right now.
+        with self.assertRaises(PreflightRejected):
+            self.go(expected_backup_sha256=digest_file(self.backup))
+
+    def test_existing_unpinned_wal_shm_or_rollback_journal_fails_closed(self):
+        for suffix in ("-wal","-shm","-journal"):
+            sidecar=self.root/("private-fixture.sqlite"+suffix)
+            sidecar.write_bytes(b"synthetic unpinned sidecar")
+            try:
+                with self.subTest(suffix=suffix),self.assertRaises(PreflightRejected):
+                    self.go()
+                self.assertEqual(digest_file(self.backup),self.backup_sha)
+            finally:
+                sidecar.unlink()
+
+    def test_hardlinked_input_is_not_an_isolated_backup(self):
+        other=self.root/"hardlinked.sqlite"
+        import os
+        os.link(self.backup,other)
+        with self.assertRaises(PreflightRejected):
+            self.go()
+        self.assertEqual(digest_file(self.backup),self.backup_sha)
 
     def test_symlink_input_not_accepted(self):
         link=self.root/"backup-alias.sqlite"
