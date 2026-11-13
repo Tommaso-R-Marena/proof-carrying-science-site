@@ -120,7 +120,8 @@ class TestCronRecoverySQL(unittest.TestCase):
         self.expire_batch()
         missing=self.c.execute(self.q["unarchived"],(61,)).fetchall()
         self.assertEqual(len(missing),1)
-        (event,actor,action,subject_type,subject_id,detail,created)=missing[0]
+        (event,actor,action,subject_type,subject_id,detail,created,existing_archive_legacy_id)=missing[0]
+        self.assertIsNone(existing_archive_legacy_id)
         self.assertEqual(event,"cron-expiry:r1")
         self.c.execute("INSERT INTO audit_archive(event_id,legacy_audit_id,actor_user_id,action,subject_type,subject_id,detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?,?)",
             (event,event,actor,action,subject_type,subject_id,detail,created,"genesis","mockhash"))
