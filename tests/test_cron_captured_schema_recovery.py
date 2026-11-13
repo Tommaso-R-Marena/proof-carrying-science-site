@@ -275,6 +275,26 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
             self.sql["pendingMail"],(NOW,NOW,40)).fetchall()}
         self.assertNotIn("cron-expiry-note:cron-fixture-request",visible)
 
+    def test_expiry_mail_never_targets_a_different_verified_account(self):
+        self.seed()
+        synthetic_user(self.db,"unrelated-verified-user")
+        self.db.execute("UPDATE users SET email_verified=1 WHERE id='unrelated-verified-user'")
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","a"*64))
+        before=self.db.execute(self.sql["pendingMail"],(NOW,NOW,31)).fetchall()
+        self.assertEqual(len(before),1)
+        self.db.execute("UPDATE notifications SET user_id='unrelated-verified-user' "
+                        "WHERE id='cron-expiry-note:cron-fixture-request'")
+        after=self.db.execute(self.sql["pendingMail"],(NOW,NOW,31)).fetchall()
+        self.assertEqual(after,[])
+
     def test_retry_ledger_is_deletable_with_user_notification(self):
         self.seed()
         self.expire()
