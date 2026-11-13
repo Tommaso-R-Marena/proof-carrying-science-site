@@ -16,7 +16,7 @@ export async function runScheduledDuties(env, duties, reportFailure = console.er
       await duty(env);
     } catch (error) {
       failed.push(name);
-      const errorType = typeof error?.name === 'string' && error.name ? error.name : 'Error';
+      const errorType = ['Error','TypeError','RangeError','SyntaxError','ReferenceError','AggregateError'].includes(error?.name) ? error.name : 'Error';
       reportFailure('PCS Commons scheduled duty failed', { duty: name, error_type: errorType });
     }
   }
