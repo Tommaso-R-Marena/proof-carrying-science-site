@@ -39,7 +39,7 @@ export async function expireReservationsAtomically(env,now=new Date().toISOStrin
   for(const row of found.slice(0,CRON_EXPIRY_LIMIT)) {
     const id=String(row.id);
     try {
-      await db.batch([
+      const outcome=await db.batch([
         db.prepare(CRON_SQL.expire).bind(id,now,now),
         db.prepare(CRON_SQL.audit).bind('cron-expiry:'+id,JSON.stringify({task_id:row.task_id}),now,id),
         db.prepare(CRON_SQL.notice).bind(
@@ -50,7 +50,9 @@ export async function expireReservationsAtomically(env,now=new Date().toISOStrin
           now,id
         ),
       ]);
-      committed++;
+      // D1 exposes changes on each transactional result. A concurrent
+      // status transition that no longer qualifies must not count as ours.
+      if(Number(outcome?.[0]?.meta?.changes ?? 1)>0) committed++;
     } catch(error) {
       errors++;
       report('expire_transaction',error);
@@ -125,9 +127,11 @@ export async function deliverCronMail(env,sendMail,now=new Date().toISOString())
     } catch(error) {report('provider_mail',error);}
     const delivered=state==='sent';
     const retryAt=addMillis(now,delivered?0:Math.min(86400,300*Math.pow(2,count-1))*1000);
+    const exhausted=!delivered && state!=='disabled' && count>=CRON_MAIL_MAX_ATTEMPTS;
+    if(exhausted) console.error('PCS cron mail retry limit exhausted',{error_type:'delivery_failed'});
     try {
       await db.batch([
-        db.prepare(CRON_SQL.emailState).bind(state,delivered?null:(state==='disabled'?'Transport disabled':'Delivery pending retry'),n.id,leaseId),
+        db.prepare(CRON_SQL.emailState).bind(state,delivered?null:(state==='disabled'?'Transport disabled':exhausted?'Retry limit exhausted; manual review required':'Delivery pending retry'),n.id,leaseId),
         db.prepare(CRON_SQL.completeMail).bind(retryAt,delivered?now:null,delivered?null:(state==='disabled'?'disabled':'provider_failure'),now,n.id,leaseId),
       ]);
       if(delivered) sent++;else failed++;
