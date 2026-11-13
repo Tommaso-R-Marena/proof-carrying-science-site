@@ -42,3 +42,15 @@ test('two independent failures are surfaced without leaking raw provider excepti
   assert.deepEqual(reports.map(x=>x[1].error_type),['Error','RangeError']);
   assert.doesNotMatch(JSON.stringify(reports), /private database value|secret address/);
 });
+
+test('malicious exception name is redacted before scheduled duty logging',async()=>{
+  const reports=[];
+  const error=new Error('DB content may contain PII');
+  error.name='SensitiveUserData_ImportantSecret';
+  await assert.rejects(runScheduledDuties({},[
+    ['expiry',async()=>{throw error;}],
+  ],(...args)=>reports.push(args)),/scheduled maintenance failed: expiry/);
+  assert.equal(reports.length,1);
+  assert.equal(reports[0][1].error_type,'Error');
+  assert.doesNotMatch(JSON.stringify(reports),/SensitiveUserData_ImportantSecret/);
+});
