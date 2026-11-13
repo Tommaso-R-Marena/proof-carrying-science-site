@@ -3,7 +3,7 @@
 **Date:** 2026-11-13  
 **Status:** STAGED / NOT PRODUCTION-CLEARED  
 **Implementation:** draft PR #152, stacked on #151.  
-**Targeted independent CI:** [Cron Recovery Qualification run 43488844696](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43488844696) — **56/56 tests passed** (28 Node tests; 12 isolated SQLite tests; 16 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
+**Targeted independent CI:** [Cron Recovery Qualification run 43490645766](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43490645766) — **58/58 tests passed** (28 Node tests; 12 isolated SQLite tests; 18 tests against the captured production schema), plus `node --check`, `wrangler deploy --dry-run`, and an actual local Wrangler `scheduled()` invocation with local D1 (success, intentional mail outage, synthetic expiry + hash-archive evidence, repeat-run idempotency, and injected DB failure). The job did **not** deploy.  
 **Unresolved source qualification:** [Open PR source reconciliation run 43387807628](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807628) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
 ## Fresh read-only production schema equality check (2026-11-13)
@@ -47,6 +47,16 @@ Resend documents an [Idempotency-Key header on `POST /emails`](https://github.co
 An immutable archive row with a matching event ID and correct action/subject is **not** sufficient to release a user notification. The `pendingMail` SQL now joins the archived event to the original `audit_log` row by `legacy_audit_id` and requires the original and archived **action, subject type, subject ID, detail JSON, creation timestamp, and actor identity (including NULL)** to match. This closes a gap in which the independently attempted Cron archive-recovery duty could report a conflict while the separately attempted delivery duty nevertheless sent the message. Three adversarial captured-schema controls forge the archived detail, timestamp, or actor while preserving the expected IDs, action, and subject. All must remain ineligible for email.
 
 This is an identity/consistency gate on stored evidence, **not** proof that the originally reported task expiration was scientifically or operationally correct, and not validation of the archive's cryptographic chain. Full archive integrity requires the existing independent audit chain checks.
+
+## Atomic claim-time revalidation after an outbox SELECT
+
+The external email delivery duty first selects pending messages and then acquires a D1 retry lease; those operations are not the same statement. Previously, an admin could disable a message, revoke or suspend a recipient, alter notification content, or change task ownership **after selection but before the claim**, while the claim trusted the earlier row.
+
+The lease `INSERT … SELECT … ON CONFLICT … RETURNING` now uses the **same centralized strict Cron admission predicate** as `pendingMail` and additionally checks the current notification ID, kind, user ID (NULL-safe), subject and body; for contributor messages it checks the current active/verified user and email address. The lease is not granted if any of these values differ from the selected snapshot. The retry counter stays unchanged in this case.
+
+Captured-production-schema SQLite tests modify message state, kind, subject, body, account activation, verification, address, reservation status, and notification ownership *after a legitimate SELECT*. Each stale claim is rejected; positive and repeat-claim tests demonstrate that valid notifications continue to be delivered and existing leases retain their semantics. Administrative reminder rows have the same stale-selection protections.
+
+**Residual risk:** this revalidation is atomic only at claim time. Between the successful database claim and an external provider's acceptance, a recipient may still be suspended or an administrator may revoke a notification. Delivery is at-least-once, not a mathematically or operationally exactly-once or zero-race protocol. The release must not claim otherwise.
 
 ## Mail outbox admission and recipient-binding hardening
 
