@@ -6,6 +6,12 @@
 **Targeted independent CI:** [Cron Recovery Qualification run 43383063927](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43383063927) — **26/26 tests passed** (17 Node tests; 9 real SQLite tests), plus `node --check` and `wrangler deploy --dry-run`. The job did **not** deploy.  
 **Unresolved source qualification:** [Open PR source reconciliation run 43381892513](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43381892513) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
+## Fresh read-only production schema equality check (2026-11-13)
+
+A current Cloudflare read-only D1 metadata query was compared in bounded groups against the existing source-pinned `docs/evidence/production-d1-recovery-v2/captured-schema.json` record (capture 2026-10-13). **All 96 named non-internal schema objects matched their exact SQL definitions, types, names and table owners; zero missing, extra, or definition mismatches.** Queries only accessed `sqlite_master` through the existing fixed allowlisted schema SELECT; they did **not** query application/account rows or execute SQL mutations. Because the connector abbreviates large returned strings, the comparisons were performed inside the Cloudflare execution environment, before truncating the response, in six independently bounded groups (37 + 21 + 10 + 10 + 7 + 11 objects).
+
+This confirms compatibility of the local schema-rehearsal fixture with the observed current D1 *schema*, but it does not establish exact live row state, production backup/restore correctness, migration ledger chronology, or safe production migration authority. Those gates remain open.
+
 ## Trust and scope
 
 The Worker is an application coordinator, not the scientific authority. Its Cron maintains task reservations, notifications, sessions and an audit journal. None of this can certify scientific results or modify PCS formal source.
