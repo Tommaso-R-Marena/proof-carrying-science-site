@@ -129,6 +129,23 @@ npx --no-install wrangler d1 execute pcs-commons \
   > "$temporary/assert-cron.log" 2>&1
 echo 'PASS: local Worker committed synthetic task expiry and matching immutable archive; retry intent remains'
 
+# Simulate two forged Cron-looking notification rows in the local database.
+# One carries an admin reminder kind but points to a user; the other has
+# a mismatched ID and kind. Neither is permitted into the mail outbox.
+cat > "$temporary/forged-mail.sql" <<'SQL'
+INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state)
+VALUES('cron-reminder:task_request_target_admin:forged-user','cron-local-user',
+       'task_request_target_admin:forged-user','SYNTHETIC FORGED',
+       'Synthetic private body','2026-11-13T00:00:00Z','queued');
+INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state)
+VALUES('cron-reminder:wrong-key',NULL,
+       'skill_review_target_admin:mismatched','SYNTHETIC FORGED',
+       'Synthetic private body','2026-11-13T00:00:00Z','queued');
+SQL
+npx --no-install wrangler d1 execute pcs-commons \
+  --local --persist-to "$state" --file "$temporary/forged-mail.sql" \
+  > "$temporary/forged-mail.log" 2>&1
+
 # A second event before the 5-minute retry window must not recreate events,
 # send a new email, or increment the existing attempt counter.
 curl --silent --show-error --max-time 25 \
@@ -146,7 +163,7 @@ console.log('PASS: local second scheduled invocation did not retry mail early');
 NODE
 npx --no-install wrangler d1 execute pcs-commons \
   --local --persist-to "$state" \
-  --command "INSERT INTO cron_local_assert(ok) SELECT CASE WHEN (SELECT attempt_count FROM cron_delivery_attempts WHERE notification_id='cron-expiry-note:cron-local-request')=1 AND (SELECT COUNT(*) FROM audit_archive WHERE event_id='cron-expiry:cron-local-request')=1 THEN 1 ELSE 0 END" \
+  --command "INSERT INTO cron_local_assert(ok) SELECT CASE WHEN (SELECT attempt_count FROM cron_delivery_attempts WHERE notification_id='cron-expiry-note:cron-local-request')=1 AND (SELECT COUNT(*) FROM audit_archive WHERE event_id='cron-expiry:cron-local-request')=1 AND (SELECT COUNT(*) FROM cron_delivery_attempts WHERE notification_id IN ('cron-reminder:task_request_target_admin:forged-user','cron-reminder:wrong-key'))=0 AND (SELECT COUNT(*) FROM notifications WHERE id IN ('cron-reminder:task_request_target_admin:forged-user','cron-reminder:wrong-key') AND email_state='queued')=2 THEN 1 ELSE 0 END" \
   > "$temporary/assert-repeat.log" 2>&1
 
 # Inject an isolated DB fault. A broken maintenance statement must cause
