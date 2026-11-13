@@ -90,6 +90,22 @@ class TestCronRecoverySQL(unittest.TestCase):
         self.assertEqual(self.c.execute("SELECT COUNT(*) FROM audit_log").fetchone()[0],0)
         self.assertEqual(self.c.execute("SELECT COUNT(*) FROM notifications").fetchone()[0],0)
 
+    def test_stale_read_cannot_forge_audit_after_competing_release(self):
+        # Another path expired the reservation after our stale SELECT. The
+        # compare-and-set changes zero rows; no false cron event is permitted.
+        self.c.execute("UPDATE task_requests SET status='expired' WHERE id='r1'")
+        self.expire_batch()
+        self.assertEqual(self.c.execute("SELECT COUNT(*) FROM audit_log").fetchone()[0],0)
+        self.assertEqual(self.c.execute("SELECT COUNT(*) FROM notifications").fetchone()[0],0)
+
+    def test_stale_read_cannot_forge_audit_after_task_mode_changed(self):
+        # A task was switched to open before our expiry transaction began.
+        self.c.execute("UPDATE tasks SET claim_mode='open' WHERE id='T1'")
+        self.expire_batch()
+        self.assertEqual(self.c.execute("SELECT status FROM task_requests WHERE id='r1'").fetchone()[0],"approved")
+        self.assertEqual(self.c.execute("SELECT COUNT(*) FROM audit_log").fetchone()[0],0)
+        self.assertEqual(self.c.execute("SELECT COUNT(*) FROM notifications").fetchone()[0],0)
+
     def test_atomic_success_and_exactly_once_intents(self):
         self.expire_batch()
         self.expire_batch()
