@@ -8,6 +8,7 @@ on:
       - 'src/worker.js'
       - 'migrations/0026_cron_mail_outbox.sql'
       - 'tests/cron-recovery.test.mjs'
+      - 'tests/cron-reminder-privacy.test.mjs'
       - 'tests/scheduled-duties.test.mjs'
       - 'tests/test_cron_atomic_recovery.py'
       - 'tests/test_cron_captured_schema_recovery.py'
