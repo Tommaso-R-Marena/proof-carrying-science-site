@@ -23,6 +23,10 @@ function mockDb(routes={}) {
               trace.push({type:'run',sql,args});
               return routes.run?.(sql,args)??{success:true};
             },
+            first:async()=> {
+              trace.push({type:'first',sql,args});
+              return routes.first ? routes.first(sql,args) : {ok:1};
+            },
           };
         }
       };
@@ -94,6 +98,44 @@ test('audit archive failure propagates and can be replayed next run',async()=>{
   assert.equal(attempts,1);
   await reconcileExpiryArchive({COMMONS_DB:db},async()=>{attempts++;});
   assert.equal(attempts,2);
+});
+
+
+test('audit reconciliation refuses conflicting immutable rows with same legacy identifier',async()=>{
+  const event={
+    id:'cron-expiry:r1',actor_user_id:null,action:'task_request_expired',
+    subject_type:'task_request',subject_id:'r1',
+    detail_json:'{}',created_at:t0,
+    existing_archive_legacy_id:'cron-expiry:r1'
+  };
+  const db=mockDb({all:sql=>sql===CRON_SQL.unarchived?[event]:[]});
+  let called=false;
+  const old=console.error;console.error=()=>{};
+  try {
+    await assert.rejects(reconcileExpiryArchive({COMMONS_DB:db},
+      async()=>{called=true;}),/archive reconciliation failure count: 1/);
+  } finally {console.error=old;}
+  assert.equal(called,false);
+  assert.equal(db.trace.filter(v=>v.type==='first').length,0);
+});
+
+test('archive append success without matching immutable persisted event fails closed',async()=>{
+  const event={id:'cron-expiry:r1',actor_user_id:null,
+    action:'task_request_expired',subject_type:'task_request',subject_id:'r1',
+    detail_json:'{}',created_at:t0};
+  const db=mockDb({
+    all:sql=>sql===CRON_SQL.unarchived?[event]:[],
+    first:sql=>sql===CRON_SQL.verifyArchive?null:{ok:1},
+  });
+  // This mock must preserve actual null, not default it into {ok:1}.
+  let archiveCalled=0;
+  const original=console.error;console.error=()=>{};
+  try {
+    await assert.rejects(reconcileExpiryArchive({COMMONS_DB:db},async()=>{
+      archiveCalled++;
+    }),/archive reconciliation failure count: 1/);
+  } finally {console.error=original;}
+  assert.equal(archiveCalled,1);
 });
 
 test('auth cleanup uses one D1 transaction for all five statements',async()=>{
