@@ -222,6 +222,59 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
         self.assertIsNone(self.db.execute(self.sql["verifyArchive"],bad).fetchone())
         self.assertEqual(self.db.execute(self.sql["unarchived"],(61,)).fetchall(),[])
 
+    def test_outbox_rejects_forged_notification_kinds_and_mismatched_identities(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","a"*64))
+        notices=[
+            ("cron-reminder:task_request_target_admin:r-good",None,
+             "task_request_target_admin:r-good",True),
+            ("cron-reminder:skill_review_overdue_admin:r-good",None,
+             "skill_review_overdue_admin:r-good",True),
+            ("cron-reminder:task_request_target_admin:r-user","cron-fixture-user",
+             "task_request_target_admin:r-user",False),
+            ("cron-reminder:task_request_target_admin:r-bad",None,
+             "task_request_target_admin:r-other",False),
+            ("cron-reminder:unapproved_kind:ID",None,
+             "unapproved_kind:ID",False),
+            ("cron-reminder:skill_review_target_admin:",None,
+             "skill_review_target_admin:",False),
+            ("cron-generic:task_request_overdue_admin:id",None,
+             "task_request_overdue_admin:id",False),
+            ("cron-expiry-note:forged-admin",None,"task_expired",False),
+            ("cron-expiry-note:unknown-user","cron-fixture-user",
+             "task_expired",False),
+            ("cron-expiry-note:cron-fixture-request","cron-fixture-user",
+             "task_request_overdue_admin:cron-fixture-request",False),
+        ]
+        # Do not duplicate the legitimate expiry notice ID; its original
+        # kind must remain unchanged. That conflicting kind is checked via
+        # a temporary UPDATE after testing other records.
+        for uid,user_id,kind,allowed in notices[:-1]:
+            self.db.execute(
+                "INSERT INTO notifications(id,user_id,kind,subject,body,created_at,email_state) "
+                "VALUES(?,?,?,?,?,?,?)",
+                (uid,user_id,kind,"Synthetic", "Offline",NOW,"queued"))
+        visible={r[0] for r in self.db.execute(
+            self.sql["pendingMail"],(NOW,NOW,40)).fetchall()}
+        self.assertEqual(visible,{
+            "cron-expiry-note:cron-fixture-request",
+            "cron-reminder:task_request_target_admin:r-good",
+            "cron-reminder:skill_review_overdue_admin:r-good",
+        })
+        self.db.execute("UPDATE notifications SET kind='task_request_overdue_admin:forged'"
+                        " WHERE id='cron-expiry-note:cron-fixture-request'")
+        visible={r[0] for r in self.db.execute(
+            self.sql["pendingMail"],(NOW,NOW,40)).fetchall()}
+        self.assertNotIn("cron-expiry-note:cron-fixture-request",visible)
+
     def test_retry_ledger_is_deletable_with_user_notification(self):
         self.seed()
         self.expire()
