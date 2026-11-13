@@ -1,0 +1,30 @@
+name: PCS Private D1 Restore Rehearsal (synthetic only)
+on:
+  pull_request:
+    branches: [feat/cron-atomic-outbox-recovery-2026-11-13, main]
+    paths:
+      - 'scripts/cron_private_restore_preflight.py'
+      - 'tests/test_cron_private_restore_preflight.py'
+      - 'migrations/0026_cron_mail_outbox.sql'
+      - 'docs/PRIVATE_D1_CRON_RESTORE_PREFLIGHT.md'
+      - '.github/workflows/private-d1-rehearsal.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-private-rehearsal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - name: Validate strict offline source syntax
+        run: |
+          python3 -m py_compile scripts/cron_private_restore_preflight.py
+          python3 -m py_compile tests/test_cron_private_restore_preflight.py
+      - name: Synthetic SQLite backup clone and fail-closed adversarial tests
+        run: python3 -m unittest discover -s tests -p test_cron_private_restore_preflight.py -v
