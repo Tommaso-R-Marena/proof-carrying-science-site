@@ -58,3 +58,11 @@ https://:version-proof-carrying-science-site.marenatommaso.workers.dev/*
 /account.html
   Cache-Control: no-store
   X-Robots-Tag: noindex, nofollow, noarchive
+
+# Short TTLs on public non-executable assets only. Keep unversioned JS,
+# proof receipts, HTML, and signed research artifacts revalidated.
+/*.css
+  Cache-Control: public, max-age=60, stale-while-revalidate=120
+
+/*.svg
+  Cache-Control: public, max-age=300, stale-while-revalidate=600
