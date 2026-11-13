@@ -1,0 +1,27 @@
+name: Cloudflare Deployment Metadata Audit (offline only)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/cloudflare_deployment_provenance.py'
+      - 'tests/test_cloudflare_deployment_provenance.py'
+      - '.github/workflows/deployment-provenance-audit.yml'
+      - 'docs/CLOUDFLARE_DEPLOYMENT_PROVENANCE_V1.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-provenance-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - name: Independent offline provider metadata negative controls
+        run: python3 -m unittest discover -s tests -p test_cloudflare_deployment_provenance.py -v
+      - name: Review tool syntax (no network or deploy)
+        run: python3 -m py_compile scripts/cloudflare_deployment_provenance.py
