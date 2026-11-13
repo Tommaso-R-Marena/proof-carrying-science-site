@@ -6,7 +6,7 @@
 
 ## What this implements
 
-The script `scripts/cron_private_restore_preflight.py` accepts a previously exported, separately authorized **SQLite database file**, an independently recorded SHA-256 for that file, and the independently reviewed SHA-256 of `migrations/0026_cron_mail_outbox.sql`.
+The script `scripts/cron_private_restore_preflight.py` accepts a previously exported, separately authorized **SQLite database file**, an independently recorded SHA-256 for that file, and the independently reviewed SHA-256 of `migrations/0026_cron_mail_outbox.sql` (**exact audited revision `28e1c98642317ffaa2df976ea976f3a696638f7f2c6232823112dbc17ce12756`**). The tool independently pins these migration bytes in its implementation: supplying a matching checksum for different SQL does not qualify the alternative.
 
 It performs these checks, **offline**:
 
@@ -14,11 +14,11 @@ It performs these checks, **offline**:
 2. Opens the backup using a read-only SQLite connection with `PRAGMA query_only=ON`; verifies the current approved captured production schema (96 exact objects), existing SQLite and foreign-key integrity, and the **observed pre-0026 ledger** of `0024_countermodel_lab.sql` and `0025_bridge_research_sessions.sql`.
 3. Computes streaming, type-encoded SHA-256 fingerprints of each captured table's rows **without logging raw values or their hashes**.
 4. Clones the database through SQLite's backup API into a private temporary directory and verifies snapshot schema/row equality.
-5. Applies **only migration 0026** to the temporary clone, never to the original backup. Requires exactly two additive objects: `cron_delivery_attempts` and `idx_cron_delivery_due`.
+5. Enforces an exact two-statement additive migration shape and runs it with a fail-closed SQLite authorizer allowing only the proposed table/index creation. The authorizer denies direct application-row updates/deletes, unauthorized DDL, ATTACH/DETACH, VACUUM INTO and PRAGMA changes; it can never treat a caller-provided checksum as authorization for different SQL. Applies **only the exact pinned migration 0026** to the temporary clone, never the original backup. Requires exactly two additive objects: `cron_delivery_attempts` and `idx_cron_delivery_due`.
 6. Asserts that every old schema object and old table's complete rows have identical fingerprints, the new attempt ledger is empty, the existing historical ledger has not been backfilled, and SQLite integrity/foreign keys remain valid.
 7. Deletes the temporary cloned backup on completion or failure, and rechecks the original backup's SHA-256. The script returns status booleans only, not rows, emails, user IDs, passwords, salts, tokens, raw backup hashes, or customer data.
 
-The **synthetic GitHub Actions test** creates an entirely artificial database from PCS's captured schema, seeds a synthetic account and historical migration ledger, and proves that damaged backups, mismatched checksums, missing ledger entries, changed schema, symlinked inputs, extra migration objects, and malicious migration writes are rejected. It also demonstrates that the original backup remains unchanged even when a malicious test migration changes rows on the disposable clone.
+The **synthetic GitHub Actions test** creates an entirely artificial database from PCS's captured schema, seeds a synthetic account and historical migration ledger, and proves that damaged backups, mismatched checksums, missing ledger entries, changed schema, symlinked inputs, extra migration objects, and malicious migration writes are rejected. It also demonstrates that malicious ATTACH, VACUUM INTO, unauthorized DDL, direct application-row writes, self-hashed alternative migration definitions, and weakened constraint variants are rejected before the migration executes. A separate direct-authorizer test checks that external files are never created.
 
 ## How an authorized reviewer would run it privately
 
