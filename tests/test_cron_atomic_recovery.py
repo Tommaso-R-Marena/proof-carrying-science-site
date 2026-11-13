@@ -28,7 +28,7 @@ def db_fixture():
     conn = sqlite3.connect(":memory:")
     conn.execute("PRAGMA foreign_keys=ON")
     conn.executescript("""
-       CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,email_verified INTEGER);
+       CREATE TABLE users(id TEXT PRIMARY KEY,email TEXT,email_verified INTEGER,status TEXT NOT NULL DEFAULT 'active');
        CREATE TABLE tasks(id TEXT PRIMARY KEY,title TEXT,claim_mode TEXT NOT NULL);
        CREATE TABLE task_requests(
          id TEXT PRIMARY KEY,task_id TEXT NOT NULL REFERENCES tasks(id),
@@ -56,7 +56,7 @@ def db_fixture():
        );
     """)
     conn.executescript(MIGRATION.read_text())
-    conn.execute("INSERT INTO users VALUES ('u1','user@example.test',1)")
+    conn.execute("INSERT INTO users(id,email,email_verified) VALUES ('u1','user@example.test',1)")
     conn.execute("INSERT INTO tasks VALUES ('T1','Real Test Task','reserved')")
     conn.execute("INSERT INTO task_requests VALUES ('r1','T1','u1','approved','pending','2026-11-12T00:00:00Z','',NULL,'key')")
     conn.commit()
