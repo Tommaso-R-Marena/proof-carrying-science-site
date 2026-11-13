@@ -1,3 +1,4 @@
+import {expireReservationsAtomically,reconcileExpiryArchive,cleanupExpiredAuth,queueCronReminder,deliverCronMail} from './cron-recovery.mjs';
 import {runScheduledDuties} from './scheduled-duties.mjs';
 import {leanReadiness} from './lean-readiness.js';
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
@@ -1070,7 +1071,7 @@ async function remindPendingReviews(env) {
     const kind = (overdue ? "task_request_overdue_admin:" : "task_request_target_admin:") + row.id;
     const already = await env.COMMONS_DB.prepare("SELECT 1 AS ok FROM notifications WHERE kind=? LIMIT 1").bind(kind).first();
     if (already) continue;
-    await notify(env, {
+    await queueCronReminder(env,{
       kind,
       email: env.ADMIN_EMAIL || null,
       subject: (overdue ? "[PCS OVERDUE] Task request " : "[PCS 1-day target] Task request ") + row.task_id + " — " + row.display_name,
@@ -1098,7 +1099,7 @@ async function remindPendingReviews(env) {
     const kind = (overdue ? "skill_review_overdue_admin:" : "skill_review_target_admin:") + subjectKey;
     const already = await env.COMMONS_DB.prepare("SELECT 1 AS ok FROM notifications WHERE kind=? LIMIT 1").bind(kind).first();
     if (already) continue;
-    await notify(env,{
+    await queueCronReminder(env,{
       kind,
       email:env.ADMIN_EMAIL || null,
       subject:(overdue ? "[PCS OVERDUE] Competency review " : "[PCS 1-day target] Competency review ") + row.skill + " — " + row.display_name,
@@ -1118,36 +1119,8 @@ async function remindPendingReviews(env) {
 }
 
 async function expireStaleWork(env) {
-  const now = nowIso();
-  const stale = await env.COMMONS_DB.prepare(
-    `SELECT r.id,r.user_id,u.email,u.email_verified,t.title,t.id AS task_id
-     FROM task_requests r
-     JOIN tasks t ON t.id=r.task_id
-     JOIN users u ON u.id=r.user_id
-     WHERE r.status='approved' AND t.claim_mode!='open' AND (
-       (r.checkpoint_status='pending' AND r.checkpoint_due_at IS NOT NULL AND r.checkpoint_due_at<=? AND COALESCE(r.checkpoint_note,'')='')
-       OR (r.reservation_expires_at IS NOT NULL AND r.reservation_expires_at<=?)
-     )`
-  ).bind(now, now).all();
-  for (const row of stale.results || []) {
-    await env.COMMONS_DB.prepare(
-      "UPDATE task_requests SET status='expired', checkpoint_status=CASE WHEN checkpoint_status='pending' THEN 'missed' ELSE checkpoint_status END,reservation_key=NULL WHERE id=? AND status='approved'"
-    ).bind(row.id).run();
-    await notify(env, {
-      userId: row.user_id,
-      email: row.email_verified ? row.email : null,
-      kind: "task_expired",
-      subject: `PCS task released: ${row.task_id}`,
-      body: `Your reservation for ${row.task_id} — ${row.title} was released because the progress checkpoint or reservation deadline passed. This releases the work so another qualified contributor can take it. You may apply again later.\n`,
-    });
-    await audit(env, null, "task_request_expired", "task_request", row.id, { task_id: row.task_id });
-  }
-  await env.COMMONS_DB.prepare("UPDATE competency_evaluations SET status='expired' WHERE status='open' AND expires_at<=?").bind(now).run();
-  await env.COMMONS_DB.prepare("DELETE FROM sessions WHERE expires_at<=?").bind(now).run();
-  await env.COMMONS_DB.prepare("DELETE FROM admin_sessions WHERE expires_at<=?").bind(now).run();
-  await env.COMMONS_DB.prepare("DELETE FROM email_verification_tokens WHERE expires_at<=? OR used_at IS NOT NULL").bind(now).run();
-  await env.COMMONS_DB.prepare("DELETE FROM rate_limits WHERE window_start<?").bind(addDaysIso(now, -2)).run();
-  return stale.results?.length || 0;
+  // Atomic task transition, journal intent and durable notification intent.
+  return expireReservationsAtomically(env);
 }
 
 async function register(request, env) {
@@ -4653,9 +4626,13 @@ export default {
   },
 
   async scheduled(_event, env, _ctx) {
+    const now=nowIso();
     await runScheduledDuties(env, [
       ['expire_stale_work', expireStaleWork],
+      ['reconcile_expiry_archive', () => reconcileExpiryArchive(env,archiveLeanEvent(env))],
+      ['cleanup_expired_auth', () => cleanupExpiredAuth(env,now,addDaysIso(now,-2))],
       ['remind_pending_reviews', remindPendingReviews],
+      ['deliver_cron_mail', () => deliverCronMail(env,sendMail,now)],
     ]);
   },
 };
