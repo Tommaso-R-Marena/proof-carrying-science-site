@@ -133,6 +133,20 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
         with self.assertRaises(sqlite3.DatabaseError):
             self.db.execute("UPDATE audit_archive SET subject_id='forged'")
 
+    def test_wrong_archived_event_action_does_not_enable_external_mail(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request","unrelated_event",
+                         "task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","b"*64))
+        self.assertEqual(self.db.execute(
+            self.sql["pendingMail"],(NOW,NOW,31)).fetchall(),[])
+
     def test_retry_ledger_is_deletable_with_user_notification(self):
         self.seed()
         self.expire()
