@@ -26,7 +26,7 @@ from urllib.parse import quote
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
-from d1_schema_recovery_v2 import validate_capture, schema_rows
+from d1_schema_recovery_v2 import validate_capture, schema_rows, statements
 
 FORMAT="pcs-d1-private-restore-offline-preflight-v1"
 EXPECTED_PRE0026_LEDGER=frozenset({
@@ -109,6 +109,59 @@ def sqlite_readonly(path):
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
+def vetted_migration_sql(path):
+    """Allow the two intended additive DDL statements, never arbitrary SQL.
+
+    A checksum pin alone is insufficient: a user can compute a matching hash
+    for malicious SQL. Reject any additional statement before execution.
+    """
+    sql=Path(path).read_text()
+    if len(sql.encode())>65536:
+        raise PreflightRejected("Migration size outside bounded qualification")
+    pieces=statements(sql)
+    if len(pieces)!=2:
+        raise PreflightRejected("Expected exactly two additive DDL statements")
+    first=pieces[0]
+    # The first statement may carry a limited number of leading SQL comments.
+    first=re.sub(r"\A(?:\s*--[^\n]*(?:\n|\Z))*","",first)
+    if not re.match(r"\A\s*CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+cron_delivery_attempts\s*\(",first,re.I):
+        raise PreflightRejected("Proposed table operation is not permitted")
+    if not re.match(r"\A\s*CREATE\s+INDEX\s+IF\s+NOT\s+EXISTS\s+idx_cron_delivery_due\s+ON\s+cron_delivery_attempts\s*\(",pieces[1],re.I):
+        raise PreflightRejected("Proposed index operation is not permitted")
+    return sql
+
+
+def cron_migration_authorizer(action,arg1,arg2,database,trigger):
+    """Constrain SQL effects to the proposed main-DB table and index.
+
+    SQLite invokes SQLITE_INSERT/UPDATE on sqlite_master as internal steps of
+    CREATE TABLE/INDEX; old application table inserts/updates remain denied.
+    This defense also denies ATTACH, DETACH, VACUUM INTO, PRAGMAs, triggers,
+    views, virtual tables, drop/alter and reads of outside databases.
+    """
+    denied=sqlite3.SQLITE_DENY
+    allowed=sqlite3.SQLITE_OK
+    if database not in (None,"main") or trigger is not None:
+        return denied
+    if action==sqlite3.SQLITE_CREATE_TABLE:
+        return allowed if arg1=="cron_delivery_attempts" else denied
+    if action==sqlite3.SQLITE_CREATE_INDEX:
+        if arg2=="cron_delivery_attempts" and (
+            arg1=="idx_cron_delivery_due" or
+            str(arg1).startswith("sqlite_autoindex_cron_delivery_attempts_")
+        ):
+            return allowed
+        return denied
+    if action==sqlite3.SQLITE_REINDEX:
+        return allowed if arg1=="idx_cron_delivery_due" else denied
+    if action in (sqlite3.SQLITE_INSERT,sqlite3.SQLITE_UPDATE):
+        return allowed if arg1 in ("sqlite_master","sqlite_schema") else denied
+    if action in (sqlite3.SQLITE_READ,sqlite3.SQLITE_SELECT,
+                  sqlite3.SQLITE_FUNCTION,sqlite3.SQLITE_TRANSACTION):
+        return allowed
+    return denied
+
+
 def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
              capture_path=None,migration_path=None):
     backup=Path(input_backup)
@@ -129,6 +182,7 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
     before_objects=validate_capture(capture)
     if digest_file(migration_path)!=expected_migration_sha256:
         raise PreflightRejected("Proposed migration checksum mismatch")
+    migration_sql=vetted_migration_sql(migration_path)
 
     with tempfile.TemporaryDirectory(prefix="pcs-private-restore-") as dirname:
         private_copy=Path(dirname)/"rehearsal.sqlite"
@@ -149,9 +203,15 @@ def rehearse(input_backup,*,expected_backup_sha256,expected_migration_sha256,
                 if fingerprint_tables(dest,before_objects)!=initial:
                     raise PreflightRejected("Local restoration altered historical table rows")
 
-                # On a PRIVATE, disposable copy only. Never the source file.
-                statements=migration_path.read_text()
-                dest.executescript(statements)
+                # A disposable copy is not a sandbox by itself. Restrict
+                # the SQLite connection so malformed input cannot modify
+                # application rows, attach an external DB, or write outside
+                # the copy. Remove the authorizer before read-only checks.
+                dest.set_authorizer(cron_migration_authorizer)
+                try:
+                    dest.executescript(migration_sql)
+                finally:
+                    dest.set_authorizer(None)
                 after_objects=schema_rows(dest)
                 old={obj["name"]:obj for obj in before_objects}
                 newer={obj["name"]:obj for obj in after_objects}
