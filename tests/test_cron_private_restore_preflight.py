@@ -109,7 +109,7 @@ class PrivateD1RestorePreflightTests(unittest.TestCase):
         badsha=digest_file(malicious)
         with self.assertRaises(PreflightRejected):
             self.go(migration_path=malicious,expected_migration_sha256=badsha)
-        # Even the deliberately malicious migration ran on the temporary clone.
+        # The unapproved mutation is rejected before SQL execution.
         with sqlite3.connect(self.backup) as db:
             self.assertEqual(db.execute("SELECT display_name FROM users WHERE id='fixture-user'").fetchone()[0],
                              "Synthetic recovery fixture")
