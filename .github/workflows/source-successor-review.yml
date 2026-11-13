@@ -70,9 +70,9 @@ jobs:
               --output "$RUNNER_TEMP/pcs-source-review-candidates/pr-${pr}.json"
           done <<'REVIEWED_SHA_LOCK'
           151 0e084e716af21483d93f620bb88af1f10b2cf9ad
-          152 4c37f4f62d8fc2beb5f23f6fb71f4eecc4e3cf59
+          152 6ec457b6036897733d11730044d637e0645f4d80
           153 914dd444c5c339da4ceba00a5185222009221c01
-          157 f8942b61ccb98bfeb544a3aec5f7018c4d3f1fab
+          157 a39cfb42276d09a0e502ebfd691cb332f2d41fda
           REVIEWED_SHA_LOCK
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
