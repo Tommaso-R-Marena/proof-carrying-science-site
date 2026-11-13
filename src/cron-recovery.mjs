@@ -22,7 +22,7 @@ export const CRON_SQL = Object.freeze({
 });
 
 function errorType(error) {
-  return typeof error?.name === 'string' && /^[A-Za-z][A-Za-z0-9_]{0,39}$/.test(error.name) ? error.name : 'Error';
+  return ['Error','TypeError','RangeError','SyntaxError','ReferenceError','AggregateError'].includes(error?.name) ? error.name : 'Error';
 }
 function report(operation,error) {
   // Do not log provider/SQLite error messages: they may include user data.
