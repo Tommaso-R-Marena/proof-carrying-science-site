@@ -1,3 +1,4 @@
+import {runScheduledDuties} from './scheduled-duties.mjs';
 import {leanReadiness} from './lean-readiness.js';
 import {COUNTERMODEL_VERSION,publicCountermodelMissions,replayCountermodelSession} from "../public/countermodel-core.mjs";
 import {SEARCH_RESEARCH_CONSENT,SEARCH_RESEARCH_FORMAT,normalizeResearchSession} from '../public/search-research-core.mjs';
@@ -4652,11 +4653,9 @@ export default {
   },
 
   async scheduled(_event, env, _ctx) {
-    try {
-      await expireStaleWork(env);
-      await remindPendingReviews(env);
-    } catch (error) {
-      console.error("PCS Commons scheduled cleanup failed",error);
-    }
+    await runScheduledDuties(env, [
+      ['expire_stale_work', expireStaleWork],
+      ['remind_pending_reviews', remindPendingReviews],
+    ]);
   },
 };

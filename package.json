@@ -48,7 +48,7 @@
     "test:browser:bridge": "node scripts/browser_bridge_builder.cjs",
     "test:browser:bridge-research": "node scripts/browser_bridge_research.cjs",
     "test:browser:memory": "PCS_BRIDGE_PAGE=memory-workshop.html PCS_BRIDGE_CATALOG=memory-workshop-catalog.json node scripts/browser_bridge_builder.cjs",
-    "test:platform-governance": "node --test tests/bridge-curriculum.test.mjs tests/research-governance.test.mjs && python3 tests/test_d1_reconcile.py && python3 tests/test_research_lineage.py && python3 tests/test_d1_production_preflight.py && python3 tests/test_d1_schema_recovery_v2.py",
+    "test:platform-governance": "node --test tests/bridge-curriculum.test.mjs tests/research-governance.test.mjs && python3 tests/test_d1_reconcile.py && python3 tests/test_research_lineage.py && python3 tests/test_d1_production_preflight.py && python3 tests/test_d1_schema_recovery_v2.py && npm run test:cron",
     "test:browser:lean-recovery": "node scripts/browser_lean_job_recovery.cjs",
     "test:scientific-workflow": "node --test tests/scientific-workflow-v2.test.mjs",
     "test:browser:scientific-workflow": "node scripts/browser_scientific_workflow_v2.cjs",
@@ -82,7 +82,8 @@
     "test:browser:connected-models": "node scripts/browser_connected_models.cjs",
     "test:browser:route-stale": "node scripts/browser_route_stale.cjs",
     "test:model-evaluation": "node --test tests/model-evaluation.test.mjs && python3 -m unittest discover -s tests -p 'test_model_evaluation*.py' -v && python3 scripts/export_model_evaluation_example.py",
-    "test:browser:model-evaluation": "node scripts/browser_model_evaluation.cjs"
+    "test:browser:model-evaluation": "node scripts/browser_model_evaluation.cjs",
+    "test:cron": "node --test tests/scheduled-duties.test.mjs"
   },
   "devDependencies": {
     "playwright": "1.64.1",
