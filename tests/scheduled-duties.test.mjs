@@ -45,7 +45,7 @@ test('two independent failures are surfaced without leaking raw provider excepti
 
 test('malicious exception name is redacted before scheduled duty logging',async()=>{
   const reports=[];
-  const error=new Error('provider value');
+  const error=new Error('DB content may contain PII');
   error.name='SensitiveUserData_ImportantSecret';
   await assert.rejects(runScheduledDuties({},[
     ['expiry',async()=>{throw error;}],
