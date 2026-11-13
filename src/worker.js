@@ -815,12 +815,13 @@ async function sendRelayMail(env, to, subject, text) {
   return { state: "sent", error: null, provider: "gmail_apps_script" };
 }
 
-async function sendResendMail(env, to, subject, text) {
+async function sendResendMail(env, to, subject, text, { idempotencyKey = null } = {}) {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "authorization": `Bearer ${env.RESEND_API_KEY}`,
       "content-type": "application/json",
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: JSON.stringify({
       from: env.MAIL_FROM,
@@ -837,7 +838,7 @@ async function sendResendMail(env, to, subject, text) {
   return { state: "sent", error: null, provider: "resend" };
 }
 
-async function sendMail(env, to, subject, text) {
+async function sendMail(env, to, subject, text, { idempotencyKey = null } = {}) {
   if (!emailTransportConfigured(env)) {
     return { state: "disabled", error: "Transactional email transport is not configured." };
   }
@@ -846,7 +847,7 @@ async function sendMail(env, to, subject, text) {
       const relay = await sendRelayMail(env, to, subject, text);
       if (relay.state === "sent" || !resendConfigured(env)) return relay;
     }
-    if (resendConfigured(env)) return await sendResendMail(env, to, subject, text);
+    if (resendConfigured(env)) return await sendResendMail(env, to, subject, text, { idempotencyKey });
     return { state: "failed", error: "All configured email transports failed." };
   } catch (error) {
     return { state: "failed", error: String(error).slice(0, 500) };
