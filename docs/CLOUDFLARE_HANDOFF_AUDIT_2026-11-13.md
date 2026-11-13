@@ -35,6 +35,10 @@ Snapshot from connected Cloudflare account API and GitHub connector on 2026-11-1
 | Account audit logs | Account audit API returned no entries in the queried period starting 2026-11-12 00:00 UTC. This does **not** demonstrate that no agent or external tool made changes outside the queried scope. |
 | Preview configuration | `wrangler.jsonc` sets `workers_dev: true`, `preview_urls: false`, and a preview binding config with no D1 database. Verify preview isolation in an actual test; do not presume all resources or side effects are isolated. |
 
+### 2FA remediation completed (2026-11-13)
+
+After the initial audit, the account owner enabled two-factor authentication. An independent read-only `GET /accounts/{account_id}/members` confirmed `two_factor_authentication_enabled: true` for the sole listed administrator. This closes the originally observed missing-MFA finding, but does **not** reduce any existing API-token privileges or provide a substitute for credential rotation.
+
 ### Supplemental independent token check (2026-11-13)
 
 A second read-only Cloudflare call listed the account tokens and retrieved the metadata of the token named `GPT API Token` (ID prefix `3919b284`; full ID not included). It is **active**, has **no expiration**, has **no access condition**, and has **two broad policies with 289 and 96 permission groups** respectively. Last reported use was `2026-11-04T04:17:43Z`. This corroborates the handoff's **urgent token replacement** recommendation. It does not establish token leakage, who used the token, or attribution for an out-of-band deployment. The OAuth connector is separately authenticated; do not presume that revoking this account token will remove the connected agent's OAuth access.
@@ -119,7 +123,7 @@ Researcher / API client
 
 ## Immediate next steps / open owner gates
 
-- [ ] Account owner enables MFA and confirms new authentication path.
+- [x] Account owner enabled MFA; independently verified through the Cloudflare members metadata endpoint.
 - [ ] Obtain Grokbot handoff and inspect for ongoing autonomous write operations.
 - [ ] Read-only secret-scope/permissions inventory and source/deployment provenance review.
 - [ ] Verify live Cron handler and isolation requirements.
