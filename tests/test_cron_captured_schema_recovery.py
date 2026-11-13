@@ -50,6 +50,7 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
 
     def seed(self):
         synthetic_user(self.db,"cron-fixture-user")
+        self.db.execute("UPDATE users SET email_verified=1 WHERE id='cron-fixture-user'")
         insert(self.db,"tasks",{"id":"cron-fixture-task",
             "title":"Synthetic expiration test","summary":"No real user or task",
             "claim_mode":"approval","expected_hours":1,
@@ -399,7 +400,7 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
             ("cron-expiry-note:cron-fixture-request",)).fetchone()
         claimed=self.db.execute(self.sql["claimMail"],(
             notice[0],"lease","2026-11-13T07:05:00Z",NOW,NOW,
-            *notice,"synthetic-cron-fixture-user@pcs.invalid",NOW,NOW)).fetchall()
+            *notice,"cron-fixture-user@pcs-fixture.invalid",NOW,NOW)).fetchall()
         self.assertEqual(claimed,[(1,"lease")])
         self.assertEqual(self.db.execute(
             "SELECT COUNT(*) FROM cron_delivery_attempts").fetchone()[0],1)
