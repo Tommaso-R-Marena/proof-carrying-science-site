@@ -157,3 +157,33 @@ test('mail job detects bounded backlog and does not silently drain unbounded wor
     ?Array.from({length:CRON_MAIL_LIMIT+1},(_,i)=>({id:'n'+i,kind:'task_expired',email_verified:0})):[]});
   await assert.rejects(deliverCronMail({COMMONS_DB:db},async()=>({state:'sent'}),t0),/mail backlog/);
 });
+
+test('last failed email attempt is retained for manual intervention',async()=>{
+  const n={id:'cron-reminder:final',kind:'task_request_overdue_admin:final',subject:'Admin',body:'Body'};
+  const db=mockDb({all:sql=>sql===CRON_SQL.pendingMail?[n]
+    :sql===CRON_SQL.claimMail?[{attempt_count:5,lease_id:'lease'}]:[]});
+  const reports=[],old=console.error;console.error=(...args)=>reports.push(args);
+  try {
+    await assert.rejects(deliverCronMail({COMMONS_DB:db,ADMIN_EMAIL:'admin@example.test'},
+      async()=>({state:'failed'}),t0),/incomplete delivery count/);
+  } finally {console.error=old;}
+  assert(db.trace.find(x=>x.type==='batch').statements[0].args[1].includes('manual review'));
+  assert(reports.some(x=>x[0]==='PCS cron mail retry limit exhausted'));
+});
+
+test('provider accepts before failed D1 acknowledgment: report failure, do not claim exactly-once',async()=>{
+  const n={id:'cron-reminder:ambiguous',kind:'task_request_target_admin:ambiguous',subject:'Subject',body:'Text'};
+  const db=mockDb({
+    all:sql=>sql===CRON_SQL.pendingMail?[n]
+      :sql===CRON_SQL.claimMail?[{attempt_count:1,lease_id:'lease'}]:[],
+    batch:async()=>{throw new Error('D1 acknowledgment interrupted');}
+  });
+  const reports=[],old=console.error;console.error=(...args)=>reports.push(args);
+  let providerCalls=0;
+  try {
+    await assert.rejects(deliverCronMail({COMMONS_DB:db,ADMIN_EMAIL:'admin@example.test'},
+      async()=>{providerCalls++;return{state:'sent'};},t0),/incomplete delivery count/);
+  } finally {console.error=old;}
+  assert.equal(providerCalls,1);
+  assert(reports.some(x=>x[0]==='PCS cron recovery failure'&&x[1].operation==='complete_mail'));
+});
