@@ -124,7 +124,10 @@ def review(root,baseline,candidate):
         "changed_files":changes,
         "change_count":len(changes),
         "review_classes":sorted(set(x["review_class"] for x in changes)),
-        "retained_source_qualification_gate_unchanged_by_this_tool":True,
+        "candidate_changes_protected_source_checker":any(
+            x["path"]=="scripts/check_reconciled_prs.py" for x in changes
+        ),
+        "existing_source_gate_executed_by_this_tool":False,
         "qualified":False,
         "owner_approved":False,
         "is_release_authorization":False,
