@@ -9,7 +9,7 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
-from cron_private_restore_preflight import rehearse,digest_file,PreflightRejected
+from cron_private_restore_preflight import rehearse,digest_file,PreflightRejected,cron_migration_authorizer,vetted_migration_sql
 from d1_schema_recovery_v2 import restore_schema,synthetic_user
 
 CAPTURE=ROOT/"docs/evidence/production-d1-recovery-v2/captured-schema.json"
@@ -107,6 +107,67 @@ class PrivateD1RestorePreflightTests(unittest.TestCase):
         with self.assertRaises(PreflightRejected):
             self.go(migration_path=malicious,expected_migration_sha256=digest_file(malicious))
         self.assertEqual(digest_file(self.backup),self.backup_sha)
+
+    def test_malicious_attach_never_creates_an_external_database(self):
+        outside=self.root/"outside-attached.sqlite"
+        malicious=self.root/"attach_migration.sql"
+        malicious.write_text(
+            MIGRATION.read_text()+
+            "\nATTACH DATABASE '"+str(outside)+"' AS outside;\n"
+            "CREATE TABLE outside.compromised(id INTEGER);\n")
+        with self.assertRaises(PreflightRejected):
+            self.go(migration_path=malicious,
+                    expected_migration_sha256=digest_file(malicious))
+        self.assertFalse(outside.exists())
+        self.assertEqual(digest_file(self.backup),self.backup_sha)
+
+    def test_malicious_vacuum_into_never_creates_an_external_file(self):
+        outside=self.root/"exfiltration.sqlite"
+        malicious=self.root/"vacuum_migration.sql"
+        malicious.write_text(
+            MIGRATION.read_text()+"\nVACUUM INTO '"+str(outside)+"';\n")
+        with self.assertRaises(PreflightRejected):
+            self.go(migration_path=malicious,
+                    expected_migration_sha256=digest_file(malicious))
+        self.assertFalse(outside.exists())
+        self.assertEqual(digest_file(self.backup),self.backup_sha)
+
+    def test_direct_sql_authorizer_denies_side_effects_and_external_files(self):
+        outside=self.root/"forged-attached.sqlite"
+        with sqlite3.connect(":memory:") as db:
+            db.execute("CREATE TABLE users(id TEXT PRIMARY KEY,name TEXT)")
+            db.execute("INSERT INTO users VALUES('fixture','unchanged')")
+            db.set_authorizer(cron_migration_authorizer)
+            for sql in (
+                "UPDATE users SET name='compromised'",
+                "DELETE FROM users",
+                "CREATE TABLE unauthorized(id INTEGER)",
+                "CREATE TRIGGER unauthorized AFTER INSERT ON users BEGIN "
+                "UPDATE users SET name='compromised'; END",
+                "ATTACH DATABASE '"+str(outside)+"' AS outside",
+                "VACUUM INTO '"+str(outside)+"'",
+                "PRAGMA writable_schema=ON",
+            ):
+                with self.subTest(sql=sql),self.assertRaises(sqlite3.DatabaseError):
+                    db.execute(sql)
+            db.set_authorizer(None)
+            self.assertEqual(db.execute(
+                "SELECT name FROM users WHERE id='fixture'").fetchone()[0],
+                "unchanged")
+        self.assertFalse(outside.exists())
+
+    def test_migration_precheck_cannot_admit_renamed_table_or_third_statement(self):
+        direct=MIGRATION.read_text()
+        self.assertEqual(vetted_migration_sql(MIGRATION),direct)
+        for name,sql in {
+            "renamed":direct.replace("cron_delivery_attempts","unauthorized_table"),
+            "third_statement":direct+"\nDELETE FROM users;\n",
+            "pragma":direct+"\nPRAGMA writable_schema=ON;\n",
+        }.items():
+            path=self.root/(name+".sql")
+            path.write_text(sql)
+            with self.subTest(name=name),self.assertRaises(PreflightRejected):
+                vetted_migration_sql(path)
 
     def test_symlink_input_not_accepted(self):
         link=self.root/"backup-alias.sqlite"
