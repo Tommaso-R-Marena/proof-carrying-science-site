@@ -9,7 +9,7 @@ import unittest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
-from cron_private_restore_preflight import rehearse,digest_file,PreflightRejected,cron_migration_authorizer,vetted_migration_sql
+from cron_private_restore_preflight import rehearse,digest_file,PreflightRejected,cron_migration_authorizer,vetted_migration_sql,PINNED_0026_SHA256
 from d1_schema_recovery_v2 import restore_schema,synthetic_user
 
 CAPTURE=ROOT/"docs/evidence/production-d1-recovery-v2/captured-schema.json"
@@ -60,6 +60,20 @@ class PrivateD1RestorePreflightTests(unittest.TestCase):
                 "SELECT 1 FROM sqlite_master WHERE name='cron_delivery_attempts'").fetchone())
             self.assertEqual(db.execute("SELECT display_name FROM users WHERE id='fixture-user'").fetchone()[0],
                              "Synthetic recovery fixture")
+
+    def test_repo_migration_bytes_match_reviewed_immutable_pin(self):
+        self.assertEqual(digest_file(MIGRATION),PINNED_0026_SHA256)
+
+    def test_alternative_ddl_with_weakened_check_is_not_an_approved_migration(self):
+        modified=self.root/"weakened_constraints.sql"
+        modified.write_text(MIGRATION.read_text().replace(
+            "CHECK (attempt_count BETWEEN 0 AND 5)",
+            "CHECK (attempt_count BETWEEN 0 AND 50000)"))
+        self.assertNotEqual(digest_file(modified),PINNED_0026_SHA256)
+        with self.assertRaises(PreflightRejected):
+            self.go(migration_path=modified,
+                    expected_migration_sha256=digest_file(modified))
+        self.assertEqual(digest_file(self.backup),self.backup_sha)
 
     def test_wrong_backup_digest_rejected_before_sqlite_clone(self):
         with self.assertRaises(PreflightRejected):
