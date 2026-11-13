@@ -3,8 +3,8 @@
 **Date:** 2026-11-13  
 **Status:** STAGED / NOT PRODUCTION-CLEARED  
 **Implementation:** draft PR #152, stacked on #151.  
-**Targeted independent CI:** [Cron Recovery Qualification run 43383063927](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43383063927) — **26/26 tests passed** (17 Node tests; 9 real SQLite tests), plus `node --check` and `wrangler deploy --dry-run`. The job did **not** deploy.  
-**Unresolved source qualification:** [Open PR source reconciliation run 43381892513](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43381892513) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
+**Targeted independent CI:** [Cron Recovery Qualification run 43387807771](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807771) — **36/36 tests passed** (18 Node tests; 11 isolated SQLite tests; 7 tests against the captured production schema), plus `node --check` and `wrangler deploy --dry-run`. The job did **not** deploy.  
+**Unresolved source qualification:** [Open PR source reconciliation run 43387807628](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43387807628) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
 ## Fresh read-only production schema equality check (2026-11-13)
 
@@ -28,6 +28,7 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 | First duty fails and reminders never execute | Independent sequential duties with sanitized failure report and aggregate rejection | Existing PR #151 tests |
 | Session cleanup fails partway | One transaction containing the five hygiene statements, isolated from other duties | JS duty test; no claim of full production restore test |
 | Expiry mail outruns hash-linked audit | Cron mail lookup requires matching archived expiry event before allowing external delivery | Isolated SQLite rejection before archive and positive delivery eligibility after archive |
+| Forged archive identifier reuses an expiry ID but has the wrong action | Email readiness now requires exact legacy-event binding, archived action, subject type and subject ID, not just matching event ID | Captured-production-schema regression with deliberately mismatched archived action |
 | Email fails or Cron restarts | Mail intent is stored first; separate `cron_delivery_attempts` table records claims, leases, retries and acknowledgments | Real SQLite lease/next-attempt test and JS provider-failure tests |
 | Message recipient not verified or deleted | Site notification may remain; external mail is disabled unless verified / admin address configured | JS recipient tests and SQLite cascading deletion test |
 | Unbounded database/email work | Per-run limits, explicit failures on over-limit backlog, five-attempt cap | JS bounded-load tests |
