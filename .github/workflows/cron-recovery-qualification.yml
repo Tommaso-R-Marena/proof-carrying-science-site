@@ -10,6 +10,8 @@ on:
       - 'tests/cron-recovery.test.mjs'
       - 'tests/scheduled-duties.test.mjs'
       - 'tests/test_cron_atomic_recovery.py'
+      - 'tests/test_cron_captured_schema_recovery.py'
+      - 'scripts/test_local_cron_integration.sh'
       - 'package.json'
       - '.github/workflows/cron-recovery-qualification.yml'
   workflow_dispatch:
@@ -38,3 +40,5 @@ jobs:
           node --check src/worker.js
           node --check src/cron-recovery.mjs
           npx --no-install wrangler deploy --dry-run
+      - name: Real local Worker scheduled-handler event, then injected D1 fault
+        run: bash scripts/test_local_cron_integration.sh
