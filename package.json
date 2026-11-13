@@ -83,7 +83,7 @@
     "test:browser:route-stale": "node scripts/browser_route_stale.cjs",
     "test:model-evaluation": "node --test tests/model-evaluation.test.mjs && python3 -m unittest discover -s tests -p 'test_model_evaluation*.py' -v && python3 scripts/export_model_evaluation_example.py",
     "test:browser:model-evaluation": "node scripts/browser_model_evaluation.cjs",
-    "test:cron": "node --test tests/scheduled-duties.test.mjs tests/cron-recovery.test.mjs && python3 -m unittest discover -s tests -p test_cron_atomic_recovery.py -v && python3 tests/test_cron_captured_schema_recovery.py -v"
+    "test:cron": "node --test tests/scheduled-duties.test.mjs tests/cron-recovery.test.mjs tests/cron-reminder-privacy.test.mjs && python3 -m unittest discover -s tests -p test_cron_atomic_recovery.py -v && python3 tests/test_cron_captured_schema_recovery.py -v"
   },
   "devDependencies": {
     "playwright": "1.64.1",
