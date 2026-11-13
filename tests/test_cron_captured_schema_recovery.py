@@ -184,6 +184,44 @@ class CronCapturedSchemaRecovery(unittest.TestCase):
         self.assertEqual(self.db.execute(
             self.sql["pendingMail"],(NOW,NOW,31)).fetchall(),[])
 
+    def test_conflicting_immutable_archive_does_not_suppress_recovery(self):
+        self.seed()
+        self.expire()
+        # The legacy audit ID alone cannot establish provenance. A conflicting
+        # archived event must still be selected for fail-closed reconciliation.
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"FORGED"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","f"*64))
+        rows=self.db.execute(self.sql["unarchived"],(61,)).fetchall()
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0][0],"cron-expiry:cron-fixture-request")
+        self.assertEqual(rows[0][7],"cron-expiry:cron-fixture-request")
+
+    def test_valid_archival_exact_postcondition_can_be_verified(self):
+        self.seed()
+        self.expire()
+        self.db.execute("INSERT INTO audit_archive("
+                        "event_id,legacy_audit_id,action,subject_type,subject_id,"
+                        "detail_json,created_at,prev_hash,event_hash) VALUES(?,?,?,?,?,?,?,?,?)",
+                        ("cron-expiry:cron-fixture-request",
+                         "cron-expiry:cron-fixture-request",
+                         "task_request_expired","task_request","cron-fixture-request",
+                         '{"task_id":"cron-fixture-task"}',NOW,
+                         "SYNTHETIC_GENESIS_HASH","a"*64))
+        identity=("cron-expiry:cron-fixture-request",
+                  "cron-expiry:cron-fixture-request",
+                  "task_request_expired","task_request","cron-fixture-request",
+                  '{"task_id":"cron-fixture-task"}',NOW,None)
+        self.assertEqual(self.db.execute(self.sql["verifyArchive"],identity).fetchone(),(1,))
+        bad=(*identity[:5], '{"task_id":"FORGED"}',*identity[6:])
+        self.assertIsNone(self.db.execute(self.sql["verifyArchive"],bad).fetchone())
+        self.assertEqual(self.db.execute(self.sql["unarchived"],(61,)).fetchall(),[])
+
     def test_retry_ledger_is_deletable_with_user_notification(self):
         self.seed()
         self.expire()
