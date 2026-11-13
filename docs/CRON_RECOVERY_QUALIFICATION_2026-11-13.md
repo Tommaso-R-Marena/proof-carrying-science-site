@@ -3,7 +3,7 @@
 **Date:** 2026-11-13  
 **Status:** STAGED / NOT PRODUCTION-CLEARED  
 **Implementation:** draft PR #152, stacked on #151.  
-**Targeted independent CI:** [Cron Recovery Qualification run 43382197444](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43382197444) — **23/23 tests passed** (15 Node tests; 8 real SQLite tests), plus `node --check` and `wrangler deploy --dry-run`. The job did **not** deploy.  
+**Targeted independent CI:** [Cron Recovery Qualification run 43383063927](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43383063927) — **26/26 tests passed** (17 Node tests; 9 real SQLite tests), plus `node --check` and `wrangler deploy --dry-run`. The job did **not** deploy.  
 **Unresolved source qualification:** [Open PR source reconciliation run 43381892513](https://github.com/Tommaso-R-Marena/proof-carrying-science-site/actions/runs/43381892513) failed because the pinned source-intake policy in `scripts/check_reconciled_prs.py` forbids changes to qualified non-control source bytes or file census. That is a genuine protected gate requiring independent owner-approved requalification, **not** a test to delete or waive.
 
 ## Trust and scope
@@ -21,6 +21,7 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 | Two Cron invocations retry the same task | Stable `cron-expiry:<request-id>` and `cron-expiry-note:<request-id>` identifiers; conditional `approved`-only update | Repeated transaction tests: one audit, one notification |
 | First duty fails and reminders never execute | Independent sequential duties with sanitized failure report and aggregate rejection | Existing PR #151 tests |
 | Session cleanup fails partway | One transaction containing the five hygiene statements, isolated from other duties | JS duty test; no claim of full production restore test |
+| Expiry mail outruns hash-linked audit | Cron mail lookup requires matching archived expiry event before allowing external delivery | Isolated SQLite rejection before archive and positive delivery eligibility after archive |
 | Email fails or Cron restarts | Mail intent is stored first; separate `cron_delivery_attempts` table records claims, leases, retries and acknowledgments | Real SQLite lease/next-attempt test and JS provider-failure tests |
 | Message recipient not verified or deleted | Site notification may remain; external mail is disabled unless verified / admin address configured | JS recipient tests and SQLite cascading deletion test |
 | Unbounded database/email work | Per-run limits, explicit failures on over-limit backlog, five-attempt cap | JS bounded-load tests |
@@ -30,7 +31,7 @@ No live changes were made to the Cloudflare account, Cron trigger, credentials, 
 1. **Email is at-least-once, not exactly-once.** A provider can accept a message and a subsequent database acknowledgement can fail. Provider-side idempotency or an acknowledged reliable relay is needed to eliminate duplicate sends. Never claim otherwise.
 2. **The hash-linked audit archive is recoverable from committed intents, not a single atomic transaction with the app row update.** Recovery is sequential and may lag after a crash; the journal must not claim complete archival while reconciliation is pending.
 3. A missing task audit intent can still occur if other, non-Cron code changes task statuses outside this path. Scope remains only scheduled expiry.
-4. The helper preserves existing `appendAuditArchive` behavior; its race logic and cryptographic trust root require independent verification. The new fixture does not prove global correctness.
+4. The outbox gate does not send task-expiration email before hash-linked archival; site notification rows may still be visible while recovery is pending. The helper preserves existing `appendAuditArchive` behavior; its race logic and cryptographic trust root require independent verification. The new fixture does not prove global correctness.
 5. Admin notification `kind` uniqueness before this change was inferred by application checks rather than enforced by a database unique index. The new deterministic ID enforces uniqueness for newly created Cron-owned records.
 6. Pending/failed messages from historical pre-migration notifications are intentionally not auto-replayed unless they carry the new `cron-` prefix. This avoids accidentally resending old mail.
 7. Failed mail attempts after exhausting five tries remain visible as failed records but need an operator monitoring and manual-retry process.
