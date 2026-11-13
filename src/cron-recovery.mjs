@@ -120,19 +120,22 @@ export async function deliverCronMail(env,sendMail,now=new Date().toISOString())
     } catch(error) {failed++;report('claim_mail',error);continue;}
     if(!(claimed.results||[]).length) continue;
     const count=Number(claimed.results[0].attempt_count);
-    let state='failed';
+    let state='failed',providerUnavailable=false;
     try {
       const outcome=await sendMail(env,address,n.subject,n.body);
-      state=outcome?.state==='sent'?'sent':outcome?.state==='disabled'?'disabled':'failed';
+      // A temporarily unconfigured mail relay is retryable. In contrast,
+      // missing or unverified recipients are disabled before claiming.
+      providerUnavailable=outcome?.state==='disabled';
+      state=outcome?.state==='sent'?'sent':'failed';
     } catch(error) {report('provider_mail',error);}
     const delivered=state==='sent';
     const retryAt=addMillis(now,delivered?0:Math.min(86400,300*Math.pow(2,count-1))*1000);
-    const exhausted=!delivered && state!=='disabled' && count>=CRON_MAIL_MAX_ATTEMPTS;
+    const exhausted=!delivered && count>=CRON_MAIL_MAX_ATTEMPTS;
     if(exhausted) console.error('PCS cron mail retry limit exhausted',{error_type:'delivery_failed'});
     try {
       await db.batch([
-        db.prepare(CRON_SQL.emailState).bind(state,delivered?null:(state==='disabled'?'Transport disabled':exhausted?'Retry limit exhausted; manual review required':'Delivery pending retry'),n.id,leaseId),
-        db.prepare(CRON_SQL.completeMail).bind(retryAt,delivered?now:null,delivered?null:(state==='disabled'?'disabled':'provider_failure'),now,n.id,leaseId),
+        db.prepare(CRON_SQL.emailState).bind(state,delivered?null:(exhausted?'Retry limit exhausted; manual review required':providerUnavailable?'Mail transport unavailable; retry scheduled':'Delivery pending retry'),n.id,leaseId),
+        db.prepare(CRON_SQL.completeMail).bind(retryAt,delivered?now:null,delivered?null:(providerUnavailable?'transport_unavailable':'provider_failure'),now,n.id,leaseId),
       ]);
       if(delivered) sent++;else failed++;
     } catch(error) {failed++;report('complete_mail',error);}
