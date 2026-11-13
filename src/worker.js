@@ -1045,7 +1045,7 @@ async function publicTaskGraph(env) {
 
 async function remindPendingReviews(env) {
   const pending = await env.COMMONS_DB.prepare(
-    `SELECT r.id,r.task_id,r.requested_at,r.decision_due_at,t.title,u.display_name,u.email,u.level
+    `SELECT r.id,r.task_id,r.requested_at,r.decision_due_at,t.title
      FROM task_requests r
      JOIN tasks t ON t.id=r.task_id
      JOIN users u ON u.id=r.user_id
@@ -1054,7 +1054,7 @@ async function remindPendingReviews(env) {
      LIMIT 200`
   ).all();
   const pendingSkills = await env.COMMONS_DB.prepare(
-    `SELECT sk.user_id,sk.skill,sk.requested_at,sk.review_due_at,sk.source,u.display_name,u.email,u.level
+    `SELECT sk.user_id,sk.skill,sk.requested_at,sk.review_due_at
      FROM skills sk JOIN users u ON u.id=sk.user_id
      WHERE sk.status='pending'
      ORDER BY COALESCE(sk.review_due_at,sk.requested_at) ASC
@@ -1073,11 +1073,9 @@ async function remindPendingReviews(env) {
     if (already) continue;
     await queueCronReminder(env,{
       kind,
-      email: env.ADMIN_EMAIL || null,
-      subject: (overdue ? "[PCS OVERDUE] Task request " : "[PCS 1-day target] Task request ") + row.task_id + " — " + row.display_name,
+      subject: (overdue ? "[PCS OVERDUE] Task request " : "[PCS 1-day target] Task request ") + row.task_id,
       body: [
-        row.display_name + " <" + row.email + "> is waiting for a decision on " + row.task_id + " — " + row.title + ".",
-        "Verified level: L" + row.level,
+        "A task application for " + row.task_id + " — " + row.title + " is awaiting an administrator decision.",
         "Requested: " + row.requested_at,
         "Hard decision deadline: " + row.decision_due_at,
         overdue ? "The 2-business-day review deadline has passed. Please approve or reject now." : "The 1-business-day response target has been reached. Please review before the hard 2-business-day deadline.",
@@ -1101,12 +1099,9 @@ async function remindPendingReviews(env) {
     if (already) continue;
     await queueCronReminder(env,{
       kind,
-      email:env.ADMIN_EMAIL || null,
-      subject:(overdue ? "[PCS OVERDUE] Competency review " : "[PCS 1-day target] Competency review ") + row.skill + " — " + row.display_name,
+      subject:(overdue ? "[PCS OVERDUE] Competency review " : "[PCS 1-day target] Competency review ") + row.skill,
       body:[
-        row.display_name + " <" + row.email + "> is waiting for manual " + row.skill + " competency review.",
-        "Source: " + (row.source || "manual"),
-        "Verified level: L" + row.level,
+        "A manual " + row.skill + " competency review is awaiting an administrator decision.",
         "Requested: " + requestedAt,
         "Hard review deadline: " + hardIso,
         overdue ? "The 2-business-day review deadline has passed. Please decide now." : "The 1-business-day response target has been reached. Please review before the hard 2-business-day deadline.",
