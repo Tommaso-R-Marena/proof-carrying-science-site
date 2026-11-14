@@ -1,0 +1,34 @@
+--- scripts/verify_browser_ui_sources.mjs
++++ scripts/verify_browser_ui_sources.mjs
+@@ -5,6 +5,7 @@
+ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+ const load=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
++const READING_HELP_SUCCESSOR_SHA256='9a1141266b3f56224931d4041e43460825caee78ac066a540e77cbee3f82c2a5';
+ const normalized=p=>p.startsWith('public/')||p.startsWith('scripts/')?p:'public/'+p;
+ export function verifyBrowserUISources(historicalPath){
+  const manifest=load('docs/evidence/site-clarity-v1/browser-qualifications.json');
+@@ -24,7 +25,22 @@
+    if(!name.endsWith('.html'))assert.equal(digest,oldSources[name],'Mathematical, data or test source changed: '+name);
+   }
+  }
+- for(const [name,digest] of Object.entries(manifest.reading_help_sources))assert.equal(sha(fs.readFileSync(path.join(root,name))),digest,'Reading help source drift');
++ // Reading-help pins.  The v1 pins stay in the historical manifest above.  One reviewed successor,
++ // fixed here by digest, may supersede them; it names its predecessor and may differ from it only in
++ // the help registry (docs/evidence/site-clarity-v2: added pages only, fresh all-page browser run).
++ const successorPath='docs/evidence/site-clarity-v2/reading-help-requalification.json';
++ const successorRaw=fs.readFileSync(path.join(root,successorPath));
++ assert.equal(sha(successorRaw),READING_HELP_SUCCESSOR_SHA256,'Unreviewed reading-help successor');
++ const successor=JSON.parse(successorRaw);
++ assert.equal(successor.format,'pcs-reading-help-requalification-v2');assert.equal(successor.scientific_acceptance,false);
++ assert.equal(sha(fs.readFileSync(path.join(root,successor.predecessor.path))),successor.predecessor.sha256,'Historical qualification record changed');
++ assert.equal(successor.predecessor.path,'docs/evidence/site-clarity-v1/browser-qualifications.json');
++ assert.deepEqual(successor.previous_reading_help_sources,manifest.reading_help_sources,'Successor misstates the predecessor pins');
++ assert.deepEqual(Object.keys(successor.reading_help_sources).sort(),Object.keys(manifest.reading_help_sources).sort(),'Reading help source coverage changed');
++ for(const [name,digest] of Object.entries(successor.reading_help_sources)){
++  if(name!=='public/page-help-core.mjs')assert.equal(digest,manifest.reading_help_sources[name],'Reading help source changed outside the registry: '+name);
++  assert.equal(sha(fs.readFileSync(path.join(root,name))),digest,'Reading help source drift');
++ }
+  return {format:manifest.format,viewers:records.length,historical_evidence_preserved:true,math_data_and_test_sources_unchanged:true,executed_checks_unchanged:true,scientific_acceptance:false};
+ }
+ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))try{console.log(JSON.stringify(verifyBrowserUISources()));}catch(e){console.error(e.message);process.exitCode=1;}

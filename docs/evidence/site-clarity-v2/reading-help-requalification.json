@@ -1,0 +1,52 @@
+{
+  "format": "pcs-reading-help-requalification-v2",
+  "status": "PREPARED FOR OWNER REVIEW. Not effective: scripts/verify_browser_ui_sources.mjs still enforces the v1 pins until the owner approves the change.",
+  "scientific_acceptance": false,
+  "human_participants": 0,
+  "predecessor": {
+    "path": "docs/evidence/site-clarity-v1/browser-qualifications.json",
+    "sha256": "9eaafbdf49c319b96dd8415abd1dc75548b5b035f47054d5acec145d1915a2cc",
+    "note": "Unchanged. The three scientific-viewer records in it still verify; only the reading-help pin is superseded."
+  },
+  "previous_reading_help_sources": {
+    "public/page-help.mjs": "65d57a5a45df54e49a5f92f0a79bf70dac278af3e20217f53b79e3643680d91b",
+    "public/page-help-core.mjs": "0a791249caac7be618799c66999cd707f60c00e1dc9df9a23be7fa399f3d68b7",
+    "public/page-help.css": "fa5a95ecf72f3b0f384387418dbf3311c3bd0a757b36ebda8a14cfad47d5a3b9"
+  },
+  "reading_help_sources": {
+    "public/page-help.mjs": "65d57a5a45df54e49a5f92f0a79bf70dac278af3e20217f53b79e3643680d91b",
+    "public/page-help-core.mjs": "76f7d36cc4cd76b0f12844d8abacf2da129ff3e1bb0f910c247fa3438d024392",
+    "public/page-help.css": "fa5a95ecf72f3b0f384387418dbf3311c3bd0a757b36ebda8a14cfad47d5a3b9"
+  },
+  "page_help_delta": {
+    "base": "public/page-help-core.mjs at main e813662",
+    "added": [
+      "claim-check.html"
+    ],
+    "removed": [],
+    "changed": [],
+    "unchanged_entries": 75,
+    "unchanged_entries_sha256": "203b201d086ae57058abbb269796798aa1fedec4da9690b748ec33e16931b775",
+    "method": "Both versions imported as modules; every entry of the base compared field by field with the current one."
+  },
+  "fresh_evidence": {
+    "all_pages_browser": {
+      "path": "docs/evidence/site-clarity-v2/all-pages-browser.json",
+      "sha256": "e161824db809dc2dc92415251f113fc0a10db2857765c5198803b7d8aabbd210",
+      "script": "scripts/browser_site_clarity.cjs (unchanged)",
+      "widths": [
+        320,
+        1440
+      ],
+      "page_checks": 152,
+      "scientific_workflows": 12,
+      "environment": "wrangler dev --local (pinned 4.156.0) on 127.0.0.1:8788, Chromium build 1243, Playwright 1.64.1, 2026-11-12",
+      "what_it_shows": "On every page, at 320 px and 1440 px: one visible title, the page help opens and gives a first action and a scope note, the glossary opens, no horizontal overflow (also with a fallback font), no runtime error, no write and no external request. Authored automation; no person took part."
+    }
+  },
+  "not_established": [
+    "that any person understands the help text",
+    "that the new page is correct (see docs/CLAIM_CHECK_V1.md)",
+    "approval: this file is a proposal"
+  ]
+}

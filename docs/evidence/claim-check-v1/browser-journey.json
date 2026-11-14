@@ -1,0 +1,41 @@
+{
+ "format": "pcs-claim-check-browser-journey-v1",
+ "human_participants": 0,
+ "human_usability_established": false,
+ "steps": [
+  {
+   "width": 390,
+   "examples": 6,
+   "benchmark_rows": 8,
+   "recorded_rows": 22,
+   "recorded_verdicts": [
+    "PROVED",
+    "REFUTED",
+    "UNKNOWN"
+   ],
+   "recorded_file_rebuilt_in_browser": true,
+   "own_claim_preview": "match / conditional / mismatch / link check failed / malformed file all shown",
+   "overflow": false
+  },
+  {
+   "width": 1280,
+   "examples": 6,
+   "benchmark_rows": 8,
+   "recorded_rows": 22,
+   "recorded_verdicts": [
+    "PROVED",
+    "REFUTED",
+    "UNKNOWN"
+   ],
+   "recorded_file_rebuilt_in_browser": true,
+   "own_claim_preview": "match / conditional / mismatch / link check failed / malformed file all shown",
+   "overflow": false,
+   "browser_generated_lean_accepted_by_real_kernel": true,
+   "recorded_lean_re_accepted_by_real_kernel": true,
+   "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)"
+  }
+ ],
+ "external_requests": [],
+ "page_errors": [],
+ "ok": true
+}
