@@ -1,4 +1,4 @@
-# Check a number in a paper (ClaimCheck v1 page)
+# Check a number in a paper (ClaimCheck page, v1 checker with v1.1 verdicts)
 
 Page: [`/claim-check`](https://proof-carrying-science-site.marenatommaso.workers.dev/claim-check)
 
@@ -16,10 +16,49 @@ separate answers:
 3. **Does it support the scientific conclusion?** Always "not assessed", with the open questions
    listed and any interpretive wording in the sentence pointed out.
 
-The researcher can download the Lean file for their own claim and run `lean` on it. The file is the
-fixed checker from the PCS core repository (`research/claimcheck_v1/formal/ClaimCheck.lean`, served
-unchanged as `public/claim-check/ClaimCheck.lean`), the data as one numeral, the claim and the
-expected outcome. The Lean kernel parses the bytes and recomputes the statistic itself.
+The researcher can download the Lean file for their own claim. The file is the fixed checker from
+the PCS core repository (`research/claimcheck_v1/formal/ClaimCheck.lean`, served unchanged as
+`public/claim-check/ClaimCheck.lean`), the data as one numeral, the claim and the expected outcome.
+The Lean kernel parses the bytes and recomputes the statistic itself.
+
+## Getting an actual kernel result
+
+The browser never runs Lean and never says it did. The route to a real result is:
+
+1. Download the Lean file and the runner (`public/claim-check/claimcheck_kernel_runner.py`, one
+   Python file, standard library only, no network use; the same bytes as
+   `research/claimcheck_v1_1/claimcheck_kernel_runner.py` in the core repository).
+2. With Lean 4.28.0 installed: `python claimcheck_kernel_runner.py ClaimCheck-obligation.lean --out kernel-run.json`.
+   The runner refuses a file that does not start with the reviewed checker (by SHA-256) or that
+   contains `sorry`, `axiom` and similar; it runs Lean, reads the axioms each theorem depends on, and
+   writes what was proved.
+3. Optionally open `kernel-run.json` in the page. The page compares the proof-file, data and checker
+   digests in it with the ones it built and shows the outcome under the label
+   **"REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE"**. A report for other data or another
+   proof file is refused. The page cannot know that Lean ran; anyone who needs to know runs Lean on
+   the proof file, which is the evidence.
+
+For a complete record with the v1.1 rules applied (other readings of the sentence, chance of
+coincidence, support from other numbers) the command-line tool in the core repository is the
+route: `python -m research.claimcheck_v1_1 verify …`, replayable with
+`replay_independent_v1_1.py`.
+
+## What can be said: the v1.1 verdicts
+
+Recorded examples show, beside the recorded Lean result, the verdict the v1.1 policy
+(`pcs-claimcheck-semantic-policy-v1.1`) allows:
+
+| Shown | Meaning |
+| --- | --- |
+| Number reproduced | the kernel proved the match and the mechanical rules support the reading |
+| Discrepancy for a person to review | the kernel proved a mismatch and another confirmed number in the same sentence supports the reading; never "the paper is wrong" |
+| A person must review the reading | a kernel result exists and is kept, but nothing here supports saying the sentence means it |
+| Unknown | no kernel result |
+
+A verdict can only be weaker than the recorded Lean result (`tests/claim-check-page.test.mjs`).
+Across the six examples: 25 reproduced, 92 for a person to review, 10 unknown, no discrepancy.
+The rules were designed on these same documents, so these counts are development evidence, not a
+test. The prospective evaluation has not been run.
 
 ## Recorded published examples
 
@@ -64,13 +103,15 @@ node --test tests/claim-check-core.test.mjs tests/claim-check-page.test.mjs
 PCS_CHROMIUM=/path/to/chromium node scripts/browser_claim_check.cjs   # real-browser journey
 ```
 
-To regenerate the examples from the core repository's results:
+To regenerate the examples from the core repository's results (the second command adds the v1.1
+verdicts and copies the runner):
 
 ```sh
 python -m research.claimcheck_v1.tools.export_site --bundles research/claimcheck_v1/benchmark/results/bundles \
   --summary research/claimcheck_v1/benchmark/results/heldout/summary.json \
   --adversarial research/claimcheck_v1/benchmark/results/adversarial/adversarial.json \
   --site ../proof-carrying-science-site/public
+python -m research.claimcheck_v1_1.export_site_v11 --site ../proof-carrying-science-site/public
 ```
 
 ## Recorded browser evidence
@@ -79,34 +120,22 @@ python -m research.claimcheck_v1.tools.export_site --bundles research/claimcheck
 `scripts/browser_claim_check.cjs` run in Chromium at 390 px and 1280 px with `PCS_LEAN` set: a
 recorded example opened and rebuilt, the user's own data with a true statement, a
 convention-dependent standard deviation, a false statement, a reading the sentence does not
-support, and a malformed file. The Lean file the browser generated for the user's own claim, and
-the recorded Lean file downloaded from the page, were both accepted by the real Lean 4.28.0
-kernel. No external request and no page error occurred. This is authored automation.
+support, and a malformed file. The Lean file the browser generated was put to the real Lean 4.28.0
+kernel through the served runner, the runner's report was opened in the page and shown as reported
+and not verified, and two altered reports (other data, other proof file) were refused. The recorded
+Lean file downloaded from the page was accepted by the kernel as well. No external request and no
+page error occurred. This is authored automation.
 
-No human usability study has been run on this page.
+No human usability study has been run on this page. A protocol is prepared in the core repository
+(`research/claimcheck_v1_1/usability/`); nobody has been asked to take part.
 
-## Open item for the site owner: the reviewed reading-help pin
+## Protected gates: open owner decisions
 
-`docs/evidence/site-clarity-v1/browser-qualifications.json` pins the SHA-256 of
-`public/page-help-core.mjs` (`reading_help_sources`). Every page must have an entry in that file
-(`tests/science-clarity.test.mjs`), so adding this page changes its bytes, and three tests then
-report `Reading help source drift`:
-
-* `tests/science-clarity.test.mjs` (fresh scientific viewer qualification)
-* `tests/scientific-workflow-v2.test.mjs` (public artifacts match preserved digests)
-* `tests/transport-workflow-v3.test.mjs` (retained assets match)
-
-The only change to `page-help-core.mjs` is the added `claim-check.html` entry; no existing entry
-was edited. The pin was deliberately **not** updated in this change: it records a reviewed
-qualification, and moving it is the owner's decision. Until the owner re-qualifies the help text
-and updates the pin, those three tests fail on this branch and the page must not be deployed.
+Four hosted checks are red on the draft PR, by design of two protected gates (the reviewed
+reading-help pin and the source-admission gate), and the new tests are not yet part of the complete
+website gate. No protected file was changed. The exact proposed changes, their security
+implications and the dry-run evidence are in
+[`docs/governance/CLAIMCHECK_PROPOSALS.md`](governance/CLAIMCHECK_PROPOSALS.md). Until the owner
+decides, the page must not be merged or deployed.
 
 One existing page was edited: `public/check-my-files.html` gained a single link to this page.
-
-## Open item: the new tests are not wired into the CI scripts
-
-`tests/claim-check-core.test.mjs` and `tests/claim-check-page.test.mjs` are run by hand (see
-"Reproduce"). They are not added to the `package.json` scripts that CI and `deploy` call, because
-`package.json` is pinned by `docs/evidence/lean-job-operations-v1/manifest.json`. When the page is
-admitted, both tests should be added to the release gate so that the recorded examples cannot
-drift from the checker.

@@ -1,0 +1,45 @@
+{
+ "format": "pcs-claimcheck-complete-gate-dry-run-v1",
+ "approval": false,
+ "effective": false,
+ "patch": "03-complete-gate.patch",
+ "patch_sha256": "53e967048c9b31d2771620f4af0ea51a68f01b59708a6a52a3edb74878898fd1",
+ "source_commit": "735e59c709ab2bea98a3c7fa453b743231a9c298",
+ "where": "throw-away worktree; the checked-out package.json is unchanged",
+ "patch_applies_cleanly": true,
+ "with_patch": {
+  "exit": 0,
+  "tests": 9,
+  "pass": 9,
+  "fail": 0,
+  "failed": []
+ },
+ "must_fail": {
+  "served_kernel_runner_altered": {
+   "rejected": true,
+   "failed": [
+    "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one"
+   ]
+  },
+  "served_lean_checker_altered": {
+   "rejected": true,
+   "failed": [
+    "the served checker is the pinned reviewed checker and contains no escape hatch",
+    "every recorded example rebuilds to exactly the Lean file the kernel checked"
+   ]
+  },
+  "v1_1_verdict_escalated_beyond_recorded_lean_result": {
+   "rejected": true,
+   "failed": [
+    "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one"
+   ]
+  },
+  "local_run_label_weakened": {
+   "rejected": true,
+   "failed": [
+    "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one"
+   ]
+  }
+ },
+ "all_as_expected": true
+}
