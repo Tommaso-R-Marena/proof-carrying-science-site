@@ -157,10 +157,11 @@ function runCheck() {
   );
   $('scope').textContent = preview === 'conditional'
     ? 'The number matches under one standard-deviation convention and not the other, and the sentence does not say which was used. No unconditional result is given.'
-    : 'A match or mismatch here concerns this file and this reading only. It is not a statement about the paper until Lean has checked it and a person has confirmed the reading.';
+    : 'A match or mismatch here concerns this file and this reading only. You chose this reading, so under the v1.1 rules the answer about the paper is “a person must review the reading” until the full check has run (the command-line tool also examines every other reading the sentence allows). It is not a statement about the paper.';
   state.last = { c, results, checks, preview };
   $('proofText').textContent = 'The result above is a browser calculation. Lean has not checked it. Download the Lean file and run the proof checker to turn the preview into a proof or a refutation.';
   $('downloadLean').disabled = false; $('downloadDraft').disabled = false;
+  $('kernelRunStatus').hidden = true; $('kernelRun').value = '';
   $('result').hidden = false; $('result').focus();
 }
 $('check').addEventListener('click', runCheck);
@@ -175,6 +176,27 @@ $('downloadLean').addEventListener('click', async () => {
     const { results } = state.last;
     download('ClaimCheck-obligation.lean', (await checker()) + obligationTail(state.bytes, results.map((r) => ({ claim: r.claim, outcome: r.outcome })), NA));
   } catch { say('The checker file could not be loaded. Reload the page and try again.', true); }
+});
+// A kernel-run file comes from the runner on the user's own computer.  This page cannot verify that
+// Lean ran.  It only checks that the file is about exactly this proof file and this data, and says so.
+$('kernelRun').addEventListener('change', async (event) => {
+  const box = $('kernelRunStatus'); box.hidden = false; box.replaceChildren();
+  const refuse = (text) => { box.append(el('strong', 'Not shown. '), el('span', text)); };
+  try {
+    const file = event.target.files[0]; if (!file || !state.last) return refuse('Check a number first, then open the kernel-run file made for it.');
+    if (file.size > 200000) return refuse('That file is too large to be a kernel-run file.');
+    const run = JSON.parse(await file.text());
+    if (run.schema !== 'pcs-claimcheck-kernel-run-v1') return refuse('This is not a kernel-run file written by the runner.');
+    const { results } = state.last;
+    const proof = (await checker()) + obligationTail(state.bytes, results.map((r) => ({ claim: r.claim, outcome: r.outcome })), NA);
+    if (run.proof_file_sha256 !== await sha256(new TextEncoder().encode(proof))) return refuse('This kernel run is about a different proof file than the one this page builds for the current data, sentence and reading.');
+    if (run.data_sha256 !== state.sha) return refuse('This kernel run is about a different data file.');
+    if (run.reviewed_checker_sha256 !== state.catalog?.checker_sha256) return refuse('This kernel run used a checker other than the reviewed one this page serves.');
+    if (run.accepted !== true || !Array.isArray(run.theorems) || run.theorems.length !== results.length) return refuse(`The runner did not report an accepted proof${run.why_not ? `: ${run.why_not}` : '.'} Nothing is established.`);
+    box.append(el('strong', 'REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE'), document.createElement('br'));
+    for (const t of run.theorems) box.append(el('span', `${t.theorem}: Lean kernel accepted — ${String(t.in_words)}.`), document.createElement('br'));
+    box.append(el('span', `Reported run: ${String(run.lean || '').slice(0, 60)}, ${String(run.utc)}. This page checked only that the file names exactly this proof file, this data and the reviewed checker. To convince someone else, give them the proof file: running Lean on it is the check. This is a result about the file and the typed statement, not about the paper.`));
+  } catch { refuse('The file could not be read as a kernel-run file.'); }
 });
 $('downloadDraft').addEventListener('click', () => {
   const { c, results, checks, preview } = state.last;
@@ -205,6 +227,8 @@ function renderBenchmark(b) {
   for (const a of b.arms) { const tr = document.createElement('tr'); [(a.complete === false ? `${a.label} — incomplete: ${a.model_errors} of ${a.model_calls} model calls failed` : a.label) + (a.document_copies ? ` · ${a.document_copies} of ${a.document_copies_total} copies` : ''), a.correct_verification, a.correct_refutation, a.unsupported_positive, a.unsupported_refutation, a.abstained].forEach((x) => tr.append(el('td', String(x)))); rows.append(tr); }
   $('benchmarkTable').hidden = false; $('benchmarkNotes').textContent = b.notes;
 }
+const OUTWARD = { CONFIRMATION: ['NUMBER REPRODUCED', 'ok'], DISCREPANCY_FOR_REVIEW: ['DISCREPANCY FOR A PERSON TO REVIEW', 'bad'], REQUIRE_HUMAN_REVIEW: ['A PERSON MUST REVIEW THE READING', 'neutral'], UNKNOWN: ['UNKNOWN', 'neutral'] };
+const MATH = { MATCH_PROVED: 'Lean proved: the file gives the printed number under this statement.', MISMATCH_PROVED: 'Lean proved: the file does not give the printed number under this statement.', CONDITIONAL_ON_CONVENTION: 'Lean proved a match under one standard-deviation convention and a mismatch under the other.', UNDEFINED_PROVED: 'Lean proved: the statistic is undefined for this file.', NOT_ESTABLISHED: 'No Lean result.' };
 const fromBase64 = (text) => Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
 $('loadExample').addEventListener('click', async () => {
   const meta = state.catalog.examples.find((x) => x.id === $('exampleSelect').value);
@@ -218,15 +242,22 @@ $('loadExample').addEventListener('click', async () => {
     state.example = ex;
     const receipts = ex.receipts;
     const rows = $('recordedRows'); rows.replaceChildren();
+    const decided = new Map((ex.v1_1?.decisions || []).map((d) => [d.claim_id, d]));
     for (const r of receipts) {
       const tr = document.createElement('tr');
       const v = (r.q1_mathematics?.variants || [])[0]?.predicted_outcome;
       const value = v?.defined ? Number(v.approximate_in_reported_units).toPrecision(8).replace(/\.?0+$/, '') : '';
-      const cond = r.reason === 'ambiguous_convention' ? ' (conditional)' : '';
-      tr.append(el('td', r.result + cond, `badge ${r.result === 'PROVED' ? 'ok' : r.result === 'REFUTED' ? 'bad' : 'neutral'}`), el('td', r.q2_correspondence?.sentence?.text || r.q2_correspondence?.quote?.text || ''), el('td', r.claim ? `${r.claim.reading} ${r.result === 'UNKNOWN' ? r.message : ''}` : r.message), el('td', value));
+      const d = decided.get(r.claim_id);
+      const outward = OUTWARD[d?.verdict] || OUTWARD.UNKNOWN;
+      const first = el('td', outward[0], `badge ${outward[1]}`);
+      const why = (d?.reasons || [])[0] || (d?.findings || []).find((f) => !f.passed)?.detail;
+      const cell = document.createElement('td'); cell.append(first); if (why && d.verdict !== 'CONFIRMATION') cell.append(el('p', why, 'small'));
+      if (d?.supported_by?.length) cell.append(el('p', `Supported by another number in the sentence: ${d.supported_by.join(', ')}.`, 'small'));
+      const math = MATH[d?.mathematical_status] || MATH.NOT_ESTABLISHED;
+      tr.append(cell, el('td', math), el('td', r.q2_correspondence?.sentence?.text || r.q2_correspondence?.quote?.text || ''), el('td', r.claim ? r.claim.reading : r.message), el('td', value));
       rows.append(tr);
     }
-    $('recordedNote').textContent = `${ex.citation} Article licence: ${ex.article_license}. Data licence: ${ex.data_license}. These rows are recorded results of the real Lean proof checker, not a calculation by this page. Readings were proposed by ${ex.proposed_by}; a proposer has no authority. A REFUTED row means this file does not give the printed number under this reading. It does not mean the paper is wrong.${ex.selection_note ? ' ' + ex.selection_note : ''}`;
+    $('recordedNote').textContent = `${ex.citation} Article licence: ${ex.article_license}. Data licence: ${ex.data_license}. These rows are recorded results of the real Lean proof checker, not a calculation by this page. Readings were proposed by ${ex.proposed_by}; a proposer has no authority. The first column applies the v1.1 reading rules to those recorded results; it is a mechanical judgement, not a person's. “A person must review the reading” keeps the arithmetic result and says nothing about the paper. A mismatch means this file does not give the printed number under this reading. It does not mean the paper is wrong.${ex.selection_note ? ' ' + ex.selection_note : ''}`;
     $('recordedSource').textContent = `Article DOI ${ex.article_doi}. Data: ${ex.data_origin}.`;
     // Re-derive the obligation bytes locally: the recorded proof is about exactly this data and these readings.
     const items = [];

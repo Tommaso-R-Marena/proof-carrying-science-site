@@ -13,6 +13,11 @@
     "PROVED": 13,
     "REFUTED": 7,
     "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 11,
+    "REQUIRE_HUMAN_REVIEW": 9,
+    "UNKNOWN": 2
    }
   },
   {
@@ -22,6 +27,11 @@
    "counts": {
     "PROVED": 7,
     "REFUTED": 3,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 3,
+    "REQUIRE_HUMAN_REVIEW": 7,
     "UNKNOWN": 2
    }
   },
@@ -33,6 +43,10 @@
     "PROVED": 2,
     "REFUTED": 48,
     "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "REQUIRE_HUMAN_REVIEW": 50,
+    "UNKNOWN": 2
    }
   },
   {
@@ -43,6 +57,9 @@
     "PROVED": 3,
     "REFUTED": 1,
     "UNKNOWN": 0
+   },
+   "v1_1_counts": {
+    "REQUIRE_HUMAN_REVIEW": 4
    }
   },
   {
@@ -53,6 +70,11 @@
     "PROVED": 14,
     "REFUTED": 3,
     "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 7,
+    "REQUIRE_HUMAN_REVIEW": 10,
+    "UNKNOWN": 2
    }
   },
   {
@@ -62,6 +84,11 @@
    "counts": {
     "PROVED": 10,
     "REFUTED": 6,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 4,
+    "REQUIRE_HUMAN_REVIEW": 12,
     "UNKNOWN": 2
    }
   }
@@ -188,5 +215,20 @@
    "software_freeze_sha256": "1a7eeb57029e5ff35ee1586908f77fa949a7577777a2495dc00db18c6af0ae2d",
    "benchmark_freeze_sha256": "1a2001809d1e923900817e17273a975fb554b13bc5b72809f4bd23e2f9ecc890"
   }
+ },
+ "v1_1": {
+  "policy_id": "pcs-claimcheck-semantic-policy-v1.1",
+  "kernel_runner": {
+   "path": "claim-check/claimcheck_kernel_runner.py",
+   "sha256": "8d9e07b4ac4b0abed13c9e750cbca113f1db26d82f3709579a7aafa7401f713f"
+  },
+  "kernel_run_schema": "pcs-claimcheck-kernel-run-v1",
+  "recorded_example_verdicts": {
+   "CONFIRMATION": 25,
+   "REQUIRE_HUMAN_REVIEW": 92,
+   "UNKNOWN": 10
+  },
+  "development_note": "The v1.1 reading rules were designed on these same six articles, so the following is development evidence, not a test. From the same kernel results, with readings proposed by two language models: misleading refutations fell from 131 and 2 to 0 and 0; correct confirmations fell from 40 and 24 to 26 and 17; detected discrepancies fell from 13 and 11 to 3 and 2. An adversary allowed to pick any eligible reading after seeing the data obtained 12 confirmations of numbers not labelled true (145 under v1) and no accusation of a true number. A prospective evaluation on new papers has been specified and not yet run.",
+  "prospective_evaluation": "specified, not approved, not run"
  }
 }

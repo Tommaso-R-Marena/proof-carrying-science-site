@@ -101,6 +101,24 @@ const CSV = 'animal,group,mass_g\n1,a,10.5\n2,a,11.5\n3,b,NA\n4,b,9.25\n5,b,12\n
             assert.match(stdout, /^'pcs_claim_0' depends on axioms: \[propext, Classical\.choice, Quot\.sound\]/);
             assert.doesNotMatch(stdout, /error|warning|sorry/i);
           }
+          // the published runner on the browser-generated proof file, then its report opened in the page
+          const runJson = path.join(tmp, 'kernel-run.json');
+          execFileSync('python3', [path.join(root, 'claim-check/claimcheck_kernel_runner.py'), path.join(tmp, 'own.lean'), '--lean', process.env.PCS_LEAN, '--out', runJson], { encoding: 'utf8', timeout: 900000, stdio: ['ignore', 'pipe', 'pipe'] });
+          const run = JSON.parse(fs.readFileSync(runJson, 'utf8'));
+          assert.equal(run.accepted, true); assert.equal(run.theorems.length, 1);
+          await page.setInputFiles('#kernelRun', runJson);
+          await page.waitForSelector('#kernelRunStatus:not([hidden])');
+          const shown = await page.locator('#kernelRunStatus').textContent();
+          assert.match(shown, /REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE/); assert.match(shown, /MATCHES/); assert.match(shown, /not about the paper/);
+          const other = path.join(tmp, 'other-run.json');
+          fs.writeFileSync(other, JSON.stringify({ ...run, data_sha256: '0'.repeat(64) }));
+          await page.setInputFiles('#kernelRun', other);
+          await page.waitForFunction(() => /Not shown/.test(document.getElementById('kernelRunStatus').textContent));
+          const forged = path.join(tmp, 'forged-run.json');
+          fs.writeFileSync(forged, JSON.stringify({ ...run, proof_file_sha256: 'f'.repeat(64) }));
+          await page.setInputFiles('#kernelRun', forged);
+          await page.waitForFunction(() => /different proof file/.test(document.getElementById('kernelRunStatus').textContent));
+          step.local_kernel_run_shown_as_reported_not_verified = true; step.kernel_run_for_other_data_or_proof_refused = true;
           step.browser_generated_lean_accepted_by_real_kernel = true;
           step.recorded_lean_re_accepted_by_real_kernel = true;
           step.lean = execFileSync(process.env.PCS_LEAN, ['--version'], { encoding: 'utf8' }).trim();

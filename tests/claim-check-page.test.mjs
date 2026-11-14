@@ -83,6 +83,34 @@ test('page wiring: local only, no provider access, honest labels', () => {
   assert.match(js, /It does not mean the paper is wrong/);
 });
 
+test('v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one', () => {
+  const v = catalog.v1_1;
+  assert.equal(sha(read('claim-check/claimcheck_kernel_runner.py')), v.kernel_runner.sha256);
+  assert.match(v.development_note, /development evidence, not a test/);
+  assert.match(v.prospective_evaluation, /not run/);
+  let confirmations = 0;
+  for (const meta of catalog.examples) {
+    const ex = JSON.parse(read(`claim-check/examples/${meta.id}.json`));
+    const byId = new Map(ex.receipts.map((r) => [r.claim_id, r]));
+    assert.equal(ex.v1_1.decisions.length, ex.receipts.length);
+    for (const d of ex.v1_1.decisions) {
+      const r = byId.get(d.claim_id); assert.ok(r, d.claim_id);
+      assert.ok(['CONFIRMATION', 'DISCREPANCY_FOR_REVIEW', 'REQUIRE_HUMAN_REVIEW', 'UNKNOWN'].includes(d.verdict));
+      if (d.verdict === 'CONFIRMATION') { assert.equal(r.result, 'PROVED'); assert.equal(d.mathematical_status, 'MATCH_PROVED'); assert.ok(d.findings.length > 0); confirmations += 1; }
+      if (d.verdict === 'DISCREPANCY_FOR_REVIEW') { assert.equal(r.result, 'REFUTED'); assert.ok(d.supported_by.length > 0); }
+      if (r.result === 'UNKNOWN') assert.ok(['REQUIRE_HUMAN_REVIEW', 'UNKNOWN'].includes(d.verdict), 'a v1 UNKNOWN can never become a verdict');
+    }
+  }
+  assert.ok(confirmations > 0);
+  const js = read('claim-check.mjs').toString('utf8'); const html = read('claim-check.html').toString('utf8');
+  assert.match(js, /REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE/);
+  assert.match(js, /This page cannot verify that\n\/\/ Lean ran|cannot verify that/);
+  assert.match(html, /href="claim-check\/claimcheck_kernel_runner\.py" download/);
+  const runner = read('claim-check/claimcheck_kernel_runner.py').toString('utf8');
+  assert.ok(runner.includes(catalog.checker_sha256), 'the runner pins the same reviewed checker the page serves');
+  assert.doesNotMatch(runner, /urllib|http\.client|requests|socket/);
+});
+
 test('sentence helpers', () => {
   assert.deepEqual(locateNumbers('weighed 3,750 g, r = −0.45, ages 10-20, mean 43.92 mm (n = 342)').map((n) => n.literal), ['3750', '-0.45', '10', '20', '43.92', '342']);
   const s = 'Mean bill length was 43.92 mm in Adelie penguins, suggesting dimorphism.';
