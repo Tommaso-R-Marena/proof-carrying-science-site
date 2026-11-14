@@ -1,0 +1,50 @@
+{
+ "what": "Dry run of docs/governance/claimcheck-proposals/01-reading-help-verifier.patch in a scratch copy of the branch. The branch itself still carries the unmodified verifier.",
+ "positive": {
+  "patched_verifier_accepts_current_tree": {
+   "passed": true,
+   "output": "{\"format\":\"pcs-browser-ui-requalification-v1\",\"viewers\":3,\"historical_evidence_preserved\":true,\"math_data_and_test_sources_unchanged\":true,\"executed_checks_unch"
+  },
+  "three_test_files_that_fail_on_the_branch": {
+   "pass": 22,
+   "fail": 0
+  },
+  "successor_check": {
+   "passed": true,
+   "output": "{\"format\":\"pcs-reading-help-requalification-v2\",\"added_pages\":[\"claim-check.html\"],\"unchanged_entries\":75,\"pages_in_fresh_run\":152,\"historical_record_preserved\":true,\"effective\":false,\"scientific_acce"
+  }
+ },
+ "negative": {
+  "existing_help_entry_edited": {
+   "rejected": true,
+   "message": "Reading help source drift\n+ actual - expected\n\n+ '5168156de7744efb92038ed0548c78dea553696679fe99758bd4ed88a613b3f8'\n- '76f7d36cc4cd76b0f12844d8abacf2da129ff3e1b",
+   "expected_message_contains": "Reading help source drift",
+   "as_expected": true
+  },
+  "second_page_added_without_review": {
+   "rejected": true,
+   "message": "Reading help source drift\n+ actual - expected\n\n+ '6b4d1dc0739624d2df82b07fe7c06d6f012ad513f86dcaeb7a3c02535178037e'\n- '76f7d36cc4cd76b0f12844d8abacf2da129ff3e1b",
+   "expected_message_contains": "Reading help source drift",
+   "as_expected": true
+  },
+  "successor_manifest_edited": {
+   "rejected": true,
+   "message": "Unreviewed reading-help successor\n+ actual - expected\n\n+ '4ef6be2042c9f8a2fe55f5bdaceb19dc6d3b5e2965c8eea219a24ff932ae8f69'\n- '9a1141266b3f56224931d4041e4346082",
+   "expected_message_contains": "Unreviewed reading-help successor",
+   "as_expected": true
+  },
+  "historical_manifest_edited": {
+   "rejected": true,
+   "message": "Expected values to be strictly equal:\n\ntrue !== false",
+   "expected_message_contains": "",
+   "as_expected": true
+  },
+  "help_stylesheet_edited": {
+   "rejected": true,
+   "message": "Reading help source drift\n+ actual - expected\n\n+ '19217317a7532d806c206a8fd5f6b685ff1e396029eb82d73558b2689bdf22ac'\n- 'fa5a95ecf72f3b0f384387418dbf3311c3bd0a757",
+   "expected_message_contains": "Reading help source",
+   "as_expected": true
+  }
+ },
+ "all_as_expected": true
+}
