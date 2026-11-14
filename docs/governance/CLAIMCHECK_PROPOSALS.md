@@ -76,7 +76,8 @@ public site, whatever is done about (a). That needs a decision, not a workaround
 
 **What this branch changes relative to `main`**
 ([census](claimcheck-proposals/02-site-admission-census.json), with SHA-256 and mode of every
-file). No file is deleted and no integration control is touched. Existing files modified:
+file, generated at commit `3105604`: 32 files added, 6 modified, 20 of the 38 under `public/`; the
+three record files of this proposal are added by the commit after it). No file is deleted and no integration control is touched. Existing files modified:
 `public/check-my-files.html` (one link), `public/page-help-core.mjs` (one entry),
 `public/runtime-connections.json`, `public/sitemap.xml`, `public/llms.txt` (the new page listed),
 `tests/science-clarity.test.mjs` (page count 75 → 76). Everything else is added. One added file is
@@ -98,8 +99,8 @@ be regenerated at the commit the owner fixes:
 change only to the exact tree of a commit that the owner has tagged and that reviewed code names
 by id. Rule (a) already forces every non-control file, including all of `public/`, to equal that
 commit, so the new (b) adds no freedom beyond the successor itself; it keeps a separate, explicit
-statement about the deployment tree. What the owner takes on is reviewing the 37 changed or added
-files once. Nothing else in the gate changes: registry digest, original PR sets, ancestry rules,
+statement about the deployment tree. What the owner takes on is reviewing the changed and added
+files of the census once. Nothing else in the gate changes: registry digest, original PR sets, ancestry rules,
 control list, clean-tree rule.
 
 **Dry run** ([record](claimcheck-proposals/02-reconciliation-gate.dry-run.json)), produced by
