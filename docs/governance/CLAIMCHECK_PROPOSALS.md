@@ -152,6 +152,26 @@ above the recorded Lean result, and when the "not verified by this page" label i
 
 **Also the owner's:** whether `claim-check-page` becomes a required status check in the ruleset.
 
+## 4. Known defect in the served runner (found 2026-11-15)
+
+`public/claim-check/claimcheck_kernel_runner.py` (a copy of the core repository's v1.1 runner)
+accepts a hand-written proof file that defines its own `run` and reports "MATCHES" with
+`accepted: true`. Reproduced with the real Lean kernel; details, scope and a tested fix are in the
+core repository: `research/claimcheck_assurance_v1/findings/RUNNER_TAIL_FORGERY.md` (draft PR
+Tommaso-R-Marena/proof-carrying-science#216).
+
+What is and is not affected on this page:
+
+* the page's display of a local `kernel-run.json` is **not** affected: it shows a report only if
+  the report's `proof_file_sha256` equals the proof file the page built itself;
+* the recorded examples are **not** affected: the page rebuilds each proof file and compares digests;
+* the advice "anyone can run Lean on the proof file to check the second" is affected when the proof
+  file comes from someone else: the runner's report then proves nothing about the checker.
+
+Not changed here. If the owner replaces the core runner by the v2 runner, the served copy, its digest
+in `examples.json` and the page test that pins it change together; until then the page should not
+be deployed (it is not).
+
 ## Not proposed
 
 No change to any ruleset, required check, bypass list, deployment setting, secret, or to the
