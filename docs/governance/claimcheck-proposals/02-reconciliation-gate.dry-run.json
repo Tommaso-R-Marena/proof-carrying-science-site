@@ -2,7 +2,7 @@
  "format": "pcs-claimcheck-site-admission-dry-run-v1",
  "approval": false,
  "effective": false,
- "source_commit": "31056044d1d4660151280dba07e8e03f8f939f62",
+ "source_commit": "5538f1b0ddd93b5317ed26faa58c2eb6c5c2c469",
  "protected_main_in_registry": "54bc61805e741a7228c36e257d3e314cd603b1a9",
  "note": "Throw-away worktrees and a local tag, deleted at the end. Nothing pushed. The commit ids of the retained commit and of the control commit below exist only in this dry run.",
  "gate_unchanged_on_origin_main": {
@@ -36,7 +36,7 @@
  },
  "census": {
   "against_origin_main": "e8136625c463b271364b36b2b8ae76f8777f1967",
-  "added": 32,
+  "added": 36,
   "modified": [
    "public/check-my-files.html",
    "public/llms.txt",
@@ -61,10 +61,10 @@
  },
  "successor": {
   "retained_commit_parents": [
-   "31056044d1d4660151280dba07e8e03f8f939f62",
+   "5538f1b0ddd93b5317ed26faa58c2eb6c5c2c469",
    "d35e2b5e6b29e0a27dc0cb117986895fd58c1456"
   ],
-  "retained_tree": "bd7ff6425c28bcf6f5c2d0f34df33f2058bb69b5",
+  "retained_tree": "ec05db5ec16e4033693dd1e5993c995c6fa455b0",
   "previous_retained_commit": "d35e2b5e6b29e0a27dc0cb117986895fd58c1456",
   "previous_tag": "pcs-source-intake/site-open-prs-v1-20261105",
   "tag_in_this_dry_run": "pcs-source-intake/site-claimcheck-v1-DRYRUN-LOCAL",
@@ -77,13 +77,13 @@
  },
  "proposed_change": {
   "patch": "02-reconciliation-gate.patch",
-  "patch_sha256": "98375e6607dc13d32f365e264b17a7b56f9bf65f26adf4b7d45741c0ca23649a",
+  "patch_sha256": "46091363342969d1612840068547e54162a4505a65b486f8caa86b8b8436a675",
   "gate": {
    "passed": true,
    "reason": "",
    "summary": {
     "repository": "Tommaso-R-Marena/proof-carrying-science-site",
-    "candidate": "10d8df1b324332c42ed9d0dcfab532ae518e5aa4",
+    "candidate": "0264f4a5352ba4948d2f9a89f476d8c734882e7d",
     "original_prs_retained": [
      147,
      146,
@@ -94,10 +94,10 @@
      128
     ],
     "production_source_preserved": true,
-    "qualified_source_commit": "ee7654cad783f31a9667ca5371840b7548f9319b",
+    "qualified_source_commit": "88e17c633b32b0695805336c4f9c696ce41fd4f9",
     "retention_tag": "pcs-source-intake/site-claimcheck-v1-DRYRUN-LOCAL",
     "original_ancestry_preserved_at_intake": true,
-    "selected_noncontrol_source_files_checked": 3841,
+    "selected_noncontrol_source_files_checked": 3845,
     "current_main_may_use_squash_history": true
    }
   },
@@ -140,7 +140,7 @@
   },
   "retained_commit_drops_original_pr_heads": {
    "rejected": true,
-   "reason": "subprocess.CalledProcessError: Command '['git', '-C', '/tmp/pcs-site-admission-7gyhpt_8/neg-retained_commit_drops_original_pr_heads', 'merge-base', '--is-ancestor', '019c932127f4b1f5273e20a43644999f694a641d', '66c69978cc09b6cd30526e752928343956a23f8c']' returned non-zero exit status 1.",
+   "reason": "subprocess.CalledProcessError: Command '['git', '-C', '/tmp/pcs-site-admission-5a9s9qi2/neg-retained_commit_drops_original_pr_heads', 'merge-base', '--is-ancestor', '019c932127f4b1f5273e20a43644999f694a641d', 'cdae519fcff201080a453ad04e95cd8b0f2dcb55']' returned non-zero exit status 1.",
    "expected_reason_contains": "returned non-zero exit status",
    "as_expected": true
   }

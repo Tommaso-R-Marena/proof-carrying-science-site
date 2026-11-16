@@ -1,35 +1,35 @@
 {
  "format": "pcs-claimcheck-site-admission-census-v1",
- "source_commit": "31056044d1d4660151280dba07e8e03f8f939f62",
+ "source_commit": "5538f1b0ddd93b5317ed26faa58c2eb6c5c2c469",
  "against_origin_main": "e8136625c463b271364b36b2b8ae76f8777f1967",
  "files": [
   {
    "path": ".github/workflows/claim-check.yml",
    "status": "A",
    "mode": "100644",
-   "sha256": "73dfa32d5a78924dff812a9bda6a65d2016c8e1620d3274ae21e2e55d86852b9",
-   "bytes": 2966
+   "sha256": "f42050df70d675d2d7cf9ff42d1ed43e82bd86d14da7925d1a7804429861bd8a",
+   "bytes": 3050
   },
   {
    "path": "docs/CLAIM_CHECK_V1.md",
    "status": "A",
    "mode": "100644",
-   "sha256": "2c296ecf4d31c75bb1d62edac4e17f56f1116315ab40ce4016696efaa8690718",
-   "bytes": 8638
+   "sha256": "500ccfebb4013e3246efd402e3aa0ad20cf30cec80a81227e6beba240d910c26",
+   "bytes": 10327
   },
   {
    "path": "docs/evidence/claim-check-v1/browser-journey.json",
    "status": "A",
    "mode": "100644",
-   "sha256": "3250faa36597b8dcfb9e97bd79de9d15b3a2323914750ff772be2988a62d0427",
-   "bytes": 5169
+   "sha256": "5c22bd7ebbd1c2224c96e3016aac8b00816ed1a6dc2def0e5b07386a43eb936c",
+   "bytes": 5470
   },
   {
    "path": "docs/evidence/claim-check-v1/claim-check-desktop.png",
    "status": "A",
    "mode": "100644",
-   "sha256": "b8170d27aa4752f1ca2e011cf0b2216365a44a2fdaaca6fceadc5a4484bfac67",
-   "bytes": 701936
+   "sha256": "05e720ac6cbeba1d8ca57c5a99e67183f914ce8c57c7650bbb77713dc03d5f84",
+   "bytes": 726484
   },
   {
    "path": "docs/evidence/site-clarity-v2/all-pages-browser.json",
@@ -49,8 +49,8 @@
    "path": "docs/governance/CLAIMCHECK_PROPOSALS.md",
    "status": "A",
    "mode": "100644",
-   "sha256": "7ba539994317c57d1157afab5f508bf798cb926b2d5a811f219d0227df1af84c",
-   "bytes": 10757
+   "sha256": "8f50cd3a51c22b23ef0aceb029d22902ae5b61b593d2a39775b68774804c2d9a",
+   "bytes": 14085
   },
   {
    "path": "docs/governance/claimcheck-proposals/01-reading-help-verifier.dry-run.json",
@@ -65,6 +65,27 @@
    "mode": "100644",
    "sha256": "98218343926db36d343c5358534d9d374d85eeeb7c875b99e8aafcfe7a66d398",
    "bytes": 2978
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/02-reconciliation-gate.dry-run.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "c1bccff4e509356aa48f0ef482b8e74ed9c844c939aa27d7ba97c2a91b00256c",
+   "bytes": 5256
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/02-reconciliation-gate.patch",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "98375e6607dc13d32f365e264b17a7b56f9bf65f26adf4b7d45741c0ca23649a",
+   "bytes": 1841
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/02-site-admission-census.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "1e8597719f40da56d9c00ebbd0f83771840b12e19cbe0f77412842de32ecd3c7",
+   "bytes": 7825
   },
   {
    "path": "docs/governance/claimcheck-proposals/03-complete-gate.dry-run.json",
@@ -91,8 +112,8 @@
    "path": "public/claim-check-core.mjs",
    "status": "A",
    "mode": "100644",
-   "sha256": "3909fba751eadb42fba832d962a6c4e64a5567618bd45e7f1ab2f66b85f05837",
-   "bytes": 17822
+   "sha256": "4ffbeccb95587eb54dd40775f7ebb0afc465b392b7f3ef5fd73ad21813b9cae1",
+   "bytes": 20348
   },
   {
    "path": "public/claim-check-examples.mjs",
@@ -119,15 +140,15 @@
    "path": "public/claim-check.html",
    "status": "A",
    "mode": "100644",
-   "sha256": "b41d7814ebc4dd0b844ac21860f75b06798119076c0c28328787fef06cd186fb",
-   "bytes": 10167
+   "sha256": "37070ec0ca2a5b9fcbc43186d9dbe0c235742bd425ca44e1b83f361918a9bcbe",
+   "bytes": 10690
   },
   {
    "path": "public/claim-check.mjs",
    "status": "A",
    "mode": "100644",
-   "sha256": "efd13b1a4c59bcfa45ae967cd1070181e727384fef9ad65039fe83ce06e7dd26",
-   "bytes": 25223
+   "sha256": "8e0d678c0e390267a3a00197ff8e9acf2c50c0aa56beaf21d4044039c1d33986",
+   "bytes": 25706
   },
   {
    "path": "public/claim-check/ClaimCheck.lean",
@@ -140,15 +161,15 @@
    "path": "public/claim-check/claimcheck_kernel_runner.py",
    "status": "A",
    "mode": "100644",
-   "sha256": "8d9e07b4ac4b0abed13c9e750cbca113f1db26d82f3709579a7aafa7401f713f",
-   "bytes": 8138
+   "sha256": "459155f30329462ee598e7327c676b5826c4954384064084506323a874f1f158",
+   "bytes": 14667
   },
   {
    "path": "public/claim-check/examples.json",
    "status": "A",
    "mode": "100644",
-   "sha256": "8987a4ad79678b4332474e36de462ae61b958ad8960c19596e6c5e88de24b14c",
-   "bytes": 7964
+   "sha256": "c24c0d9d0109da234eb5d6f401da92d38c4e3155138c4a788288b2702d0f190b",
+   "bytes": 8889
   },
   {
    "path": "public/claim-check/examples/06_pmc5980576.json",
@@ -224,8 +245,8 @@
    "path": "scripts/browser_claim_check.cjs",
    "status": "A",
    "mode": "100644",
-   "sha256": "6f71142825eecc0925e40c7410f23b170501b1ee4e11ce495cb862a7f5c26ea0",
-   "bytes": 10678
+   "sha256": "484a75810bdbe83360938c441f92eb85535d48670f531de54cfdd173c7fd6e2f",
+   "bytes": 13576
   },
   {
    "path": "scripts/check_reading_help_successor.mjs",
@@ -233,6 +254,13 @@
    "mode": "100644",
    "sha256": "6fd71fea0c94d14982167d4539d18d16441bd512b630aca0369dd1c158076c29",
    "bytes": 3785
+  },
+  {
+   "path": "scripts/dry_run_claimcheck_proposals.py",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "ff3e451e27702fc4218441f3cf8725a830341bcc9c8a15870573f7a75697b394",
+   "bytes": 10638
   },
   {
    "path": "scripts/prepare_claimcheck_site_admission.py",
@@ -252,8 +280,8 @@
    "path": "tests/claim-check-page.test.mjs",
    "status": "A",
    "mode": "100644",
-   "sha256": "227dda847d1bb4b04639622302217d4ec7cde80bb7e6c12a0cda1ba0dcc6f0e2",
-   "bytes": 8172
+   "sha256": "162eb050e93af89d5eb217b6996ac85f402084b90aab7ca2fec1f6453f298e3f",
+   "bytes": 16065
   },
   {
    "path": "tests/fixtures/claim-check-differential.json",

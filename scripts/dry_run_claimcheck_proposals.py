@@ -93,8 +93,8 @@ def dry_run_01(commit):
             'second_page_added_without_review': (('public/page-help-core.mjs', 'export const PAGE_HELP = Object.freeze({',
                                                   'export const PAGE_HELP = Object.freeze({\n  "unreviewed.html": {"title": "x", "purpose": "x"},'),
                                                  'Reading help source drift'),
-            'successor_manifest_edited': (('docs/evidence/site-clarity-v2/reading-help-requalification.json', '"effective": false',
-                                           '"effective": true'), 'Unreviewed reading-help successor'),
+            'successor_manifest_edited': (('docs/evidence/site-clarity-v2/reading-help-requalification.json', '', ' '),
+                                          'Unreviewed reading-help successor'),
             'historical_manifest_edited': (('docs/evidence/site-clarity-v1/browser-qualifications.json', '"format"', '"format_"'), ''),
             'help_stylesheet_edited': (('public/page-help.css', '', '/* altered */\n'), 'Reading help source'),
         }
@@ -140,8 +140,10 @@ def dry_run_03(commit):
                 (tree / 'public/claim-check/ClaimCheck.lean').read_text(encoding='utf-8') + '\n-- altered\n', encoding='utf-8'),
             'local_run_label_weakened': lambda: edit(tree / 'public/claim-check.mjs', 'REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE',
                                                      'VERIFIED BY YOUR LOCAL RUN'),
-            'withdrawn_receipts_accepted_again': lambda: edit(tree / 'public/claim-check-core.mjs', "if (run.schema !== KERNEL_RUN_SCHEMA) return",
-                                                              "if (run.schema === WITHDRAWN_RUN_SCHEMA) run = { ...run, schema: KERNEL_RUN_SCHEMA };\n  if (run.schema !== KERNEL_RUN_SCHEMA) return"),
+            'withdrawn_receipts_accepted_again': lambda: (
+                edit(tree / 'public/claim-check-core.mjs', "if (run.schema === WITHDRAWN_RUN_SCHEMA) return", "if (false) return"),
+                edit(tree / 'public/claim-check-core.mjs', "if (run.schema !== KERNEL_RUN_SCHEMA) return",
+                     "if (run.schema !== KERNEL_RUN_SCHEMA && run.schema !== WITHDRAWN_RUN_SCHEMA) return")),
             'report_about_other_data_shown': lambda: edit(tree / 'public/claim-check-core.mjs', "if (run.data_sha256 !== expected.dataSha256) return",
                                                           "if (false) return"),
             'report_without_the_canonical_flag_shown': lambda: edit(tree / 'public/claim-check-core.mjs', "run.generated_part_canonical !== true || ", ""),

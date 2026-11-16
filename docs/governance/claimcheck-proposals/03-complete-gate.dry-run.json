@@ -1,16 +1,17 @@
 {
- "format": "pcs-claimcheck-complete-gate-dry-run-v1",
+ "format": "pcs-claimcheck-complete-gate-dry-run-v2",
  "approval": false,
  "effective": false,
  "patch": "03-complete-gate.patch",
  "patch_sha256": "53e967048c9b31d2771620f4af0ea51a68f01b59708a6a52a3edb74878898fd1",
- "source_commit": "735e59c709ab2bea98a3c7fa453b743231a9c298",
+ "source_commit": "5538f1b0ddd93b5317ed26faa58c2eb6c5c2c469",
  "where": "throw-away worktree; the checked-out package.json is unchanged",
  "patch_applies_cleanly": true,
+ "complete_gate_runs_it": true,
  "with_patch": {
   "exit": 0,
-  "tests": 9,
-  "pass": 9,
+  "tests": 11,
+  "pass": 11,
   "fail": 0,
   "failed": []
  },
@@ -21,20 +22,46 @@
     "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one"
    ]
   },
+  "served_kernel_runner_without_the_strict_grammar": {
+   "rejected": true,
+   "failed": [
+    "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one",
+    "the served runner passes page-built proof files to Lean and refuses the reported forgery before Lean starts"
+   ]
+  },
   "served_lean_checker_altered": {
    "rejected": true,
    "failed": [
     "the served checker is the pinned reviewed checker and contains no escape hatch",
-    "every recorded example rebuilds to exactly the Lean file the kernel checked"
+    "every recorded example rebuilds to exactly the Lean file the kernel checked",
+    "the served runner passes page-built proof files to Lean and refuses the reported forgery before Lean starts"
    ]
   },
-  "v1_1_verdict_escalated_beyond_recorded_lean_result": {
+  "local_run_label_weakened": {
    "rejected": true,
    "failed": [
     "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one"
    ]
   },
-  "local_run_label_weakened": {
+  "withdrawn_receipts_accepted_again": {
+   "rejected": true,
+   "failed": [
+    "a kernel-run report is shown only if it is a strict-runner report about exactly what the page built"
+   ]
+  },
+  "report_about_other_data_shown": {
+   "rejected": true,
+   "failed": [
+    "a kernel-run report is shown only if it is a strict-runner report about exactly what the page built"
+   ]
+  },
+  "report_without_the_canonical_flag_shown": {
+   "rejected": true,
+   "failed": [
+    "a kernel-run report is shown only if it is a strict-runner report about exactly what the page built"
+   ]
+  },
+  "what_a_kernel_run_does_not_verify_removed": {
    "rejected": true,
    "failed": [
     "v1.1 verdicts never exceed the recorded Lean result; the served runner is the published one"
