@@ -29,18 +29,35 @@ The browser never runs Lean and never says it did. The route to a real result is
    Python file, standard library only, no network use; the same bytes as
    `research/claimcheck_v1_1/claimcheck_kernel_runner.py` in the core repository).
 2. With Lean 4.28.0 installed: `python claimcheck_kernel_runner.py ClaimCheck-obligation.lean --out kernel-run.json`.
-   The runner refuses a file that does not start with the reviewed checker (by SHA-256) or that
-   contains `sorry`, `axiom` and similar; it runs Lean, reads the axioms each theorem depends on, and
-   writes what was proved.
+   The runner refuses a file that does not start with the reviewed checker (by SHA-256), and it
+   refuses, before starting Lean, any file whose generated part is not exactly in the form the
+   generator writes (one data numeral, claims built from literals, one batch theorem, one fixed-form
+   theorem per claim). Then it runs Lean, reads the axioms each theorem depends on, and writes what
+   the kernel accepted (receipt schema `pcs-claimcheck-kernel-run-v2`).
+
+   **Correction, 16 November 2026.** The runner served until then (schema v1, SHA-256 `8d9e07b4…`)
+   checked the generated part only for a few forbidden words. A hand-written file that defined its
+   own `run` and proved the expected equation by `rfl` passed the Lean kernel, and that runner
+   reported a match for it, although the theorem said nothing about the reviewed checker (finding
+   `research/claimcheck_assurance_v1/findings/RUNNER_TAIL_FORGERY.md` in the core repository). It is
+   withdrawn, and the page refuses its receipts with that reason. Proof files the page itself built
+   were never affected; the recorded examples were never affected.
 3. Optionally open `kernel-run.json` in the page. The page compares the proof-file, data and checker
    digests in it with the ones it built and shows the outcome under the label
-   **"REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE"**. A report for other data or another
-   proof file is refused. The page cannot know that Lean ran; anyone who needs to know runs Lean on
-   the proof file, which is the evidence.
+   **"REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE"**, worded by the page from its own
+   results. A report for other data or another proof file, or from the withdrawn runner, is refused.
+   The page cannot know that Lean ran; anyone who needs to know runs the runner on the proof file
+   (plain Lean alone does not check that a file someone else made has the generated form).
 
-For a complete record with the v1.1 rules applied (other readings of the sentence, chance of
-coincidence, support from other numbers) the command-line tool in the core repository is the
-route: `python -m research.claimcheck_v1_1 verify …`, replayable with
+What a kernel run verifies, and the page says so beside every reported run: the supplied
+mathematical obligation, that is, that this typed statement about the reviewed checker holds for
+the exact bytes of the file. What no kernel run verifies: that the obligation faithfully represents
+the sentence in the paper, that the printed number is the paper's number, or that the file is the
+authors' data.
+
+For a complete record with the v1.1 rules applied (other readings of the sentence, how many
+comparable numbers those readings reproduce, support from other numbers) the command-line tool in
+the core repository is the route: `python -m research.claimcheck_v1_1 verify …`, replayable with
 `replay_independent_v1_1.py`.
 
 ## What can be said: the v1.1 verdicts
@@ -122,8 +139,10 @@ recorded example opened and rebuilt, the user's own data with a true statement, 
 convention-dependent standard deviation, a false statement, a reading the sentence does not
 support, and a malformed file. The Lean file the browser generated was put to the real Lean 4.28.0
 kernel through the served runner, the runner's report was opened in the page and shown as reported
-and not verified, and two altered reports (other data, other proof file) were refused. The recorded
-Lean file downloaded from the page was accepted by the kernel as well. No external request and no
+and not verified, with what it does and does not verify, and three altered reports (other data,
+other proof file, a receipt of the withdrawn runner) were refused. The forged proof file of the
+runner finding was accepted by plain Lean and refused by the served runner before Lean was asked
+anything. The recorded Lean file downloaded from the page was accepted by the kernel as well. No external request and no
 page error occurred. This is authored automation.
 
 No human usability study has been run on this page. A protocol is prepared in the core repository

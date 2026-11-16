@@ -179,23 +179,39 @@ $('downloadLean').addEventListener('click', async () => {
 });
 // A kernel-run file comes from the runner on the user's own computer.  This page cannot verify that
 // Lean ran.  It only checks that the file is about exactly this proof file and this data, and says so.
+// Only receipts of the strict runner (schema v2) are shown: the runner served until 16 November 2026
+// (schema v1) accepted proof files whose generated part had been written by hand.  What is shown is
+// worded by this page from its own results, never taken from the report.
+const KERNEL_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v2';
+const WITHDRAWN_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v1';
+function kernelWords(o) {
+  if (!o.defined) return 'the statistic is undefined for this file under this typed statement';
+  return o.verdict === 'consistent' ? 'the printed value MATCHES the statistic of this file under this typed statement'
+    : 'the printed value DOES NOT MATCH the statistic of this file under this typed statement';
+}
+function outcomePrefix(o) { return !o.defined ? '.undefined ' : o.verdict === 'consistent' ? '.checked .consistent ' : '.checked .inconsistent '; }
 $('kernelRun').addEventListener('change', async (event) => {
   const box = $('kernelRunStatus'); box.hidden = false; box.replaceChildren();
   const refuse = (text) => { box.append(el('strong', 'Not shown. '), el('span', text)); };
+  const line = (text, tag = 'span') => { box.append(el(tag, text), document.createElement('br')); };
   try {
     const file = event.target.files[0]; if (!file || !state.last) return refuse('Check a number first, then open the kernel-run file made for it.');
     if (file.size > 200000) return refuse('That file is too large to be a kernel-run file.');
     const run = JSON.parse(await file.text());
-    if (run.schema !== 'pcs-claimcheck-kernel-run-v1') return refuse('This is not a kernel-run file written by the runner.');
+    if (run.schema === WITHDRAWN_RUN_SCHEMA) return refuse('This file was written by the earlier runner (kernel-run v1), withdrawn on 16 November 2026: it accepted proof files whose generated part had been written by hand, so its reports do not show that the reviewed checker was used. Download the current runner and run it again.');
+    if (run.schema !== KERNEL_RUN_SCHEMA) return refuse('This is not a kernel-run file written by the current runner.');
     const { results } = state.last;
     const proof = (await checker()) + obligationTail(state.bytes, results.map((r) => ({ claim: r.claim, outcome: r.outcome })), NA);
     if (run.proof_file_sha256 !== await sha256(new TextEncoder().encode(proof))) return refuse('This kernel run is about a different proof file than the one this page builds for the current data, sentence and reading.');
     if (run.data_sha256 !== state.sha) return refuse('This kernel run is about a different data file.');
     if (run.reviewed_checker_sha256 !== state.catalog?.checker_sha256) return refuse('This kernel run used a checker other than the reviewed one this page serves.');
-    if (run.accepted !== true || !Array.isArray(run.theorems) || run.theorems.length !== results.length) return refuse(`The runner did not report an accepted proof${run.why_not ? `: ${run.why_not}` : '.'} Nothing is established.`);
-    box.append(el('strong', 'REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE'), document.createElement('br'));
-    for (const t of run.theorems) box.append(el('span', `${t.theorem}: Lean kernel accepted — ${String(t.in_words)}.`), document.createElement('br'));
-    box.append(el('span', `Reported run: ${String(run.lean || '').slice(0, 60)}, ${String(run.utc)}. This page checked only that the file names exactly this proof file, this data and the reviewed checker. To convince someone else, give them the proof file: running Lean on it is the check. This is a result about the file and the typed statement, not about the paper.`));
+    if (run.accepted !== true || run.generated_part_canonical !== true || !Array.isArray(run.theorems) || run.theorems.length !== results.length) return refuse(`The runner did not report an accepted proof${run.why_not ? `: ${String(run.why_not).slice(0, 300)}` : '.'} Nothing is established.`);
+    if (!results.every((r, i) => run.theorems[i]?.theorem === `pcs_claim_${i}` && String(run.theorems[i]?.proved_outcome || '').startsWith(outcomePrefix(r.outcome)))) return refuse('The outcomes in this report do not agree with the proof file this page builds. Nothing is established.');
+    line('REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE', 'strong');
+    results.forEach((r, i) => line(`pcs_claim_${i}${r.assumption ? ` (if ${r.assumption})` : ''}: Lean kernel accepted, as reported: ${kernelWords(r.outcome)}.`));
+    line('What such a run verifies: the supplied mathematical obligation, that is, this typed statement about the reviewed checker holds for the exact bytes of this file.');
+    line('What no kernel run verifies: that the obligation faithfully represents the sentence in the paper, that the printed number is the paper’s number, or that the file is the authors’ data. This is a result about the file and the typed statement, not about the paper.');
+    box.append(el('span', `Reported run: ${String(run.lean || '').slice(0, 60)}, ${String(run.utc).slice(0, 30)}. This page checked only that the report names exactly this proof file, this data and the reviewed checker. To convince someone else, give them the proof file and the runner: the runner refuses any file that is not in the generated form, and Lean then checks the proof.`));
   } catch { refuse('The file could not be read as a kernel-run file.'); }
 });
 $('downloadDraft').addEventListener('click', () => {

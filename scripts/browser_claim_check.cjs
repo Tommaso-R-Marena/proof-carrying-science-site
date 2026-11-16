@@ -106,10 +106,38 @@ const CSV = 'animal,group,mass_g\n1,a,10.5\n2,a,11.5\n3,b,NA\n4,b,9.25\n5,b,12\n
           execFileSync('python3', [path.join(root, 'claim-check/claimcheck_kernel_runner.py'), path.join(tmp, 'own.lean'), '--lean', process.env.PCS_LEAN, '--out', runJson], { encoding: 'utf8', timeout: 900000, stdio: ['ignore', 'pipe', 'pipe'] });
           const run = JSON.parse(fs.readFileSync(runJson, 'utf8'));
           assert.equal(run.accepted, true); assert.equal(run.theorems.length, 1);
+          assert.equal(run.schema, 'pcs-claimcheck-kernel-run-v2'); assert.equal(run.generated_part_canonical, true);
           await page.setInputFiles('#kernelRun', runJson);
           await page.waitForSelector('#kernelRunStatus:not([hidden])');
           const shown = await page.locator('#kernelRunStatus').textContent();
           assert.match(shown, /REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE/); assert.match(shown, /MATCHES/); assert.match(shown, /not about the paper/);
+          assert.match(shown, /What such a run verifies: the supplied mathematical obligation/);
+          assert.match(shown, /What no kernel run verifies: that the obligation faithfully represents the sentence in the paper/);
+          // a receipt of the withdrawn runner (schema v1) is refused with the reason
+          const old = path.join(tmp, 'v1-run.json');
+          fs.writeFileSync(old, JSON.stringify({ ...run, schema: 'pcs-claimcheck-kernel-run-v1' }));
+          await page.setInputFiles('#kernelRun', old);
+          await page.waitForFunction(() => /earlier runner \(kernel-run v1\), withdrawn/.test(document.getElementById('kernelRunStatus').textContent));
+          // the forgery reported in the core repository's research record: the Lean kernel accepts it,
+          // the served runner refuses it before asking Lean anything
+          const forgedLean = path.join(tmp, 'forged.lean');
+          const dataHex = Buffer.from(CSV).toString('hex');
+          fs.writeFileSync(forgedLean, ownLean.split('\n-- ===== generated obligations')[0]
+            + '\n-- ===== generated obligations (data numeral, claims, expected outcomes) =====\nopen PCS.ClaimCheck\n\n'
+            + `def pcs_src : Source := ⟨0x${dataHex}, ${Buffer.byteLength(CSV)}⟩\n\n`
+            + 'structure Decoy where\n  n : Nat\n\ndef pcs_c0 : Decoy := ⟨0⟩\n\n'
+            + 'def run (_ : Source) (_ : Decoy) : Outcome := .checked .consistent (.rat ((999 : Rat) / 1)) 2 0\n\n'
+            + 'theorem pcs_claim_0 : run pcs_src pcs_c0 = .checked .consistent (.rat ((999 : Rat) / 1)) 2 0 :=\n  rfl\n#print axioms pcs_claim_0\n\n');
+          const plain = execFileSync(process.env.PCS_LEAN, [forgedLean], { encoding: 'utf8', timeout: 1800000 });
+          assert.match(plain, /'pcs_claim_0'/, 'plain Lean accepts the forged file: the check of its form is what refuses it');
+          const forgedRun = path.join(tmp, 'forged-file-run.json');
+          let refusedCode = 0;
+          try { execFileSync('python3', [path.join(root, 'claim-check/claimcheck_kernel_runner.py'), forgedLean, '--lean', process.env.PCS_LEAN, '--out', forgedRun], { encoding: 'utf8', timeout: 900000, stdio: ['ignore', 'pipe', 'pipe'] }); } catch (e) { refusedCode = e.status; }
+          const refused = JSON.parse(fs.readFileSync(forgedRun, 'utf8'));
+          assert.equal(refusedCode, 1); assert.equal(refused.accepted, false); assert.match(refused.why_not, /not in canonical form/);
+          assert.equal(refused.lean, undefined, 'Lean was not even asked for its version');
+          step.forged_proof_file = { accepted_by_plain_lean: true, served_runner_exit_code: refusedCode, served_runner_why_not: refused.why_not, lean_started_by_runner: false };
+          step.withdrawn_v1_receipt_refused = true;
           const other = path.join(tmp, 'other-run.json');
           fs.writeFileSync(other, JSON.stringify({ ...run, data_sha256: '0'.repeat(64) }));
           await page.setInputFiles('#kernelRun', other);

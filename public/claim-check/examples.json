@@ -220,9 +220,22 @@
   "policy_id": "pcs-claimcheck-semantic-policy-v1.1",
   "kernel_runner": {
    "path": "claim-check/claimcheck_kernel_runner.py",
-   "sha256": "8d9e07b4ac4b0abed13c9e750cbca113f1db26d82f3709579a7aafa7401f713f"
+   "sha256": "fe974a9fdb766048bf323e20c8ad8eded34688bd993259cc54a02119e5743503",
+   "accepts": "only proof files whose generated part is exactly in the generator's form; anything else is refused before Lean is started"
   },
-  "kernel_run_schema": "pcs-claimcheck-kernel-run-v1",
+  "kernel_run_schema": "pcs-claimcheck-kernel-run-v2",
+  "withdrawn_runners": [
+   {
+    "sha256": "8d9e07b4ac4b0abed13c9e750cbca113f1db26d82f3709579a7aafa7401f713f",
+    "kernel_run_schema": "pcs-claimcheck-kernel-run-v1",
+    "withdrawn": "2026-11-16",
+    "reason": "it accepted proof files whose generated part had been written by hand, including one that defined its own `run`, so its reports do not show that the reviewed checker was used"
+   }
+  ],
+  "kernel_run_meaning": {
+   "establishes": "the supplied mathematical obligation: each theorem in the proof file, about the reviewed checker, holds for the data bytes embedded in that file",
+   "does_not_establish": "that the obligation faithfully represents a sentence of a paper, that the reported value is the paper's number, or that the embedded bytes are the authors' data"
+  },
   "recorded_example_verdicts": {
    "CONFIRMATION": 25,
    "REQUIRE_HUMAN_REVIEW": 92,

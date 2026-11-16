@@ -152,27 +152,43 @@ above the recorded Lean result, and when the "not verified by this page" label i
 
 **Also the owner's:** whether `claim-check-page` becomes a required status check in the ruleset.
 
-## 4. Known defect in the served runner (found 2026-11-15)
+## 4. Defect in the served runner (found 2026-11-15, corrected on this branch 2026-11-16)
 
-`public/claim-check/claimcheck_kernel_runner.py` (a copy of the core repository's v1.1 runner)
-accepts a hand-written proof file that defines its own `run` and reports "MATCHES" with
-`accepted: true`. Reproduced with the real Lean kernel; details, scope and a tested fix are in the
-core repository: `research/claimcheck_assurance_v1/findings/RUNNER_TAIL_FORGERY.md` (draft PR
+The runner served until 16 November 2026 (`public/claim-check/claimcheck_kernel_runner.py`, a copy
+of the core repository's v1.1 runner, SHA-256 `8d9e07b4…`, receipt schema v1) accepted a
+hand-written proof file that defines its own `run` and reported "MATCHES" with `accepted: true`.
+Reproduced with the real Lean kernel; details and scope in the core repository:
+`research/claimcheck_assurance_v1/findings/RUNNER_TAIL_FORGERY.md` (draft PR
 Tommaso-R-Marena/proof-carrying-science#216).
 
-What is and is not affected on this page:
+**Correction (owner decisions C3 and D4, authorised 2026-11-16 for preparation and testing; not
+deployed, not merged).** The served copy is now the core repository's strict runner (commits
+`d5a36975` and `2de4f872` there; SHA-256 `fe974a9f…`, receipt schema v2): it refuses, before starting Lean, any
+file whose generated part is not exactly in the generator's form. `examples.json` pins the new digest
+and lists the withdrawn one with the reason. The page accepts only v2 receipts, refuses v1 receipts
+with the reason, words each reported result itself instead of taking text from the report, and says
+beside every reported run what a kernel run verifies (the supplied mathematical obligation) and what
+it does not (that the obligation faithfully represents the sentence, the number or the data of a
+paper).
 
-* the page's display of a local `kernel-run.json` is **not** affected: it shows a report only if
+Tests: `tests/claim-check-page.test.mjs` runs the served runner on a page-built proof file (reaches
+Lean), on the reported forgery and on a file with an extra definition (both refused, Lean never
+started); `scripts/browser_claim_check.cjs`, with the real Lean 4.28.0 kernel, shows the forgery
+accepted by plain Lean and refused by the served runner, and a v1 receipt refused by the page
+(`docs/evidence/claim-check-v1/browser-journey.json`).
+
+What was and was not affected before the correction:
+
+* the page's display of a local `kernel-run.json` was **not** affected: it shows a report only if
   the report's `proof_file_sha256` equals the proof file the page built itself;
-* the recorded examples are **not** affected: the page rebuilds each proof file and compares digests;
-* the advice "anyone can run Lean on the proof file to check the second" is affected when the proof
-  file comes from someone else: the runner's report then proves nothing about the checker.
-
-Not changed here. If the owner replaces the core runner by the v2 runner, the served copy, its digest
-in `examples.json` and the page test that pins it change together; until then the page should not
-be deployed (it is not).
+* the recorded examples were **not** affected: the page rebuilds each proof file and compares digests;
+* the advice "anyone can run Lean on the proof file to check the second" was affected when the proof
+  file came from someone else. The page now says to use the runner for that, and that plain Lean
+  alone does not check a file's form.
 
 ## Not proposed
 
 No change to any ruleset, required check, bypass list, deployment setting, secret, or to the
-Worker. No existing test is skipped, loosened or removed. No historical evidence file is edited.
+Worker. No existing test is skipped, loosened or removed. No historical evidence file is edited (the
+ClaimCheck browser-journey record, which this branch introduced, is regenerated with each change of
+the page).

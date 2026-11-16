@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: '3.12.14'
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Page arithmetic against recorded Lean results, wiring, v1.1 verdict bounds, served runner digest
+      - name: Page arithmetic against recorded Lean results, wiring, v1.1 verdict bounds, served runner digest; served runner refuses the reported forgery before Lean
         run: node --test tests/claim-check-core.test.mjs tests/claim-check-page.test.mjs
       - name: Prepared reading-help successor still matches its sources and fresh evidence (not effective)
         run: node scripts/check_reading_help_successor.mjs
@@ -50,7 +50,7 @@ jobs:
           set -euo pipefail
           source scripts/activate_lean_428.sh
           lean --version
-      - name: Real-browser journey; the browser-built proof file goes to the actual kernel through the served runner
+      - name: Real-browser journey; the browser-built proof file goes to the actual kernel through the served runner; the forged file is refused
         shell: bash
         env:
           PCS_CLAIM_CHECK_OUTPUT: ${{ runner.temp }}/claim-check
