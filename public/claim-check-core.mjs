@@ -314,3 +314,29 @@ export function approx(o) {
   const x = Math.sqrt(Number(o.value.n) / Number(o.value.d)) * o.sign;
   return Number.isFinite(x) ? x.toPrecision(10).replace(/\.?0+$/, '') : '≈ (too large to display)';
 }
+
+// ---------------------------------------------------------------- kernel-run reports from the local runner
+// Only reports of the strict runner (schema v2) may be shown.  The runner served until 16 November
+// 2026 (schema v1) accepted proof files whose generated part had been written by hand.
+export const KERNEL_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v2';
+export const WITHDRAWN_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v1';
+const outcomePrefix = (o) => (!o.defined ? '.undefined ' : o.verdict === 'consistent' ? '.checked .consistent ' : '.checked .inconsistent ');
+// Null if the report may be shown beside this page's own result (as reported, never as verified);
+// otherwise the reason it may not.  `expected` holds what the page built: the proof file's digest,
+// the data's digest, the reviewed checker's digest, and the outcome the page computed for each claim.
+export function kernelRunRefusal(run, expected) {
+  if (!run || typeof run !== 'object') return 'The file could not be read as a kernel-run file.';
+  if (run.schema === WITHDRAWN_RUN_SCHEMA) return 'This file was written by the earlier runner (kernel-run v1), withdrawn on 16 November 2026: it accepted proof files whose generated part had been written by hand, so its reports do not show that the reviewed checker was used. Download the current runner and run it again.';
+  if (run.schema !== KERNEL_RUN_SCHEMA) return 'This is not a kernel-run file written by the current runner.';
+  if (run.proof_file_sha256 !== expected.proofSha256) return 'This kernel run is about a different proof file than the one this page builds for the current data, sentence and reading.';
+  if (run.data_sha256 !== expected.dataSha256) return 'This kernel run is about a different data file.';
+  if (run.reviewed_checker_sha256 !== expected.checkerSha256) return 'This kernel run used a checker other than the reviewed one this page serves.';
+  const n = expected.outcomes.length;
+  if (run.accepted !== true || run.generated_part_canonical !== true || !Array.isArray(run.theorems) || run.theorems.length !== n) {
+    return `The runner did not report an accepted proof${run.why_not ? `: ${String(run.why_not).slice(0, 300)}` : '.'} Nothing is established.`;
+  }
+  if (!expected.outcomes.every((o, i) => run.theorems[i]?.theorem === `pcs_claim_${i}` && String(run.theorems[i]?.proved_outcome || '').startsWith(outcomePrefix(o)))) {
+    return 'The outcomes in this report do not agree with the proof file this page builds. Nothing is established.';
+  }
+  return null;
+}

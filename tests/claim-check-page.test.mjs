@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { Q, obligationTail, unitFactor, evaluate } from '../public/claim-check-core.mjs';
+import { Q, obligationTail, unitFactor, evaluate, kernelRunRefusal, KERNEL_RUN_SCHEMA, WITHDRAWN_RUN_SCHEMA } from '../public/claim-check-core.mjs';
 import { locateNumbers, linkChecks, interpretiveWords } from '../public/claim-check-text.mjs';
 
 const pub = new URL('../public/', import.meta.url);
@@ -111,9 +111,8 @@ test('v1.1 verdicts never exceed the recorded Lean result; the served runner is 
   assert.ok(confirmations > 0);
   const js = read('claim-check.mjs').toString('utf8'); const html = read('claim-check.html').toString('utf8');
   assert.match(js, /REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE/);
-  assert.match(js, /const KERNEL_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v2';/);
-  assert.match(js, /run\.schema === WITHDRAWN_RUN_SCHEMA\) return refuse\('This file was written by the earlier runner/);
-  assert.match(js, /run\.generated_part_canonical !== true/);
+  assert.match(js, /const why = kernelRunRefusal\(run, /);
+  assert.match(js, /if \(why\) return refuse\(why\);/);
   assert.match(js, /What no kernel run verifies: that the obligation faithfully represents the sentence in the paper/);
   assert.doesNotMatch(js, /t\.in_words/, 'the page words results itself, never from the report');
   assert.match(html, /verifies the supplied mathematical obligation and nothing more/);
@@ -125,6 +124,33 @@ test('v1.1 verdicts never exceed the recorded Lean result; the served runner is 
   assert.doesNotMatch(runner, /urllib|http\.client|requests|socket/);
   assert.match(runner, /SCHEMA = "pcs-claimcheck-kernel-run-v2"/);
   assert.match(runner, /def parse_tail\(tail: str\):/);
+});
+
+test('a kernel-run report is shown only if it is a strict-runner report about exactly what the page built', () => {
+  assert.equal(KERNEL_RUN_SCHEMA, 'pcs-claimcheck-kernel-run-v2');
+  assert.equal(WITHDRAWN_RUN_SCHEMA, 'pcs-claimcheck-kernel-run-v1');
+  const match = { defined: true, verdict: 'consistent' }, miss = { defined: true, verdict: 'inconsistent' }, undef = { defined: false, reason: 'columnNotFound' };
+  const expected = { proofSha256: 'a'.repeat(64), dataSha256: 'b'.repeat(64), checkerSha256: catalog.checker_sha256, outcomes: [match, miss, undef] };
+  const good = { schema: KERNEL_RUN_SCHEMA, proof_file_sha256: 'a'.repeat(64), data_sha256: 'b'.repeat(64), reviewed_checker_sha256: catalog.checker_sha256,
+    accepted: true, generated_part_canonical: true, theorems: [
+      { theorem: 'pcs_claim_0', proved_outcome: '.checked .consistent (.rat ((1 : Rat) / 1)) 1 0' },
+      { theorem: 'pcs_claim_1', proved_outcome: '.checked .inconsistent (.rat ((1 : Rat) / 1)) 1 0' },
+      { theorem: 'pcs_claim_2', proved_outcome: '.undefined .columnNotFound' }] };
+  assert.equal(kernelRunRefusal(good, expected), null);
+  const refused = (change, why) => assert.match(String(kernelRunRefusal({ ...good, ...change }, expected)), why);
+  refused({ schema: WITHDRAWN_RUN_SCHEMA }, /earlier runner \(kernel-run v1\), withdrawn on 16 November 2026/);
+  refused({ schema: 'something-else' }, /not a kernel-run file written by the current runner/);
+  refused({ proof_file_sha256: 'f'.repeat(64) }, /different proof file/);
+  refused({ data_sha256: 'f'.repeat(64) }, /different data file/);
+  refused({ reviewed_checker_sha256: 'f'.repeat(64) }, /checker other than the reviewed one/);
+  refused({ accepted: false, why_not: 'Lean rejected the file' }, /did not report an accepted proof: Lean rejected the file/);
+  refused({ generated_part_canonical: undefined }, /did not report an accepted proof/);
+  refused({ theorems: good.theorems.slice(0, 2) }, /did not report an accepted proof/);
+  refused({ theorems: [good.theorems[1], good.theorems[0], good.theorems[2]] }, /do not agree with the proof file/);
+  refused({ theorems: [good.theorems[0], { ...good.theorems[1], proved_outcome: '.checked .consistent x' }, good.theorems[2]] }, /do not agree/);
+  assert.match(String(kernelRunRefusal(null, expected)), /could not be read/);
+  // a v1 receipt is refused even if everything else about it is right
+  assert.notEqual(kernelRunRefusal({ ...good, schema: WITHDRAWN_RUN_SCHEMA, generated_part_canonical: undefined }, expected), null);
 });
 
 // ------------------------------------------------------------------ the served runner, run for real

@@ -176,7 +176,8 @@ paper).
 
 Tests: `tests/claim-check-page.test.mjs` runs the served runner on a page-built proof file (reaches
 Lean), on the reported forgery and on a file with an extra definition (both refused, Lean never
-started); `scripts/browser_claim_check.cjs`, with the real Lean 4.28.0 kernel, shows the forgery
+started), and tests the page's rule for showing a report (`kernelRunRefusal` in
+`public/claim-check-core.mjs`) on a correct report and on eleven wrong ones, including a v1 receipt; `scripts/browser_claim_check.cjs`, with the real Lean 4.28.0 kernel, shows the forgery
 accepted by plain Lean and refused by the served runner, and a v1 receipt refused by the page
 (`docs/evidence/claim-check-v1/browser-journey.json`).
 
@@ -188,6 +189,9 @@ What was and was not affected before the correction:
 * the advice "anyone can run Lean on the proof file to check the second" was affected when the proof
   file came from someone else. The page now says to use the runner for that, and that plain Lean
   alone does not check a file's form.
+
+Dry runs of patches 01 and 03 are reproducible: `python3 scripts/dry_run_claimcheck_proposals.py`
+(throw-away worktrees; the patched gate must accept the commit and reject the listed alterations).
 
 ## Not proposed
 
