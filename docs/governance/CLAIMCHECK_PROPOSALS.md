@@ -163,8 +163,11 @@ Tommaso-R-Marena/proof-carrying-science#216).
 
 **Correction (owner decisions C3 and D4, authorised 2026-11-16 for preparation and testing; not
 deployed, not merged).** The served copy is now the core repository's strict runner (commits
-`d5a36975` and `2de4f872` there; SHA-256 `fe974a9f…`, receipt schema v2): it refuses, before starting Lean, any
-file whose generated part is not exactly in the generator's form. `examples.json` pins the new digest
+`d5a36975`, `2de4f872` and `39ce953c` there; SHA-256 `459155f3…`, receipt schema v2): it refuses, before
+starting Lean, any file whose generated part is not exactly in the generator's form, with one spelling
+per value. In the core repository's research branch that language is proved in Lean to be exactly the
+set of renderings of valid values, and the runner's parser agrees with the proved parser on 7,248
+inputs (a test, not a proof). `examples.json` pins the new digest
 and lists the withdrawn one with the reason. The page accepts only v2 receipts, refuses v1 receipts
 with the reason, words each reported result itself instead of taking text from the report, and says
 beside every reported run what a kernel run verifies (the supplied mathematical obligation) and what
