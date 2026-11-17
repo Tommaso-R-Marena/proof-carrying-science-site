@@ -150,7 +150,14 @@ cleanly and `npm run test:claim-check` passes (9 of 9). It fails, as it must, wh
 runner is altered, when the served Lean checker is altered, when a recorded v1.1 verdict is raised
 above the recorded Lean result, and when the "not verified by this page" label is weakened.
 
-**Also the owner's:** whether `claim-check-page` becomes a required status check in the ruleset.
+**Required checks (decision C2, recommendation of 2026-11-17).** No new required check for this
+repository. `site-full-gate` is already the strict required check (`docs/HOSTED_CI_REPLACEMENT.md`)
+and runs on every pull request; with patch 03 it runs ClaimCheck's mandatory tests. Do **not** require
+`claim-check-page` as it is: its workflow is path-filtered, so on every pull request that does not
+touch its paths a required `claim-check-page` would stay pending forever. If it should become
+required, first give it the always-reporting change-detection aggregate used in the core repository
+(`claimcheck-required`, tested there by `research/claimcheck_v1_1/governance/test_required_check.py`;
+recommendation and inventory in the core repository's `docs/integration/claimcheck/REQUIRED_CHECKS.md`).
 
 ## 4. Defect in the served runner (found 2026-11-15, corrected on this branch 2026-11-16)
 
