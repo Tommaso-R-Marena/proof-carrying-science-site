@@ -220,8 +220,8 @@
   "policy_id": "pcs-claimcheck-semantic-policy-v1.1",
   "kernel_runner": {
    "path": "claim-check/claimcheck_kernel_runner.py",
-   "sha256": "459155f30329462ee598e7327c676b5826c4954384064084506323a874f1f158",
-   "accepts": "only proof files whose generated part is exactly in the generator's form; anything else is refused before Lean is started"
+   "sha256": "831bbababd2f48e5b9f62fa33433fe7edfbc8ee1f2271e3e7700b883745f75e9",
+   "accepts": "only proof files whose generated part is in the canonical form of the generator's grammar; anything else is refused before Lean is started. The grammar admits claim settings the page never writes; the receipt lists each claim's settings and flags those"
   },
   "kernel_run_schema": "pcs-claimcheck-kernel-run-v2",
   "withdrawn_runners": [
