@@ -27,13 +27,19 @@ The browser never runs Lean and never says it did. The route to a real result is
 
 1. Download the Lean file and the runner (`public/claim-check/claimcheck_kernel_runner.py`, one
    Python file, standard library only, no network use; the same bytes as
-   `research/claimcheck_v1_1/claimcheck_kernel_runner.py` in the core repository).
+   `research/claimcheck_v1_1/claimcheck_kernel_runner.py` in the core repository). The page shows
+   the runner's SHA-256 from the catalog next to the download link, so that someone who receives a
+   runner from somebody else can compare it.
 2. With Lean 4.28.0 installed: `python claimcheck_kernel_runner.py ClaimCheck-obligation.lean --out kernel-run.json`.
    The runner refuses a file that does not start with the reviewed checker (by SHA-256), and it
-   refuses, before starting Lean, any file whose generated part is not exactly in the form the
-   generator writes (one data numeral, claims built from literals, one batch theorem, one fixed-form
-   theorem per claim). Then it runs Lean, reads the axioms each theorem depends on, and writes what
-   the kernel accepted (receipt schema `pcs-claimcheck-kernel-run-v2`).
+   refuses, before starting Lean, any file whose generated part is not in the canonical form of the
+   generator's grammar (one data numeral, claims built from literals, one batch theorem, one
+   fixed-form theorem per claim, one spelling per value). That grammar is wider than what the page
+   writes: it admits claim settings the page never writes (other missing-value tokens, other
+   positive scales, other spellings of the printed number), and such settings can force either
+   verdict. The receipt therefore lists the settings of each claim and flags those the page never
+   writes. Then the runner runs Lean, reads the axioms each theorem depends on, and writes what the
+   kernel accepted (receipt schema `pcs-claimcheck-kernel-run-v2`).
 
    **Correction, 16 November 2026.** The runner served until then (schema v1, SHA-256 `8d9e07b4…`)
    checked the generated part only for a few forbidden words. A hand-written file that defined its
@@ -42,12 +48,33 @@ The browser never runs Lean and never says it did. The route to a real result is
    `research/claimcheck_assurance_v1/findings/RUNNER_TAIL_FORGERY.md` in the core repository). It is
    withdrawn, and the page refuses its receipts with that reason. Proof files the page itself built
    were never affected; the recorded examples were never affected.
-3. Optionally open `kernel-run.json` in the page. The page compares the proof-file, data and checker
-   digests in it with the ones it built and shows the outcome under the label
-   **"REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE"**, worded by the page from its own
-   results. A report for other data or another proof file, or from the withdrawn runner, is refused.
-   The page cannot know that Lean ran; anyone who needs to know runs the runner on the proof file
-   (plain Lean alone does not check that a file someone else made has the generated form).
+3. Optionally open `kernel-run.json` in the page. The page accepts only a report about the exact
+   proof file it built when Check was pressed (`kernelRunRefusal` in `claim-check-core.mjs`): schema
+   v2 exactly, `accepted` true, the research-only authority label, the SHA-256 of that proof file and
+   of the data as they were at Check, the catalog's pinned checker digest (no report is shown if the
+   catalog did not load), `checker_pin_overridden` false, `all_settings_as_the_page_writes` true,
+   `generated_part_canonical` true, and exactly one theorem per claim, in order, each accepted by
+   the kernel, depending on no axiom beyond `propext`, `Classical.choice` and `Quot.sound`, and
+   stating exactly the outcome the page wrote for that claim. Anything else is refused with a fixed
+   message worded by the page. Receipts of the earlier v2 runner, which lack the settings
+   statements, are refused too: run the current runner again. An accepted report is shown under the
+   label **"REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE"**, worded by the page from its
+   own results and naming the data file it is about. No free text from a report is displayed; the
+   Lean version and the time are repeated only if they have the exact forms the runner writes.
+   Before building any proof file the page checks the fetched checker against the catalog's pinned
+   digest and builds nothing if it differs. The page cannot know that Lean ran; anyone who needs to
+   know runs the runner on the proof file and reads the settings it lists (plain Lean alone does not
+   check that the generated part of a file someone else made is in canonical form).
+
+   **Hardening, 17 November 2026** (independent security review). Before this change the page kept
+   showing an earlier result and report after another data file was opened, and its downloads mixed
+   the new data with the old outcomes; it repeated text from a report (`lean`, `utc`, `why_not`),
+   so a hand-written report could make the page print its own wording; and it ignored fields a
+   genuine report always gets right (authority, per-theorem acceptance and axioms, the exact
+   outcome). Now any change to the data, the example, the sentence, the number, the statistic, a
+   column, a condition or a unit clears the result and the report and disables the downloads; the
+   bytes and their digest are taken when Check is pressed and only that snapshot is used for the
+   downloads and for checking a report.
 
 What a kernel run verifies, and the page says so beside every reported run: the supplied
 mathematical obligation, that is, that this typed statement about the reviewed checker holds for
@@ -144,6 +171,13 @@ other proof file, a receipt of the withdrawn runner) were refused. The forged pr
 runner finding was accepted by plain Lean and refused by the served runner before Lean was asked
 anything. The recorded Lean file downloaded from the page was accepted by the kernel as well. No external request and no
 page error occurred. This is authored automation.
+
+The recorded files predate the hardening of 17 November 2026. The journey now also shows that any
+change to the inputs clears the result and the report and disables the downloads, that a receipt
+for the previous data file is refused after another file is checked, that no text from a report is
+displayed, that a page serving a checker without the pinned digest builds no proof file, and that
+the runner's SHA-256 is shown. Run it again (see Reproduce) to see these steps; the recorded
+evidence files are not regenerated by this change.
 
 No human usability study has been run on this page. A protocol is prepared in the core repository
 (`research/claimcheck_v1_1/usability/`); nobody has been asked to take part.

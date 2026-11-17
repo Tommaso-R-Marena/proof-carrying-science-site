@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { Q, obligationTail, unitFactor, evaluate, kernelRunRefusal, KERNEL_RUN_SCHEMA, WITHDRAWN_RUN_SCHEMA } from '../public/claim-check-core.mjs';
+import { Q, obligationTail, proofFile, unitFactor, evaluate, kernelRunRefusal, kernelRunFacts, KERNEL_RUN_SCHEMA, WITHDRAWN_RUN_SCHEMA, KERNEL_RUN_AUTHORITY, KERNEL_RUN_REFUSALS } from '../public/claim-check-core.mjs';
 import { locateNumbers, linkChecks, interpretiveWords } from '../public/claim-check-text.mjs';
 
 const pub = new URL('../public/', import.meta.url);
@@ -126,31 +126,201 @@ test('v1.1 verdicts never exceed the recorded Lean result; the served runner is 
   assert.match(runner, /def parse_tail\(tail: str\):/);
 });
 
-test('a kernel-run report is shown only if it is a strict-runner report about exactly what the page built', () => {
+// ------------------------------------------------------------------ kernel-run reports (second security review: F3, F4, F5, I3)
+// Real receipts: genuine-A-*.json were written by the served runner with the real Lean 4.28.0 kernel for
+// proof files the page builds; review-f4-*.json are the reviewer's (an earlier v2 runner's genuine receipt,
+// a hand-written one, and a refused one whose why_not carries a right-to-left override).
+const RUNS = new URL('./fixtures/claim-check-kernel-runs/', import.meta.url);
+const receipt = (name) => JSON.parse(fs.readFileSync(new URL(name, RUNS), 'utf8'));
+const NA = ['', 'NA'];
+const A_CSV = Buffer.from('animal,group,mass_g\n1,a,10.5\n2,a,11.5\n3,b,NA\n4,b,9.25\n5,b,12\n');
+const R = KERNEL_RUN_REFUSALS;
+// What the page holds after Check for this data and reading, built with the page's own core.
+function pageCheck(csv, stats, reported) {
+  const items = stats.map((stat) => {
+    const claim = { stat, reported, filter: [], sub_filter: [], column: 'mass_g', x_column: null, reported_unit: null, scale: unitFactor(null, null) };
+    return { claim, outcome: evaluate(csv, claim, NA) };
+  });
+  const file = proofFile(checker, csv, items, NA);
+  return { file, expected: { proofSha256: sha(file), dataSha256: sha(csv), checkerSha256: catalog.checker_sha256, outcomes: items.map((it) => it.outcome) } };
+}
+
+test('genuine receipts of the served runner about exactly the file the page builds are shown', () => {
   assert.equal(KERNEL_RUN_SCHEMA, 'pcs-claimcheck-kernel-run-v2');
   assert.equal(WITHDRAWN_RUN_SCHEMA, 'pcs-claimcheck-kernel-run-v1');
-  const match = { defined: true, verdict: 'consistent' }, miss = { defined: true, verdict: 'inconsistent' }, undef = { defined: false, reason: 'columnNotFound' };
-  const expected = { proofSha256: 'a'.repeat(64), dataSha256: 'b'.repeat(64), checkerSha256: catalog.checker_sha256, outcomes: [match, miss, undef] };
-  const good = { schema: KERNEL_RUN_SCHEMA, proof_file_sha256: 'a'.repeat(64), data_sha256: 'b'.repeat(64), reviewed_checker_sha256: catalog.checker_sha256,
-    accepted: true, generated_part_canonical: true, theorems: [
-      { theorem: 'pcs_claim_0', proved_outcome: '.checked .consistent (.rat ((1 : Rat) / 1)) 1 0' },
-      { theorem: 'pcs_claim_1', proved_outcome: '.checked .inconsistent (.rat ((1 : Rat) / 1)) 1 0' },
-      { theorem: 'pcs_claim_2', proved_outcome: '.undefined .columnNotFound' }] };
-  assert.equal(kernelRunRefusal(good, expected), null);
-  const refused = (change, why) => assert.match(String(kernelRunRefusal({ ...good, ...change }, expected)), why);
-  refused({ schema: WITHDRAWN_RUN_SCHEMA }, /earlier runner \(kernel-run v1\), withdrawn on 16 November 2026/);
-  refused({ schema: 'something-else' }, /not a kernel-run file written by the current runner/);
-  refused({ proof_file_sha256: 'f'.repeat(64) }, /different proof file/);
-  refused({ data_sha256: 'f'.repeat(64) }, /different data file/);
-  refused({ reviewed_checker_sha256: 'f'.repeat(64) }, /checker other than the reviewed one/);
-  refused({ accepted: false, why_not: 'Lean rejected the file' }, /did not report an accepted proof: Lean rejected the file/);
-  refused({ generated_part_canonical: undefined }, /did not report an accepted proof/);
-  refused({ theorems: good.theorems.slice(0, 2) }, /did not report an accepted proof/);
-  refused({ theorems: [good.theorems[1], good.theorems[0], good.theorems[2]] }, /do not agree with the proof file/);
-  refused({ theorems: [good.theorems[0], { ...good.theorems[1], proved_outcome: '.checked .consistent x' }, good.theorems[2]] }, /do not agree/);
-  assert.match(String(kernelRunRefusal(null, expected)), /could not be read/);
-  // a v1 receipt is refused even if everything else about it is right
-  assert.notEqual(kernelRunRefusal({ ...good, schema: WITHDRAWN_RUN_SCHEMA, generated_part_canonical: undefined }, expected), null);
+  assert.equal(KERNEL_RUN_AUTHORITY, catalog.authority);
+  const mean = pageCheck(A_CSV, ['mean'], '10.81');
+  // the proof file is the one the reviewer downloaded from the page (proof-A.lean), and the one both runners checked
+  assert.equal(mean.expected.proofSha256, '8757e5a38921447c404384f64a4f2b57e265361d875ff9f65d9b39770f699100');
+  assert.equal(sha(Buffer.concat([checker, Buffer.from(obligationTail(A_CSV, [{ claim: { stat: 'mean', reported: '10.81', column: 'mass_g', filter: [], sub_filter: [] }, outcome: mean.expected.outcomes[0] }]), 'utf8')])), mean.expected.proofSha256);
+  const g1 = receipt('genuine-A-mean.json');
+  assert.equal(g1.proof_file_sha256, mean.expected.proofSha256);
+  assert.equal(kernelRunRefusal(g1, mean.expected), null);
+  const sd = pageCheck(A_CSV, ['sd_sample', 'sd_pop'], '1.21');
+  const g2 = receipt('genuine-A-sd-two-claims.json');
+  assert.deepEqual(sd.expected.outcomes.map((o) => o.verdict), ['consistent', 'inconsistent']);
+  assert.equal(kernelRunRefusal(g2, sd.expected), null);
+  assert.equal(kernelRunRefusal(g1, sd.expected), R.proof, 'a receipt for another reading of the same data');
+  assert.equal(kernelRunRefusal(g2, mean.expected), R.proof);
+  const other = pageCheck(Buffer.from('animal,group,mass_g\n1,a,99\n2,a,98\n3,b,NA\n4,b,97\n5,b,96\n6,b,95\n'), ['mean'], '10.81');
+  assert.equal(kernelRunRefusal(g1, other.expected), R.data, 'a receipt for the previous data file');
+});
+
+test('kernelRunRefusal: every field a genuine receipt always gets right is required (F5)', () => {
+  const g = receipt('genuine-A-mean.json'); const e = pageCheck(A_CSV, ['mean'], '10.81').expected;
+  const t0 = g.theorems[0];
+  const variant = (change) => ({ ...g, ...change });
+  const theorem = (change) => variant({ theorems: [{ ...t0, ...change }] });
+  const without = (key) => { const copy = { ...g }; delete copy[key]; return copy; };
+  const cases = [
+    ['schema v1 (withdrawn runner)', variant({ schema: WITHDRAWN_RUN_SCHEMA }), R.withdrawn],
+    ['schema v1, everything else right', variant({ schema: WITHDRAWN_RUN_SCHEMA, generated_part_canonical: undefined }), R.withdrawn],
+    ['another schema', variant({ schema: 'pcs-claimcheck-kernel-run-v3' }), R.schema],
+    ['no schema', without('schema'), R.schema],
+    ['accepted false', variant({ accepted: false }), R.notAccepted],
+    ['accepted missing', without('accepted'), R.notAccepted],
+    ['accepted as a string', variant({ accepted: 'true' }), R.notAccepted],
+    ['authority missing', without('authority'), R.authority],
+    ['production authority claimed', variant({ authority: 'PCS_V06_AUTHORITY' }), R.authority],
+    ['generated part not canonical', variant({ generated_part_canonical: false }), R.notCanonical],
+    ['canonical flag missing', without('generated_part_canonical'), R.notCanonical],
+    ['checker pin overridden', variant({ checker_pin_overridden: true }), R.pinOverridden],
+    ['pin flag missing', without('checker_pin_overridden'), R.pinOverridden],
+    ['another checker digest', variant({ reviewed_checker_sha256: 'f'.repeat(64) }), R.checker],
+    ['checker digest missing', without('reviewed_checker_sha256'), R.checker],
+    ['another data file', variant({ data_sha256: '0'.repeat(64) }), R.data],
+    ['data digest missing', without('data_sha256'), R.data],
+    ['another proof file', variant({ proof_file_sha256: 'f'.repeat(64) }), R.proof],
+    ['proof digest in upper case', variant({ proof_file_sha256: g.proof_file_sha256.toUpperCase() }), R.proof],
+    ['proof digest missing', without('proof_file_sha256'), R.proof],
+    ['a setting the page never writes', variant({ all_settings_as_the_page_writes: false }), R.settings],
+    ['settings flag missing', without('all_settings_as_the_page_writes'), R.settings],
+    ['a theorem flags a setting', theorem({ settings_the_page_never_writes: ['the scale is not a ratio of two units'] }), R.settings],
+    ['a theorem without its settings notes', theorem({ settings_the_page_never_writes: undefined }), R.settings],
+    ['no theorems', variant({ theorems: [] }), R.theorems],
+    ['theorems not a list', variant({ theorems: { 0: t0 } }), R.theorems],
+    ['theorems missing', without('theorems'), R.theorems],
+    ['one theorem too many', variant({ theorems: [t0, { ...t0, theorem: 'pcs_claim_1' }] }), R.theorems],
+    ['theorem renamed', theorem({ theorem: 'pcs_claim_1' }), R.theorems],
+    ['theorem not a record', variant({ theorems: ['pcs_claim_0'] }), R.theorems],
+    ['kernel_accepted false', theorem({ kernel_accepted: false }), R.notKernelAccepted],
+    ['kernel_accepted missing', theorem({ kernel_accepted: undefined }), R.notKernelAccepted],
+    ['sorryAx', theorem({ axioms: ['propext', 'sorryAx'] }), R.axioms],
+    ['Lean.ofReduceBool', theorem({ axioms: ['Lean.ofReduceBool'] }), R.axioms],
+    ['axioms missing', theorem({ axioms: undefined }), R.axioms],
+    ['axioms as one string', theorem({ axioms: 'propext' }), R.axioms],
+    ['outcome sharing only the prefix (review F5)', theorem({ proved_outcome: '.checked .consistent (.rat ((999 : Rat) / 1)) 7 7' }), R.outcomes],
+    ['outcome with a trailing space', theorem({ proved_outcome: `${t0.proved_outcome} ` }), R.outcomes],
+    ['outcome extended', theorem({ proved_outcome: `${t0.proved_outcome}0` }), R.outcomes],
+    ['outcome missing', theorem({ proved_outcome: undefined }), R.outcomes],
+  ];
+  for (const [what, run, why] of cases) assert.equal(kernelRunRefusal(run, e), why, what);
+  assert.equal(kernelRunRefusal(g, e), null, 'the variants above changed one field each');
+  // page side: no report is shown without the catalog's pin or without the page's own proof file
+  assert.equal(kernelRunRefusal(g, { ...e, checkerSha256: undefined }), R.noCatalog);
+  assert.equal(kernelRunRefusal(without('reviewed_checker_sha256'), { ...e, checkerSha256: undefined }), R.noCatalog, 'review F5: no catalog and no checker digest');
+  assert.equal(kernelRunRefusal(g, { ...e, proofSha256: undefined }), R.noProofFile);
+  assert.equal(kernelRunRefusal(g, { ...e, outcomes: [] }), R.theorems);
+  assert.equal(kernelRunRefusal(g, { ...e, outcomes: [{ defined: true }] }), R.unreadable, 'never throws');
+  for (const bad of [null, undefined, 'x', 42, true, [g]]) assert.equal(kernelRunRefusal(bad, e), R.unreadable);
+  // two claims: one theorem per claim, in order, each with exactly its own outcome
+  const sd = pageCheck(A_CSV, ['sd_sample', 'sd_pop'], '1.21').expected; const g2 = receipt('genuine-A-sd-two-claims.json');
+  const [s0, s1] = g2.theorems;
+  assert.equal(kernelRunRefusal({ ...g2, theorems: [s1, s0] }, sd), R.theorems, 'out of order');
+  assert.equal(kernelRunRefusal({ ...g2, theorems: [s0] }, sd), R.theorems, 'a claim missing');
+  assert.equal(kernelRunRefusal({ ...g2, theorems: [{ ...s0, proved_outcome: s1.proved_outcome }, { ...s1, proved_outcome: s0.proved_outcome }] }, sd), R.outcomes, 'outcomes swapped');
+  assert.equal(kernelRunRefusal({ ...g2, theorems: [s0, { ...s1, proved_outcome: s0.proved_outcome.replace('.consistent', '.inconsistent') }] }, sd), R.outcomes, 'same prefix, another value');
+  assert.equal(kernelRunRefusal({ ...g2, theorems: [s0, { ...s1, axioms: [...s1.axioms, 'sorryAx'] }] }, sd), R.axioms, 'the second theorem counts too');
+  // the reviewer's receipts
+  const earlier = receipt('review-f4-genuine-earlier-v2-runner.json');
+  assert.equal(earlier.proof_file_sha256, e.proofSha256);
+  assert.equal(kernelRunRefusal(earlier, e), R.pinOverridden, 'an earlier v2 receipt lacks the settings statements: run the current runner again');
+  const handwritten = receipt('review-f4-handwritten.json');
+  assert.equal(kernelRunRefusal(handwritten, e), R.authority);
+  assert.equal(kernelRunRefusal({ ...handwritten, authority: KERNEL_RUN_AUTHORITY, checker_pin_overridden: false, all_settings_as_the_page_writes: true }, e), R.notKernelAccepted);
+  assert.equal(kernelRunRefusal(receipt('review-f4-refused-bidi.json'), e), R.notAccepted);
+});
+
+test('no text from a receipt is ever displayed (F4)', () => {
+  const fixed = new Set(Object.values(R));
+  for (const text of fixed) assert.doesNotMatch(text, /[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/);
+  const PROSE = 'PCS-certified: the paper\u2019s claim is correct, peer-reviewed and VERIFIED \u202e.tcerroc si repap ehT\u202c';
+  const hostile = (run) => ({ ...run, why_not: PROSE, lean: PROSE, utc: PROSE, host: PROSE, meaning: PROSE, proof_file: PROSE, establishes: PROSE, does_not_establish: PROSE, lean_executable: PROSE, lean_found: PROSE,
+    theorems: Array.isArray(run.theorems) ? run.theorems.map((t) => ({ ...t, in_words: PROSE, statement: { reported: PROSE } })) : run.theorems });
+  const e = pageCheck(A_CSV, ['mean'], '10.81').expected;
+  const g = receipt('genuine-A-mean.json');
+  const runs = [g, { ...g, accepted: false }, { ...g, authority: PROSE }, { ...g, schema: PROSE }, { ...g, data_sha256: PROSE }, { ...g, theorems: [{ ...g.theorems[0], proved_outcome: PROSE }] },
+    receipt('review-f4-handwritten.json'), receipt('review-f4-refused-bidi.json'), receipt('review-f4-genuine-earlier-v2-runner.json')];
+  for (const run of runs) {
+    for (const r of [run, hostile(run)]) {
+      const why = kernelRunRefusal(r, e);
+      assert.ok(why === null || fixed.has(why), `not a fixed message: ${why}`);
+      for (const planted of ['PCS-certified', 'peer-reviewed', '\u202e', 'paper\u2019s claim']) assert.ok(!String(why).includes(planted));
+    }
+  }
+  assert.equal(kernelRunRefusal(hostile(g), e), null, 'free text does not decide anything, and is not shown either');
+  // only the Lean version line and the UTC time may be repeated, and only in exactly the runner's forms
+  assert.deepEqual(kernelRunFacts(g), { lean: 'Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)', utc: g.utc });
+  for (const [lean, utc] of [[PROSE, PROSE], ['Lean 4.28.0 \u2014 PCS-certified: the paper\u2019s claim is correct', 'peer-reviewed and VERIFIED'], [`${g.lean}\n`, `${g.utc}\n`],
+    [g.lean.replace('4.28.0', '4.27.0'), '2026-11-17 16:10:27Z'], [`\u202e${g.lean}`, `${g.utc} VERIFIED`], [g.lean.replace('Release', 'Release, VERIFIED'), '2026-11-17T16:10:27.5Z'],
+    [g.lean.replace('x86_64-unknown-linux-gnu', 'PCS certified'), '\u0662\u0660\u0662\u0666-11-17T16:10:27Z'], [42, 42], [undefined, undefined]]) {
+    assert.deepEqual(kernelRunFacts({ ...g, lean, utc }), { lean: null, utc: null }, String(lean));
+  }
+  assert.deepEqual(kernelRunFacts(null), { lean: null, utc: null });
+  // the page reads no field of a report itself: only kernelRunRefusal and kernelRunFacts look inside one
+  const js = read('claim-check.mjs').toString('utf8');
+  assert.deepEqual([...js.matchAll(/\brun\??\.[A-Za-z_$]/g)].map((m) => m[0]), []);
+  assert.doesNotMatch(js, /why_not|in_words|\.slice\(0, (60|30|300)\)/);
+  assert.match(js, /const \{ lean, utc \} = kernelRunFacts\(run\);/);
+  // the data file's name, which the page does show, is displayed without control or direction-changing characters
+  const m = /const shownName = \(name\) => String\(name\)\.replace\(\/(.+)\/gu, '\\uFFFD'\);/.exec(js);
+  assert.ok(m, 'shownName');
+  assert.equal('\u202egnp.csv\u0007\u2066x\u2028'.replace(new RegExp(m[1], 'gu'), '\uFFFD'), '\uFFFDgnp.csv\uFFFD\uFFFDx\uFFFD');
+});
+
+test('a result belongs to the inputs at Check; any change clears it; only the snapshot is used (F3)', () => {
+  const js = read('claim-check.mjs').toString('utf8');
+  assert.match(js, /\/\/ Every change to the inputs ends here, so every change clears the outdated result\.\nfunction refresh\(\) \{\n  clearResult\(\);/);
+  assert.match(js, /\['stat', 'column', 'xColumn', 'numberSelect', 'dataUnit', 'reportedUnit'\]\.forEach\(\(id\) => \$\(id\)\.addEventListener\('input', refresh\)\);/);
+  assert.match(js, /\$\('sentence'\)\.addEventListener\('input', readSentence\);/);
+  assert.match(js, /\[col, op, val\]\.forEach\(\(x\) => x\.addEventListener\('input', refresh\)\)/);
+  assert.match(js, /async function setData\(bytes, name\) \{\n  clearResult\(\);/);
+  assert.match(js, /if \(f\) \{ clearResult\(\);/);
+  assert.match(js, /if \(!loader\) return;\n  clearResult\(\);/);
+  const clear = js.slice(js.indexOf('function clearResult() {'), js.indexOf('// ------------------------------------------------------------------ data'));
+  for (const part of ["state.last = null", "$('result').hidden = true", "$('downloadLean').disabled = true", "$('downloadDraft').disabled = true", 'box.hidden = true', 'box.replaceChildren()', "$('kernelRun').value = ''"]) assert.ok(clear.includes(part), part);
+  assert.match(js, /const snap = \{ c, bytes: state\.bytes\.slice\(\), sha: state\.sha, name: state\.name, headers: state\.headers, sentence: \$\('sentence'\)\.value \};/);
+  // downloads and the report check read the snapshot, never the current inputs
+  const handlers = js.slice(js.indexOf('// The checker is used only if'), js.indexOf('// ------------------------------------------------------------------ recorded published examples'));
+  assert.ok(handlers.length > 1000);
+  assert.doesNotMatch(handlers, /state\.(bytes|sha|name|headers|numbers)\b|\$\('sentence'\)|obligationTail/);
+  assert.match(handlers, /const snap = state\.last; if \(!snap\) return;/);
+  assert.match(handlers, /if \(state\.last !== snap\) return;/);
+  // the checker is used only with the catalog's pinned digest, before any proof file is built
+  assert.match(handlers, /if \(await sha256\(raw\) !== pinned\) throw new Refusal\(CHECKER_REFUSALS\.digest\);/);
+  assert.equal([...js.matchAll(/proofFile\(/g)].length, 2, 'one proof file builder for checks, one for the recorded examples');
+  assert.equal([...js.matchAll(/proofFile\(await reviewedChecker\(\)|proofFile\(checkerBytes, /g)].length, 2);
+});
+
+test('the runner digest is shown next to its download link (I3) and the wording is right (5)', () => {
+  const html = read('claim-check.html').toString('utf8'); const js = read('claim-check.mjs').toString('utf8');
+  assert.match(html, /<a id="runnerLink"[^>]*>Download the runner<\/a><button id="downloadDraft" disabled>Download this result<\/button><\/div><p id="runnerDigest" class="small">/);
+  assert.match(js, /showRunnerDigest\(state\.catalog\?\.v1_1\?\.kernel_runner\?\.sha256\);/);
+  assert.match(catalog.v1_1.kernel_runner.sha256, /^[0-9a-f]{64}$/);
+  const doc = fs.readFileSync(new URL('../docs/CLAIM_CHECK_V1.md', import.meta.url), 'utf8').replace(/\s+/g, ' ');
+  for (const [name, text] of [['page', html], ['script', js], ['doc', doc]]) {
+    assert.doesNotMatch(text, /exactly the kind of file|not in the generated form|has the generated form|exactly in the form the generator writes/, name);
+    assert.match(text, /canonical form of the generator(’|')s grammar/, name);
+    assert.match(text, /settings (this|the) page never writes/, name);
+  }
+  assert.match(html, /This page shows a report only if it is about exactly the proof file built here when you pressed Check/);
+  assert.match(doc, /The page accepts only a report about the exact proof file it built when Check was pressed/);
+  assert.match(doc, /shows the runner's SHA-256 from the catalog next to the download link/);
+  assert.match(catalog.v1_1.kernel_runner.accepts, /canonical form of the generator's grammar/);
+  // what a kernel run does and does not verify is still said, and nothing claims scientific correctness
+  assert.match(html, /verifies the supplied mathematical obligation and nothing more/);
+  assert.match(js, /What no kernel run verifies: that the obligation faithfully represents the sentence in the paper/);
+  assert.doesNotMatch(html + js, /scientifically (correct|valid)|certified|peer-reviewed/i);
 });
 
 // ------------------------------------------------------------------ the served runner, run for real

@@ -315,28 +315,84 @@ export function approx(o) {
   return Number.isFinite(x) ? x.toPrecision(10).replace(/\.?0+$/, '') : '≈ (too large to display)';
 }
 
+// ---------------------------------------------------------------- the proof file the page offers
+// The exact bytes of the proof file: the reviewed checker's bytes (the caller has checked their digest
+// against the catalog's pin), then the generated part.  Its SHA-256 is what a kernel-run report must name.
+export function proofFile(checkerBytes, bytes, items, naTokens = ['', 'NA']) {
+  const tail = enc.encode(obligationTail(bytes, items, naTokens));
+  const out = new Uint8Array(checkerBytes.length + tail.length);
+  out.set(checkerBytes); out.set(tail, checkerBytes.length);
+  return out;
+}
+
 // ---------------------------------------------------------------- kernel-run reports from the local runner
-// Only reports of the strict runner (schema v2) may be shown.  The runner served until 16 November
-// 2026 (schema v1) accepted proof files whose generated part had been written by hand.
+// Only reports of the strict runner (schema v2) may be shown, and only if every field that a genuine
+// report always gets right is right.  The runner served until 16 November 2026 (schema v1) accepted
+// proof files whose generated part had been written by hand.  The page never displays free text from a
+// report: a refusal is one of the fixed messages below, and a shown report is worded by the page from
+// its own results.  A report can be written by hand, so even a shown one is "reported, not verified".
 export const KERNEL_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v2';
 export const WITHDRAWN_RUN_SCHEMA = 'pcs-claimcheck-kernel-run-v1';
-const outcomePrefix = (o) => (!o.defined ? '.undefined ' : o.verdict === 'consistent' ? '.checked .consistent ' : '.checked .inconsistent ');
+export const KERNEL_RUN_AUTHORITY = 'RESEARCH_ONLY_NOT_PCS_V06_AUTHORITY';
+export const STANDARD_AXIOMS = Object.freeze(['propext', 'Classical.choice', 'Quot.sound']);
+const NOTHING = ' Nothing is established.';
+export const KERNEL_RUN_REFUSALS = Object.freeze({
+  unreadable: 'The file could not be read as a kernel-run file.',
+  withdrawn: 'This file was written by the earlier runner (kernel-run v1), withdrawn on 16 November 2026: it accepted proof files whose generated part had been written by hand, so its reports do not show that the reviewed checker was used. Download the current runner and run it again.',
+  schema: 'This is not a kernel-run file written by the current runner.',
+  notAccepted: 'The runner did not report an accepted proof.' + NOTHING,
+  authority: 'This file does not carry the research-only authority label that the current runner writes, so it is not a report of the current runner.' + NOTHING,
+  notCanonical: 'The report does not state that the generated part of the proof file is in canonical form.' + NOTHING,
+  pinOverridden: 'The report does not state that the runner used the reviewed checker digest built into it: either the digest was replaced on the command line, or the report comes from a runner older than the current one. Download the current runner and run it again.',
+  noCatalog: 'The catalog with the reviewed checker digest could not be loaded, so this page cannot tell which checker a report used. Reload the page and try again.',
+  checker: 'This kernel run used a checker other than the reviewed one this page serves.' + NOTHING,
+  noProofFile: 'This page could not build its own proof file for this check, so it cannot compare a report with it. Reload the page and check the number again.',
+  data: 'This kernel run is about a different data file than the one checked here.',
+  proof: 'This kernel run is about a different proof file than the one this page built when you pressed Check (for example another printed number, statistic, column, condition or unit).',
+  settings: 'The runner flagged a claim setting that this page never writes (for example other missing-value tokens, a scale outside the unit table, or a printed value whose rounding interval contains every small value). Such a report is not shown.',
+  theorems: 'The theorems in this report are not exactly the ones in the proof file this page built: one per claim, in order.' + NOTHING,
+  notKernelAccepted: 'The report does not say that the Lean kernel accepted every theorem.' + NOTHING,
+  axioms: 'A theorem in this report depends on an axiom other than propext, Classical.choice and Quot.sound.' + NOTHING,
+  outcomes: 'The outcomes in this report do not agree with the proof file this page builds.' + NOTHING,
+});
+const HEX64 = /^[0-9a-f]{64}$/;
+const isRecord = (x) => x !== null && typeof x === 'object' && !Array.isArray(x);
 // Null if the report may be shown beside this page's own result (as reported, never as verified);
-// otherwise the reason it may not.  `expected` holds what the page built: the proof file's digest,
-// the data's digest, the reviewed checker's digest, and the outcome the page computed for each claim.
+// otherwise one of KERNEL_RUN_REFUSALS.  `expected` is what the page took when Check was pressed:
+// proofSha256, the digest of the exact proof file it built; dataSha256, the digest of the data bytes;
+// checkerSha256, the reviewed checker digest pinned by the catalog (undefined if the catalog did not
+// load); outcomes, the outcome the page computed for each claim, in order.
 export function kernelRunRefusal(run, expected) {
-  if (!run || typeof run !== 'object') return 'The file could not be read as a kernel-run file.';
-  if (run.schema === WITHDRAWN_RUN_SCHEMA) return 'This file was written by the earlier runner (kernel-run v1), withdrawn on 16 November 2026: it accepted proof files whose generated part had been written by hand, so its reports do not show that the reviewed checker was used. Download the current runner and run it again.';
-  if (run.schema !== KERNEL_RUN_SCHEMA) return 'This is not a kernel-run file written by the current runner.';
-  if (run.proof_file_sha256 !== expected.proofSha256) return 'This kernel run is about a different proof file than the one this page builds for the current data, sentence and reading.';
-  if (run.data_sha256 !== expected.dataSha256) return 'This kernel run is about a different data file.';
-  if (run.reviewed_checker_sha256 !== expected.checkerSha256) return 'This kernel run used a checker other than the reviewed one this page serves.';
-  const n = expected.outcomes.length;
-  if (run.accepted !== true || run.generated_part_canonical !== true || !Array.isArray(run.theorems) || run.theorems.length !== n) {
-    return `The runner did not report an accepted proof${run.why_not ? `: ${String(run.why_not).slice(0, 300)}` : '.'} Nothing is established.`;
-  }
-  if (!expected.outcomes.every((o, i) => run.theorems[i]?.theorem === `pcs_claim_${i}` && String(run.theorems[i]?.proved_outcome || '').startsWith(outcomePrefix(o)))) {
-    return 'The outcomes in this report do not agree with the proof file this page builds. Nothing is established.';
-  }
-  return null;
+  const R = KERNEL_RUN_REFUSALS;
+  try {
+    if (!isRecord(run)) return R.unreadable;
+    if (run.schema === WITHDRAWN_RUN_SCHEMA) return R.withdrawn;
+    if (run.schema !== KERNEL_RUN_SCHEMA) return R.schema;
+    if (run.generated_part_canonical !== true || run.accepted !== true) return run.accepted !== true ? R.notAccepted : R.notCanonical;
+    if (run.authority !== KERNEL_RUN_AUTHORITY) return R.authority;
+    if (run.checker_pin_overridden !== false) return R.pinOverridden;
+    if (!HEX64.test(String(expected?.checkerSha256))) return R.noCatalog;
+    if (run.reviewed_checker_sha256 !== expected.checkerSha256) return R.checker;
+    if (!HEX64.test(String(expected.dataSha256)) || !HEX64.test(String(expected.proofSha256))) return R.noProofFile;
+    if (run.data_sha256 !== expected.dataSha256) return R.data;
+    if (run.proof_file_sha256 !== expected.proofSha256) return R.proof;
+    if (run.all_settings_as_the_page_writes !== true) return R.settings;
+    const literals = expected.outcomes.map(leanOutcome);     // the very literals the page wrote into the proof file
+    const ts = run.theorems;
+    if (!Array.isArray(ts) || !literals.length || ts.length !== literals.length
+      || !ts.every((t, i) => isRecord(t) && t.theorem === `pcs_claim_${i}`)) return R.theorems;
+    if (!ts.every((t) => t.kernel_accepted === true)) return R.notKernelAccepted;
+    if (!ts.every((t) => Array.isArray(t.axioms) && t.axioms.every((a) => STANDARD_AXIOMS.includes(a)))) return R.axioms;
+    if (!ts.every((t) => Array.isArray(t.settings_the_page_never_writes) && t.settings_the_page_never_writes.length === 0)) return R.settings;
+    if (!ts.every((t, i) => t.proved_outcome === literals[i])) return R.outcomes;
+    return null;
+  } catch { return R.unreadable; }
+}
+// The only values of a report the page may display, and only in exactly these forms (otherwise null,
+// and the page omits them): the Lean version line and the UTC time of the run.
+export const SHOWN_LEAN_VERSION = /^Lean \(version 4\.28\.0, [A-Za-z0-9_.-]+, commit [0-9a-f]{7,40}, Release\)$/;
+export const SHOWN_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+export function kernelRunFacts(run) {
+  const pick = (v, re) => (typeof v === 'string' && re.test(v) ? v : null);
+  return { lean: pick(run?.lean, SHOWN_LEAN_VERSION), utc: pick(run?.utc, SHOWN_UTC) };
 }

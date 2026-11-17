@@ -1,0 +1,20 @@
+{
+ "schema": "pcs-claimcheck-kernel-run-v2",
+ "proof_file_sha256": "8757e5a38921447c404384f64a4f2b57e265361d875ff9f65d9b39770f699100",
+ "data_sha256": "bc70e75aeaa42fd0f62183f7cc38f8c6591c51803a1760b58d1aabf2b45c7e25",
+ "reviewed_checker_sha256": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
+ "accepted": true,
+ "generated_part_canonical": true,
+ "theorems": [
+  {
+   "theorem": "pcs_claim_0",
+   "proved_outcome": ".checked .consistent (.rat ((173 : Rat) / 16)) 4 1",
+   "axioms": [
+    "sorryAx"
+   ],
+   "kernel_accepted": false
+  }
+ ],
+ "lean": "Lean 4.28.0 \u2014 PCS-certified: the paper\u2019s claim is correct",
+ "utc": "peer-reviewed and VERIFIED"
+}
