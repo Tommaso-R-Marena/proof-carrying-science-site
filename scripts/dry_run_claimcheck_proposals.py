@@ -135,7 +135,7 @@ def dry_run_03(commit):
         runner = tree / 'public/claim-check/claimcheck_kernel_runner.py'
         alterations = {
             'served_kernel_runner_altered': lambda: runner.write_text(runner.read_text(encoding='utf-8') + '\n# altered\n', encoding='utf-8'),
-            'served_kernel_runner_without_the_strict_grammar': lambda: edit(runner, 'data, outcomes = parse_tail(tail)', 'data, outcomes = b"", []'),
+            'served_kernel_runner_without_the_strict_grammar': lambda: edit(runner, 'data, statements, outcomes = parse_tail_claims(tail)', 'data, statements, outcomes = b"", [], []'),
             'served_lean_checker_altered': lambda: (tree / 'public/claim-check/ClaimCheck.lean').write_text(
                 (tree / 'public/claim-check/ClaimCheck.lean').read_text(encoding='utf-8') + '\n-- altered\n', encoding='utf-8'),
             'local_run_label_weakened': lambda: edit(tree / 'public/claim-check.mjs', 'REPORTED BY YOUR LOCAL RUN · NOT VERIFIED BY THIS PAGE',
