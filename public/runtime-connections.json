@@ -161,6 +161,16 @@
       "scope": "The website runs a browser calculation. The downloaded app independently executes its pinned compiled Lean checker on original CSV bytes; new builds run it automatically with each review. Imported receipts are not fresh checks."
     },
     {
+      "page": "claim-check.html",
+      "kind": "local claim tool",
+      "execution": "browser-finite-or-structural-checker",
+      "entrypoints": [
+        "claim-check.mjs",
+        "page-help.mjs"
+      ],
+      "scope": "The page recomputes a statistic from CSV bytes with exact browser arithmetic and writes the Lean obligation for the user to check locally. That preview is not a proof. Published examples display recorded results of the real Lean 4.28.0 kernel after the page rebuilds the obligation bytes; nothing is re-proved in the browser, no model is called, and no result assesses scientific validity."
+    },
+    {
       "page": "claim-invalidation-v1.html",
       "kind": "research task",
       "execution": "website-service-or-opt-in-study",

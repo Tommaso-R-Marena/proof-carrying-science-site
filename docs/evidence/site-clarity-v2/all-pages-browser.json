@@ -1,0 +1,1336 @@
+{
+  "format": "pcs-all-page-clarity-browser-v1",
+  "human_participants": 0,
+  "human_comprehension_established": false,
+  "pages": [
+    {
+      "file": "404.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "account.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "admin-login.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "admin.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "architecture.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena-countermodel.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena-proof-quest.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena-safety-forge.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "assurance-fold.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "bridge-builder.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "calibration-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "capabilities.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "check-my-files.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "claim-check.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "claim-invalidation-v1.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "claim-review.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "commons.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "contact.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "contribute.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "contributors.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "demo.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "evaluation-firewall.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "evidence-atlas.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "experience.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "first-visit-study.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "forge-duel.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "fund.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "governance.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "guided-submission.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "index.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "intake.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "intervention-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "lean-learning-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "live-demo.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "meaning-forge.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "memory-workshop.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "model-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "model-walkthrough.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "mvp.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "omega-workspace.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "organizations.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "package-inspector.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "paper-demos.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "privacy.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "project-builder.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "projects.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "proof-search-results.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "proof-workbench-study.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "proof-workbench.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "prooflab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "reasoning-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "repair-model-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "research-preview.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "research-updates.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "research.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "researcher-pilots.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "result-anatomy.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "review-changes.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "reviewer-desk.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "roles.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "scientific-workflow-v2.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-audit.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-gauntlet.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-multistep-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-repair-lab.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "task-graph.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "tasks.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "transport-workflow-v3.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "trust-explorer.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "trust.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "usability-study.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "validation-registry.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "validation.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "workboard.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "world-builder.html",
+      "width": 320,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "404.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "account.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "admin-login.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "admin.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "architecture.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena-countermodel.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena-proof-quest.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena-safety-forge.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "arena.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "assurance-fold.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "bridge-builder.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "calibration-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "capabilities.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "check-my-files.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "claim-check.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "claim-invalidation-v1.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "claim-review.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "commons.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "contact.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "contribute.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "contributors.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "demo.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "evaluation-firewall.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "evidence-atlas.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "experience.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "first-visit-study.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "forge-duel.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "fund.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "governance.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "guided-submission.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "index.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "intake.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "intervention-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "lean-learning-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "live-demo.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "meaning-forge.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "memory-workshop.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "model-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "model-walkthrough.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "mvp.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "omega-workspace.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "organizations.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "package-inspector.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "paper-demos.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "privacy.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "project-builder.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "projects.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "proof-search-results.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "proof-workbench-study.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "proof-workbench.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "prooflab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "reasoning-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "repair-model-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "research-preview.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "research-updates.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "research.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "researcher-pilots.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "result-anatomy.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "review-changes.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "reviewer-desk.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "roles.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "scientific-workflow-v2.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-audit.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-gauntlet.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-multistep-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "semantic-repair-lab.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "task-graph.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "tasks.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "transport-workflow-v3.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "trust-explorer.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "trust.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "usability-study.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "validation-registry.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "validation.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "workboard.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    },
+    {
+      "file": "world-builder.html",
+      "width": 1440,
+      "one_visible_title": true,
+      "contextual_action_and_scope": true,
+      "optional_glossary": true,
+      "no_overflow": true
+    }
+  ],
+  "scientific_workflows": [
+    {
+      "width": 320,
+      "mode": "original",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 320,
+      "mode": "edited",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 320,
+      "mode": "removed",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 390,
+      "mode": "original",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 390,
+      "mode": "edited",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 390,
+      "mode": "removed",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 768,
+      "mode": "original",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 768,
+      "mode": "edited",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 768,
+      "mode": "removed",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 1440,
+      "mode": "original",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 1440,
+      "mode": "edited",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    },
+    {
+      "width": 1440,
+      "mode": "removed",
+      "actual_file_check": true,
+      "report_and_replay_download": true,
+      "recomputed_import": true,
+      "altered_verdict_rejected": true,
+      "no_lean_verdict_invented": true
+    }
+  ],
+  "positive_responses_substituted": false,
+  "missing_source_fails_closed": true,
+  "status": "PASS"
+}

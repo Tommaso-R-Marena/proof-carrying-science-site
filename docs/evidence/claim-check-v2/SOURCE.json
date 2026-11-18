@@ -1,0 +1,32 @@
+{
+ "format": "pcs-claim-check-journey-successor-v1",
+ "what": "The browser journey of the ClaimCheck page with real Chromium and the real Lean 4.28.0 kernel, run against the files below. It describes exactly these bytes; if any of them changes, run the journey again and write a new successor.",
+ "source_commit": "c21667253e5725aae7e3b1fa90e61a87287dd29b",
+ "bound_files": {
+  "public/claim-check-core.mjs": "73ac79140309a27dcc06a3167e9c57f24dbcbbd7f9ccd415c664eb8519e18c8c",
+  "public/claim-check.html": "7bc7aa5586e275f1bae4e7477f7e9c3d46430d8f6c49543f7bcfb9ca34eeb6fc",
+  "public/claim-check.mjs": "d379e9bdaabf6db828f7187ef1335bf5ea1643eb78c7521eeac81cfe3e615289",
+  "public/claim-check/ClaimCheck.lean": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
+  "public/claim-check/claimcheck_kernel_runner.py": "831bbababd2f48e5b9f62fa33433fe7edfbc8ee1f2271e3e7700b883745f75e9",
+  "public/claim-check/examples.json": "61c1825a54f4fcd75e4f4fb0115951ff057485454ed4b2d2ae13d78936bb1809",
+  "public/claim-check/examples/06_pmc5980576.json": "d159bdc2561a91bf173beda5b93a71e88cb88e9d10c73dee0fdc367b8f5a1066",
+  "public/claim-check/examples/08_pmc6238128.json": "4c51b0b3b66d616a98899c364a86432aba7e9ead439a3181b1b37f688d2fd223",
+  "public/claim-check/examples/09_pmc6476783.json": "a7fc77d3260d0451634a472001399e2fa839559cf727b7e3b51a602dffdf7bf1",
+  "public/claim-check/examples/10_pmc5817150.json": "bbb6a420901d296b7ba1ae94e00fa8c252c861778b877ba2d8475877d202f64f",
+  "public/claim-check/examples/12_pmc4417136.json": "4af8be2415988895c1382d327e54961c08391efde2484324dab58693233e12c1",
+  "public/claim-check/examples/17_pmc9309151.json": "d3efdd6572cc7ce1ccee4f5392ce6c7a0a865ff8ec06de13f2cb2c6e7eb6e6c8",
+  "public/page-help-core.mjs": "76f7d36cc4cd76b0f12844d8abacf2da129ff3e1bb0f910c247fa3438d024392",
+  "scripts/browser_claim_check.cjs": "15585320d26cbb560cfc5fad245cf8dd1fa23838b41c2ded6a944f5aa3c8ab2b"
+ },
+ "journey_record": {
+  "path": "browser-journey.json",
+  "sha256": "a1bd3343ca3efcd5297461460a206301395d3bcfe60812cb83b72f27e5db2d4d"
+ },
+ "predecessor": {
+  "path": "docs/evidence/claim-check-v1/browser-journey.json",
+  "sha256": "5c22bd7ebbd1c2224c96e3016aac8b00816ed1a6dc2def0e5b07386a43eb936c",
+  "note": "historical record of the page before the 2026-11-17 hardening; kept unchanged; it does not qualify the files above"
+ },
+ "human_participants": 0,
+ "human_usability_established": false
+}

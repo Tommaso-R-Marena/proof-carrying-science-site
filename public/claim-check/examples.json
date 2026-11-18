@@ -1,0 +1,247 @@
+{
+ "format": "pcs-claimcheck-site-examples-v1",
+ "authority": "RESEARCH_ONLY_NOT_PCS_V06_AUTHORITY",
+ "toolchain": "Lean 4.28.0",
+ "checker_sha256": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
+ "recorded_utc": "2026-11-11T18:29:37Z",
+ "examples": [
+  {
+   "id": "06_pmc5980576",
+   "title": "Effects of winter food provisioning on the phenotypes of breeding blue tits",
+   "data_sha256": "3431fbd902acd24298a4fcc2980e10b694018d91a015cb38822e2828f1171d44",
+   "counts": {
+    "PROVED": 13,
+    "REFUTED": 7,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 11,
+    "REQUIRE_HUMAN_REVIEW": 9,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "08_pmc6238128",
+   "title": "Morphological adaptations for relatively larger brains in hummingbird skulls",
+   "data_sha256": "eca9c8973f3ef2a3046e012fe50dc7cd63f7c77ec04185ae1543115c52dde8d6",
+   "counts": {
+    "PROVED": 7,
+    "REFUTED": 3,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 3,
+    "REQUIRE_HUMAN_REVIEW": 7,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "09_pmc6476783",
+   "title": "Ancient landscapes of the Namib Desert harbor high levels of genetic variability and deeply divergent lineages for Collembola",
+   "data_sha256": "9670bb7b9657a428efd054165bbc7360c5cf0ee05f19e55d1c9e06d4e7c9b513",
+   "counts": {
+    "PROVED": 2,
+    "REFUTED": 48,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "REQUIRE_HUMAN_REVIEW": 50,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "10_pmc5817150",
+   "title": "Age, state, environment, and season dependence of senescence in body mass",
+   "data_sha256": "b3712bff4020df73727159f30321cb0f0e95ba7f404b377437b77479fdae646f",
+   "counts": {
+    "PROVED": 3,
+    "REFUTED": 1,
+    "UNKNOWN": 0
+   },
+   "v1_1_counts": {
+    "REQUIRE_HUMAN_REVIEW": 4
+   }
+  },
+  {
+   "id": "12_pmc4417136",
+   "title": "Soil microbial community variation correlates most strongly with plant species identity, followed by soil chemistry, spatial location and plant genus",
+   "data_sha256": "4db2fc7fd7b275dc5a190cf68fb24d4f572c4b5eda26d206af9654d5488644f7",
+   "counts": {
+    "PROVED": 14,
+    "REFUTED": 3,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 7,
+    "REQUIRE_HUMAN_REVIEW": 10,
+    "UNKNOWN": 2
+   }
+  },
+  {
+   "id": "17_pmc9309151",
+   "title": "Positive effects of fast growth on locomotor performance in pelagic fish juveniles",
+   "data_sha256": "27a4372092b2e6dda1344e42a64da872f14c8760dc4c9ce12d8b19086c252627",
+   "counts": {
+    "PROVED": 10,
+    "REFUTED": 6,
+    "UNKNOWN": 2
+   },
+   "v1_1_counts": {
+    "CONFIRMATION": 4,
+    "REQUIRE_HUMAN_REVIEW": 12,
+    "UNKNOWN": 2
+   }
+  }
+ ],
+ "not_published_as_examples": [],
+ "benchmark": {
+  "summary": "Frozen held-out evaluation on 6 open-access articles with deposited data (86 true statements, 41 false ones including planted errors, 67 numbers that cannot be derived from the table). Every proposer feeds the same verifier.",
+  "arms": [
+   {
+    "label": "Cue-word rules (no model)",
+    "arm": "rules",
+    "document_copies": 14,
+    "document_copies_total": 14,
+    "correct_verification": 5,
+    "correct_refutation": 1,
+    "unsupported_positive": 10,
+    "unsupported_refutation": 161,
+    "abstained": 70,
+    "model_calls": 0,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Data-matching search (no model)",
+    "arm": "search",
+    "document_copies": 14,
+    "document_copies_total": 14,
+    "correct_verification": 37,
+    "correct_refutation": 0,
+    "unsupported_positive": 45,
+    "unsupported_refutation": 0,
+    "abstained": 87,
+    "model_calls": 0,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Gemini model",
+    "arm": "gemini",
+    "document_copies": 12,
+    "document_copies_total": 14,
+    "correct_verification": 24,
+    "correct_refutation": 11,
+    "unsupported_positive": 2,
+    "unsupported_refutation": 2,
+    "abstained": 73,
+    "model_calls": 12,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Nemotron model (via OpenRouter)",
+    "arm": "openrouter",
+    "document_copies": 14,
+    "document_copies_total": 14,
+    "correct_verification": 40,
+    "correct_refutation": 13,
+    "unsupported_positive": 5,
+    "unsupported_refutation": 131,
+    "abstained": 51,
+    "model_calls": 14,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Both models, all proposals",
+    "arm": "union",
+    "document_copies": 12,
+    "document_copies_total": 14,
+    "correct_verification": 34,
+    "correct_refutation": 16,
+    "unsupported_positive": 5,
+    "unsupported_refutation": 128,
+    "abstained": 35,
+    "model_calls": 24,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Only readings both models proposed",
+    "arm": "agree",
+    "document_copies": 12,
+    "document_copies_total": 14,
+    "correct_verification": 22,
+    "correct_refutation": 7,
+    "unsupported_positive": 2,
+    "unsupported_refutation": 2,
+    "abstained": 79,
+    "model_calls": 24,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Gemini, filtered by Nemotron as critic",
+    "arm": "gemini+critic",
+    "document_copies": 6,
+    "document_copies_total": 14,
+    "correct_verification": 17,
+    "correct_refutation": 2,
+    "unsupported_positive": 0,
+    "unsupported_refutation": 2,
+    "abstained": 35,
+    "model_calls": 9,
+    "model_errors": 0,
+    "complete": true
+   },
+   {
+    "label": "Nemotron, filtered by Gemini as critic",
+    "arm": "openrouter+critic",
+    "document_copies": 6,
+    "document_copies_total": 14,
+    "correct_verification": 23,
+    "correct_refutation": 1,
+    "unsupported_positive": 3,
+    "unsupported_refutation": 65,
+    "abstained": 21,
+    "model_calls": 12,
+    "model_errors": 0,
+    "complete": true
+   }
+  ],
+  "notes": "Counts are printed numbers, over original, planted-error and prompt-injection copies of the held-out articles. Rows that cover fewer copies cannot be compared with rows that cover more. “Wrongly” columns include every result on a number that had no gold label, before any hand adjudication. Gold labels are AI-assisted annotations, not expert review. In this evaluation a proved match was reliable when the proposer had not seen the data, and a refutation was often a wrong reading of the sentence, so read “refuted” as “this reading does not hold for this file”. The full report, receipts and replay instructions are in the PCS core repository under research/claimcheck_v1. Adversarial suite: 409 deceptive proposals, 0 accepted; coincidence search submitted 214 numerically matching readings for 62 false or underivable numbers, 3 were proved.",
+  "freezes": {
+   "software_freeze_sha256": "1a7eeb57029e5ff35ee1586908f77fa949a7577777a2495dc00db18c6af0ae2d",
+   "benchmark_freeze_sha256": "1a2001809d1e923900817e17273a975fb554b13bc5b72809f4bd23e2f9ecc890"
+  }
+ },
+ "v1_1": {
+  "policy_id": "pcs-claimcheck-semantic-policy-v1.1",
+  "kernel_runner": {
+   "path": "claim-check/claimcheck_kernel_runner.py",
+   "sha256": "831bbababd2f48e5b9f62fa33433fe7edfbc8ee1f2271e3e7700b883745f75e9",
+   "accepts": "only proof files whose generated part is in the canonical form of the generator's grammar; anything else is refused before Lean is started. The grammar admits claim settings the page never writes; the receipt lists each claim's settings and flags those"
+  },
+  "kernel_run_schema": "pcs-claimcheck-kernel-run-v2",
+  "withdrawn_runners": [
+   {
+    "sha256": "8d9e07b4ac4b0abed13c9e750cbca113f1db26d82f3709579a7aafa7401f713f",
+    "kernel_run_schema": "pcs-claimcheck-kernel-run-v1",
+    "withdrawn": "2026-11-16",
+    "reason": "it accepted proof files whose generated part had been written by hand, including one that defined its own `run`, so its reports do not show that the reviewed checker was used"
+   }
+  ],
+  "kernel_run_meaning": {
+   "establishes": "the supplied mathematical obligation: each theorem in the proof file, about the reviewed checker, holds for the data bytes embedded in that file",
+   "does_not_establish": "that the obligation faithfully represents a sentence of a paper, that the reported value is the paper's number, or that the embedded bytes are the authors' data"
+  },
+  "recorded_example_verdicts": {
+   "CONFIRMATION": 25,
+   "REQUIRE_HUMAN_REVIEW": 92,
+   "UNKNOWN": 10
+  },
+  "development_note": "The v1.1 reading rules were designed on these same six articles, so the following is development evidence, not a test. From the same kernel results, with readings proposed by two language models: misleading refutations fell from 131 and 2 to 0 and 0; correct confirmations fell from 40 and 24 to 26 and 17; detected discrepancies fell from 13 and 11 to 3 and 2. An adversary allowed to pick any eligible reading after seeing the data obtained 12 confirmations of numbers not labelled true (145 under v1) and no accusation of a true number. A prospective evaluation on new papers has been specified and not yet run.",
+  "prospective_evaluation": "specified, not approved, not run"
+ }
+}

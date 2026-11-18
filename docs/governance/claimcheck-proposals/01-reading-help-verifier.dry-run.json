@@ -1,0 +1,73 @@
+{
+ "format": "pcs-claimcheck-reading-help-verifier-dry-run-v2",
+ "approval": false,
+ "effective": false,
+ "patch": "01-reading-help-verifier.patch",
+ "patch_sha256": "98218343926db36d343c5358534d9d374d85eeeb7c875b99e8aafcfe7a66d398",
+ "source_commit": "e0b9136cf7e8480cfcf55c9bfa86b9582f22e39e",
+ "what": "The patch applied in a throw-away worktree of the commit; the checked-out verifier is unchanged.",
+ "unpatched_verifier_on_the_commit": {
+  "passed": false,
+  "tests": {
+   "exit": 1,
+   "tests": 22,
+   "pass": 19,
+   "fail": 3,
+   "failed": [
+    "fresh scientific viewer qualification preserves all previous outcomes, inputs, proof evidence and engine source bytes",
+    "exact real dataset and every public artifact match preserved digests",
+    "actual retained assets and recorded finite case identities match"
+   ]
+  }
+ },
+ "patch_applies_cleanly": true,
+ "positive": {
+  "patched_verifier_accepts_the_commit": {
+   "passed": true,
+   "output": "{\"format\":\"pcs-browser-ui-requalification-v1\",\"viewers\":3,\"historical_evidence_preserved\":true,\"math_data_and_test_sources_unchanged\":true,\"executed_checks_unchanged\":true,\"scientific_acceptance\":fals"
+  },
+  "tests_that_call_the_verifier": {
+   "exit": 0,
+   "tests": 22,
+   "pass": 22,
+   "fail": 0,
+   "failed": []
+  },
+  "successor_check": {
+   "passed": true
+  }
+ },
+ "negative": {
+  "existing_help_entry_edited": {
+   "rejected": true,
+   "message": "Reading help source drift\n+ actual - expected\n\n+ 'a8ca4233c4402a3c5ab97dfd25647c3d6e362992593b906a0f3da6da288cc18f'\n- '76f7d36cc4cd76b0f12844d8abacf2da129ff3e1bb0f910c247fa3438d024392'",
+   "expected_message_contains": "Reading help source drift",
+   "as_expected": true
+  },
+  "second_page_added_without_review": {
+   "rejected": true,
+   "message": "Reading help source drift\n+ actual - expected\n\n+ 'e3d3f810e74f435ec16abbd700f8ed6322bf06e428a161b3d3690cda0ed89de8'\n- '76f7d36cc4cd76b0f12844d8abacf2da129ff3e1bb0f910c247fa3438d024392'",
+   "expected_message_contains": "Reading help source drift",
+   "as_expected": true
+  },
+  "successor_manifest_edited": {
+   "rejected": true,
+   "message": "Unreviewed reading-help successor\n+ actual - expected\n\n+ '5ea3ee24dbe7cd4ccec670dbdab0c02d6ccb922761b963008c9079a174050806'\n- '9a1141266b3f56224931d4041e43460825caee78ac066a540e77cbee3f82c2a5'",
+   "expected_message_contains": "Unreviewed reading-help successor",
+   "as_expected": true
+  },
+  "historical_manifest_edited": {
+   "rejected": true,
+   "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'pcs-browser-ui-requalification-v1'",
+   "expected_message_contains": "",
+   "as_expected": true
+  },
+  "help_stylesheet_edited": {
+   "rejected": true,
+   "message": "Reading help source drift\n+ actual - expected\n\n+ '73e3fc782cfe1bf5a3f61d2f14a6c23fdbf65f0d486e8ca08d8a2a1b07400cb0'\n- 'fa5a95ecf72f3b0f384387418dbf3311c3bd0a757b36ebda8a14cfad47d5a3b9'",
+   "expected_message_contains": "Reading help source",
+   "as_expected": true
+  }
+ },
+ "all_as_expected": true
+}

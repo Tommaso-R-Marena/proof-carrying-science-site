@@ -1,0 +1,364 @@
+{
+ "format": "pcs-claimcheck-site-admission-census-v1",
+ "source_commit": "e0b9136cf7e8480cfcf55c9bfa86b9582f22e39e",
+ "against_origin_main": "e8136625c463b271364b36b2b8ae76f8777f1967",
+ "files": [
+  {
+   "path": ".github/workflows/claim-check.yml",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "f42050df70d675d2d7cf9ff42d1ed43e82bd86d14da7925d1a7804429861bd8a",
+   "bytes": 3050
+  },
+  {
+   "path": "docs/CLAIM_CHECK_V1.md",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "483d6121767df01f74b16ed638a6e789b9dc7066a8917f4004d7e3ea6a309678",
+   "bytes": 13312
+  },
+  {
+   "path": "docs/evidence/claim-check-v1/browser-journey.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "5c22bd7ebbd1c2224c96e3016aac8b00816ed1a6dc2def0e5b07386a43eb936c",
+   "bytes": 5470
+  },
+  {
+   "path": "docs/evidence/claim-check-v1/claim-check-desktop.png",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "05e720ac6cbeba1d8ca57c5a99e67183f914ce8c57c7650bbb77713dc03d5f84",
+   "bytes": 726484
+  },
+  {
+   "path": "docs/evidence/claim-check-v2/SOURCE.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "8a0ffa53a11ce2b6c8bb35c850e8619f39d84698fb798a2178ea7d54cfc425d3",
+   "bytes": 2427
+  },
+  {
+   "path": "docs/evidence/claim-check-v2/browser-journey.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "a1bd3343ca3efcd5297461460a206301395d3bcfe60812cb83b72f27e5db2d4d",
+   "bytes": 7291
+  },
+  {
+   "path": "docs/evidence/site-clarity-v2/all-pages-browser.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "e161824db809dc2dc92415251f113fc0a10db2857765c5198803b7d8aabbd210",
+   "bytes": 34237
+  },
+  {
+   "path": "docs/evidence/site-clarity-v2/reading-help-requalification.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "9a1141266b3f56224931d4041e43460825caee78ac066a540e77cbee3f82c2a5",
+   "bytes": 2670
+  },
+  {
+   "path": "docs/governance/CLAIMCHECK_PROPOSALS.md",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "5e7bea6c29c82d9a57eb7c0c6e62af763110867bc2de12d54b9a60f8dbc9d86d",
+   "bytes": 22303
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/01-reading-help-verifier.dry-run.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "074e09109672d3a52f201f476109fbaf3b0a5a5561a79996c90c43cef1d04785",
+   "bytes": 3049
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/01-reading-help-verifier.patch",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "98218343926db36d343c5358534d9d374d85eeeb7c875b99e8aafcfe7a66d398",
+   "bytes": 2978
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/02-reconciliation-gate.dry-run.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "5581b3725f1142ad31b31e159c41d5cc3a3760a226e29f1fe4e6c1c2b8b3f481",
+   "bytes": 5256
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/02-reconciliation-gate.patch",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "b027e8e1e1461acee9a4dc0d3d13d344905da4bd99efcbcdda2761f7a3399c5f",
+   "bytes": 1841
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/02-site-admission-census.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "72d8db0f0c1cd02cec976f4ef4d7ca7856d8187ed408c7db8f083c191e9914dd",
+   "bytes": 9853
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/03-complete-gate.dry-run.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "9dea61331423a5a0bf8f75e9ea2dc7a2f503d481c3dc3e734ac22924079cbaf9",
+   "bytes": 2739
+  },
+  {
+   "path": "docs/governance/claimcheck-proposals/03-complete-gate.patch",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "53e967048c9b31d2771620f4af0ea51a68f01b59708a6a52a3edb74878898fd1",
+   "bytes": 5747
+  },
+  {
+   "path": "public/check-my-files.html",
+   "status": "M",
+   "mode": "100644",
+   "sha256": "025420d07c9b607dc54322eb689ca0d77150d0ac99b5cd804ef83c09313e9265",
+   "bytes": 9073
+  },
+  {
+   "path": "public/claim-check-core.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "73ac79140309a27dcc06a3167e9c57f24dbcbbd7f9ccd415c664eb8519e18c8c",
+   "bytes": 24897
+  },
+  {
+   "path": "public/claim-check-examples.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "bdaa4dd99f937b36ea07af30f62143f6e39289562ac1ed375aaed5a2c34deaee",
+   "bytes": 621
+  },
+  {
+   "path": "public/claim-check-text.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "d5bb411dbc66189dca79cdb616ecfdbeb5b7c3293bea2a593d3722223bc3c0c7",
+   "bytes": 5143
+  },
+  {
+   "path": "public/claim-check.css",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "86859f26e243101f4bcf1d1b91668e45ac12ae4c99671b765de8fe274765b249",
+   "bytes": 1385
+  },
+  {
+   "path": "public/claim-check.html",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "7bc7aa5586e275f1bae4e7477f7e9c3d46430d8f6c49543f7bcfb9ca34eeb6fc",
+   "bytes": 11330
+  },
+  {
+   "path": "public/claim-check.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "d379e9bdaabf6db828f7187ef1335bf5ea1643eb78c7521eeac81cfe3e615289",
+   "bytes": 30955
+  },
+  {
+   "path": "public/claim-check/ClaimCheck.lean",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
+   "bytes": 26076
+  },
+  {
+   "path": "public/claim-check/claimcheck_kernel_runner.py",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "831bbababd2f48e5b9f62fa33433fe7edfbc8ee1f2271e3e7700b883745f75e9",
+   "bytes": 25323
+  },
+  {
+   "path": "public/claim-check/examples.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "61c1825a54f4fcd75e4f4fb0115951ff057485454ed4b2d2ae13d78936bb1809",
+   "bytes": 9020
+  },
+  {
+   "path": "public/claim-check/examples/06_pmc5980576.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "d159bdc2561a91bf173beda5b93a71e88cb88e9d10c73dee0fdc367b8f5a1066",
+   "bytes": 198860
+  },
+  {
+   "path": "public/claim-check/examples/08_pmc6238128.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "4c51b0b3b66d616a98899c364a86432aba7e9ead439a3181b1b37f688d2fd223",
+   "bytes": 83718
+  },
+  {
+   "path": "public/claim-check/examples/09_pmc6476783.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "a7fc77d3260d0451634a472001399e2fa839559cf727b7e3b51a602dffdf7bf1",
+   "bytes": 386487
+  },
+  {
+   "path": "public/claim-check/examples/10_pmc5817150.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "bbb6a420901d296b7ba1ae94e00fa8c252c861778b877ba2d8475877d202f64f",
+   "bytes": 64466
+  },
+  {
+   "path": "public/claim-check/examples/12_pmc4417136.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "4af8be2415988895c1382d327e54961c08391efde2484324dab58693233e12c1",
+   "bytes": 138876
+  },
+  {
+   "path": "public/claim-check/examples/17_pmc9309151.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "d3efdd6572cc7ce1ccee4f5392ce6c7a0a865ff8ec06de13f2cb2c6e7eb6e6c8",
+   "bytes": 152491
+  },
+  {
+   "path": "public/llms.txt",
+   "status": "M",
+   "mode": "100644",
+   "sha256": "e271654c470b9e2a967d3480c6fd9f6aade90a22410e7980bf06f8d0f00f301b",
+   "bytes": 7633
+  },
+  {
+   "path": "public/page-help-core.mjs",
+   "status": "M",
+   "mode": "100644",
+   "sha256": "76f7d36cc4cd76b0f12844d8abacf2da129ff3e1bb0f910c247fa3438d024392",
+   "bytes": 38180
+  },
+  {
+   "path": "public/runtime-connections.json",
+   "status": "M",
+   "mode": "100644",
+   "sha256": "c919338cfbb5ff9c42a54cf3409ff2c62dc8bfe59644a2423feb3c6fb0b5ac92",
+   "bytes": 32998
+  },
+  {
+   "path": "public/sitemap.xml",
+   "status": "M",
+   "mode": "100644",
+   "sha256": "412f538126e23df1d7ed8b6aea24defc5f48d2ceebb9d4c999e7844f4ae2458c",
+   "bytes": 7373
+  },
+  {
+   "path": "scripts/browser_claim_check.cjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "15585320d26cbb560cfc5fad245cf8dd1fa23838b41c2ded6a944f5aa3c8ab2b",
+   "bytes": 27154
+  },
+  {
+   "path": "scripts/check_claimcheck_proposals_consistency.py",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "ee2eb8b9f31ad5f26ef75bebe6092cc518e0c8737df01882972ab37165d2ff36",
+   "bytes": 6124
+  },
+  {
+   "path": "scripts/check_reading_help_successor.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "6fd71fea0c94d14982167d4539d18d16441bd512b630aca0369dd1c158076c29",
+   "bytes": 3785
+  },
+  {
+   "path": "scripts/claim_check_journey_record.py",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "443b0b376e2146a6803e3f412484d120d7c29789e639cf5f3aaa3c21151d0902",
+   "bytes": 5072
+  },
+  {
+   "path": "scripts/dry_run_claimcheck_proposals.py",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "6cfb9f9d47a5deffe5991b7715d15fdb35187549e3fa95891a64bc35e0242787",
+   "bytes": 10698
+  },
+  {
+   "path": "scripts/prepare_claimcheck_site_admission.py",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "56c757828816e2d9f96e92aea4521c3cc0b01565674cef4e71be20c6e4fe51fa",
+   "bytes": 15024
+  },
+  {
+   "path": "tests/claim-check-core.test.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "0a54f92cedda5ab8a2c55cef712f253d972031b0f2d032d88ce7fcb978eb8d4e",
+   "bytes": 3320
+  },
+  {
+   "path": "tests/claim-check-page.test.mjs",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "3a60d9203b066458b0caee10c0743febcd2f25b22361aff43971e0a225749d44",
+   "bytes": 30873
+  },
+  {
+   "path": "tests/fixtures/claim-check-differential.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "cb2bd463fe2e2acb049c6b102f7a0206917717e613833ccbec7ac012df264ea4",
+   "bytes": 613980
+  },
+  {
+   "path": "tests/fixtures/claim-check-kernel-runs/genuine-A-mean.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "cccd67d3f680ffe5d8d8bcec82e2c942737861a52498f0cfcb43f96712470ad4",
+   "bytes": 2302
+  },
+  {
+   "path": "tests/fixtures/claim-check-kernel-runs/genuine-A-sd-two-claims.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "8f75035b85a5a91086078f9897fdd2cf9a69bbaa9feeaad2a0deda80a1e81d70",
+   "bytes": 2983
+  },
+  {
+   "path": "tests/fixtures/claim-check-kernel-runs/review-f4-genuine-earlier-v2-runner.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "83751e4497de23df3f4416b6449b5cd80c19e3bc2608d99fa13e3325c4aecd9a",
+   "bytes": 1613
+  },
+  {
+   "path": "tests/fixtures/claim-check-kernel-runs/review-f4-handwritten.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "d7f626a605938a5f6eae33dc4ab8c8662d4e9c8b87224f18f856e76ae0600fb6",
+   "bytes": 682
+  },
+  {
+   "path": "tests/fixtures/claim-check-kernel-runs/review-f4-refused-bidi.json",
+   "status": "A",
+   "mode": "100644",
+   "sha256": "59ca9b965359a1f3b36014b6b6cb985a0f185b171b77be489f02c9ee5d8d3116",
+   "bytes": 752
+  },
+  {
+   "path": "tests/science-clarity.test.mjs",
+   "status": "M",
+   "mode": "100644",
+   "sha256": "6d2b508c9faded2acd0e23e233d37636ad2f9bebff145239e6def80aef9e4f21",
+   "bytes": 6213
+  }
+ ]
+}

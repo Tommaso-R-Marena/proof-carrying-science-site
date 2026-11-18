@@ -1,0 +1,22 @@
+diff --git a/scripts/check_reconciled_prs.py b/scripts/check_reconciled_prs.py
+index 20925be..117f635 100644
+--- a/scripts/check_reconciled_prs.py
++++ b/scripts/check_reconciled_prs.py
+@@ -12,7 +12,7 @@ REGISTRY_SHA256='5d69305871d78e262ba3dfa25349743efa11577491f645da8583a15b7398fe0
+ # A mutable branch/tag name is not trusted in place of its exact object ID.
+ INTAKES={
+  'proof-carrying-science':('0b521f39af99f5856b69dfcc25bc274ec9dc804a','pcs-source-intake/core-open-prs-v1-20261105'),
+- 'proof-carrying-science-site':('d35e2b5e6b29e0a27dc0cb117986895fd58c1456','pcs-source-intake/site-open-prs-v1-20261105'),
++ 'proof-carrying-science-site':('6c1ec33e51c3ead21fcaa07f368b7a1c791771dc','pcs-source-intake/site-claimcheck-v1-20261117'),
+ }
+ COMMON_CONTROLS={'scripts/check_reconciled_prs.py','scripts/test_reconciled_prs.py'}
+ CONTROLS={
+@@ -92,7 +92,7 @@ def check(roots,manifest):
+   if name=='proof-carrying-science':
+    _core_source(root,main)
+   if name=='proof-carrying-science-site':
+-   assert git(root,'rev-parse','HEAD:public')==git(root,'rev-parse',main+':public'),'Public deployment tree changed'
++   assert git(root,'rev-parse','HEAD:public')==git(root,'rev-parse',intake+':public'),'Public deployment tree differs from the retained reviewed source'
+    assert not git(root,'status','--porcelain','--untracked-files=all','--','public'),'Public working source differs'
+   result.append({'repository':entry['repository'],'candidate':git(root,'rev-parse','HEAD'),'original_prs_retained':[p['number'] for p in prs],'production_source_preserved':True,**lineage})
+  return {'passed':True,'checked':result,'pcs_authority':False,'scope':'Fixed retained source ancestry and exact selected-source/authority/formal/public identities compatible with protected linear main history; not semantics, immutable storage or deployment.'}

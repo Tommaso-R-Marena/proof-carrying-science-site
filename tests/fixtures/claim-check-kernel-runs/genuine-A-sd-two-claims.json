@@ -1,0 +1,72 @@
+{
+ "schema": "pcs-claimcheck-kernel-run-v2",
+ "authority": "RESEARCH_ONLY_NOT_PCS_V06_AUTHORITY",
+ "proof_file": "proof-A-sd.lean",
+ "reviewed_checker_sha256": "35c83b283b18f50c3fa9d1bb3f42ec0beca1d6a7458d14ebf7180d9927b9edf9",
+ "checker_pin_overridden": false,
+ "utc": "2026-11-17T16:13:32Z",
+ "host": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+ "accepted": true,
+ "theorems": [
+  {
+   "theorem": "pcs_claim_0",
+   "kernel_accepted": true,
+   "proved_outcome": ".checked .consistent (.sqrt (1 : Int) ((283 : Rat) / 192)) 4 1",
+   "in_words": "the reported value MATCHES the statistic of the embedded data under this typed statement (reported '1.21'; .sdSample of column 'mass_g'; filter []; missing-value tokens ['', 'NA']; scale 1)",
+   "axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ],
+   "statement": {
+    "column": "mass_g",
+    "filter": "[]",
+    "stat": ".sdSample",
+    "na_tokens": [
+     "",
+     "NA"
+    ],
+    "scale": "1",
+    "reported": "1.21"
+   },
+   "settings_the_page_never_writes": []
+  },
+  {
+   "theorem": "pcs_claim_1",
+   "kernel_accepted": true,
+   "proved_outcome": ".checked .inconsistent (.sqrt (1 : Int) ((283 : Rat) / 256)) 4 1",
+   "in_words": "the reported value DOES NOT MATCH the statistic of the embedded data under this typed statement (reported '1.21'; .sdPop of column 'mass_g'; filter []; missing-value tokens ['', 'NA']; scale 1)",
+   "axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+   ],
+   "statement": {
+    "column": "mass_g",
+    "filter": "[]",
+    "stat": ".sdPop",
+    "na_tokens": [
+     "",
+     "NA"
+    ],
+    "scale": "1",
+    "reported": "1.21"
+   },
+   "settings_the_page_never_writes": []
+  }
+ ],
+ "proof_file_sha256": "f9a236101ef3304a9b83298c3398363ae443fd5a27d9fc0e938a2ef97572e674",
+ "proof_file_bytes": 27267,
+ "generated_part_canonical": true,
+ "data_sha256": "bc70e75aeaa42fd0f62183f7cc38f8c6591c51803a1760b58d1aabf2b45c7e25",
+ "data_bytes": 61,
+ "lean_executable": "/opt/lean/lean-4.28.0-linux/bin/lean",
+ "lean_found": "given explicitly",
+ "lean_executable_sha256": "3e0d0d3d801675359f2d4cf9815bfdb417b20b92fdd9d48b3b14c95bbae28bbf",
+ "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)",
+ "max_memory_mb": 8000,
+ "all_settings_as_the_page_writes": true,
+ "meaning": "The Lean kernel checked every theorem listed here against the data bytes embedded in the proof file: the supplied mathematical obligation, with the settings listed for each theorem, holds. This does not show that the obligation faithfully represents a paper: whether a sentence means this statement, whether its settings are the right ones, and whether these bytes are the authors' data are not established by a kernel run.",
+ "establishes": "the supplied mathematical obligation, about the embedded data bytes",
+ "does_not_establish": "that the obligation represents any sentence of a paper, or that the bytes are the authors' data"
+}

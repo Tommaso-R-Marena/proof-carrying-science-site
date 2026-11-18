@@ -1,0 +1,68 @@
+{
+ "format": "pcs-claim-check-browser-journey-v1",
+ "human_participants": 0,
+ "human_usability_established": false,
+ "steps": [
+  {
+   "width": 390,
+   "examples": 6,
+   "benchmark_rows": 8,
+   "recorded_rows": 22,
+   "recorded_verdicts": [
+    "A PERSON MUST REVIEW THE READING",
+    "A PERSON MUST REVIEW THE READINGNothing attached to this number says it is this statistic (the statistic's wording occurs elsewhere in the sentence, or not at all).",
+    "A PERSON MUST REVIEW THE READINGThe file's value differs from the printed number by no more than one unit in the last printed digit. Truncation, double rounding or round-half-even would explain that; it is not treated as a discrepancy.",
+    "A PERSON MUST REVIEW THE READINGThe number is reproduced, but that alone does not show the sentence means this reading: Nothing attached to this number says it is this statistic (the statistic's wording occurs elsewhere in the sentence, or not at all). The printed number has too few digits to carry evidence: only 9 comparable numbers exist (same decimals, same number of digits), so a chance match cannot be made unlikely (limit 2%).",
+    "A PERSON MUST REVIEW THE READINGThe number is reproduced, but that alone does not show the sentence means this reading: “day” is printed after the number, but the manifest gives this column in g. The printed number has too few digits to carry evidence: only 9 comparable numbers exist (same decimals, same number of digits), so a chance match cannot be made unlikely (limit 2%).",
+    "A PERSON MUST REVIEW THE READINGThe sentence gives a “±” value without saying whether it is a standard deviation, a standard error or an interval.",
+    "A PERSON MUST REVIEW THE READINGThe sentence prints n = 351, but this reading uses 350 rows of the file. The authors probably analysed different rows or a different file version.",
+    "A PERSON MUST REVIEW THE READINGWhat a count counts (rows, individuals, sequences, sites) is not fixed by the sentence's wording, so a count that differs is never flagged automatically.",
+    "NUMBER REPRODUCED",
+    "NUMBER REPRODUCEDSupported by another number in the sentence: 12.0, 167.0.",
+    "UNKNOWN",
+    "UNKNOWNNo mathematical result was established by the Lean kernel."
+   ],
+   "recorded_file_rebuilt_in_browser": true,
+   "own_claim_preview": "match / conditional / mismatch / link check failed / malformed file all shown",
+   "overflow": false
+  },
+  {
+   "width": 1280,
+   "examples": 6,
+   "benchmark_rows": 8,
+   "recorded_rows": 22,
+   "recorded_verdicts": [
+    "A PERSON MUST REVIEW THE READING",
+    "A PERSON MUST REVIEW THE READINGNothing attached to this number says it is this statistic (the statistic's wording occurs elsewhere in the sentence, or not at all).",
+    "A PERSON MUST REVIEW THE READINGThe file's value differs from the printed number by no more than one unit in the last printed digit. Truncation, double rounding or round-half-even would explain that; it is not treated as a discrepancy.",
+    "A PERSON MUST REVIEW THE READINGThe number is reproduced, but that alone does not show the sentence means this reading: Nothing attached to this number says it is this statistic (the statistic's wording occurs elsewhere in the sentence, or not at all). The printed number has too few digits to carry evidence: only 9 comparable numbers exist (same decimals, same number of digits), so a chance match cannot be made unlikely (limit 2%).",
+    "A PERSON MUST REVIEW THE READINGThe number is reproduced, but that alone does not show the sentence means this reading: “day” is printed after the number, but the manifest gives this column in g. The printed number has too few digits to carry evidence: only 9 comparable numbers exist (same decimals, same number of digits), so a chance match cannot be made unlikely (limit 2%).",
+    "A PERSON MUST REVIEW THE READINGThe sentence gives a “±” value without saying whether it is a standard deviation, a standard error or an interval.",
+    "A PERSON MUST REVIEW THE READINGThe sentence prints n = 351, but this reading uses 350 rows of the file. The authors probably analysed different rows or a different file version.",
+    "A PERSON MUST REVIEW THE READINGWhat a count counts (rows, individuals, sequences, sites) is not fixed by the sentence's wording, so a count that differs is never flagged automatically.",
+    "NUMBER REPRODUCED",
+    "NUMBER REPRODUCEDSupported by another number in the sentence: 12.0, 167.0.",
+    "UNKNOWN",
+    "UNKNOWNNo mathematical result was established by the Lean kernel."
+   ],
+   "recorded_file_rebuilt_in_browser": true,
+   "own_claim_preview": "match / conditional / mismatch / link check failed / malformed file all shown",
+   "overflow": false,
+   "forged_proof_file": {
+    "accepted_by_plain_lean": true,
+    "served_runner_exit_code": 1,
+    "served_runner_why_not": "the generated part is not in canonical form (no claim in canonical form); nothing was run",
+    "lean_started_by_runner": false
+   },
+   "withdrawn_v1_receipt_refused": true,
+   "local_kernel_run_shown_as_reported_not_verified": true,
+   "kernel_run_for_other_data_or_proof_refused": true,
+   "browser_generated_lean_accepted_by_real_kernel": true,
+   "recorded_lean_re_accepted_by_real_kernel": true,
+   "lean": "Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)"
+  }
+ ],
+ "external_requests": [],
+ "page_errors": [],
+ "ok": true
+}
