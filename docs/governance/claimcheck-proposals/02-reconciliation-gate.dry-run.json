@@ -2,7 +2,7 @@
  "format": "pcs-claimcheck-site-admission-dry-run-v1",
  "approval": false,
  "effective": false,
- "source_commit": "464f73299842d09b32913abbb06965c2a36e3300",
+ "source_commit": "e0b9136cf7e8480cfcf55c9bfa86b9582f22e39e",
  "protected_main_in_registry": "54bc61805e741a7228c36e257d3e314cd603b1a9",
  "note": "Throw-away worktrees and a local tag, deleted at the end. Nothing pushed. The commit ids of the retained commit and of the control commit below exist only in this dry run.",
  "gate_unchanged_on_origin_main": {
@@ -36,7 +36,7 @@
  },
  "census": {
   "against_origin_main": "e8136625c463b271364b36b2b8ae76f8777f1967",
-  "added": 41,
+  "added": 45,
   "modified": [
    "public/check-my-files.html",
    "public/llms.txt",
@@ -61,14 +61,17 @@
  },
  "successor": {
   "retained_commit_parents": [
-   "464f73299842d09b32913abbb06965c2a36e3300",
+   "e0b9136cf7e8480cfcf55c9bfa86b9582f22e39e",
    "d35e2b5e6b29e0a27dc0cb117986895fd58c1456"
   ],
-  "retained_tree": "d6f6d6db1c8e0c10d6172f36d3a9cf9804cd694c",
+  "retained_tree": "1a2ab000ce15f14ad942240105a5efabda8a21e3",
   "previous_retained_commit": "d35e2b5e6b29e0a27dc0cb117986895fd58c1456",
   "previous_tag": "pcs-source-intake/site-open-prs-v1-20261105",
+  "retained_commit": "6c1ec33e51c3ead21fcaa07f368b7a1c791771dc",
   "tag_in_this_dry_run": "pcs-source-intake/site-claimcheck-v1-DRYRUN-LOCAL",
-  "tag_the_owner_would_create": "pcs-source-intake/site-claimcheck-v1-<date>"
+  "tag_the_owner_would_create": "pcs-source-intake/site-claimcheck-v1-20261117",
+  "tag_created": false,
+  "reproducible_with": "git commit-tree <source tree> -p <source commit> -p <previous retained commit> with the identity, date and message in RETAINED_ENV and RETAINED_MESSAGE"
  },
  "successor_intake_with_public_rule_unchanged": {
   "passed": false,
@@ -77,13 +80,15 @@
  },
  "proposed_change": {
   "patch": "02-reconciliation-gate.patch",
-  "patch_sha256": "b027e8e1e1461acee9a4dc0d3d13d344905da4bd99efcbcdda2761f7a3399c5f",
+  "patch_sha256": "5948809b0e0f621d66cf5a3427c8fd074bc646868657d1fa6ba6f2a007d71a5e",
+  "names_the_proposed_tag": true,
+  "tested_patch_differs_only_in_the_tag_name": true,
   "gate": {
    "passed": true,
    "reason": "",
    "summary": {
     "repository": "Tommaso-R-Marena/proof-carrying-science-site",
-    "candidate": "41074bf50d54bbf3fdf848495de8b48a6b3ab954",
+    "candidate": "7acb0c544c9147d58b1082f01a676d69bd521a30",
     "original_prs_retained": [
      147,
      146,
@@ -94,10 +99,10 @@
      128
     ],
     "production_source_preserved": true,
-    "qualified_source_commit": "a8ba4bec2675b3e5922bf1a17d36d286c81285ef",
+    "qualified_source_commit": "6c1ec33e51c3ead21fcaa07f368b7a1c791771dc",
     "retention_tag": "pcs-source-intake/site-claimcheck-v1-DRYRUN-LOCAL",
     "original_ancestry_preserved_at_intake": true,
-    "selected_noncontrol_source_files_checked": 3850,
+    "selected_noncontrol_source_files_checked": 3854,
     "current_main_may_use_squash_history": true
    }
   },
@@ -140,7 +145,7 @@
   },
   "retained_commit_drops_original_pr_heads": {
    "rejected": true,
-   "reason": "subprocess.CalledProcessError: Command '['git', '-C', '/tmp/pcs-site-admission-ty26pmek/neg-retained_commit_drops_original_pr_heads', 'merge-base', '--is-ancestor', '019c932127f4b1f5273e20a43644999f694a641d', '6c6af035323880bd95ac313b8818bb1acddf9f29']' returned non-zero exit status 1.",
+   "reason": "subprocess.CalledProcessError: Command '['git', '-C', '/tmp/pcs-site-admission-mcewqrio/neg-retained_commit_drops_original_pr_heads', 'merge-base', '--is-ancestor', '019c932127f4b1f5273e20a43644999f694a641d', '7914c302b4bc4dcb3d689f1df2fea0acad93f8b7']' returned non-zero exit status 1.",
    "expected_reason_contains": "returned non-zero exit status",
    "as_expected": true
   }

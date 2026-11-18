@@ -4,7 +4,7 @@
  "effective": false,
  "patch": "01-reading-help-verifier.patch",
  "patch_sha256": "98218343926db36d343c5358534d9d374d85eeeb7c875b99e8aafcfe7a66d398",
- "source_commit": "464f73299842d09b32913abbb06965c2a36e3300",
+ "source_commit": "e0b9136cf7e8480cfcf55c9bfa86b9582f22e39e",
  "what": "The patch applied in a throw-away worktree of the commit; the checked-out verifier is unchanged.",
  "unpatched_verifier_on_the_commit": {
   "passed": false,

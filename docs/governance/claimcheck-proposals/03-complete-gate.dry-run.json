@@ -4,7 +4,7 @@
  "effective": false,
  "patch": "03-complete-gate.patch",
  "patch_sha256": "53e967048c9b31d2771620f4af0ea51a68f01b59708a6a52a3edb74878898fd1",
- "source_commit": "464f73299842d09b32913abbb06965c2a36e3300",
+ "source_commit": "e0b9136cf7e8480cfcf55c9bfa86b9582f22e39e",
  "where": "throw-away worktree; the checked-out package.json is unchanged",
  "patch_applies_cleanly": true,
  "complete_gate_runs_it": true,
