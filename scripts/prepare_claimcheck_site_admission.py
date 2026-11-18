@@ -12,15 +12,22 @@ pushes, and leaves no tag behind.
 
 Not an approval.  The retained commit, its tag and the control change are the owner's to make.
 """
-import argparse, hashlib, json, re, shutil, subprocess, sys, tempfile
+import argparse, hashlib, json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GATE = 'scripts/check_reconciled_prs.py'
 GATE_TEST = 'scripts/test_reconciled_prs.py'
 DRY_TAG = 'pcs-source-intake/site-claimcheck-v1-DRYRUN-LOCAL'
+# the tag name the owner would create; the proposal patch names it, and no ref of that name is created here
+PROPOSED_TAG = 'pcs-source-intake/site-claimcheck-v1-20261117'
 NAME = 'proof-carrying-science-site'
 IDENT = ['-c', 'user.name=PCS dry run', '-c', 'user.email=dry-run@example.invalid']
+# fixed identity and date, so the retained commit is reproducible from the source commit alone
+RETAINED_ENV = {'GIT_AUTHOR_NAME': 'PCS retained source', 'GIT_AUTHOR_EMAIL': 'retained-source@example.invalid',
+                'GIT_COMMITTER_NAME': 'PCS retained source', 'GIT_COMMITTER_EMAIL': 'retained-source@example.invalid',
+                'GIT_AUTHOR_DATE': '2026-11-17T00:00:00Z', 'GIT_COMMITTER_DATE': '2026-11-17T00:00:00Z'}
+RETAINED_MESSAGE = 'Retained qualified source: previous site intake plus the ClaimCheck page (proposed; tree identical to the source commit)'
 
 
 def git(root, *args, check=True):
@@ -128,13 +135,15 @@ def main():
 
         # 3. successor retained commit: same tree as the source; parents = source and the previous retained commit
         tree = git(ROOT, 'rev-parse', source + '^{tree}')
-        retained = git(ROOT, *IDENT, 'commit-tree', tree, '-p', source, '-p', old_intake,
-                       '-m', 'DRY RUN retained source commit for the ClaimCheck page; not a protected ref')
+        retained = subprocess.run(['git', '-C', str(ROOT), 'commit-tree', tree, '-p', source, '-p', old_intake, '-m', RETAINED_MESSAGE],
+                                  capture_output=True, text=True, check=True, env={**os.environ, **RETAINED_ENV}).stdout.strip()
         git(ROOT, 'tag', '-f', DRY_TAG, retained)
         report['successor'] = {'retained_commit_parents': [source, old_intake], 'retained_tree': tree,
                                'previous_retained_commit': old_intake, 'previous_tag': old_tag,
-                               'tag_in_this_dry_run': DRY_TAG,
-                               'tag_the_owner_would_create': 'pcs-source-intake/site-claimcheck-v1-<date>'}
+                               'retained_commit': retained, 'tag_in_this_dry_run': DRY_TAG,
+                               'tag_the_owner_would_create': PROPOSED_TAG, 'tag_created': False,
+                               'reproducible_with': 'git commit-tree <source tree> -p <source commit> -p <previous retained commit> '
+                                                    'with the identity, date and message in RETAINED_ENV and RETAINED_MESSAGE'}
 
         # 4. only the retained commit and tag moved: rule (b) still refuses any change under public/
         only_intake = worktree('only-intake', source)
@@ -145,11 +154,19 @@ def main():
         # 5. the proposed change: retained commit moved and rule (b) anchored at the retained commit
         proposed = worktree('proposed', source)
         patch_gate(proposed, retained, DRY_TAG, public_rule=True)
-        patch = git(proposed, 'diff', '--', GATE)
+        tested_patch = git(proposed, 'diff', '--', GATE)
+        # the proposal: the same change with the proposed tag name (no ref of that name is created)
+        named = worktree('named', source)
+        patch_gate(named, retained, PROPOSED_TAG, public_rule=True)
+        patch = git(named, 'diff', '--', GATE)
         (out / '02-reconciliation-gate.patch').write_text(patch + '\n')
         control = commit_all(proposed, 'DRY RUN control change: retained commit and public rule')
         report['proposed_change'] = {'patch': '02-reconciliation-gate.patch',
                                      'patch_sha256': hashlib.sha256((patch + '\n').encode()).hexdigest(),
+                                     'names_the_proposed_tag': PROPOSED_TAG in patch and DRY_TAG not in patch,
+                                     # compare the patched files (each diff's index line carries its own blob hash)
+                                     'tested_patch_differs_only_in_the_tag_name': bool(tested_patch) and
+                                         (Path(proposed) / GATE).read_text().replace(DRY_TAG, PROPOSED_TAG) == (Path(named) / GATE).read_text(),
                                      'gate': run_gate(proposed), 'gate_own_tests': run_gate_tests(proposed)}
 
         # 6. the proposed gate must still reject these
@@ -207,6 +224,8 @@ def main():
             and 'Public deployment tree changed' in report['successor_intake_with_public_rule_unchanged']['reason'],
             report['proposed_change']['gate']['passed'] is True,
             report['proposed_change']['gate_own_tests']['passed'] is True,
+            report['proposed_change']['names_the_proposed_tag'] is True,
+            report['proposed_change']['tested_patch_differs_only_in_the_tag_name'] is True,
             all(item['as_expected'] for item in negatives.values()),
             not report['census']['deleted'],
             not report['census']['integration_controls_touched'],
